@@ -156,7 +156,7 @@ std::string ContextImpl::GetDistributedFilesDir()
 void ContextImpl::SwitchArea(int mode)
 {
     HILOG_DEBUG("ContextImpl::SwitchArea, mode:%{public}d.", mode);
-    if (mode < 0 || mode >= (sizeof(CONTEXT_ELS) / sizeof(CONTEXT_ELS[0]))) {
+    if (mode < 0 || mode >= (int)(sizeof(CONTEXT_ELS) / sizeof(CONTEXT_ELS[0]))) {
         HILOG_ERROR("ContextImpl::SwitchArea, mode is invalid.");
         return;
     }
@@ -395,12 +395,12 @@ std::shared_ptr<AppExecFwk::HapModuleInfo> ContextImpl::GetHapModuleInfo() const
 
 void ContextImpl::SetFlags(int64_t flags)
 {
-    flags_ = static_cast<uint64_t>(flags_) | CONTEXT_CREATE_BY_SYSTEM_APP;
+    flags_ = static_cast<uint64_t>(flags_) | static_cast<uint64_t>(CONTEXT_CREATE_BY_SYSTEM_APP);
 }
 
 bool ContextImpl::IsCreateBySystemApp() const
 {
-    return (static_cast<uint64_t>(flags_) & CONTEXT_CREATE_BY_SYSTEM_APP) == 1;
+    return (static_cast<uint64_t>(flags_) & static_cast<uint64_t>(CONTEXT_CREATE_BY_SYSTEM_APP)) == 1;
 }
 
 std::shared_ptr<Context> Context::appContext_ = nullptr;

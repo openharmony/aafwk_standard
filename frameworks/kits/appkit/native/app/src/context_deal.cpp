@@ -597,7 +597,7 @@ int ContextDeal::VerifyPermission(const std::string &permission, int pid, int ui
 
 bool ContextDeal::IsCreateBySystemApp() const
 {
-    return (static_cast<uint64_t>(flags_) & CONTEXT_CREATE_BY_SYSTEM_APP) == 1;
+    return (static_cast<uint64_t>(flags_) & static_cast<uint64_t>(CONTEXT_CREATE_BY_SYSTEM_APP)) == 1;
 }
 
 int ContextDeal::GetCurrentAccountId() const

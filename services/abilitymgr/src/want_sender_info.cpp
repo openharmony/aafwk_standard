@@ -36,7 +36,7 @@ bool WantSenderInfo::ReadFromParcel(Parcel &parcel)
         }
         allWants.emplace_back(*wantsInfo);
     }
-    flags = parcel.ReadInt32();
+    flags = parcel.ReadUint32();
     userId = parcel.ReadInt32();
     return true;
 }
@@ -70,7 +70,7 @@ bool WantSenderInfo::Marshalling(Parcel &parcel) const
             return false;
         }
     }
-    parcel.WriteInt32(flags);
+    parcel.WriteUint32(flags);
     parcel.WriteInt32(userId);
     return true;
 }
