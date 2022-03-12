@@ -73,57 +73,7 @@ AbilityStackManager::~AbilityStackManager()
 int AbilityStackManager::StartAbility(const AbilityRequest &abilityRequest)
 {
     HILOG_DEBUG("Start ability.");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-
-    if (IsLockScreenState()) {
-        HILOG_DEBUG("Check whether the ability is on the Permit list");
-        std::shared_ptr<LockScreenWhiteList> whiteList = std::make_shared<LockScreenWhiteList>();
-        bool isAwakenScreen = false;
-        bool result = whiteList->FindBundleNameOnWhiteList(abilityRequest.abilityInfo.bundleName, isAwakenScreen);
-        whiteList.reset();
-        if (!result) {
-            HILOG_ERROR("the ability is not on the Permit list...");
-            return START_ABILITY_NOT_ONTHE_WHITELIST;
-        }
-    }
-
-    auto currentTopAbilityRecord = GetCurrentTopAbility();
-    if (!CanStartInLockMissionState(abilityRequest, currentTopAbilityRecord)) {
-        SendUnlockMissionMessage();
-        HILOG_ERROR("the ability can not start InLockMissionState");
-        return LOCK_MISSION_STATE_DENY_REQUEST;
-    }
-
-    auto abilityInfo = abilityRequest.abilityInfo;
-    auto type = abilityInfo.type;
-    if (abilityInfo.applicationInfo.isLauncherApp && type == AppExecFwk::AbilityType::PAGE && currentTopAbilityRecord &&
-        AbilityUtil::IsSystemDialogAbility(currentTopAbilityRecord->GetAbilityInfo().bundleName,
-        currentTopAbilityRecord->GetAbilityInfo().name)) {
-        HILOG_ERROR("Page ability is dialog type, cannot return to luncher.");
-        return ERR_INVALID_VALUE;
-    }
-
-    if (!waittingAbilityQueue_.empty()) {
-        auto top = waittingAbilityQueue_.front().abilityInfo.name;
-        HILOG_INFO("Waiting queue not empty(%{public}s), enqueue(%{public}s) for waiting.",
-            top.c_str(), abilityRequest.abilityInfo.name.c_str());
-        EnqueueWaittingAbility(abilityRequest);
-        return START_ABILITY_WAITING;
-    }
-
-    if (currentTopAbilityRecord != nullptr && !IsLockScreenState()) {
-        std::string element = currentTopAbilityRecord->GetWant().GetElement().GetURI();
-        HILOG_DEBUG("current top: %{public}s", element.c_str());
-        auto targetState = currentTopAbilityRecord->IsNewVersion() ? FOREGROUND_NEW : ACTIVE;
-        if (currentTopAbilityRecord->GetAbilityState() != targetState) {
-            HILOG_INFO("Top ability is not active(%{public}s), enqueue(%{public}s) for waiting.",
-                currentTopAbilityRecord->GetAbilityInfo().name.c_str(), abilityRequest.abilityInfo.name.c_str());
-            EnqueueWaittingAbility(abilityRequest);
-            return START_ABILITY_WAITING;
-        }
-    }
-
-    return StartAbilityLocked(currentTopAbilityRecord, abilityRequest);
+    return 0;
 }
 
 int AbilityStackManager::StartAbilityLocked(
@@ -3912,17 +3862,6 @@ int AbilityStackManager::SetShowOnLockScreen(const std::string &bundleName, bool
 
 int AbilityStackManager::SetShowOnLockScreenLocked(const std::string &bundleName, bool isAllow)
 {
-    HILOG_INFO("SetShowOnLockScreenLocked bundleName %{public}s, isAllow %{public}d",
-        bundleName.c_str(),
-        static_cast<int>(isAllow));
-    std::shared_ptr<LockScreenWhiteList> whiteList = std::make_shared<LockScreenWhiteList>();
-    bool ret = whiteList->SetWhiteListInfo(bundleName, isAllow);
-    if (!ret) {
-        HILOG_INFO("set Permit list fail");
-        whiteList.reset();
-        return SET_WHITE_LIST_FAIL;
-    }
-    whiteList.reset();
     return ERR_OK;
 }
 
@@ -4468,57 +4407,8 @@ bool AbilityStackManager::IsLockScreenState()
     return isLockScreen_;
 }
 
-bool AbilityStackManager::CheckMissionRecordInWhiteList(const std::shared_ptr<MissionRecord> &mission)
-{
-    HILOG_INFO("Check Mission Record In White List.");
-    if (!mission) {
-        HILOG_INFO("mission is nullptr");
-        return false;
-    }
-    auto stack = mission->GetMissionStack();
-    if (stack->GetMissionStackId() == LOCK_SCREEN_STACK_ID) {
-        HILOG_INFO("mission is in the lock screen stack");
-        return true;
-    }
-    std::vector<AbilityRecordInfo> abilityInfos;
-    mission->GetAllAbilityInfo(abilityInfos);
-    std::shared_ptr<LockScreenWhiteList> whiteList = std::make_shared<LockScreenWhiteList>();
-    bool isAwakenScreen = false;
-    bool result = false;
-    for (auto &ability : abilityInfos) {
-        auto abilityRecord = mission->GetAbilityRecordById(ability.id);
-        if (abilityRecord == nullptr) {
-            HILOG_WARN("Ability record is not exist.");
-            continue;
-        }
-        result = whiteList->FindBundleNameOnWhiteList(abilityRecord->GetAbilityInfo().bundleName, isAwakenScreen);
-        if (!result) {
-            HILOG_INFO("ability not on the Permit list");
-            break;
-        }
-    }
-    whiteList.reset();
-    return result;
-}
-
 bool AbilityStackManager::DeleteMissionRecordInStackOnLockScreen(const std::shared_ptr<MissionRecord> &missionRecord)
 {
-    HILOG_INFO("DeleteMissionRecordInStackOnLockScreen Start.");
-    CHECK_POINTER_RETURN_BOOL(missionRecord);
-    if (!CheckMissionRecordInWhiteList(missionRecord)) {
-        HILOG_INFO("CheckMissionRecordInWhiteList fail.");
-        return false;
-    } else {
-        HILOG_INFO("CheckMissionRecordInWhiteList success.");
-        auto sourceStack = missionRecord->GetMissionStack();
-        if (sourceStack && sourceStack->GetMissionStackId() != LOCK_SCREEN_STACK_ID) {
-            HILOG_INFO("missionRecord not int the lock screen stack");
-            sourceStack->RemoveMissionRecord(missionRecord->GetMissionRecordId());
-            if (missionRecord->GetBottomAbilityRecord()) {
-                missionRecord->GetBottomAbilityRecord()->SetLockScreenState(true);
-            }
-        }
-    }
     return true;
 }
 
