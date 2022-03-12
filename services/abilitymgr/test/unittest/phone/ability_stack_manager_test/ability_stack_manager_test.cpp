@@ -4770,69 +4770,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_0133, TestSize
 
 /*
  * Feature: AbilityStackManager
- * Function: CheckMissionRecordInWhiteList
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhiteList_0001, TestSize.Level1)
-{
-    std::shared_ptr<MissionRecord> mission = nullptr;
-    auto ret = stackManager_->CheckMissionRecordInWhiteList(mission);
-    EXPECT_EQ(ret, false);
-}
-
-/*
- * Feature: AbilityStackManager
- * Function: CheckMissionRecordInWhiteList
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhiteList_0002, TestSize.Level1)
-{
-    stackManager_->Init();
-    auto ret = stackManager_->SetShowOnLockScreenLocked("com.ix.hiMusic", true);
-    EXPECT_EQ(ret, ERR_OK);
-    auto result = stackManager_->StartAbility(musicAbilityRequest_);
-    EXPECT_EQ(result, ERR_OK);
-    auto missionStack = stackManager_->GetCurrentMissionStack();
-    EXPECT_TRUE(missionStack);
-    auto missionRecord = missionStack->GetTopMissionRecord();
-    EXPECT_TRUE(missionRecord);
-    missionStack->missionStackId_ = 3;
-    ret = stackManager_->CheckMissionRecordInWhiteList(missionRecord);
-    EXPECT_EQ(ret, true);
-}
-
-/*
- * Feature: AbilityStackManager
- * Function: CheckMissionRecordInWhiteList
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_CheckMissionRecordInWhiteList_0003, TestSize.Level1)
-{
-    stackManager_->Init();
-    auto ret = stackManager_->SetShowOnLockScreenLocked("com.ix.hiMusic", true);
-    EXPECT_EQ(ret, ERR_OK);
-    auto result = stackManager_->StartAbility(musicAbilityRequest_);
-    EXPECT_EQ(result, ERR_OK);
-    auto missionStack = stackManager_->GetCurrentMissionStack();
-    EXPECT_TRUE(missionStack);
-    auto missionRecord = missionStack->GetTopMissionRecord();
-    EXPECT_TRUE(missionRecord);
-    missionStack->missionStackId_ = 2;
-    ret = stackManager_->CheckMissionRecordInWhiteList(missionRecord);
-    EXPECT_EQ(ret, true);
-}
-
-/*
- * Feature: AbilityStackManager
  * Function: DeleteMissionRecordInStackOnLockScreen
  * SubFunction: NA
  * FunctionPoints: NA
