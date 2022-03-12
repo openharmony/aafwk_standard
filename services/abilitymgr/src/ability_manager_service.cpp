@@ -3329,15 +3329,15 @@ void AbilityManagerService::StartingSystemUiAbility()
     CHECK_POINTER_IS_NULLPTR(bms);
     Want systemUiWant;
     systemUiWant.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_ABILITY_NAME);
-    uint32_t waitCnt = 0;
+    //uint32_t waitCnt = 0;
     // Wait 10 minutes for the installation to complete.
-    IN_PROCESS_CALL_WITHOUT_RET(
+    /* IN_PROCESS_CALL_WITHOUT_RET(
         while (!bms->QueryAbilityInfo(systemUiWant, systemUiInfo) && waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
             HILOG_INFO("Waiting query system ui info completed.");
             usleep(REPOLL_TIME_MICRO_SECONDS);
             waitCnt++;
         }
-    );
+    ); */
     (void)StartAbility(systemUiWant, U0_USER_ID, DEFAULT_INVAL_VALUE);
 }
 #endif
