@@ -23,14 +23,10 @@ DefaultThreadFactory::DefaultThreadFactory() : index_(1)
 std::shared_ptr<Thread> DefaultThreadFactory::Create()
 {
     std::shared_ptr<Thread> pThread = std::make_shared<Thread>();
-    if (pThread != nullptr) {
-        int value = std::atomic_fetch_add(&index_, 1);
-        std::string name = std::string("PoolThread-") + std::to_string(value);
-        pThread->thread_name_ = name;
-        HILOG_INFO("DefaultThreadFactory::Create thread name is %{public}s", name.c_str());
-    } else {
-        HILOG_ERROR("DefaultThreadFactory::Create error, thread is nullptr");
-    }
+    int value = std::atomic_fetch_add(&index_, 1);
+    std::string name = std::string("PoolThread-") + std::to_string(value);
+    pThread->thread_name_ = name;
+    HILOG_INFO("DefaultThreadFactory::Create thread name is %{public}s", name.c_str());
 
     return pThread;
 }

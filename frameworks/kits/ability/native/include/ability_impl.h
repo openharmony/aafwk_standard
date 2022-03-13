@@ -463,6 +463,7 @@ private:
 class InputEventConsumerImpl : public MMI::IInputEventConsumer {
 public:
     explicit InputEventConsumerImpl(const std::shared_ptr<AbilityImpl>& abilityImpl) : abilityImpl_(abilityImpl) {}
+    ~InputEventConsumerImpl() = default;
     void OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const override;
     void OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const override;
     void OnInputEvent(std::shared_ptr<MMI::AxisEvent> axisEvent) const override {}

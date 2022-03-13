@@ -237,13 +237,14 @@ int FormDataMgr::CheckEnoughForm(const int callingUid, const int32_t currentUser
                 return ERR_APPEXECFWK_FORM_MAX_SYSTEM_FORMS;
             }
             for (auto &userUid : record.formUserUids) {
-                if (userUid == callingUid) {
-                    if (++callingUidFormCounts >= Constants::MAX_RECORD_PER_APP) {
-                        HILOG_WARN("%{public}s, already use %{public}d forms", __func__, Constants::MAX_RECORD_PER_APP);
-                        return ERR_APPEXECFWK_FORM_MAX_FORMS_PER_CLIENT;
-                    }
-                    break;
+                if (userUid != callingUid) {
+                    continue;
                 }
+                if (++callingUidFormCounts >= Constants::MAX_RECORD_PER_APP) {
+                    HILOG_WARN("%{public}s, already use %{public}d forms", __func__, Constants::MAX_RECORD_PER_APP);
+                    return ERR_APPEXECFWK_FORM_MAX_FORMS_PER_CLIENT;
+                }
+                break;
             }
         }
     }
