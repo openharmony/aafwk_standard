@@ -31,7 +31,7 @@ namespace OHOS {
 namespace AAFwk {
 namespace {
 const std::string SHORT_OPTIONS = "ch:d:a:b:p:s:CD";
-const struct option LONG_OPTIONS[] = {
+constexpr struct option LONG_OPTIONS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"device", required_argument, nullptr, 'd'},
     {"ability", required_argument, nullptr, 'a'},
@@ -43,13 +43,13 @@ const struct option LONG_OPTIONS[] = {
     {nullptr, 0, nullptr, 0},
 };
 const std::string SHORT_OPTIONS_ApplicationNotRespondin = "hp:";
-const struct option LONG_OPTIONS_ApplicationNotRespondin[] = {
+constexpr struct option LONG_OPTIONS_ApplicationNotRespondin[] = {
     {"help", no_argument, nullptr, 'h'},
     {"pid", required_argument, nullptr, 'p'},
     {nullptr, 0, nullptr, 0},
 };
 const std::string SHORT_OPTIONS_DUMP = "has:m:lud::e::LS";
-const struct option LONG_OPTIONS_DUMP[] = {
+constexpr struct option LONG_OPTIONS_DUMP[] = {
     {"help", no_argument, nullptr, 'h'},
     {"all", no_argument, nullptr, 'a'},
     {"stack", required_argument, nullptr, 's'},
@@ -63,7 +63,7 @@ const struct option LONG_OPTIONS_DUMP[] = {
     {nullptr, 0, nullptr, 0},
 };
 const std::string SHORT_OPTIONS_DUMPSYS = "hal::i:e::p::r::d::u:c";
-const struct option LONG_OPTIONS_DUMPSYS[] = {
+constexpr struct option LONG_OPTIONS_DUMPSYS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"all", no_argument, nullptr, 'a'},
     {"mission-list", no_argument, nullptr, 'l'},
