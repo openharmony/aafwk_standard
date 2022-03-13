@@ -541,6 +541,47 @@ bool UnwrapArrayStringFromJS(napi_env env, napi_value param, std::vector<std::st
     return true;
 }
 
+bool UnwrapArrayComplexFromJSNumber(napi_env env, ComplexArrayData &value, bool isDouble, napi_value jsValue)
+{
+    int32_t elementInt32 = 0;
+    double elementDouble = 0.0;
+    if (isDouble) {
+        if (napi_get_value_double(env, jsValue, &elementDouble) == napi_ok) {
+            value.doubleList.push_back(elementDouble);
+        }
+        return isDouble;
+    }
+
+    bool isReadValue32 = napi_get_value_int32(env, jsValue, &elementInt32) == napi_ok;
+    bool isReadDouble = napi_get_value_double(env, jsValue, &elementDouble) == napi_ok;
+    if (isReadValue32 && isReadDouble) {
+        if (abs(elementDouble - elementInt32 * 1.0) > 0.0) {
+            isDouble = true;
+            if (value.intList.size() > 0) {
+                for (size_t j = 0; j < value.intList.size(); j++) {
+                    value.doubleList.push_back(value.intList[j]);
+                }
+                value.intList.clear();
+            }
+            value.doubleList.push_back(elementDouble);
+        } else {
+            value.intList.push_back(elementInt32);
+        }
+    } else if (isReadValue32) {
+        value.intList.push_back(elementInt32);
+    } else if (isReadDouble) {
+        isDouble = true;
+        if (value.intList.size() > 0) {
+            for (size_t j = 0; j < value.intList.size(); j++) {
+                value.doubleList.push_back(value.intList[j]);
+            }
+            value.intList.clear();
+        }
+        value.doubleList.push_back(elementDouble);
+    }
+    return isDouble;
+}
+
 bool UnwrapArrayComplexFromJS(napi_env env, napi_value param, ComplexArrayData &value)
 {
     uint32_t arraySize = 0;
@@ -580,42 +621,7 @@ bool UnwrapArrayComplexFromJS(napi_env env, napi_value param, ComplexArrayData &
                 break;
             }
             case napi_number: {
-                int32_t elementInt32 = 0;
-                double elementDouble = 0.0;
-                if (isDouble) {
-                    if (napi_get_value_double(env, jsValue, &elementDouble) == napi_ok) {
-                        value.doubleList.push_back(elementDouble);
-                    }
-                    break;
-                } else {
-                    bool isReadValue32 = napi_get_value_int32(env, jsValue, &elementInt32) == napi_ok;
-                    bool isReadDouble = napi_get_value_double(env, jsValue, &elementDouble) == napi_ok;
-                    if (isReadValue32 && isReadDouble) {
-                        if (abs(elementDouble - elementInt32 * 1.0) > 0.0) {
-                            isDouble = true;
-                            if (value.intList.size() > 0) {
-                                for (size_t j = 0; j < value.intList.size(); j++) {
-                                    value.doubleList.push_back(value.intList[j]);
-                                }
-                                value.intList.clear();
-                            }
-                            value.doubleList.push_back(elementDouble);
-                        } else {
-                            value.intList.push_back(elementInt32);
-                        }
-                    } else if (isReadValue32) {
-                        value.intList.push_back(elementInt32);
-                    } else if (isReadDouble) {
-                        isDouble = true;
-                        if (value.intList.size() > 0) {
-                            for (size_t j = 0; j < value.intList.size(); j++) {
-                                value.doubleList.push_back(value.intList[j]);
-                            }
-                            value.intList.clear();
-                        }
-                        value.doubleList.push_back(elementDouble);
-                    }
-                }
+                isDouble = UnwrapArrayComplexFromJSNumber(env, value, isDouble, jsValue);
                 break;
             }
             default:
@@ -1169,7 +1175,10 @@ std::vector<uint8_t> ConvertU8Vector(napi_env env, napi_value jsValue)
     NAPI_CALL_BASE(env, napi_get_arraybuffer_info(env, buffer, reinterpret_cast<void **>(&data), &total), {});
     length = std::min<size_t>(length, total - offset);
     std::vector<uint8_t> result(sizeof(uint8_t) + length);
-    memcpy_s(result.data(), result.size(), &data[offset], length);
+    int retCode = memcpy_s(result.data(), result.size(), &data[offset], length);
+    if (retCode != 0) {
+        return {};
+    }
     return result;
 }
 

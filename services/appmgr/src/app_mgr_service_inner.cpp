@@ -358,6 +358,11 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
 void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    if (!appRunningManager_) {
+        HILOG_ERROR("appRunningManager_ is nullptr");
+        return;
+    }
+
     auto appRecord = GetAppRunningRecordByAppRecordId(recordId);
     if (!appRecord) {
         HILOG_ERROR("get app record failed");
