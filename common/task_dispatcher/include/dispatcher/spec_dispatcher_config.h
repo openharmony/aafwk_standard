@@ -31,7 +31,7 @@ public:
         name_ = name;
         priority_ = priority;
     }
-    ~SpecDispatcherConfig(){};
+    virtual ~SpecDispatcherConfig() = default;
     std::string GetName()
     {
         return name_;

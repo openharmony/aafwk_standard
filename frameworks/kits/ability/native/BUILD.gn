@@ -326,7 +326,6 @@ ohos_shared_library("dummy_classes") {
   sources = [
     "${SUBSYSTEM_DIR}/src/dummy_data_ability_predicates_discard.cpp",
     "${SUBSYSTEM_DIR}/src/dummy_result_set_discard.cpp",
-    "${SUBSYSTEM_DIR}/src/dummy_values_bucket_discard.cpp",
   ]
 
   configs = [ ":ability_config" ]

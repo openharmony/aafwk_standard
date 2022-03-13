@@ -74,8 +74,11 @@ napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info)
         NAPI_ASSERT(env, valuetype == napi_function, "Wrong argument type. Function expected.");
     }
 
-    AsyncCallbackInfo *async_callback_info =
-        new AsyncCallbackInfo { .env = env, .asyncWork = nullptr, .deferred = nullptr };
+    AsyncCallbackInfo *async_callback_info = new AsyncCallbackInfo {
+        .env = env,
+        .asyncWork = nullptr,
+        .deferred = nullptr
+    };
     std::string bundleName;
     ParseBundleName(env, bundleName, argv[0]);
 

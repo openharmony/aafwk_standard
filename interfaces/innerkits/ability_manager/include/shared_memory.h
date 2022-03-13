@@ -23,9 +23,9 @@ public:
     SharedMemory() = default;
     ~SharedMemory() = default;
 
-    static void ReleaseShmId(const int shmId);
+    static void ReleaseShmId(int shmId);
     static void* PopSharedMemory(int shmKey, int size);
-    static int PushSharedMemory(const void *data, const int size);
+    static int PushSharedMemory(const void *data, int size);
 };
 }  // namespace AAFwk
 }  // namespace OHOS
