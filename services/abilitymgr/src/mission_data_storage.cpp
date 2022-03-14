@@ -15,6 +15,7 @@
 
 #include "mission_data_storage.h"
 
+#include <climits>
 #include "file_util.h"
 #include "hilog_wrapper.h"
 #include "image_source.h"
@@ -123,7 +124,7 @@ bool MissionDataStorage::CheckFileNameValid(const std::string &fileName)
         return false;
     }
 
-    int missionIdLength = fileNameExcludePath.find(JSON_FILE_SUFFIX) - fileNameExcludePath.find("_") - 1;
+    size_t missionIdLength = fileNameExcludePath.find(JSON_FILE_SUFFIX) - fileNameExcludePath.find("_") - 1;
     std::string missionId = fileNameExcludePath.substr(fileNameExcludePath.find("_") + 1, missionIdLength);
     for (auto ch : missionId) {
         if (!isdigit(ch)) {
@@ -269,7 +270,12 @@ bool MissionDataStorage::WriteToPng(const char* fileName, uint32_t width, uint32
         png_destroy_write_struct(&png_ptr, nullptr);
         return false;
     }
-    FILE *fp = fopen(fileName, "wb");
+    char realPath[PATH_MAX] = {0};
+    if (realpath(fileName, realPath) == nullptr) {
+        HILOG_ERROR("snapshot: Fail to get realpath of %{public}s", fileName);
+        return false;
+    }
+    FILE *fp = fopen(realPath, "wb");
     if (fp == nullptr) {
         HILOG_ERROR("snapshot: open file [%s] error, nullptr!\n", fileName);
         png_destroy_write_struct(&png_ptr, &info_ptr);

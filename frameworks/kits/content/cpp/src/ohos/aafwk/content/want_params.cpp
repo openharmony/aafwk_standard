@@ -1341,8 +1341,8 @@ WantParams *WantParams::Unmarshalling(Parcel &parcel)
 void WantParams::DumpInfo(int level) const
 {
     ABILITYBASE_LOGI("=======WantParams::DumpInfo level: %{public}d start=============", level);
-    int params_size = params_.size();
-    ABILITYBASE_LOGI("===WantParams::params_: count %{public}d =============", params_size);
+    size_t params_size = params_.size();
+    ABILITYBASE_LOGI("===WantParams::params_: count %{public}u =============", (uint32_t)params_size);
     int typeId = VALUE_TYPE_NULL;
     for (auto it : params_) {
         typeId = VALUE_TYPE_NULL;

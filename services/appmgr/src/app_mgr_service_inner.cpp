@@ -2153,8 +2153,8 @@ void AppMgrServiceInner::UpdateConfiguration(const Configuration &config)
 
     std::vector<std::string> changeKeyV;
     configuration_->CompareDifferent(changeKeyV, config);
-    int size = changeKeyV.size();
-    HILOG_INFO("changeKeyV size :%{public}d", size);
+    uint32_t size = changeKeyV.size();
+    HILOG_INFO("changeKeyV size :%{public}u", size);
     if (!changeKeyV.empty()) {
         configuration_->Merge(changeKeyV, config);
         // all app
@@ -2309,7 +2309,7 @@ int AppMgrServiceInner::VerifyAccountPermission(const std::string &permissionNam
         return ERR_OK;
     }
 
-    const int currentUserId = getuid() / Constants::BASE_USER_RANGE;
+    const int currentUserId = (int)(getuid() / Constants::BASE_USER_RANGE);
     if (userId != currentUserId) {
         auto isCallingPermAccount = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
             AAFwk::PermissionConstants::PERMISSION_INTERACT_ACROSS_LOCAL_ACCOUNTS);

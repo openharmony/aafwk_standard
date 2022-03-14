@@ -291,8 +291,8 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, Missio
             return -1;
         }
         Media::InitializationOptions mediaOption;
-        mediaOption.size.width = missionPixelMap.imageInfo.width;
-        mediaOption.size.height = missionPixelMap.imageInfo.height;
+        mediaOption.size.width = (int)missionPixelMap.imageInfo.width;
+        mediaOption.size.height = (int)missionPixelMap.imageInfo.height;
         mediaOption.pixelFormat = Media::PixelFormat::BGRA_8888;
         mediaOption.editable = true;
         auto pixel = Media::PixelMap::Create((const uint32_t *)data,

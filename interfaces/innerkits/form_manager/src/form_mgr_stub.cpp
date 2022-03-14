@@ -27,12 +27,12 @@ const int32_t LIMIT_PARCEL_SIZE = 1024;
 
 void SplitString(const std::string &source, std::vector<std::string> &strings)
 {
-    int splitSize = (source.size() / LIMIT_PARCEL_SIZE);
+    size_t splitSize = (source.size() / LIMIT_PARCEL_SIZE);
     if ((source.size() % LIMIT_PARCEL_SIZE) != 0) {
         splitSize++;
     }
     HILOG_DEBUG("the dump string split into %{public}d size", splitSize);
-    for (int i = 0; i < splitSize; i++) {
+    for (size_t i = 0; i < splitSize; i++) {
         int32_t start = LIMIT_PARCEL_SIZE * i;
         strings.emplace_back(source.substr(start, LIMIT_PARCEL_SIZE));
     }

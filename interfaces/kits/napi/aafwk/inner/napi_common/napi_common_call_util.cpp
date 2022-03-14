@@ -35,7 +35,7 @@ void StringSplit(const string &str, const string &splits, std::vector<std::strin
     }
     string strs = str + splits;
     size_t pos = strs.find(splits);
-    int step = splits.size();
+    size_t step = splits.size();
 
     while (pos != strs.npos) {
         string temp = strs.substr(0, pos);
@@ -137,7 +137,7 @@ void ParseBetween(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb:
     std::vector<std::string> value_vec;
     StringSplit(betweenValue, ",", value_vec);
     predicates.Between(value_str, value_vec[0], value_vec[1]);
-    int tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
+    size_t tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
     value_vec.erase(value_vec.begin(), value_vec.begin() + 1);
     pacMap.Remove(value_str);
     if (value_vec.size() == 1) {
@@ -153,7 +153,7 @@ void ParseNotBetween(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeR
     std::vector<std::string> value_vec;
     StringSplit(betweenValue, ",", value_vec);
     predicates.NotBetween(value_str, value_vec[0], value_vec[1]);
-    int tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
+    size_t tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
     value_vec.erase(value_vec.begin(), value_vec.begin() + 1);
     pacMap.Remove(value_str);
     if (value_vec.size() == 1) {
@@ -173,7 +173,7 @@ void ParseIn(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::Data
         in_vec.push_back(value_vec[0]);
         in_vec.push_back(value_vec[1]);
         predicates.In(value_str, in_vec);
-        int tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
+        size_t tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
         value_vec.erase(value_vec.begin(), value_vec.begin() + 1);
         pacMap.Remove(value_str);
         if (value_vec.size() == 1) {
@@ -196,7 +196,7 @@ void ParseNotIn(AppExecFwk::PacMap &pacMap, std::string &value_str, NativeRdb::D
         in_vec.push_back(value_vec[0]);
         in_vec.push_back(value_vec[1]);
         predicates.NotIn(value_str, in_vec);
-        int tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
+        size_t tempLength = value_vec[0].length() + 1 + value_vec[1].length() + 1;
         value_vec.erase(value_vec.begin(), value_vec.begin() + 1);
         pacMap.Remove(value_str);
         if (value_vec.size() == 1) {
@@ -354,7 +354,7 @@ void ConvertResultSet(Json::Value &arrayValue, std::shared_ptr<NativeRdb::AbsSha
     resultSet->GetAllColumnNames(columnNames);
     while (resultSetNum == NO_ERROR) {
         Json::Value data;
-        int size = columnNames.size();
+        int size = (int)columnNames.size();
         for (int i = 0; i < size; i++) {
             GetValue(columnNames, i, data, resultSet);
         }
