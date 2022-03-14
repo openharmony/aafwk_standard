@@ -1578,7 +1578,6 @@ bool AbilityThread::ScheduleNotifyChange(const Uri &uri)
 std::vector<std::shared_ptr<DataAbilityResult>> AbilityThread::ExecuteBatch(
     const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
 {
-
     HILOG_INFO("AbilityThread::ExecuteBatch start");
     std::vector<std::shared_ptr<DataAbilityResult>> results;
     if (abilityImpl_ == nullptr) {
