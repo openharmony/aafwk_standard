@@ -62,6 +62,9 @@ ohos_source_set("tools_fm_source_set") {
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
+
+  subsystem_name = "aafwk"
+  part_name = "ability_tools"
 }
 
 ohos_executable("fm") {
