@@ -172,7 +172,7 @@ bool AppRunningManager::GetPidsByUserId(int32_t userId, std::list<pid_t> &pids)
         }
     }
 
-    return (pids.empty() ? false : true);
+    return (!pids.empty());
 }
 
 bool AppRunningManager::ProcessExitByBundleNameAndUid(
