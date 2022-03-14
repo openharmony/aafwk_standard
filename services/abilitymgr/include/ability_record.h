@@ -600,7 +600,6 @@ public:
      */
     bool IsConnectListEmpty();
 
-#ifdef SUPPORT_GRAPHICS
     /**
      * add ability's window info to record.
      *
@@ -613,6 +612,7 @@ public:
      */
     void RemoveWindowInfo();
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * get ability's window info from record.
      *

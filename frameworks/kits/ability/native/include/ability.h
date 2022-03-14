@@ -59,6 +59,9 @@
 #include "window_scene.h"
 #include "wm_common.h"
 #endif
+#ifndef SUPPORT_GRAPHICS
+#include "inttypes.h"
+#endif
 #include "../../ability_runtime/include/ability_context.h"
 
 using Uri = OHOS::Uri;

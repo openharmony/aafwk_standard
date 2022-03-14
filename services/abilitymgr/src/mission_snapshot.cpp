@@ -60,6 +60,7 @@ bool MissionPixelMap::Marshalling(Parcel &parcel) const
 
 bool MissionSnapshot::ReadFromParcel(Parcel &parcel)
 {
+#ifdef SUPPORT_GRAPHICS
     std::unique_ptr<AppExecFwk::ElementName> ability(parcel.ReadParcelable<AppExecFwk::ElementName>());
     if (ability == nullptr) {
         return false;
@@ -70,6 +71,7 @@ bool MissionSnapshot::ReadFromParcel(Parcel &parcel)
         return false;
     }
     snapshot = pixelMap;
+#endif
     return true;
 }
 
@@ -89,9 +91,11 @@ bool MissionSnapshot::Marshalling(Parcel &parcel) const
     if (!parcel.WriteParcelable(&topAbility)) {
         return false;
     }
+#ifdef SUPPORT_GRAPHICS
     if (!parcel.WriteParcelable(snapshot.get())) {
         return false;
     }
+#endif
     return true;
 }
 }  // namespace AAFwk

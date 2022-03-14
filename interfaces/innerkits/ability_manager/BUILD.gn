@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -57,6 +57,7 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/ability_manager_client.cpp",
     "${services_path}/abilitymgr/src/ability_manager_proxy.cpp",
     "${services_path}/abilitymgr/src/ability_manager_stub.cpp",
+    "${services_path}/abilitymgr/src/ability_mission_info.cpp",
     "${services_path}/abilitymgr/src/ability_record_info.cpp",
     "${services_path}/abilitymgr/src/ability_running_info.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_proxy.cpp",
@@ -64,10 +65,23 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/ability_start_setting.cpp",
     "${services_path}/abilitymgr/src/caller_info.cpp",
     "${services_path}/abilitymgr/src/extension_running_info.cpp",
+    "${services_path}/abilitymgr/src/image_info.cpp",
     "${services_path}/abilitymgr/src/launch_param.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
+    "${services_path}/abilitymgr/src/mission_description_info.cpp",
+    "${services_path}/abilitymgr/src/mission_info.cpp",
+    "${services_path}/abilitymgr/src/mission_listener_proxy.cpp",
+    "${services_path}/abilitymgr/src/mission_listener_stub.cpp",
+    "${services_path}/abilitymgr/src/mission_option.cpp",
+    "${services_path}/abilitymgr/src/mission_record_info.cpp",
+    "${services_path}/abilitymgr/src/mission_snapshot.cpp",
+    "${services_path}/abilitymgr/src/mission_stack_info.cpp",
+    "${services_path}/abilitymgr/src/remote_mission_listener_proxy.cpp",
+    "${services_path}/abilitymgr/src/remote_mission_listener_stub.cpp",
     "${services_path}/abilitymgr/src/sender_info.cpp",
     "${services_path}/abilitymgr/src/shared_memory.cpp",
+    "${services_path}/abilitymgr/src/stack_info.cpp",
+    "${services_path}/abilitymgr/src/stack_setting.cpp",
     "${services_path}/abilitymgr/src/start_options.cpp",
     "${services_path}/abilitymgr/src/stop_user_callback_proxy.cpp",
     "${services_path}/abilitymgr/src/stop_user_callback_stub.cpp",
@@ -115,22 +129,6 @@ ohos_shared_library("ability_manager") {
   ]
 
   if (ability_runtime_graphics) {
-    sources += [
-      "${services_path}/abilitymgr/src/ability_mission_info.cpp",
-      "${services_path}/abilitymgr/src/image_info.cpp",
-      "${services_path}/abilitymgr/src/mission_description_info.cpp",
-      "${services_path}/abilitymgr/src/mission_info.cpp",
-      "${services_path}/abilitymgr/src/mission_listener_proxy.cpp",
-      "${services_path}/abilitymgr/src/mission_listener_stub.cpp",
-      "${services_path}/abilitymgr/src/mission_option.cpp",
-      "${services_path}/abilitymgr/src/mission_record_info.cpp",
-      "${services_path}/abilitymgr/src/mission_snapshot.cpp",
-      "${services_path}/abilitymgr/src/mission_stack_info.cpp",
-      "${services_path}/abilitymgr/src/remote_mission_listener_proxy.cpp",
-      "${services_path}/abilitymgr/src/remote_mission_listener_stub.cpp",
-      "${services_path}/abilitymgr/src/stack_info.cpp",
-      "${services_path}/abilitymgr/src/stack_setting.cpp",
-    ]
     deps += [ "//foundation/multimedia/image_standard/interfaces/innerkits:image_native" ]
   }
 

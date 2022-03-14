@@ -102,7 +102,9 @@ private:
     int userId_ = 0;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
     std::mutex cachedPixelMapMutex_;
+#ifdef SUPPORT_GRAPHICS
     std::map<int32_t, std::shared_ptr<Media::PixelMap>> cachedPixelMap_;
+#endif
 };
 }  // namespace AAFwk
 }  // namespace OHOS

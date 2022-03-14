@@ -83,7 +83,8 @@ int32_t DistributedClient::ConnectRemoteAbility(const OHOS::AAFwk::Want& want, c
     PARCEL_TRANSACT_SYNC_RET_INT(remote, CONNECT_REMOTE_ABILITY, data, reply);
 }
 
-int32_t DistributedClient::DisconnectRemoteAbility(const sptr<IRemoteObject>& connect)
+int32_t DistributedClient::DisconnectRemoteAbility(const sptr<IRemoteObject>& connect, int32_t callerUid,
+    uint32_t accessToken)
 {
     HILOG_INFO("called");
     if (connect == nullptr) {
@@ -101,6 +102,8 @@ int32_t DistributedClient::DisconnectRemoteAbility(const sptr<IRemoteObject>& co
         return ERR_FLATTEN_OBJECT;
     }
     PARCEL_WRITE_HELPER(data, RemoteObject, connect);
+    PARCEL_WRITE_HELPER(data, Int32, callerUid);
+    PARCEL_WRITE_HELPER(data, Uint32, accessToken);
     MessageParcel reply;
     PARCEL_TRANSACT_SYNC_RET_INT(remote, DISCONNECT_REMOTE_ABILITY, data, reply);
 }
