@@ -17,7 +17,14 @@
 
 #include <dlfcn.h>
 
+#include "accesstoken_kit.h"
 #include "hilog_wrapper.h"
+#include "permission_list_state.h"
+
+using OHOS::Security::AccessToken::AccessTokenKit;
+using OHOS::Security::AccessToken::PermissionListState;
+using OHOS::Security::AccessToken::TypePermissionOper;
+
 namespace OHOS {
 namespace AppExecFwk {
 static void *g_handle = nullptr;
@@ -165,7 +172,39 @@ void AbilityProcess::RequestPermissionsFromUser(
         return;
     }
 
-    ability->RequestPermissionsFromUser(param.permission_list, param.requestCode);
+    std::vector<PermissionListState> permList;
+    for (auto permission : param.permission_list) {
+        HILOG_DEBUG("%{public}s. permission: %{public}s.", __func__, permission.c_str());
+        PermissionListState permState;
+        permState.permissionName = permission;
+        permState.state = -1;
+        permList.emplace_back(permState);
+    }
+    HILOG_DEBUG("%{public}s. permList size: %{public}d, permissions size: %{public}d.",
+        __func__, permList.size(), param.permission_list.size());
+
+    auto ret = AccessTokenKit::GetSelfPermissionsState(permList);
+    if (permList.size() != param.permission_list.size()) {
+        HILOG_ERROR("%{public}s. Returned permList size: %{public}d.", __func__, permList.size());
+        return;
+    }
+
+    std::vector<int> permissionsState;
+    for (auto permState : permList) {
+        HILOG_DEBUG("%{public}s. permissions: %{public}s. permissionsState: %{public}u",
+            __func__, permState.permissionName.c_str(), permState.state);
+        permissionsState.emplace_back(permState.state);
+    }
+    HILOG_DEBUG("%{public}s. permissions size: %{public}d. permissionsState size: %{public}d",
+        __func__, param.permission_list.size(), permissionsState.size());
+
+    if (ret != TypePermissionOper::DYNAMIC_OPER) {
+        HILOG_DEBUG("%{public}s. No dynamic popup required.", __func__);
+        (void)CaullFunc(param.requestCode, param.permission_list, permissionsState, callbackInfo);
+        return;
+    }
+
+    ability->RequestPermissionsFromUser(param.permission_list, permissionsState, param.requestCode);
 
     {
         std::lock_guard<std::mutex> lock_l(mutex_);
@@ -173,23 +212,20 @@ void AbilityProcess::RequestPermissionsFromUser(
         auto it = abilityRequestPermissionsForUserMap_.find(ability);
         if (it == abilityRequestPermissionsForUserMap_.end()) {
             HILOG_INFO("AbilityProcess::RequestPermissionsFromUser ability: %{public}p is not in the "
-                     "abilityRequestPermissionsForUserMap_",
-                ability);
+                "abilityRequestPermissionsForUserMap_", ability);
         } else {
             HILOG_INFO("AbilityProcess::RequestPermissionsFromUser ability: %{public}p is in the "
-                     "abilityRequestPermissionsForUserMap_",
-                ability);
+                "abilityRequestPermissionsForUserMap_", ability);
             map = it->second;
         }
 
         map[param.requestCode] = callbackInfo;
         abilityRequestPermissionsForUserMap_[ability] = map;
     }
-    HILOG_INFO("AbilityProcess::RequestPermissionsFromUser end");
 }
 
 void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int requestCode,
-    const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
+    const std::vector<std::string> &permissions, const std::vector<int> &permissionsState)
 {
     HILOG_INFO("AbilityProcess::OnRequestPermissionsFromUserResult begin");
     if (ability == nullptr) {
@@ -215,16 +251,27 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
         return;
     }
     CallbackInfo callbackInfo = callback->second;
+    if (!CaullFunc(requestCode, permissions, permissionsState, callbackInfo)) {
+        HILOG_ERROR("AbilityProcess::OnRequestPermissionsFromUserResult call function failed.");
+        return;
+    }
+    map.erase(requestCode);
+
+    abilityRequestPermissionsForUserMap_[ability] = map;
+    HILOG_INFO("AbilityProcess::OnRequestPermissionsFromUserResult end");
+}
+
+bool AbilityProcess::CaullFunc(int requestCode, const std::vector<std::string> &permissions,
+    const std::vector<int> &permissionsState, CallbackInfo &callbackInfo)
+{
 #ifdef SUPPORT_GRAPHICS
     // start open featureability lib
     if (g_handle == nullptr) {
         g_handle = dlopen(SHARED_LIBRARY_FEATURE_ABILITY, RTLD_LAZY);
         if (g_handle == nullptr) {
             HILOG_ERROR("%{public}s, dlopen failed %{public}s. %{public}s",
-                __func__,
-                SHARED_LIBRARY_FEATURE_ABILITY,
-                dlerror());
-            return;
+                __func__, SHARED_LIBRARY_FEATURE_ABILITY, dlerror());
+            return false;
         }
     }
 #endif
@@ -233,18 +280,13 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
         dlsym(g_handle, FUNC_CALL_ON_REQUEST_PERMISSIONS_FROM_USERRESULT));
     if (func == nullptr) {
         HILOG_ERROR("%{public}s, dlsym failed %{public}s. %{public}s",
-            __func__,
-            FUNC_CALL_ON_REQUEST_PERMISSIONS_FROM_USERRESULT,
-            dlerror());
+            __func__, FUNC_CALL_ON_REQUEST_PERMISSIONS_FROM_USERRESULT, dlerror());
         dlclose(g_handle);
         g_handle = nullptr;
-        return;
+        return false;
     }
-    func(requestCode, permissions, grantResults, callbackInfo);
-    map.erase(requestCode);
-
-    abilityRequestPermissionsForUserMap_[ability] = map;
-    HILOG_INFO("AbilityProcess::OnRequestPermissionsFromUserResult end");
+    func(requestCode, permissions, permissionsState, callbackInfo);
+    return true;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
