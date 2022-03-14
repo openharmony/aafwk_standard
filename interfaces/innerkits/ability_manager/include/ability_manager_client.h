@@ -809,9 +809,22 @@ public:
     ErrCode BlockAppService();
 
 private:
-    static std::mutex mutex_;
+    class AbilityMgrDeathRecipient : public IRemoteObject::DeathRecipient {
+    public:
+        AbilityMgrDeathRecipient() = default;
+        ~AbilityMgrDeathRecipient() = default;
+        void OnRemoteDied(const wptr<IRemoteObject>& remote) override;
+    private:
+        DISALLOW_COPY_AND_MOVE(AbilityMgrDeathRecipient);
+    };
+
+    sptr<IAbilityManager> GetAbilityManager();
+    void ResetProxy(const wptr<IRemoteObject>& remote);
+
+    static std::recursive_mutex mutex_;
     static std::shared_ptr<AbilityManagerClient> instance_;
-    sptr<IRemoteObject> remoteObject_;
+    sptr<IAbilityManager> proxy_;
+    sptr<IRemoteObject::DeathRecipient> deathRecipient_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
