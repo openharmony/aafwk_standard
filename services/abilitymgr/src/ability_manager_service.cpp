@@ -533,7 +533,8 @@ void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUs
             continue;
         }
         if (info.type != AppExecFwk::ExtensionAbilityType::FILESHARE) {
-            HILOG_WARN("The upms only open to FILESHARE.");
+            HILOG_WARN("The upms only open to FILESHARE. The type is %{public}u.", info.type);
+            HILOG_WARN("BundleName: %{public}s, AbilityName: %{public}s.", info.bundleName.c_str(), info.name.c_str());
             continue;
         }
         if (fromTokenId != info.applicationInfo.accessTokenId) {
