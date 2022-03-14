@@ -41,7 +41,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int AddForm(const int64_t formId, const Want &want, const sptr<IRemoteObject> &callerToken,
-    FormJsInfo &formInfo) override;
+        FormJsInfo &formInfo) override;
 
     /**
      * @brief Delete forms with formIds, send formIds to form manager service.
@@ -63,12 +63,10 @@ public:
     /**
      * @brief Update form with formId, send formId to form manager service.
      * @param formId The Id of the form to update.
-     * @param bundleName Provider ability bundleName.
      * @param FormProviderData Form binding data.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UpdateForm(const int64_t formId, const std::string &bundleName,
-    const FormProviderData &FormProviderData) override;
+    virtual int UpdateForm(const int64_t formId, const FormProviderData &FormProviderData) override;
 
     /**
      * @brief Set next refresh time.
