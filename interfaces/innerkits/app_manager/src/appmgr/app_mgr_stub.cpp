@@ -295,14 +295,16 @@ int32_t AppMgrStub::HandleStartUserTestProcess(MessageParcel &data, MessageParce
         return ERR_INVALID_VALUE;
     }
     BundleInfo *bundleInfo = data.ReadParcelable<BundleInfo>();
-    if (want == nullptr) {
+    if (bundleInfo == nullptr) {
         HILOG_ERROR("want is nullptr");
+        delete want;
         return ERR_INVALID_VALUE;
     }
     auto observer = data.ReadParcelable<IRemoteObject>();
     int32_t result = StartUserTestProcess(*want, observer, *bundleInfo);
     reply.WriteInt32(result);
     delete want;
+    delete bundleInfo;
     return result;
 }
 
@@ -343,6 +345,7 @@ int32_t AppMgrStub::HandleScheduleAcceptWantDone(MessageParcel &data, MessagePar
     auto flag = data.ReadString();
 
     ScheduleAcceptWantDone(recordId, *want, flag);
+    delete want;
     return NO_ERROR;
 }
 
