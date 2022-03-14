@@ -16,17 +16,17 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-int DefaultWorkerPoolConfig::GetMaxThreadCount(void) const
+int DefaultWorkerPoolConfig::GetMaxThreadCount() const
 {
     return DEFAULT_MAX_THREAD_COUNT;
 }
 
-int DefaultWorkerPoolConfig::GetCoreThreadCount(void) const
+int DefaultWorkerPoolConfig::GetCoreThreadCount() const
 {
     return DEFAULT_CORE_THREAD_COUNT;
 }
 
-long DefaultWorkerPoolConfig::GetKeepAliveTime(void) const
+long DefaultWorkerPoolConfig::GetKeepAliveTime() const
 {
     return DEFAULT_KEEP_ALIVE_TIME;
 }
