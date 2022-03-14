@@ -32,6 +32,7 @@ int AbilityContext::ABILITY_CONTEXT_DEFAULT_REQUEST_CODE(0);
 const std::string GRANT_ABILITY_BUNDLE_NAME = "com.ohos.permissionmanager";
 const std::string GRANT_ABILITY_ABILITY_NAME = "com.ohos.permissionmanager.GrantAbility";
 const std::string PERMISSION_KEY = "ohos.user.grant.permission";
+const std::string STATE_KEY = "ohos.user.grant.permission.state";
 
 ErrCode AbilityContext::StartAbility(const AAFwk::Want &want, int requestCode)
 {
@@ -407,7 +408,8 @@ void AbilityContext::GetPermissionDes(const std::string &permissionName, std::st
     HILOG_DEBUG("%{public}s end GetPermissionDef.", __func__);
 }
 
-void AbilityContext::RequestPermissionsFromUser(std::vector<std::string> &permissions, int requestCode)
+void AbilityContext::RequestPermissionsFromUser(std::vector<std::string> &permissions,
+    std::vector<int> &permissionsState, int requestCode)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     if (permissions.size() == 0) {
@@ -423,6 +425,7 @@ void AbilityContext::RequestPermissionsFromUser(std::vector<std::string> &permis
     AAFwk::Want want;
     want.SetElementName(GRANT_ABILITY_BUNDLE_NAME, GRANT_ABILITY_ABILITY_NAME);
     want.SetParam(PERMISSION_KEY, permissions);
+    want.SetParam(STATE_KEY, permissionsState);
     StartAbility(want, requestCode);
     HILOG_INFO("%{public}s end.", __func__);
 }

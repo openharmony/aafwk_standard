@@ -18,9 +18,15 @@
 #include <native_engine/native_engine.h>
 
 #include "ability_manager_client.h"
+#include "accesstoken_kit.h"
 #include "bytrace.h"
 #include "connection_manager.h"
 #include "hilog_wrapper.h"
+#include "permission_list_state.h"
+
+using OHOS::Security::AccessToken::AccessTokenKit;
+using OHOS::Security::AccessToken::PermissionListState;
+using OHOS::Security::AccessToken::TypePermissionOper;
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -28,6 +34,7 @@ const size_t AbilityContext::CONTEXT_TYPE_ID(std::hash<const char*> {} ("Ability
 const std::string GRANT_ABILITY_BUNDLE_NAME = "com.ohos.permissionmanager";
 const std::string GRANT_ABILITY_ABILITY_NAME = "com.ohos.permissionmanager.GrantAbility";
 const std::string PERMISSION_KEY = "ohos.user.grant.permission";
+const std::string STATE_KEY = "ohos.user.grant.permission.state";
 
 std::string AbilityContextImpl::GetBundleCodeDir()
 {
@@ -315,22 +322,61 @@ void AbilityContextImpl::RequestPermissionsFromUser(const std::vector<std::strin
         HILOG_ERROR("%{public}s. The params are invalid.", __func__);
         return;
     }
-    AAFwk::Want want;
-    want.SetElementName(GRANT_ABILITY_BUNDLE_NAME, GRANT_ABILITY_ABILITY_NAME);
-    want.SetParam(PERMISSION_KEY, permissions);
-    permissionRequestCallbacks_.insert(make_pair(requestCode, std::move(task)));
-    HILOG_DEBUG("%{public}s. Start calling StartAbility.", __func__);
-    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode);
-    HILOG_INFO("%{public}s. End calling StartAbility. ret=%{public}d", __func__, err);
+
+    std::vector<PermissionListState> permList;
+    for (auto permission : permissions) {
+        HILOG_DEBUG("%{public}s. permission: %{public}s.", __func__, permission.c_str());
+        PermissionListState permState;
+        permState.permissionName = permission;
+        permState.state = -1;
+        permList.emplace_back(permState);
+    }
+    HILOG_DEBUG("%{public}s. permList size: %{public}d, permissions size: %{public}d.",
+        __func__, permList.size(), permissions.size());
+
+    auto ret = AccessTokenKit::GetSelfPermissionsState(permList);
+    if (permList.size() != permissions.size()) {
+        HILOG_ERROR("%{public}s. Returned permList size: %{public}d.", __func__, permList.size());
+        return;
+    }
+
+    std::vector<int> permissionsState;
+    for (auto permState : permList) {
+        HILOG_DEBUG("%{public}s. permissions: %{public}s. permissionsState: %{public}u",
+            __func__, permState.permissionName.c_str(), permState.state);
+        permissionsState.emplace_back(permState.state);
+    }
+    HILOG_DEBUG("%{public}s. permissions size: %{public}d. permissionsState size: %{public}d",
+        __func__, permissions.size(), permissionsState.size());
+
+    if (ret == TypePermissionOper::DYNAMIC_OPER) {
+        AAFwk::Want want;
+        want.SetElementName(GRANT_ABILITY_BUNDLE_NAME, GRANT_ABILITY_ABILITY_NAME);
+        want.SetParam(PERMISSION_KEY, permissions);
+        want.SetParam(STATE_KEY, permissionsState);
+        permissionRequestCallbacks_.insert(make_pair(requestCode, std::move(task)));
+        HILOG_DEBUG("%{public}s. Start calling StartAbility.", __func__);
+        ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode);
+        HILOG_DEBUG("%{public}s. End calling StartAbility. ret=%{public}d", __func__, err);
+    } else {
+        HILOG_DEBUG("%{public}s. No dynamic popup required.", __func__);
+        if (task) {
+            task(permissions, permissionsState);
+        }
+    }
 }
 
 void AbilityContextImpl::OnRequestPermissionsFromUserResult(
-    int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
+    int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &permissionsState)
 {
     HILOG_DEBUG("%{public}s. Start calling OnRequestPermissionsFromUserResult.", __func__);
-    permissionRequestCallbacks_[requestCode](permissions, grantResults);
-    permissionRequestCallbacks_.erase(requestCode);
-    HILOG_INFO("%{public}s. End calling OnRequestPermissionsFromUserResult.", __func__);
+    auto iter = permissionRequestCallbacks_.find(requestCode);
+    if (iter != permissionRequestCallbacks_.end() && iter->second) {
+        auto task = iter->second;
+        task(permissions, permissionsState);
+        permissionRequestCallbacks_.erase(iter);
+        HILOG_DEBUG("%{public}s. End calling OnRequestPermissionsFromUserResult.", __func__);
+    }
 }
 
 ErrCode AbilityContextImpl::RestoreWindowStage(NativeEngine& engine, NativeValue* contentStorage)
