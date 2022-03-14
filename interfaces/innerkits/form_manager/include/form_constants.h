@@ -65,8 +65,10 @@ namespace Constants {
     // The max uid of system app.
     const int32_t MAX_SYSTEM_APP_UID = 10000;
 
+    const int MIN_TIME_SPEED = 1;
+    const int MAX_TIME_SPEED = 1000;
     const int MAX_HOUR = 23;
-    const int MAX_MININUTE = 59;
+    const int MAX_MINUTE = 59;
     const int MAX_SECOND = 60;
     const int MIN_TIME = 0;
     const int HOUR_PER_DAY = 24;

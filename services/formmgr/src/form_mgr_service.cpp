@@ -33,6 +33,7 @@
 #include "form_task_mgr.h"
 #include "form_timer_mgr.h"
 #include "hilog_wrapper.h"
+#include "in_process_call_wrapper.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "permission/permission.h"
@@ -142,10 +143,21 @@ int FormMgrService::ReleaseForm(const int64_t formId, const sptr<IRemoteObject> 
  * @param formBindingData Form binding data.
  * @return Returns ERR_OK on success, others on failure.
  */
-int FormMgrService::UpdateForm(const int64_t formId,
-    const std::string &bundleName, const FormProviderData &formBindingData)
+int FormMgrService::UpdateForm(const int64_t formId, const FormProviderData &formBindingData)
 {
-    return FormMgrAdapter::GetInstance().UpdateForm(formId, bundleName, formBindingData);
+    // get IBundleMgr
+    sptr<IBundleMgr> bundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+    if (bundleMgr == nullptr) {
+        HILOG_ERROR("%{public}s error, failed to get bundleMgr.", __func__);
+        return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
+    }
+    std::string callerBundleName;
+    auto callingUid = IPCSkeleton::GetCallingUid();
+    if (!IN_PROCESS_CALL(bundleMgr->GetBundleNameForUid(callingUid, callerBundleName))) {
+        HILOG_ERROR("GetFormsInfoByModule, failed to get form config info.");
+        return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
+    }
+    return FormMgrAdapter::GetInstance().UpdateForm(formId, callerBundleName, formBindingData);
 }
 
 /**
@@ -395,7 +407,7 @@ ErrCode FormMgrService::Init()
     }
     FormDbCache::GetInstance().Start();
     FormInfoMgr::GetInstance().Start();
-
+    FormTimerMgr::GetInstance(); // Init FormTimerMgr
     HILOG_INFO("init success");
     return ERR_OK;
 }
