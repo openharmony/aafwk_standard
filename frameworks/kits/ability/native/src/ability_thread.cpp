@@ -1609,12 +1609,12 @@ std::shared_ptr<AbilityRuntime::AbilityContext> AbilityThread::BuildAbilityConte
 void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info)
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    if (currentAbility_ == nullptr) {
-        HILOG_INFO("currentAbility is nullptr.");
+    if (currentAbility_ == nullptr && currentExtension_ == nullptr) {
+        HILOG_INFO("currentAbility and currentExtension_ is nullptr.");
         return;
     }
 
-    if (!params.empty()) {
+    if (!params.empty() && currentAbility_ != nullptr) {
         if (abilityImpl_->IsStageBasedModel()) {
             auto scene = currentAbility_->GetScene();
             if (scene == nullptr) {
@@ -1630,9 +1630,9 @@ void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std:
         } else {
             currentAbility_->Dump(params, info);
         }
-
         return;
     }
+
     std::string dumpInfo = "        event:";
     info.push_back(dumpInfo);
 
@@ -1650,19 +1650,19 @@ void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std:
     runner->DumpRunnerInfo(dumpInfo);
     info.push_back(dumpInfo);
 
-    const auto ablityContext = currentAbility_->GetAbilityContext();
-    if (!ablityContext) {
-        HILOG_INFO("current ability context is nullptr.");
-        return;
+    if (currentAbility_ != nullptr) {
+        const auto ablityContext = currentAbility_->GetAbilityContext();
+        if (!ablityContext) {
+            HILOG_INFO("current ability context is nullptr.");
+            return;
+        }
+        const auto localCallContainer = ablityContext->GetLocalCallContainer();
+        if (!localCallContainer) {
+            HILOG_INFO("current ability context locall call container is nullptr.");
+            return;
+        }
+        localCallContainer->DumpCalls(info);
     }
-
-    const auto localCallContainer = ablityContext->GetLocalCallContainer();
-    if (!localCallContainer) {
-        HILOG_INFO("current ability context locall call container is nullptr.");
-        return;
-    }
-
-    localCallContainer->DumpCalls(info);
 
     HILOG_INFO("localCallContainer need to get calls info.");
 }
