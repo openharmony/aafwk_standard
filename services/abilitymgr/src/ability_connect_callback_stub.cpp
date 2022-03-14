@@ -42,6 +42,7 @@ void AbilityConnectionProxy::OnAbilityConnectDone(
     MessageOption option;
 
     if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("Write interface token failed.");
         return;
     }
 
@@ -75,6 +76,7 @@ void AbilityConnectionProxy::OnAbilityDisconnectDone(const AppExecFwk::ElementNa
     MessageOption option(MessageOption::TF_ASYNC);
 
     if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("Write interface token failed.");
         return;
     }
     if (!data.WriteParcelable(&element) || !data.WriteInt32(resultCode)) {

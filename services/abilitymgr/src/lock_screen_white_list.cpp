@@ -114,11 +114,10 @@ bool LockScreenWhiteList::FindBundleNameOnWhiteList(const std::string &bundleNam
         isAwakenScreen = jsonFile.at(bundleName).at(AmsWhiteList::ISAWAKEN_SCREEN).get<bool>();
         jsonFile.clear();
         return true;
-    } else {
-        HILOG_INFO("json info not contains bundleName...");
-        jsonFile.clear();
-        return false;
     }
+    HILOG_INFO("json info not contains bundleName...");
+    jsonFile.clear();
+    return false;
 }
 
 bool LockScreenWhiteList::IsExistFile(const std::string &path)

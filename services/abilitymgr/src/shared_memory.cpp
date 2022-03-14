@@ -34,7 +34,7 @@ constexpr unsigned int SHM_READ_WRITE_PERMISSIONS = 0666U;
 #endif
 }
 
-void SharedMemory::ReleaseShmId(const int shmId)
+void SharedMemory::ReleaseShmId(int shmId)
 {
     if (shmId == -1) {
         return;
@@ -45,7 +45,7 @@ void SharedMemory::ReleaseShmId(const int shmId)
     }
 }
 
-int SharedMemory::PushSharedMemory(const void *data, const int size)
+int SharedMemory::PushSharedMemory(const void *data, int size)
 {
     // internal call, no need to check null.
     static int shmKey = SHM_KEY_START;

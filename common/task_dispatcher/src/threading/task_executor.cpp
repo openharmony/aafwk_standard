@@ -205,7 +205,7 @@ void TaskExecutor::Consume()
     for (;;) {
         if (terminated_.load() && delayTasks_->Empty()) {
             HILOG_INFO("TaskExecutor::Consume delay task is empty");
-            break;
+            return;
         }
         std::shared_ptr<DelayTaskWrapper> delayTaskWrapper = delayTasks_->Take();
         if (delayTaskWrapper == nullptr || delayTaskWrapper->runnable_ == nullptr) {
