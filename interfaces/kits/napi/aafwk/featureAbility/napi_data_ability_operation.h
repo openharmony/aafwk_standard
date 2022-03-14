@@ -33,7 +33,7 @@ namespace AppExecFwk {
  * @return The return value from Init is treated as the exports object for the module.
  */
 napi_value DataAbilityOperationInit(napi_env env, napi_value exports);
-void SetNamedProperty(napi_env env, napi_value obj, const char *propName, const int propValue);
+void SetNamedProperty(napi_env env, napi_value obj, const char *propName, int propValue);
 /**
  * @brief Parse the dataAbilityOperation parameters.
  *
@@ -47,7 +47,7 @@ napi_value UnwrapDataAbilityOperation(std::shared_ptr<DataAbilityOperation> &par
 napi_value BuildDataAbilityOperation(
     std::shared_ptr<DataAbilityOperation> &dataAbilityOperation, napi_env env, napi_value param);
 bool GetDataAbilityOperationBuilder(
-    std::shared_ptr<DataAbilityOperationBuilder> &builder, const int type, const std::shared_ptr<Uri> &uri);
+    std::shared_ptr<DataAbilityOperationBuilder> &builder, int type, const std::shared_ptr<Uri> &uri);
 /**
  * @brief Parse the ValuesBucket parameters.
  *
