@@ -651,6 +651,5 @@ AbilitySchedulerRecipient::AbilitySchedulerRecipient(RemoteDiedHandler handler) 
 
 AbilitySchedulerRecipient::~AbilitySchedulerRecipient()
 {}
-
 }  // namespace AAFwk
 }  // namespace OHOS
