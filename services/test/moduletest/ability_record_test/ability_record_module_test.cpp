@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -520,6 +520,7 @@ HWTEST_F(AbilityRecordModuleTest, ConnectionRecord_001, TestSize.Level2)
  */
 HWTEST_F(AbilityRecordModuleTest, WindowInfo_001, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     auto &abilityRequest = MakeDefaultAbilityRequest();
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
@@ -532,6 +533,7 @@ HWTEST_F(AbilityRecordModuleTest, WindowInfo_001, TestSize.Level1)
         abilityRecord->RemoveWindowInfo();
         EXPECT_FALSE(abilityRecord->GetWindowInfo());
     }
+#endif
 }
 
 /*

@@ -21,6 +21,11 @@
 #include "napi_common_data.h"
 #include "napi_common_error.h"
 
+#ifndef SUPPORT_GRAPHICS
+#define DBL_MIN ((double)2.22507385850720138309e-308L)
+#define DBL_MAX ((double)2.22507385850720138309e-308L)
+#endif
+
 namespace OHOS {
 namespace AppExecFwk {
 void StringSplit(const string &str, const string &splits, std::vector<std::string> &res)
@@ -288,11 +293,20 @@ bool KeyInValue(std::string &key_str)
 void ParseJsonKey(std::string &jsonStr, AppExecFwk::PacMap &pacMap, NativeRdb::DataAbilityPredicates &predicates)
 {
     HILOG_INFO("%{public}s called.", __func__);
+#ifdef SUPPORT_GRAPHICS
     Json::Reader reader;
+#else
+    Json::CharReaderBuilder builder;
+    const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+#endif
     Json::Value devJson;
     Json::Value::iterator iter;
     Json::Value::Members members;
+#ifdef SUPPORT_GRAPHICS
     bool parseSuc = reader.parse(jsonStr, devJson);
+#else
+    bool parseSuc = reader->parse(jsonStr.c_str(), jsonStr.c_str() + jsonStr.length(), &devJson, nullptr);
+#endif
     if (parseSuc) {
         members = devJson.getMemberNames();
         for (Json::Value::Members::iterator it = members.begin(); it != members.end(); ++it) {

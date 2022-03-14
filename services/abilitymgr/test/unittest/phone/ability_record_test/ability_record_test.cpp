@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -473,11 +473,13 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Terminate, TestSize.Level1)
  */
 HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetWindowInfo, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     int windowToken = 1;
     abilityRecord_->AddWindowInfo(windowToken);
     EXPECT_NE(abilityRecord_->GetWindowInfo(), nullptr);
     abilityRecord_->RemoveWindowInfo();
     EXPECT_EQ(abilityRecord_->GetWindowInfo(), nullptr);
+#endif
 }
 
 /*

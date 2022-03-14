@@ -243,6 +243,7 @@ bool MissionRecord::IsExistAbilityRecord(int32_t id)
     return false;
 }
 
+#ifdef SUPPORT_GRAPHICS
 bool MissionRecord::SupportMultWindow() const
 {
     auto bottom = GetBottomAbilityRecord();
@@ -251,6 +252,7 @@ bool MissionRecord::SupportMultWindow() const
     }
     return false;
 }
+#endif
 
 void MissionRecord::SetMissionStack(const std::shared_ptr<MissionStack> &missionStack, int stackId)
 {
@@ -268,6 +270,7 @@ std::shared_ptr<MissionStack> MissionRecord::GetMissionStack() const
 
 void MissionRecord::SetMissionOption(const MissionOption &option)
 {
+#ifdef SUPPORT_GRAPHICS
     if (option.winModeKey != option_.winModeKey) {
         HILOG_ERROR("Batch processing notify multi window mode changed.");
         for (auto &it : abilities_) {
@@ -285,6 +288,7 @@ void MissionRecord::SetMissionOption(const MissionOption &option)
     }
 
     option_ = option;
+#endif
 }
 
 const MissionOption &MissionRecord::GetMissionOption() const

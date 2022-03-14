@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -107,13 +107,11 @@ public:
         return urivalue;
     }
 
-#ifdef SUPPORT_GRAPHICS
     void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override
     {}
 
     void NotifyTopActiveAbilityChanged(bool flag) override
     {}
-#endif
 
     virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override
     {

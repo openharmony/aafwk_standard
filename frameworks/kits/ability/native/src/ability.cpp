@@ -1157,7 +1157,6 @@ bool Ability::IsTerminating()
 void Ability::OnAbilityResult(int requestCode, int resultCode, const Want &want)
 {}
 
-#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called back when the Back key is pressed.
  * The default implementation destroys the ability. You can override this method.
@@ -1177,7 +1176,6 @@ void Ability::OnBackPressed()
     }
     HILOG_INFO("%{public}s end.", __func__);
 }
-#endif
 
 /**
  * @brief Called when the launch mode of an ability is set to singleInstance. This happens when you re-launch an
@@ -3072,7 +3070,11 @@ ErrCode Ability::GetFormsInfoByModule(std::string &bundleName, std::string &modu
  */
 std::string Ability::GetErrorMsg(const ErrCode errorCode)
 {
+#ifdef SUPPORT_GRAPHICS
     return FormMgr::GetInstance().GetErrorMessage(errorCode);
+#else
+    return nullptr;
+#endif
 }
 
 /**

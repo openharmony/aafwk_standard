@@ -22,7 +22,9 @@
 #include <string>
 #include "nocopyable.h"
 #include "screenshot_response.h"
+#ifdef SUPPORT_GRAPHICS
 #include "window_manager_service_client.h"
+#endif
 
 namespace OHOS {
 namespace AAFwk {
@@ -32,12 +34,16 @@ public:
     virtual ~ScreenshotHandler() = default;
 
     void StartScreenshot(int32_t missionId, int32_t winId);
+#ifdef SUPPORT_GRAPHICS
     OHOS::WMImageInfo GetImageInfo(int32_t missionId);
+#endif
     void RemoveImageInfo(int32_t missionId);
 
 private:
+#ifdef SUPPORT_GRAPHICS
     std::map<int32_t, OHOS::WMImageInfo> screenShot_;
     sptr<IWindowManagerService> windowMS_;
+#endif
 };
 }  // namespace AAFwk
 }  // namespace OHOS
