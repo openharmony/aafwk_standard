@@ -31,11 +31,11 @@ public:
     DefaultWorkerPoolConfig() = default;
     virtual ~DefaultWorkerPoolConfig() = default;
 
-    int GetMaxThreadCount(void) const override;
+    int GetMaxThreadCount() const override;
 
-    int GetCoreThreadCount(void) const override;
+    int GetCoreThreadCount() const override;
 
-    long GetKeepAliveTime(void) const override;
+    long GetKeepAliveTime() const override;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

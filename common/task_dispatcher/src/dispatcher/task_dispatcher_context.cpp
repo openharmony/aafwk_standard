@@ -130,9 +130,6 @@ int TaskDispatcherContext::MapPriorityIndex(TaskPriority priority) const
         default:
             return DEFAULT_PRIORITY_INDEX;
     }
-    HILOG_ERROR("TaskDispatcherContext.mapPriorityIndex unhandled priority=%{public}d", priority);
-
-    return DEFAULT_PRIORITY_INDEX;
 }
 
 std::shared_ptr<TaskDispatcher> TaskDispatcherContext::GetGlobalTaskDispatcher(TaskPriority priority)
