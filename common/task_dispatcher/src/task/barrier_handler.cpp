@@ -70,9 +70,6 @@ ErrCode BarrierHandler::Intercept(std::shared_ptr<Task> &task)
 
     // afterBarrier means is intercepted.
     bool intercepted = AddTaskAfterBarrier(task);
-    if (intercepted) {
-        HILOG_INFO("BarrierHandler::Intercept intercepted a task.");
-    }
     ErrCode result = intercepted ? ERR_APPEXECFWK_INTERCEPT_TASK_EXECUTE_SUCCESS : ERR_APPEXECFWK_CHECK_FAILED;
     HILOG_INFO("BarrierHandler::Intercept end, result:%{public}d", result);
     return result;
