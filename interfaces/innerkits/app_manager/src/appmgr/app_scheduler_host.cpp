@@ -211,6 +211,7 @@ int32_t AppSchedulerHost::HandleScheduleAcceptWant(MessageParcel &data, MessageP
     }
     auto moduleName = data.ReadString();
     ScheduleAcceptWant(*want, moduleName);
+    delete want;
     return NO_ERROR;
 }
 

@@ -75,14 +75,16 @@ int WantReceiverStub::PerformReceiveInner(MessageParcel &data, MessageParcel &re
     WantParams *wantParams = data.ReadParcelable<WantParams>();
     if (wantParams == nullptr) {
         HILOG_ERROR("AbilityManagerStub: wantParams is nullptr");
+        delete want;
         return ERR_INVALID_VALUE;
     }
 
     bool serialized = data.ReadBool();
     bool sticky = data.ReadBool();
     int sendingUser = data.ReadInt32();
-
     PerformReceive(*want, resultCode, bundleName, *wantParams, serialized, sticky, sendingUser);
+    delete want;
+    delete wantParams;
     return NO_ERROR;
 }
 }  // namespace AAFwk
