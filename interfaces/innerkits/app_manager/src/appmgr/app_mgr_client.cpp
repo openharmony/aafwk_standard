@@ -28,6 +28,91 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+class AppMgrRemoteHolder : public std::enable_shared_from_this<AppMgrRemoteHolder>{
+public:
+    AppMgrRemoteHolder() = default;
+
+    virtual ~AppMgrRemoteHolder() = default;
+
+    void SetServiceManager(std::unique_ptr<AppServiceManager> serviceMgr)
+    {
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
+        serviceManager_ = std::move(serviceMgr);
+    }
+
+    AppMgrResultCode ConnectAppMgrService()
+    {
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
+        if (!serviceManager_) {
+            return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
+        }
+        remote_ = serviceManager_->GetAppMgrService();
+        if (!remote_) {
+            return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
+        }
+
+        auto me = shared_from_this();
+        deathRecipient_ = sptr<IRemoteObject::DeathRecipient>(new AppMgrDeathRecipient(me));
+        if (deathRecipient_ == nullptr) {
+            HILOG_ERROR("%{public}s :Failed to create AppMgrDeathRecipient!", __func__);
+            return AppMgrResultCode::ERROR_SERVICE_NOT_READY;;
+        }
+        if ((remote_->IsProxyObject()) && (!remote_->AddDeathRecipient(deathRecipient_))) {
+            HILOG_ERROR("%{public}s :Add death recipient to AppMgrService failed.", __func__);
+            return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
+        }
+
+        return AppMgrResultCode::RESULT_OK;
+    }
+
+    sptr<IRemoteObject> GetRemoteObject()
+    {
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
+        if (!remote_) {
+            (void) ConnectAppMgrService();
+        }
+        return remote_;
+    }
+
+private:
+    void HandleRemoteDied(const wptr<IRemoteObject>& remote)
+    {
+        std::lock_guard<std::recursive_mutex> lock(mutex_);
+        if (!remote_) {
+            return;
+        }
+
+        if (remote_ == remote.promote()) {
+            remote_->RemoveDeathRecipient(deathRecipient_);
+            remote_ = nullptr;
+        }
+    }
+
+    class AppMgrDeathRecipient : public IRemoteObject::DeathRecipient {
+    public:
+        explicit AppMgrDeathRecipient(const std::shared_ptr<AppMgrRemoteHolder>& holder) : owner_(holder) {}
+
+        virtual ~AppMgrDeathRecipient() = default;
+
+        void OnRemoteDied(const wptr<IRemoteObject>& remote) override
+        {
+            std::shared_ptr<AppMgrRemoteHolder> holder = owner_.lock();
+            if (holder) {
+                holder->HandleRemoteDied(remote);
+            }
+        }
+
+    private:
+        std::weak_ptr<AppMgrRemoteHolder> owner_;
+    };
+
+private:
+    std::unique_ptr<AppServiceManager> serviceManager_;
+    sptr<IRemoteObject> remote_;
+    std::recursive_mutex mutex_;
+    sptr<IRemoteObject::DeathRecipient> deathRecipient_;
+};
+
 AppMgrClient::AppMgrClient()
 {
     SetServiceManager(std::make_unique<AppServiceManager>());
@@ -39,7 +124,7 @@ AppMgrClient::~AppMgrClient()
 AppMgrResultCode AppMgrClient::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemoteObject> &preToken,
     const AbilityInfo &abilityInfo, const ApplicationInfo &appInfo, const AAFwk::Want &want)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -56,7 +141,7 @@ AppMgrResultCode AppMgrClient::LoadAbility(const sptr<IRemoteObject> &token, con
 
 AppMgrResultCode AppMgrClient::TerminateAbility(const sptr<IRemoteObject> &token)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -69,7 +154,7 @@ AppMgrResultCode AppMgrClient::TerminateAbility(const sptr<IRemoteObject> &token
 
 AppMgrResultCode AppMgrClient::UpdateAbilityState(const sptr<IRemoteObject> &token, const AbilityState state)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -82,7 +167,7 @@ AppMgrResultCode AppMgrClient::UpdateAbilityState(const sptr<IRemoteObject> &tok
 
 AppMgrResultCode AppMgrClient::UpdateExtensionState(const sptr<IRemoteObject> &token, const ExtensionState state)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -95,7 +180,7 @@ AppMgrResultCode AppMgrClient::UpdateExtensionState(const sptr<IRemoteObject> &t
 
 AppMgrResultCode AppMgrClient::RegisterAppStateCallback(const sptr<IAppStateCallback> &callback)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -110,7 +195,7 @@ AppMgrResultCode AppMgrClient::AbilityBehaviorAnalysis(const sptr<IRemoteObject>
     const sptr<IRemoteObject> &preToken, const int32_t visibility, const int32_t perceptibility,
     const int32_t connectionState)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -123,7 +208,7 @@ AppMgrResultCode AppMgrClient::AbilityBehaviorAnalysis(const sptr<IRemoteObject>
 
 AppMgrResultCode AppMgrClient::KillProcessByAbilityToken(const sptr<IRemoteObject> &token)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -136,7 +221,7 @@ AppMgrResultCode AppMgrClient::KillProcessByAbilityToken(const sptr<IRemoteObjec
 
 AppMgrResultCode AppMgrClient::KillProcessesByUserId(int32_t userId)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -149,7 +234,7 @@ AppMgrResultCode AppMgrClient::KillProcessesByUserId(int32_t userId)
 
 AppMgrResultCode AppMgrClient::KillApplication(const std::string &bundleName)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -165,7 +250,7 @@ AppMgrResultCode AppMgrClient::KillApplication(const std::string &bundleName)
 
 AppMgrResultCode AppMgrClient::KillApplicationByUid(const std::string &bundleName, const int uid)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -181,7 +266,7 @@ AppMgrResultCode AppMgrClient::KillApplicationByUid(const std::string &bundleNam
 
 AppMgrResultCode AppMgrClient::ClearUpApplicationData(const std::string &bundleName)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         int32_t result = service->ClearUpApplicationData(bundleName);
         if (result == ERR_OK) {
@@ -194,7 +279,7 @@ AppMgrResultCode AppMgrClient::ClearUpApplicationData(const std::string &bundleN
 
 AppMgrResultCode AppMgrClient::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         int32_t result = service->GetAllRunningProcesses(info);
         if (result == ERR_OK) {
@@ -207,7 +292,7 @@ AppMgrResultCode AppMgrClient::GetAllRunningProcesses(std::vector<RunningProcess
 
 AppMgrResultCode AppMgrClient::GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         int32_t result = service->GetProcessRunningInfosByUserId(info, userId);
         if (result == ERR_OK) {
@@ -220,7 +305,7 @@ AppMgrResultCode AppMgrClient::GetProcessRunningInfosByUserId(std::vector<Runnin
 
 AppMgrResultCode AppMgrClient::GetConfiguration(Configuration& config)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -236,24 +321,23 @@ AppMgrResultCode AppMgrClient::GetConfiguration(Configuration& config)
 
 AppMgrResultCode AppMgrClient::ConnectAppMgrService()
 {
-    if (!serviceManager_) {
-        return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
+    if (mgrHolder_) {
+        return mgrHolder_->ConnectAppMgrService();
     }
-    remote_ = serviceManager_->GetAppMgrService();
-    if (!remote_) {
-        return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
-    }
-    return AppMgrResultCode::RESULT_OK;
+    return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
 }
 
 void AppMgrClient::SetServiceManager(std::unique_ptr<AppServiceManager> serviceMgr)
 {
-    serviceManager_ = std::move(serviceMgr);
+    if (!mgrHolder_) {
+        mgrHolder_ = std::make_shared<AppMgrRemoteHolder>();
+    }
+    mgrHolder_->SetServiceManager(std::move(serviceMgr));
 }
 
 void AppMgrClient::AbilityAttachTimeOut(const sptr<IRemoteObject> &token)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         return;
     }
@@ -266,7 +350,7 @@ void AppMgrClient::AbilityAttachTimeOut(const sptr<IRemoteObject> &token)
 
 void AppMgrClient::PrepareTerminate(const sptr<IRemoteObject> &token)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         return;
     }
@@ -283,7 +367,7 @@ void AppMgrClient::PrepareTerminate(const sptr<IRemoteObject> &token)
  */
 void AppMgrClient::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string &strConfig)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return;
@@ -294,7 +378,7 @@ void AppMgrClient::GetSystemMemoryAttr(SystemMemoryAttr &memoryInfo, std::string
 
 void AppMgrClient::GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token, AppExecFwk::RunningProcessInfo &info)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         sptr<IAmsMgr> amsService = service->GetAmsMgr();
         if (amsService != nullptr) {
@@ -305,7 +389,7 @@ void AppMgrClient::GetRunningProcessInfoByToken(const sptr<IRemoteObject> &token
 
 void AppMgrClient::AddAbilityStageDone(const int32_t recordId)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return;
@@ -316,7 +400,7 @@ void AppMgrClient::AddAbilityStageDone(const int32_t recordId)
 
 void AppMgrClient::StartupResidentProcess(const std::vector<AppExecFwk::BundleInfo> &bundleInfos)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return;
@@ -328,7 +412,7 @@ void AppMgrClient::StartupResidentProcess(const std::vector<AppExecFwk::BundleIn
 int AppMgrClient::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
     const BundleInfo &bundleInfo)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
@@ -339,7 +423,7 @@ int AppMgrClient::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemo
 int AppMgrClient::FinishUserTest(
     const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
@@ -349,7 +433,7 @@ int AppMgrClient::FinishUserTest(
 
 void AppMgrClient::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         return;
     }
@@ -362,7 +446,7 @@ void AppMgrClient::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecF
 
 void AppMgrClient::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifiedAbilityResponse> &response)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         return;
     }
@@ -375,7 +459,7 @@ void AppMgrClient::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecif
 
 void AppMgrClient::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return;
@@ -386,7 +470,7 @@ void AppMgrClient::ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::W
 
 AppMgrResultCode AppMgrClient::UpdateConfiguration(const Configuration &config)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
     }
@@ -400,7 +484,7 @@ AppMgrResultCode AppMgrClient::UpdateConfiguration(const Configuration &config)
 
 int AppMgrClient::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<IRemoteObject>> &tokens)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
@@ -412,11 +496,7 @@ int AppMgrClient::GetAbilityRecordsByProcessID(const int pid, std::vector<sptr<I
 int AppMgrClient::StartRenderProcess(const std::string &renderParam, int32_t ipcFd,
     int32_t sharedFd, pid_t &renderPid)
 {
-    if (!remote_) {
-        ConnectAppMgrService();
-    }
-
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         return service->StartRenderProcess(renderParam, ipcFd, sharedFd, renderPid);
     }
@@ -430,11 +510,7 @@ void AppMgrClient::AttachRenderProcess(const sptr<IRenderScheduler> &renderSched
         return;
     }
 
-    if (!remote_) {
-        ConnectAppMgrService();
-    }
-
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service != nullptr) {
         HILOG_INFO("AttachRenderProcess");
         service->AttachRenderProcess(renderScheduler->AsObject());
@@ -443,7 +519,7 @@ void AppMgrClient::AttachRenderProcess(const sptr<IRenderScheduler> &renderSched
 
 void AppMgrClient::PostANRTaskByProcessID(const pid_t pid)
 {
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return;
@@ -455,7 +531,7 @@ void AppMgrClient::PostANRTaskByProcessID(const pid_t pid)
 int AppMgrClient::BlockAppService()
 {
     HILOG_INFO("%{public}s", __func__);
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return AppMgrResultCode::ERROR_SERVICE_NOT_READY;

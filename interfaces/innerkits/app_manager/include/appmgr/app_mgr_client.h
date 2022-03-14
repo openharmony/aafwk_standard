@@ -34,6 +34,7 @@ namespace OHOS {
 namespace AppExecFwk {
 class AppServiceManager;
 class Configuration;
+class AppMgrRemoteHolder;
 class AppMgrClient {
 public:
     AppMgrClient();
@@ -270,8 +271,7 @@ private:
     void SetServiceManager(std::unique_ptr<AppServiceManager> serviceMgr);
 
 private:
-    std::unique_ptr<AppServiceManager> serviceManager_;
-    sptr<IRemoteObject> remote_;
+    std::shared_ptr<AppMgrRemoteHolder> mgrHolder_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
