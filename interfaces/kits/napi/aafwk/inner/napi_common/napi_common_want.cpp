@@ -155,7 +155,7 @@ bool InnerWrapWantParamsByte(
     auto value = wantParams.GetParam(key);
     AAFwk::IByte *bo = AAFwk::IByte::Query(value);
     if (bo != nullptr) {
-        int intValue = AAFwk::Byte::Unbox(bo);
+        int intValue = (int)AAFwk::Byte::Unbox(bo);
         napi_value jsValue = WrapInt32ToJS(env, intValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -380,7 +380,7 @@ bool InnerWrapWantParamsArrayByte(napi_env env, napi_value jsObject, const std::
         if (ao->Get(i, iface) == ERR_OK) {
             AAFwk::IByte *iValue = AAFwk::IByte::Query(iface);
             if (iValue != nullptr) {
-                int intValue = AAFwk::Byte::Unbox(iValue);
+                int intValue = (int)AAFwk::Byte::Unbox(iValue);
                 natArray.push_back(intValue);
             }
         }
@@ -568,10 +568,10 @@ napi_value WrapWantParams(napi_env env, const AAFwk::WantParams &wantParams)
 bool InnerSetWantParamsArrayString(
     const std::string &key, const std::vector<std::string> &value, AAFwk::WantParams &wantParams)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_IString);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             ao->Set(i, AAFwk::String::Box(value[i]));
         }
         wantParams.SetParam(key, ao);
@@ -583,10 +583,10 @@ bool InnerSetWantParamsArrayString(
 
 bool InnerSetWantParamsArrayInt(const std::string &key, const std::vector<int> &value, AAFwk::WantParams &wantParams)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_IInteger);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             ao->Set(i, AAFwk::Integer::Box(value[i]));
         }
         wantParams.SetParam(key, ao);
@@ -598,10 +598,10 @@ bool InnerSetWantParamsArrayInt(const std::string &key, const std::vector<int> &
 
 bool InnerSetWantParamsArrayLong(const std::string &key, const std::vector<long> &value, AAFwk::WantParams &wantParams)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_ILong);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             ao->Set(i, AAFwk::Long::Box(value[i]));
         }
         wantParams.SetParam(key, ao);
@@ -613,10 +613,10 @@ bool InnerSetWantParamsArrayLong(const std::string &key, const std::vector<long>
 
 bool InnerSetWantParamsArrayBool(const std::string &key, const std::vector<bool> &value, AAFwk::WantParams &wantParams)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_IBoolean);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             ao->Set(i, AAFwk::Boolean::Box(value[i]));
         }
         wantParams.SetParam(key, ao);
@@ -629,10 +629,10 @@ bool InnerSetWantParamsArrayBool(const std::string &key, const std::vector<bool>
 bool InnerSetWantParamsArrayDouble(
     const std::string &key, const std::vector<double> &value, AAFwk::WantParams &wantParams)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_IDouble);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             ao->Set(i, AAFwk::Double::Box(value[i]));
         }
         wantParams.SetParam(key, ao);
