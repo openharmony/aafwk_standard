@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,10 +38,6 @@ std::shared_ptr<RenderRecord> RenderRecord::CreateRenderRecord(pid_t hostPid, co
     }
 
     auto renderRecord = std::make_shared<RenderRecord>(hostPid, renderParam, ipcFd, sharedFd, host);
-    if (!renderRecord) {
-        HILOG_ERROR("create render record failed, hostPid:%{public}d.", hostPid);
-        return nullptr;
-    }
 
     return renderRecord;
 }

@@ -254,9 +254,6 @@ ExtraParams *ExtraParams::Unmarshalling(Parcel &parcel)
 
     ExtraParams *extraParams = new (std::nothrow) ExtraParams(devtype, targetBundleName, description, jsonParams);
 
-    if (extraParams == nullptr) {
-        return nullptr;
-    }
     return extraParams;
 }
 }  // namespace AppExecFwk
