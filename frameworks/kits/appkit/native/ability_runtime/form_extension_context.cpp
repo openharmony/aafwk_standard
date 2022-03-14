@@ -46,7 +46,7 @@ int FormExtensionContext::UpdateForm(const int64_t formId, const AppExecFwk::For
     }
 
     // update form request to fms
-    return AppExecFwk::FormMgr::GetInstance().UpdateForm(formId, abilityInfo_->bundleName, formProviderData);
+    return AppExecFwk::FormMgr::GetInstance().UpdateForm(formId, formProviderData);
 }
 
 ErrCode FormExtensionContext::StartAbility(const AAFwk::Want &want) const
