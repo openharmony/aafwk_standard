@@ -252,8 +252,8 @@ public:
      * @param runtime
      */
     const std::unique_ptr<AbilityRuntime::Runtime>& GetRuntime();
-	
-	 /*
+    
+    /*
      *
      * @brief Will be called the application ends
      *

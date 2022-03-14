@@ -76,8 +76,7 @@ std::shared_ptr<Task> WorkerThread::PollFirstTask(void)
 
 long WorkerThread::GetTaskCounter(void)
 {
-    long value = task_counter_;
-    return value;
+    return task_counter_;
 }
 
 std::shared_ptr<Thread> WorkerThread::GetThread(void)

@@ -38,10 +38,6 @@ std::shared_ptr<RenderRecord> RenderRecord::CreateRenderRecord(pid_t hostPid, co
     }
 
     auto renderRecord = std::make_shared<RenderRecord>(hostPid, renderParam, ipcFd, sharedFd, host);
-    if (!renderRecord) {
-        HILOG_ERROR("create render record failed, hostPid:%{public}d.", hostPid);
-        return nullptr;
-    }
 
     return renderRecord;
 }
