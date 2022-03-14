@@ -394,20 +394,21 @@ int32_t AppMgrServiceInner::KillApplication(const std::string &bundleName)
         return ERR_NO_INIT;
     }
 
-    if (remoteClientManager_ == nullptr) {
-        HILOG_ERROR("remoteClientManager_ fail");
-        return ERR_NO_INIT;
+    auto callerPid = IPCSkeleton::GetCallingPid();
+    auto appRecord = appRunningManager_->GetAppRunningRecordByPid(callerPid);
+    if (!appRecord) {
+        HILOG_ERROR("Get app running record by calling pid failed. callingPId: %{public}d", callerPid);
+        return ERR_INVALID_OPERATION;
     }
 
-    auto bundleMgr = remoteClientManager_->GetBundleManager();
-    if (bundleMgr == nullptr) {
-        HILOG_ERROR("GetBundleManager fail");
-        return ERR_NO_INIT;
+    auto applicationInfo = appRecord->GetApplicationInfo();
+    if (!applicationInfo) {
+        HILOG_ERROR("Get application info failed.");
+        return ERR_INVALID_OPERATION;
     }
 
-    int32_t callerUid = IPCSkeleton::GetCallingUid();
-    if (!IN_PROCESS_CALL(bundleMgr->CheckIsSystemAppByUid(callerUid))) {
-        HILOG_ERROR("caller is not systemApp, callerUid %{public}d", callerUid);
+    if (applicationInfo->appPrivilegeLevel != "system_basic" || applicationInfo->appPrivilegeLevel != "system_core") {
+        HILOG_ERROR("caller is not system_basic.");
         return ERR_INVALID_OPERATION;
     }
 
