@@ -29,6 +29,8 @@ using namespace OHOS;
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
 
+static constexpr uint8_t NUMBER_OF_PARAMETERS_TWO = 2;
+
 static napi_value ParseBundleName(napi_env env, std::string &bundleName, napi_value args)
 {
     napi_status status;
@@ -63,7 +65,7 @@ napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("NAPI_KillProcessesByBundleName called...");
     size_t argc = 2;
-    napi_value argv[argc];
+    napi_value argv[NUMBER_OF_PARAMETERS_TWO];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     HILOG_INFO("argc = [%{public}zu]", argc);
 

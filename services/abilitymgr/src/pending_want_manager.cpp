@@ -474,7 +474,7 @@ int32_t PendingWantManager::GetWantSenderInfo(const sptr<IWantSender> &target, s
     WantSenderInfo wantSenderInfo;
     wantSenderInfo.requestCode = record->GetKey()->GetRequestCode();
     wantSenderInfo.type = record->GetKey()->GetType();
-    wantSenderInfo.flags = record->GetKey()->GetFlags();
+    wantSenderInfo.flags = (uint32_t)(record->GetKey()->GetFlags());
     wantSenderInfo.allWants = record->GetKey()->GetAllWantsInfos();
     info.reset(new (std::nothrow) WantSenderInfo(wantSenderInfo));
     HILOG_ERROR("%{public}s:want is ok.", __func__);
