@@ -704,6 +704,7 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
             napi_create_reference(env, argv[1], REF_COUNT, &asyncCallbackInfo->callback);
             ReleaseFormCallback(env, asyncCallbackInfo);
         } else if (valueType == napi_boolean) { // release promise, two argv
+            napi_get_value_bool(env, argv[1], &asyncCallbackInfo->isReleaseCache);
             return ReleaseFormPromise(env, asyncCallbackInfo);
         } else {
             NAPI_ASSERT(env, valueType == napi_function || valueType == napi_boolean,
@@ -2475,9 +2476,17 @@ napi_value GetFormsInfoTwoArgv(napi_env env, napi_value *argv, AsyncGetFormsInfo
         napi_create_reference(env, argv[ARGS_SIZE_ONE], REF_COUNT, &asyncCallbackInfo->callback);
         return GetFormsInfoCallback(env, asyncCallbackInfo, true);
     } else {
-        NAPI_ASSERT(env, false, "The arguments[1] type of getFormsInfo is incorrect, "
-            "expected type is string or function.");
-        return NapiGetResut(env, 1);
+        AsyncErrMsgCallbackInfo *asyncErrorInfo = new
+            AsyncErrMsgCallbackInfo {
+                .env = env,
+                .asyncWork = nullptr,
+                .deferred = nullptr,
+                .callback = nullptr,
+                .code = ERR_APPEXECFWK_FORM_INVALID_MODULENAME,
+                .type = PROMISE_FLG,
+                .callbackValue = argv[1]
+            };
+        return RetErrMsg(asyncErrorInfo);
     }
 }
 
