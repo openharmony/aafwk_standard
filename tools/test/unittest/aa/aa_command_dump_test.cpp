@@ -66,7 +66,7 @@ void AaCommandDumpTest::TearDown()
 void AaCommandDumpTest::MakeMockObjects() const
 {
     // mock a stub
-    auto managerStubPtr = sptr<IRemoteObject>(new MockAbilityManagerStub());
+    auto managerStubPtr = sptr<IAbilityManager>(new MockAbilityManagerStub());
 
     // set the mock stub
     auto managerClientPtr = AbilityManagerClient::GetInstance();
