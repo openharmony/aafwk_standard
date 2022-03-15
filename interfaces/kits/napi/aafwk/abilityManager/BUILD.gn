@@ -43,8 +43,6 @@ ohos_shared_library("abilitymanager") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimedia_image_standard:image",
-    "multimedia_image_standard:image_native",
     "napi:ace_napi",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
@@ -53,9 +51,10 @@ ohos_shared_library("abilitymanager") {
 
   if (ability_runtime_graphics) {
     include_dirs += [ "//foundation/multimedia/image_standard/interfaces/kits/js/common/include/" ]
-    deps += [
-      "//foundation/multimedia/image_standard/interfaces/innerkits:image",
-      "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
+    deps += []
+    external_deps += [
+      "multimedia_image_standard:image",
+      "multimedia_image_standard:image_native",
     ]
     defines = [ "SUPPORT_GRAPHICS" ]
   }

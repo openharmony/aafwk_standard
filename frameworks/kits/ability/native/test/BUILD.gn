@@ -656,10 +656,10 @@ ohos_unittest("ability_thread_call_request_test") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
   ]

@@ -25,7 +25,6 @@ config("fmskit_public_config") {
   include_dirs = [
     "//foundation/aafwk/standard/frameworks/kits/fmskit/native/include",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
     "//foundation/aafwk/standard/interfaces/innerkits/form_manager/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include",
@@ -46,7 +45,7 @@ ohos_shared_library("fmskit_native") {
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
-  deps = [ "${appexecfwk_path}/common:libappexecfwk_common" ]
+  deps = []
 
   external_deps = [
     "ability_base:want",

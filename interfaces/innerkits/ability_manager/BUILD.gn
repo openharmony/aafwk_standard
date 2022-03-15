@@ -120,7 +120,6 @@ ohos_shared_library("ability_manager") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimedia_image_standard:image_native",
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
@@ -129,7 +128,8 @@ ohos_shared_library("ability_manager") {
   ]
 
   if (ability_runtime_graphics) {
-    deps += [ "//foundation/multimedia/image_standard/interfaces/innerkits:image_native" ]
+    deps += []
+    external_deps += [ "multimedia_image_standard:image_native" ]
   }
 
   subsystem_name = "aafwk"

@@ -23,8 +23,6 @@ config("formmgr_sdk_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "${aafwk_path}/services/common/include",
-    "//foundation/appexecfwk/standard/common/log/include",
-    "//foundation/aafwk/standard/services/common/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -59,10 +57,7 @@ ohos_shared_library("form_manager") {
     "${services_path}/formmgr:formmgr_config",
   ]
 
-  deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
-    "//third_party/jsoncpp:jsoncpp",
-  ]
+  deps = [ "//third_party/jsoncpp:jsoncpp" ]
 
   external_deps = [
     "ability_base:want",

@@ -26,15 +26,15 @@ ohos_shared_library("formutil_napi") {
   deps = [
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/ace/napi:ace_napi",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
   ]
 
   external_deps = [
+    "ability_base:base",
     "ability_runtime:ability_manager",
     "ability_runtime:runtime",
+    "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
+    "napi:ace_napi",
   ]
 
   subsystem_name = "aafwk"
