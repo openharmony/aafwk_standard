@@ -70,7 +70,7 @@ void AaCommandDumpTest::MakeMockObjects() const
 
     // set the mock stub
     auto managerClientPtr = AbilityManagerClient::GetInstance();
-    managerClientPtr->remoteObject_ = managerStubPtr;
+    managerClientPtr->proxy_ = managerStubPtr;
 }
 
 /**
