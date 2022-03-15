@@ -54,7 +54,7 @@ public:
      * @param useNewMission new mission flag.
      */
     static void SetUseNewMission(bool useNewMission);
- 
+
     /**
      * @brief Get if use new mission.
      *
@@ -454,7 +454,7 @@ public:
     void AfterForeground() override;
     void AfterBackground() override;
     void AfterFocused() override;
-    void AfterUnFocused() override;
+    void AfterUnfocused() override;
 private:
     sptr<IRemoteObject> token_ = nullptr;
     std::weak_ptr<AbilityImpl> owner_;
