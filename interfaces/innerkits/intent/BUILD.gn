@@ -32,7 +32,6 @@ config("intent_public_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/intent/include",
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/aafwk/standard/services/common/include",
-    "//foundation/appexecfwk/standard/common/log/include",
   ]
 }
 
@@ -51,7 +50,7 @@ ohos_shared_library("intent") {
     #"${intentImpl}/want.cpp",
   ]
 
-  deps = [ "//foundation/appexecfwk/standard/common:libappexecfwk_common" ]
+  deps = []
 
   external_deps = [
     "ability_base:base",

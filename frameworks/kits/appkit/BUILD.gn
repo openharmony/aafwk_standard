@@ -48,7 +48,6 @@ config("appkit_public_config") {
 ohos_executable("appexec") {
   include_dirs = [
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/interfaces/innerkits/base/include",
@@ -89,7 +88,6 @@ ohos_executable("appexec") {
 ohos_shared_library("appkit_native") {
   include_dirs = [
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
     "${aafwk_path}/interfaces/innerkits/uri/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
@@ -138,7 +136,6 @@ ohos_shared_library("appkit_native") {
     ":appkit_delegator",
     "${aafwk_path}/common/task_dispatcher:task_dispatcher",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
   ]
 
@@ -199,8 +196,6 @@ ohos_shared_library("app_context") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
-
     # "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/common/task_dispatcher:task_dispatcher",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
@@ -243,7 +238,6 @@ ohos_shared_library("app_context") {
 ohos_shared_library("appkit_delegator") {
   include_dirs = [
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app",
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context",
     "${aafwk_path}/frameworks/kits/appkit/native",
@@ -274,16 +268,11 @@ ohos_shared_library("appkit_delegator") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
 
-  deps = [
-    "${aafwk_path}/frameworks/kits/appkit:app_context",
-    "${appexecfwk_path}/common:libappexecfwk_common",
-  ]
+  deps = [ "${aafwk_path}/frameworks/kits/appkit:app_context" ]
 
   external_deps = [
     "ability_base:want",
-    "ability_base:want",
     "ability_runtime:ability_manager",
-    "ability_runtime:app_manager",
     "ability_runtime:app_manager",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_base",
