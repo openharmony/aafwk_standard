@@ -1805,7 +1805,7 @@ void AbilityManagerService::DumpSysMissionListInner(
     } else if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {
         targetManager->DumpMissionList(info, isClient);
     } else {
-        info.emplace_back("error: invalid argument, please see 'ability dumpsys -h'.");
+        info.emplace_back("error: invalid argument, please see 'aa dump -h'.");
     }
 }
 void AbilityManagerService::DumpSysAbilityInner(
@@ -1836,7 +1836,7 @@ void AbilityManagerService::DumpSysAbilityInner(
         std::vector<std::string> params(argList.begin() + MIN_DUMP_ARGUMENT_NUM, argList.end());
         targetManager->DumpMissionListByRecordId(info, isClient, std::stoi(argList[1]), params);
     } else {
-        info.emplace_back("error: invalid argument, please see 'ability dumpsys -h'.");
+        info.emplace_back("error: invalid argument, please see 'aa dump -h'.");
     }
 }
 
@@ -1870,7 +1870,7 @@ void AbilityManagerService::DumpSysStateInner(
     } else if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {
         targetManager->DumpState(info, isClient);
     } else {
-        info.emplace_back("error: invalid argument, please see 'ability dumpsys -h'.");
+        info.emplace_back("error: invalid argument, please see 'aa dump -h'.");
     }
 }
 
@@ -1903,7 +1903,7 @@ void AbilityManagerService::DumpSysPendingInner(
     } else if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {
         targetManager->Dump(info);
     } else {
-        info.emplace_back("error: invalid argument, please see 'ability dumpsys -h'.");
+        info.emplace_back("error: invalid argument, please see 'aa dump -h'.");
     }
 }
 
@@ -1980,7 +1980,7 @@ void AbilityManagerService::DataDumpSysStateInner(
     } else if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {
         targetManager->DumpSysState(info, isClient);
     } else {
-        info.emplace_back("error: invalid argument, please see 'ability dump -h'.");
+        info.emplace_back("error: invalid argument, please see 'aa dump -h'.");
     }
 }
 
