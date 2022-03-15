@@ -39,7 +39,7 @@ std::recursive_mutex AbilityManagerClient::mutex_;
 #define CHECK_POINTER_RETURN_NOT_CONNECTED(object)   \
     if (!object) {                                   \
         HILOG_ERROR("proxy is nullptr.");            \
-        return ABILITY_SERVICE_NOT_CONNECTED;                                      \
+        return ABILITY_SERVICE_NOT_CONNECTED;        \
     }
 
 std::shared_ptr<AbilityManagerClient> AbilityManagerClient::GetInstance()

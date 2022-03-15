@@ -28,7 +28,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-class AppMgrRemoteHolder : public std::enable_shared_from_this<AppMgrRemoteHolder>{
+class AppMgrRemoteHolder : public std::enable_shared_from_this<AppMgrRemoteHolder> {
 public:
     AppMgrRemoteHolder() = default;
 
@@ -55,7 +55,7 @@ public:
         deathRecipient_ = sptr<IRemoteObject::DeathRecipient>(new AppMgrDeathRecipient(me));
         if (deathRecipient_ == nullptr) {
             HILOG_ERROR("%{public}s :Failed to create AppMgrDeathRecipient!", __func__);
-            return AppMgrResultCode::ERROR_SERVICE_NOT_READY;;
+            return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
         }
         if ((remote_->IsProxyObject()) && (!remote_->AddDeathRecipient(deathRecipient_))) {
             HILOG_ERROR("%{public}s :Add death recipient to AppMgrService failed.", __func__);
