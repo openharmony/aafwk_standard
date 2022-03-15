@@ -64,8 +64,9 @@ bool FormTimerMgr::AddFormTimer(const FormTimer &task)
             return false;
         }
     } else {
-        if (task.period >= Constants::MIN_PERIOD && task.period <= Constants::MAX_PERIOD &&
-            (task.period % Constants::MIN_PERIOD) == 0) {
+        if (task.period >= (Constants::MIN_PERIOD / timeSpeed_) && // Min period is 30 minutes
+            task.period <= (Constants::MAX_PERIOD / timeSpeed_) && // Max period is 1 week
+            task.period % (Constants::MIN_PERIOD / timeSpeed_) == 0) {
             return AddIntervalTimer(task);
         } else {
             HILOG_ERROR("%{public}s failed, interval time is invalid", __func__);
