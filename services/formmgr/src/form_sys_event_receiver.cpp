@@ -76,7 +76,13 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
         int userId = want.GetIntParam(KEY_USER_ID, 0);
         HandleProviderUpdated(bundleName, userId);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED) {
-        int uid = want.GetIntParam(KEY_UID, 0);
+        int userId = want.GetIntParam(KEY_USER_ID, 0);
+        sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+        if (iBundleMgr == nullptr) {
+            HILOG_ERROR("%{public}s error, failed to get IBundleMgr.", __func__);
+            return;
+        }
+        int uid = IN_PROCESS_CALL(iBundleMgr->GetUidByBundleName(bundleName, userId));
         HandleBundleDataCleared(bundleName, uid);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_UID_REMOVED) {
         int32_t userId = want.GetIntParam(KEY_USER_ID, -1);
