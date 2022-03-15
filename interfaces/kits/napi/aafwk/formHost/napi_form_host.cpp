@@ -706,6 +706,7 @@ napi_value NAPI_ReleaseForm(napi_env env, napi_callback_info info)
             napi_create_reference(env, argv[1], REF_COUNT, &asyncCallbackInfo->callback);
             ReleaseFormCallback(env, asyncCallbackInfo);
         } else if (valueType == napi_boolean) { // release promise, two argv
+            napi_get_value_bool(env, argv[1], &asyncCallbackInfo->isReleaseCache);
             return ReleaseFormPromise(env, asyncCallbackInfo);
         } else {
             NAPI_ASSERT(env, valueType == napi_function || valueType == napi_boolean,
