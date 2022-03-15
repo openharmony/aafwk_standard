@@ -2294,7 +2294,7 @@ ErrCode Ability::UpdateForm(const int64_t formId, const FormProviderData &formPr
     }
 
     // update form request to fms
-    ErrCode result = FormMgr::GetInstance().UpdateForm(formId, abilityInfo_->bundleName, formProviderData);
+    ErrCode result = FormMgr::GetInstance().UpdateForm(formId, formProviderData);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s error, update form for fms failed.", __func__);
     }
