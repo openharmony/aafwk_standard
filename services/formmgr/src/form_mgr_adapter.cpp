@@ -1207,6 +1207,9 @@ ErrCode FormMgrAdapter::CreateFormItemInfo(const BundleInfo &bundleInfo,
     for (const auto &abilityInfo : bundleInfo.abilityInfos) {
         if (abilityInfo.name == formInfo.abilityName) {
             itemInfo.SetAbilityModuleName(abilityInfo.moduleName);
+            if (!abilityInfo.isModuleJson) {
+                itemInfo.SetFormSrc("");
+            }
         }
     }
 
