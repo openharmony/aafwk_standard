@@ -27,6 +27,7 @@ namespace OHOS {
 namespace AAFwk {
 std::shared_ptr<AbilityManagerClient> mockInstanceEx_ = nullptr;
 std::mutex mockMutexEx_;
+sptr<IRemoteObject> remoteObject_;
 
 std::shared_ptr<AbilityManagerClient> AbilityManagerClient::GetInstance()
 {
