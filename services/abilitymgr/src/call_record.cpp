@@ -64,13 +64,15 @@ void CallRecord::SetCallStub(const sptr<IRemoteObject> & call)
     HILOG_DEBUG("SetCallStub complete.");
 
     if (callDeathRecipient_ == nullptr) {
-        auto callStubDied = [callRecord = shared_from_this()] (const wptr<IRemoteObject> & remote) {
-            if (callRecord == nullptr) {
+        std::weak_ptr<CallRecord> callRecord = shared_from_this();
+        auto callStubDied = [wptr = callRecord] (const wptr<IRemoteObject> & remote) {
+            auto call = wptr.lock();
+            if (call == nullptr) {
                 HILOG_ERROR("callRecord  is nullptr, can't call stub died.");
                 return;
             }
 
-            callRecord->OnCallStubDied(remote);
+            call->OnCallStubDied(remote);
         };
         callDeathRecipient_ =
                 new AbilityCallRecipient(callStubDied);
