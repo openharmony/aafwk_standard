@@ -394,6 +394,24 @@ int32_t AppMgrServiceInner::KillApplication(const std::string &bundleName)
         return ERR_NO_INIT;
     }
 
+    auto callerPid = IPCSkeleton::GetCallingPid();
+    auto appRecord = appRunningManager_->GetAppRunningRecordByPid(callerPid);
+    if (!appRecord) {
+        HILOG_ERROR("Get app running record by calling pid failed. callingPId: %{public}d", callerPid);
+        return ERR_INVALID_OPERATION;
+    }
+
+    auto applicationInfo = appRecord->GetApplicationInfo();
+    if (!applicationInfo) {
+        HILOG_ERROR("Get application info failed.");
+        return ERR_INVALID_OPERATION;
+    }
+
+    if (applicationInfo->appPrivilegeLevel != "system_basic" || applicationInfo->appPrivilegeLevel != "system_core") {
+        HILOG_ERROR("caller is not system_basic.");
+        return ERR_INVALID_OPERATION;
+    }
+
     if (VerifyProcessPermission() == ERR_PERMISSION_DENIED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         return ERR_PERMISSION_DENIED;
@@ -486,20 +504,20 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
         HILOG_ERROR("remoteClientManager_ fail");
         return ERR_NO_INIT;
     }
-    auto bundleMgr_ = remoteClientManager_->GetBundleManager();
-    if (bundleMgr_ == nullptr) {
+    auto bundleMgr = remoteClientManager_->GetBundleManager();
+    if (bundleMgr == nullptr) {
         HILOG_ERROR("GetBundleManager fail");
         return ERR_NO_INIT;
     }
 
     int32_t callerUid = IPCSkeleton::GetCallingUid();
-    if (!IN_PROCESS_CALL(bundleMgr_->CheckIsSystemAppByUid(callerUid))) {
+    if (!IN_PROCESS_CALL(bundleMgr->CheckIsSystemAppByUid(callerUid))) {
         HILOG_ERROR("caller is not systemApp, callerUid %{public}d", callerUid);
         return ERR_INVALID_VALUE;
     }
 
     HILOG_INFO("userId value is %{public}d", userId);
-    int uid = IN_PROCESS_CALL(bundleMgr_->GetUidByBundleName(bundleName, userId));
+    int uid = IN_PROCESS_CALL(bundleMgr->GetUidByBundleName(bundleName, userId));
     HILOG_INFO("uid value is %{public}d", uid);
     if (!appRunningManager_->ProcessExitByBundleNameAndUid(bundleName, uid, pids)) {
         HILOG_INFO("The process corresponding to the package name did not start");
