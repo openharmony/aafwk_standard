@@ -50,8 +50,6 @@ config("ability_config") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   defines = [
-    "APP_LOG_TAG = \"Ability\"",
-    "LOG_DOMAIN = 0xD002200",
     "AMS_LOG_TAG = \"Ability\"",
     "AMS_LOG_DOMAIN = 0xD002200",
   ]

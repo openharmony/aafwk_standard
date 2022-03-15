@@ -53,6 +53,8 @@ ohos_shared_library("libams") {
   ]
 
   defines = [
+    "APP_LOG_TAG = \"AppMgrService\"",
+    "LOG_DOMAIN = 0xD001110",
     "AMS_LOG_TAG = \"AppMgrService\"",
     "AMS_LOG_DOMAIN = 0xD001110",
   ]
@@ -93,7 +95,7 @@ ohos_shared_library("libams") {
 
   if (ability_runtime_graphics) {
     defines += [ "SUPPORT_GRAPHICS" ]
-    deps += [ "//base/global/i18n_standard/frameworks/intl:intl_util" ]
+    deps += []
     external_deps += [ "i18n_standard:intl_util" ]
   }
 

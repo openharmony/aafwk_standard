@@ -73,8 +73,6 @@ ohos_shared_library("app_manager") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"AppexecfwkCore\"",
-    "LOG_DOMAIN = 0xD001100",
     "AMS_LOG_TAG = \"AppexecfwkCore\"",
     "AMS_LOG_DOMAIN = 0xD001100",
   ]
@@ -92,7 +90,6 @@ ohos_shared_library("app_manager") {
     "bytrace_standard:bytrace_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
-    "hiviewdfx_hilog_native:libhilog",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "samgr_standard:samgr_proxy",
