@@ -44,12 +44,14 @@ ohos_shared_library("appmanager_napi") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimedia_image_standard:image",
     "napi:ace_napi",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimedia_image_standard:image" ]
+  }
 
   relative_install_dir = "module/application"
 
