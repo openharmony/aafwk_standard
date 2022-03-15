@@ -192,9 +192,8 @@ int32_t FormMgrStub::HandleReleaseForm(MessageParcel &data, MessageParcel &reply
 int32_t FormMgrStub::HandleUpdateForm(MessageParcel &data, MessageParcel &reply)
 {
     int64_t formId = data.ReadInt64();
-    std::string bundleName = data.ReadString();
     std::unique_ptr<FormProviderData> formBindingData(data.ReadParcelable<FormProviderData>());
-    int32_t result = UpdateForm(formId, bundleName, *formBindingData);
+    int32_t result = UpdateForm(formId, *formBindingData);
     reply.WriteInt32(result);
     return result;
 }

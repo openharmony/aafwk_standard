@@ -430,7 +430,7 @@ void FormSysEventReceiver::GetTimerCfg(const bool updateEnabled,
         hour = std::stoi(temp[0]);
         min = std::stoi(temp[1]);
         if (hour < Constants::MIN_TIME || hour > Constants::MAX_HOUR || min < Constants::MIN_TIME || min >
-            Constants::MAX_MININUTE) {
+            Constants::MAX_MINUTE) {
             HILOG_ERROR("%{public}s, time is invalid", __func__);
             return;
         }
