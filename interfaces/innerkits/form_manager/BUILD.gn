@@ -48,8 +48,8 @@ ohos_shared_library("form_manager") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"FormMgrService\"",
-    "LOG_DOMAIN = 0xD001120",
+    "AMS_LOG_TAG = \"FormMgrService\"",
+    "AMS_LOG_DOMAIN = 0xD001120",
   ]
 
   public_configs = [

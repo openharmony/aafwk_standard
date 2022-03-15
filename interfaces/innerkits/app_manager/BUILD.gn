@@ -73,8 +73,6 @@ ohos_shared_library("app_manager") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"AppexecfwkCore\"",
-    "LOG_DOMAIN = 0xD001100",
     "AMS_LOG_TAG = \"AppexecfwkCore\"",
     "AMS_LOG_DOMAIN = 0xD001100",
   ]
