@@ -99,11 +99,10 @@ public:
     /**
      * @brief Update form with formId, send formId to form manager service.
      * @param formId The Id of the form to update.
-     * @param bundleName Provider ability bundleName.
      * @param formBindingData Form binding data.
      * @return Returns ERR_OK on success, others on failure.
      */
-    int UpdateForm(const int64_t formId, const std::string& bundleName, const FormProviderData& formBindingData)
+    int UpdateForm(const int64_t formId, const FormProviderData& formBindingData)
     {
         if (formId == 300L) {
             return -1;

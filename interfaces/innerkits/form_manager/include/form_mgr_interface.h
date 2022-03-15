@@ -69,12 +69,10 @@ public:
     /**
      * @brief Update form with formId, send formId to form manager service.
      * @param formId The Id of the form to update.
-     * @param bundleName Provider ability bundleName.
      * @param formProviderData Form binding data.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int UpdateForm(const int64_t formId, const std::string &bundleName,
-    const FormProviderData &formProviderData) = 0;
+    virtual int UpdateForm(const int64_t formId, const FormProviderData &formProviderData) = 0;
 
     /**
      * @brief Set next refresh time.

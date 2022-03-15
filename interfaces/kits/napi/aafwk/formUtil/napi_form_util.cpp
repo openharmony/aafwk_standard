@@ -30,13 +30,138 @@ using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
 
 namespace {
-    constexpr size_t ARGS_SIZE_TWO = 2;
-    constexpr int INT_64_LENGTH = 19;
-    constexpr int ZERO_VALUE = 0;
-    constexpr int REF_COUNT = 1;
-    constexpr int DECIMAL_VALUE = 10;
-    constexpr int BASE_NUMBER = 9;
-    constexpr int CALLBACK_FLG = 1;
+constexpr size_t ARGS_SIZE_TWO = 2;
+constexpr int INT_64_LENGTH = 19;
+constexpr int ZERO_VALUE = 0;
+constexpr int REF_COUNT = 1;
+constexpr int DECIMAL_VALUE = 10;
+constexpr int BASE_NUMBER = 9;
+constexpr int CALLBACK_FLG = 1;
+static constexpr int32_t ERR_COMMON = 1;
+static constexpr int32_t ERR_PERMISSION_DENY = 2;
+static constexpr int32_t ERR_GET_INFO_FAILED = 4;
+static constexpr int32_t ERR_GET_BUNDLE_FAILED = 5;
+static constexpr int32_t ERR_GET_LAYOUT_FAILED = 6;
+static constexpr int32_t ERR_ADD_INVALID_PARAM = 7;
+static constexpr int32_t ERR_CFG_NOT_MATCH_ID = 8;
+static constexpr int32_t ERR_NOT_EXIST_ID = 9;
+static constexpr int32_t ERR_BIND_PROVIDER_FAILED = 10;
+static constexpr int32_t ERR_MAX_SYSTEM_FORMS = 11;
+static constexpr int32_t ERR_MAX_INSTANCES_PER_FORM = 12;
+static constexpr int32_t ERR_OPERATION_FORM_NOT_SELF = 13;
+static constexpr int32_t ERR_PROVIDER_DEL_FAIL = 14;
+static constexpr int32_t ERR_MAX_FORMS_PER_CLIENT = 15;
+static constexpr int32_t ERR_MAX_SYSTEM_TEMP_FORMS = 16;
+static constexpr int32_t ERR_FORM_NO_SUCH_MODULE = 17;
+static constexpr int32_t ERR_FORM_NO_SUCH_ABILITY = 18;
+static constexpr int32_t ERR_FORM_NO_SUCH_DIMENSION = 19;
+static constexpr int32_t ERR_FORM_FA_NOT_INSTALLED = 20;
+static constexpr int32_t ERR_SYSTEM_RESPONSES_FAILED = 30;
+static constexpr int32_t ERR_FORM_DUPLICATE_ADDED = 31;
+static constexpr int32_t ERR_IN_RECOVERY = 36;
+const std::map<int32_t, int32_t> ERROR_CODE_MAP = {
+    { ERR_OK,                                        ERR_OK },
+    { ERR_APPEXECFWK_FORM_COMMON_CODE,               ERR_COMMON },
+    { ERR_APPEXECFWK_FORM_PERMISSION_DENY,           ERR_PERMISSION_DENY },
+    { ERR_APPEXECFWK_FORM_PERMISSION_DENY_BUNDLE,    ERR_PERMISSION_DENY },
+    { ERR_APPEXECFWK_FORM_PERMISSION_DENY_SYS,       ERR_PERMISSION_DENY },
+    { ERR_APPEXECFWK_FORM_GET_INFO_FAILED,           ERR_GET_INFO_FAILED },
+    { ERR_APPEXECFWK_FORM_GET_BUNDLE_FAILED,         ERR_GET_BUNDLE_FAILED },
+    { ERR_APPEXECFWK_FORM_INVALID_PARAM,             ERR_ADD_INVALID_PARAM },
+    { ERR_APPEXECFWK_FORM_INVALID_FORM_ID,           ERR_ADD_INVALID_PARAM },
+    { ERR_APPEXECFWK_FORM_FORM_ID_NUM_ERR,           ERR_ADD_INVALID_PARAM },
+    { ERR_APPEXECFWK_FORM_FORM_ARRAY_ERR,            ERR_ADD_INVALID_PARAM },
+    { ERR_APPEXECFWK_FORM_RELEASE_FLG_ERR,           ERR_COMMON },
+    { ERR_APPEXECFWK_FORM_REFRESH_TIME_NUM_ERR,      ERR_COMMON },
+    { ERR_APPEXECFWK_FORM_INVALID_BUNDLENAME,        ERR_ADD_INVALID_PARAM },
+    { ERR_APPEXECFWK_FORM_INVALID_MODULENAME,        ERR_ADD_INVALID_PARAM },
+    { ERR_APPEXECFWK_FORM_INVALID_PROVIDER_DATA,     ERR_ADD_INVALID_PARAM },
+    { ERR_APPEXECFWK_FORM_INVALID_REFRESH_TIME,      ERR_ADD_INVALID_PARAM },
+    { ERR_APPEXECFWK_FORM_FORM_ID_ARRAY_ERR,         ERR_ADD_INVALID_PARAM },
+    { ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR,         ERR_COMMON },
+    { ERR_APPEXECFWK_FORM_CFG_NOT_MATCH_ID,          ERR_CFG_NOT_MATCH_ID },
+    { ERR_APPEXECFWK_FORM_NOT_EXIST_ID,              ERR_NOT_EXIST_ID },
+    { ERR_APPEXECFWK_FORM_PROVIDER_DATA_EMPTY,       ERR_ADD_INVALID_PARAM },
+    { ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED,      ERR_BIND_PROVIDER_FAILED },
+    { ERR_APPEXECFWK_FORM_MAX_SYSTEM_FORMS,          ERR_MAX_SYSTEM_FORMS },
+    { ERR_APPEXECFWK_FORM_EXCEED_INSTANCES_PER_FORM, ERR_MAX_INSTANCES_PER_FORM },
+    { ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF,        ERR_OPERATION_FORM_NOT_SELF },
+    { ERR_APPEXECFWK_FORM_PROVIDER_DEL_FAIL,         ERR_PROVIDER_DEL_FAIL },
+    { ERR_APPEXECFWK_FORM_MAX_FORMS_PER_CLIENT,      ERR_MAX_FORMS_PER_CLIENT },
+    { ERR_APPEXECFWK_FORM_MAX_SYSTEM_TEMP_FORMS,     ERR_MAX_SYSTEM_TEMP_FORMS },
+    { ERR_APPEXECFWK_FORM_NO_SUCH_MODULE,            ERR_FORM_NO_SUCH_MODULE },
+    { ERR_APPEXECFWK_FORM_NO_SUCH_ABILITY,           ERR_FORM_NO_SUCH_ABILITY },
+    { ERR_APPEXECFWK_FORM_NO_SUCH_DIMENSION,         ERR_FORM_NO_SUCH_DIMENSION },
+    { ERR_APPEXECFWK_FORM_FA_NOT_INSTALLED,          ERR_FORM_FA_NOT_INSTALLED },
+    { ERR_APPEXECFWK_FORM_MAX_REQUEST,               ERR_MAX_SYSTEM_FORMS },
+    { ERR_APPEXECFWK_FORM_MAX_REFRESH,               ERR_MAX_SYSTEM_FORMS },
+    { ERR_APPEXECFWK_FORM_GET_BMS_FAILED,            ERR_COMMON },
+    { ERR_APPEXECFWK_FORM_GET_HOST_FAILED,           ERR_COMMON },
+    { ERR_APPEXECFWK_FORM_GET_FMS_FAILED,            ERR_COMMON },
+    { ERR_APPEXECFWK_FORM_SEND_FMS_MSG,              ERR_COMMON },
+    { ERR_APPEXECFWK_FORM_FORM_DUPLICATE_ADDED,      ERR_FORM_DUPLICATE_ADDED },
+    { ERR_APPEXECFWK_FORM_IN_RECOVER,                ERR_IN_RECOVERY },
+    { ERR_APPEXECFWK_FORM_GET_SYSMGR_FAILED,         ERR_SYSTEM_RESPONSES_FAILED }
+};
+const std::map<int32_t, std::string> CODE_MSG_MAP = {
+    { ERR_OK, "success" },
+    { ERR_COMMON, "internal error" },
+    { ERR_PERMISSION_DENY, "does not have permission to use forms" },
+    { ERR_GET_INFO_FAILED, "failed to obtain the configuration information" },
+    { ERR_GET_BUNDLE_FAILED, "failed to obtain the bundle information" },
+    { ERR_GET_LAYOUT_FAILED, "failed to initialize the form layout" },
+    { ERR_ADD_INVALID_PARAM, "invalid input parameter during form operation" },
+    { ERR_CFG_NOT_MATCH_ID, "the form id is different from that obtained for the first time" },
+    { ERR_NOT_EXIST_ID, "the ID of the form to be operated does not exist" },
+    { ERR_BIND_PROVIDER_FAILED, "failed to bind the Form Manager Service to the provider service" },
+    { ERR_MAX_SYSTEM_FORMS, "the total number of added forms exceeds the maximum allowed by the system" },
+    { ERR_MAX_INSTANCES_PER_FORM, "the number of form instances exceeds the maximum allowed by the system" },
+    { ERR_OPERATION_FORM_NOT_SELF, "can not be operated by the current application" },
+    { ERR_PROVIDER_DEL_FAIL, "failed to instruct the form provider to delete the form" },
+    { ERR_MAX_FORMS_PER_CLIENT, "the total number of added forms exceeds the maximum per client" },
+    { ERR_MAX_SYSTEM_TEMP_FORMS, "the total number of added temp forms exceeds the maximum in system" },
+    { ERR_FORM_NO_SUCH_MODULE, "the module can not be find in system" },
+    { ERR_FORM_NO_SUCH_ABILITY, "the ability can not be find in system" },
+    { ERR_FORM_NO_SUCH_DIMENSION, "the dimension is not exist in the form" },
+    { ERR_FORM_FA_NOT_INSTALLED, "the ability is not installed" },
+    { ERR_SYSTEM_RESPONSES_FAILED, "failed to obtain the RPC object" },
+    { ERR_FORM_DUPLICATE_ADDED, "failed to obtain the form requested by the client" },
+    { ERR_IN_RECOVERY, "the form is being restored" }
+};
+} // namespace
+
+/**
+ * @brief query the error message by error code
+ *
+ * @param[in] errorCode the error code return by form JS API.
+ *
+ * @return the error detail message
+ */
+std::string QueryRetMsg(int32_t errorCode)
+{
+    auto iter = CODE_MSG_MAP.find(errorCode);
+    if (iter != CODE_MSG_MAP.end()) {
+        return iter->second;
+    } else {
+        return CODE_MSG_MAP.at(ERR_COMMON);
+    }
+}
+
+/**
+ * @brief query the error code by FMS errcode
+ *
+ * @param[in] innerErrorCode the error code return by form native API.
+ *
+ * @return the error detail message
+ */
+int32_t QueryRetCode(int32_t innerErrorCode)
+{
+    auto iter = ERROR_CODE_MAP.find(innerErrorCode);
+    if (iter != ERROR_CODE_MAP.end()) {
+        return iter->second;
+    } else {
+        return ERR_COMMON;
+    }
 }
 
 /**
@@ -126,18 +251,27 @@ void InnerCreateCallbackRetMsg(napi_env env, int32_t code, napi_value* result)
 {
     HILOG_DEBUG("%{public}s called. code:%{public}d", __func__, code);
     napi_value error = nullptr;
-    napi_value errCode = nullptr;
     napi_create_object(env, &error);
-    napi_create_int32(env, code, &errCode);
-    napi_set_named_property(env, error, "code", errCode);
-    result[0] = error;
 
+    auto retCode = QueryRetCode(code);
+    auto retMsg = QueryRetMsg(retCode);
+
+    // create error code
+    napi_value errCode = nullptr;
+    napi_create_int32(env, retCode, &errCode);
+    napi_set_named_property(env, error, "code", errCode);
+
+    // create error msg
+    napi_value errMsg = nullptr;
+    napi_create_string_utf8(env, retMsg.c_str(), NAPI_AUTO_LENGTH, &errMsg);
+    napi_set_named_property(env, error, "msg", errMsg);
+
+    result[0] = error;
     if (code == ERR_OK) {
         napi_value data = nullptr;
         napi_create_int32(env, ERR_OK, &data);
         result[1] = data;
     }
-
     HILOG_DEBUG("%{public}s, end.", __func__);
 }
 
@@ -157,12 +291,22 @@ void InnerCreatePromiseRetMsg(napi_env env, int32_t code, napi_value* result)
         napi_create_int32(env, ERR_OK, result);
         return;
     }
-
     napi_value errInfo = nullptr;
-    napi_value errCode = nullptr;
     napi_create_object(env, &errInfo);
-    napi_create_int32(env, code, &errCode);
+
+    auto retCode = QueryRetCode(code);
+    auto retMsg = QueryRetMsg(retCode);
+
+    // create error code
+    napi_value errCode = nullptr;
+    napi_create_int32(env, retCode, &errCode);
     napi_set_named_property(env, errInfo, "code", errCode);
+
+    // create error msg
+    napi_value errMsg = nullptr;
+    napi_create_string_utf8(env, retMsg.c_str(), NAPI_AUTO_LENGTH, &errMsg);
+    napi_set_named_property(env, errInfo, "msg", errMsg);
+
     result[0] = errInfo;
     HILOG_DEBUG("%{public}s, end.", __func__);
 }
@@ -203,7 +347,6 @@ napi_value RetErrMsg(AsyncErrMsgCallbackInfo* asyncCallbackInfo)
             [](napi_env env, napi_status status, void *data) {
                 AsyncErrMsgCallbackInfo *asyncCallbackInfo = (AsyncErrMsgCallbackInfo *)data;
                 HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
-
                 if (asyncCallbackInfo->callback != nullptr) {
                     napi_value callback;
                     napi_value undefined;
@@ -239,7 +382,6 @@ napi_value RetErrMsg(AsyncErrMsgCallbackInfo* asyncCallbackInfo)
             [](napi_env env, napi_status status, void *data) {
                 HILOG_INFO("%{public}s, promise complete", __func__);
                 AsyncErrMsgCallbackInfo *asyncCallbackInfo = (AsyncErrMsgCallbackInfo *)data;
-
                 napi_value result;
                 InnerCreatePromiseRetMsg(env, asyncCallbackInfo->code, &result);
                 napi_reject_deferred(env, asyncCallbackInfo->deferred, result);
