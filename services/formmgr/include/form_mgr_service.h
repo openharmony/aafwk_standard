@@ -60,7 +60,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int AddForm(const int64_t formId, const Want &want, const sptr<IRemoteObject> &callerToken,
-    FormJsInfo &formInfo) override;
+        FormJsInfo &formInfo) override;
 
     /**
      * @brief Delete forms with formIds, send formIds to form manager service.
@@ -86,8 +86,7 @@ public:
      * @param FormProviderData Form binding data.
      * @return Returns ERR_OK on success, others on failure.
      */
-    int UpdateForm(const int64_t formId, const std::string &bundleName,
-    const FormProviderData &FormProviderData) override;
+    int UpdateForm(const int64_t formId, const FormProviderData &FormProviderData) override;
 
     /**
      * @brief set next refresh time.
@@ -105,7 +104,7 @@ public:
      * @return Returns true on success, false on failure.
      */
     int LifecycleUpdate(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken,
-    const int32_t updateType) override;
+        const int32_t updateType) override;
 
     /**
      * @brief Request form with formId and want, send formId and want to form manager service.
@@ -124,7 +123,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int NotifyWhetherVisibleForms(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken,
-    const int32_t formVisibleType) override;
+        const int32_t formVisibleType) override;
 
     /**
      * @brief temp form to normal form.

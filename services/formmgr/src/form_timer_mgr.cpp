@@ -37,6 +37,7 @@ const int REQUEST_UPDATE_AT_CODE = 1;
 const int REQUEST_LIMITER_CODE = 2;
 const int REQUEST_DYNAMIC_CODE = 3;
 const int SHIFT_BIT_LENGTH = 32;
+const std::string FMS_TIME_SPEED = "fms.time_speed";
 
 FormTimerMgr::FormTimerMgr()
 {
@@ -55,8 +56,8 @@ bool FormTimerMgr::AddFormTimer(const FormTimer &task)
 {
     HILOG_INFO("%{public}s, formId: %{public}" PRId64 ", userId:%{public}d", __func__, task.formId, task.userId);
     if (task.isUpdateAt) {
-        if (task.hour >= Constants::MIN_TIME && task.hour <= Constants::MAX_HOUR && task.min >= Constants::MIN_TIME &&
-            task.min <= Constants::MAX_MININUTE) {
+        if (task.hour >= Constants::MIN_TIME && task.hour <= Constants::MAX_HOUR &&
+            task.min >= Constants::MIN_TIME && task.min <= Constants::MAX_MINUTE) {
             return AddUpdateAtTimer(task);
         } else {
             HILOG_ERROR("%{public}s failed, update at time is invalid", __func__);
@@ -81,7 +82,10 @@ bool FormTimerMgr::AddFormTimer(const FormTimer &task)
  */
 bool FormTimerMgr::AddFormTimer(const int64_t formId, const long updateDuration, const int32_t userId)
 {
-    FormTimer timerTask(formId, updateDuration, userId);
+    auto duration = updateDuration / timeSpeed_;
+    HILOG_INFO("%{public}s formId:%{public}s duration:%{public}s", __func__,
+        std::to_string(formId).c_str(), std::to_string(duration).c_str());
+    FormTimer timerTask(formId, duration, userId);
     return AddFormTimer(timerTask);
 }
 /**
@@ -188,7 +192,7 @@ bool FormTimerMgr::UpdateIntervalValue(const int64_t formId, const FormTimerCfg 
 bool FormTimerMgr::UpdateAtTimerValue(const int64_t formId, const FormTimerCfg &timerCfg)
 {
     if (timerCfg.updateAtHour < Constants::MIN_TIME || timerCfg.updateAtHour > Constants::MAX_HOUR
-        || timerCfg.updateAtMin < Constants::MIN_TIME || timerCfg.updateAtMin > Constants::MAX_MININUTE) {
+        || timerCfg.updateAtMin < Constants::MIN_TIME || timerCfg.updateAtMin > Constants::MAX_MINUTE) {
         HILOG_ERROR("%{public}s failed, time is invalid", __func__);
         return false;
     }
@@ -229,7 +233,7 @@ bool FormTimerMgr::UpdateAtTimerValue(const int64_t formId, const FormTimerCfg &
 bool FormTimerMgr::IntervalToAtTimer(const int64_t formId, const FormTimerCfg &timerCfg)
 {
     if (timerCfg.updateAtHour < Constants::MIN_TIME || timerCfg.updateAtHour > Constants::MAX_HOUR
-        || timerCfg.updateAtMin < Constants::MIN_TIME || timerCfg.updateAtMin > Constants::MAX_MININUTE) {
+        || timerCfg.updateAtMin < Constants::MIN_TIME || timerCfg.updateAtMin > Constants::MAX_MINUTE) {
         HILOG_ERROR("%{public}s failed, time is invalid", __func__);
         return false;
     }
@@ -331,12 +335,12 @@ bool FormTimerMgr::SetNextRefreshTime(const int64_t formId, const long nextGapTi
     }
     auto timeSinceEpoch = std::chrono::steady_clock::now().time_since_epoch();
     int64_t timeInSec = std::chrono::duration_cast<std::chrono::milliseconds>(timeSinceEpoch).count();
-    int64_t refreshTime = timeInSec + nextGapTime * Constants::MS_PER_SECOND;
-    HILOG_INFO("%{public}s, timeInSec:%{public}" PRId64 ", refreshTime:%{public}" PRId64, __func__, timeInSec,
-        refreshTime);
+    int64_t refreshTime = timeInSec + nextGapTime * Constants::MS_PER_SECOND / timeSpeed_;
+    HILOG_INFO("%{public}s currentTime:%{public}s refreshTime:%{public}s", __func__,
+        std::to_string(timeInSec).c_str(), std::to_string(refreshTime).c_str());
     std::lock_guard<std::mutex> lock(refreshMutex_);
     bool isExist = false;
-    for (auto &refreshItem: dynamicRefreshTasks_) {
+    for (auto &refreshItem : dynamicRefreshTasks_) {
         if ((refreshItem.formId == formId) && (refreshItem.userId == userId)) {
             refreshItem.settedTime = refreshTime;
             isExist = true;
@@ -698,6 +702,16 @@ bool FormTimerMgr::GetDynamicItem(const int64_t formId, DynamicRefreshItem &dyna
     return false;
 }
 /**
+ * @brief Set time speed.
+ * @param timeSpeed The time speed.
+ */
+void FormTimerMgr::SetTimeSpeed(int32_t timeSpeed)
+{
+    HILOG_INFO("%{public}s set time speed to:%{public}d", __func__, timeSpeed);
+    timeSpeed_ = timeSpeed;
+    HandleResetLimiter();
+}
+/**
  * @brief Delete interval timer task.
  * @param formId The Id of the form.
  * @return Returns true on success, false on failure.
@@ -939,7 +953,7 @@ bool FormTimerMgr::UpdateLimiterAlarm()
     }
     tmAtTime.tm_sec = Constants::MAX_SECOND; // max value can be 61
     tmAtTime.tm_hour = Constants::MAX_HOUR;
-    tmAtTime.tm_min = Constants::MAX_MININUTE;
+    tmAtTime.tm_min = Constants::MAX_MINUTE;
     int64_t limiterWakeUpTime = FormUtil::GetMillisecondFromTm(tmAtTime);
 
     auto timerOption = std::make_shared<FormTimerOption>();
@@ -1213,6 +1227,7 @@ void FormTimerMgr::Init()
     matchingSkills.AddEvent(Constants::ACTION_UPDATEATTIMER);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_TIME_CHANGED);
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_TIMEZONE_CHANGED);
+    matchingSkills.AddEvent(FMS_TIME_SPEED);
 
     EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
     timerReceiver_ = std::make_shared<TimerReceiver>(subscribeInfo);
@@ -1245,7 +1260,11 @@ void FormTimerMgr::TimerReceiver::OnReceiveEvent(const EventFwk::CommonEventData
 
     HILOG_INFO("%{public}s, action:%{public}s.", __func__, action.c_str());
 
-    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_TIME_CHANGED
+    if (action == FMS_TIME_SPEED) {
+        // Time speed must between 1 and 1000.
+        auto timeSpeed = std::clamp(eventData.GetCode(), Constants::MIN_TIME_SPEED, Constants::MAX_TIME_SPEED);
+        FormTimerMgr::GetInstance().SetTimeSpeed(timeSpeed);
+    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_TIME_CHANGED
         || action == EventFwk::CommonEventSupport::COMMON_EVENT_TIMEZONE_CHANGED) {
         FormTimerMgr::GetInstance().HandleSystemTimeChanged();
     } else if (action == Constants::ACTION_UPDATEATTIMER) {
