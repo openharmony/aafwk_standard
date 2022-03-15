@@ -45,8 +45,8 @@
 #include "png.h"
 #include "ui_service_mgr_client.h"
 #include "locale_config.h"
-#include "lock_screen_white_list.h"
 #endif
+#include "lock_screen_white_list.h"
 #include "mission_info_mgr.h"
 #include "permission_constants.h"
 #include "permission_verification.h"

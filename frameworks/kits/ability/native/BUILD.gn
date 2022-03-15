@@ -364,6 +364,7 @@ ohos_shared_library("service_extension_module") {
     "ability_base:want",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
     "utils_base:utils",
   ]
 
@@ -389,6 +390,7 @@ ohos_shared_library("datashare_ext_ability_module") {
     "ability_base:want",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
     "utils_base:utils",
   ]
 

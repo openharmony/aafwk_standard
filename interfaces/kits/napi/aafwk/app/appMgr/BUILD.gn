@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/feature.gni")
 
 ohos_shared_library("napi_app_mgr") {
   include_dirs = [
@@ -38,12 +39,14 @@ ohos_shared_library("napi_app_mgr") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimedia_image_standard:image",
     "napi:ace_napi",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimedia_image_standard:image" ]
+  }
 
   relative_install_dir = "module"
   subsystem_name = "aafwk"

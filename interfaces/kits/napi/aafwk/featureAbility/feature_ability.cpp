@@ -814,10 +814,14 @@ napi_value HasWindowFocusPromise(napi_env env, AsyncCallbackInfo *asyncCallbackI
 #else
 napi_value HasWindowFocusAsync(
     napi_env env, napi_value *args, const size_t argCallback, AsyncCallbackInfo *asyncCallbackInfo)
-{}
+{
+    return nullptr;
+}
 
 napi_value HasWindowFocusPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
-{}
+{
+    return nullptr;
+}
 #endif
 
 EXTERN_C_START
