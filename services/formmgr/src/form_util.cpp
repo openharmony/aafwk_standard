@@ -116,7 +116,7 @@ int64_t FormUtil::PaddingUDIDHash(uint64_t formId, uint64_t udidHash)
  */
 bool FormUtil::GenerateUdidHash(int64_t &udidHash)
 {
-    HILOG_INFO("%{public}s start, udidHash: %{public}" PRId64 "", __func__, udidHash);
+    HILOG_INFO("%{public}s start, udidHash:%{private}s", __func__, std::to_string(udidHash).c_str());
     if (udidHash != INVALID_UDID_HASH) {
         return true;
     }
@@ -127,8 +127,7 @@ bool FormUtil::GenerateUdidHash(int64_t &udidHash)
     if (udidHash < 0) {
         udidHash = 0L;
     }
-    HILOG_INFO("%{public}s, FormAdapter generate hash %{public}" PRId64 "", __func__, udidHash);
-
+    HILOG_INFO("%{public}s, generate hash %{private}s", __func__, std::to_string(udidHash).c_str());
     return true;
 }
 /**
