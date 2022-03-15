@@ -262,7 +262,7 @@ void AbilityImpl::WindowLifeCycleImpl::AfterFocused()
     HILOG_INFO("%{public}s.", __func__);
 }
 
-void AbilityImpl::WindowLifeCycleImpl::AfterUnFocused()
+void AbilityImpl::WindowLifeCycleImpl::AfterUnfocused()
 {
     HILOG_INFO("%{public}s begin.", __func__);
     auto owner = owner_.lock();
