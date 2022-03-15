@@ -53,6 +53,7 @@ ohos_shared_library("ability_context_native") {
     "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "ability_runtime:runtime",
+    "access_token:libaccesstoken_sdk",
     "bundle_framework:appexecfwk_base",
     "bytrace_standard:bytrace_core",
     "faultloggerd:lib_dfx_dump_catcher",
