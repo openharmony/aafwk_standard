@@ -47,6 +47,7 @@ int32_t StartSpecifiedAbilityResponseStub::HandleOnAcceptWantResponse(MessagePar
 
     auto flag = Str16ToStr8(data.ReadString16());
     OnAcceptWantResponse(*want, flag);
+    delete want;
     return NO_ERROR;
 }
 
@@ -59,6 +60,7 @@ int32_t StartSpecifiedAbilityResponseStub::HandleOnTimeoutResponse(MessageParcel
     }
 
     OnTimeoutResponse(*want);
+    delete want;
     return NO_ERROR;
 }
 

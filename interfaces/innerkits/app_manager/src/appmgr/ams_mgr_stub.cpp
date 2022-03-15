@@ -263,9 +263,12 @@ int32_t AmsMgrStub::HandleStartSpecifiedAbility(MessageParcel &data, MessageParc
     AbilityInfo *abilityInfo = data.ReadParcelable<AbilityInfo>();
     if (abilityInfo == nullptr) {
         HILOG_ERROR("abilityInfo is nullptr.");
+        delete want;
         return ERR_INVALID_VALUE;
     }
     StartSpecifiedAbility(*want, *abilityInfo);
+    delete want;
+    delete abilityInfo;
     return NO_ERROR;
 }
 
