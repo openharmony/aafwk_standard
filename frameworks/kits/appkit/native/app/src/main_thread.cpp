@@ -1487,7 +1487,8 @@ void MainThread::HandleScheduleANRProcess()
     auto jsRuntime = std::move((std::unique_ptr<AbilityRuntime::JsRuntime>&)applicationForAnr_->GetRuntime());
     if (jsRuntime != nullptr) {
         mainThreadStackInfo= jsRuntime->BuildNativeAndJsBackStackTrace();
-        if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) != mainThreadStackInfo.size()) {
+        if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) !=
+          (ssize_t)mainThreadStackInfo.size()) {
             HILOG_ERROR("MainThread::HandleScheduleANRProcess write main thread stack info failed");
         }
     }
@@ -1499,7 +1500,7 @@ void MainThread::HandleScheduleANRProcess()
         HILOG_ERROR("MainThread::HandleScheduleANRProcess get process stack info failed");
     }
     HILOG_INFO("MainThread:HandleScheduleANRProcess DumpCatch end.");
-    if (write(rFD, proStackInfo.c_str(), proStackInfo.size()) != proStackInfo.size()) {
+    if (write(rFD, proStackInfo.c_str(), proStackInfo.size()) != (ssize_t)proStackInfo.size()) {
         HILOG_ERROR("MainThread::HandleScheduleANRProcess write process stack info failed");
     }
     HILOG_INFO("HandleScheduleANRProcess DumpCatch write process stack info size: %{public}d", proStackInfo.size());
@@ -1617,9 +1618,9 @@ void MainThread::LoadAbilityLibrary(const std::vector<std::string> &libraryPaths
     }
     HILOG_INFO("MainThread::LoadAbilityLibrary. End calling dlopen.");
 #endif  // ACEABILITY_LIBRARY_LOADER
-    int size = libraryPaths.size();
-    HILOG_INFO("MainThread::LoadAbilityLibrary. size=%{public}d.", size);
-    for (int index = 0; index < size; index++) {
+    size_t size = libraryPaths.size();
+    HILOG_INFO("MainThread::LoadAbilityLibrary. size=%{public}u.", (uint32_t)size);
+    for (size_t index = 0; index < size; index++) {
         std::string libraryPath = libraryPaths[index];
         HILOG_INFO("MainThread::LoadAbilityLibrary Try to scanDir %{public}s", libraryPath.c_str());
         if (!ScanDir(libraryPath)) {

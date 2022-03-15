@@ -88,7 +88,7 @@ int ConnectionRecord::DisconnectAbility()
     /* set state to Disconnecting */
     SetConnectState(ConnectionState::DISCONNECTING);
     CHECK_POINTER_AND_RETURN(targetService_, ERR_INVALID_VALUE);
-    int connectNums = targetService_->GetConnectRecordList().size();
+    std::size_t connectNums = targetService_->GetConnectRecordList().size();
     if (connectNums == 1) {
         /* post timeout task to eventhandler */
         auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();

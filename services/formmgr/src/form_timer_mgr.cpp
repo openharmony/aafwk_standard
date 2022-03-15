@@ -1047,7 +1047,8 @@ bool FormTimerMgr::UpdateDynamicAlarm()
     }
 
     auto timerOption = std::make_shared<FormTimerOption>();
-    timerOption->SetType(timerOption->TIMER_TYPE_REALTIME | timerOption->TIMER_TYPE_WAKEUP);
+    timerOption->SetType(((unsigned int)(timerOption->TIMER_TYPE_REALTIME))
+     | ((unsigned int)(timerOption->TIMER_TYPE_WAKEUP)));
     timerOption->SetRepeat(false);
     timerOption->SetInterval(0);
     std::shared_ptr<WantAgent> wantAgent = GetDynamicWantAgent(dynamicWakeUpTime_, firstTask.userId);

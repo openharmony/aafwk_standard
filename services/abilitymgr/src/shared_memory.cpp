@@ -108,6 +108,10 @@ void* SharedMemory::PopSharedMemory(int shmKey, int size)
     }
 
     void *data = reinterpret_cast<void *>(malloc(size));
+    if (data == nullptr) {
+        HILOG_ERROR("malloc failed %{public}d.", errno);
+        return nullptr;
+    }
     int retCode = memcpy_s(data, size, shared, size);
     if (retCode != EOK) {
         shmdt(shared);
