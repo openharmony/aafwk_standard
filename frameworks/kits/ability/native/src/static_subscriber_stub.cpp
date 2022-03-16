@@ -25,8 +25,8 @@ int StaticSubscriberStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
     }
     switch (code) {
         case COMMAND_ON_RECEIVE_EVENT: {
-            CommonEventData* inData = data.ReadParcelable<CommonEventData>();
-            ErrCode ec = OnReceiveEvent(inData);
+            std::unique_ptr<CommonEventData> inData(data.ReadParcelable<CommonEventData>());
+            ErrCode ec = OnReceiveEvent(inData.get());
             reply.WriteInt32(ec);
             return ERR_NONE;
         }
