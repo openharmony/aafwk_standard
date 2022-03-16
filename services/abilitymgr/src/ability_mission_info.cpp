@@ -27,19 +27,19 @@ bool AbilityMissionInfo::ReadFromParcel(Parcel &parcel)
     runingState = parcel.ReadInt32();
     missionStackId = parcel.ReadInt32();
 
-    auto want = parcel.ReadParcelable<Want>();
+    std::unique_ptr<Want> want(parcel.ReadParcelable<Want>());
     if (want == nullptr) {
         return false;
     }
     baseWant = *want;
 
-    auto bAbility = parcel.ReadParcelable<AppExecFwk::ElementName>();
+    std::unique_ptr<AppExecFwk::ElementName> bAbility(parcel.ReadParcelable<AppExecFwk::ElementName>());
     if (bAbility == nullptr) {
         return false;
     }
     baseAbility = *bAbility;
 
-    auto tAbility = parcel.ReadParcelable<AppExecFwk::ElementName>();
+    std::unique_ptr<AppExecFwk::ElementName> tAbility(parcel.ReadParcelable<AppExecFwk::ElementName>());
     if (tAbility == nullptr) {
         return false;
     }
@@ -47,7 +47,7 @@ bool AbilityMissionInfo::ReadFromParcel(Parcel &parcel)
 
     size = parcel.ReadInt32();
 
-    auto mDescription = parcel.ReadParcelable<MissionDescriptionInfo>();
+    std::unique_ptr<MissionDescriptionInfo> mDescription(parcel.ReadParcelable<MissionDescriptionInfo>());
     if (mDescription == nullptr) {
         return false;
     }

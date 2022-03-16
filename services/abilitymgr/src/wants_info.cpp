@@ -23,7 +23,7 @@ namespace OHOS {
 namespace AAFwk {
 bool WantsInfo::ReadFromParcel(Parcel &parcel)
 {
-    auto wantResquest = parcel.ReadParcelable<Want>();
+    std::unique_ptr<Want> wantResquest(parcel.ReadParcelable<Want>());
     if (wantResquest == nullptr) {
         return false;
     }
