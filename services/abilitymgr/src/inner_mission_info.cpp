@@ -41,6 +41,7 @@ std::string InnerMissionInfo::ToJsonStr() const
     value[KEY_MISSION_NAME] = missionName;
     value[KEY_IS_SINGLETON] = isSingletonMode;
     value[KEY_BUNDLE_NAME] = bundleName;
+    value[KEY_START_METHOD] = startMethod;
     value[KEY_UID] = uid;
     value[KEY_MISSION_ID] = missionInfo.id;
     value[KEY_RUNNING_STATE] = missionInfo.runningState;

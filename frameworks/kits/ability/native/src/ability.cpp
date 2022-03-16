@@ -3632,8 +3632,8 @@ void Ability::OnChange(Rosen::DisplayId displayId)
     }
 
     configuration->CompareDifferent(changeKeyV, newConfig);
-    int size = changeKeyV.size();
-    HILOG_INFO("changeKeyV size :%{public}d", size);
+    uint32_t size = changeKeyV.size();
+    HILOG_INFO("changeKeyV size :%{public}u", size);
     if (!changeKeyV.empty()) {
         configuration->Merge(changeKeyV, newConfig);
         OnConfigurationUpdated(*configuration);
@@ -3682,8 +3682,8 @@ void Ability::OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to)
     }
 
     configuration->CompareDifferent(changeKeyV, newConfig);
-    int size = changeKeyV.size();
-    HILOG_INFO("changeKeyV size :%{public}d", size);
+    uint32_t size = changeKeyV.size();
+    HILOG_INFO("changeKeyV size :%{public}u", size);
     if (!changeKeyV.empty()) {
         configuration->Merge(changeKeyV, newConfig);
         OnConfigurationUpdated(*configuration);

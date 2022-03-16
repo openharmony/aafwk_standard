@@ -343,7 +343,7 @@ int DataShareProxy::BatchInsert(const Uri &uri, const std::vector<NativeRdb::Val
         return ret;
     }
 
-    int count = values.size();
+    int count = (int)values.size();
     if (!data.WriteInt32(count)) {
         HILOG_ERROR("fail to WriteInt32 ret");
         return ret;
@@ -541,7 +541,7 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> DataShareProxy::Exec
         return results;
     }
 
-    int count = operations.size();
+    int count = (int)operations.size();
     if (!data.WriteInt32(count)) {
         HILOG_ERROR("fail to WriteInt32 ret");
         return results;
