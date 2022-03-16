@@ -154,7 +154,7 @@ void AbilityManagerService::OnStart()
         HILOG_INFO("Ability manager service has already started.");
         return;
     }
-    HILOG_INFO("Ability manager service started.");
+    HILOG_INFO("Ability manager service starting.");
     if (!Init()) {
         HILOG_ERROR("Failed to init service.");
         return;
@@ -216,7 +216,7 @@ bool AbilityManagerService::Init()
             HILOG_INFO("file exists");
             return;
         }
-        HILOG_INFO("no such file,create...");
+        HILOG_INFO("no such file, create...");
         std::ofstream outFile(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH, std::ios::out);
         outFile.close();
     };
@@ -227,7 +227,7 @@ bool AbilityManagerService::Init()
 
 void AbilityManagerService::OnStop()
 {
-    HILOG_INFO("Stop service.");
+    HILOG_INFO("Stop Ability manager service.");
     eventLoop_.reset();
     handler_.reset();
     state_ = ServiceRunningState::STATE_NOT_START;
@@ -2591,18 +2591,9 @@ int AbilityManagerService::GenerateAbilityRequest(
     HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
     IN_PROCESS_CALL_WITHOUT_RET(bms->QueryAbilityInfo(want, abilityInfoFlag, userId, request.abilityInfo));
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
-        HILOG_WARN("%{public}s, QueryAbilityInfo again, userId is 0", __func__);
-        IN_PROCESS_CALL_WITHOUT_RET(bms->QueryAbilityInfo(want, abilityInfoFlag, U0_USER_ID, request.abilityInfo));
-    }
-    if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
         // try to find extension
         std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
         IN_PROCESS_CALL_WITHOUT_RET(bms->QueryExtensionAbilityInfos(want, abilityInfoFlag, userId, extensionInfos));
-        if (extensionInfos.size() <= 0) {
-            HILOG_WARN("%{public}s, QueryExtensionAbilityInfos again, userId is 0", __func__);
-            IN_PROCESS_CALL_WITHOUT_RET(bms->QueryExtensionAbilityInfos(want, abilityInfoFlag,
-                U0_USER_ID, extensionInfos));
-        }
         if (extensionInfos.size() <= 0) {
             HILOG_ERROR("Get extension info failed.");
             return RESOLVE_ABILITY_ERR;
