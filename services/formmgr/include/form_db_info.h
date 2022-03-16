@@ -39,6 +39,7 @@ struct FormDBInfo {
     FormDBInfo()
     {
         formId = -1;
+        userId = 0;
     }
 
     /**
