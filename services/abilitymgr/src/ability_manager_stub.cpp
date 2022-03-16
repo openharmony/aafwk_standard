@@ -758,7 +758,7 @@ int AbilityManagerStub::UpdateConfigurationInner(MessageParcel &data, MessagePar
 
 int AbilityManagerStub::GetWantSenderInner(MessageParcel &data, MessageParcel &reply)
 {
-    WantSenderInfo *wantSenderInfo = data.ReadParcelable<WantSenderInfo>();
+    std::unique_ptr<WantSenderInfo> wantSenderInfo(data.ReadParcelable<WantSenderInfo>());
     if (wantSenderInfo == nullptr) {
         HILOG_ERROR("wantSenderInfo is nullptr");
         return ERR_INVALID_VALUE;
@@ -779,7 +779,7 @@ int AbilityManagerStub::SendWantSenderInner(MessageParcel &data, MessageParcel &
         HILOG_ERROR("wantSender is nullptr");
         return ERR_INVALID_VALUE;
     }
-    SenderInfo *senderInfo = data.ReadParcelable<SenderInfo>();
+    std::unique_ptr<SenderInfo> senderInfo(data.ReadParcelable<SenderInfo>());
     if (senderInfo == nullptr) {
         HILOG_ERROR("senderInfo is nullptr");
         return ERR_INVALID_VALUE;
@@ -1173,7 +1173,7 @@ int AbilityManagerStub::GetMissionIdByTokenInner(MessageParcel &data, MessagePar
 int AbilityManagerStub::MoveMissionToFrontByOptionsInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t missionId = data.ReadInt32();
-    StartOptions *startOptions = data.ReadParcelable<StartOptions>();
+    std::unique_ptr<StartOptions> startOptions(data.ReadParcelable<StartOptions>());
     if (startOptions == nullptr) {
         HILOG_ERROR("startOptions is nullptr");
         return ERR_INVALID_VALUE;
@@ -1218,7 +1218,7 @@ int AbilityManagerStub::ReleaseInner(MessageParcel &data, MessageParcel &reply)
         return ERR_INVALID_VALUE;
     }
 
-    auto element = data.ReadParcelable<AppExecFwk::ElementName>();
+    std::unique_ptr<AppExecFwk::ElementName> element(data.ReadParcelable<AppExecFwk::ElementName>());
     if (element == nullptr) {
         HILOG_ERROR("callback stub receive element is nullptr");
         return ERR_INVALID_VALUE;
