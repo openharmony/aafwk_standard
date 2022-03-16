@@ -925,6 +925,7 @@ ErrCode FormMgrAdapter::AddNewFormRecord(const FormItemInfo &info, const int64_t
     // storage info
     if (!newInfo.IsTemporaryForm()) {
         if (ErrCode errorCode = FormDbCache::GetInstance().UpdateDBRecord(formId, formRecord); errorCode != ERR_OK) {
+            HILOG_ERROR("%{public}s fail, UpdateDBRecord failed", __func__);
             return errorCode;
         }
     }
