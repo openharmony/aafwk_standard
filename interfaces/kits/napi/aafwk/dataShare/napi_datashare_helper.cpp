@@ -895,7 +895,10 @@ void RegisterCompleteCB(napi_env env, napi_status status, void *data)
         return;
     }
     HILOG_INFO("NAPI_Register, input params onCB is invalid params, will be release");
-    onCB->observer->ReleaseJSCallback();
+    if (onCB->observer) {
+        HILOG_INFO("NAPI_Register, call ReleaseJSCallback");
+        onCB->observer->ReleaseJSCallback();
+    }
     delete onCB;
     onCB = nullptr;
     HILOG_INFO("NAPI_Register, main event thread complete over an release invalid onCB.");
