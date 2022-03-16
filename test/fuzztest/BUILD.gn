@@ -18,12 +18,18 @@ group("fuzztest") {
 
   deps = [
     "AcquireDataAbility_fuzzer:fuzztest",
+    "CompelVerifyPermission_fuzzer:fuzztest",
     "FinishUserTest_fuzzer:fuzztest",
     "GetWantSender_fuzzer:fuzztest",
+    "IntentParseUri_fuzzer:fuzztest",
     "MoveMissionToFloatingStack_fuzzer:fuzztest",
     "SetMissionLabel_fuzzer:fuzztest",
     "SetMissionStackSetting_fuzzer:fuzztest",
+    "StartAbility_fuzzer:fuzztest",
     "StartContinuation_fuzzer:fuzztest",
+    "StopServiceAbility_fuzzer:fuzztest",
     "UpdateConfiguration_fuzzer:fuzztest",
+    "WantAgentHelperString_fuzzer:fuzztest",
+    "WantAgentHelperTrigger_fuzzer:fuzztest",
   ]
 }
