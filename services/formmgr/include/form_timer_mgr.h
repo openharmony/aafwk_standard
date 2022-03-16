@@ -311,7 +311,7 @@ private:
      * @param updateAtTime The next update time.
      * @return Returns WantAgent.
      */
-    std::shared_ptr<WantAgent> GetUpdateAtWantAgent(long updateAtTime);
+    std::shared_ptr<WantAgent> GetUpdateAtWantAgent(long updateAtTime, int32_t userId);
     /**
      * @brief Get WantAgent.
      * @return Returns WantAgent.

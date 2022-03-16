@@ -711,6 +711,7 @@ void FormTimerMgr::SetTimeSpeed(int32_t timeSpeed)
     HILOG_INFO("%{public}s set time speed to:%{public}d", __func__, timeSpeed);
     timeSpeed_ = timeSpeed;
     HandleResetLimiter();
+    ClearIntervalTimer();
 }
 /**
  * @brief Delete interval timer task.
@@ -850,9 +851,11 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
     tmAtTime.tm_min = findedItem.refreshTask.min;
     int64_t selectTime = FormUtil::GetMillisecondFromTm(tmAtTime);
     if (selectTime < currentTime) {
-        tmAtTime.tm_mday += 1;
+        selectTime += Constants::MS_PER_DAY;
         nextWakeUpTime += (Constants::HOUR_PER_DAY * Constants::MIN_PER_HOUR);
     }
+    HILOG_INFO("%{public}s, selectTime: %{public}" PRId64 ", currentTime: %{public}" PRId64 ".",
+        __func__, selectTime, currentTime);
 
     if (nextWakeUpTime == atTimerWakeUpTime_) {
         HILOG_WARN("%{public}s end, wakeUpTime not change, no need update alarm.", __func__);
@@ -860,10 +863,12 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
     }
 
     auto timerOption = std::make_shared<FormTimerOption>();
-    timerOption->SetType(timerOption->TIMER_TYPE_WAKEUP);
+    timerOption->SetType(((unsigned int)(timerOption->TIMER_TYPE_REALTIME))
+      | ((unsigned int)(timerOption->TIMER_TYPE_WAKEUP)));
     timerOption->SetRepeat(false);
     timerOption->SetInterval(0);
-    std::shared_ptr<WantAgent> wantAgent = GetUpdateAtWantAgent(findedItem.updateAtTime);
+    int32_t userId = findedItem.refreshTask.userId;
+    std::shared_ptr<WantAgent> wantAgent = GetUpdateAtWantAgent(findedItem.updateAtTime, userId);
     if (wantAgent == nullptr) {
         HILOG_ERROR("%{public}s, failed to create wantAgent.", __func__);
         return false;
@@ -874,11 +879,15 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
     if (currentUpdateAtWantAgent != nullptr) {
         ClearUpdateAtTimerResource();
     }
-    currentUpdateAtWantAgent = wantAgent;
+    auto timeSinceEpoch = std::chrono::steady_clock::now().time_since_epoch();
+    int64_t timeInSec = std::chrono::duration_cast<std::chrono::milliseconds>(timeSinceEpoch).count();
+    int64_t nextTime = timeInSec + (selectTime - currentTime);
+    HILOG_INFO("%{public}s, nextTime: %{public}" PRId64 ".", __func__, nextTime);
 
+    currentUpdateAtWantAgent = wantAgent;
     updateAtTimerId_ = MiscServices::TimeServiceClient::GetInstance()->CreateTimer(timerOption);
     bool bRet = MiscServices::TimeServiceClient::GetInstance()->StartTimer(updateAtTimerId_,
-        static_cast<uint64_t>(selectTime));
+        static_cast<uint64_t>(nextTime));
     if (!bRet) {
         HILOG_ERROR("%{public}s failed, init update at timer task error", __func__);
         return false;
@@ -893,7 +902,7 @@ bool FormTimerMgr::UpdateAtTimerAlarm()
  * @param updateAtTime The next update time.
  * @return Returns WantAgent.
  */
-std::shared_ptr<WantAgent> FormTimerMgr::GetUpdateAtWantAgent(long updateAtTime)
+std::shared_ptr<WantAgent> FormTimerMgr::GetUpdateAtWantAgent(long updateAtTime, int32_t userId)
 {
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("", "", "");
@@ -906,7 +915,7 @@ std::shared_ptr<WantAgent> FormTimerMgr::GetUpdateAtWantAgent(long updateAtTime)
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_UPDATE_AT_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
         WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, wants, nullptr);
-    return WantAgentHelper::GetWantAgent(wantAgentInfo);
+    return WantAgentHelper::GetWantAgent(wantAgentInfo, userId);
 }
 
 /**
@@ -1159,7 +1168,7 @@ void FormTimerMgr::EnsureInitIntervalTimer()
 
     intervalTimer_ = std::make_shared<Utils::Timer>("interval timer");
     auto timeCallback = []() { FormTimerMgr::GetInstance().OnIntervalTimeOut(); };
-    intervalTimer_->Register(timeCallback, Constants::MIN_PERIOD);
+    intervalTimer_->Register(timeCallback, Constants::MIN_PERIOD / timeSpeed_);
     intervalTimer_->Setup();
 
     HILOG_INFO("%{public}s end", __func__);
