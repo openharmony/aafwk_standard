@@ -166,11 +166,6 @@ OHOS::AppExecFwk::ElementName Want::GetElement() const
  */
 Want &Want::SetElementName(const std::string &bundleName, const std::string &abilityName)
 {
-    if (bundleName.empty() || abilityName.empty()) {
-        ABILITYBASE_LOGE("Want::SetElementName : The bundleName and abilityName can't be empty.");
-        return *this;
-    }
-
     operation_.SetBundleName(bundleName);
     operation_.SetAbilityName(abilityName);
     return *this;
@@ -185,10 +180,6 @@ Want &Want::SetElementName(const std::string &bundleName, const std::string &abi
  */
 Want &Want::SetElementName(const std::string &deviceId, const std::string &bundleName, const std::string &abilityName)
 {
-    if (bundleName.empty() || abilityName.empty()) {
-        ABILITYBASE_LOGE("Want::SetElementName : The bundleName and abilityName can't be empty.");
-        return *this;
-    }
     operation_.SetDeviceId(deviceId);
     operation_.SetBundleName(bundleName);
     operation_.SetAbilityName(abilityName);
