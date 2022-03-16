@@ -528,10 +528,6 @@ napi_value WrapWantParams(napi_env env, const AAFwk::WantParams &wantParams)
 {
     HILOG_INFO("%{public}s called.", __func__);
     napi_value jsObject = nullptr;
-    if (wantParams.IsEmpty()) {
-        HILOG_INFO("%{public}s called, wantParams is null.", __func__);
-        return jsObject;
-    }
     NAPI_CALL(env, napi_create_object(env, &jsObject));
 
     napi_value jsValue = nullptr;
