@@ -42,8 +42,8 @@ public:
     int32_t specification;
     bool isEnableUpdate = false;
     long updateDuration = false;
-    int updateAtHour = 0;
-    int updateAtMin = 0;
+    int updateAtHour = -1;
+    int updateAtMin = -1;
     FormProviderInfo formProviderInfo;
     std::vector<std::string> hapSourceDirs;
     std::string jsFormCodePath = "";
