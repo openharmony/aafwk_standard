@@ -159,22 +159,21 @@ public:
      * @param want, want object.
      * @param observer, test observer remote object.
      * @param bundleInfo, bundle info.
+     * @param userId the user id.
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-        const BundleInfo &bundleInfo) override;
+        const BundleInfo &bundleInfo, int32_t userId) override;
 
     /**
      * @brief Finish user test.
      * @param msg user test message.
      * @param resultCode user test result Code.
      * @param bundleName user test bundleName.
-     * @param pid the user test process id.
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int FinishUserTest(
-        const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid) override;
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override;
 
     virtual void ScheduleAcceptWantDone(
         const int32_t recordId, const AAFwk::Want &want, const std::string &flag) override;
