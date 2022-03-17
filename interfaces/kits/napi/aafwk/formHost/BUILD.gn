@@ -26,9 +26,9 @@ ohos_shared_library("formhost_napi") {
   ]
 
   deps = [
-    "${kits_path}/appkit:appkit_native",
     "${aafwk_path}/interfaces/kits/napi/aafwk/formUtil:formutil_napi",
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${kits_path}/appkit:appkit_native",
   ]
 
   external_deps = [
