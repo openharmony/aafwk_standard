@@ -12,11 +12,12 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 ohos_shared_library("wantconstant") {
   include_dirs = [
     "//third_party/node/src",
     "//third_party/libuv/include",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/wantConstant",
+    "./",
   ]
 
   sources = [
@@ -25,7 +26,7 @@ ohos_shared_library("wantconstant") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
+    "${kits_path}/appkit:appkit_native",
     "//third_party/libuv:uv_static",
   ]
 

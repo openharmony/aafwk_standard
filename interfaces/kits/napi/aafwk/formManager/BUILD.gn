@@ -12,11 +12,9 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 ohos_shared_library("formmanager") {
-  include_dirs = [
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formManager",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
-  ]
+  include_dirs = [ "./" ]
 
   sources = [
     "napi_form_manager.cpp",
@@ -24,8 +22,8 @@ ohos_shared_library("formmanager") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${kits_path}/appkit:appkit_native",
   ]
 
   external_deps = [

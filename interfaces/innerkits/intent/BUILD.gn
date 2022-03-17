@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 config("intent_config") {
   visibility = [ ":*" ]
@@ -29,13 +30,13 @@ config("intent_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "//utils/native/base/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/intent/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
-    "//foundation/aafwk/standard/services/common/include",
+    "${innerkits_path}/intent/include",
+    "${innerkits_path}/uri/include",
+    "${services_path}/common/include",
   ]
 }
 
-intentImpl = "//foundation/aafwk/standard/frameworks/kits/content/cpp/src/ohos/aafwk/content"
+intentImpl = "${kits_path}/content/cpp/src/ohos/aafwk/content"
 
 ohos_shared_library("intent") {
   sources = [

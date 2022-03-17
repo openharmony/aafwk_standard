@@ -13,6 +13,7 @@
 
 # import("//ark/ts2abc/ts2panda/ts2abc_config.gni")
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
 ohos_shared_library("uripermissionmanager_napi") {
   sources = [
@@ -20,15 +21,13 @@ ohos_shared_library("uripermissionmanager_napi") {
     "native_module.cpp",
   ]
 
-  configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
+  configs = [ "${services_path}/common:common_config" ]
 
-  include_dirs = [
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
-  ]
+  include_dirs = []
 
   deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/uri_permission:uri_permission_mgr",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${innerkits_path}/uri_permission:uri_permission_mgr",
   ]
 
   external_deps = [

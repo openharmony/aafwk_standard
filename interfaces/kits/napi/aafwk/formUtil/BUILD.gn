@@ -13,24 +13,27 @@
 
 #import("//build/config/ohos/rules.gni")
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
+config("formutil_napi_public_config") {
+  include_dirs = [ "./" ]
+}
+
 ohos_shared_library("formutil_napi") {
   include_dirs = [
-    "//foundation/ace/napi/interfaces/kits",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/formUtil",
+    "./",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 
+  public_configs = [ ":formutil_napi_public_config" ]
+
   sources = [ "napi_form_util.cpp" ]
 
-  deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-  ]
+  deps = [ "${aafwk_path}/frameworks/kits/appkit:appkit_native" ]
 
   external_deps = [
     "ability_base:base",
     "ability_runtime:ability_manager",
+    "ability_runtime:abilitykit_native",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",

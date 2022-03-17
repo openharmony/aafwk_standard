@@ -20,7 +20,7 @@ config("appmgr_config") {
     "include",
     "${services_path}/common/include",
     "//base/startup/appspawn_standard/interfaces/innerkits/include",
-    "//foundation/aafwk/standard/tools/aa/include",
+    "${aafwk_path}/tools/aa/include",
   ]
 }
 
