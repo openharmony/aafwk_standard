@@ -73,7 +73,11 @@ ohos_shared_library("runtime") {
     "resmgr_standard:global_resmgr",
     "utils_base:utils",
   ]
-
+  if (is_standard_system) {
+    external_deps += [ "startup_l2:syspara" ]
+  } else {
+    external_deps += [ "startup:syspara" ]
+  }
   subsystem_name = "aafwk"
   part_name = "ability_runtime"
 }

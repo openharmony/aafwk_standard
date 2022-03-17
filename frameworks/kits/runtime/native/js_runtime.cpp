@@ -29,6 +29,7 @@
 #include "js_runtime_utils.h"
 
 #include "systemcapability.h"
+#include "parameters.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -82,6 +83,9 @@ private:
     bool Initialize(const Runtime::Options& options) override
     {
         panda::RuntimeOption pandaOption;
+        int arkProperties = OHOS::system::GetIntParameter<int>("persist.ark.properties", -1);
+        pandaOption.SetArkProperties(arkProperties);
+        HILOG_INFO("ArkJSRuntime::Initialize ark properties = %{public}d", arkProperties);
         pandaOption.SetGcType(panda::RuntimeOption::GC_TYPE::GEN_GC);
         pandaOption.SetGcPoolSize(DEFAULT_GC_POOL_SIZE);
         pandaOption.SetLogLevel(panda::RuntimeOption::LOG_LEVEL::ERROR);
