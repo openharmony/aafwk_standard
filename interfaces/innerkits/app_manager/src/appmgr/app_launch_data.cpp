@@ -153,6 +153,11 @@ bool UserTestRecord::Marshalling(Parcel &parcel) const
         HILOG_ERROR("Failed to write isFinished");
         return false;
     }
+
+    if (!parcel.WriteInt32(userId)) {
+        HILOG_ERROR("Failed to write userId");
+        return false;
+    }
     return true;
 }
 
@@ -187,6 +192,7 @@ bool UserTestRecord::ReadFromParcel(Parcel &parcel)
     }
 
     isFinished = parcel.ReadBool();
+    userId = parcel.ReadInt32();
     return true;
 }
 }  // namespace AppExecFwk

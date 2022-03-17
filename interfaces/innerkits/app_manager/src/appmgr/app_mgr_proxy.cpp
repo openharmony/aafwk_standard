@@ -477,8 +477,8 @@ int AppMgrProxy::GetForegroundApplications(std::vector<AppStateData> &list)
     return reply.ReadInt32();
 }
 
-int AppMgrProxy::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-    const BundleInfo &bundleInfo)
+int AppMgrProxy::StartUserTestProcess(
+    const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -499,6 +499,10 @@ int AppMgrProxy::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemot
         HILOG_ERROR("bundleInfo write failed.");
         return ERR_FLATTEN_OBJECT;
     }
+    if (!data.WriteInt32(userId)) {
+        HILOG_ERROR("userId write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
     int32_t ret =
         Remote()->SendRequest(static_cast<uint32_t>(IAppMgr::Message::START_USER_TEST_PROCESS), data, reply, option);
     if (ret != NO_ERROR) {
@@ -508,8 +512,7 @@ int AppMgrProxy::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemot
     return reply.ReadInt32();
 }
 
-int AppMgrProxy::FinishUserTest(
-    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+int AppMgrProxy::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -528,10 +531,6 @@ int AppMgrProxy::FinishUserTest(
     }
     if (!data.WriteString(bundleName)) {
         HILOG_ERROR("bundleName write failed.");
-        return ERR_FLATTEN_OBJECT;
-    }
-    if (!data.WriteInt32(pid)) {
-        HILOG_ERROR("pid write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     int32_t ret =
