@@ -54,7 +54,7 @@ void AbilityManagerClientTest::SetUp()
 {
     client_ = std::make_shared<AbilityManagerClient>();
     mock_ = new AbilityManagerStubTestMock();
-    client_->remoteObject_ = mock_;
+    client_->proxy_ = mock_;
 }
 
 /*

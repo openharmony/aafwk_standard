@@ -111,7 +111,7 @@ void PandingWantManagerTest::SetUp()
         amsSerice = new MockAbilityMgrService();
     }
     AbilityManagerClient::GetInstance();
-    AbilityManagerClient::GetInstance()->remoteObject_ = amsSerice;
+    AbilityManagerClient::GetInstance()->proxy_ = amsSerice;
 }
 
 void PandingWantManagerTest::TearDown()
