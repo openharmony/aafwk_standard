@@ -79,6 +79,7 @@ const int32_t APP_MEMORY_SIZE = 512;
 const int32_t GET_PARAMETER_INCORRECT = -9;
 const int32_t GET_PARAMETER_OTHER = -1;
 const int32_t SIZE_10 = -1;
+const int32_t ACCOUNT_MGR_SERVICE_UID = 3046;
 const bool isRamConstrainedDevice = false;
 const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.dalvikheaplimit";
 const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
@@ -3684,9 +3685,24 @@ int AbilityManagerService::StartUser(int userId)
         return CHECK_PERMISSION_FAILED;
     }
 
-    if (userController_) {
-        return userController_->StartUser(userId, true);
+    std::string oldIdentity;
+    if (IPCSkeleton::GetCallingUid() == ACCOUNT_MGR_SERVICE_UID) {
+        oldIdentity = IPCSkeleton::ResetCallingIdentity();
+        HILOG_INFO("calling uid after reset %{public}d.", IPCSkeleton::GetCallingUid());
     }
+
+    if (userController_) {
+        int ret = userController_->StartUser(userId, true);
+        if (!oldIdentity.empty()) {
+            IPCSkeleton::SetCallingIdentity(oldIdentity);
+        }
+        return ret;
+    }
+
+    if (!oldIdentity.empty()) {
+        IPCSkeleton::SetCallingIdentity(oldIdentity);
+    }
+
     return 0;
 }
 
