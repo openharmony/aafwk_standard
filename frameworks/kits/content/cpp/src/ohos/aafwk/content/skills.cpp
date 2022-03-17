@@ -19,7 +19,7 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace AAFwk {
 
-const int LENGTH_FOR_FINDMINETYPE = 3;
+const size_t LENGTH_FOR_FINDMINETYPE = 3;
 /**
  * @brief Default constructor used to create a Skills instance.
  */
@@ -804,7 +804,7 @@ bool Skills::FindMimeType(const std::string &type)
         return true;
     }
 
-    int typeLength = (int)type.length();
+    size_t typeLength = type.length();
     if (typeLength == LENGTH_FOR_FINDMINETYPE && type == "*/*") {
         return !types.empty();
     }

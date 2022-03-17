@@ -98,8 +98,8 @@ bool DataAbilityOperation::operator==(const DataAbilityOperation &other) const
     if (valuesBucketReferences_ != other.valuesBucketReferences_) {
         return false;
     }
-    int backReferencesCount = dataAbilityPredicatesBackReferences_.size();
-    int otherBackReferencesCount = other.dataAbilityPredicatesBackReferences_.size();
+    size_t backReferencesCount = dataAbilityPredicatesBackReferences_.size();
+    size_t otherBackReferencesCount = other.dataAbilityPredicatesBackReferences_.size();
     if (backReferencesCount != otherBackReferencesCount) {
         return false;
     }
@@ -337,7 +337,7 @@ bool DataAbilityOperation::Marshalling(Parcel &out) const
 
     int referenceSize = 0;
     if (!dataAbilityPredicatesBackReferences_.empty()) {
-        referenceSize = dataAbilityPredicatesBackReferences_.size();
+        referenceSize = (int)dataAbilityPredicatesBackReferences_.size();
         if (!out.WriteInt32(referenceSize)) {
             HILOG_ERROR("DataAbilityOperation::Marshalling WriteInt32(VALUE_OBJECT) error");
             return false;

@@ -1504,7 +1504,7 @@ int AbilityManagerStub::DoAbilityBackground(const sptr<IRemoteObject> &token, ui
 int AbilityManagerStub::DoAbilityForegroundInner(MessageParcel &data, MessageParcel &reply)
 {
     sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
-    int32_t flag = data.ReadUint32();
+    uint32_t flag = data.ReadUint32();
     auto result = DoAbilityForeground(token, flag);
     reply.WriteInt32(result);
 
@@ -1514,7 +1514,7 @@ int AbilityManagerStub::DoAbilityForegroundInner(MessageParcel &data, MessagePar
 int AbilityManagerStub::DoAbilityBackgroundInner(MessageParcel &data, MessageParcel &reply)
 {
     sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
-    int32_t flag = data.ReadUint32();
+    uint32_t flag = data.ReadUint32();
     auto result = DoAbilityBackground(token, flag);
     reply.WriteInt32(result);
     return NO_ERROR;
