@@ -88,6 +88,8 @@ const std::string EVENT_MESSAGE_START_SPECIFIED_ABILITY_TIMEOUT = "Start Specifi
 const std::string EVENT_MESSAGE_START_PROCESS_SPECIFIED_ABILITY_TIMEOUT = "Start Process Specified Ability TimeOut!";
 const std::string EVENT_MESSAGE_DEFAULT = "AppMgrServiceInner HandleTimeOut!";
 
+const std::string SYSTEM_BASIC = "system_basic";
+const std::string SYSTEM_CORE = "system_core";
 
 int32_t GetUserIdByUid(int32_t uid)
 {
@@ -407,8 +409,8 @@ int32_t AppMgrServiceInner::KillApplication(const std::string &bundleName)
         return ERR_INVALID_OPERATION;
     }
 
-    if (applicationInfo->appPrivilegeLevel != "system_basic" || applicationInfo->appPrivilegeLevel != "system_core") {
-        HILOG_ERROR("caller is not system_basic.");
+    if (applicationInfo->appPrivilegeLevel != SYSTEM_BASIC && applicationInfo->appPrivilegeLevel != SYSTEM_CORE) {
+        HILOG_ERROR("caller is not system_basic or system_core.");
         return ERR_INVALID_OPERATION;
     }
 
