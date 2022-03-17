@@ -392,7 +392,7 @@ int AbilitySchedulerStub::BatchInsertInner(MessageParcel &data, MessageParcel &r
 
     std::vector<NativeRdb::ValuesBucket> values;
     for (int i = 0; i < count; i++) {
-        NativeRdb::ValuesBucket *value = data.ReadParcelable<NativeRdb::ValuesBucket>();
+        std::unique_ptr<NativeRdb::ValuesBucket> value(data.ReadParcelable<NativeRdb::ValuesBucket>());
         if (value == nullptr) {
             HILOG_ERROR("AbilitySchedulerStub value is nullptr, index = %{public}d", i);
             return ERR_INVALID_VALUE;

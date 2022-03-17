@@ -26,7 +26,7 @@ bool MissionInfo::ReadFromParcel(Parcel &parcel)
     time = Str16ToStr8(parcel.ReadString16());
     label = Str16ToStr8(parcel.ReadString16());
     iconPath = Str16ToStr8(parcel.ReadString16());
-    auto parcelWant = parcel.ReadParcelable<Want>();
+    std::unique_ptr<Want> parcelWant(parcel.ReadParcelable<Want>());
     if (parcelWant == nullptr) {
         return false;
     }
