@@ -395,7 +395,7 @@ ErrCode DataShareStub::CmdExecuteBatch(MessageParcel &data, MessageParcel &reply
     }
 
     std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> results = ExecuteBatch(operations);
-    int total = results.size();
+    int total = (int)(results.size());
     if (!reply.WriteInt32(total)) {
         HILOG_ERROR("DataShareStub::CmdExecuteBatchInner fail to WriteInt32 ret");
         return ERR_INVALID_VALUE;
