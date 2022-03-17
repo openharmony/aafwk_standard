@@ -1058,5 +1058,15 @@ void AppRunningRecord::SetDebugApp(bool isDebugApp)
     HILOG_INFO("SetDebugApp come, value is %{public}d", isDebugApp);
     isDebugApp_ = isDebugApp;
 }
+
+void AppRunningRecord::SetKilling()
+{
+    isKilling_ = true;
+}
+
+bool AppRunningRecord::IsKilling() const
+{
+    return isKilling_;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

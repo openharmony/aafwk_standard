@@ -245,21 +245,21 @@ public:
     void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
     int GetProcessRunningInfos(std::vector<AppExecFwk::RunningProcessInfo> &info);
 
-	/**
+    /**
      * Start a user test
      */
-    int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer, const AppExecFwk::BundleInfo &bundleInfo);
+    int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer, const AppExecFwk::BundleInfo &bundleInfo,
+        int32_t userId);
 
     /**
      * @brief Finish user test.
      * @param msg user test message.
      * @param resultCode user test result Code.
      * @param bundleName user test bundleName.
-     * @param pid the user test process id.
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid);
+    int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName);
 
     int GetProcessRunningInfosByUserId(std::vector<AppExecFwk::RunningProcessInfo> &info, int32_t userId);
     std::string ConvertAppState(const AppState &state);

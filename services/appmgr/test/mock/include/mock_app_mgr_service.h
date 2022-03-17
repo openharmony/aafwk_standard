@@ -59,13 +59,12 @@ public:
     MOCK_METHOD0(BlockAppService, int());
 
     virtual int StartUserTestProcess(
-        const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo)
+        const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo, int32_t userId)
     {
         return 0;
     }
 
-    virtual int FinishUserTest(
-        const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
     {
         return 0;
     }
