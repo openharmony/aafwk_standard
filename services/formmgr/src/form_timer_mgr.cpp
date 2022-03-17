@@ -54,7 +54,8 @@ FormTimerMgr::~FormTimerMgr()
  */
 bool FormTimerMgr::AddFormTimer(const FormTimer &task)
 {
-    HILOG_INFO("%{public}s, formId: %{public}" PRId64 ", userId:%{public}d", __func__, task.formId, task.userId);
+    HILOG_INFO("%{public}s formId:%{public}s userId:%{public}d", __func__,
+        std::to_string(task.formId).c_str(), task.userId);
     if (task.isUpdateAt) {
         if (task.hour >= Constants::MIN_TIME && task.hour <= Constants::MAX_HOUR &&
             task.min >= Constants::MIN_TIME && task.min <= Constants::MAX_MINUTE) {
@@ -100,6 +101,8 @@ bool FormTimerMgr::AddFormTimer(const int64_t formId, const long updateDuration,
 bool FormTimerMgr::AddFormTimer(const int64_t formId, const long updateAtHour,
                                 const long updateAtMin, const int32_t userId)
 {
+    HILOG_INFO("%{public}s formId:%{public}s time:%{public}s-%{public}s", __func__,
+        std::to_string(formId).c_str(), std::to_string(updateAtHour).c_str(), std::to_string(updateAtMin).c_str());
     FormTimer timerTask(formId, updateAtHour, updateAtMin, userId);
     return AddFormTimer(timerTask);
 }

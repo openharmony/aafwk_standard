@@ -942,21 +942,22 @@ ErrCode FormMgrAdapter::AddNewFormRecord(const FormItemInfo &info, const int64_t
 ErrCode FormMgrAdapter::AddFormTimer(const FormRecord &formRecord)
 {
     HILOG_INFO("%{public}s start", __func__);
-    if (formRecord.isEnableUpdate && !formRecord.formTempFlg) {
-        bool timerRet = false;
-        if (formRecord.updateDuration > 0) {
-            timerRet = FormTimerMgr::GetInstance().AddFormTimer(formRecord.formId,
-                formRecord.updateDuration, formRecord.userId);
-        } else {
-            timerRet = FormTimerMgr::GetInstance().AddFormTimer(formRecord.formId, formRecord.updateAtHour,
-                formRecord.updateAtMin, formRecord.userId);
-        }
-        if (!timerRet) {
-            HILOG_ERROR("%{public}s fail, add form timer failed", __func__);
-            return ERR_APPEXECFWK_FORM_COMMON_CODE;
-        }
+    if (!formRecord.isEnableUpdate || formRecord.formTempFlg) {
+        HILOG_INFO("%{public}s isEnableUpdate:%{public}d formTempFlg:%{public}d.",
+            __func__, formRecord.isEnableUpdate, formRecord.formTempFlg);
+        return ERR_OK;
     }
-    HILOG_INFO("%{public}s end", __func__);
+    if (formRecord.updateDuration > 0) {
+        bool ret = FormTimerMgr::GetInstance().AddFormTimer(formRecord.formId,
+            formRecord.updateDuration, formRecord.userId);
+        return ret ? ERR_OK : ERR_APPEXECFWK_FORM_COMMON_CODE;
+    }
+    if (formRecord.updateAtHour >= 0 && formRecord.updateAtMin >= 0) {
+        bool ret = FormTimerMgr::GetInstance().AddFormTimer(formRecord.formId,
+            formRecord.updateAtHour, formRecord.updateAtMin, formRecord.userId);
+        return ret ? ERR_OK : ERR_APPEXECFWK_FORM_COMMON_CODE;
+    }
+    HILOG_INFO("%{public}s no need add form timer.", __func__);
     return ERR_OK;
 }
 
