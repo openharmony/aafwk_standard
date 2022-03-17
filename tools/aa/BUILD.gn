@@ -17,10 +17,10 @@ import("//foundation/aafwk/standard/aafwk.gni")
 config("ability_command_config") {
   include_dirs = [
     "include",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
-    "//foundation/aafwk/standard/services/abilitymgr/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
+    "${innerkits_path}/app_manager/include/appmgr",
+    "${innerkits_path}/uri/include",
+    "${services_path}/abilitymgr/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//third_party/jsoncpp/include",
   ]

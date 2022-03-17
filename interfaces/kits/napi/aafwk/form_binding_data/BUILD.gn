@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 ohos_shared_library("formbindingdata_napi") {
   include_dirs = []
@@ -21,7 +22,7 @@ ohos_shared_library("formbindingdata_napi") {
     "form_binding_data_module.cpp",
   ]
 
-  configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
+  configs = [ "${services_path}/common:common_config" ]
 
   deps = []
 

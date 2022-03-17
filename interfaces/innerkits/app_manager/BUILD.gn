@@ -17,9 +17,9 @@ import("//foundation/aafwk/standard/aafwk.gni")
 config("appmgr_sdk_config") {
   include_dirs = [
     "include/appmgr",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
+    "${kits_path}/ability/native/include",
+    "${innerkits_path}/ability_manager/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
   ]
 }
 
@@ -80,7 +80,7 @@ ohos_shared_library("app_manager") {
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
-  deps = [ "//foundation/appexecfwk/standard/common:libappexecfwk_common" ]
+  deps = [ "${appexecfwk_path}/common:libappexecfwk_common" ]
 
   external_deps = [
     "ability_base:base",
@@ -103,7 +103,7 @@ ohos_shared_library("app_manager") {
 config("configuration_sdk_config") {
   include_dirs = [
     "include/appmgr",
-    "//foundation/aafwk/standard/interfaces/innerkits/log/include",
+    "${innerkits_path}/log/include",
     "//third_party/json/include",
   ]
 }

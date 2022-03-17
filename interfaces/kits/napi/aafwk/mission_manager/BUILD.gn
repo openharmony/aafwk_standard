@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
 
 ohos_shared_library("missionmanager_napi") {
@@ -24,16 +25,13 @@ ohos_shared_library("missionmanager_napi") {
     "native_module.cpp",
   ]
 
-  configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
+  configs = [ "${services_path}/common:common_config" ]
 
-  include_dirs = [
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/kits",
-  ]
+  include_dirs = [ "${kits_path}/ability/native/include/continuation/kits" ]
 
   deps = [
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${services_path}/abilitymgr:abilityms",
   ]
 
   external_deps = [
@@ -72,11 +70,9 @@ ohos_shared_library("distributedmissionmanager") {
   include_dirs = [
     "//third_party/libuv/include",
     "//third_party/node/src",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common/",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
   ]
 
-  configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
+  configs = [ "${services_path}/common:common_config" ]
 
   cflags = [
     "-fPIC",
@@ -88,14 +84,12 @@ ohos_shared_library("distributedmissionmanager") {
     "mission_continue_stub.cpp",
   ]
 
-  deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
-  ]
+  deps = [ "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common" ]
 
   external_deps = [
     "ability_base:want",
     "ability_runtime:ability_manager",
+    "ability_runtime:abilitykit_native",
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",

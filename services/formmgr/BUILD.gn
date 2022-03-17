@@ -31,8 +31,8 @@ ohos_shared_library("libfms") {
   include_dirs = [
     "${services_path}/common:perm_verification",
     "${aafwk_path}/services/common/include",
-    "//foundation/appexecfwk/standard/common/log/include",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime",
+    "${appexecfwk_path}/common/log/include",
+    "${kits_path}/appkit/native/ability_runtime",
 
     #  "//third_party/libuuid",
   ]
@@ -88,8 +88,8 @@ ohos_shared_library("libfms") {
   }
   deps = [
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${kits_path}/appkit:app_context",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
 
     #  "//third_party/libuuid:libuuid_static",
   ]
