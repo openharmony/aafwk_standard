@@ -363,6 +363,10 @@ bool FormTimerMgr::SetNextRefreshTime(const int64_t formId, const long nextGapTi
         HILOG_ERROR("%{public}s, failed to UpdateDynamicAlarm", __func__);
         return false;
     }
+    if (!UpdateLimiterAlarm()) {
+        HILOG_ERROR("%{public}s, failed to UpdateLimiterAlarm", __func__);
+        return false;
+    }
     refreshLimiter_.AddItem(formId);
     SetEnableFlag(formId, false);
 
@@ -421,6 +425,10 @@ bool FormTimerMgr::AddUpdateAtTimer(const FormTimer &task)
         atItem.updateAtTime = task.hour * Constants::MIN_PER_HOUR + task.min;
 
         AddUpdateAtItem(atItem);
+    }
+    if (!UpdateLimiterAlarm()) {
+        HILOG_ERROR("%{public}s, failed to UpdateLimiterAlarm", __func__);
+        return false;
     }
 
     if (!UpdateAtTimerAlarm()) {
@@ -492,6 +500,7 @@ bool FormTimerMgr::HandleSystemTimeChanged()
 {
     HILOG_INFO("%{public}s start", __func__);
     if (!updateAtTimerTasks_.empty()) {
+        atTimerWakeUpTime_ = LONG_MAX;
         return UpdateAtTimerAlarm();
     }
 
@@ -949,10 +958,10 @@ bool FormTimerMgr::UpdateLimiterAlarm()
 {
     HILOG_INFO("%{public}s start", __func__);
     if (limiterTimerId_ != 0L) {
-        HILOG_INFO("%{public}s clear dynamic timer start", __func__);
+        HILOG_INFO("%{public}s clear limiter timer start", __func__);
         MiscServices::TimeServiceClient::GetInstance()->StopTimer(limiterTimerId_);
         MiscServices::TimeServiceClient::GetInstance()->DestroyTimer(limiterTimerId_);
-        HILOG_INFO("%{public}s clear dynamic timer end", __func__);
+        HILOG_INFO("%{public}s clear limiter timer end", __func__);
         limiterTimerId_ = 0L;
     }
 
@@ -981,7 +990,7 @@ bool FormTimerMgr::UpdateLimiterAlarm()
     timerOption->SetWantAgent(wantAgent);
 
     if (currentLimiterWantAgent != nullptr) {
-        ClearUpdateAtTimerResource();
+        ClearLimiterTimerResource();
     }
     currentLimiterWantAgent = wantAgent;
 
