@@ -4224,13 +4224,7 @@ int AbilityManagerService::StartUserTest(const Want &want, const sptr<IRemoteObj
         }
     }
 
-    int ret = KillProcess(bundleName);
-    if (ret) {
-        HILOG_ERROR("Failed to kill process.");
-        return ret;
-    }
-
-    return DelayedSingleton<AppScheduler>::GetInstance()->StartUserTest(want, observer, bundleInfo);
+    return DelayedSingleton<AppScheduler>::GetInstance()->StartUserTest(want, observer, bundleInfo, GetUserId());
 }
 
 int AbilityManagerService::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
@@ -4240,8 +4234,8 @@ int AbilityManagerService::FinishUserTest(const std::string &msg, const int &res
         HILOG_ERROR("Invalid bundle name.");
         return ERR_INVALID_VALUE;
     }
-    pid_t callingPid = IPCSkeleton::GetCallingPid();
-    return DelayedSingleton<AppScheduler>::GetInstance()->FinishUserTest(msg, resultCode, bundleName, callingPid);
+
+    return DelayedSingleton<AppScheduler>::GetInstance()->FinishUserTest(msg, resultCode, bundleName);
 }
 
 int AbilityManagerService::GetCurrentTopAbility(sptr<IRemoteObject> &token)
