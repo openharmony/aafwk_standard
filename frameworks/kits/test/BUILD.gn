@@ -121,7 +121,7 @@ ohos_moduletest("ability_moduletest") {
 
   if (ability_runtime_graphics) {
     deps += [ "//foundation/multimedia/image_standard/interfaces/innerkits:image_native" ]
-    external_deps += [ "multimodalinput_base:libmmi-client" ]
+    external_deps += [ "input:libmmi-client" ]
   }
 }
 
@@ -184,7 +184,7 @@ ohos_moduletest("ability_conetxt_test") {
     "native_appdatamgr:native_rdb",
   ]
   if (ability_runtime_graphics) {
-    external_deps += [ "multimodalinput_base:libmmi-client" ]
+    external_deps += [ "input:libmmi-client" ]
   }
 }
 
@@ -288,7 +288,7 @@ ohos_moduletest("data_ability_operation_moduletest") {
 
   if (ability_runtime_graphics) {
     deps += [ "//foundation/multimedia/image_standard/interfaces/innerkits:image_native" ]
-    external_deps += [ "multimodalinput_base:libmmi-client" ]
+    external_deps += [ "input:libmmi-client" ]
   }
 }
 
@@ -335,7 +335,7 @@ ohos_moduletest("data_ability_helper_module_test") {
   ]
 
   if (ability_runtime_graphics) {
-    external_deps += [ "multimodalinput_base:libmmi-client" ]
+    external_deps += [ "input:libmmi-client" ]
   }
 }
 

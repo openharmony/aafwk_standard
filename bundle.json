@@ -38,7 +38,7 @@
               "ipc",
               "native_appdatamgr",
               "napi",
-              "multimodalinput_base",
+              "input",
               "multimedia_image_standard",
               "os_account_standard",
               "power_manager_native",
