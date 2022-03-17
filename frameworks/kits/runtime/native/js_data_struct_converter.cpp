@@ -170,12 +170,11 @@ NativeValue* CreateJsApplicationInfo(NativeEngine& engine, const AppExecFwk::App
             array->SetElement(index++, CreateJsModuleInfo(engine, entity));
         }
     }
-    object->SetProperty("moduleInfos", arrayValue);
-
+    object->SetProperty("moduleInfo", arrayValue);
     for (auto &item : applicationInfo.metaData) {
         object->SetProperty(item.first.c_str(), CreateJsCustomizeDataArray(engine, item.second));
     }
-
+    // metadata: Map<string, Array<Metadata>>;
     for (auto &item : applicationInfo.metadata) {
         object->SetProperty(item.first.c_str(), CreateJsMetadataArray(engine, item.second));
     }
