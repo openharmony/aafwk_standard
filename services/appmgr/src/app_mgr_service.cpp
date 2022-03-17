@@ -367,25 +367,26 @@ int32_t AppMgrService::GetForegroundApplications(std::vector<AppStateData> &list
 }
 
 int AppMgrService::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-    const AppExecFwk::BundleInfo &bundleInfo)
+    const AppExecFwk::BundleInfo &bundleInfo, int32_t userId)
 {
     if (!IsReady()) {
         return ERR_INVALID_OPERATION;
     }
     std::function<void()> startUserTestProcessFunc =
-        std::bind(&AppMgrServiceInner::StartUserTestProcess, appMgrServiceInner_, want, observer, bundleInfo);
+        std::bind(&AppMgrServiceInner::StartUserTestProcess, appMgrServiceInner_, want, observer, bundleInfo, userId);
     handler_->PostTask(startUserTestProcessFunc, TASK_START_USER_TEST_PROCESS);
     return ERR_OK;
 }
 
-int AppMgrService::FinishUserTest(
-    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+int AppMgrService::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
 {
     if (!IsReady()) {
         return ERR_INVALID_OPERATION;
     }
+
+    pid_t callingPid = IPCSkeleton::GetCallingPid();
     std::function<void()> finishUserTestProcessFunc =
-        std::bind(&AppMgrServiceInner::FinishUserTest, appMgrServiceInner_, msg, resultCode, bundleName, pid);
+        std::bind(&AppMgrServiceInner::FinishUserTest, appMgrServiceInner_, msg, resultCode, bundleName, callingPid);
     handler_->PostTask(finishUserTestProcessFunc, TASK_FINISH_USER_TEST);
     return ERR_OK;
 }

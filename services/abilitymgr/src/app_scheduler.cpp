@@ -306,11 +306,11 @@ std::string AppScheduler::ConvertAppState(const AppState &state)
     return "INVALIDSTATE";
 }
 
-int AppScheduler::StartUserTest(const Want &want, const sptr<IRemoteObject> &observer,
-    const AppExecFwk::BundleInfo &bundleInfo)
+int AppScheduler::StartUserTest(
+    const Want &want, const sptr<IRemoteObject> &observer, const AppExecFwk::BundleInfo &bundleInfo, int32_t userId)
 {
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
-    int ret = appMgrClient_->StartUserTestProcess(want, observer, bundleInfo);
+    int ret = appMgrClient_->StartUserTestProcess(want, observer, bundleInfo, userId);
     if (ret != ERR_OK) {
         HILOG_ERROR("Fail to start user test.");
         return INNER_ERR;
@@ -318,11 +318,10 @@ int AppScheduler::StartUserTest(const Want &want, const sptr<IRemoteObject> &obs
     return ERR_OK;
 }
 
-int AppScheduler::FinishUserTest(
-    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+int AppScheduler::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
 {
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
-    int ret = appMgrClient_->FinishUserTest(msg, resultCode, bundleName, pid);
+    int ret = appMgrClient_->FinishUserTest(msg, resultCode, bundleName);
     if (ret != ERR_OK) {
         HILOG_ERROR("Fail to start user test.");
         return INNER_ERR;
