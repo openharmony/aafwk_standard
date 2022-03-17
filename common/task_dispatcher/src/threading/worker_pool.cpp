@@ -43,7 +43,6 @@ WorkerPool::WorkerPool(const std::shared_ptr<WorkerPoolConfig> &config)
 WorkerPool::~WorkerPool()
 {
     control_ = 0;
-
     HILOG_INFO("WorkerPool::~WorkerPool");
 }
 
@@ -74,7 +73,7 @@ bool WorkerPool::CheckConfigParams(const std::shared_ptr<WorkerPoolConfig> &conf
 
     if (!CheckThreadCount(maxThreadCount, coreThreadCount)) {
         HILOG_ERROR("WorkerPool::CheckConfigParams parameters are illegal, maxThreadCount %{public}d is less than "
-                 "coreThreadCount %{public}d",
+            "coreThreadCount %{public}d",
             maxThreadCount,
             coreThreadCount);
         return false;
@@ -243,7 +242,7 @@ bool WorkerPool::AddWorker(const std::shared_ptr<Delegate> &delegate, const std:
         }
         if (!IsRunning(value)) {
             HILOG_INFO("WorkerPool::AddWorker thread pool is not running. value=%{public}d, closing=%{public}d, "
-                     "count_bits=%{public}d",
+                "count_bits=%{public}d",
                 value,
                 CLOSING,
                 COUNT_BITS);
@@ -256,7 +255,6 @@ bool WorkerPool::AddWorker(const std::shared_ptr<Delegate> &delegate, const std:
                 HILOG_ERROR("WorkerPool::AddWorker create thread fail");
                 break;
             }
-
             newThread->CreateThread();
 
             HILOG_INFO("WorkerPool::AddWorker create new thread");
