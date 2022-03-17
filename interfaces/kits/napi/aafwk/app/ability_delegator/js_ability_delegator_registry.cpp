@@ -118,6 +118,7 @@ NativeValue *AbilityLifecycleStateInit(NativeEngine *engine)
         return nullptr;
     }
 
+    object->SetProperty("UNINITIALIZED", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::UNINITIALIZED));
     object->SetProperty("CREATE", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::CREATE));
     object->SetProperty("FOREGROUND", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::FOREGROUND));
     object->SetProperty("BACKGROUND", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::BACKGROUND));
