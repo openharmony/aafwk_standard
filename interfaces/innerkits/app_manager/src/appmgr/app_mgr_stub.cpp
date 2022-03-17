@@ -301,7 +301,8 @@ int32_t AppMgrStub::HandleStartUserTestProcess(MessageParcel &data, MessageParce
         return ERR_INVALID_VALUE;
     }
     auto observer = data.ReadParcelable<IRemoteObject>();
-    int32_t result = StartUserTestProcess(*want, observer, *bundleInfo);
+    int32_t userId = data.ReadInt32();
+    int32_t result = StartUserTestProcess(*want, observer, *bundleInfo, userId);
     reply.WriteInt32(result);
     delete want;
     delete bundleInfo;
@@ -313,8 +314,7 @@ int32_t AppMgrStub::HandleFinishUserTest(MessageParcel &data, MessageParcel &rep
     std::string msg = data.ReadString();
     int resultCode = data.ReadInt32();
     std::string bundleName = data.ReadString();
-    auto pid = data.ReadInt32();
-    int32_t result = FinishUserTest(msg, resultCode, bundleName, pid);
+    int32_t result = FinishUserTest(msg, resultCode, bundleName);
     reply.WriteInt32(result);
     return result;
 }

@@ -499,9 +499,6 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
         return ERR_PERMISSION_DENIED;
     }
 
-    int result = ERR_OK;
-    int64_t startTime = SystemTimeMillis();
-    std::list<pid_t> pids;
     if (remoteClientManager_ == nullptr) {
         HILOG_ERROR("remoteClientManager_ fail");
         return ERR_NO_INIT;
@@ -516,6 +513,29 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
     if (!IN_PROCESS_CALL(bundleMgr->CheckIsSystemAppByUid(callerUid))) {
         HILOG_ERROR("caller is not systemApp, callerUid %{public}d", callerUid);
         return ERR_INVALID_VALUE;
+    }
+
+    return KillApplicationByUserIdLocked(bundleName, userId);
+}
+
+int32_t AppMgrServiceInner::KillApplicationByUserIdLocked(const std::string &bundleName, const int userId)
+{
+    if (!appRunningManager_) {
+        HILOG_ERROR("appRunningManager_ is nullptr");
+        return ERR_NO_INIT;
+    }
+
+    int result = ERR_OK;
+    int64_t startTime = SystemTimeMillis();
+    std::list<pid_t> pids;
+    if (remoteClientManager_ == nullptr) {
+        HILOG_ERROR("remoteClientManager_ fail");
+        return ERR_NO_INIT;
+    }
+    auto bundleMgr = remoteClientManager_->GetBundleManager();
+    if (bundleMgr == nullptr) {
+        HILOG_ERROR("GetBundleManager fail");
+        return ERR_NO_INIT;
     }
 
     HILOG_INFO("userId value is %{public}d", userId);
@@ -1854,7 +1874,7 @@ int32_t AppMgrServiceInner::GetForegroundApplications(std::vector<AppStateData> 
 }
 
 int AppMgrServiceInner::StartUserTestProcess(
-    const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo)
+    const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo, int32_t userId)
 {
     HILOG_INFO("Enter");
     if (!observer) {
@@ -1863,6 +1883,17 @@ int AppMgrServiceInner::StartUserTestProcess(
     }
     if (!appRunningManager_) {
         HILOG_ERROR("appRunningManager_ is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    std::string bundleName = want.GetStringParam("-b");
+    if (bundleName.empty()) {
+        HILOG_ERROR("Invalid bundle name");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (KillApplicationByUserIdLocked(bundleName, userId)) {
+        HILOG_ERROR("Failed to kill the application");
         return ERR_INVALID_VALUE;
     }
 
@@ -1884,7 +1915,7 @@ int AppMgrServiceInner::StartUserTestProcess(
         return ERR_INVALID_VALUE;
     }
 
-    return StartEmptyProcess(want, observer, bundleInfo, processName);
+    return StartEmptyProcess(want, observer, bundleInfo, processName, userId);
 }
 
 int AppMgrServiceInner::GetHapModuleInfoForTestRunner(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
@@ -1903,7 +1934,7 @@ int AppMgrServiceInner::GetHapModuleInfoForTestRunner(const AAFwk::Want &want, c
     if (moduelJson) {
         std::string moudleName = want.GetStringParam("-m");
         if (moudleName.empty()) {
-            UserTestAbnormalFinish(observer, "No module name isn't unspecified.");
+            UserTestAbnormalFinish(observer, "No module name is specified.");
             return ERR_INVALID_VALUE;
         }
 
@@ -1935,7 +1966,7 @@ int AppMgrServiceInner::UserTestAbnormalFinish(const sptr<IRemoteObject> &observ
 }
 
 int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-    const BundleInfo &info, const std::string &processName)
+    const BundleInfo &info, const std::string &processName, const int userId)
 {
     HILOG_INFO("enter bundle [%{public}s | processName [%{public}s]]", info.name.c_str(), processName.c_str());
     if (!CheckRemoteClient() || !appRunningManager_) {
@@ -1958,6 +1989,7 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
     testRecord->want = want;
     testRecord->observer = observer;
     testRecord->isFinished = false;
+    testRecord->userId = userId;
     appRecord->SetUserTestInfo(testRecord);
 
     StartProcess(appInfo->name, processName, false, appRecord, appInfo->uid, appInfo->bundleName);
@@ -1997,7 +2029,7 @@ int AppMgrServiceInner::FinishUserTest(
 
     FinishUserTestLocked(msg, resultCode, appRecord);
 
-    int ret = KillApplication(bundleName);
+    int ret = KillApplicationByUserIdLocked(bundleName, userTestRecord->userId);
     if (ret) {
         HILOG_ERROR("Failed to kill process.");
         return ret;

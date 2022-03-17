@@ -409,26 +409,25 @@ void AppMgrClient::StartupResidentProcess(const std::vector<AppExecFwk::BundleIn
     service->StartupResidentProcess(bundleInfos);
 }
 
-int AppMgrClient::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-    const BundleInfo &bundleInfo)
+int AppMgrClient::StartUserTestProcess(
+    const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo, int32_t userId)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
     }
-    return service->StartUserTestProcess(want, observer, bundleInfo);
+    return service->StartUserTestProcess(want, observer, bundleInfo, userId);
 }
 
-int AppMgrClient::FinishUserTest(
-    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+int AppMgrClient::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
         HILOG_ERROR("service is nullptr");
         return AppMgrResultCode::ERROR_SERVICE_NOT_READY;
     }
-    return service->FinishUserTest(msg, resultCode, bundleName, pid);
+    return service->FinishUserTest(msg, resultCode, bundleName);
 }
 
 void AppMgrClient::StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo)
