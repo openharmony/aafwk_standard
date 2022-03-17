@@ -130,7 +130,7 @@ void AmsMgrScheduler::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, 
 
 void AmsMgrScheduler::KillProcessByAbilityToken(const sptr<IRemoteObject> &token)
 {
-    if (amsMgrServiceInner_->VerifyProcessPermission() == ERR_PERMISSION_DENIED) {
+    if (amsMgrServiceInner_->VerifyProcessPermission() != ERR_OK) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         return;
     }
