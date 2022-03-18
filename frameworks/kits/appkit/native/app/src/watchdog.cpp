@@ -51,6 +51,7 @@ void WatchDog::ProcessEvent(const OHOS::AppExecFwk::InnerEvent::Pointer &event)
         if (currentHandler_ != nullptr) {
             currentHandler_->RemoveTask(MAIN_THREAD_IS_ALIVE_MSG);
         }
+        timeOut_.store(false);
     }
 }
 
@@ -108,25 +109,30 @@ bool WatchDog::Timer()
         std::this_thread::sleep_for(std::chrono::milliseconds(INI_TIMER_SECOND));
         if (!stopWatchDog_) {
             auto timeoutTask = [&]() {
-            appMainThreadIsAlive_ = false;
-            std::string eventType = "THREAD_BLOCK_3S";
-            std::string msgContent = "app main thread is not response!";
-            if (applicationInfo_ != nullptr) {
-                OHOS::HiviewDFX::HiSysEvent::Write(OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK, eventType,
-                    OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
-                    EVENT_KEY_UID, std::to_string(applicationInfo_->uid),
-                    EVENT_KEY_PID, std::to_string(getpid()),
-                    EVENT_KEY_PACKAGE_NAME, applicationInfo_->bundleName,
-                    EVENT_KEY_PROCESS_NAME, applicationInfo_->process,
-                    EVENT_KEY_MESSAGE, msgContent);
-            }
-            HILOG_INFO("Warning : main thread is not response!");
+                timeOut_.store(true);
+                appMainThreadIsAlive_ = false;
+                std::string eventType = "THREAD_BLOCK_6S";
+                std::string msgContent = "app main thread is not response!";
+                if (applicationInfo_ != nullptr) {
+                    OHOS::HiviewDFX::HiSysEvent::Write(OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK, eventType,
+                        OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+                        EVENT_KEY_UID, std::to_string(applicationInfo_->uid),
+                        EVENT_KEY_PID, std::to_string(getpid()),
+                        EVENT_KEY_PACKAGE_NAME, applicationInfo_->bundleName,
+                        EVENT_KEY_PROCESS_NAME, applicationInfo_->process,
+                        EVENT_KEY_MESSAGE, msgContent);
+                }
+                HILOG_INFO("Warning : main thread is not response!");
             };
-            if (currentHandler_ != nullptr) {
-                currentHandler_->PostTask(timeoutTask, MAIN_THREAD_IS_ALIVE_MSG, MAIN_THREAD_TIMEOUT_TIME);
-            }
-            if (appMainHandler_ != nullptr) {
-                appMainHandler_->SendEvent(MAIN_THREAD_IS_ALIVE);
+            if (timeOut_) {
+                HILOG_ERROR("Watchdog timeout, wait for the handler to recover, and do not send event.");
+            } else {
+                if (currentHandler_ != nullptr) {
+                    currentHandler_->PostTask(timeoutTask, MAIN_THREAD_IS_ALIVE_MSG, MAIN_THREAD_TIMEOUT_TIME);
+                }
+                if (appMainHandler_ != nullptr) {
+                    appMainHandler_->SendEvent(MAIN_THREAD_IS_ALIVE);
+                }
             }
         }
     }
