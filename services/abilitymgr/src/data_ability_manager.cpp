@@ -180,7 +180,8 @@ bool DataAbilityManager::ContainsDataAbility(const sptr<IAbilityScheduler> &sche
 
     DataAbilityRecordPtrMap::iterator it;
     for (it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
-        if (it->second->GetScheduler() != nullptr && it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
+        if (it->second && it->second->GetScheduler() &&
+            it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
             return true;
         }
     }
@@ -295,12 +296,14 @@ void DataAbilityManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &abi
         }
         if (abilityRecord->GetAbilityInfo().type == AppExecFwk::AbilityType::DATA) {
             // If 'abilityRecord' is a data ability server, trying to remove it from 'dataAbilityRecords_'.
-            for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
+            for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end();) {
                 if (it->second->GetAbilityRecord() == abilityRecord) {
                     it->second->KillBoundClientProcesses();
                     HILOG_DEBUG("Removing died data ability record...");
-                    dataAbilityRecordsLoaded_.erase(it);
+                    it = dataAbilityRecordsLoaded_.erase(it);
                     break;
+                } else {
+                    ++it;
                 }
             }
         }
@@ -401,7 +404,8 @@ std::shared_ptr<AbilityRecord> DataAbilityManager::GetAbilityRecordByScheduler(c
     std::lock_guard<std::mutex> locker(mutex_);
 
     for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
-        if (it->second->GetScheduler() != nullptr && it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
+        if (it->second && it->second->GetScheduler() &&
+            it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
             return it->second->GetAbilityRecord();
         }
     }
@@ -523,7 +527,7 @@ void DataAbilityManager::DumpSysState(std::vector<std::string> &info, bool isCli
             info.emplace_back("AbilityName [ " + it->first + " ]");
             it->second->Dump(info);
             // add dump client info
-            if (isClient && it->second->GetScheduler() && it->second->GetAbilityRecord()->IsReady()) {
+            if (isClient && it->second && it->second->GetScheduler() && it->second->GetAbilityRecord()->IsReady()) {
                 std::vector<std::string> params;
                 it->second->GetScheduler()->DumpAbilityInfo(params, info);
                 AppExecFwk::Configuration config;
