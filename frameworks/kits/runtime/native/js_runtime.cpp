@@ -57,11 +57,11 @@ public:
         }
     }
 
-    void StartDebugMode() override
+    void StartDebugMode(bool needBreakPoint) override
     {
         if (!debugMode_) {
-            HILOG_INFO("Ark VM is startint debug mode");
-            panda::JSNApi::StartDebugger(ARK_DEBUGGER_LIB_PATH, vm_, isDebugMode_);
+            HILOG_INFO("Ark VM is starting debug mode [%{public}s]", needBreakPoint ? "break" : "normal");
+            panda::JSNApi::StartDebugger(ARK_DEBUGGER_LIB_PATH, vm_, needBreakPoint);
             debugMode_ = true;
         }
     }
@@ -96,7 +96,6 @@ private:
     }
 
     panda::ecmascript::EcmaVM* vm_ = nullptr;
-    bool isDebugMode_ = true;
 };
 
 std::string GetLogContent(NativeCallbackInfo& info)
