@@ -180,7 +180,7 @@ bool FormTimerMgr::UpdateIntervalValue(const int64_t formId, const FormTimerCfg 
     std::lock_guard<std::mutex> lock(intervalMutex_);
     auto intervalTask = intervalTimerTasks_.find(formId);
     if (intervalTask != intervalTimerTasks_.end()) {
-        intervalTask->second.period = timerCfg.updateDuration;
+        intervalTask->second.period = timerCfg.updateDuration / timeSpeed_;
         return true;
     } else {
         HILOG_ERROR("%{public}s failed, the interval timer is not exist", __func__);
