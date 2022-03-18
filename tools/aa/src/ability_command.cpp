@@ -643,9 +643,10 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 if (isfirstCommand == false) {
                     isfirstCommand = true;
                 } else {
-                    // 'aa dumpsys -i 10 -element -lastpage'
-                    // 'aa dumpsys -i 10 -render -lastpage'
-                    if (strcmp(optarg, "astpage")) {
+                    // 'aa dump -i 10 -element -lastpage'
+                    // 'aa dump -i 10 -render -lastpage'
+                    // 'aa dump -i 10 -layer'
+                    if (strcmp(optarg, "astpage") && strcmp(optarg, "ayer")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -708,8 +709,10 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 if (isfirstCommand == false && optarg == nullptr) {
                     isfirstCommand = true;
                 } else {
-                    // 'aa dumpsys -i 10 -render'
-                    if (strcmp(optarg, "ender")) {
+                    // 'aa dump -i 10 -render'
+                    // 'aa dump -i 10 -rotation'
+                    // 'aa dump -i 10 -frontend'
+                    if (strcmp(optarg, "ender") && strcmp(optarg, "otation") && strcmp(optarg, "ontend")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -742,9 +745,11 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 break;
             }
             case '?': {
-                result = OHOS::ERR_INVALID_VALUE;
-                resultReceiver_.append(HELP_MSG_DUMPSYS);
-                return result;
+                if (!isfirstCommand) {
+                    result = OHOS::ERR_INVALID_VALUE;
+                    resultReceiver_.append(HELP_MSG_DUMPSYS);
+                    return result;
+                }
                 break;
             }
             default: {
