@@ -1140,11 +1140,9 @@ void MainThread::HandleLaunchAbility(const std::shared_ptr<AbilityLocalRecord> &
     auto& runtime = application_->GetRuntime();
     auto appInfo = application_->GetApplicationInfo();
     auto want = abilityRecord->GetWant();
-    if (runtime && appInfo && want) {
-        if (appInfo->debug && want->GetBoolParam("debugApp", false)) {
-            HdcRegister::Get().StartHdcRegister(appInfo->bundleName);
-            runtime->StartDebugMode();
-        }
+    if (runtime && appInfo && want && appInfo->debug) {
+        HdcRegister::Get().StartHdcRegister(appInfo->bundleName);
+        runtime->StartDebugMode(want->GetBoolParam("debugApp", false));
     }
 
     mainThreadState_ = MainThreadState::RUNNING;
@@ -1344,7 +1342,7 @@ void MainThread::HandleTerminateApplication()
         handleANRThread_->join();
         handleANRThread_ = nullptr;
     }
-    
+
     HILOG_INFO("MainThread::handleTerminateApplication before stop runner");
     int ret = runner->Stop();
     HILOG_INFO("MainThread::handleTerminateApplication after stop runner");
