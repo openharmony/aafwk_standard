@@ -276,7 +276,9 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
     // 5. schedule target ability
     if (!currentTopAbility) {
         // top ability is null, then launch the first Ability.
-        targetAbilityRecord->SetLauncherRoot();
+        if (targetAbilityRecord->GetAbilityInfo().applicationInfo.isLauncherApp) {
+            targetAbilityRecord->SetLauncherRoot();
+        }
         return targetAbilityRecord->LoadAbility();
     } else {
         // schedule target ability to foreground.
@@ -2067,7 +2069,9 @@ int MissionListManager::CallAbilityLocked(const AbilityRequest &abilityRequest)
     // flag the first ability.
     auto currentTopAbility = GetCurrentTopAbilityLocked();
     if (!currentTopAbility) {
-        targetAbilityRecord->SetLauncherRoot();
+        if (targetAbilityRecord->GetAbilityInfo().applicationInfo.isLauncherApp) {
+            targetAbilityRecord->SetLauncherRoot();
+        }
     }
 
     return targetAbilityRecord->LoadAbility();
