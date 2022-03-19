@@ -362,6 +362,7 @@ public:
     int GetCompatibleVersion();
 #ifdef SUPPORT_GRAPHICS
     void AfterUnFocused();
+    void AfterFocused();
 #endif
 protected:
     /**

@@ -38,6 +38,7 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
     if ((lifecycleState_ == targetState.state) && !targetState.isNewWant) {
         if (ability_ != nullptr && targetState.state == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
             ability_->RequsetFocus(want);
+            AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
         }
         HILOG_ERROR("Org lifeCycleState equals to Dst lifeCycleState.");
         return;
@@ -153,6 +154,13 @@ bool PageAbilityImpl::AbilityTransactionNew(const Want &want, const AAFwk::LifeC
             Stop();
             break;
         }
+        case AAFwk::ABILITY_STATE_INACTIVE: {
+            if (lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) {
+                Inactive();
+            }
+            ret = false;
+            break;
+        }
         case AAFwk::ABILITY_STATE_FOREGROUND_NEW: {
             if (lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND_NEW ||
                 lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND) {
@@ -164,6 +172,17 @@ bool PageAbilityImpl::AbilityTransactionNew(const Want &want, const AAFwk::LifeC
             SerUriString(targetState.caller.deviceId + "/" + targetState.caller.bundleName + "/" +
                          targetState.caller.abilityName);
             Active();
+            if (ability_) {
+                ability_->RequsetFocus(want);
+            }
+            break;
+        }
+        case AAFwk::ABILITY_STATE_ACTIVE: {
+            if (lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND) {
+                Foreground(want);
+            }
+            Active();
+            ret = false;
             break;
         }
         case AAFwk::ABILITY_STATE_BACKGROUND_NEW: {
