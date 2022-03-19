@@ -44,7 +44,7 @@ public:
 
     virtual Language GetLanguage() const = 0;
 
-    virtual void StartDebugMode() = 0;
+    virtual void StartDebugMode(bool needBreakPoint) = 0;
 
     Runtime(const Runtime&) = delete;
     Runtime(Runtime&&) = delete;
