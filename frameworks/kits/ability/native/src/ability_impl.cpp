@@ -227,6 +227,30 @@ void AbilityImpl::AfterUnFocused()
     HILOG_INFO("%{public}s end.", __func__);
 }
 
+void AbilityImpl::AfterFocused()
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    if (ability_->GetAbilityInfo()->isStageBasedModel) {
+        HILOG_INFO("new version ability, do nothing when after focused.");
+        return;
+    }
+
+    if (!ability_ || !ability_->GetAbilityInfo() || !contextDeal_ || !handler_) {
+        HILOG_ERROR("AbilityImpl::AfterFocused failed");
+        return;
+    }
+
+    HILOG_INFO("fa mode ability, window after focused.");
+    auto task = [abilityImpl = shared_from_this(), ability = ability_, contextDeal = contextDeal_]() {
+        auto info = contextDeal->GetLifeCycleStateInfo();
+        info.state = AbilityLifeCycleState::ABILITY_STATE_ACTIVE;
+        Want want(*(ability->GetWant()));
+        abilityImpl->HandleAbilityTransaction(want, info);
+    };
+    handler_->PostTask(task);
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
 void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
@@ -259,7 +283,12 @@ void AbilityImpl::WindowLifeCycleImpl::AfterBackground()
 
 void AbilityImpl::WindowLifeCycleImpl::AfterFocused()
 {
-    HILOG_INFO("%{public}s.", __func__);
+    HILOG_INFO("%{public}s begin.", __func__);
+    auto owner = owner_.lock();
+    if (owner) {
+        owner->AfterFocused();
+    }
+    HILOG_INFO("%{public}s end.", __func__);
 }
 
 void AbilityImpl::WindowLifeCycleImpl::AfterUnfocused()
