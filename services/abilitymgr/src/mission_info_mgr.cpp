@@ -279,7 +279,7 @@ bool MissionInfoMgr::FindReusedSingletonMission(const std::string &missionName, 
     );
 
     if (it == missionInfoList_.end()) {
-        HILOG_ERROR("can not find target singleton mission:%{public}s", missionName.c_str());
+        HILOG_WARN("can not find target singleton mission:%{public}s", missionName.c_str());
         return false;
     }
     info = *it;
