@@ -281,6 +281,15 @@ bool MissionDataStorage::WriteToPng(const char* fileName, uint32_t width, uint32
         png_destroy_write_struct(&png_ptr, &info_ptr);
         return false;
     }
+
+    if (setjmp(png_jmpbuf(png_ptr))) {
+        /* If we get here, we had a problem writing the file. */
+        fclose(fp);
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        return false;
+    }
+
+
     png_init_io(png_ptr, fp);
 
     // set png header
