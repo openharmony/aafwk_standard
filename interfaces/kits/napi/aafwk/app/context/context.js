@@ -104,8 +104,8 @@ class Context {
         return this.__context_impl__.databaseDir
     }
 
-    get storageDir() {
-        return this.__context_impl__.storageDir
+    get preferencesDir() {
+        return this.__context_impl__.preferencesDir
     }
 
     get bundleCodeDir() {

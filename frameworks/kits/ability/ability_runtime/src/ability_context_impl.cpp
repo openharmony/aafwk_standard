@@ -51,9 +51,9 @@ std::string AbilityContextImpl::GetDatabaseDir()
     return stageContext_ ? stageContext_->GetDatabaseDir() : "";
 }
 
-std::string AbilityContextImpl::GetStorageDir()
+std::string AbilityContextImpl::GetPreferencesDir()
 {
-    return stageContext_ ? stageContext_->GetStorageDir() : "";
+    return stageContext_ ? stageContext_->GetPreferencesDir() : "";
 }
 
 std::string AbilityContextImpl::GetTempDir()
