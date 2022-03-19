@@ -29,7 +29,7 @@ JS_EXCEPTION:
   PROCESS_NAME: {type: STRING, desc: process name}
   MSG: {type: STRING, desc: application event message}
 
-THREAD_BLOCK_3S:
+THREAD_BLOCK_6S:
   __BASE: {type: FAULT, level: CRITICAL, tag: STABILITY, desc: application freeze}
   PID: {type: INT32, desc: pid}
   UID: {type: INT32, desc: uid}
