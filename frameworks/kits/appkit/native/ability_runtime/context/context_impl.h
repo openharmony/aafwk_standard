@@ -93,7 +93,7 @@ public:
      *
      * @return Returns the local storage file.
      */
-    std::string GetStorageDir() override;
+    std::string GetPreferencesDir() override;
 
     /**
      * @brief Obtains the path distributed file of the application
@@ -240,8 +240,8 @@ private:
     static const std::string CONTEXT_DATA_STORAGE;
     static const std::string CONTEXT_BASE;
     static const std::string CONTEXT_PRIVATE;
-    static const std::string CONTEXT_CACHES;
-    static const std::string CONTEXT_STORAGE;
+    static const std::string CONTEXT_CACHE;
+    static const std::string CONTEXT_PREFERENCES;
     static const std::string CONTEXT_DATABASE;
     static const std::string CONTEXT_TEMP;
     static const std::string CONTEXT_FILES;

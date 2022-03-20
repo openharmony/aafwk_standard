@@ -45,9 +45,8 @@ const std::string ContextImpl::CONTEXT_FILE_SEPARATOR("/");
 const std::string ContextImpl::CONTEXT_DATA("/data/");
 const std::string ContextImpl::CONTEXT_DATA_STORAGE("/data/storage/");
 const std::string ContextImpl::CONTEXT_BASE("base");
-const std::string ContextImpl::CONTEXT_PRIVATE("/private/");
-const std::string ContextImpl::CONTEXT_CACHES("caches");
-const std::string ContextImpl::CONTEXT_STORAGE("storage");
+const std::string ContextImpl::CONTEXT_CACHE("cache");
+const std::string ContextImpl::CONTEXT_PREFERENCES("preferences");
 const std::string ContextImpl::CONTEXT_DATABASE("database");
 const std::string ContextImpl::CONTEXT_TEMP("/temp");
 const std::string ContextImpl::CONTEXT_FILES("/files");
@@ -82,7 +81,7 @@ std::string ContextImpl::GetBundleCodeDir()
 
 std::string ContextImpl::GetCacheDir()
 {
-    std::string dir = GetBaseDir() + CONTEXT_PRIVATE + CONTEXT_CACHES;
+    std::string dir = GetBaseDir() + CONTEXT_FILE_SEPARATOR + CONTEXT_CACHE;
     CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetCacheDir:%{public}s", dir.c_str());
     return dir;
@@ -107,17 +106,19 @@ std::string ContextImpl::GetDatabaseDir()
     } else {
         dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DATABASE;
     }
-    dir =  dir + CONTEXT_FILE_SEPARATOR + ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
+    if (parentContext_ != nullptr) {
+        dir = dir + CONTEXT_FILE_SEPARATOR + ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
+    }
     CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetDatabaseDir:%{public}s", dir.c_str());
     return dir;
 }
 
-std::string ContextImpl::GetStorageDir()
+std::string ContextImpl::GetPreferencesDir()
 {
-    std::string dir = GetBaseDir() + CONTEXT_PRIVATE + CONTEXT_STORAGE;
+    std::string dir = GetBaseDir() + CONTEXT_FILE_SEPARATOR + CONTEXT_PREFERENCES;
     CreateDirIfNotExist(dir);
-    HILOG_DEBUG("ContextImpl::GetStorageDir:%{public}s", dir.c_str());
+    HILOG_DEBUG("ContextImpl::GetPreferencesDir:%{public}s", dir.c_str());
     return dir;
 }
 
@@ -145,8 +146,10 @@ std::string ContextImpl::GetDistributedFilesDir()
         dir = CONTEXT_DISTRIBUTEDFILES_BASE_BEFORE + std::to_string(GetCurrentAccountId()) +
             CONTEXT_DISTRIBUTEDFILES_BASE_MIDDLE + GetBundleName();
     } else {
-        dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DISTRIBUTEDFILES +
-            CONTEXT_FILE_SEPARATOR + ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
+        dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DISTRIBUTEDFILES;
+    }
+    if (parentContext_ != nullptr) {
+        dir = dir + CONTEXT_FILE_SEPARATOR + ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
     }
     CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetDistributedFilesDir:%{public}s", dir.c_str());
@@ -174,7 +177,7 @@ std::string ContextImpl::GetBaseDir() const
         baseDir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_BASE;
     }
     if (parentContext_ != nullptr) {
-        baseDir =  baseDir + CONTEXT_HAPS + CONTEXT_FILE_SEPARATOR +
+        baseDir = baseDir + CONTEXT_HAPS + CONTEXT_FILE_SEPARATOR +
             ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
     }
 
