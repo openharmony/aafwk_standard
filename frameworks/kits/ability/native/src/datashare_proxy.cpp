@@ -487,9 +487,9 @@ Uri DataShareProxy::NormalizeUri(const Uri &uri)
         return urivalue;
     }
 
-    sptr<Uri> info = data.ReadObject<Uri>();
+    std::unique_ptr<Uri> info(reply.ReadParcelable<Uri>());
     if (!info) {
-        HILOG_ERROR("uri info is nullptr.");
+        HILOG_ERROR("ReadParcelable value is nullptr.");
         return urivalue;
     }
     HILOG_INFO("%{public}s end successfully.", __func__);
@@ -519,9 +519,9 @@ Uri DataShareProxy::DenormalizeUri(const Uri &uri)
         return urivalue;
     }
 
-    sptr<Uri> info = data.ReadObject<Uri>();
+    std::unique_ptr<Uri> info(reply.ReadParcelable<Uri>());
     if (!info) {
-        HILOG_ERROR("uri info is nullptr.");
+        HILOG_ERROR("ReadParcelable value is nullptr.");
         return urivalue;
     }
     HILOG_INFO("%{public}s end successfully.", __func__);
@@ -569,12 +569,12 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> DataShareProxy::Exec
     }
 
     for (int i = 0; i < total; i++) {
-        sptr<AppExecFwk::DataAbilityResult> result = data.ReadObject<AppExecFwk::DataAbilityResult>();
+        AppExecFwk::DataAbilityResult *result = reply.ReadParcelable<AppExecFwk::DataAbilityResult>();
         if (result == nullptr) {
             HILOG_ERROR("result is nullptr, index = %{public}d", i);
             return results;
         }
-        std::shared_ptr<AppExecFwk::DataAbilityResult> dataAbilityResult(result.GetRefPtr());
+        std::shared_ptr<AppExecFwk::DataAbilityResult> dataAbilityResult(result);
         results.push_back(dataAbilityResult);
     }
     HILOG_INFO("%{public}s end successfully.", __func__);
