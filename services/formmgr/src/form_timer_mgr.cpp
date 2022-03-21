@@ -582,10 +582,8 @@ bool FormTimerMgr::OnDynamicTimeTrigger(int64_t updateTime)
                     FormTimer timerTask(itItem->formId, true, itItem->userId);
                     updateList.emplace_back(timerTask);
                 }
+                SetIntervalEnableFlag(itItem->formId, true);
                 itItem = dynamicRefreshTasks_.erase(itItem);
-                if (itItem != dynamicRefreshTasks_.end()) {
-                    SetIntervalEnableFlag(itItem->formId, true);
-                }
             } else {
                 itItem++;
             }
