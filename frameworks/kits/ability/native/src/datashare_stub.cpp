@@ -72,7 +72,7 @@ int DataShareStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessagePa
 
 ErrCode DataShareStub::CmdGetFileTypes(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -92,7 +92,7 @@ ErrCode DataShareStub::CmdGetFileTypes(MessageParcel &data, MessageParcel &reply
 
 ErrCode DataShareStub::CmdOpenFile(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -116,7 +116,7 @@ ErrCode DataShareStub::CmdOpenFile(MessageParcel &data, MessageParcel &reply)
 
 ErrCode DataShareStub::CmdOpenRawFile(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -136,14 +136,14 @@ ErrCode DataShareStub::CmdOpenRawFile(MessageParcel &data, MessageParcel &reply)
 
 ErrCode DataShareStub::CmdInsert(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
     }
-    sptr<NativeRdb::ValuesBucket> value = data.ReadObject<NativeRdb::ValuesBucket>();
+    std::shared_ptr<NativeRdb::ValuesBucket> value(data.ReadParcelable<NativeRdb::ValuesBucket>());
     if (value == nullptr) {
-        HILOG_ERROR("value is nullptr");
+        HILOG_ERROR("ReadParcelable value is nullptr");
         return ERR_INVALID_VALUE;
     }
     int index = Insert(*uri, *value);
@@ -157,19 +157,20 @@ ErrCode DataShareStub::CmdInsert(MessageParcel &data, MessageParcel &reply)
 
 ErrCode DataShareStub::CmdUpdate(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
     }
-    sptr<NativeRdb::ValuesBucket> value = data.ReadObject<NativeRdb::ValuesBucket>();
+    std::shared_ptr<NativeRdb::ValuesBucket> value(data.ReadParcelable<NativeRdb::ValuesBucket>());
     if (value == nullptr) {
-        HILOG_ERROR("value is nullptr");
+        HILOG_ERROR("ReadParcelable value is nullptr");
         return ERR_INVALID_VALUE;
     }
-    sptr<NativeRdb::DataAbilityPredicates> predicates = data.ReadObject<NativeRdb::DataAbilityPredicates>();
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates(
+        data.ReadParcelable<NativeRdb::DataAbilityPredicates>());
     if (predicates == nullptr) {
-        HILOG_ERROR("predicates is nullptr");
+        HILOG_ERROR("ReadParcelable predicates is nullptr");
         return ERR_INVALID_VALUE;
     }
     int index = Update(*uri, *value, *predicates);
@@ -182,14 +183,15 @@ ErrCode DataShareStub::CmdUpdate(MessageParcel &data, MessageParcel &reply)
 
 ErrCode DataShareStub::CmdDelete(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
     }
-    sptr<NativeRdb::DataAbilityPredicates> predicates = data.ReadObject<NativeRdb::DataAbilityPredicates>();
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates(
+        data.ReadParcelable<NativeRdb::DataAbilityPredicates>());
     if (predicates == nullptr) {
-        HILOG_ERROR("predicates is nullptr");
+        HILOG_ERROR("ReadParcelable predicates is nullptr");
         return ERR_INVALID_VALUE;
     }
     int index = Delete(*uri, *predicates);
@@ -202,7 +204,7 @@ ErrCode DataShareStub::CmdDelete(MessageParcel &data, MessageParcel &reply)
 
 ErrCode DataShareStub::CmdQuery(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -212,9 +214,10 @@ ErrCode DataShareStub::CmdQuery(MessageParcel &data, MessageParcel &reply)
         HILOG_ERROR("fail to ReadStringVector columns");
         return ERR_INVALID_VALUE;
     }
-    sptr<NativeRdb::DataAbilityPredicates> predicates = data.ReadObject<NativeRdb::DataAbilityPredicates>();
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates(
+        data.ReadParcelable<NativeRdb::DataAbilityPredicates>());
     if (predicates == nullptr) {
-        HILOG_ERROR("predicates is nullptr");
+        HILOG_ERROR("ReadParcelable predicates is nullptr");
         return ERR_INVALID_VALUE;
     }
     auto resultSet = Query(*uri, columns, *predicates);
@@ -233,7 +236,7 @@ ErrCode DataShareStub::CmdQuery(MessageParcel &data, MessageParcel &reply)
 
 ErrCode DataShareStub::CmdGetType(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -248,7 +251,7 @@ ErrCode DataShareStub::CmdGetType(MessageParcel &data, MessageParcel &reply)
 
 ErrCode DataShareStub::CmdBatchInsert(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -262,7 +265,7 @@ ErrCode DataShareStub::CmdBatchInsert(MessageParcel &data, MessageParcel &reply)
 
     std::vector<NativeRdb::ValuesBucket> values;
     for (int i = 0; i < count; i++) {
-        sptr<NativeRdb::ValuesBucket> value = data.ReadObject<NativeRdb::ValuesBucket>();
+        std::unique_ptr<NativeRdb::ValuesBucket> value(data.ReadParcelable<NativeRdb::ValuesBucket>());
         if (value == nullptr) {
             HILOG_ERROR("DataShareStub value is nullptr, index = %{public}d", i);
             return ERR_INVALID_VALUE;
@@ -281,7 +284,7 @@ ErrCode DataShareStub::CmdBatchInsert(MessageParcel &data, MessageParcel &reply)
 
 ErrCode DataShareStub::CmdRegisterObserver(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -302,7 +305,7 @@ ErrCode DataShareStub::CmdRegisterObserver(MessageParcel &data, MessageParcel &r
 
 ErrCode DataShareStub::CmdUnregisterObserver(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -323,7 +326,7 @@ ErrCode DataShareStub::CmdUnregisterObserver(MessageParcel &data, MessageParcel 
 
 ErrCode DataShareStub::CmdNotifyChange(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -339,7 +342,7 @@ ErrCode DataShareStub::CmdNotifyChange(MessageParcel &data, MessageParcel &reply
 
 ErrCode DataShareStub::CmdNormalizeUri(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -356,7 +359,7 @@ ErrCode DataShareStub::CmdNormalizeUri(MessageParcel &data, MessageParcel &reply
 
 ErrCode DataShareStub::CmdDenormalizeUri(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<Uri> uri = data.ReadObject<Uri>();
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
     if (uri == nullptr) {
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
@@ -382,12 +385,12 @@ ErrCode DataShareStub::CmdExecuteBatch(MessageParcel &data, MessageParcel &reply
     HILOG_INFO("DataShareStub::CmdExecuteBatchInner count:%{public}d", count);
     std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> operations;
     for (int i = 0; i < count; i++) {
-        sptr<AppExecFwk::DataAbilityOperation> operation = data.ReadObject<AppExecFwk::DataAbilityOperation>();
+        AppExecFwk::DataAbilityOperation *operation = data.ReadParcelable<AppExecFwk::DataAbilityOperation>();
         if (operation == nullptr) {
             HILOG_ERROR("DataShareStub::CmdExecuteBatchInner operation is nullptr, index = %{public}d", i);
             return ERR_INVALID_VALUE;
         }
-        std::shared_ptr<AppExecFwk::DataAbilityOperation> dataAbilityOperation(operation.GetRefPtr());
+        std::shared_ptr<AppExecFwk::DataAbilityOperation> dataAbilityOperation(operation);
         operations.push_back(dataAbilityOperation);
     }
 
