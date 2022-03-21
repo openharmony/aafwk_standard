@@ -333,7 +333,13 @@ void GetFilesDirExecuteCallback(napi_env env, void *data)
     }
 
     asyncCallbackInfo->native_data.data_type = NVT_STRING;
-    asyncCallbackInfo->native_data.str_value = asyncCallbackInfo->ability->GetFilesDir();
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext = asyncCallbackInfo->ability->GetAbilityContext();
+    if (abilityContext == nullptr) {
+        HILOG_ERROR("%{public}s GetAbilityContext is nullptr", __func__);
+        asyncCallbackInfo->error_code = NAPI_ERR_ACE_ABILITY;
+        return;
+    }
+    asyncCallbackInfo->native_data.str_value = abilityContext->GetFilesDir();
     HILOG_INFO("%{public}s end. filesDir=%{public}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
 }
 
@@ -485,7 +491,13 @@ void GetOrCreateDistributedDirExecuteCallback(napi_env env, void *data)
     }
 
     asyncCallbackInfo->native_data.data_type = NVT_STRING;
-    asyncCallbackInfo->native_data.str_value = asyncCallbackInfo->ability->GetDistributedDir();
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext = asyncCallbackInfo->ability->GetAbilityContext();
+    if (abilityContext == nullptr) {
+        HILOG_ERROR("%{public}s GetAbilityContext is nullptr", __func__);
+        asyncCallbackInfo->error_code = NAPI_ERR_ACE_ABILITY;
+        return;
+    }
+    asyncCallbackInfo->native_data.str_value = abilityContext->GetDistributedFilesDir();
     HILOG_INFO("%{public}s end. filesDir=%{public}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
 }
 
@@ -589,7 +601,13 @@ void GetCacheDirExecuteCallback(napi_env env, void *data)
     }
 
     asyncCallbackInfo->native_data.data_type = NVT_STRING;
-    asyncCallbackInfo->native_data.str_value = asyncCallbackInfo->ability->GetCacheDir();
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext = asyncCallbackInfo->ability->GetAbilityContext();
+    if (abilityContext == nullptr) {
+        HILOG_ERROR("%{public}s GetAbilityContext is nullptr", __func__);
+        asyncCallbackInfo->error_code = NAPI_ERR_ACE_ABILITY;
+        return;
+    }
+    asyncCallbackInfo->native_data.str_value = abilityContext->GetCacheDir();
     HILOG_INFO("%{public}s end. CacheDir=%{public}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
 }
 
