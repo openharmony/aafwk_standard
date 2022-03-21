@@ -82,7 +82,7 @@ const std::string EMPTY_DEVICE_ID = "";
 const int32_t APP_MEMORY_SIZE = 512;
 const int32_t GET_PARAMETER_INCORRECT = -9;
 const int32_t GET_PARAMETER_OTHER = -1;
-const int32_t SIZE_10 = -1;
+const int32_t SIZE_10 = 10;
 const bool isRamConstrainedDevice = false;
 const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.dalvikheaplimit";
 const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
@@ -3338,22 +3338,19 @@ int AbilityManagerService::GetAppMemorySize()
     char *valueGet = nullptr;
     unsigned int len = 128;
     int ret = GetParameter(key, def, valueGet, len);
+    int resultInt = 0;
     if ((ret != GET_PARAMETER_OTHER) && (ret != GET_PARAMETER_INCORRECT)) {
-        int *size = 0;
-        size_t len = strlen(valueGet);
-        int index = 0;
-        for (size_t i = 0; i < len; i++) {
-            while (!(valueGet[i] > '0' && valueGet[i] < '9')) {
-                i++;
+        int len = strlen(valueGet);
+        for (int i = 0; i < len; i++) {
+            if (valueGet[i] >= '0' && valueGet[i] <= '9') {
+                resultInt *= SIZE_10;
+                resultInt += valueGet[i] - '0';
             }
-            while (valueGet[i] >= '0' && valueGet[i] < '9') {
-                int t = valueGet[i] - '0';
-                size[index] = size[index] * SIZE_10 + t;
-                i++;
-            }
-            index++;
         }
-        return *size;
+        if (resultInt == 0) {
+            return APP_MEMORY_SIZE;
+        }
+        return resultInt;
     }
     return APP_MEMORY_SIZE;
 }
@@ -3370,9 +3367,8 @@ bool AbilityManagerService::IsRamConstrainedDevice()
         int value = atoi(valueGet);
         if (value) {
             return true;
-        } else {
-            return isRamConstrainedDevice;
         }
+        return isRamConstrainedDevice;
     }
     return isRamConstrainedDevice;
 }
