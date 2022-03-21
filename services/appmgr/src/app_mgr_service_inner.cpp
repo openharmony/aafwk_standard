@@ -1203,7 +1203,7 @@ void AppMgrServiceInner::OnProcessCreated(const std::shared_ptr<AppRunningRecord
     }
     ProcessData data = WrapProcessData(appRecord);
     HILOG_DEBUG("OnProcessCreated, bundle:%{public}s, pid:%{public}d, uid:%{public}d, size:%{public}d",
-        data.bundleName.c_str(), data.uid, data.pid, (int32_t)appStateObservers_.size());
+        data.bundleName.c_str(), data.pid, data.uid, (int32_t)appStateObservers_.size());
     std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
     for (const auto &observer : appStateObservers_) {
         if (observer != nullptr) {
@@ -1222,7 +1222,7 @@ void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &
     }
     ProcessData data = WrapProcessData(appRecord);
     HILOG_DEBUG("OnProcessDied, bundle:%{public}s, pid:%{public}d, uid:%{public}d, size:%{public}d",
-        data.bundleName.c_str(), data.uid, data.pid, (int32_t)appStateObservers_.size());
+        data.bundleName.c_str(), data.pid, data.uid, (int32_t)appStateObservers_.size());
     std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
     for (const auto &observer : appStateObservers_) {
         if (observer != nullptr) {
