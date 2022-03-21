@@ -12,11 +12,10 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 ohos_shared_library("abilityconstant_napi") {
-  include_dirs = [
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-  ]
+  include_dirs = [ "${innerkits_path}/ability_manager/include" ]
 
   sources = [ "ability_constant_module.cpp" ]
 
