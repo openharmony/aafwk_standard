@@ -22,7 +22,7 @@ namespace OHOS {
 namespace AppExecFwk {
 namespace {
 const int32_t CONNECT_RETRY_DELAY = 200 * 1000;  // 200ms
-const int32_t CONNECT_RETRY_MAX_TIMES = 15;
+const int32_t CONNECT_RETRY_MAX_TIMES = 2;
 }  // namespace
 
 AppSpawnClient::AppSpawnClient(bool isNWebSpawn)
