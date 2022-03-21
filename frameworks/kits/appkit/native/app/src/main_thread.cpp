@@ -1483,7 +1483,7 @@ void MainThread::HandleScheduleANRProcess()
     }
     HILOG_INFO("MainThread:HandleScheduleANRProcess RequestFileDescriptor end.");
     if (applicationForAnr_->GetRuntime() != nullptr) {
-        mainThreadStackInfo= applicationForAnr_->GetRuntime()->BuildNativeAndJsBackStackTrace();
+        mainThreadStackInfo = applicationForAnr_->GetRuntime()->BuildNativeAndJsBackStackTrace();
         if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) !=
           (ssize_t)mainThreadStackInfo.size()) {
             HILOG_ERROR("MainThread::HandleScheduleANRProcess write main thread stack info failed");
