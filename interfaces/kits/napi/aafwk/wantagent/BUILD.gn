@@ -12,15 +12,15 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 ohos_shared_library("wantagent") {
   include_dirs = [
     "//third_party/node/src",
-    "//foundation/aafwk/standard/services/common/include",
+    "${services_path}/common/include",
     "//third_party/libuv/include",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime",
-    "//foundation/aafwk/standard/services/abilitymgr/include",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
+    "${kits_path}/appkit/native/ability_runtime",
+    "${services_path}/abilitymgr/include",
     "./",
   ]
 
@@ -30,9 +30,9 @@ ohos_shared_library("wantagent") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${kits_path}/appkit:app_context",
+    "${kits_path}/appkit:appkit_native",
   ]
 
   external_deps = [
