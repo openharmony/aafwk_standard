@@ -1482,9 +1482,8 @@ void MainThread::HandleScheduleANRProcess()
         return;
     }
     HILOG_INFO("MainThread:HandleScheduleANRProcess RequestFileDescriptor end.");
-    auto jsRuntime = std::move((std::unique_ptr<AbilityRuntime::JsRuntime>&)applicationForAnr_->GetRuntime());
-    if (jsRuntime != nullptr) {
-        mainThreadStackInfo= jsRuntime->BuildNativeAndJsBackStackTrace();
+    if (applicationForAnr_->GetRuntime() != nullptr) {
+        mainThreadStackInfo= applicationForAnr_->GetRuntime()->BuildNativeAndJsBackStackTrace();
         if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) !=
           (ssize_t)mainThreadStackInfo.size()) {
             HILOG_ERROR("MainThread::HandleScheduleANRProcess write main thread stack info failed");
