@@ -12,12 +12,13 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
 
 ohos_shared_library("abilitymanager") {
   include_dirs = [
     "//third_party/node/src",
-    "//foundation/aafwk/standard/services/common/include",
+    "${services_path}/common/include",
     "//utils/system/safwk/native/include",
     "./",
   ]
@@ -28,16 +29,16 @@ ohos_shared_library("abilitymanager") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/aafwk/standard/services/appmgr:libams",
+    "${kits_path}/appkit:appkit_native",
+    "${services_path}/appmgr:libams",
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_runtime:ability_manager",
+    "ability_runtime:abilitykit_native",
+    "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "eventhandler:libeventhandler",

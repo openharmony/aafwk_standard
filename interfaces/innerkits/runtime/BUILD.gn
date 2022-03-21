@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 config("runtime_config") {
   visibility = [ ":*" ]
@@ -26,10 +27,10 @@ config("runtime_config") {
   }
 
   include_dirs = [
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/base/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "${innerkits_path}/ability_manager/include",
+    "${innerkits_path}/base/include",
+    "${innerkits_path}/uri/include",
+    "${innerkits_path}/want/include/ohos/aafwk/content",
   ]
 }
 
@@ -40,16 +41,16 @@ config("runtime_public_config") {
 
 ohos_shared_library("runtime") {
   sources = [
-    "//foundation/aafwk/standard/frameworks/kits/runtime/native/js_data_struct_converter.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/runtime/native/js_runtime.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/runtime/native/js_runtime_utils.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/runtime/native/runtime.cpp",
+    "${kits_path}/runtime/native/js_data_struct_converter.cpp",
+    "${kits_path}/runtime/native/js_runtime.cpp",
+    "${kits_path}/runtime/native/js_runtime_utils.cpp",
+    "${kits_path}/runtime/native/runtime.cpp",
   ]
 
   configs = [
     ":runtime_config",
     "//ark/js_runtime:ark_jsruntime_public_config",
-    "//foundation/aafwk/standard/services/common:common_config",
+    "${services_path}/common:common_config",
   ]
 
   public_configs = [ ":runtime_public_config" ]

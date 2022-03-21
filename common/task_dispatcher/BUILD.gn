@@ -16,13 +16,12 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 config("task_dispatcher_public_config") {
   include_dirs = [
+    "include/dispatcher",
+    "include/task",
+    "include/threading",
     "${aafwk_path}/services/common/include",
     "${appexecfwk_path}/common/log/include",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
-
-    "${aafwk_path}/common/task_dispatcher/include/dispatcher",
-    "${aafwk_path}/common/task_dispatcher/include/task",
-    "${aafwk_path}/common/task_dispatcher/include/threading",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include/task",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
   ]
@@ -32,22 +31,22 @@ ohos_shared_library("task_dispatcher") {
   public_configs = [ ":task_dispatcher_public_config" ]
 
   sources = [
-    "${aafwk_path}/common/task_dispatcher/src/dispatcher/base_task_dispatcher.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/dispatcher/global_task_dispatcher.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/dispatcher/group_impl.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/dispatcher/parallel_task_dispatcher.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/dispatcher/parallel_task_dispatcher_base.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/dispatcher/serial_task_dispatcher.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/dispatcher/spec_task_dispatcher.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/dispatcher/task_dispatcher_context.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/task/barrier_handler.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/task/sync_task.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/task/task.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/threading/default_thread_factory.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/threading/default_worker_pool_config.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/threading/task_executor.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/threading/work_thread.cpp",
-    "${aafwk_path}/common/task_dispatcher/src/threading/worker_pool.cpp",
+    "src/dispatcher/base_task_dispatcher.cpp",
+    "src/dispatcher/global_task_dispatcher.cpp",
+    "src/dispatcher/group_impl.cpp",
+    "src/dispatcher/parallel_task_dispatcher.cpp",
+    "src/dispatcher/parallel_task_dispatcher_base.cpp",
+    "src/dispatcher/serial_task_dispatcher.cpp",
+    "src/dispatcher/spec_task_dispatcher.cpp",
+    "src/dispatcher/task_dispatcher_context.cpp",
+    "src/task/barrier_handler.cpp",
+    "src/task/sync_task.cpp",
+    "src/task/task.cpp",
+    "src/threading/default_thread_factory.cpp",
+    "src/threading/default_worker_pool_config.cpp",
+    "src/threading/task_executor.cpp",
+    "src/threading/work_thread.cpp",
+    "src/threading/worker_pool.cpp",
   ]
   cflags = []
   if (target_cpu == "arm") {
