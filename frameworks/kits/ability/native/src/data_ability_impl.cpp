@@ -211,6 +211,17 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityImpl::Query(
     return ability_->Query(uri, columns, predicates);
 }
 
+std::shared_ptr<AppExecFwk::PacMap> DataAbilityImpl::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    if (ability_ == nullptr) {
+        HILOG_ERROR("DataAbilityImpl::Call ability_ is nullptr");
+        return nullptr;
+    }
+
+    return ability_->Call(uri, method, arg, pacMap);
+}
+
 /**
  * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
  * implemented by a Data ability. Data abilities supports general data types, including text, HTML, and JPEG.

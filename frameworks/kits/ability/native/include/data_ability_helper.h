@@ -200,6 +200,9 @@ public:
      */
     int Delete(Uri &uri, const NativeRdb::DataAbilityPredicates &predicates);
 
+    std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap);
+
     /**
      * @brief Deletes one or more data records from the database.
      *
