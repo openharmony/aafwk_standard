@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 ohos_shared_library("abilitymanager_napi") {
   include_dirs = []
@@ -22,18 +23,16 @@ ohos_shared_library("abilitymanager_napi") {
     "js_ability_manager_utils.cpp",
   ]
 
-  configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
+  configs = [ "${services_path}/common:common_config" ]
 
   include_dirs = [
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/ability_manager",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
+    "./",
     "//third_party/icu/icu4c/source/common",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/continuation/kits",
   ]
 
   deps = [
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${services_path}/abilitymgr:abilityms",
   ]
 
   external_deps = [

@@ -20,9 +20,9 @@ config("dataobs_manager_public_config") {
     "include/",
     "//utils/native/base/include",
     "//utils/system/safwk/native/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
-    "//foundation/aafwk/standard/services/dataobsmgr/include",
+    "${kits_path}/ability/native/include",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
+    "${services_path}/dataobsmgr/include",
   ]
   cflags = []
   if (target_cpu == "arm") {

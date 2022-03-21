@@ -23,18 +23,18 @@ config("ability_manager_public_config") {
     "${innerkits_path}/want/include",
     "//utils/native/base/include",
     "//utils/system/safwk/native/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
+    "${innerkits_path}/uri/include",
+    "${innerkits_path}/want/include/ohos/aafwk/content",
+    "${kits_path}/ability/native/include",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
+    "${innerkits_path}/app_manager/include/appmgr",
+    "${kits_path}/appkit/native/app/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
+    "${innerkits_path}/dataobs_manager/include",
   ]
 
   if (ability_runtime_graphics) {
@@ -53,6 +53,11 @@ config("ability_manager_public_config") {
 
 ohos_shared_library("ability_manager") {
   sources = [
+    "${kits_path}/ability/native/src/data_ability_operation.cpp",
+    "${kits_path}/ability/native/src/data_ability_operation_builder.cpp",
+    "${kits_path}/ability/native/src/data_ability_result.cpp",
+    "${kits_path}/ability/native/src/task_handler.cpp",
+    "${kits_path}/ability/native/src/task_handler_client.cpp",
     "${services_path}/abilitymgr/src/ability_connect_callback_stub.cpp",
     "${services_path}/abilitymgr/src/ability_manager_client.cpp",
     "${services_path}/abilitymgr/src/ability_manager_proxy.cpp",
@@ -76,11 +81,6 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/want_sender_proxy.cpp",
     "${services_path}/abilitymgr/src/want_sender_stub.cpp",
     "${services_path}/abilitymgr/src/wants_info.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/data_ability_operation.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/data_ability_operation_builder.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/data_ability_result.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/task_handler.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/task_handler_client.cpp",
   ]
 
   public_configs = [
@@ -89,8 +89,8 @@ ohos_shared_library("ability_manager") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "${kits_path}/ability/native:dummy_classes",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
