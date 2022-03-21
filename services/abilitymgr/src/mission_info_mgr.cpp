@@ -119,6 +119,10 @@ bool MissionInfoMgr::UpdateMissionInfo(const InnerMissionInfo &missionInfo)
     if (missionInfo.missionInfo.time == listIter->missionInfo.time) {
         // time not changes, no need sort again
         *listIter = missionInfo;
+        if (!taskDataPersistenceMgr_->SaveMissionInfo(missionInfo)) {
+            HILOG_ERROR("save mission info failed.");
+            return false;
+        }
         return true;
     }
 
@@ -321,10 +325,8 @@ int MissionInfoMgr::UpdateMissionLabel(int32_t missionId, const std::string& lab
         return -1;
     }
 
-    InnerMissionInfo updateInfo = *it;
-    updateInfo.missionInfo.label = label;
-
-    if (!taskDataPersistenceMgr_->SaveMissionInfo(updateInfo)) {
+    it->missionInfo.label = label;
+    if (!taskDataPersistenceMgr_->SaveMissionInfo(*it)) {
         HILOG_ERROR("save mission info failed.");
         return -1;
     }
