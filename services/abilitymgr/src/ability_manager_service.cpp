@@ -600,15 +600,6 @@ int AbilityManagerService::TerminateAbilityWithFlag(const sptr<IRemoteObject> &t
         return ERR_INVALID_VALUE;
     }
 
-    if ((resultWant != nullptr) &&
-        AbilityUtil::IsSystemDialogAbility(
-            abilityRecord->GetAbilityInfo().bundleName, abilityRecord->GetAbilityInfo().name) &&
-        resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_KEY) &&
-        resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_CALLER_BUNDLENAME) &&
-        resultWant->HasParameter(AbilityConfig::SYSTEM_DIALOG_REQUEST_PERMISSIONS)) {
-        RequestPermission(resultWant);
-    }
-
     if (!IsAbilityControllerForeground(abilityRecord->GetAbilityInfo().bundleName)) {
         return ERR_WOULD_BLOCK;
     }
@@ -693,24 +684,6 @@ std::string AbilityManagerService::AnonymizeDeviceId(const std::string& deviceId
     std::string anonDeviceId = deviceId.substr(0, NON_ANONYMIZE_LENGTH);
     anonDeviceId.append("******");
     return anonDeviceId;
-}
-
-void AbilityManagerService::RequestPermission(const Want *resultWant)
-{
-    HILOG_INFO("Request permission.");
-    CHECK_POINTER_IS_NULLPTR(resultWant);
-    auto bms = GetBundleManager();
-    CHECK_POINTER_IS_NULLPTR(bms);
-
-    auto callerBundleName = resultWant->GetStringParam(AbilityConfig::SYSTEM_DIALOG_CALLER_BUNDLENAME);
-    auto permissions = resultWant->GetStringArrayParam(AbilityConfig::SYSTEM_DIALOG_REQUEST_PERMISSIONS);
-
-    IN_PROCESS_CALL_WITHOUT_RET(
-        for (auto &it : permissions) {
-            auto ret = bms->RequestPermissionFromUser(callerBundleName, it, GetUserId());
-            HILOG_INFO("Request permission from user result :%{public}d, permission:%{public}s.", ret, it.c_str());
-        }
-    );
 }
 
 int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode)
