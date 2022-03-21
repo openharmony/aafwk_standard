@@ -13,7 +13,6 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
-SUBSYSTEM_DIR = "//foundation/aafwk/standard"
 
 config("fmskit_config") {
   defines = [
@@ -23,11 +22,11 @@ config("fmskit_config") {
 }
 config("fmskit_public_config") {
   include_dirs = [
-    "//foundation/aafwk/standard/frameworks/kits/fmskit/native/include",
+    "native/include",
     "${aafwk_path}/services/common/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/form_manager/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/want/include",
+    "${innerkits_path}/form_manager/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
+    "${innerkits_path}/want/include",
     "//utils/system/safwk/native/include",
   ]
 }
@@ -37,9 +36,9 @@ ohos_shared_library("fmskit_native") {
   configs = [ ":fmskit_config" ]
   public_configs = [ ":fmskit_public_config" ]
   sources = [
-    "$SUBSYSTEM_DIR/frameworks/kits/fmskit/native/src/form_errors.cpp",
-    "$SUBSYSTEM_DIR/frameworks/kits/fmskit/native/src/form_host_client.cpp",
-    "$SUBSYSTEM_DIR/frameworks/kits/fmskit/native/src/form_mgr.cpp",
+    "native/src/form_errors.cpp",
+    "native/src/form_host_client.cpp",
+    "native/src/form_mgr.cpp",
   ]
   cflags = []
   if (target_cpu == "arm") {

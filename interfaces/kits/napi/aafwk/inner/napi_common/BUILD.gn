@@ -12,7 +12,13 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
+
+config("napi_common_public_config") {
+  include_dirs = [ "./" ]
+}
+
 ohos_shared_library("napi_common") {
   include_dirs = [
     "//third_party/node/src",
@@ -20,6 +26,8 @@ ohos_shared_library("napi_common") {
     "//third_party/jsoncpp",
     "//third_party/jsoncpp/include/json",
   ]
+
+  public_configs = [ ":napi_common_public_config" ]
 
   sources = [
     "napi_common_ability.cpp",
@@ -31,7 +39,7 @@ ohos_shared_library("napi_common") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
+    "${kits_path}/appkit:appkit_native",
     "//third_party/jsoncpp:jsoncpp",
     "//third_party/libuv:uv_static",
   ]

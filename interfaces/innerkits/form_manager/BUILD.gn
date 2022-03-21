@@ -19,9 +19,9 @@ config("formmgr_sdk_config") {
   include_dirs = [
     "include/",
     "//third_party/json/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "${kits_path}/ability/native/include",
+    "${innerkits_path}/ability_manager/include",
+    "${innerkits_path}/app_manager/include/appmgr",
     "${aafwk_path}/services/common/include",
   ]
   cflags = []
