@@ -133,8 +133,11 @@ void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, 
         }
 
         HILOG_INFO("%{public}s, no such form anymore, delete it:%{public}s", __func__, formRecord.formName.c_str());
-        (!formRecord.formTempFlg) ? FormDbCache::GetInstance().DeleteFormInfo(formId) :
+        if (formRecord.formTempFlg) {
             FormDataMgr::GetInstance().DeleteTempForm(formId);
+        } else {
+            FormDbCache::GetInstance().DeleteFormInfo(formId);
+        }
         removedForms.emplace_back(formId);
         FormDataMgr::GetInstance().DeleteFormRecord(formId);
     }

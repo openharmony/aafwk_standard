@@ -1130,11 +1130,12 @@ ErrCode FormMgrAdapter::GetFormItemInfo(const AAFwk::Want &want, const BundleInf
     HILOG_DEBUG("GetFormItemInfo start.");
     int32_t dimensionId = want.GetIntParam(Constants::PARAM_FORM_DIMENSION_KEY, formInfo.defaultDimension);
     if (!IsDimensionValid(formInfo, dimensionId)) {
-        HILOG_ERROR("addForm, dimension is not valid");
+        HILOG_ERROR("GetFormItemInfo failed, dimension is not valid.");
         return ERR_APPEXECFWK_FORM_NO_SUCH_DIMENSION;
     }
 
     if (ErrCode ret = CreateFormItemInfo(bundleInfo, formInfo, formItemInfo); ret != ERR_OK) {
+        HILOG_ERROR("GetFormItemInfo failed, CreateFormItemInfo failed.");
         return ret;
     }
     formItemInfo.SetSpecificationId(dimensionId);
