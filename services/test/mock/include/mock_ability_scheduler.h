@@ -79,6 +79,12 @@ public:
         return nullptr;
     }
 
+    std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+    {
+        return nullptr;
+    }
+
     virtual std::string GetType(const Uri &uri) override
     {
         return " ";
