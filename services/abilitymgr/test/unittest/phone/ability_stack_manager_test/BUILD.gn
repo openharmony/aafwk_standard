@@ -70,6 +70,5 @@ ohos_unittest("ability_stack_manager_test") {
 
 group("unittest") {
   testonly = true
-
-  deps = [ ":ability_stack_manager_test" ]
+  # deps = [ ":ability_stack_manager_test" ]
 }
