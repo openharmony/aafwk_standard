@@ -19,6 +19,7 @@
 #include <chrono>
 #include <fstream>
 #include <functional>
+#include <getopt.h>
 #include <memory>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -64,6 +65,30 @@ using OHOS::Security::AccessToken::AccessTokenKit;
 
 namespace OHOS {
 namespace AAFwk {
+namespace {
+const int32_t MIN_ARGS_SIZE = 1;
+const int32_t MID_ARGS_SIZE = 2;
+const int32_t MAX_ARGS_SIZE = 3;
+const int32_t FIRST_PARAM = 0;
+const int32_t SECOND_PARAM = 1;
+const int32_t THIRD_PARAM = 2;
+
+const std::string ARGS_ABILITY = "-a";
+const std::string ARGS_MISSION_LIST = "-l";
+const std::string ARGS_ABILITY_BY_ID = "-i";
+const std::string ARGS_EXTENSION = "-e";
+const std::string ARGS_PENDING_WANT = "-p";
+const std::string ARGS_PROCESS = "-r";
+const std::string ARGS_DATA = "-d";
+const std::string ARGS_USER_ID = "-u";
+const std::string ARGS_CLIENT = "-c";
+const std::string ILLEGAL_INFOMATION = "The arguments are illegal and you can enter '-h' for help.";
+
+const std::set<std::string> ONE_ARG_SET { ARGS_ABILITY, ARGS_MISSION_LIST, ARGS_EXTENSION,
+    ARGS_PENDING_WANT, ARGS_PROCESS, ARGS_DATA };
+
+const std::set<std::string> TWO_ARGS_SET { ARGS_ABILITY, ARGS_ABILITY_BY_ID, ARGS_PENDING_WANT };
+}
 using namespace std::chrono;
 using namespace std::chrono_literals;
 const bool CONCURRENCY_MODE_FALSE = false;
@@ -4651,6 +4676,142 @@ int AbilityManagerService::BlockAppService()
         return INVALID_DATA;
     }
     return DelayedSingleton<AppScheduler>::GetInstance()->BlockAppService();
+}
+
+int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
+{
+    std::vector<std::string> argsStr;
+    for (auto arg : args) {
+        argsStr.emplace_back(Str16ToStr8(arg));
+    }
+    int32_t argsSize = static_cast<int32_t>(argsStr.size());
+    if (argsSize < MIN_ARGS_SIZE || argsSize > MAX_ARGS_SIZE) {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+    ErrCode errCode = ERR_OK;
+    std::string result;
+    if (argsSize == MIN_ARGS_SIZE) {
+        errCode = ProcessOneParam(argsStr[FIRST_PARAM], result);
+    } else if (argsSize == MID_ARGS_SIZE) {
+        errCode = ProcessTwoParam(argsStr[FIRST_PARAM], argsStr[SECOND_PARAM], result);
+    } else {
+        errCode = ProcessThreeParam(argsStr[FIRST_PARAM], argsStr[SECOND_PARAM], argsStr[THIRD_PARAM], result);
+    }
+
+    if (errCode == ERR_AAFWK_HIDUMP_INVALID_ARGS) {
+        ShowIllealInfomation(result);
+    }
+
+    int ret = dprintf(fd, "%s\n", result.c_str());
+    if (ret < 0) {
+        HILOG_ERROR("dprintf error");
+        return ERR_AAFWK_HIDUMP_ERROR;
+    }
+
+    return errCode;
+}
+
+ErrCode AbilityManagerService::ProcessOneParam(std::string& args, std::string &result)
+{
+    if (args == "-h") {
+        ShowHelp(result);
+        return ERR_OK;
+    }
+
+    std::string cmd;
+    auto iter = ONE_ARG_SET.find(args);
+    if (iter != ONE_ARG_SET.end()) {
+        cmd = *iter;
+    } else {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    cmd += " ";
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, false, false, -1);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerService::ProcessTwoParam(const std::string& firstParam, const std::string& secondParam,
+    std::string &result)
+{
+    std::string cmd;
+    auto iter = TWO_ARGS_SET.find(firstParam);
+    if (iter != TWO_ARGS_SET.end()) {
+        cmd = *iter;
+    } else {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    bool isClient = false;
+    if (cmd == "-a" && secondParam == "-c") {
+        isClient = true;
+    }
+
+    if (isClient) {
+        cmd = cmd + " ";
+    } else {
+        cmd = cmd + " " + secondParam + " ";
+    }
+
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, isClient, false, -1);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerService::ProcessThreeParam(const std::string& firstParam, const std::string& secondParam,
+    const std::string& thirdParam, std::string &result)
+{
+    if (firstParam != "-a" || secondParam != "-u") {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    int userID = DEFAULT_INVAL_VALUE;
+    (void)StrToInt(thirdParam, userID);
+    HILOG_DEBUG("%{public}s, userID is : %{public}d", __func__, userID);
+    if (userID < 0) {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    std::string cmd = "-a ";
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, false, true, userID);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
+    return ERR_OK;
+}
+
+void AbilityManagerService::ShowHelp(std::string &result)
+{
+    result.append("Usage:\n")
+        .append("-h                          ")
+        .append("help text for the tool\n")
+        .append("-a [-c | -u {UserId}]       ")
+        .append("dump all ability infomation in the system or all ability infomation of client/UserId\n")
+        .append("-l                          ")
+        .append("dump all mission list information in the system\n")
+        .append("-i {AbilityRecordId}        ")
+        .append("dump an ability infomation by ability record id\n")
+        .append("-e                          ")
+        .append("dump all extension infomation in the system(FA: ServiceAbilityRecords, Stage: ExtensionRecords)\n")
+        .append("-p [PendingWantRecordId]    ")
+        .append("dump all pendingwant record infomation in the system\n")
+        .append("-r                          ")
+        .append("dump all process in the system\n")
+        .append("-d                          ")
+        .append("dump all data ability infomation in the system");
+}
+
+void AbilityManagerService::ShowIllealInfomation(std::string &result)
+{
+    result.append(ILLEGAL_INFOMATION);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

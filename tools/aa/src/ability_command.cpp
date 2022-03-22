@@ -561,6 +561,11 @@ ErrCode AbilityManagerShellCommand::RunAsStopService()
 
 ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
 {
+    HILOG_ERROR("999999. argList_ size : %{public}zu", argList_.size());
+    for (auto arg : argList_) {
+        HILOG_ERROR("999999. arg is : %{public}s", arg.c_str());
+    }
+
     ErrCode result = OHOS::ERR_OK;
     bool isUserID = false;
     bool isClient = false;
@@ -603,11 +608,16 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
         }
     }
 
+    HILOG_ERROR("999999. argc_: %{public}d", argc_);
+    for (int i = 0; i < argc_; i++) {
+        HILOG_ERROR("999999. argv_[%{public}d]: %{public}s", i, argv_[i]);
+    }
+
     while (true) {
 
         int option = getopt_long(argc_, argv_, SHORT_OPTIONS_DUMPSYS.c_str(), LONG_OPTIONS_DUMPSYS, nullptr);
 
-        HILOG_INFO("option: %{public}d, optopt: %{public}d, optind: %{public}d", option, optopt, optind);
+        HILOG_INFO("999999. option: %{public}d, optopt: %{public}d, optind: %{public}d", option, optopt, optind);
 
         if (optind < 0 || optind > argc_) {
             resultReceiver_.append(HELP_MSG_DUMPSYS);
