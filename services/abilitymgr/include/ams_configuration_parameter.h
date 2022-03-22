@@ -38,7 +38,6 @@ const std::string APP_NOT_RESPONSE_PROCESS_TIMEOUT_TIME {"app_not_response_proce
 const std::string AMS_TIMEOUT_TIME {"ams_timeout_time"};
 const std::string SYSTEM_CONFIGURATION {"system_configuration"};
 const std::string SYSTEM_ORIENTATION {"system_orientation"};
-const std::string STARTUP_CONTACTS {"startup_contacts"};
 const std::string STARTUP_MMS {"startup_mms"};
 const std::string USE_NEW_MISSION {"use_new_mission"};
 const std::string ROOT_LAUNCHER_RESTART_MAX {"root_launcher_restart_max"};
@@ -85,11 +84,6 @@ public:
      * return false : ams do not start phone service
      */
     bool GetPhoneServiceState() const;
-    /**
-     * return true : ams can start contacts
-     * return false : ams do not start contacts
-     */
-    bool GetStartContactsState() const;
     /**
      * return true : ams can start mms
      * return false : ams do not start mms
@@ -150,7 +144,6 @@ private:
     bool canStartUiStatusBar_ {false};
     bool canStartUiNavigationBar_ {false};
     bool canStartPhoneService_ {false};
-    bool canStartContacts {false};
     bool canStartMms {false};
     bool useNewMission_ {false};
     int maxRestartNum_ = 0;
