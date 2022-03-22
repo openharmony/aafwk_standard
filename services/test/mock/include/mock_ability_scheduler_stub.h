@@ -37,6 +37,7 @@ public:
     MOCK_METHOD2(Delete, int(const Uri &, const NativeRdb::DataAbilityPredicates &));
     MOCK_METHOD3(Query, std::shared_ptr<NativeRdb::AbsSharedResultSet>(
                             const Uri &, std::vector<std::string> &, const NativeRdb::DataAbilityPredicates &));
+    MOCK_METHOD4(Call, std::shared_ptr<PacMap>(const Uri &, const std::string &, const std::string &, const PacMap &));
     MOCK_METHOD1(GetType, std::string(const Uri &uri));
     MOCK_METHOD2(OpenRawFile, int(const Uri &uri, const std::string &mode));
     MOCK_METHOD2(Reload, bool(const Uri &uri, const PacMap &extras));
