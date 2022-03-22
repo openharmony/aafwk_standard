@@ -19,6 +19,7 @@
 #include <chrono>
 #include <fstream>
 #include <functional>
+#include <getopt.h>
 #include <memory>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -64,6 +65,39 @@ using OHOS::Security::AccessToken::AccessTokenKit;
 
 namespace OHOS {
 namespace AAFwk {
+namespace {
+const std::string HELP_MSG_DUMPSYS = "usage: aa dump <options>\n"
+                                "options list:\n"
+                                "  -h, --help                   list available commands\n"
+                                "  -a, --all                    dump all abilities\n"
+                                "  -l, --mission-list           dump mission list\n"
+                                "  -i, --ability                dump abilityRecordId\n"
+                                "  -e, --extension              dump elementName (API7 serviceAbilityRecords,"
+                                                                "API8 ExtensionRecords)\n"
+                                "  -p, --pending                dump pendingWantRecordId\n"
+                                "  -r, --process                dump process\n"
+                                "  -d, --data                   dump the data abilities\n"
+                                "  -u, --userId                 userId\n"
+                                "  -c, --client                 client\n"
+                                "  -c, -u are auxiliary parameters and cannot be used alone\n"
+                                "  The original -s parameter is invalid\n"
+                                "  The original -m parameter is invalid\n";
+const std::string HELP_MSG_NO_OPTION = "error: you must specify an option at least.";
+const std::string SHORT_OPTIONS_DUMPSYS = "hal::i:e::p::r::d::u:c";
+constexpr struct option LONG_OPTIONS_DUMPSYS[] = {
+    {"help", no_argument, nullptr, 'h'},
+    {"all", no_argument, nullptr, 'a'},
+    {"mission-list", no_argument, nullptr, 'l'},
+    {"ability", required_argument, nullptr, 'i'},
+    {"extension", no_argument, nullptr, 'e'},
+    {"pending", no_argument, nullptr, 'p'},
+    {"process", no_argument, nullptr, 'r'},
+    {"data", no_argument, nullptr, 'd'},
+    {"userId", required_argument, nullptr, 'u'},
+    {"client", no_argument, nullptr, 'c'},
+    {nullptr, 0, nullptr, 0},
+};
+}
 using namespace std::chrono;
 using namespace std::chrono_literals;
 const bool CONCURRENCY_MODE_FALSE = false;
@@ -4651,6 +4685,267 @@ int AbilityManagerService::BlockAppService()
         return INVALID_DATA;
     }
     return DelayedSingleton<AppScheduler>::GetInstance()->BlockAppService();
+}
+
+int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
+{
+    int argc = args.size() + 1;
+    char* argv[argc];
+    for (int i = 1; i < argc; i++) {
+        argv[i] = Str16ToStr8(args.at(i - 1)).data();
+    }
+
+    std::vector<std::string> argsStr;
+    for (int i = 2; i < argc; i++) {
+        argsStr.push_back(argv[i]);
+    }
+
+
+
+
+    std::string resultReceiver;
+    // std::vector<std::string> argsStr;
+    // for (auto item : args) {
+    //     argsStr.emplace_back(Str16ToStr8(item));
+    // }
+
+    // if (!DelayedSingleton<BundleMgrService>::GetInstance()->Hidump(argsStr, result)) {
+    //     APP_LOGE("Hidump error");
+    //     return ERR_APPEXECFWK_HIDUMP_ERROR;
+    // }
+
+    RunAsDumpsysCommand(argc, argv, argsStr, resultReceiver);
+
+    int ret = dprintf(fd, "%s\n", resultReceiver.c_str());
+    if (ret < 0) {
+        HILOG_ERROR("dprintf error");
+        return ERR_INVALID_VALUE;
+    }
+
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerService::RunAsDumpsysCommand(int argc, char *argv[], std::vector<std::string> &argsStr,
+    std::string &resultReceiver)
+{
+    ErrCode result = OHOS::ERR_OK;
+    bool isUserID = false;
+    bool isClient = false;
+    int userID = DEFAULT_INVAL_VALUE;
+    bool isfirstCommand = false;
+    std::string cmd = "dump";
+    std::string args;
+    for (auto it = argsStr.begin(); it != argsStr.end(); it++) {
+        if (*it == "-c" || *it == "--client") {
+            if (isClient == false) {
+                isClient = true;
+            } else {
+                result = OHOS::ERR_INVALID_VALUE;
+                resultReceiver.append(HELP_MSG_DUMPSYS);
+                return result;
+            }
+        } else if (*it == "-u" || *it == "--userId") {
+            if (it + 1 == argsStr.end()) {
+                result = OHOS::ERR_INVALID_VALUE;
+                resultReceiver.append(HELP_MSG_DUMPSYS);
+                return result;
+            }
+            (void)StrToInt(*(it + 1), userID);
+            if (userID == DEFAULT_INVAL_VALUE) {
+                result = OHOS::ERR_INVALID_VALUE;
+                resultReceiver.append(HELP_MSG_DUMPSYS);
+                return result;
+            }
+            if (isUserID == false) {
+                isUserID = true;
+            } else {
+                result = OHOS::ERR_INVALID_VALUE;
+                resultReceiver.append(HELP_MSG_DUMPSYS);
+                return result;
+            }
+        } else if (*it == std::to_string(userID)) {
+            continue;
+        } else {
+            args += *it;
+            args += " ";
+        }
+    }
+
+    while (true) {
+
+        int option = getopt_long(argc, argv, SHORT_OPTIONS_DUMPSYS.c_str(), LONG_OPTIONS_DUMPSYS, nullptr);
+
+        HILOG_INFO("option: %{public}d, optopt: %{public}d, optind: %{public}d", option, optopt, optind);
+
+        if (optind < 0 || optind > argc) {
+            resultReceiver.append(HELP_MSG_DUMPSYS);
+            return OHOS::ERR_INVALID_VALUE;
+        }
+
+        if (option == -1) {
+            break;
+        }
+
+        switch (option) {
+            case 'h': {
+                // 'aa dumpsys -h'
+                // 'aa dumpsys --help'
+                resultReceiver.append(HELP_MSG_DUMPSYS);
+                result = OHOS::ERR_INVALID_VALUE;
+                return result;
+                break;
+            }
+            case 'a': {
+                if (isfirstCommand == false) {
+                    isfirstCommand = true;
+                } else {
+                    result = OHOS::ERR_INVALID_VALUE;
+                    resultReceiver.append(HELP_MSG_DUMPSYS);
+                    return result;
+                }
+                // 'aa dumpsys -a'
+                // 'aa dumpsys --all'
+                break;
+            }
+            case 'l': {
+                if (isfirstCommand == false) {
+                    isfirstCommand = true;
+                } else {
+                    // 'aa dumpsys -i 10 -element -lastpage'
+                    // 'aa dumpsys -i 10 -render -lastpage'
+                    if (strcmp(optarg, "astpage")) {
+                        result = OHOS::ERR_INVALID_VALUE;
+                        resultReceiver.append(HELP_MSG_DUMPSYS);
+                        return result;
+                    }
+                }
+                // 'aa dumpsys -l'
+                // 'aa dumpsys --mission-list'
+                break;
+            }
+            case 'i': {
+                if (isfirstCommand == false) {
+                    isfirstCommand = true;
+                    int abilityRecordId = DEFAULT_INVAL_VALUE;
+                    (void)StrToInt(optarg, abilityRecordId);
+                    if (abilityRecordId == DEFAULT_INVAL_VALUE) {
+                        result = OHOS::ERR_INVALID_VALUE;
+                        resultReceiver.append(HELP_MSG_DUMPSYS);
+                        return result;
+                    }
+                } else {
+                    // 'aa dumpsys -i 10 -inspector'
+                    if (strcmp(optarg, "nspector")) {
+                        result = OHOS::ERR_INVALID_VALUE;
+                        resultReceiver.append(HELP_MSG_DUMPSYS);
+                        return result;
+                    }
+                }
+                // 'aa dumpsys -i'
+                // 'aa dumpsys --ability'
+                break;
+            }
+            case 'e': {
+                if (isfirstCommand == false && optarg == nullptr) {
+                    isfirstCommand = true;
+                } else {
+                    // 'aa dumpsys -i 10 -element'
+                    if (strcmp(optarg, "lement")) {
+                        result = OHOS::ERR_INVALID_VALUE;
+                        resultReceiver.append(HELP_MSG_DUMPSYS);
+                        return result;
+                    }
+                }
+                // 'aa dumpsys -e'
+                // 'aa dumpsys --extension'
+                break;
+            }
+            case 'p': {
+                if (isfirstCommand == false && optarg == nullptr) {
+                    isfirstCommand = true;
+                } else {
+                    result = OHOS::ERR_INVALID_VALUE;
+                    resultReceiver.append(HELP_MSG_DUMPSYS);
+                    return result;
+                }
+                // 'aa dumpsys -p'
+                // 'aa dumpsys --pending'
+                break;
+            }
+            case 'r': {
+                if (isfirstCommand == false && optarg == nullptr) {
+                    isfirstCommand = true;
+                } else {
+                    // 'aa dumpsys -i 10 -render'
+                    if (strcmp(optarg, "ender")) {
+                        result = OHOS::ERR_INVALID_VALUE;
+                        resultReceiver.append(HELP_MSG_DUMPSYS);
+                        return result;
+                    }
+                }
+                // 'aa dumpsys -r'
+                // 'aa dumpsys --process'
+                break;
+            }
+            case 'd': {
+                if (isfirstCommand == false && optarg == nullptr) {
+                    isfirstCommand = true;
+                } else {
+                    result = OHOS::ERR_INVALID_VALUE;
+                    resultReceiver.append(HELP_MSG_DUMPSYS);
+                    return result;
+                }
+                // 'aa dumpsys -d'
+                // 'aa dumpsys --data'
+                break;
+            }
+            case 'u': {
+                // 'aa dumpsys -u'
+                // 'aa dumpsys --userId'
+                break;
+            }
+            case 'c': {
+                // 'aa dumpsys -c'
+                // 'aa dumpsys --client'
+                break;
+            }
+            case '?': {
+                result = OHOS::ERR_INVALID_VALUE;
+                resultReceiver.append(HELP_MSG_DUMPSYS);
+                return result;
+                break;
+            }
+            default: {
+                if (strcmp(argv[optind], cmd.c_str()) == 0) {
+                    // 'aa dumpsys' with no option: aa dumpsys
+                    // 'aa dumpsys' with a wrong argument: aa dumpsys xxx
+                    HILOG_INFO("'aa dumpsys' with no option.");
+
+                    resultReceiver.append(HELP_MSG_NO_OPTION + "\n");
+                    result = OHOS::ERR_INVALID_VALUE;
+                }
+                break;
+            }
+        }
+    }
+
+    if (result != OHOS::ERR_OK) {
+        resultReceiver.append(HELP_MSG_DUMPSYS);
+    } else {
+        if (isfirstCommand != true) {
+            result = OHOS::ERR_INVALID_VALUE;
+            resultReceiver.append(HELP_MSG_NO_OPTION + "\n");
+            resultReceiver.append(HELP_MSG_DUMPSYS);
+            return result;
+        }
+
+        std::vector<std::string> dumpResults;
+        DumpSysState(args, dumpResults, isClient, isUserID, userID);
+        for (auto it : dumpResults) {
+            resultReceiver += it + "\n";
+        }
+    }
+    return result;
 }
 }  // namespace AAFwk
 }  // namespace OHOS
