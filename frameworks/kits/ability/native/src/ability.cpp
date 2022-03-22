@@ -137,12 +137,12 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
             continuationManager_.reset();
         } else {
             std::weak_ptr<ContinuationHandler> continuationHandler = continuationHandler_;
-            sptr<ReverseContinuationSchedulerPrimary> Primary = sptr<ReverseContinuationSchedulerPrimary>(
+            sptr<ReverseContinuationSchedulerPrimary> primary = sptr<ReverseContinuationSchedulerPrimary>(
                 new (std::nothrow) ReverseContinuationSchedulerPrimary(continuationHandler, handler_));
-            if (Primary == nullptr) {
-                HILOG_ERROR("Ability::Init failed,Primary create failed");
+            if (primary == nullptr) {
+                HILOG_ERROR("Ability::Init failed,primary create failed");
             } else {
-                continuationHandler_->SetPrimaryStub(Primary);
+                continuationHandler_->SetPrimaryStub(primary);
                 continuationHandler_->SetAbilityInfo(abilityInfo_);
             }
         }
