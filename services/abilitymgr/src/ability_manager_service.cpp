@@ -737,7 +737,7 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
         case AppExecFwk::AbilityType::SERVICE:
         case AppExecFwk::AbilityType::EXTENSION: {
             if (!connectManager) {
-                HILOG_ERROR("connectManager is nullptr. userId=%{public}d", userId);
+                HILOG_ERROR("connectManager is nullptr.");
                 return ERR_INVALID_VALUE;
             }
             auto result = connectManager->TerminateAbility(abilityRecord, requestCode);
@@ -760,13 +760,13 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
                 return ERR_WOULD_BLOCK;
             }
             if (!stackManager) {
-                HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
+                HILOG_ERROR("stackManager is nullptr.");
                 return ERR_INVALID_VALUE;
             }
             auto result = stackManager->TerminateAbility(abilityRecord, requestCode);
             if (result == NO_FOUND_ABILITY_BY_CALLER) {
                 if (!connectManager) {
-                    HILOG_ERROR("connectManager is nullptr. userId=%{public}d", userId);
+                    HILOG_ERROR("connectManager is nullptr.");
                     return ERR_INVALID_VALUE;
                 }
                 return connectManager->TerminateAbility(abilityRecord, requestCode);
@@ -806,7 +806,7 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, boo
     }
     auto missionListManager = GetListManagerByUserId(userId);
     if (!missionListManager) {
-        HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
+        HILOG_ERROR("missionListManager is Null.");
         return ERR_INVALID_VALUE;
     }
     return missionListManager->MinimizeAbility(token, fromUser);
@@ -815,7 +815,7 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, boo
 int AbilityManagerService::GetRecentMissions(
     const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
 {
-    HILOG_INFO("numMax: %{public}d, flags: %{public}d", numMax, flags);
+    HILOG_INFO("flags: %{public}d", flags);
     if (numMax < 0 || flags < 0) {
         HILOG_ERROR("numMax or flags is invalid.");
         return ERR_INVALID_VALUE;
@@ -850,7 +850,6 @@ int AbilityManagerService::SetMissionDescriptionInfo(
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
-        HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
         return ERR_INVALID_VALUE;
     }
     return stackManager->SetMissionDescriptionInfo(abilityRecord, description);
@@ -891,7 +890,6 @@ int AbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, co
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
-        HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
         return ERR_INVALID_VALUE;
     }
     return stackManager->MoveMissionToEnd(token, nonFirst);
@@ -1035,8 +1033,7 @@ int AbilityManagerService::DisconnectRemoteAbility(const sptr<IRemoteObject> &co
 int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
     int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams)
 {
-    HILOG_INFO("ContinueMission srcDeviceId: %{public}s, dstDeviceId: %{public}s, missionId: %{public}d",
-        srcDeviceId.c_str(), dstDeviceId.c_str(), missionId);
+    HILOG_INFO("ContinueMission missionId: %{public}d", missionId);
     if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         return CHECK_PERMISSION_FAILED;
@@ -1047,7 +1044,7 @@ int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const
 
 int AbilityManagerService::ContinueAbility(const std::string &deviceId, int32_t missionId)
 {
-    HILOG_INFO("ContinueAbility deviceId : %{public}s, missionId = %{public}d.", deviceId.c_str(), missionId);
+    HILOG_INFO("ContinueAbility missionId = %{public}d.", missionId);
 
     sptr<IRemoteObject> abilityToken = GetAbilityTokenByMissionId(missionId);
     CHECK_POINTER_AND_RETURN(abilityToken, ERR_INVALID_VALUE);
