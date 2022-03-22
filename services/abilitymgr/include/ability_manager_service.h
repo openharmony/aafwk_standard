@@ -968,12 +968,6 @@ private:
     void StartingSystemUiAbility(const SatrtUiMode &mode);
 
     /**
-     * starting contacts ability.
-     *
-     */
-    void StartingContactsAbility();
-
-    /**
      * starting mms ability.
      *
      */

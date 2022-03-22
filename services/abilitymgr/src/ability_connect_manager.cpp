@@ -949,7 +949,6 @@ bool AbilityConnectManager::IsAbilityNeedRestart(const std::shared_ptr<AbilityRe
     auto findKeepAliveAbility = [abilityRecord](const std::string &mainElemen) {
         return (abilityRecord->GetAbilityInfo().name == mainElemen ||
                 abilityRecord->GetAbilityInfo().name == AbilityConfig::PHONE_SERVICE_ABILITY_NAME ||
-                abilityRecord->GetAbilityInfo().name == AbilityConfig::CONTACTS_ABILITY_NAME ||
                 abilityRecord->GetAbilityInfo().name == AbilityConfig::MMS_ABILITY_NAME ||
                 abilityRecord->GetAbilityInfo().name == AbilityConfig::SYSTEM_UI_ABILITY_NAME ||
                 abilityRecord->GetAbilityInfo().name == AbilityConfig::LAUNCHER_ABILITY_NAME);
