@@ -42,6 +42,7 @@ ErrCode AppSpawnSocket::OpenAppSpawnConnection()
         }
         if (clientSocket_->ConnectSocket() != ERR_OK) {
             HILOG_ERROR("failed to connect socket");
+            clientSocket_->CloseClient();
             return ERR_APPEXECFWK_CONNECT_APPSPAWN_FAILED;
         }
         HILOG_DEBUG("connection has been opened");
