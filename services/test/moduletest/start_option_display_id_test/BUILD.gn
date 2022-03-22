@@ -65,6 +65,5 @@ ohos_moduletest("start_option_display_id_test") {
 
 group("moduletest") {
   testonly = true
-
-  deps = [ ":start_option_display_id_test" ]
+  # deps = [ ":start_option_display_id_test" ]
 }
