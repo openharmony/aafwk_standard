@@ -45,8 +45,7 @@ const std::string ContextImpl::CONTEXT_FILE_SEPARATOR("/");
 const std::string ContextImpl::CONTEXT_DATA("/data/");
 const std::string ContextImpl::CONTEXT_DATA_STORAGE("/data/storage/");
 const std::string ContextImpl::CONTEXT_BASE("base");
-const std::string ContextImpl::CONTEXT_PRIVATE("/private/");
-const std::string ContextImpl::CONTEXT_CACHES("caches");
+const std::string ContextImpl::CONTEXT_CACHE("cache");
 const std::string ContextImpl::CONTEXT_STORAGE("storage");
 const std::string ContextImpl::CONTEXT_DATABASE("database");
 const std::string ContextImpl::CONTEXT_TEMP("/temp");
@@ -82,7 +81,7 @@ std::string ContextImpl::GetBundleCodeDir()
 
 std::string ContextImpl::GetCacheDir()
 {
-    std::string dir = GetBaseDir() + CONTEXT_PRIVATE + CONTEXT_CACHES;
+    std::string dir = GetBaseDir() + CONTEXT_FILE_SEPARATOR + CONTEXT_CACHE;
     CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetCacheDir:%{public}s", dir.c_str());
     return dir;
@@ -115,7 +114,7 @@ std::string ContextImpl::GetDatabaseDir()
 
 std::string ContextImpl::GetStorageDir()
 {
-    std::string dir = GetBaseDir() + CONTEXT_PRIVATE + CONTEXT_STORAGE;
+    std::string dir = GetBaseDir() + CONTEXT_FILE_SEPARATOR  + CONTEXT_STORAGE;
     CreateDirIfNotExist(dir);
     HILOG_DEBUG("ContextImpl::GetStorageDir:%{public}s", dir.c_str());
     return dir;
@@ -174,7 +173,7 @@ std::string ContextImpl::GetBaseDir() const
         baseDir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_BASE;
     }
     if (parentContext_ != nullptr) {
-        baseDir =  baseDir + CONTEXT_HAPS + CONTEXT_FILE_SEPARATOR +
+        baseDir = baseDir + CONTEXT_HAPS + CONTEXT_FILE_SEPARATOR +
             ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
     }
 
