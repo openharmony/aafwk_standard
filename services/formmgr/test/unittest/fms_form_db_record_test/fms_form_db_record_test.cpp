@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-// #include <chrono>
 #include <gtest/gtest.h>
 #include <string>
 #include <thread>
