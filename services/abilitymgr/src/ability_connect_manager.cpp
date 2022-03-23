@@ -446,7 +446,7 @@ int AbilityConnectManager::ScheduleConnectAbilityDoneLocked(
 
     if ((!abilityRecord->IsAbilityState(AbilityState::INACTIVE)) &&
         (!abilityRecord->IsAbilityState(AbilityState::ACTIVE))) {
-        HILOG_ERROR("Ability record state is not inactive ,state：%{public}d", abilityRecord->GetAbilityState());
+        HILOG_ERROR("Ability record state is not inactive ,state: %{public}d", abilityRecord->GetAbilityState());
         return INVALID_CONNECTION_STATE;
     }
 
@@ -479,7 +479,7 @@ int AbilityConnectManager::ScheduleDisconnectAbilityDoneLocked(const sptr<IRemot
     CHECK_POINTER_AND_RETURN(connect, CONNECTION_NOT_EXIST);
 
     if (!abilityRecord->IsAbilityState(AbilityState::ACTIVE)) {
-        HILOG_ERROR("The service ability state is not active ,state：%{public}d", abilityRecord->GetAbilityState());
+        HILOG_ERROR("The service ability state is not active ,state: %{public}d", abilityRecord->GetAbilityState());
         return INVALID_CONNECTION_STATE;
     }
 
@@ -522,7 +522,7 @@ int AbilityConnectManager::ScheduleCommandAbilityDoneLocked(const sptr<IRemoteOb
 
     if ((!abilityRecord->IsAbilityState(AbilityState::INACTIVE)) &&
         (!abilityRecord->IsAbilityState(AbilityState::ACTIVE))) {
-        HILOG_ERROR("Ability record state is not inactive ,state：%{public}d", abilityRecord->GetAbilityState());
+        HILOG_ERROR("Ability record state is not inactive ,state: %{public}d", abilityRecord->GetAbilityState());
         return INVALID_CONNECTION_STATE;
     }
     // complete command and pop waiting start ability from queue.

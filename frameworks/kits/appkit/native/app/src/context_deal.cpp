@@ -686,8 +686,12 @@ std::shared_ptr<HapModuleInfo> ContextDeal::GetHapModuleInfo()
     // fix set HapModuleInfoLocal data failed, request only once
     if (hapModuleInfoLocal_ == nullptr) {
         HapModuleInfoRequestInit();
+        if (hapModuleInfoLocal_ == nullptr) {
+            HILOG_ERROR("hapModuleInfoLocal_ is nullptr");
+            return nullptr;
+        }
     }
-    
+
     sptr<IBundleMgr> ptr = GetBundleManager();
     if (ptr == nullptr) {
         HILOG_ERROR("GetAppType failed to get bundle manager service");
