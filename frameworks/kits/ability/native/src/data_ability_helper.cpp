@@ -568,6 +568,44 @@ int DataAbilityHelper::Insert(Uri &uri, const NativeRdb::ValuesBucket &value)
     return index;
 }
 
+std::shared_ptr<AppExecFwk::PacMap> DataAbilityHelper::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    std::shared_ptr<AppExecFwk::PacMap> result = nullptr;
+    HILOG_INFO("DataAbilityHelper::Call start.");
+    if (!CheckUriParam(uri)) {
+        HILOG_ERROR("%{public}s called. CheckUriParam uri failed", __func__);
+        return result;
+    }
+
+    sptr<AAFwk::IAbilityScheduler> dataAbilityProxy = dataAbilityProxy_;
+    if (uri_ == nullptr) {
+        HILOG_INFO("DataAbilityHelper::Call before AcquireDataAbility.");
+        dataAbilityProxy = AbilityManagerClient::GetInstance()->AcquireDataAbility(uri, tryBind_, token_);
+        HILOG_INFO("DataAbilityHelper::Call after AcquireDataAbility.");
+        if (dataAbilityProxy == nullptr) {
+            HILOG_ERROR("DataAbilityHelper::Call failed dataAbility == nullptr");
+            return nullptr;
+        }
+        if (isSystemCaller_) {
+            AddDataAbilityDeathRecipient(dataAbilityProxy->AsObject());
+        }
+    }
+    HILOG_INFO("DataAbilityHelper::Call before dataAbilityProxy->Insert.");
+    result = dataAbilityProxy->Call(uri, method, arg, pacMap);
+    HILOG_INFO("DataAbilityHelper::Call after dataAbilityProxy->Insert.");
+    if (uri_ == nullptr) {
+        HILOG_INFO("DataAbilityHelper::Call before ReleaseDataAbility.");
+        int err = AbilityManagerClient::GetInstance()->ReleaseDataAbility(dataAbilityProxy, token_);
+        HILOG_INFO("DataAbilityHelper::Call after ReleaseDataAbility.");
+        if (err != ERR_OK) {
+            HILOG_ERROR("DataAbilityHelper::Call failed to ReleaseDataAbility err = %{public}d", err);
+        }
+    }
+    HILOG_INFO("DataAbilityHelper::Call end.");
+    return result;
+}
+
 /**
  * @brief Updates data records in the database.
  *
