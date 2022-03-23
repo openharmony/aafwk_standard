@@ -1087,7 +1087,7 @@ void CompleteAsyncVoidCallbackWork(napi_env env, napi_status status, void *data)
     if (asyncCallbackInfo->error_code) {
         NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, asyncCallbackInfo->error_code, &result[PARAM0]));
     }
-    
+
     if (asyncCallbackInfo->error_code == NAPI_ERR_NO_ERROR) {
         result[PARAM1] = WrapVoidToJS(env);
     } else {

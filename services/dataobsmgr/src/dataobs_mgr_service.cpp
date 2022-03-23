@@ -25,7 +25,6 @@
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
-// #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {

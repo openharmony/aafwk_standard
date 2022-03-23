@@ -129,6 +129,19 @@ public:
         const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates);
 
     /**
+     * @brief Calls the method of the Data ability.
+     *
+     * @param uri Indicates the Data ability of the method to call.
+     * @param method Indicates the method to call.
+     * @param arg Indicates the parameter of the String type.
+     * @param pacMap Defines a PacMap object for storing a series of values.
+     *
+     * @return Returns the call result.
+     */
+    std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap);
+
+    /**
      * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
      * implemented by a Data ability. Data abilities supports general data types, including text, HTML, and JPEG.
      *

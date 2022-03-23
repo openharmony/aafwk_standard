@@ -325,7 +325,6 @@ struct DAHelperDeleteCB {
     DataAbilityHelper *dataAbilityHelper = nullptr;
     std::string uri;
     NativeRdb::DataAbilityPredicates predicates;
-    AppExecFwk::PacMap pacMap;
     int result = 0;
     int execResult;
 };
@@ -336,7 +335,6 @@ struct DAHelperQueryCB {
     std::string uri;
     std::vector<std::string> columns;
     NativeRdb::DataAbilityPredicates predicates;
-    AppExecFwk::PacMap pacMap;
     std::shared_ptr<NativeRdb::AbsSharedResultSet> result;
     int execResult;
 };
@@ -347,8 +345,23 @@ struct DAHelperUpdateCB {
     std::string uri;
     NativeRdb::ValuesBucket valueBucket;
     NativeRdb::DataAbilityPredicates predicates;
-    AppExecFwk::PacMap pacMap;
     int result = 0;
+    int execResult;
+};
+
+struct DAHelperCallCB {
+    CBBase cbBase;
+    DataAbilityHelper *dataAbilityHelper = nullptr;
+    std::string uri;
+    std::string method;
+    std::string arg;
+    AppExecFwk::PacMap pacMap;
+    std::shared_ptr<AppExecFwk::PacMap> result;
+    int execResult;
+};
+
+struct DAHelperErrorCB {
+    CBBase cbBase;
     int execResult;
 };
 struct DAHelperBatchInsertCB {

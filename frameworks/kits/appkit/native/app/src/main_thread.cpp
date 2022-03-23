@@ -1489,7 +1489,8 @@ void MainThread::HandleScheduleANRProcess()
             HILOG_ERROR("MainThread::HandleScheduleANRProcess write main thread stack info failed");
         }
     }
-    HILOG_INFO("HandleScheduleANRProcess write main thread stack info size: %{public}d", mainThreadStackInfo.size());
+    HILOG_INFO("HandleScheduleANRProcess write main thread stack info size: %{public}d",
+        (int32_t)mainThreadStackInfo.size());
     HILOG_INFO("MainThread:HandleScheduleANRProcess BuildNativeAndJsBackStackTrace end.");
     OHOS::HiviewDFX::DfxDumpCatcher dumplog;
     std::string proStackInfo;
@@ -1500,7 +1501,8 @@ void MainThread::HandleScheduleANRProcess()
     if (write(rFD, proStackInfo.c_str(), proStackInfo.size()) != (ssize_t)proStackInfo.size()) {
         HILOG_ERROR("MainThread::HandleScheduleANRProcess write process stack info failed");
     }
-    HILOG_INFO("HandleScheduleANRProcess DumpCatch write process stack info size: %{public}d", proStackInfo.size());
+    HILOG_INFO("HandleScheduleANRProcess DumpCatch write process stack info size: %{public}d",
+        (int32_t)proStackInfo.size());
     if (rFD != -1) {
         close(rFD);
     }
