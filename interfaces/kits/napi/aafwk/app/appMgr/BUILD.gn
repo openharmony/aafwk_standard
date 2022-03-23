@@ -19,7 +19,6 @@ ohos_shared_library("napi_app_mgr") {
   include_dirs = [
     "//third_party/node/src",
     "${services_path}/common/include",
-    "//utils/system/safwk/native/include",
     "./",
   ]
 

@@ -24,7 +24,6 @@ config("tools_fm_config") {
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//utils/native/base/include",
-    "//utils/system/safwk/native/include",
     "include",
   ]
 }
