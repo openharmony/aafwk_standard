@@ -131,29 +131,29 @@ void JsDataShareExtAbility::LoadLibrary()
     libRdbHandle_ = dlopen(LIB_RDB_PATH.c_str(), RTLD_LAZY);
     if (libRdbHandle_ == nullptr) {
         HILOG_ERROR("dlopen failed: %{public}s", dlerror());
-    }
+    } else {
+        rdbValueBucketNewInstance_ = reinterpret_cast<RdbValueBucketNewInstance>(
+            dlsym(libRdbHandle_, "NAPI_OHOS_Data_RdbJsKit_ValuesBucketProxy_NewInstance"));
+        if (rdbValueBucketNewInstance_ == nullptr) {
+            HILOG_ERROR("symbol not found: %{public}s", dlerror());
+        }
 
-    rdbValueBucketNewInstance_ = reinterpret_cast<RdbValueBucketNewInstance>(
-        dlsym(libRdbHandle_, "NAPI_OHOS_Data_RdbJsKit_ValuesBucketProxy_NewInstance"));
-    if (rdbValueBucketNewInstance_ == nullptr) {
-        HILOG_ERROR("symbol not found: %{public}s", dlerror());
-    }
-
-    rdbResultSetProxyGetNativeObject_ = reinterpret_cast<RdbResultSetProxyGetNativeObject>(
-        dlsym(libRdbHandle_, "NAPI_OHOS_Data_RdbJsKit_ResultSetProxy_GetNativeObject"));
-    if (rdbResultSetProxyGetNativeObject_ == nullptr) {
-        HILOG_ERROR("symbol not found: %{public}s", dlerror());
+        rdbResultSetProxyGetNativeObject_ = reinterpret_cast<RdbResultSetProxyGetNativeObject>(
+            dlsym(libRdbHandle_, "NAPI_OHOS_Data_RdbJsKit_ResultSetProxy_GetNativeObject"));
+        if (rdbResultSetProxyGetNativeObject_ == nullptr) {
+            HILOG_ERROR("symbol not found: %{public}s", dlerror());
+        }
     }
 
     libDataAbilityHandle_ = dlopen(LIB_DATA_ABILITY_PATH.c_str(), RTLD_LAZY);
     if (libDataAbilityHandle_ == nullptr) {
         HILOG_ERROR("dlopen failed: %{public}s", dlerror());
-    }
-
-    dataAbilityPredicatesNewInstance_ = reinterpret_cast<DataAbilityPredicatesNewInstance>(
-        dlsym(libDataAbilityHandle_, "NAPI_OHOS_Data_DataAbilityJsKit_DataAbilityPredicatesProxy_NewInstance"));
-    if (dataAbilityPredicatesNewInstance_ == nullptr) {
-        HILOG_ERROR("symbol not found: %{public}s", dlerror());
+    } else {
+        dataAbilityPredicatesNewInstance_ = reinterpret_cast<DataAbilityPredicatesNewInstance>(
+            dlsym(libDataAbilityHandle_, "NAPI_OHOS_Data_DataAbilityJsKit_DataAbilityPredicatesProxy_NewInstance"));
+        if (dataAbilityPredicatesNewInstance_ == nullptr) {
+            HILOG_ERROR("symbol not found: %{public}s", dlerror());
+        }
     }
 }
 
