@@ -32,7 +32,6 @@ NativeValue* CreateJsHapModuleInfo(NativeEngine& engine, AppExecFwk::HapModuleIn
     object->SetProperty("label", CreateJsValue(engine, hapModuleInfo.label));
     object->SetProperty("backgroundImg", CreateJsValue(engine, hapModuleInfo.backgroundImg));
     object->SetProperty("mainAbilityName", CreateJsValue(engine, hapModuleInfo.mainAbility));
-    // object->SetProperty("srcPath", CreateJsValue(engine, hapModuleInfo.srcPath)); // d.ts no have
     object->SetProperty("supportedModes", CreateJsValue(engine, hapModuleInfo.supportedModes));
 
     NativeValue *capArrayValue = engine.CreateArray(hapModuleInfo.reqCapabilities.size());
