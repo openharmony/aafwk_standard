@@ -22,6 +22,8 @@
 namespace OHOS {
 namespace AppExecFwk {
 
+std::mutex ApplicationStateObserverStub::callbackMutex_;
+
 ApplicationStateObserverStub::ApplicationStateObserverStub()
 {
     memberFuncMap_[static_cast<uint32_t>(
@@ -102,25 +104,43 @@ int32_t ApplicationStateObserverStub::HandleOnForegroundApplicationChanged(Messa
 
 int32_t ApplicationStateObserverStub::HandleOnAbilityStateChanged(MessageParcel &data, MessageParcel &reply)
 {
-    std::unique_lock<std::mutex> lock(callbackMutex_); // Protect ReadParcelable<IRemoteObject>()
-    std::unique_ptr<AbilityStateData> abilityStateData(data.ReadParcelable<AbilityStateData>());
-    if (!abilityStateData) {
-        HILOG_ERROR("ReadParcelable<AbilityStateData> failed");
-        return ERR_APPEXECFWK_PARCEL_ERROR;
+    AbilityStateData* abilityStateData = nullptr;
+    {
+        // Protect Multi Thread ReadParcelable<IRemoteObject>()
+        std::unique_lock<std::mutex> lock(callbackMutex_);
+        abilityStateData = data.ReadParcelable<AbilityStateData>();
+        if (!abilityStateData) {
+            HILOG_ERROR("ReadParcelable<AbilityStateData> failed");
+            return ERR_APPEXECFWK_PARCEL_ERROR;
+        }
     }
     OnAbilityStateChanged(*abilityStateData);
+    {
+        // Protect Multi Thread Deconstruct IRemoteObject
+        std::unique_lock<std::mutex> lock(callbackMutex_);
+        delete abilityStateData;
+    }
     return NO_ERROR;
 }
 
 int32_t ApplicationStateObserverStub::HandleOnExtensionStateChanged(MessageParcel &data, MessageParcel &reply)
 {
-    std::unique_lock<std::mutex> lock(callbackMutex_); // Protect ReadParcelable<IRemoteObject>()
-    std::unique_ptr<AbilityStateData> abilityStateData(data.ReadParcelable<AbilityStateData>());
-    if (!abilityStateData) {
-        HILOG_ERROR("ReadParcelable<AbilityStateData> failed");
-        return ERR_APPEXECFWK_PARCEL_ERROR;
+    AbilityStateData* abilityStateData = nullptr;
+    {
+        // Protect Multi Thread ReadParcelable<IRemoteObject>()
+        std::unique_lock<std::mutex> lock(callbackMutex_);
+        abilityStateData = data.ReadParcelable<AbilityStateData>();
+        if (!abilityStateData) {
+            HILOG_ERROR("ReadParcelable<AbilityStateData> failed");
+            return ERR_APPEXECFWK_PARCEL_ERROR;
+        }
     }
     OnExtensionStateChanged(*abilityStateData);
+    {
+        // Protect Multi Thread Deconstruct IRemoteObject
+        std::unique_lock<std::mutex> lock(callbackMutex_);
+        delete abilityStateData;
+    }
     return NO_ERROR;
 }
 
