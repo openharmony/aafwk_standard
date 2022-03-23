@@ -21,8 +21,6 @@ ohos_shared_library("featureability") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
-    "//third_party/jsoncpp",
-    "//third_party/jsoncpp/include/json",
   ]
 
   sources = [
@@ -41,7 +39,6 @@ ohos_shared_library("featureability") {
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "${innerkits_path}/dataobs_manager:dataobs_manager",
     "${kits_path}/appkit:appkit_native",
-    "//third_party/jsoncpp:jsoncpp",
     "//third_party/libuv:uv_static",
   ]
 

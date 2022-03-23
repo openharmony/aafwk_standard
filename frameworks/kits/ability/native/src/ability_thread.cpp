@@ -1052,6 +1052,22 @@ int AbilityThread::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     return index;
 }
 
+std::shared_ptr<AppExecFwk::PacMap> AbilityThread::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    HILOG_INFO("AbilityThread::Call begin");
+    if (abilityImpl_ == nullptr) {
+        HILOG_ERROR("AbilityThread::Insert abilityImpl_ is nullptr");
+        return nullptr;
+    }
+
+    HILOG_INFO("AbilityThread::Call before abilityImpl_->Call");
+    std::shared_ptr<AppExecFwk::PacMap> result = abilityImpl_->Call(uri, method, arg, pacMap);
+    HILOG_INFO("AbilityThread::Call after abilityImpl_->Call");
+    HILOG_INFO("AbilityThread::Call end");
+    return result;
+}
+
 /**
  * @brief Updates data records in the database.
  *
