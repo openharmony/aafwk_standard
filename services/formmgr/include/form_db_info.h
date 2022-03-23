@@ -347,9 +347,6 @@ public:
 private:
     FormDBInfo formDBInfo_;
 };
-
-// void to_json(nlohmann::json &jsonObject, const FormDBInfo &info);
-// void from_json(const nlohmann::json &jsonObject, FormDBInfo &info);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_SERVICES_FORMMGR_INCLUDE_INNER_FORM_INFO_H

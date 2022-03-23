@@ -210,4 +210,4 @@ private:
     size_t cachedFsi_;
 };
 } // namespace OHOS
-#endif // #ifndef UTILS_NATIVE_INCLUDE_URI_H_
+#endif // UTILS_NATIVE_INCLUDE_URI_H_
