@@ -3073,7 +3073,7 @@ int AbilityStackManager::GenerateMissinOptionsOfSplitScreen(
             missionOptions.push_front(optionSecondary);
             HILOG_DEBUG("splitscreen stack will add two missions together.");
         } else {
-            HILOG_DEBUG("splitscreen stack will emplace mission： winmode：%{public}d", primary.winModeKey);
+            HILOG_DEBUG("splitscreen stack will emplace mission, winmode: %{public}d", primary.winModeKey);
         }
     }
     return ERR_OK;
