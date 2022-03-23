@@ -2236,8 +2236,16 @@ bool MissionListManager::GetMissionSnapshot(int32_t missionId, const sptr<IRemot
     MissionSnapshot& missionSnapshot)
 {
     HILOG_INFO("snapshot: Start get mission snapshot.");
+    bool forceSnapshot = false;
+    {
+        std::lock_guard<std::recursive_mutex> guard(managerLock_);
+        auto abilityRecord = GetAbilityRecordByToken(abilityToken);
+        if (abilityRecord && abilityRecord->IsAbilityState(FOREGROUND_NEW)) {
+            forceSnapshot = true;
+        }
+    }
     return DelayedSingleton<MissionInfoMgr>::GetInstance()->GetMissionSnapshot(
-        missionId, abilityToken, missionSnapshot);
+        missionId, abilityToken, missionSnapshot, forceSnapshot);
 }
 
 void MissionListManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info, bool isPerm)
