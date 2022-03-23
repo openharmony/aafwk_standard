@@ -1561,8 +1561,8 @@ napi_value GetElementNameAsync(napi_env env, napi_value *args, const size_t argC
     NAPI_CALL(env, napi_queue_async_work(env, elementNameCB->cbBase.asyncWork));
     napi_value result = nullptr;
     NAPI_CALL(env, napi_get_null(env, &result));
-    return result;
     HILOG_INFO("%{public}s, asyncCallback end.", __func__);
+    return result;
 }
 
 /**
