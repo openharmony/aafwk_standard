@@ -19,7 +19,6 @@ ohos_shared_library("abilitymanager") {
   include_dirs = [
     "//third_party/node/src",
     "${services_path}/common/include",
-    "//utils/system/safwk/native/include",
     "./",
   ]
 
@@ -51,7 +50,7 @@ ohos_shared_library("abilitymanager") {
   ]
 
   if (ability_runtime_graphics) {
-    include_dirs += [ "//foundation/multimedia/image_standard/interfaces/kits/js/common/include/" ]
+    include_dirs += []
     deps += []
     external_deps += [
       "multimedia_image_standard:image",

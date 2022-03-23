@@ -27,12 +27,7 @@ config("runtime_config") {
     defines += [ "_ARM64_" ]
   }
 
-  include_dirs = [
-    "${innerkits_path}/ability_manager/include",
-    "${innerkits_path}/base/include",
-    "${innerkits_path}/uri/include",
-    "${innerkits_path}/want/include/ohos/aafwk/content",
-  ]
+  include_dirs = []
 }
 
 config("runtime_public_config") {
@@ -62,8 +57,11 @@ ohos_shared_library("runtime") {
   ]
 
   external_deps = [
+    "ability_base:base",
     "ability_base:configuration",
     "ability_base:want",
+    "ability_base:zuri",
+    "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "eventhandler:libeventhandler",

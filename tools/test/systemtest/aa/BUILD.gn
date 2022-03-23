@@ -21,7 +21,6 @@ config("tools_aa_test_config") {
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "${appexecfwk_path}/tools/bm/include",
-    "//utils/system/safwk/native/include",
     "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
     "//base/security/appverify/interfaces/innerkits/appverify/include",
   ]

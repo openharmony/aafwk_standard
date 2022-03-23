@@ -22,7 +22,6 @@ config("napi_common_public_config") {
 ohos_shared_library("napi_common") {
   include_dirs = [
     "//third_party/node/src",
-    "//third_party/libuv/include",
     "//third_party/jsoncpp",
     "//third_party/jsoncpp/include/json",
   ]

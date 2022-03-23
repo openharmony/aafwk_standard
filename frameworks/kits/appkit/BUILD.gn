@@ -51,11 +51,7 @@ ohos_executable("appexec") {
     "native/ability_runtime/context",
     "native/app/include",
     "${aafwk_path}/services/common/include",
-    "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
     "${aafwk_path}/frameworks/kits/ability/native/include",
-    "${aafwk_path}/interfaces/innerkits/base/include",
-    "${aafwk_path}/interfaces/innerkits/ability_manager/include",
-    "${aafwk_path}/interfaces/innerkits/uri/include",
     "${aafwk_path}/services/abilitymgr/include",
   ]
 
@@ -69,7 +65,10 @@ ohos_executable("appexec") {
   ]
 
   external_deps = [
+    "ability_base:base",
     "ability_base:want",
+    "ability_base:zuri",
+    "ability_runtime:ability_manager",
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
@@ -93,14 +92,8 @@ ohos_shared_library("appkit_native") {
     "native/app/include",
     "native/app/include/task",
     "${aafwk_path}/services/common/include",
-    "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
-    "${aafwk_path}/interfaces/innerkits/uri/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
-    "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${aafwk_path}/services/abilitymgr/include",
-    "${aafwk_path}/common/task_dispatcher/include/dispatcher",
-    "${aafwk_path}/common/task_dispatcher/include/task",
-    "${aafwk_path}/common/task_dispatcher/include/threading",
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common",
   ]
 
@@ -242,7 +235,6 @@ ohos_shared_library("appkit_delegator") {
     "native/ability_delegator/include",
     "${aafwk_path}/services/common/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
-    "${aafwk_path}/interfaces/innerkits/ability_manager/include",
   ]
 
   configs = [ ":appkit_config" ]
