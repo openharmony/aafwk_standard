@@ -232,27 +232,27 @@ std::map<int, int> DataAbilityOperation::GetDataAbilityPredicatesBackReferences(
 }
 bool DataAbilityOperation::IsInsertOperation() const
 {
-    HILOG_DEBUG("DataAbilityOperation::IsInsertOperation：%d", type_ == TYPE_INSERT);
+    HILOG_DEBUG("DataAbilityOperation::IsInsertOperation: %{public}d", type_ == TYPE_INSERT);
     return type_ == TYPE_INSERT;
 }
 bool DataAbilityOperation::IsUpdateOperation() const
 {
-    HILOG_DEBUG("DataAbilityOperation::IsUpdateOperation：%d", type_ == TYPE_UPDATE);
+    HILOG_DEBUG("DataAbilityOperation::IsUpdateOperation: %{public}d", type_ == TYPE_UPDATE);
     return type_ == TYPE_UPDATE;
 }
 bool DataAbilityOperation::IsDeleteOperation() const
 {
-    HILOG_DEBUG("DataAbilityOperation::IsDeleteOperation：%d", type_ == TYPE_DELETE);
+    HILOG_DEBUG("DataAbilityOperation::IsDeleteOperation: %{public}d", type_ == TYPE_DELETE);
     return type_ == TYPE_DELETE;
 }
 bool DataAbilityOperation::IsAssertOperation() const
 {
-    HILOG_DEBUG("DataAbilityOperation::IsAssertOperation：%d", type_ == TYPE_ASSERT);
+    HILOG_DEBUG("DataAbilityOperation::IsAssertOperation: %{public}d", type_ == TYPE_ASSERT);
     return type_ == TYPE_ASSERT;
 }
 bool DataAbilityOperation::IsInterruptionAllowed() const
 {
-    HILOG_DEBUG("DataAbilityOperation::IsInterruptionAllowed：%d", interrupted_);
+    HILOG_DEBUG("DataAbilityOperation::IsInterruptionAllowed: %{public}d", interrupted_);
     return interrupted_;
 }
 bool DataAbilityOperation::Marshalling(Parcel &out) const

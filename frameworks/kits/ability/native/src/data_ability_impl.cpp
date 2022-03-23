@@ -55,7 +55,6 @@ void DataAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         default: {
             HILOG_ERROR("DataAbilityImpl::HandleAbilityTransaction state is error");
             return;
-            break;
         }
     }
 
