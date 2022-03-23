@@ -34,6 +34,7 @@
 #include "ability_util.h"
 #include "bytrace.h"
 #include "bundle_mgr_client.h"
+#include "display_manager.h"
 #include "distributed_client.h"
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
@@ -3710,11 +3711,15 @@ int32_t AbilityManagerService::GetRemoteMissionSnapshotInfo(const std::string& d
 void AbilityManagerService::StartFreezingScreen()
 {
     HILOG_INFO("%{public}s", __func__);
+    std::vector<Rosen::DisplayId> displayIds = Rosen::DisplayManager::GetInstance().GetAllDisplayIds();
+    Rosen::DisplayManager::GetInstance().Freeze(displayIds);
 }
 
 void AbilityManagerService::StopFreezingScreen()
 {
     HILOG_INFO("%{public}s", __func__);
+    std::vector<Rosen::DisplayId> displayIds = Rosen::DisplayManager::GetInstance().GetAllDisplayIds();
+    Rosen::DisplayManager::GetInstance().Unfreeze(displayIds);
 }
 
 void AbilityManagerService::UserStarted(int32_t userId)
