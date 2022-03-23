@@ -626,6 +626,13 @@ int AbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     return -1;
 }
 
+std::shared_ptr<AppExecFwk::PacMap> AbilityImpl::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    HILOG_INFO("AbilityImpl::Call");
+    return nullptr;
+}
+
 /**
  * @brief Updates data records in the database.
  *

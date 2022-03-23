@@ -314,7 +314,9 @@ bool ContextDeal::StopAbility(const AAFwk::Want &want)
  */
 std::string ContextDeal::GetCacheDir()
 {
-    return (applicationInfo_ != nullptr) ? applicationInfo_->cacheDir : "";
+    std::string dir = (applicationInfo_ != nullptr) ? applicationInfo_->cacheDir : "";
+    HILOG_DEBUG("ContextDeal::GetCacheDir dir = %{public}s", dir.c_str());
+    return dir;
 }
 
 bool ContextDeal::IsUpdatingConfigurations()
@@ -423,9 +425,10 @@ std::string ContextDeal::GetExternalFilesDir(std::string &type)
  */
 std::string ContextDeal::GetFilesDir()
 {
-    return (applicationInfo_ != nullptr)
-               ? (applicationInfo_->dataDir + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_Files)
-               : "";
+    std::string dir = (applicationInfo_ != nullptr) ?
+                          (applicationInfo_->dataDir + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_Files) : "";
+    HILOG_DEBUG("ContextDeal::GetFilesDir dir = %{public}s", dir.c_str());
+    return dir;
 }
 
 /**
@@ -687,7 +690,7 @@ std::shared_ptr<HapModuleInfo> ContextDeal::GetHapModuleInfo()
     if (hapModuleInfoLocal_ == nullptr) {
         HapModuleInfoRequestInit();
     }
-    
+
     sptr<IBundleMgr> ptr = GetBundleManager();
     if (ptr == nullptr) {
         HILOG_ERROR("GetAppType failed to get bundle manager service");
@@ -696,6 +699,7 @@ std::shared_ptr<HapModuleInfo> ContextDeal::GetHapModuleInfo()
     Want want;
     ElementName name;
     name.SetBundleName(GetBundleName());
+    name.SetAbilityName(abilityInfo_->name);
     want.SetElement(name);
     std::vector<AbilityInfo> abilityInfos;
     bool isSuc = ptr->QueryAbilityInfos(want, abilityInfos);

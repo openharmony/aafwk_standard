@@ -51,6 +51,7 @@ private:
     int UpdatetInner(MessageParcel &data, MessageParcel &reply);
     int DeleteInner(MessageParcel &data, MessageParcel &reply);
     int QueryInner(MessageParcel &data, MessageParcel &reply);
+    int CallInner(MessageParcel &data, MessageParcel &reply);
     int GetTypeInner(MessageParcel &data, MessageParcel &reply);
     int ReloadInner(MessageParcel &data, MessageParcel &reply);
     int BatchInsertInner(MessageParcel &data, MessageParcel &reply);

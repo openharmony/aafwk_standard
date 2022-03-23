@@ -371,6 +371,58 @@ int AbilitySchedulerProxy::Insert(const Uri &uri, const NativeRdb::ValuesBucket 
 }
 
 /**
+ * @brief Inserts a single data record into the database.
+ *
+ * @param uri Indicates the path of the data to operate.
+ * @param value  Indicates the data record to insert. If this parameter is null, a blank row will be inserted.
+ *
+ * @return Returns the index of the inserted data record.
+ */
+std::shared_ptr<AppExecFwk::PacMap> AbilitySchedulerProxy::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return nullptr;
+    }
+
+    if (!data.WriteParcelable(&uri)) {
+        HILOG_ERROR("fail to WriteParcelable uri");
+        return nullptr;
+    }
+
+    if (!data.WriteString(method)) {
+        HILOG_ERROR("fail to WriteString method");
+        return nullptr;
+    }
+
+    if (!data.WriteString(arg)) {
+        HILOG_ERROR("fail to WriteString arg");
+        return nullptr;
+    }
+
+    if (!data.WriteParcelable(&pacMap)) {
+        HILOG_ERROR("fail to WriteParcelable pacMap");
+        return nullptr;
+    }
+
+    int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_CALL, data, reply, option);
+    if (err != NO_ERROR) {
+        HILOG_ERROR("Call fail to SendRequest. err: %{public}d", err);
+        return nullptr;
+    }
+    std::shared_ptr<AppExecFwk::PacMap> result(reply.ReadParcelable<AppExecFwk::PacMap>());
+    if (!result) {
+        HILOG_ERROR("ReadParcelable value is nullptr.");
+        return nullptr;
+    }
+    return result;
+}
+
+/**
  * @brief Updates data records in the database.
  *
  * @param uri Indicates the path of data to update.

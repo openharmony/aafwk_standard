@@ -86,6 +86,11 @@ public:
     {
         return std::make_shared<NativeRdb::AbsSharedResultSet>("resultset");
     };
+    std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+    {
+        return nullptr;
+    }
     virtual std::string GetType(const Uri &uri)
     {
         return std::string("Type1");
