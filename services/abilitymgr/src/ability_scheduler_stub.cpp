@@ -45,6 +45,7 @@ AbilitySchedulerStub::AbilitySchedulerStub()
     requestFuncMap_[SCHEDULE_UPDATE] = &AbilitySchedulerStub::UpdatetInner;
     requestFuncMap_[SCHEDULE_DELETE] = &AbilitySchedulerStub::DeleteInner;
     requestFuncMap_[SCHEDULE_QUERY] = &AbilitySchedulerStub::QueryInner;
+    requestFuncMap_[SCHEDULE_CALL] = &AbilitySchedulerStub::CallInner;
     requestFuncMap_[SCHEDULE_GETTYPE] = &AbilitySchedulerStub::GetTypeInner;
     requestFuncMap_[SCHEDULE_RELOAD] = &AbilitySchedulerStub::ReloadInner;
     requestFuncMap_[SCHEDULE_BATCHINSERT] = &AbilitySchedulerStub::BatchInsertInner;
@@ -255,6 +256,38 @@ int AbilitySchedulerStub::InsertInner(MessageParcel &data, MessageParcel &reply)
         return ERR_INVALID_VALUE;
     }
     HILOG_INFO("AbilitySchedulerStub::InsertInner end");
+    return NO_ERROR;
+}
+
+int AbilitySchedulerStub::CallInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::shared_ptr<Uri> uri(data.ReadParcelable<Uri>());
+    if (uri == nullptr) {
+        HILOG_ERROR("AbilitySchedulerStub uri is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    std::string method = data.ReadString();
+    if (method.empty()) {
+        HILOG_ERROR("ReadParcelable method is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    std::string arg = data.ReadString();
+    if (arg.empty()) {
+        HILOG_ERROR("ReadParcelable arg is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    std::shared_ptr<AppExecFwk::PacMap> pacMap(data.ReadParcelable<AppExecFwk::PacMap>());
+    if (pacMap == nullptr) {
+        HILOG_ERROR("ReadParcelable pacMap is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    std::shared_ptr<AppExecFwk::PacMap> result = Call(*uri, method, arg, *pacMap);
+    if (!reply.WriteParcelable(result.get())) {
+        HILOG_ERROR("fail to WriteParcelable pacMap error");
+        return ERR_INVALID_VALUE;
+    }
+    HILOG_INFO("AbilitySchedulerStub::CallInner end");
     return NO_ERROR;
 }
 

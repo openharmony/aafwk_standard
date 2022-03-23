@@ -994,6 +994,12 @@ int Ability::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     return 0;
 }
 
+std::shared_ptr<AppExecFwk::PacMap> Ability::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    return nullptr;
+}
+
 /**
  * @brief Called when the system configuration is updated.
  *
