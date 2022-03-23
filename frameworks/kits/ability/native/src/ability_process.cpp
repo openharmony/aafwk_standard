@@ -180,12 +180,12 @@ void AbilityProcess::RequestPermissionsFromUser(
         permState.state = -1;
         permList.emplace_back(permState);
     }
-    HILOG_DEBUG("%{public}s. permList size: %{public}d, permissions size: %{public}d.",
+    HILOG_DEBUG("%{public}s. permList size: %{public}zu, permissions size: %{public}zu.",
         __func__, permList.size(), param.permission_list.size());
 
     auto ret = AccessTokenKit::GetSelfPermissionsState(permList);
     if (permList.size() != param.permission_list.size()) {
-        HILOG_ERROR("%{public}s. Returned permList size: %{public}d.", __func__, permList.size());
+        HILOG_ERROR("%{public}s. Returned permList size: %{public}zu.", __func__, permList.size());
         return;
     }
 
@@ -195,7 +195,7 @@ void AbilityProcess::RequestPermissionsFromUser(
             __func__, permState.permissionName.c_str(), permState.state);
         permissionsState.emplace_back(permState.state);
     }
-    HILOG_DEBUG("%{public}s. permissions size: %{public}d. permissionsState size: %{public}d",
+    HILOG_DEBUG("%{public}s. permissions size: %{public}zu. permissionsState size: %{public}zu",
         __func__, param.permission_list.size(), permissionsState.size());
 
     if (ret != TypePermissionOper::DYNAMIC_OPER) {
