@@ -622,7 +622,6 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 resultReceiver_.append(HELP_MSG_DUMPSYS);
                 result = OHOS::ERR_INVALID_VALUE;
                 return result;
-                break;
             }
             case 'a': {
                 if (isfirstCommand == false) {
@@ -1405,8 +1404,9 @@ ErrCode AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID()
         abilityMs_ = GetAbilityManagerService();
         if (abilityMs_ == nullptr) {
             std::cout << "abilityMsObj is nullptr";
+        } else {
+            abilityMs_->SendANRProcessID(atoi(pid.c_str()));
         }
-        abilityMs_->SendANRProcessID(atoi(pid.c_str()));
     } else {
         resultReceiver_.append(HELP_ApplicationNotRespondin+ "\n");
         result = OHOS::ERR_INVALID_VALUE;
