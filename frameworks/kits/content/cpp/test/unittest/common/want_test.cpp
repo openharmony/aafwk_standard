@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -508,7 +508,6 @@ HWTEST_F(WantBaseTest, AaFwk_Want_Parcelable_0500, Function | MediumTest | Level
         GTEST_LOG_(INFO) << "element->GetBundleName().c_str(): " << element.GetBundleName().c_str();
         EXPECT_STREQ(element.GetBundleName().c_str(), std::string("system.test.bundlename").c_str());
 
-        GTEST_LOG_(INFO) << "element.GetDeviceID().c_str(): " << element.GetDeviceID().c_str();
         EXPECT_STREQ(element.GetDeviceID().c_str(), std::string("system.test.deviceid").c_str());
 
         std::string param_content = WantOut_->GetStringParam(keyStr);
