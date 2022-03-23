@@ -123,6 +123,7 @@ ohos_shared_library("abilityms") {
     "samgr_standard:samgr_proxy",
     "startup_l2:syspara",
     "utils_base:utils",
+    "window_manager:libdm",
   ]
 
   if (ability_runtime_graphics) {
