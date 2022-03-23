@@ -298,7 +298,6 @@ void GetMissionSnapshotInfoForResult(napi_env env, MissionSnapshot &recentMissio
     napi_value deviceId;
     NAPI_CALL_RETURN_VOID(env,
         napi_create_string_utf8(env, recentMissionInfos.topAbility.GetDeviceID().c_str(), NAPI_AUTO_LENGTH, &deviceId));
-    HILOG_INFO("deviceId = [%{public}s]", recentMissionInfos.topAbility.GetDeviceID().c_str());
     NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, objTopAbilityInfo, "deviceId", deviceId));
     napi_value bundleName;
     NAPI_CALL_RETURN_VOID(env,
