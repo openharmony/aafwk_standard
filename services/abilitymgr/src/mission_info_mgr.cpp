@@ -429,9 +429,9 @@ bool MissionInfoMgr::UpdateMissionSnapshot(int32_t missionId, const sptr<IRemote
 }
 
 bool MissionInfoMgr::GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
-    MissionSnapshot& missionSnapshot) const
+    MissionSnapshot& missionSnapshot, bool force) const
 {
-    HILOG_ERROR("mission_list_info GetMissionSnapshot, missionId:%{public}d", missionId);
+    HILOG_INFO("mission_list_info GetMissionSnapshot, missionId:%{public}d, force:%{public}d", missionId, force);
     auto it = find_if(missionInfoList_.begin(), missionInfoList_.end(), [missionId](const InnerMissionInfo &info) {
         return missionId == info.missionInfo.id;
     });
@@ -443,6 +443,12 @@ bool MissionInfoMgr::GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObj
         HILOG_ERROR("snapshot: taskDataPersistenceMgr_ is nullptr");
         return false;
     }
+
+    if (force) {
+        HILOG_INFO("force to get snapshot");
+        return UpdateMissionSnapshot(missionId, abilityToken, missionSnapshot);
+    }
+
     if (taskDataPersistenceMgr_->GetMissionSnapshot(missionId, missionSnapshot)) {
         missionSnapshot.topAbility = it->missionInfo.want.GetElement();
         HILOG_ERROR("mission_list_info GetMissionSnapshot, find snapshot OK, missionId:%{public}d", missionId);

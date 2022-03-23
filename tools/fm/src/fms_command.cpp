@@ -62,7 +62,6 @@ ErrCode FormMgrShellCommand::CreateCommandMap()
     commandMap_ = {
         {"help", std::bind(&FormMgrShellCommand::RunAsHelpCommand, this)},
         {"query", std::bind(&FormMgrShellCommand::RunAsQueryCommand, this)},
-        // {"dump", std::bind(&FormMgrShellCommand::RunAsDumpCommand, this)},
     };
 
     return OHOS::ERR_OK;

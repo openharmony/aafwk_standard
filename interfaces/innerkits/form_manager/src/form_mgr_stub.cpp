@@ -31,7 +31,7 @@ void SplitString(const std::string &source, std::vector<std::string> &strings)
     if ((source.size() % LIMIT_PARCEL_SIZE) != 0) {
         splitSize++;
     }
-    HILOG_DEBUG("the dump string split into %{public}d size", splitSize);
+    HILOG_DEBUG("the dump string split into %{public}zu size", splitSize);
     for (size_t i = 0; i < splitSize; i++) {
         size_t start = LIMIT_PARCEL_SIZE * i;
         strings.emplace_back(source.substr(start, LIMIT_PARCEL_SIZE));
