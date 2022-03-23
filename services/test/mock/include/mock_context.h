@@ -62,7 +62,8 @@ public:
     virtual std::shared_ptr<HapModuleInfo> GetHapModuleInfo() = 0;
     virtual std::string GetProcessName() = 0;
     virtual std::string GetCallingBundle() = 0;
-    virtual void RequestPermissionsFromUser(std::vector<std::string> &permissions, int requestCode) = 0;
+    virtual void RequestPermissionsFromUser(std::vector<std::string> &permissions, std::vector<int> &permissionsState,
+        int requestCode) = 0;
     virtual void StartAbility(const Want &want, int requestCode, const AbilityStartSetting &abilityStartSetting) = 0;
     virtual bool ConnectAbility(const Want &want, const sptr<AAFwk::IAbilityConnection> &conn) = 0;
     virtual void DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn) = 0;

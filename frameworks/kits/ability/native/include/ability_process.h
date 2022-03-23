@@ -40,6 +40,10 @@ public:
         const std::vector<std::string> &permissions, const std::vector<int> &grantResults);
 
 private:
+    bool CaullFunc(int requestCode, const std::vector<std::string> &permissions,
+        const std::vector<int> &permissionsState, CallbackInfo &callbackInfo);
+
+private:
     static std::mutex mutex_;
     static std::shared_ptr<AbilityProcess> instance_;
     static std::map<Ability *, std::map<int, CallbackInfo>> abilityResultMap_;

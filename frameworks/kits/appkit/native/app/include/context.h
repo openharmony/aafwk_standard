@@ -268,8 +268,8 @@ public:
 
     /**
      * @brief Checks whether the current process has the given permission.
-     * You need to call requestPermissionsFromUser(java.lang.std::string[],int) to request a permission only
-     * if the current process does not have the specific permission.
+     * You need to call requestPermissionsFromUser(std::vector<std::string>,std::vector<int>, int) to request
+     * a permission only if the current process does not have the specific permission.
      *
      * @param permission Indicates the permission to check. This parameter cannot be null.
      *
@@ -419,11 +419,13 @@ public:
      * the Ability.onRequestPermissionsFromUserResult(int, String[], int[]) method will be called back.
      *
      * @param permissions Indicates the list of permissions to be requested. This parameter cannot be null.
+     * @param permissionsState Indicates the list of permissions' state to be requested. This parameter cannot be null.
      * @param requestCode Indicates the request code to be passed to the Ability.onRequestPermissionsFromUserResult(int,
      * String[], int[]) callback method. This code cannot be a negative number.
      *
      */
-    virtual void RequestPermissionsFromUser(std::vector<std::string> &permissions, int requestCode) = 0;
+    virtual void RequestPermissionsFromUser(std::vector<std::string> &permissions, std::vector<int> &permissionsState,
+        int requestCode) = 0;
 
     /**
      * @brief Starts a new ability with special ability start setting.
