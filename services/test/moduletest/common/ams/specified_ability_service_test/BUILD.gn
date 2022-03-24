@@ -91,8 +91,13 @@ ohos_moduletest("specified_ability_service_test") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
-    "window_manager:libdm",
   ]
+
+  if (ability_runtime_graphics) {
+    external_deps += [
+      "window_manager:libdm",
+    ]
+  }
 }
 
 group("moduletest") {
