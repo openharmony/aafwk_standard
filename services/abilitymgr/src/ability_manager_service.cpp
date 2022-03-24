@@ -34,7 +34,9 @@
 #include "ability_util.h"
 #include "bytrace.h"
 #include "bundle_mgr_client.h"
+#ifdef SUPPORT_GRAPHICS
 #include "display_manager.h"
+#endif
 #include "distributed_client.h"
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
