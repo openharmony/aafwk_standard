@@ -115,7 +115,7 @@ void JsDataShareExtAbility::Init(const std::shared_ptr<AbilityLocalRecord> &reco
         return;
     }
 
-    HILOG_INFO("Set datashare extension ability context pointer: %{public}p", context.get());
+    HILOG_INFO("Set datashare extension ability context");
 
     nativeObj->SetNativePointer(new std::weak_ptr<AbilityRuntime::Context>(context),
         [](NativeEngine*, void* data, void*) {

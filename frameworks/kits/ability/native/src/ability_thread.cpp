@@ -1706,7 +1706,7 @@ sptr<IRemoteObject> AbilityThread::CallRequest()
 
         HILOG_DEBUG("AbilityThread::CallRequest syncTask CallRequest begin");
         retval = currentAbility->CallRequest();
-        HILOG_DEBUG("AbilityThread::CallRequest syncTask CallRequest end %{public}p", retval.GetRefPtr());
+        HILOG_DEBUG("AbilityThread::CallRequest syncTask CallRequest end");
     };
 
     if (abilityHandler_ == nullptr) {

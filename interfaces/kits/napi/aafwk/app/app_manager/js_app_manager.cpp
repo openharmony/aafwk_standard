@@ -124,7 +124,7 @@ private:
         } else {
             serialNumber_ = 0;
         }
-        HILOG_INFO("%{public}s create observer:%{public}p", __func__, observer.GetRefPtr());
+        HILOG_INFO("%{public}s create observer", __func__);
         AsyncTask::CompleteCallback complete =
             [appManager = appManager_, observer](NativeEngine& engine, AsyncTask& task, int32_t status) {
                 HILOG_INFO("RegisterApplicationStateObserver callback begin");
@@ -166,7 +166,7 @@ private:
         if (item != observerIds_.end()) {
             // match id
             observer = item->second;
-            HILOG_INFO("%{public}s find observer:%{public}p exist", __func__, item->second.GetRefPtr());
+            HILOG_INFO("%{public}s find observer exist", __func__);
         } else {
             HILOG_INFO("%{public}s not find observer exist.", __func__);
         }
