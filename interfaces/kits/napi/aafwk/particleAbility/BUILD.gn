@@ -16,7 +16,6 @@ import("//foundation/aafwk/standard/aafwk.gni")
 ohos_shared_library("particleability") {
   include_dirs = [
     "//third_party/node/src",
-    "//third_party/libuv/include",
     "${aafwk_path}/interfaces/kits/napi/aafwk/featureAbility",
     "${services_path}/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",

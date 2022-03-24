@@ -15,8 +15,6 @@ import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
 ohos_shared_library("abilitymanager_napi") {
-  include_dirs = []
-
   sources = [
     "ability_manager_module.cpp",
     "js_ability_manager.cpp",

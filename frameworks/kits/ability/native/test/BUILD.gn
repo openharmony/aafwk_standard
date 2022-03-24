@@ -31,7 +31,6 @@ config("module_private_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/aafwk/standard/services/abilitymgr/include",
-    "//utils/system/safwk/native/include",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
