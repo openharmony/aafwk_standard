@@ -1101,7 +1101,12 @@ private:
         const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
     void DataDumpSysStateInner(
         const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
-    ErrCode RunAsDumpsysCommand(int argc, char *argv[], std::vector<std::string> &argsStr, std::string &result);
+    ErrCode ProcessOneParam(std::string& args, std::string &result);
+    ErrCode ProcessTwoParam(const std::string& firstParam, const std::string& secondParam, std::string &result);
+    ErrCode ProcessThreeParam(const std::string& firstParam, const std::string& secondParam,
+        const std::string& thirdParam, std::string &result);
+    void ShowHelp(std::string &result);
+    void ShowIllealInfomation(std::string &result);
 
     void InitConnectManager(int32_t userId, bool switchUser);
     void InitDataAbilityManager(int32_t userId, bool switchUser);

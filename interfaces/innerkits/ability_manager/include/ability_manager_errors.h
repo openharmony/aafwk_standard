@@ -380,6 +380,16 @@ enum {
      * Result(2097220) for send usr1 sig to the process of not response fail.
      */
     SEND_USR1_SIG_FAIL,
+
+    /**
+     * Result(2097221) for hidump fail.
+     */
+    ERR_AAFWK_HIDUMP_ERROR,
+
+    /**
+     * Result(2097222) for hidump params are invalid.
+     */
+    ERR_AAFWK_HIDUMP_INVALID_ARGS,
 };
 
 enum {

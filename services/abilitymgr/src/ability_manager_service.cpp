@@ -66,37 +66,28 @@ using OHOS::Security::AccessToken::AccessTokenKit;
 namespace OHOS {
 namespace AAFwk {
 namespace {
-const std::string HELP_MSG_DUMPSYS = "usage: aa dump <options>\n"
-                                "options list:\n"
-                                "  -h, --help                   list available commands\n"
-                                "  -a, --all                    dump all abilities\n"
-                                "  -l, --mission-list           dump mission list\n"
-                                "  -i, --ability                dump abilityRecordId\n"
-                                "  -e, --extension              dump elementName (API7 serviceAbilityRecords,"
-                                                                "API8 ExtensionRecords)\n"
-                                "  -p, --pending                dump pendingWantRecordId\n"
-                                "  -r, --process                dump process\n"
-                                "  -d, --data                   dump the data abilities\n"
-                                "  -u, --userId                 userId\n"
-                                "  -c, --client                 client\n"
-                                "  -c, -u are auxiliary parameters and cannot be used alone\n"
-                                "  The original -s parameter is invalid\n"
-                                "  The original -m parameter is invalid\n";
-const std::string HELP_MSG_NO_OPTION = "error: you must specify an option at least.";
-const std::string SHORT_OPTIONS_DUMPSYS = "hal::i:e::p::r::d::u:c";
-constexpr struct option LONG_OPTIONS_DUMPSYS[] = {
-    {"help", no_argument, nullptr, 'h'},
-    {"all", no_argument, nullptr, 'a'},
-    {"mission-list", no_argument, nullptr, 'l'},
-    {"ability", required_argument, nullptr, 'i'},
-    {"extension", no_argument, nullptr, 'e'},
-    {"pending", no_argument, nullptr, 'p'},
-    {"process", no_argument, nullptr, 'r'},
-    {"data", no_argument, nullptr, 'd'},
-    {"userId", required_argument, nullptr, 'u'},
-    {"client", no_argument, nullptr, 'c'},
-    {nullptr, 0, nullptr, 0},
-};
+const int32_t MIN_ARGS_SIZE = 1;
+const int32_t MID_ARGS_SIZE = 2;
+const int32_t MAX_ARGS_SIZE = 3;
+const int32_t FIRST_PARAM = 0;
+const int32_t SECOND_PARAM = 1;
+const int32_t THIRD_PARAM = 2;
+
+const std::string ARGS_ABILITY = "-a";
+const std::string ARGS_MISSION_LIST = "-l";
+const std::string ARGS_ABILITY_BY_ID = "-i";
+const std::string ARGS_EXTENSION = "-e";
+const std::string ARGS_PENDING_WANT = "-p";
+const std::string ARGS_PROCESS = "-r";
+const std::string ARGS_DATA = "-d";
+const std::string ARGS_USER_ID = "-u";
+const std::string ARGS_CLIENT = "-c";
+const std::string ILLEGAL_INFOMATION = "The arguments are illegal and you can enter '-h' for help.";
+
+const std::set<std::string> ONE_ARG_SET { ARGS_ABILITY, ARGS_MISSION_LIST, ARGS_EXTENSION,
+    ARGS_PENDING_WANT, ARGS_PROCESS, ARGS_DATA };
+
+const std::set<std::string> TWO_ARGS_SET { ARGS_ABILITY, ARGS_ABILITY_BY_ID, ARGS_PENDING_WANT };
 }
 using namespace std::chrono;
 using namespace std::chrono_literals;
@@ -4689,263 +4680,138 @@ int AbilityManagerService::BlockAppService()
 
 int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
 {
-    int argc = args.size() + 1;
-    char* argv[argc];
-    for (int i = 1; i < argc; i++) {
-        argv[i] = Str16ToStr8(args.at(i - 1)).data();
-    }
-
     std::vector<std::string> argsStr;
-    for (int i = 2; i < argc; i++) {
-        argsStr.push_back(argv[i]);
+    for (auto arg : args) {
+        argsStr.emplace_back(Str16ToStr8(arg));
+    }
+    int32_t argsSize = static_cast<int32_t>(argsStr.size());
+    if (argsSize < MIN_ARGS_SIZE || argsSize > MAX_ARGS_SIZE) {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+    ErrCode errCode = ERR_OK;
+    std::string result;
+    if (argsSize == MIN_ARGS_SIZE) {
+        errCode = ProcessOneParam(argsStr[FIRST_PARAM], result);
+    } else if (argsSize == MID_ARGS_SIZE) {
+        errCode = ProcessTwoParam(argsStr[FIRST_PARAM], argsStr[SECOND_PARAM], result);
+    } else {
+        errCode = ProcessThreeParam(argsStr[FIRST_PARAM], argsStr[SECOND_PARAM], argsStr[THIRD_PARAM], result);
     }
 
+    if (errCode == ERR_AAFWK_HIDUMP_INVALID_ARGS) {
+        ShowIllealInfomation(result);
+    }
 
-
-
-    std::string resultReceiver;
-    // std::vector<std::string> argsStr;
-    // for (auto item : args) {
-    //     argsStr.emplace_back(Str16ToStr8(item));
-    // }
-
-    // if (!DelayedSingleton<BundleMgrService>::GetInstance()->Hidump(argsStr, result)) {
-    //     APP_LOGE("Hidump error");
-    //     return ERR_APPEXECFWK_HIDUMP_ERROR;
-    // }
-
-    RunAsDumpsysCommand(argc, argv, argsStr, resultReceiver);
-
-    int ret = dprintf(fd, "%s\n", resultReceiver.c_str());
+    int ret = dprintf(fd, "%s\n", result.c_str());
     if (ret < 0) {
         HILOG_ERROR("dprintf error");
-        return ERR_INVALID_VALUE;
+        return ERR_AAFWK_HIDUMP_ERROR;
     }
 
+    return errCode;
+}
+
+ErrCode AbilityManagerService::ProcessOneParam(std::string& args, std::string &result)
+{
+    if (args == "-h") {
+        ShowHelp(result);
+        return ERR_OK;
+    }
+
+    std::string cmd;
+    auto iter = ONE_ARG_SET.find(args);
+    if (iter != ONE_ARG_SET.end()) {
+        cmd = *iter;
+    } else {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    cmd += " ";
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, false, false, -1);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
     return ERR_OK;
 }
 
-ErrCode AbilityManagerService::RunAsDumpsysCommand(int argc, char *argv[], std::vector<std::string> &argsStr,
-    std::string &resultReceiver)
+ErrCode AbilityManagerService::ProcessTwoParam(const std::string& firstParam, const std::string& secondParam,
+    std::string &result)
 {
-    ErrCode result = OHOS::ERR_OK;
-    bool isUserID = false;
-    bool isClient = false;
-    int userID = DEFAULT_INVAL_VALUE;
-    bool isfirstCommand = false;
-    std::string cmd = "dump";
-    std::string args;
-    for (auto it = argsStr.begin(); it != argsStr.end(); it++) {
-        if (*it == "-c" || *it == "--client") {
-            if (isClient == false) {
-                isClient = true;
-            } else {
-                result = OHOS::ERR_INVALID_VALUE;
-                resultReceiver.append(HELP_MSG_DUMPSYS);
-                return result;
-            }
-        } else if (*it == "-u" || *it == "--userId") {
-            if (it + 1 == argsStr.end()) {
-                result = OHOS::ERR_INVALID_VALUE;
-                resultReceiver.append(HELP_MSG_DUMPSYS);
-                return result;
-            }
-            (void)StrToInt(*(it + 1), userID);
-            if (userID == DEFAULT_INVAL_VALUE) {
-                result = OHOS::ERR_INVALID_VALUE;
-                resultReceiver.append(HELP_MSG_DUMPSYS);
-                return result;
-            }
-            if (isUserID == false) {
-                isUserID = true;
-            } else {
-                result = OHOS::ERR_INVALID_VALUE;
-                resultReceiver.append(HELP_MSG_DUMPSYS);
-                return result;
-            }
-        } else if (*it == std::to_string(userID)) {
-            continue;
-        } else {
-            args += *it;
-            args += " ";
-        }
-    }
-
-    while (true) {
-
-        int option = getopt_long(argc, argv, SHORT_OPTIONS_DUMPSYS.c_str(), LONG_OPTIONS_DUMPSYS, nullptr);
-
-        HILOG_INFO("option: %{public}d, optopt: %{public}d, optind: %{public}d", option, optopt, optind);
-
-        if (optind < 0 || optind > argc) {
-            resultReceiver.append(HELP_MSG_DUMPSYS);
-            return OHOS::ERR_INVALID_VALUE;
-        }
-
-        if (option == -1) {
-            break;
-        }
-
-        switch (option) {
-            case 'h': {
-                // 'aa dumpsys -h'
-                // 'aa dumpsys --help'
-                resultReceiver.append(HELP_MSG_DUMPSYS);
-                result = OHOS::ERR_INVALID_VALUE;
-                return result;
-                break;
-            }
-            case 'a': {
-                if (isfirstCommand == false) {
-                    isfirstCommand = true;
-                } else {
-                    result = OHOS::ERR_INVALID_VALUE;
-                    resultReceiver.append(HELP_MSG_DUMPSYS);
-                    return result;
-                }
-                // 'aa dumpsys -a'
-                // 'aa dumpsys --all'
-                break;
-            }
-            case 'l': {
-                if (isfirstCommand == false) {
-                    isfirstCommand = true;
-                } else {
-                    // 'aa dumpsys -i 10 -element -lastpage'
-                    // 'aa dumpsys -i 10 -render -lastpage'
-                    if (strcmp(optarg, "astpage")) {
-                        result = OHOS::ERR_INVALID_VALUE;
-                        resultReceiver.append(HELP_MSG_DUMPSYS);
-                        return result;
-                    }
-                }
-                // 'aa dumpsys -l'
-                // 'aa dumpsys --mission-list'
-                break;
-            }
-            case 'i': {
-                if (isfirstCommand == false) {
-                    isfirstCommand = true;
-                    int abilityRecordId = DEFAULT_INVAL_VALUE;
-                    (void)StrToInt(optarg, abilityRecordId);
-                    if (abilityRecordId == DEFAULT_INVAL_VALUE) {
-                        result = OHOS::ERR_INVALID_VALUE;
-                        resultReceiver.append(HELP_MSG_DUMPSYS);
-                        return result;
-                    }
-                } else {
-                    // 'aa dumpsys -i 10 -inspector'
-                    if (strcmp(optarg, "nspector")) {
-                        result = OHOS::ERR_INVALID_VALUE;
-                        resultReceiver.append(HELP_MSG_DUMPSYS);
-                        return result;
-                    }
-                }
-                // 'aa dumpsys -i'
-                // 'aa dumpsys --ability'
-                break;
-            }
-            case 'e': {
-                if (isfirstCommand == false && optarg == nullptr) {
-                    isfirstCommand = true;
-                } else {
-                    // 'aa dumpsys -i 10 -element'
-                    if (strcmp(optarg, "lement")) {
-                        result = OHOS::ERR_INVALID_VALUE;
-                        resultReceiver.append(HELP_MSG_DUMPSYS);
-                        return result;
-                    }
-                }
-                // 'aa dumpsys -e'
-                // 'aa dumpsys --extension'
-                break;
-            }
-            case 'p': {
-                if (isfirstCommand == false && optarg == nullptr) {
-                    isfirstCommand = true;
-                } else {
-                    result = OHOS::ERR_INVALID_VALUE;
-                    resultReceiver.append(HELP_MSG_DUMPSYS);
-                    return result;
-                }
-                // 'aa dumpsys -p'
-                // 'aa dumpsys --pending'
-                break;
-            }
-            case 'r': {
-                if (isfirstCommand == false && optarg == nullptr) {
-                    isfirstCommand = true;
-                } else {
-                    // 'aa dumpsys -i 10 -render'
-                    if (strcmp(optarg, "ender")) {
-                        result = OHOS::ERR_INVALID_VALUE;
-                        resultReceiver.append(HELP_MSG_DUMPSYS);
-                        return result;
-                    }
-                }
-                // 'aa dumpsys -r'
-                // 'aa dumpsys --process'
-                break;
-            }
-            case 'd': {
-                if (isfirstCommand == false && optarg == nullptr) {
-                    isfirstCommand = true;
-                } else {
-                    result = OHOS::ERR_INVALID_VALUE;
-                    resultReceiver.append(HELP_MSG_DUMPSYS);
-                    return result;
-                }
-                // 'aa dumpsys -d'
-                // 'aa dumpsys --data'
-                break;
-            }
-            case 'u': {
-                // 'aa dumpsys -u'
-                // 'aa dumpsys --userId'
-                break;
-            }
-            case 'c': {
-                // 'aa dumpsys -c'
-                // 'aa dumpsys --client'
-                break;
-            }
-            case '?': {
-                result = OHOS::ERR_INVALID_VALUE;
-                resultReceiver.append(HELP_MSG_DUMPSYS);
-                return result;
-                break;
-            }
-            default: {
-                if (strcmp(argv[optind], cmd.c_str()) == 0) {
-                    // 'aa dumpsys' with no option: aa dumpsys
-                    // 'aa dumpsys' with a wrong argument: aa dumpsys xxx
-                    HILOG_INFO("'aa dumpsys' with no option.");
-
-                    resultReceiver.append(HELP_MSG_NO_OPTION + "\n");
-                    result = OHOS::ERR_INVALID_VALUE;
-                }
-                break;
-            }
-        }
-    }
-
-    if (result != OHOS::ERR_OK) {
-        resultReceiver.append(HELP_MSG_DUMPSYS);
+    std::string cmd;
+    auto iter = TWO_ARGS_SET.find(firstParam);
+    if (iter != TWO_ARGS_SET.end()) {
+        cmd = *iter;
     } else {
-        if (isfirstCommand != true) {
-            result = OHOS::ERR_INVALID_VALUE;
-            resultReceiver.append(HELP_MSG_NO_OPTION + "\n");
-            resultReceiver.append(HELP_MSG_DUMPSYS);
-            return result;
-        }
-
-        std::vector<std::string> dumpResults;
-        DumpSysState(args, dumpResults, isClient, isUserID, userID);
-        for (auto it : dumpResults) {
-            resultReceiver += it + "\n";
-        }
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
     }
-    return result;
+
+    bool isClient = false;
+    if (cmd == "-a" && secondParam == "-c") {
+        isClient = true;
+    }
+
+    if (isClient) {
+        cmd = cmd + " ";
+    } else {
+        cmd = cmd + " " + secondParam + " ";
+    }
+
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, isClient, false, -1);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerService::ProcessThreeParam(const std::string& firstParam, const std::string& secondParam,
+    const std::string& thirdParam, std::string &result)
+{
+    if (firstParam != "-a" || secondParam != "-u") {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    int userID = DEFAULT_INVAL_VALUE;
+    (void)StrToInt(thirdParam, userID);
+    HILOG_DEBUG("%{public}s, userID is : %{public}d", __func__, userID);
+    if (userID < 0) {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    std::string cmd = "-a ";
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, false, true, userID);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
+    return ERR_OK;
+}
+
+void AbilityManagerService::ShowHelp(std::string &result)
+{
+    result.append("Usage:\n")
+        .append("-h                          ")
+        .append("help text for the tool\n")
+        .append("-a [-c | -u {UserId}]       ")
+        .append("dump all ability infomation in the system or all ability infomation of client/UserId\n")
+        .append("-l                          ")
+        .append("dump all mission list information in the system\n")
+        .append("-i {AbilityRecordId}        ")
+        .append("dump an ability infomation by ability record id\n")
+        .append("-e                          ")
+        .append("dump all extension infomation in the system(FA: ServiceAbilityRecords, Stage: ExtensionRecords)\n")
+        .append("-p [PendingWantRecordId]    ")
+        .append("dump all pendingwant record infomation in the system\n")
+        .append("-r                          ")
+        .append("dump all process in the system\n")
+        .append("-d                          ")
+        .append("dump all data ability infomation in the system");
+}
+
+void AbilityManagerService::ShowIllealInfomation(std::string &result)
+{
+    result.append(ILLEGAL_INFOMATION);
 }
 }  // namespace AAFwk
 }  // namespace OHOS
