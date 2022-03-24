@@ -90,7 +90,7 @@ public:
             // when the object is about to be destroyed, does not reset state
             std::unique_ptr<JsCallerComplex> delObj(data);
         }
-        HILOG_DEBUG("ReleaseObject success end %{public}p", data);
+        HILOG_DEBUG("ReleaseObject success end");
         return true;
     }
 
@@ -158,7 +158,7 @@ public:
         std::lock_guard<std::mutex> lck (jsCallerComplexMutex);
         auto iter = jsCallerComplexManagerList.find(ptr);
         if (iter != jsCallerComplexManagerList.end()) {
-            HILOG_ERROR("JsAbilityContext::%{public}s, ptr[%{public}p] address exists", __func__, ptr);
+            HILOG_ERROR("JsAbilityContext::%{public}s, address exists", __func__);
             return false;
         }
 
@@ -178,7 +178,7 @@ public:
         std::lock_guard<std::mutex> lck (jsCallerComplexMutex);
         auto iter = jsCallerComplexManagerList.find(ptr);
         if (iter == jsCallerComplexManagerList.end()) {
-            HILOG_ERROR("JsAbilityContext::%{public}s, input parameters[%{public}p] not found", __func__, ptr);
+            HILOG_ERROR("JsAbilityContext::%{public}s, input parameters not found", __func__);
             return false;
         }
 
@@ -281,7 +281,7 @@ private:
 
         auto task = [notify = this, &str] () {
             if (!FindJsCallerComplex(notify)) {
-                HILOG_ERROR("ptr[%{public}p] not found, address error", notify);
+                HILOG_ERROR("ptr not found, address error");
                 return;
             }
             notify->OnReleaseNotifyTask(str);
@@ -292,7 +292,7 @@ private:
 
     void OnReleaseNotifyTask(const std::string &str)
     {
-        HILOG_DEBUG("OnReleaseNotifyTask begin %{public}p", this);
+        HILOG_DEBUG("OnReleaseNotifyTask begin");
         if (jsreleaseCallBackObj_ == nullptr) {
             HILOG_ERROR("JsCallerComplex::%{public}s, jsreleaseObj is nullptr", __func__);
             return;
@@ -302,10 +302,10 @@ private:
         NativeValue* callback = jsreleaseCallBackObj_->Get();
         NativeValue* args[] = { CreateJsValue(releaseCallBackEngine_, str) };
         releaseCallBackEngine_.CallFunction(value, callback, args, 1);
-        HILOG_DEBUG("OnReleaseNotifyTask CallFunction call done %{public}p", this);
+        HILOG_DEBUG("OnReleaseNotifyTask CallFunction call done");
         callee_ = nullptr;
         StateReset();
-        HILOG_DEBUG("OnReleaseNotifyTask end %{public}p", this);
+        HILOG_DEBUG("OnReleaseNotifyTask end");
     }
 
     NativeValue* ReleaseInner(NativeEngine& engine, NativeCallbackInfo& info)
@@ -360,7 +360,7 @@ private:
         jsreleaseCallBackObj_.reset(releaseCallBackEngine_.CreateReference(param1, 1));
         auto task = [notify = this] (const std::string &str) {
             if (!FindJsCallerComplexAndChangeState(notify, OBJSTATE::OBJ_EXECUTION)) {
-                HILOG_ERROR("ptr[%{public}p] not found, address error", notify);
+                HILOG_ERROR("ptr not found, address error");
                 return;
             }
             notify->OnReleaseNotify(str);
