@@ -37,7 +37,7 @@ void AppSchedulerProxy::ScheduleForegroundApplication()
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -60,7 +60,7 @@ void AppSchedulerProxy::ScheduleBackgroundApplication()
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -83,7 +83,7 @@ void AppSchedulerProxy::ScheduleTerminateApplication()
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -103,7 +103,7 @@ void AppSchedulerProxy::ScheduleLowMemory()
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -123,7 +123,7 @@ void AppSchedulerProxy::ScheduleShrinkMemory(const int32_t level)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -148,7 +148,7 @@ void AppSchedulerProxy::ScheduleLaunchAbility(const AbilityInfo &info, const spt
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -174,7 +174,7 @@ void AppSchedulerProxy::ScheduleCleanAbility(const sptr<IRemoteObject> &token)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -196,7 +196,7 @@ void AppSchedulerProxy::ScheduleLaunchApplication(const AppLaunchData &launchDat
     HILOG_INFO("AppSchedulerProxy ScheduleLaunchApplication start");
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -230,7 +230,7 @@ void AppSchedulerProxy::ScheduleAbilityStage(const HapModuleInfo &abilityStage)
     HILOG_INFO("AppSchedulerProxy ScheduleAbilityStage start");
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -256,7 +256,7 @@ void AppSchedulerProxy::ScheduleProfileChanged(const Profile &profile)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -277,7 +277,7 @@ void AppSchedulerProxy::ScheduleConfigurationUpdated(const Configuration &config
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -298,7 +298,7 @@ void AppSchedulerProxy::ScheduleProcessSecurityExit()
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -318,7 +318,7 @@ void AppSchedulerProxy::ScheduleAcceptWant(const AAFwk::Want &want, const std::s
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -342,7 +342,7 @@ void AppSchedulerProxy::ScheduleANRProcess()
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
