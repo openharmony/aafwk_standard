@@ -133,6 +133,7 @@ ohos_shared_library("abilityms") {
     external_deps += [
       "i18n_standard:intl_util",
       "multimedia_image_standard:image_native",
+      "window_manager:libdm",
     ]
   }
 
