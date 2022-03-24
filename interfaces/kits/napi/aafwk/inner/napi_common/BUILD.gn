@@ -20,10 +20,7 @@ config("napi_common_public_config") {
 }
 
 ohos_shared_library("napi_common") {
-  include_dirs = [
-    "//third_party/node/src",
-    "//third_party/libuv/include",
-  ]
+  include_dirs = [ "//third_party/node/src" ]
 
   public_configs = [ ":napi_common_public_config" ]
 

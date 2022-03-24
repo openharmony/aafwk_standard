@@ -28,7 +28,6 @@ config("selfStartingTestHostBConfig") {
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
     "${appexecfwk_path}/services/bundlemgr/include",
-    "//utils/system/safwk/native/include",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//third_party/jsoncpp/include",
   ]

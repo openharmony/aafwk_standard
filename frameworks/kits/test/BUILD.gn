@@ -33,7 +33,6 @@ config("module_private_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
-    "//utils/system/safwk/native/include",
     "//foundation/aafwk/standard/services/common/include",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/AMS",
     "//foundation/aafwk/standard/services/common/include",
