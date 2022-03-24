@@ -107,7 +107,7 @@ void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
         return;
     }
 
-    HILOG_INFO("Set ability context pointer: %{public}p", context.get());
+    HILOG_INFO("Set ability context");
 
     nativeObj->SetNativePointer(
         new std::weak_ptr<AbilityRuntime::Context>(context),

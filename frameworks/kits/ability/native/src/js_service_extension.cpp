@@ -94,7 +94,7 @@ void JsServiceExtension::Init(const std::shared_ptr<AbilityLocalRecord> &record,
         return;
     }
 
-    HILOG_INFO("Set service extension context pointer: %{public}p", context.get());
+    HILOG_INFO("Set service extension context");
 
     nativeObj->SetNativePointer(new std::weak_ptr<AbilityRuntime::Context>(context),
         [](NativeEngine*, void* data, void*) {
