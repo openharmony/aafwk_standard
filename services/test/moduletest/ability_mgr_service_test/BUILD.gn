@@ -132,9 +132,7 @@ ohos_moduletest("ability_mgr_module_test") {
   ]
 
   if (ability_runtime_graphics) {
-    external_deps += [
-      "window_manager:libdm",
-    ]
+    external_deps += [ "window_manager:libdm" ]
   }
 }
 
