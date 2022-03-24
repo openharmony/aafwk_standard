@@ -91,6 +91,7 @@ ohos_moduletest("specified_ability_service_test") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "window_manager:libdm",
   ]
 }
 

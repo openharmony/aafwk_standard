@@ -123,7 +123,6 @@ ohos_shared_library("abilityms") {
     "samgr_standard:samgr_proxy",
     "startup_l2:syspara",
     "utils_base:utils",
-    "window_manager:libdm",
   ]
 
   if (ability_runtime_graphics) {
@@ -135,6 +134,7 @@ ohos_shared_library("abilityms") {
     external_deps += [
       "i18n_standard:intl_util",
       "multimedia_image_standard:image_native",
+      "window_manager:libdm",
     ]
   }
 

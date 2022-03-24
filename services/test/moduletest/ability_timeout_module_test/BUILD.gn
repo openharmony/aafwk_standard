@@ -131,6 +131,7 @@ ohos_moduletest("ability_timeout_module_test") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
+    "window_manager:libdm",
   ]
 }
 
