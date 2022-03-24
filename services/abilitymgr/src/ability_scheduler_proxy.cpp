@@ -57,7 +57,7 @@ void AbilitySchedulerProxy::SendResult(int requestCode, int resultCode, const Wa
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -77,7 +77,7 @@ void AbilitySchedulerProxy::ScheduleConnectAbility(const Want &want)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -95,7 +95,7 @@ void AbilitySchedulerProxy::ScheduleDisconnectAbility(const Want &want)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -114,7 +114,7 @@ void AbilitySchedulerProxy::ScheduleCommandAbility(const Want &want, bool restar
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -142,7 +142,7 @@ void AbilitySchedulerProxy::ScheduleSaveAbilityState()
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -156,7 +156,7 @@ void AbilitySchedulerProxy::ScheduleRestoreAbilityState(const PacMap &inState)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -174,7 +174,7 @@ void AbilitySchedulerProxy::ScheduleUpdateConfiguration(const AppExecFwk::Config
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -710,7 +710,7 @@ void AbilitySchedulerProxy::NotifyMultiWinModeChanged(int32_t winModeKey, bool f
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -843,7 +843,7 @@ void AbilitySchedulerProxy::NotifyTopActiveAbilityChanged(bool flag)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -1000,7 +1000,7 @@ void AbilitySchedulerProxy::ContinueAbility(const std::string& deviceId)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         HILOG_ERROR("ContinueAbility fail to write token");
         return;
@@ -1020,7 +1020,7 @@ void AbilitySchedulerProxy::NotifyContinuationResult(int32_t result)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         HILOG_ERROR("NotifyContinuationResult fail to write token");
         return;
