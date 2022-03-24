@@ -381,7 +381,7 @@ void AbilityContextImpl::OnRequestPermissionsFromUserResult(
 
 ErrCode AbilityContextImpl::RestoreWindowStage(NativeEngine& engine, NativeValue* contentStorage)
 {
-    HILOG_INFO("%{public}s begin. contentStorage = %{public}p", __func__, contentStorage);
+    HILOG_INFO("%{public}s begin.", __func__);
     contentStorage_ = std::unique_ptr<NativeReference>(engine.CreateReference(contentStorage, 1));
     return ERR_OK;
 }

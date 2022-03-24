@@ -31,12 +31,12 @@ const int32_t CHECK_INTERVAL = 100000;  // 100ms
 }  // namespace
 KvStoreDeathRecipientCallback::KvStoreDeathRecipientCallback()
 {
-    HILOG_INFO("create kvstore death recipient callback instance %{public}p", this);
+    HILOG_INFO("create kvstore death recipient callback instance");
 }
 
 KvStoreDeathRecipientCallback::~KvStoreDeathRecipientCallback()
 {
-    HILOG_INFO("destroy kvstore death recipient callback instance %{public}p", this);
+    HILOG_INFO("destroy kvstore death recipient callback instance");
 }
 
 void KvStoreDeathRecipientCallback::OnRemoteDied()

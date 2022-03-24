@@ -379,7 +379,7 @@ EXTERN_C_START
 void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<std::string> &permissions,
     const std::vector<int> &grantResults, CallbackInfo callbackInfo)
 {
-    HILOG_INFO("%{public}s,called env=%{public}p", __func__, callbackInfo.env);
+    HILOG_INFO("%{public}s,called env", __func__);
 
     if (permissions.empty()) {
         HILOG_ERROR("%{public}s, the string vector permissions is empty.", __func__);

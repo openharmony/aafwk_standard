@@ -51,8 +51,7 @@ ErrCode ConnectionManager::ConnectAbilityInner(const sptr<IRemoteObject> &connec
     }
 
     AppExecFwk::ElementName connectReceiver = want.GetElement();
-    HILOG_DEBUG("%{public}s begin, connectCaller: %{public}p, connectReceiver: %{public}s.",
-        __func__, connectCaller.GetRefPtr(),
+    HILOG_DEBUG("%{public}s begin, connectReceiver: %{public}s.", __func__,
         (connectReceiver.GetBundleName() + ":" + connectReceiver.GetAbilityName()).c_str());
 
     sptr<AbilityConnection> abilityConnection;
@@ -69,8 +68,8 @@ ErrCode ConnectionManager::ConnectAbilityInner(const sptr<IRemoteObject> &connec
         abilityConnections_[item->first] = callbacks;
         abilityConnection = item->first.abilityConnection;
         abilityConnection->SetConnectCallback(connectCallback);
-        HILOG_INFO("%{public}s end, find abilityConnection:%{public}p exist, callbackSize:%{public}d.",
-            __func__, abilityConnection.GetRefPtr(), (int32_t)callbacks.size());
+        HILOG_INFO("%{public}s end, find abilityConnection exist, callbackSize:%{public}d.",
+            __func__, (int32_t)callbacks.size());
         if (abilityConnection->GetResultCode() == ERR_OK) {
             connectCallback->OnAbilityConnectDone(connectReceiver, abilityConnection->GetRemoteObject(),
                 abilityConnection->GetResultCode());
@@ -88,8 +87,8 @@ ErrCode ConnectionManager::ConnectAbilityInner(const sptr<IRemoteObject> &connec
             callbacks.push_back(connectCallback);
             abilityConnections_[connectionInfo] = callbacks;
         }
-        HILOG_DEBUG("%{public}s end, not find connection, connection: %{public}p, abilityConnectionsSize:%{public}d.",
-            __func__, abilityConnection.GetRefPtr(), (int32_t)abilityConnections_.size());
+        HILOG_DEBUG("%{public}s end, not find connection, abilityConnectionsSize:%{public}d.",
+            __func__, (int32_t)abilityConnections_.size());
         return ret;
     }
 }
@@ -102,8 +101,7 @@ ErrCode ConnectionManager::DisconnectAbility(const sptr<IRemoteObject> &connectC
         return ERR_INVALID_VALUE;
     }
 
-    HILOG_DEBUG("%{public}s begin, connectCaller: %{public}p, connectReceiver: %{public}s.",
-        __func__, connectCaller.GetRefPtr(),
+    HILOG_DEBUG("%{public}s begin,, connectReceiver: %{public}s.", __func__,
         (connectReceiver.GetBundleName() + ":" + connectReceiver.GetAbilityName()).c_str());
 
     auto item = std::find_if(abilityConnections_.begin(), abilityConnections_.end(),
@@ -128,8 +126,8 @@ ErrCode ConnectionManager::DisconnectAbility(const sptr<IRemoteObject> &connectC
         sptr<AbilityConnection> abilityConnection;
         abilityConnection = item->first.abilityConnection;
         abilityConnection->SetConnectCallback(connectCallback);
-        HILOG_INFO("%{public}s end, find abilityConnection:%{public}p exist, abilityConnectionsSize:%{public}d.",
-            __func__, abilityConnection.GetRefPtr(), (int32_t)abilityConnections_.size());
+        HILOG_INFO("%{public}s end, find abilityConnection exist, abilityConnectionsSize:%{public}d.",
+            __func__, (int32_t)abilityConnections_.size());
         if (callbacks.size() == 0) {
             abilityConnections_.erase(item);
             HILOG_DEBUG("%{public}s disconnectAbility.", __func__);
@@ -153,16 +151,15 @@ bool ConnectionManager::DisconnectCaller(const sptr<IRemoteObject> &connectCalle
         return false;
     }
 
-    HILOG_DEBUG("%{public}s, connectCaller:%{public}p, abilityConnectionsSize:%{public}d.",
-        __func__, connectCaller.GetRefPtr(), (int32_t)abilityConnections_.size());
+    HILOG_DEBUG("%{public}s, abilityConnectionsSize:%{public}d.",
+        __func__, (int32_t)abilityConnections_.size());
 
     bool isDisconnect = false;
     auto iter = abilityConnections_.begin();
     while (iter != abilityConnections_.end()) {
         ConnectionInfo connectionInfo = iter->first;
         if (IsConnectCallerEqual(connectionInfo.connectCaller, connectCaller)) {
-            HILOG_DEBUG("%{public}s DisconnectAbility connection:%{public}p.",
-                __func__, connectionInfo.abilityConnection.GetRefPtr());
+            HILOG_DEBUG("%{public}s DisconnectAbility.", __func__);
             ErrCode ret =
                 AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(connectionInfo.abilityConnection);
             if (ret != ERR_OK) {
