@@ -264,15 +264,6 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
     // 4. move target list to top
     MoveMissionListToTop(targetList);
 
-    // ability is already foreground, process next ability, excepting for launcher's MainAbility.
-    if ((abilityRequest.abilityInfo.bundleName != AbilityConfig::LAUNCHER_BUNDLE_NAME ||
-        abilityRequest.abilityInfo.name != AbilityConfig::LAUNCHER_ABILITY_NAME) &&
-        (targetAbilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
-        targetAbilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW))) {
-        PostStartWaittingAbility();
-        return 0;
-    }
-
     // 5. schedule target ability
     if (!currentTopAbility) {
         // top ability is null, then launch the first Ability.
@@ -2244,8 +2235,16 @@ bool MissionListManager::GetMissionSnapshot(int32_t missionId, const sptr<IRemot
     MissionSnapshot& missionSnapshot)
 {
     HILOG_INFO("snapshot: Start get mission snapshot.");
+    bool forceSnapshot = false;
+    {
+        std::lock_guard<std::recursive_mutex> guard(managerLock_);
+        auto abilityRecord = GetAbilityRecordByToken(abilityToken);
+        if (abilityRecord && abilityRecord->IsAbilityState(FOREGROUND_NEW)) {
+            forceSnapshot = true;
+        }
+    }
     return DelayedSingleton<MissionInfoMgr>::GetInstance()->GetMissionSnapshot(
-        missionId, abilityToken, missionSnapshot);
+        missionId, abilityToken, missionSnapshot, forceSnapshot);
 }
 
 void MissionListManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info, bool isPerm)

@@ -695,8 +695,8 @@ std::vector<std::string> ContextContainer::GetStringArray(int resId)
     if (baseContext_ != nullptr) {
         return baseContext_->GetStringArray(resId);
     } else {
-        return std::vector<std::string>();
         HILOG_ERROR("ContextContainer::GetStringArray baseContext_ is nullptr");
+        return std::vector<std::string>();
     }
 }
 

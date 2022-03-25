@@ -982,7 +982,7 @@ napi_value UnwrapForResultParam(CallAbilityParam &param, napi_env env, napi_valu
         if (!UnwrapAbilityStartSetting(env, jsSettingObj, *(param.setting))) {
             HILOG_ERROR("%{public}s, unwrap abilityStartSetting failed.", __func__);
         }
-        HILOG_INFO("%{public}s abilityStartSetting = %{public}p.", __func__, param.setting.get());
+        HILOG_INFO("%{public}s abilityStartSetting", __func__);
     }
 
     napi_value result;

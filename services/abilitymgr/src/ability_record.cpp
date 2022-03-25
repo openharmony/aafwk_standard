@@ -740,11 +740,11 @@ void AbilityRecord::AddConnectRecordToList(const std::shared_ptr<ConnectionRecor
     auto it = std::find(connRecordList_.begin(), connRecordList_.end(), connRecord);
     // found it
     if (it != connRecordList_.end()) {
-        HILOG_DEBUG("Found it in list, so no need to add same connection(%{public}p)", connRecord.get());
+        HILOG_DEBUG("Found it in list, so no need to add same connection");
         return;
     }
     // no found then add new connection to list
-    HILOG_DEBUG("No found in list, so add new connection(%{public}p) to list", connRecord.get());
+    HILOG_DEBUG("No found in list, so add new connection to list");
     connRecordList_.push_back(connRecord);
 }
 

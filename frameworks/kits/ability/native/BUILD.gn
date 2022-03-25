@@ -92,11 +92,7 @@ config("ability_public_config") {
 }
 
 ohos_shared_library("static_subscriber_ipc") {
-  include_dirs = [
-    "include",
-    "//base/notification/ces_standard/interfaces/innerkits/native/include",
-    "${innerkits_path}/want/include/ohos/aafwk/content/",
-  ]
+  include_dirs = [ "include" ]
 
   sources = [
     "src/static_subscriber_proxy.cpp",
@@ -282,7 +278,7 @@ ohos_shared_library("abilitykit_native") {
   ]
 
   if (ability_runtime_graphics) {
-    include_dirs += [ "//base/global/i18n_standard/frameworks/intl/include" ]
+    include_dirs += []
     sources += [
       "${kits_path}/appkit/native/ability_runtime/form_extension_context.cpp",
       "src/ability_window.cpp",

@@ -16,7 +16,6 @@ import("//foundation/aafwk/standard/aafwk.gni")
 config("formmgr_test_config") {
   include_dirs = [
     "//utils/native/base/include",
-    "//utils/system/safwk/native/include",
     "mock/include",
   ]
 

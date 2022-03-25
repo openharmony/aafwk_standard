@@ -25,7 +25,6 @@
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
-// #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {
@@ -197,8 +196,8 @@ int DataObsMgrService::NotifyChange(const Uri &uri)
         HILOG_ERROR("DataObsMgrService::NotifyChange PostTask error");
         return DATAOBS_SERVICE_POST_TASK_FAILED;
     }
-    return NO_ERROR;
     HILOG_INFO("DataObsMgrService::NotifyChange called end");
+    return NO_ERROR;
 }
 
 std::shared_ptr<EventHandler> DataObsMgrService::GetEventHandler()

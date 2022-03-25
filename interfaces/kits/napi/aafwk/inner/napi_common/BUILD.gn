@@ -20,18 +20,12 @@ config("napi_common_public_config") {
 }
 
 ohos_shared_library("napi_common") {
-  include_dirs = [
-    "//third_party/node/src",
-    "//third_party/libuv/include",
-    "//third_party/jsoncpp",
-    "//third_party/jsoncpp/include/json",
-  ]
+  include_dirs = [ "//third_party/node/src" ]
 
   public_configs = [ ":napi_common_public_config" ]
 
   sources = [
     "napi_common_ability.cpp",
-    "napi_common_call_util.cpp",
     "napi_common_configuration.cpp",
     "napi_common_start_options.cpp",
     "napi_common_util.cpp",
@@ -40,7 +34,6 @@ ohos_shared_library("napi_common") {
 
   deps = [
     "${kits_path}/appkit:appkit_native",
-    "//third_party/jsoncpp:jsoncpp",
     "//third_party/libuv:uv_static",
   ]
 
