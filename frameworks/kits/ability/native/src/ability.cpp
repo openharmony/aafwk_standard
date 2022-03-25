@@ -3505,7 +3505,7 @@ bool Ability::CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultS
                 HILOG_ERROR("Ability::CheckAssertQueryResult strName is empty");
                 continue;
             }
-            if (strName.c_str() == strObject.c_str()) {
+            if (strName == strObject) {
                 HILOG_ERROR("Ability::CheckAssertQueryResult strName same to strObject");
                 continue;
             }

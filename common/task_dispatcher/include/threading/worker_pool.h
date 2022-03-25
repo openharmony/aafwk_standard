@@ -115,6 +115,7 @@ private:
     std::atomic<bool> initFlag_;
     std::vector<std::shared_ptr<WorkerThread>> exitPool_;
     std::atomic<bool> stop_;
+    std::atomic<bool> guardNotify_;
     std::shared_ptr<std::thread> guardThread_;
     std::mutex exitPoolLock_;
     std::condition_variable exit_;
