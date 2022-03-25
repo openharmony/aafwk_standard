@@ -16,8 +16,7 @@ import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
 
 ohos_shared_library("appmanager_napi") {
-  include_dirs =
-      [ "//foundation/multimedia/image_standard/interfaces/innerkits/include" ]
+  include_dirs = []
 
   if (ability_runtime_graphics) {
     include_dirs += [ "./" ]

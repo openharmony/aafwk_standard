@@ -137,12 +137,12 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
             continuationManager_.reset();
         } else {
             std::weak_ptr<ContinuationHandler> continuationHandler = continuationHandler_;
-            sptr<ReverseContinuationSchedulerPrimary> Primary = sptr<ReverseContinuationSchedulerPrimary>(
+            sptr<ReverseContinuationSchedulerPrimary> primary = sptr<ReverseContinuationSchedulerPrimary>(
                 new (std::nothrow) ReverseContinuationSchedulerPrimary(continuationHandler, handler_));
-            if (Primary == nullptr) {
-                HILOG_ERROR("Ability::Init failed,Primary create failed");
+            if (primary == nullptr) {
+                HILOG_ERROR("Ability::Init failed,primary create failed");
             } else {
-                continuationHandler_->SetPrimaryStub(Primary);
+                continuationHandler_->SetPrimaryStub(primary);
                 continuationHandler_->SetAbilityInfo(abilityInfo_);
             }
         }
@@ -992,6 +992,12 @@ std::string Ability::GetType(const Uri &uri)
 int Ability::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     return 0;
+}
+
+std::shared_ptr<AppExecFwk::PacMap> Ability::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    return nullptr;
 }
 
 /**
@@ -3228,13 +3234,13 @@ void Ability::ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
     if (operation->IsInsertOperation()) {
         HILOG_INFO("Ability::ExecuteOperation IsInsertOperation");
         numRows = Insert(*(operation->GetUri().get()), *valuesBucket);
-    } else if (operation->IsDeleteOperation()) {
+    } else if (operation->IsDeleteOperation() && predicates) {
         HILOG_INFO("Ability::ExecuteOperation IsDeleteOperation");
         numRows = Delete(*(operation->GetUri().get()), *predicates);
-    } else if (operation->IsUpdateOperation()) {
+    } else if (operation->IsUpdateOperation() && predicates) {
         HILOG_INFO("Ability::ExecuteOperation IsUpdateOperation");
         numRows = Update(*(operation->GetUri().get()), *valuesBucket, *predicates);
-    } else if (operation->IsAssertOperation()) {
+    } else if (operation->IsAssertOperation() && predicates) {
         HILOG_INFO("Ability::ExecuteOperation IsAssertOperation");
         std::vector<std::string> columns;
         std::shared_ptr<NativeRdb::AbsSharedResultSet> queryResult =
@@ -3499,7 +3505,7 @@ bool Ability::CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultS
                 HILOG_ERROR("Ability::CheckAssertQueryResult strName is empty");
                 continue;
             }
-            if (strName.c_str() == strObject.c_str()) {
+            if (strName == strObject) {
                 HILOG_ERROR("Ability::CheckAssertQueryResult strName same to strObject");
                 continue;
             }

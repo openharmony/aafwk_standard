@@ -40,14 +40,14 @@ const int32_t SLEEP_INTERVAL = 100 * 1000;  // 100ms
 
 FormStorageMgr::FormStorageMgr()
 {
-    HILOG_INFO("instance:%{private}p is created", this);
+    HILOG_INFO("instance is created");
     TryTwice([this] { return GetKvStore(); });
     RegisterKvStoreDeathListener();
 }
 
 FormStorageMgr::~FormStorageMgr()
 {
-    HILOG_INFO("instance:%{private}p is destroyed", this);
+    HILOG_INFO("instance is destroyed");
     dataManager_.CloseKvStore(appId_, kvStorePtr_);
 }
 

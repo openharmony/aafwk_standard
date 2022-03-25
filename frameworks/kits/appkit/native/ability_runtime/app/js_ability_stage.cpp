@@ -102,7 +102,7 @@ void JsAbilityStage::Init(std::shared_ptr<Context> context)
         return;
     }
 
-    HILOG_INFO("Set ability stage context pointer: %{public}p", context.get());
+    HILOG_INFO("Set ability stage context");
 
     nativeObj->SetNativePointer(new std::weak_ptr<AbilityRuntime::Context>(context),
         [](NativeEngine*, void* data, void*) {

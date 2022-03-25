@@ -83,6 +83,12 @@ public:
         return -1;
     }
 
+    std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+    {
+        return nullptr;
+    }
+
     std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
         const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
     {

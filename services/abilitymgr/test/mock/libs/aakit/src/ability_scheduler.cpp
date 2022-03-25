@@ -95,6 +95,12 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> AbilityScheduler::Query(
     return nullptr;
 }
 
+std::shared_ptr<AppExecFwk::PacMap> AbilityScheduler::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    return nullptr;
+}
+
 std::string AbilityScheduler::GetType(const Uri &uri)
 {
     return result_.resultWant_.GetType();
