@@ -38,6 +38,7 @@ WorkerPool::WorkerPool(const std::shared_ptr<WorkerPoolConfig> &config)
     WorkerPool::factory_ = std::make_shared<DefaultThreadFactory>();
     initFlag_.store(Init(config));
     stop_.store(false);
+    guardNotify_.store(false);
 }
 
 WorkerPool::~WorkerPool()
@@ -166,7 +167,9 @@ void WorkerPool::InterruptWorkers(void)
 
     {
         std::unique_lock<std::mutex> lock(exitPoolLock_);
-        exitGuard_.wait(lock);
+        exitGuard_.wait(lock, [this] {
+            return this->guardNotify_.load();
+        });
         if (guardThread_->joinable()) {
             HILOG_INFO("WorkerPool::InterruptWorkers guardThread_ joinable");
             guardThread_->join();
@@ -199,6 +202,7 @@ void WorkerPool::CreateGuardThread()
                 }
             }
             if (stop_.load() && exitPool_.empty() && pool_.empty()) {
+                guardNotify_.store(true);
                 exitGuard_.notify_all();
                 HILOG_INFO("WorkerPool::CreateGuardThread break while");
                 break;
