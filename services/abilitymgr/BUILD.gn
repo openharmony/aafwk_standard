@@ -45,7 +45,6 @@ config("abilityms_config") {
     "${innerkits_path}/want/include/ohos/aafwk/content",
     "${services_path}/common/include",
     "//utils/native/base/include",
-    "//utils/system/safwk/native/include",
     "//prebuilts/jdk/jdk8/linux-x86/include",
     "//prebuilts/jdk/jdk8/linux-x86/include/linux",
     "//third_party/json/include",
@@ -134,6 +133,7 @@ ohos_shared_library("abilityms") {
     external_deps += [
       "i18n_standard:intl_util",
       "multimedia_image_standard:image_native",
+      "window_manager:libdm",
     ]
   }
 

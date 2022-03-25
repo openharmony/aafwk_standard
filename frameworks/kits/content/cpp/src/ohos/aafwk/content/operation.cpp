@@ -378,7 +378,6 @@ void Operation::DumpInfo(int level) const
     ABILITYBASE_LOGI("===Operation::abilityName_ %{public}s =============", abilityName_.c_str());
     ABILITYBASE_LOGI("===Operation::action_ %{public}s =============", action_.c_str());
     ABILITYBASE_LOGI("===Operation::bundleName_ %{public}s =============", bundleName_.c_str());
-    ABILITYBASE_LOGI("===Operation::deviceId_ %{public}s =============", deviceId_.c_str());
     size_t entities_count = entities_.size();
     ABILITYBASE_LOGI("===Operation::entities_: count %{public}u =============", (uint32_t)entities_count);
     for (size_t i = 0; i < entities_count; i++) {

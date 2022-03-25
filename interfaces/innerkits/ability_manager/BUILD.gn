@@ -22,7 +22,6 @@ config("ability_manager_public_config") {
     "//third_party/jsoncpp/include",
     "${innerkits_path}/want/include",
     "//utils/native/base/include",
-    "//utils/system/safwk/native/include",
     "${innerkits_path}/uri/include",
     "${innerkits_path}/want/include/ohos/aafwk/content",
     "${kits_path}/ability/native/include",

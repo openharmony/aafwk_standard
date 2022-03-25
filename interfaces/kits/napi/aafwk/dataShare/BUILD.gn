@@ -18,7 +18,6 @@ ohos_shared_library("datashare") {
   include_dirs = [
     "./",
     "//third_party/node/src",
-    "//third_party/libuv/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",

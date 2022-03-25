@@ -27,8 +27,8 @@ namespace OHOS {
 namespace AAFwk {
 class MockAppScheduler : public AppScheduler {
 public:
-    MockAppScheduler() {};
-    virtual ~MockAppScheduler() {};
+    MockAppScheduler() = default;
+    virtual ~MockAppScheduler() = default;
 
     MOCK_METHOD0(ScheduleForegroundApplication, void());
     MOCK_METHOD0(ScheduleBackgroundApplication, void());

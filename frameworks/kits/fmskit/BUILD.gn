@@ -27,7 +27,6 @@ config("fmskit_public_config") {
     "${innerkits_path}/form_manager/include",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
     "${innerkits_path}/want/include",
-    "//utils/system/safwk/native/include",
   ]
 }
 

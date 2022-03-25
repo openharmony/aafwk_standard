@@ -24,7 +24,6 @@ config("system_test_task_dispatcher_config") {
     "${aafwk_path}/interfaces/innerkits/intent/include",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "${aafwk_path}/interfaces/innerkits/want/include",
-    "//utils/system/safwk/native/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",

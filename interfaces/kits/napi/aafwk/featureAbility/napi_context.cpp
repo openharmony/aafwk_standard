@@ -379,7 +379,7 @@ EXTERN_C_START
 void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<std::string> &permissions,
     const std::vector<int> &grantResults, CallbackInfo callbackInfo)
 {
-    HILOG_INFO("%{public}s,called env=%{public}p", __func__, callbackInfo.env);
+    HILOG_INFO("%{public}s,called env", __func__);
 
     if (permissions.empty()) {
         HILOG_ERROR("%{public}s, the string vector permissions is empty.", __func__);
@@ -1561,8 +1561,8 @@ napi_value GetElementNameAsync(napi_env env, napi_value *args, const size_t argC
     NAPI_CALL(env, napi_queue_async_work(env, elementNameCB->cbBase.asyncWork));
     napi_value result = nullptr;
     NAPI_CALL(env, napi_get_null(env, &result));
-    return result;
     HILOG_INFO("%{public}s, asyncCallback end.", __func__);
+    return result;
 }
 
 /**

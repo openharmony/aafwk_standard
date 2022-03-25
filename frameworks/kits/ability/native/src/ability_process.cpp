@@ -93,9 +93,9 @@ ErrCode AbilityProcess::StartAbility(Ability *ability, CallAbilityParam param, C
         std::map<int, CallbackInfo> map;
         auto it = abilityResultMap_.find(ability);
         if (it == abilityResultMap_.end()) {
-            HILOG_INFO("AbilityProcess::StartAbility ability: %{public}p is not in the abilityResultMap_", ability);
+            HILOG_INFO("AbilityProcess::StartAbility ability: is not in the abilityResultMap_");
         } else {
-            HILOG_INFO("AbilityProcess::StartAbility ability: %{public}p is in the abilityResultMap_", ability);
+            HILOG_INFO("AbilityProcess::StartAbility ability: is in the abilityResultMap_");
             map = it->second;
         }
         callback.errCode = err;
@@ -122,7 +122,7 @@ void AbilityProcess::OnAbilityResult(Ability *ability, int requestCode, int resu
 
     auto it = abilityResultMap_.find(ability);
     if (it == abilityResultMap_.end()) {
-        HILOG_ERROR("AbilityProcess::OnAbilityResult ability: %{public}p is not in the abilityResultMap", ability);
+        HILOG_ERROR("AbilityProcess::OnAbilityResult ability: is not in the abilityResultMap");
         return;
     }
     std::map<int, CallbackInfo> map = it->second;
@@ -180,12 +180,12 @@ void AbilityProcess::RequestPermissionsFromUser(
         permState.state = -1;
         permList.emplace_back(permState);
     }
-    HILOG_DEBUG("%{public}s. permList size: %{public}d, permissions size: %{public}d.",
+    HILOG_DEBUG("%{public}s. permList size: %{public}zu, permissions size: %{public}zu.",
         __func__, permList.size(), param.permission_list.size());
 
     auto ret = AccessTokenKit::GetSelfPermissionsState(permList);
     if (permList.size() != param.permission_list.size()) {
-        HILOG_ERROR("%{public}s. Returned permList size: %{public}d.", __func__, permList.size());
+        HILOG_ERROR("%{public}s. Returned permList size: %{public}zu.", __func__, permList.size());
         return;
     }
 
@@ -195,7 +195,7 @@ void AbilityProcess::RequestPermissionsFromUser(
             __func__, permState.permissionName.c_str(), permState.state);
         permissionsState.emplace_back(permState.state);
     }
-    HILOG_DEBUG("%{public}s. permissions size: %{public}d. permissionsState size: %{public}d",
+    HILOG_DEBUG("%{public}s. permissions size: %{public}zu. permissionsState size: %{public}zu",
         __func__, param.permission_list.size(), permissionsState.size());
 
     if (ret != TypePermissionOper::DYNAMIC_OPER) {
@@ -211,11 +211,11 @@ void AbilityProcess::RequestPermissionsFromUser(
         std::map<int, CallbackInfo> map;
         auto it = abilityRequestPermissionsForUserMap_.find(ability);
         if (it == abilityRequestPermissionsForUserMap_.end()) {
-            HILOG_INFO("AbilityProcess::RequestPermissionsFromUser ability: %{public}p is not in the "
-                "abilityRequestPermissionsForUserMap_", ability);
+            HILOG_INFO("AbilityProcess::RequestPermissionsFromUser ability: is not in the "
+                "abilityRequestPermissionsForUserMap_");
         } else {
-            HILOG_INFO("AbilityProcess::RequestPermissionsFromUser ability: %{public}p is in the "
-                "abilityRequestPermissionsForUserMap_", ability);
+            HILOG_INFO("AbilityProcess::RequestPermissionsFromUser ability: is in the "
+                "abilityRequestPermissionsForUserMap_");
             map = it->second;
         }
 
@@ -237,9 +237,8 @@ void AbilityProcess::OnRequestPermissionsFromUserResult(Ability *ability, int re
 
     auto it = abilityRequestPermissionsForUserMap_.find(ability);
     if (it == abilityRequestPermissionsForUserMap_.end()) {
-        HILOG_ERROR("AbilityProcess::OnRequestPermissionsFromUserResult ability: %{public}p is not in the "
-                 "abilityRequestPermissionsForUserMap_",
-            ability);
+        HILOG_ERROR("AbilityProcess::OnRequestPermissionsFromUserResult ability: is not in the "
+            "abilityRequestPermissionsForUserMap_");
         return;
     }
     std::map<int, CallbackInfo> map = it->second;

@@ -15,13 +15,14 @@ import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
 ohos_shared_library("abilityconstant_napi") {
-  include_dirs = [ "${innerkits_path}/ability_manager/include" ]
+  include_dirs = []
 
   sources = [ "ability_constant_module.cpp" ]
 
   deps = []
 
   external_deps = [
+    "ability_runtime:ability_manager",
     "napi:ace_napi",
     "utils_base:utils",
   ]
