@@ -59,7 +59,7 @@ static OHOS::AppExecFwk::Ability* GetGlobalAbility(napi_env env)
     // get ability pointer
     OHOS::AppExecFwk::Ability* ability = nullptr;
     napi_get_value_external(env, abilityObj, (void**)&ability);
-    HILOG_INFO("%{public}s, ability = [%{public}p]", __func__, ability);
+    HILOG_INFO("%{public}s, ability", __func__);
     if (ability == nullptr) {
         if (g_ability == nullptr) {
             std::unique_ptr<AbilityRuntime::Runtime> runtime;

@@ -353,6 +353,14 @@ public:
     std::shared_ptr<AbilityStackManager> GetStackManager();
 
     /**
+     * @brief Ability hidump.
+     * @param fd Indicates the fd.
+     * @param args Indicates the params.
+     * @return Returns the dump result.
+     */
+    int Dump(int fd, const std::vector<std::u16string> &args) override;
+
+    /**
      * DumpWaittingAbilityQueue.
      *
      * @param result, result.
@@ -1087,6 +1095,12 @@ private:
         const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
     void DataDumpSysStateInner(
         const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
+    ErrCode ProcessOneParam(std::string& args, std::string &result);
+    ErrCode ProcessTwoParam(const std::string& firstParam, const std::string& secondParam, std::string &result);
+    ErrCode ProcessThreeParam(const std::string& firstParam, const std::string& secondParam,
+        const std::string& thirdParam, std::string &result);
+    void ShowHelp(std::string &result);
+    void ShowIllealInfomation(std::string &result);
 
     void InitConnectManager(int32_t userId, bool switchUser);
     void InitDataAbilityManager(int32_t userId, bool switchUser);

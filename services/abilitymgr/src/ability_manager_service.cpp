@@ -19,6 +19,7 @@
 #include <chrono>
 #include <fstream>
 #include <functional>
+#include <getopt.h>
 #include <memory>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -34,6 +35,9 @@
 #include "ability_util.h"
 #include "bytrace.h"
 #include "bundle_mgr_client.h"
+#ifdef SUPPORT_GRAPHICS
+#include "display_manager.h"
+#endif
 #include "distributed_client.h"
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
@@ -64,6 +68,30 @@ using OHOS::Security::AccessToken::AccessTokenKit;
 
 namespace OHOS {
 namespace AAFwk {
+namespace {
+const int32_t MIN_ARGS_SIZE = 1;
+const int32_t MID_ARGS_SIZE = 2;
+const int32_t MAX_ARGS_SIZE = 3;
+const int32_t FIRST_PARAM = 0;
+const int32_t SECOND_PARAM = 1;
+const int32_t THIRD_PARAM = 2;
+
+const std::string ARGS_ABILITY = "-a";
+const std::string ARGS_MISSION_LIST = "-l";
+const std::string ARGS_ABILITY_BY_ID = "-i";
+const std::string ARGS_EXTENSION = "-e";
+const std::string ARGS_PENDING_WANT = "-p";
+const std::string ARGS_PROCESS = "-r";
+const std::string ARGS_DATA = "-d";
+const std::string ARGS_USER_ID = "-u";
+const std::string ARGS_CLIENT = "-c";
+const std::string ILLEGAL_INFOMATION = "The arguments are illegal and you can enter '-h' for help.";
+
+const std::set<std::string> ONE_ARG_SET { ARGS_ABILITY, ARGS_MISSION_LIST, ARGS_EXTENSION,
+    ARGS_PENDING_WANT, ARGS_PROCESS, ARGS_DATA };
+
+const std::set<std::string> TWO_ARGS_SET { ARGS_ABILITY, ARGS_ABILITY_BY_ID, ARGS_PENDING_WANT };
+}
 using namespace std::chrono;
 using namespace std::chrono_literals;
 const bool CONCURRENCY_MODE_FALSE = false;
@@ -82,7 +110,7 @@ const std::string EMPTY_DEVICE_ID = "";
 const int32_t APP_MEMORY_SIZE = 512;
 const int32_t GET_PARAMETER_INCORRECT = -9;
 const int32_t GET_PARAMETER_OTHER = -1;
-const int32_t SIZE_10 = -1;
+const int32_t SIZE_10 = 10;
 const bool isRamConstrainedDevice = false;
 const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.dalvikheaplimit";
 const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
@@ -710,7 +738,7 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
         case AppExecFwk::AbilityType::SERVICE:
         case AppExecFwk::AbilityType::EXTENSION: {
             if (!connectManager) {
-                HILOG_ERROR("connectManager is nullptr. userId=%{public}d", userId);
+                HILOG_ERROR("connectManager is nullptr.");
                 return ERR_INVALID_VALUE;
             }
             auto result = connectManager->TerminateAbility(abilityRecord, requestCode);
@@ -733,13 +761,13 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
                 return ERR_WOULD_BLOCK;
             }
             if (!stackManager) {
-                HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
+                HILOG_ERROR("stackManager is nullptr.");
                 return ERR_INVALID_VALUE;
             }
             auto result = stackManager->TerminateAbility(abilityRecord, requestCode);
             if (result == NO_FOUND_ABILITY_BY_CALLER) {
                 if (!connectManager) {
-                    HILOG_ERROR("connectManager is nullptr. userId=%{public}d", userId);
+                    HILOG_ERROR("connectManager is nullptr.");
                     return ERR_INVALID_VALUE;
                 }
                 return connectManager->TerminateAbility(abilityRecord, requestCode);
@@ -779,7 +807,7 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, boo
     }
     auto missionListManager = GetListManagerByUserId(userId);
     if (!missionListManager) {
-        HILOG_ERROR("missionListManager is Null. userId=%{public}d", userId);
+        HILOG_ERROR("missionListManager is Null.");
         return ERR_INVALID_VALUE;
     }
     return missionListManager->MinimizeAbility(token, fromUser);
@@ -788,7 +816,7 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, boo
 int AbilityManagerService::GetRecentMissions(
     const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
 {
-    HILOG_INFO("numMax: %{public}d, flags: %{public}d", numMax, flags);
+    HILOG_INFO("flags: %{public}d", flags);
     if (numMax < 0 || flags < 0) {
         HILOG_ERROR("numMax or flags is invalid.");
         return ERR_INVALID_VALUE;
@@ -823,7 +851,6 @@ int AbilityManagerService::SetMissionDescriptionInfo(
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
-        HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
         return ERR_INVALID_VALUE;
     }
     return stackManager->SetMissionDescriptionInfo(abilityRecord, description);
@@ -864,7 +891,6 @@ int AbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, co
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
-        HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
         return ERR_INVALID_VALUE;
     }
     return stackManager->MoveMissionToEnd(token, nonFirst);
@@ -1008,8 +1034,7 @@ int AbilityManagerService::DisconnectRemoteAbility(const sptr<IRemoteObject> &co
 int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
     int32_t missionId, const sptr<IRemoteObject> &callBack, AAFwk::WantParams &wantParams)
 {
-    HILOG_INFO("ContinueMission srcDeviceId: %{public}s, dstDeviceId: %{public}s, missionId: %{public}d",
-        srcDeviceId.c_str(), dstDeviceId.c_str(), missionId);
+    HILOG_INFO("ContinueMission missionId: %{public}d", missionId);
     if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         return CHECK_PERMISSION_FAILED;
@@ -1020,7 +1045,7 @@ int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const
 
 int AbilityManagerService::ContinueAbility(const std::string &deviceId, int32_t missionId)
 {
-    HILOG_INFO("ContinueAbility deviceId : %{public}s, missionId = %{public}d.", deviceId.c_str(), missionId);
+    HILOG_INFO("ContinueAbility missionId = %{public}d.", missionId);
 
     sptr<IRemoteObject> abilityToken = GetAbilityTokenByMissionId(missionId);
     CHECK_POINTER_AND_RETURN(abilityToken, ERR_INVALID_VALUE);
@@ -3309,22 +3334,19 @@ int AbilityManagerService::GetAppMemorySize()
     char *valueGet = nullptr;
     unsigned int len = 128;
     int ret = GetParameter(key, def, valueGet, len);
+    int resultInt = 0;
     if ((ret != GET_PARAMETER_OTHER) && (ret != GET_PARAMETER_INCORRECT)) {
-        int *size = 0;
-        size_t len = strlen(valueGet);
-        int index = 0;
-        for (size_t i = 0; i < len; i++) {
-            while (!(valueGet[i] > '0' && valueGet[i] < '9')) {
-                i++;
+        int len = strlen(valueGet);
+        for (int i = 0; i < len; i++) {
+            if (valueGet[i] >= '0' && valueGet[i] <= '9') {
+                resultInt *= SIZE_10;
+                resultInt += valueGet[i] - '0';
             }
-            while (valueGet[i] >= '0' && valueGet[i] < '9') {
-                int t = valueGet[i] - '0';
-                size[index] = size[index] * SIZE_10 + t;
-                i++;
-            }
-            index++;
         }
-        return *size;
+        if (resultInt == 0) {
+            return APP_MEMORY_SIZE;
+        }
+        return resultInt;
     }
     return APP_MEMORY_SIZE;
 }
@@ -3341,9 +3363,8 @@ bool AbilityManagerService::IsRamConstrainedDevice()
         int value = atoi(valueGet);
         if (value) {
             return true;
-        } else {
-            return isRamConstrainedDevice;
         }
+        return isRamConstrainedDevice;
     }
     return isRamConstrainedDevice;
 }
@@ -3710,11 +3731,19 @@ int32_t AbilityManagerService::GetRemoteMissionSnapshotInfo(const std::string& d
 void AbilityManagerService::StartFreezingScreen()
 {
     HILOG_INFO("%{public}s", __func__);
+#ifdef SUPPORT_GRAPHICS
+    std::vector<Rosen::DisplayId> displayIds = Rosen::DisplayManager::GetInstance().GetAllDisplayIds();
+    Rosen::DisplayManager::GetInstance().Freeze(displayIds);
+#endif
 }
 
 void AbilityManagerService::StopFreezingScreen()
 {
     HILOG_INFO("%{public}s", __func__);
+#ifdef SUPPORT_GRAPHICS
+    std::vector<Rosen::DisplayId> displayIds = Rosen::DisplayManager::GetInstance().GetAllDisplayIds();
+    Rosen::DisplayManager::GetInstance().Unfreeze(displayIds);
+#endif
 }
 
 void AbilityManagerService::UserStarted(int32_t userId)
@@ -4617,6 +4646,142 @@ int AbilityManagerService::BlockAppService()
         return INVALID_DATA;
     }
     return DelayedSingleton<AppScheduler>::GetInstance()->BlockAppService();
+}
+
+int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
+{
+    std::vector<std::string> argsStr;
+    for (auto arg : args) {
+        argsStr.emplace_back(Str16ToStr8(arg));
+    }
+    int32_t argsSize = static_cast<int32_t>(argsStr.size());
+    if (argsSize < MIN_ARGS_SIZE || argsSize > MAX_ARGS_SIZE) {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+    ErrCode errCode = ERR_OK;
+    std::string result;
+    if (argsSize == MIN_ARGS_SIZE) {
+        errCode = ProcessOneParam(argsStr[FIRST_PARAM], result);
+    } else if (argsSize == MID_ARGS_SIZE) {
+        errCode = ProcessTwoParam(argsStr[FIRST_PARAM], argsStr[SECOND_PARAM], result);
+    } else {
+        errCode = ProcessThreeParam(argsStr[FIRST_PARAM], argsStr[SECOND_PARAM], argsStr[THIRD_PARAM], result);
+    }
+
+    if (errCode == ERR_AAFWK_HIDUMP_INVALID_ARGS) {
+        ShowIllealInfomation(result);
+    }
+
+    int ret = dprintf(fd, "%s\n", result.c_str());
+    if (ret < 0) {
+        HILOG_ERROR("dprintf error");
+        return ERR_AAFWK_HIDUMP_ERROR;
+    }
+
+    return errCode;
+}
+
+ErrCode AbilityManagerService::ProcessOneParam(std::string& args, std::string &result)
+{
+    if (args == "-h") {
+        ShowHelp(result);
+        return ERR_OK;
+    }
+
+    std::string cmd;
+    auto iter = ONE_ARG_SET.find(args);
+    if (iter != ONE_ARG_SET.end()) {
+        cmd = *iter;
+    } else {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    cmd += " ";
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, false, false, -1);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerService::ProcessTwoParam(const std::string& firstParam, const std::string& secondParam,
+    std::string &result)
+{
+    std::string cmd;
+    auto iter = TWO_ARGS_SET.find(firstParam);
+    if (iter != TWO_ARGS_SET.end()) {
+        cmd = *iter;
+    } else {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    bool isClient = false;
+    if (cmd == "-a" && secondParam == "-c") {
+        isClient = true;
+    }
+
+    if (isClient) {
+        cmd = cmd + " ";
+    } else {
+        cmd = cmd + " " + secondParam + " ";
+    }
+
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, isClient, false, -1);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerService::ProcessThreeParam(const std::string& firstParam, const std::string& secondParam,
+    const std::string& thirdParam, std::string &result)
+{
+    if (firstParam != "-a" || secondParam != "-u") {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    int userID = DEFAULT_INVAL_VALUE;
+    (void)StrToInt(thirdParam, userID);
+    HILOG_DEBUG("%{public}s, userID is : %{public}d", __func__, userID);
+    if (userID < 0) {
+        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+    }
+
+    std::string cmd = "-a ";
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, false, true, userID);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
+    return ERR_OK;
+}
+
+void AbilityManagerService::ShowHelp(std::string &result)
+{
+    result.append("Usage:\n")
+        .append("-h                          ")
+        .append("help text for the tool\n")
+        .append("-a [-c | -u {UserId}]       ")
+        .append("dump all ability infomation in the system or all ability infomation of client/UserId\n")
+        .append("-l                          ")
+        .append("dump all mission list information in the system\n")
+        .append("-i {AbilityRecordId}        ")
+        .append("dump an ability infomation by ability record id\n")
+        .append("-e                          ")
+        .append("dump all extension infomation in the system(FA: ServiceAbilityRecords, Stage: ExtensionRecords)\n")
+        .append("-p [PendingWantRecordId]    ")
+        .append("dump all pendingwant record infomation in the system\n")
+        .append("-r                          ")
+        .append("dump all process in the system\n")
+        .append("-d                          ")
+        .append("dump all data ability infomation in the system");
+}
+
+void AbilityManagerService::ShowIllealInfomation(std::string &result)
+{
+    result.append(ILLEGAL_INFOMATION);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

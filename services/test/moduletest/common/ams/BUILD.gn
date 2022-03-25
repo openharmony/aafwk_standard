@@ -16,7 +16,6 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 config("appmgr_test_config") {
   include_dirs = [
-    "//utils/system/safwk/native/include",
     "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
     "//base/notification/ces_standard/frameworks/core/include",
     "//base/notification/ces_standard/interfaces/innerkits/native/include",

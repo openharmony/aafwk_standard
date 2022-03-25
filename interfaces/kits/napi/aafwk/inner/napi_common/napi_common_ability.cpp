@@ -3078,7 +3078,7 @@ bool UnwrapParamForWant(napi_env env, napi_value args, AbilityType abilityType, 
         if (!UnwrapAbilityStartSetting(env, jsSettingObj, *(param.setting))) {
             HILOG_ERROR("%{public}s, unwrap abilityStartSetting falied.", __func__);
         }
-        HILOG_INFO("%{public}s abilityStartSetting = %{public}p.", __func__, param.setting.get());
+        HILOG_INFO("%{public}s abilityStartSetting", __func__);
     }
 
     HILOG_INFO("%{public}s end.", __func__);
@@ -3596,7 +3596,7 @@ napi_value ConnectAbilityWrap(napi_env env, napi_callback_info info, ConnectAbil
         // match bundlename && abilityname
         connectAbilityCB->id = item->first.id;
         connectAbilityCB->abilityConnection = item->second;
-        HILOG_INFO("%{public}s find connection:%{public}p exist", __func__, item->second.GetRefPtr());
+        HILOG_INFO("%{public}s find connection exist", __func__);
     } else {
         sptr<NAPIAbilityConnection> conn(new (std::nothrow) NAPIAbilityConnection());
         connectAbilityCB->id = serialNumber_;
@@ -3610,7 +3610,7 @@ napi_value ConnectAbilityWrap(napi_env env, napi_callback_info info, ConnectAbil
         } else {
             serialNumber_ = 0;
         }
-        HILOG_INFO("%{public}s not find connection, make new one:%{public}p.", __func__, conn.GetRefPtr());
+        HILOG_INFO("%{public}s not find connection, make new one", __func__);
     }
     HILOG_INFO("%{public}s id:%{public}" PRId64, __func__, connectAbilityCB->id);
 
@@ -3889,7 +3889,7 @@ napi_value DisConnectAbilityWrap(napi_env env, napi_callback_info info, ConnectA
         // match id
         connectAbilityCB->want = item->first.want;
         connectAbilityCB->abilityConnection = item->second;
-        HILOG_INFO("%{public}s find conn ability:%{public}p exist", __func__, item->second.GetRefPtr());
+        HILOG_INFO("%{public}s find conn ability exist", __func__);
     } else {
         HILOG_INFO("%{public}s not find conn ability exist.", __func__);
         HILOG_INFO("%{public}s there is no ability to disconnect.", __func__);

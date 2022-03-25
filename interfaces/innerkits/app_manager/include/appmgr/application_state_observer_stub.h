@@ -17,6 +17,7 @@
 #define FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_APPMGR_APPLICATION_STATE_OBSERVER_STUB_H
 
 #include <map>
+#include <mutex>
 
 #include "iremote_stub.h"
 #include "nocopyable.h"
@@ -92,6 +93,7 @@ private:
     using ApplicationStateObserverFunc = int32_t (ApplicationStateObserverStub::*)(MessageParcel &data,
         MessageParcel &reply);
     std::map<uint32_t, ApplicationStateObserverFunc> memberFuncMap_;
+    static std::mutex callbackMutex_;
 
     DISALLOW_COPY_AND_MOVE(ApplicationStateObserverStub);
 };

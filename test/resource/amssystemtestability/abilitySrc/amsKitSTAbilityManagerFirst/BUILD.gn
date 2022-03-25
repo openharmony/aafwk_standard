@@ -25,7 +25,6 @@ config("amsKitSTAbilityManagerConfig") {
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
     "${appexecfwk_path}/services/bundlemgr/include",
-    "//utils/system/safwk/native/include",
     "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/common",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",

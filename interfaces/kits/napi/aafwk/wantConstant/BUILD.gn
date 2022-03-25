@@ -16,7 +16,6 @@ import("//foundation/aafwk/standard/aafwk.gni")
 ohos_shared_library("wantconstant") {
   include_dirs = [
     "//third_party/node/src",
-    "//third_party/libuv/include",
     "./",
   ]
 

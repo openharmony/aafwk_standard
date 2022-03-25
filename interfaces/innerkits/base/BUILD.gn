@@ -21,7 +21,7 @@ config("base_config") {
 config("base_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "${innerkits_path}/base/include",
+    "include",
     "//utils/native/base/include",
   ]
 }

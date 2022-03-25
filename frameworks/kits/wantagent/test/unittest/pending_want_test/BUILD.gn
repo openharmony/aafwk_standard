@@ -25,7 +25,6 @@ ohos_unittest("pending_want_test") {
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime",
     "//foundation/aafwk/standard/services/abilitymgr/include",
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
-    "//utils/system/safwk/native/include",
     "//utils/native/base/include",
   ]
 
