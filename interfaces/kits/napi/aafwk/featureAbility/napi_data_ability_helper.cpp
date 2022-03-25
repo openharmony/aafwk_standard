@@ -163,6 +163,7 @@ napi_value DataAbilityHelperConstructor(napi_env env, napi_callback_info info)
                 HILOG_INFO("DataAbilityHelper finalize_cb find helper");
                 (*helper)->dataAbilityHelper->Release();
                 delete *helper;
+                *helper = nullptr;
                 registerInstances_.erase(helper);
             }
             HILOG_INFO("DAHelper finalize_cb regInstances_.size = %{public}zu", registerInstances_.size());
