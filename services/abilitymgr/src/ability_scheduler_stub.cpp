@@ -448,7 +448,7 @@ int AbilitySchedulerStub::RegisterObserverInner(MessageParcel &data, MessageParc
         HILOG_ERROR("AbilitySchedulerStub uri is nullptr");
         return ERR_INVALID_VALUE;
     }
-    auto obServer = iface_cast<IDataAbilityObserver>(data.ReadParcelable<IRemoteObject>());
+    auto obServer = iface_cast<IDataAbilityObserver>(data.ReadRemoteObject());
     if (obServer == nullptr) {
         HILOG_ERROR("AbilitySchedulerStub obServer is nullptr");
         return ERR_INVALID_VALUE;
@@ -469,7 +469,7 @@ int AbilitySchedulerStub::UnregisterObserverInner(MessageParcel &data, MessagePa
         HILOG_ERROR("AbilitySchedulerStub uri is nullptr");
         return ERR_INVALID_VALUE;
     }
-    auto obServer = iface_cast<IDataAbilityObserver>(data.ReadParcelable<IRemoteObject>());
+    auto obServer = iface_cast<IDataAbilityObserver>(data.ReadRemoteObject());
     if (obServer == nullptr) {
         HILOG_ERROR("AbilitySchedulerStub obServer is nullptr");
         return ERR_INVALID_VALUE;

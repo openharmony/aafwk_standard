@@ -42,7 +42,19 @@ void AppStateCallbackProxy::OnAbilityRequestDone(const sptr<IRemoteObject> &toke
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+
+    if (token) {
+        if (!data.WriteBool(true) || !data.WriteRemoteObject(token.GetRefPtr())) {
+            HILOG_ERROR("Failed to write flag and token");
+            return;
+        }
+    } else {
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("Failed to write flag");
+            return;
+        }
+    }
+
     int32_t abilityState = static_cast<int32_t>(state);
     data.WriteInt32(abilityState);
     sptr<IRemoteObject> remote = Remote();
