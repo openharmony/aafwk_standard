@@ -1088,7 +1088,6 @@ void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
         return;
     }
 
-    isReady_ = false;
     if (scheduler_ != nullptr && schedulerDeathRecipient_ != nullptr) {
         auto schedulerObject = scheduler_->AsObject();
         if (schedulerObject != nullptr) {
