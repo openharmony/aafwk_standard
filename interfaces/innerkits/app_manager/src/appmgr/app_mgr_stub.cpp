@@ -110,7 +110,7 @@ int AppMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParce
 int32_t AppMgrStub::HandleAttachApplication(MessageParcel &data, MessageParcel &reply)
 {
     BYTRACE(BYTRACE_TAG_APP);
-    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> client = data.ReadRemoteObject();
     AttachApplication(client);
     return NO_ERROR;
 }
@@ -149,7 +149,7 @@ int32_t AppMgrStub::HandleCheckPermission(MessageParcel &data, MessageParcel &re
 int32_t AppMgrStub::HandleAbilityCleaned(MessageParcel &data, MessageParcel &reply)
 {
     BYTRACE(BYTRACE_TAG_APP);
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
     AbilityCleaned(token);
     return NO_ERROR;
 }
@@ -163,7 +163,7 @@ int32_t AppMgrStub::HandleGetAmsMgr(MessageParcel &data, MessageParcel &reply)
         HILOG_ERROR("abilitymgr instance is nullptr");
         result = ERR_NO_INIT;
     } else {
-        if (!reply.WriteParcelable(amsMgr->AsObject())) {
+        if (!reply.WriteRemoteObject(amsMgr->AsObject())) {
             HILOG_ERROR("failed to reply abilitymgr instance to client, for write parcel error");
             result = ERR_APPEXECFWK_PARCEL_ERROR;
         }
@@ -256,7 +256,7 @@ int32_t AppMgrStub::HandleStartupResidentProcess(MessageParcel &data, MessagePar
 
 int32_t AppMgrStub::HandleRegisterApplicationStateObserver(MessageParcel &data, MessageParcel &reply)
 {
-    auto callback = iface_cast<AppExecFwk::IApplicationStateObserver>(data.ReadParcelable<IRemoteObject>());
+    auto callback = iface_cast<AppExecFwk::IApplicationStateObserver>(data.ReadRemoteObject());
     int32_t result = RegisterApplicationStateObserver(callback);
     reply.WriteInt32(result);
     return NO_ERROR;
@@ -264,7 +264,7 @@ int32_t AppMgrStub::HandleRegisterApplicationStateObserver(MessageParcel &data, 
 
 int32_t AppMgrStub::HandleUnregisterApplicationStateObserver(MessageParcel &data, MessageParcel &reply)
 {
-    auto callback = iface_cast<AppExecFwk::IApplicationStateObserver>(data.ReadParcelable<IRemoteObject>());
+    auto callback = iface_cast<AppExecFwk::IApplicationStateObserver>(data.ReadRemoteObject());
     int32_t result = UnregisterApplicationStateObserver(callback);
     reply.WriteInt32(result);
     return NO_ERROR;
@@ -300,7 +300,7 @@ int32_t AppMgrStub::HandleStartUserTestProcess(MessageParcel &data, MessageParce
         delete want;
         return ERR_INVALID_VALUE;
     }
-    auto observer = data.ReadParcelable<IRemoteObject>();
+    auto observer = data.ReadRemoteObject();
     int32_t userId = data.ReadInt32();
     int32_t result = StartUserTestProcess(*want, observer, *bundleInfo, userId);
     reply.WriteInt32(result);
@@ -388,7 +388,7 @@ int32_t AppMgrStub::HandleStartRenderProcess(MessageParcel &data, MessageParcel 
 
 int32_t AppMgrStub::HandleAttachRenderProcess(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> scheduler = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> scheduler = data.ReadRemoteObject();
     AttachRenderProcess(scheduler);
     return NO_ERROR;
 }
