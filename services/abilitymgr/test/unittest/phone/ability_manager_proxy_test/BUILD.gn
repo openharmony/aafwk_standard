@@ -25,6 +25,7 @@ ohos_unittest("ability_manager_proxy_test") {
     "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/ability_scheduler_mock",
     "${aafwk_path}/services/common/include",
     "//foundation/appexecfwk/standard/common/log/include",
+    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
   ]
 
   sources = [
