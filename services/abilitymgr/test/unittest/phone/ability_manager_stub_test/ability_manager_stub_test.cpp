@@ -282,7 +282,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_009, TestSize.Level1)
     MessageParcel reply;
     MessageOption option;
 
-    sptr<IRemoteObject> token = nullptr;
+    sptr<IRemoteObject> token = sptr<AppExecFwk::MockAbilityToken>(new (std::nothrow) AppExecFwk::MockAbilityToken());
     WriteInterfaceToken(data);
     data.WriteParcelable(token);
     data.WriteInt32(1);
@@ -548,7 +548,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_020, TestSize.Level1)
     data.WriteParcelable(&element);
     int res = stub_->OnRemoteRequest(IAbilityManager::RELEASE_CALL_ABILITY, data, reply, option);
 
-    EXPECT_EQ(res, NO_ERROR);
+    EXPECT_EQ(res, ERR_INVALID_VALUE);
 }
 
 /*
