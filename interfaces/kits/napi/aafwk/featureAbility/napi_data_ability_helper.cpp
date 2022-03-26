@@ -817,6 +817,13 @@ void RegisterCompleteCB(napi_env env, napi_status status, void *data)
         HILOG_ERROR("%{public}s, input params onCB is nullptr.", __func__);
         return;
     }
+
+    auto helper = std::find(registerInstances_.begin(), registerInstances_.end(), onCB);
+    if (helper == registerInstances_.end()) {
+        HILOG_ERROR("%{public}s, input params onCB is invalid.", __func__);
+        return;
+    }
+
     if (onCB->result == NO_ERROR) {
         return;
     }
