@@ -153,7 +153,19 @@ void AppSchedulerProxy::ScheduleLaunchAbility(const AbilityInfo &info, const spt
         return;
     }
     data.WriteParcelable(&info);
-    data.WriteParcelable(token.GetRefPtr());
+
+    if (token) {
+        if (!data.WriteBool(true) || !data.WriteRemoteObject(token.GetRefPtr())) {
+            HILOG_ERROR("Failed to write flag and token");
+            return;
+        }
+    } else {
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("Failed to write flag");
+            return;
+        }
+    }
+
     if (!data.WriteParcelable(want.get())) {
         HILOG_ERROR("write want fail.");
         return;
@@ -178,7 +190,10 @@ void AppSchedulerProxy::ScheduleCleanAbility(const sptr<IRemoteObject> &token)
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
+        HILOG_ERROR("Failed to write token");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         HILOG_ERROR("Remote() is NULL");

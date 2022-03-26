@@ -43,7 +43,7 @@ int RemoteRegisterServiceProxy::Register(const std::string &bundleName, const sp
 
     MessageParcel data;
     if (!data.WriteInterfaceToken(IRemoteRegisterService::GetDescriptor()) || !data.WriteString(bundleName) ||
-        data.WriteRemoteObject(token) || !data.WriteInt32(1) || !extras.Marshalling(data) ||
+        !data.WriteRemoteObject(token) || !data.WriteInt32(1) || !extras.Marshalling(data) ||
         !data.WriteRemoteObject(callback->AsObject())) {
         HILOG_ERROR("%{public}s Failed to write transfer data.", __func__);
         return IPC_INVOKER_WRITE_TRANS_ERR;
