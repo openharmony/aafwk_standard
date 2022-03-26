@@ -46,7 +46,10 @@ int ProviderConnectStub::OnRemoteRequest(
                 HILOG_ERROR("%{public}s failed, callback stub receive element is nullptr", __func__);
                 return ERR_APPEXECFWK_PARCEL_ERROR;
             }
-            auto remoteObject = data.ReadRemoteObject();
+            sptr<IRemoteObject> remoteObject = nullptr;
+            if (data.ReadBool()) {
+                remoteObject = data.ReadRemoteObject();
+            }
             auto resultCode = data.ReadInt32();
             OnAbilityConnectDone(*element, remoteObject, resultCode);
             delete element;
