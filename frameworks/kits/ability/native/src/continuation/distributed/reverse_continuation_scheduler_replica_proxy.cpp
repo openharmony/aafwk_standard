@@ -39,10 +39,19 @@ void ReverseContinuationSchedulerReplicaProxy::PassPrimary(const sptr<IRemoteObj
         HILOG_ERROR("ReverseContinuationSchedulerReplicaProxy::PassPrimary write interface token failed");
         return;
     }
-    if (!data.WriteRemoteObject(primary)) {
-        HILOG_ERROR("ReverseContinuationSchedulerReplicaProxy::PassPrimary write parcel callback failed");
-        return;
+    if (primary) {
+        if (!data.WriteBool(true) || !data.WriteRemoteObject(primary)) {
+            HILOG_ERROR("Failed to write flag and primary");
+            return;
+        }
+    } else {
+        HILOG_DEBUG("primary is nullptr");
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("Failed to write flag");
+            return;
+        }
     }
+
     sptr<IRemoteObject> remoteObject = Remote();
     if (remoteObject == nullptr) {
         HILOG_ERROR("ReverseContinuationSchedulerReplicaProxy::PassPrimary Remote() is NULL");
