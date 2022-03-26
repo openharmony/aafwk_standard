@@ -4461,8 +4461,8 @@ void AbilityManagerService::StartupResidentProcess(int userId)
         return;
     }
 
-    HILOG_INFO("StartupResidentProcess GetBundleInfos size: %{public}u, userId: %{public}d",
-        bundleInfos.size(), userId);
+    HILOG_INFO("StartupResidentProcess GetBundleInfos size: %{public}lu, userId: %{public}d",
+        (unsigned long)bundleInfos.size(), userId);
 
     StartMainElement(userId, bundleInfos);
     if (!bundleInfos.empty()) {
