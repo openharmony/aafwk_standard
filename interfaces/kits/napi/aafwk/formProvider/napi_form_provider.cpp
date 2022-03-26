@@ -499,6 +499,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
     std::string formDataStr = GetStringByProp(env, argv[1], "data");
     HILOG_INFO("%{public}s %{public}s - %{public}s.", __func__, strFormId.c_str(), formDataStr.c_str());
     formProviderData->SetDataString(formDataStr);
+    formProviderData->ParseImagesData();
     std::map<std::string, int> rawImageDataMap;
     UnwrapRawImageDataMap(env, argv[1], rawImageDataMap);
     HILOG_INFO("%{public}s Image number is %{public}zu", __func__, rawImageDataMap.size());
