@@ -53,7 +53,7 @@ int DataObsManagerProxy::RegisterObserver(const Uri &uri, const sptr<IDataAbilit
         return ERR_INVALID_VALUE;
     }
 
-    if (!data.WriteParcelable(dataObserver->AsObject())) {
+    if (!data.WriteRemoteObject(dataObserver->AsObject())) {
         HILOG_ERROR("register observer fail, dataObserver error");
         return ERR_INVALID_VALUE;
     }
@@ -85,7 +85,7 @@ int DataObsManagerProxy::UnregisterObserver(const Uri &uri, const sptr<IDataAbil
         return ERR_INVALID_VALUE;
     }
 
-    if (!data.WriteParcelable(dataObserver->AsObject())) {
+    if (!data.WriteRemoteObject(dataObserver->AsObject())) {
         HILOG_ERROR("unregister observer fail, dataObserver error");
         return ERR_INVALID_VALUE;
     }
