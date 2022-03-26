@@ -916,6 +916,7 @@ int AbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, co
         return ERR_INVALID_VALUE;
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
@@ -2341,6 +2342,7 @@ void AbilityManagerService::AddWindowInfo(const sptr<IRemoteObject> &token, int3
         return;
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER(abilityRecord);
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
@@ -3219,6 +3221,7 @@ bool AbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
         return false;
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER_RETURN_BOOL(abilityRecord);
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
