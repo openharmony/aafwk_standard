@@ -43,7 +43,10 @@ void AppMgrProxy::AttachApplication(const sptr<IRemoteObject> &obj)
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(obj.GetRefPtr());
+    if (!data.WriteRemoteObject(obj.GetRefPtr())) {
+        HILOG_ERROR("Failed to write remote object");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         HILOG_ERROR("Remote() is NULL");
@@ -162,7 +165,10 @@ void AppMgrProxy::AbilityCleaned(const sptr<IRemoteObject> &token)
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
+        HILOG_ERROR("Failed to write token");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         HILOG_ERROR("Remote() is NULL");
@@ -187,7 +193,7 @@ sptr<IAmsMgr> AppMgrProxy::GetAmsMgr()
     if (!SendTransactCmd(IAppMgr::Message::APP_GET_MGR_INSTANCE, data, reply)) {
         return nullptr;
     }
-    sptr<IRemoteObject> object = reply.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> object = reply.ReadRemoteObject();
     sptr<IAmsMgr> amsMgr = iface_cast<IAmsMgr>(object);
     if (!amsMgr) {
         HILOG_ERROR("ams instance is nullptr");
@@ -408,7 +414,7 @@ int AppMgrProxy::RegisterApplicationStateObserver(
     if (!WriteInterfaceToken(data)) {
         return ERR_FLATTEN_OBJECT;
     }
-    if (!data.WriteParcelable(observer->AsObject())) {
+    if (!data.WriteRemoteObject(observer->AsObject())) {
         HILOG_ERROR("observer write failed.");
         return ERR_FLATTEN_OBJECT;
     }
@@ -436,7 +442,7 @@ int AppMgrProxy::UnregisterApplicationStateObserver(
     if (!WriteInterfaceToken(data)) {
         return ERR_FLATTEN_OBJECT;
     }
-    if (!data.WriteParcelable(observer->AsObject())) {
+    if (!data.WriteRemoteObject(observer->AsObject())) {
         HILOG_ERROR("observer write failed.");
         return ERR_FLATTEN_OBJECT;
     }
@@ -491,7 +497,7 @@ int AppMgrProxy::StartUserTestProcess(
         HILOG_ERROR("want write failed.");
         return ERR_FLATTEN_OBJECT;
     }
-    if (!data.WriteParcelable(observer)) {
+    if (!data.WriteRemoteObject(observer)) {
         HILOG_ERROR("observer write failed.");
         return ERR_FLATTEN_OBJECT;
     }
@@ -640,7 +646,7 @@ void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    if (!data.WriteParcelable(renderScheduler)) {
+    if (!data.WriteRemoteObject(renderScheduler)) {
         HILOG_ERROR("renderScheduler write failed.");
         return;
     }
