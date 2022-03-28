@@ -300,9 +300,9 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
-    HILOG_DEBUG("userId : %{public}d, singleUser is : %{public}d",
-        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+    validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
+    HILOG_DEBUG("userId : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
@@ -382,9 +382,9 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
-    HILOG_DEBUG("userId : %{public}d, singleUser is : %{public}d",
-        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+    validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
+    HILOG_DEBUG("userId : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
@@ -459,9 +459,9 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
-    HILOG_DEBUG("userId : %{public}d, singleUser is : %{public}d",
-        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+    validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
+    HILOG_DEBUG("userId : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
@@ -944,9 +944,9 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
-    int32_t validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : userId;
-    HILOG_DEBUG("validUserId : %{public}d, singleUser is : %{public}d",
-        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+    int32_t validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : userId;
+    HILOG_DEBUG("validUserId : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
@@ -1614,7 +1614,7 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
         return nullptr;
     }
 
-    if (abilityRequest.abilityInfo.applicationInfo.singleUser) {
+    if (abilityRequest.abilityInfo.applicationInfo.singleton) {
         userId = U0_USER_ID;
     }
 
@@ -2594,9 +2594,9 @@ int AbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
-    HILOG_DEBUG("validUserId : %{public}d, singleUser is : %{public}d",
-        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+    validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
+    HILOG_DEBUG("validUserId : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
@@ -3471,9 +3471,9 @@ int AbilityManagerService::StartAbilityByCall(
         return RESOLVE_CALL_NO_PERMISSIONS;
     }
 
-    HILOG_DEBUG("abilityInfo.applicationInfo.singleUser is %{public}s",
-        abilityRequest.abilityInfo.applicationInfo.singleUser ? "true" : "false");
-    if (abilityRequest.abilityInfo.applicationInfo.singleUser) {
+    HILOG_DEBUG("abilityInfo.applicationInfo.singleton is %{public}s",
+        abilityRequest.abilityInfo.applicationInfo.singleton ? "true" : "false");
+    if (abilityRequest.abilityInfo.applicationInfo.singleton) {
         auto missionListManager = GetListManagerByUserId(U0_USER_ID);
         if (missionListManager == nullptr) {
             HILOG_ERROR("missionListManager is Null. userId=%{public}d", U0_USER_ID);
