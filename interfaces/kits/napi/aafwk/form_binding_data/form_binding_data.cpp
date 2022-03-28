@@ -54,40 +54,36 @@ private:
 NativeValue* FormBindingData::OnCreateFormBindingData(NativeEngine& engine, NativeCallbackInfo& info)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    if (info.argc == 0) {
-        HILOG_ERROR("%{public}s, not enough params", __func__);
-        return engine.CreateUndefined();
-    }
-
     std::string formDataStr;
-    NativeValue* nativeValue = nullptr;
-    if ((info.argv[0])->TypeOf() == NATIVE_STRING) {
-        HILOG_DEBUG("%{public}s called, param type is string.", __func__);
-        nativeValue = info.argv[0];
-    } else if ((info.argv[0])->TypeOf() == NATIVE_OBJECT) {
-        HILOG_DEBUG("%{public}s called, param type is object.", __func__);
-        napi_env napiEnv = reinterpret_cast<napi_env>(&engine);
-        napi_value globalValue = nullptr;
-        napi_get_global(napiEnv, &globalValue);
-        napi_value jsonValue;
-        napi_get_named_property(napiEnv, globalValue, "JSON", &jsonValue);
+    if (info.argc > 0) {
+        NativeValue* nativeValue = nullptr;
+        if ((info.argv[0])->TypeOf() == NATIVE_STRING) {
+            HILOG_DEBUG("%{public}s called, param type is string.", __func__);
+            nativeValue = info.argv[0];
+        } else if ((info.argv[0])->TypeOf() == NATIVE_OBJECT) {
+            HILOG_DEBUG("%{public}s called, param type is object.", __func__);
+            napi_env napiEnv = reinterpret_cast<napi_env>(&engine);
+            napi_value globalValue = nullptr;
+            napi_get_global(napiEnv, &globalValue);
+            napi_value jsonValue;
+            napi_get_named_property(napiEnv, globalValue, "JSON", &jsonValue);
 
-        napi_value stringifyValue = nullptr;
-        napi_get_named_property(napiEnv, jsonValue, "stringify", &stringifyValue);
-        napi_value funcArgv[1] = { reinterpret_cast<napi_value>(info.argv[0]) };
-        napi_value transValue = nullptr;
-        napi_call_function(napiEnv, jsonValue, stringifyValue, 1, funcArgv, &transValue);
-        nativeValue = reinterpret_cast<NativeValue*>(transValue);
-    } else {
-        HILOG_ERROR("%{public}s, param type not string or object", __func__);
-        return engine.CreateUndefined();
+            napi_value stringifyValue = nullptr;
+            napi_get_named_property(napiEnv, jsonValue, "stringify", &stringifyValue);
+            napi_value funcArgv[1] = { reinterpret_cast<napi_value>(info.argv[0]) };
+            napi_value transValue = nullptr;
+            napi_call_function(napiEnv, jsonValue, stringifyValue, 1, funcArgv, &transValue);
+            nativeValue = reinterpret_cast<NativeValue*>(transValue);
+        } else {
+            HILOG_ERROR("%{public}s, param type not string or object", __func__);
+            return engine.CreateUndefined();
+        }
+
+        if (!ConvertFromJsValue(engine, nativeValue, formDataStr)) {
+            HILOG_ERROR("%{public}s, Parse formDataStr failed", __func__);
+            return engine.CreateUndefined();
+        }
     }
-
-    if (!ConvertFromJsValue(engine, nativeValue, formDataStr)) {
-        HILOG_ERROR("%{public}s, Parse formDataStr failed", __func__);
-        return engine.CreateUndefined();
-    }
-
     NativeValue* objValue = engine.CreateObject();
     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
     formProviderData_->SetDataString(formDataStr);
