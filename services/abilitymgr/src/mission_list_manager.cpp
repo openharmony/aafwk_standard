@@ -1597,7 +1597,6 @@ void MissionListManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRec
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
 
     if (abilityRecord->IsLauncherRoot() && currentUserId != userId_) {
-        HILOG_WARN("delay restart root launcher when start user.");
         HILOG_INFO("launcher root Ability died, state: INITIAL, %{public}d", __LINE__);
         abilityRecord->SetAbilityState(AbilityState::INITIAL);
         abilityRecord->SetRestarting(true);
