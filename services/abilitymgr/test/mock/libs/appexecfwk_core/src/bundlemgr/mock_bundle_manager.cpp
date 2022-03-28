@@ -162,7 +162,7 @@ bool BundleMgrService::QueryAbilityInfo(const Want &want, int32_t flags, int32_t
 {
     bool flag = QueryAbilityInfo(want, abilityInfo);
     if (userId == ERROR_USER_ID_U256) {
-        abilityInfo.applicationInfo.singleUser = false;
+        abilityInfo.applicationInfo.singleton = false;
     }
     return flag;
 }
