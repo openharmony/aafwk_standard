@@ -129,6 +129,8 @@ HWTEST_F(FormHostClientTest, AaFwk_FormHostClient_OnAcquired_0100, Function | Me
     std::shared_ptr<Ability> ability = std::make_shared<Ability>();
     instance_->AddForm(ability, formId);
     formInfo.formId = 1;
+    formInfo.jsFormCodePath = "/data/test";
+    formInfo.formData = "test";
     instance_->OnAcquired(formInfo);
 
     GTEST_LOG_(INFO) << "AaFwk_FormHostClient_OnAcquired_0100 end";
