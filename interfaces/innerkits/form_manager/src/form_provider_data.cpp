@@ -28,7 +28,7 @@
 namespace OHOS {
 namespace AppExecFwk {
 const std::string JSON_EMPTY_STRING = "{}";
-const std::string JSON_IMAGES_STRING = "images";
+const std::string JSON_IMAGES_STRING = "formImages";
 
 /**
  * @brief Constructor.
@@ -151,6 +151,10 @@ void FormProviderData::AddImageData(std::string picName, int fd)
 
 void FormProviderData::ParseImagesData()
 {
+    if (jsonFormProviderData_ == nullptr) {
+        HILOG_ERROR("Form provider json data is nullptr.");
+        return;
+    }
     if (!jsonFormProviderData_.contains(JSON_IMAGES_STRING)) {
         return;
     }
