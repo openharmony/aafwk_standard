@@ -610,7 +610,6 @@ std::shared_ptr<AbilityRunningRecord> AppRunningRecord::GetAbilityRunningRecordB
 {
     auto moduleRecord = GetModuleRunningRecordByToken(token);
     if (!moduleRecord) {
-        HILOG_ERROR("moduleRecord is not exit");
         return nullptr;
     }
     return moduleRecord->GetAbilityRunningRecordByToken(token);
