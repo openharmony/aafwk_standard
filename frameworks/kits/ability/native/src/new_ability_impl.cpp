@@ -96,9 +96,15 @@ bool NewAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycle
                 NewWant(want);
             }
 #ifdef SUPPORT_GRAPHICS
-            Foreground(want);
+            if (lifecycleState_ == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
+                if (ability_) {
+                    ability_->RequsetFocus(want);
+                }
+            } else {
+                Foreground(want);
+                ret = false;
+            }
 #endif
-            ret = false;
             break;
         }
         case AAFwk::ABILITY_STATE_BACKGROUND_NEW: {
