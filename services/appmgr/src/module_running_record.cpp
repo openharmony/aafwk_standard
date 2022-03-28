@@ -224,7 +224,12 @@ void ModuleRunningRecord::TerminateAbility(const sptr<IRemoteObject> &token, con
     if (appLifeCycleDeal_) {
         appLifeCycleDeal_->ScheduleCleanAbility(token);
     } else {
-        HILOG_ERROR("appLifeCycleDeal_ is null");
+        HILOG_WARN("appLifeCycleDeal_ is null");
+        auto serviceInner = appMgrServiceInner_.lock();
+        auto appRunningRecord = appRunningRecord_.lock();
+        if (serviceInner) {
+            serviceInner->ClearAppRunningData(appRunningRecord, true);
+        }
     }
 
     HILOG_INFO("ModuleRunningRecord::TerminateAbility end");
@@ -295,6 +300,16 @@ void ModuleRunningRecord::SetApplicationClient(std::shared_ptr<AppLifeCycleDeal>
 ModuleRecordState ModuleRunningRecord::GetState() const
 {
     return owenState_;
+}
+
+void ModuleRunningRecord::SetAppRunningRecord(const std::shared_ptr<AppRunningRecord> &appRunningRecord);
+{
+    appRunningRecord_ = appRunningRecord;
+}
+
+const std::shared_ptr<AppRunningRecord> &ModuleRunningRecord::GetAppRunningRecord()
+{
+    return appRunningRecord_.lock();
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

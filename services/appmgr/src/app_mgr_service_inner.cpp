@@ -1376,6 +1376,19 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
         return;
     }
 
+    ClearAppRunningData(appRecord, false);
+}
+
+void AppMgrServiceInner::ClearAppRunningData(const std::shared_ptr<AppRunningRecord> &appRecord, bool containsApp)
+{
+    if (!appRecord) {
+        return;
+    }
+
+    if (containsApp) {
+        appRunningManager_->RemoveAppRunningRecordById(appRecord->GetRecordId());
+    }
+
     FinishUserTestLocked("App died", -1, appRecord);
 
     // clear uri permission

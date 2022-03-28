@@ -701,6 +701,8 @@ private:
         const std::shared_ptr<AppRunningRecord> appRecord, pid_t &renderPid);
 
     void OnRenderRemoteDied(const wptr<IRemoteObject> &remote);
+
+    void ClearAppRunningData(const std::shared_ptr<AppRunningRecord> &appRecord, bool containsApp);
 private:
     /**
      * ClearUpApplicationData, clear the application data.
