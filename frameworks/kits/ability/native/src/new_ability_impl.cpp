@@ -36,6 +36,9 @@ void NewAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Lif
         targetState.isNewWant,
         targetState.sceneFlag);
 #ifdef SUPPORT_GRAPHICS
+    if (ability_ != nullptr) {
+        ability_->sceneFlag_ = targetState.sceneFlag;
+    }
     if ((lifecycleState_ == targetState.state) && !targetState.isNewWant) {
         if (ability_ != nullptr && targetState.state == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
             ability_->RequsetFocus(want);
@@ -53,11 +56,7 @@ void NewAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Lif
         Start(want);
         CheckAndRestore();
     }
-#ifdef SUPPORT_GRAPHICS
-    if (ability_ != nullptr) {
-        ability_->sceneFlag_ = targetState.sceneFlag;
-    }
-#endif
+
     bool ret = false;
     ret = AbilityTransaction(want, targetState);
     if (ret) {
