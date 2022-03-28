@@ -217,9 +217,9 @@ void PageAbilityImpl::DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
         HILOG_ERROR("PageAbilityImpl::DoKeyDown ability_ == nullptr");
         return;
     }
-    auto abilitInfo = ability_->GetAbilityInfo();
+    auto abilityInfo = ability_->GetAbilityInfo();
     HILOG_INFO("PageAbilityImpl::DoKeyDown called %{public}s And Focus is %{public}s",
-        abilitInfo->name.c_str(),
+        abilityInfo->name.c_str(),
         ability_->HasWindowFocus() ? "true" : "false");
 
     ability_->OnKeyDown(keyEvent);
@@ -241,9 +241,9 @@ void PageAbilityImpl::DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
         HILOG_ERROR("PageAbilityImpl::DoKeyUp ability_ == nullptr");
         return;
     }
-    auto abilitInfo = ability_->GetAbilityInfo();
+    auto abilityInfo = ability_->GetAbilityInfo();
     HILOG_INFO("PageAbilityImpl::DoKeyUp called %{public}s And Focus is %{public}s",
-        abilitInfo->name.c_str(),
+        abilityInfo->name.c_str(),
         ability_->HasWindowFocus() ? "true" : "false");
 
     ability_->OnKeyUp(keyEvent);
@@ -265,9 +265,9 @@ void PageAbilityImpl::DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointer
         HILOG_ERROR("PageAbilityImpl::DoPointerEvent ability_ == nullptr");
         return;
     }
-    auto abilitInfo = ability_->GetAbilityInfo();
+    auto abilityInfo = ability_->GetAbilityInfo();
     HILOG_INFO("PageAbilityImpl::DoPointerEvent called %{public}s And Focus is %{public}s",
-        abilitInfo->name.c_str(),
+        abilityInfo->name.c_str(),
         ability_->HasWindowFocus() ? "true" : "false");
 
     ability_->OnPointerEvent(pointerEvent);
