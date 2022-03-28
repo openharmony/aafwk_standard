@@ -99,6 +99,7 @@ bool UnwrapElementName(napi_env env, napi_value param, ElementName &elementName)
     }
     return true;
 }
+
 bool InnerWrapWantParamsChar(
     napi_env env, napi_value jsObject, const std::string &key, const AAFwk::WantParams &wantParams)
 {
@@ -106,7 +107,6 @@ bool InnerWrapWantParamsChar(
     AAFwk::IChar *ao = AAFwk::IChar::Query(value);
     if (ao != nullptr) {
         std::string natValue(static_cast<Char *>(ao)->ToString());
-        HILOG_INFO("%{public}s called. key=%{public}s, value=%{private}s", __func__, key.c_str(), natValue.c_str());
         napi_value jsValue = WrapStringToJS(env, natValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -123,7 +123,6 @@ bool InnerWrapWantParamsString(
     AAFwk::IString *ao = AAFwk::IString::Query(value);
     if (ao != nullptr) {
         std::string natValue = AAFwk::String::Unbox(ao);
-        HILOG_INFO("%{public}s called. key=%{public}s, value=%{private}s", __func__, key.c_str(), natValue.c_str());
         napi_value jsValue = WrapStringToJS(env, natValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -188,7 +187,6 @@ bool InnerWrapWantParamsInt32(
     AAFwk::IInteger *ao = AAFwk::IInteger::Query(value);
     if (ao != nullptr) {
         int natValue = AAFwk::Integer::Unbox(ao);
-        HILOG_INFO("%{public}s called. key=%{public}s, value=%{private}d", __func__, key.c_str(), natValue);
         napi_value jsValue = WrapInt32ToJS(env, natValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -730,14 +728,12 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
         switch (jsValueType) {
             case napi_string: {
                 std::string natValue = UnwrapStringFromJS(env, jsProValue);
-                HILOG_INFO("%{public}s called. Property value=%{private}s.", __func__, natValue.c_str());
                 wantParams.SetParam(strProName, AAFwk::String::Box(natValue));
                 break;
             }
             case napi_boolean: {
                 bool natValue = false;
                 NAPI_CALL_BASE(env, napi_get_value_bool(env, jsProValue, &natValue), false);
-                HILOG_INFO("%{public}s called. Property value=%{private}s.", __func__, natValue ? "true" : "false");
                 wantParams.SetParam(strProName, AAFwk::Boolean::Box(natValue));
                 break;
             }
@@ -747,12 +743,10 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
                 bool isReadValue32 = false;
                 bool isReadDouble = false;
                 if (napi_get_value_int32(env, jsProValue, &natValue32) == napi_ok) {
-                    HILOG_INFO("%{public}s called. Property value=%{private}d.", __func__, natValue32);
                     isReadValue32 = true;
                 }
 
                 if (napi_get_value_double(env, jsProValue, &natValueDouble) == napi_ok) {
-                    HILOG_INFO("%{public}s called. Property value=%{private}lf.", __func__, natValueDouble);
                     isReadDouble = true;
                 }
 
@@ -773,10 +767,8 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
                 bool isArray = false;
                 if (napi_is_array(env, jsProValue, &isArray) == napi_ok) {
                     if (isArray) {
-                        HILOG_INFO("%{public}s called. %{public}s is array.", __func__, strProName.c_str());
                         InnerUnwrapWantParamsArray(env, strProName, jsProValue, wantParams);
                     } else {
-                        HILOG_INFO("%{public}s called. %{public}s is wantparams.", __func__, strProName.c_str());
                         InnerUnwrapWantParams(env, strProName, jsProValue, wantParams);
                     }
                 }
