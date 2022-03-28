@@ -50,7 +50,6 @@
 #include "ui_service_mgr_client.h"
 #include "locale_config.h"
 #endif
-#include "lock_screen_white_list.h"
 #include "mission_info_mgr.h"
 #include "permission_constants.h"
 #include "permission_verification.h"
@@ -235,22 +234,6 @@ bool AbilityManagerService::Init()
 
     auto startSystemTask = [aams = shared_from_this()]() { aams->StartSystemApplication(); };
     handler_->PostTask(startSystemTask, "startLauncherAbility");
-    auto creatWhiteListTask = [aams = shared_from_this()]() {
-        if (access(AmsWhiteList::AMS_WHITE_LIST_DIR_PATH.c_str(), F_OK) != 0) {
-            if (mkdir(AmsWhiteList::AMS_WHITE_LIST_DIR_PATH.c_str(), S_IRWXO | S_IRWXG | S_IRWXU)) {
-                HILOG_ERROR("mkdir AmsWhiteList::AMS_WHITE_LIST_DIR_PATH Fail");
-                return;
-            }
-        }
-        if (aams->IsExistFile(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH)) {
-            HILOG_INFO("file exists");
-            return;
-        }
-        HILOG_INFO("no such file, create...");
-        std::ofstream outFile(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH, std::ios::out);
-        outFile.close();
-    };
-    handler_->PostTask(creatWhiteListTask, "creatWhiteList");
     HILOG_INFO("Init success.");
     return true;
 }
