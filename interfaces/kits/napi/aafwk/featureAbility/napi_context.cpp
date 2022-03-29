@@ -102,14 +102,6 @@ void VerifySelfPermissionExecuteCallbackWork(napi_env env, void *data)
         asyncCallbackInfo->param.paramArgs.GetStringValue("permission"));
 }
 
-/**
- * @brief VerifySelfPermission processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param asyncCallbackInfo Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value NAPI_VerifySelfPermissionWrap(napi_env env, napi_callback_info info, AsyncJSCallbackInfo *asyncCallbackInfo)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -143,17 +135,6 @@ napi_value NAPI_VerifySelfPermissionWrap(napi_env env, napi_callback_info info, 
     }
 }
 
-/**
- * @brief Checks whether the current process has the given permission.
- * You need to call requestPermissionsFromUser(java.lang.std::string[],int) to request a permission only
- * if the current process does not have the specific permission.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return Returns 0 (IBundleManager.PERMISSION_GRANTED) if the current process has the permission;
- * returns -1 (IBundleManager.PERMISSION_DENIED) otherwise.
- */
 napi_value NAPI_VerifySelfPermission(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -303,14 +284,6 @@ void RequestPermissionsFromUserCompleteAsyncCallbackWork(napi_env env, napi_stat
     asyncCallbackInfo = nullptr;
 }
 
-/**
- * @brief RequestPermissionsFromUser processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param asyncCallbackInfo Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value NAPI_RequestPermissionsFromUserWrap(
     napi_env env, napi_callback_info info, AsyncJSCallbackInfo *asyncCallbackInfo)
 {
@@ -335,14 +308,6 @@ napi_value NAPI_RequestPermissionsFromUserWrap(
     return ExecuteAsyncCallbackWork(env, asyncCallbackInfo, &asyncParamEx);
 }
 
-/**
- * @brief Requests certain permissions from the system.
- * This method is called for permission request. This is an asynchronous method. When it is executed,
- * the Ability.onRequestPermissionsFromUserResult(int, String[], int[]) method will be called back.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- */
 napi_value NAPI_RequestPermissionsFromUser(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -355,12 +320,15 @@ napi_value NAPI_RequestPermissionsFromUser(napi_env env, napi_callback_info info
 
     napi_value rev = NAPI_RequestPermissionsFromUserWrap(env, info, asyncCallbackInfo);
     if (rev == nullptr) {
-        if (asyncCallbackInfo->aceCallback->callback != nullptr && asyncCallbackInfo->aceCallback->env != nullptr) {
-            napi_delete_reference(asyncCallbackInfo->aceCallback->env, asyncCallbackInfo->aceCallback->callback);
+        if (asyncCallbackInfo->aceCallback != nullptr) {
+            if (asyncCallbackInfo->aceCallback->callback != nullptr && asyncCallbackInfo->aceCallback->env != nullptr) {
+                napi_delete_reference(asyncCallbackInfo->aceCallback->env, asyncCallbackInfo->aceCallback->callback);
+            }
+            asyncCallbackInfo->aceCallback->env = nullptr;
+            asyncCallbackInfo->aceCallback->callback = nullptr;
+            delete asyncCallbackInfo->aceCallback;
+            asyncCallbackInfo->aceCallback = nullptr;
         }
-        asyncCallbackInfo->aceCallback->env = nullptr;
-        asyncCallbackInfo->aceCallback->callback = nullptr;
-
         FreeAsyncJSCallbackInfo(&asyncCallbackInfo);
         rev = WrapVoidToJS(env);
     }
@@ -368,14 +336,6 @@ napi_value NAPI_RequestPermissionsFromUser(napi_env env, napi_callback_info info
 }
 
 EXTERN_C_START
-/**
- * @brief The interface of onRequestPermissionsFromUserResult provided for ACE to call back to JS.
- *
- * @param requestCode Indicates the request code returned after the ability is started.
- * @param permissions Indicates list of permission.
- * @param grantResults Indicates List of authorization results.
- * @param callbackInfo The environment and call back info that the Node-API call is invoked under.
- */
 void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<std::string> &permissions,
     const std::vector<int> &grantResults, CallbackInfo callbackInfo)
 {
@@ -501,112 +461,48 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
 }
 EXTERN_C_END
 
-/**
- * @brief Get Files Dir.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetFilesDir(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called", __func__);
     return NAPI_GetFilesDirCommon(env, info, AbilityType::PAGE);
 }
 
-/**
- * @brief Get OrCreateDistributed Dir.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetOrCreateDistributedDir(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called", __func__);
     return NAPI_GetOrCreateDistributedDirCommon(env, info, AbilityType::PAGE);
 }
 
-/**
- * @brief Get Cache Dir.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetCacheDir(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called", __func__);
     return NAPI_GetCacheDirCommon(env, info, AbilityType::PAGE);
 }
 
-/**
- * @brief Obtains the type of this application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetCtxAppType(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
     return NAPI_GetAppTypeCommon(env, info, AbilityType::PAGE);
 }
 
-/**
- * @brief Obtains the HapModuleInfo object of the application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetCtxHapModuleInfo(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
     return NAPI_GetHapModuleInfoCommon(env, info, AbilityType::PAGE);
 }
 
-/**
- * @brief Obtains the AppVersionInfo object of the application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetAppVersionInfo(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
     return NAPI_GetAppVersionInfoCommon(env, info, AbilityType::PAGE);
 }
 
-/**
- * @brief Obtains the Application Context object of the application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetApplicationContext(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
     return NAPI_GetContextCommon(env, info, AbilityType::PAGE);
 }
 
-/**
- * @brief Obtains information about the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetCtxAbilityInfo(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -763,12 +659,6 @@ napi_value NAPI_VerifyPermission(napi_env env, napi_callback_info info)
     return rev;
 }
 
-/**
- * @brief GetApplicationInfo asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetAppInfoExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute.");
@@ -791,12 +681,6 @@ void GetAppInfoExecuteCB(napi_env env, void *data)
     HILOG_INFO("NAPI_GetApplicationInfo, worker pool thread execute end.");
 }
 
-/**
- * @brief The callback at the end of the asynchronous callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetAppInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
@@ -824,16 +708,6 @@ void GetAppInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete end.");
 }
 
-/**
- * @brief GetApplicationInfo Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param appInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetApplicationInfoAsync(napi_env env, napi_value *args, const size_t argCallback, AppInfoCB *appInfoCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -864,12 +738,6 @@ napi_value GetApplicationInfoAsync(napi_env env, napi_value *args, const size_t 
     return result;
 }
 
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetAppInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete.");
@@ -894,14 +762,6 @@ void GetAppInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
     HILOG_INFO("NAPI_GetApplicationInfo, main event thread complete end.");
 }
 
-/**
- * @brief GetApplicationInfo Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param appInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetApplicationInfoPromise(napi_env env, AppInfoCB *appInfoCB)
 {
     HILOG_INFO("%{public}s, promise.", __func__);
@@ -929,14 +789,6 @@ napi_value GetApplicationInfoPromise(napi_env env, AppInfoCB *appInfoCB)
     return promise;
 }
 
-/**
- * @brief GetApplicationInfo processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param appInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetApplicationInfoWrap(napi_env env, napi_callback_info info, AppInfoCB *appInfoCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -966,13 +818,6 @@ napi_value GetApplicationInfoWrap(napi_env env, napi_callback_info info, AppInfo
     return ret;
 }
 
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to AppInfoCB on success, nullptr on failure.
- */
 AppInfoCB *CreateAppInfoCBInfo(napi_env env)
 {
     HILOG_INFO("%{public}s, called.", __func__);
@@ -1001,12 +846,6 @@ AppInfoCB *CreateAppInfoCBInfo(napi_env env)
     return appInfoCB;
 }
 
-/**
- * @brief GetBundleName asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetBundleNameExecuteCallback(napi_env env, void *data)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -1029,14 +868,6 @@ void GetBundleNameExecuteCallback(napi_env env, void *data)
     HILOG_INFO("%{public}s end. bundleName=%{public}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
 }
 
-/**
- * @brief GetBundleName processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param asyncCallbackInfo Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value NAPI_GetBundleNameWrap(napi_env env, napi_callback_info info, AsyncJSCallbackInfo *asyncCallbackInfo)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -1096,12 +927,6 @@ napi_value WrapProcessInfo(napi_env env, ProcessInfoCB *processInfoCB)
     return result;
 }
 
-/**
- * @brief GetProcessInfo asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetProcessInfoExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetProcessInfo, worker pool thread execute.");
@@ -1128,12 +953,6 @@ void GetProcessInfoExecuteCB(napi_env env, void *data)
     HILOG_INFO("NAPI_GetProcessInfo, worker pool thread execute end.");
 }
 
-/**
- * @brief The callback at the end of the asynchronous callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetProcessInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetProcessInfo, main event thread complete.");
@@ -1162,16 +981,6 @@ void GetProcessInfoAsyncCompleteCB(napi_env env, napi_status status, void *data)
     HILOG_INFO("NAPI_GetProcessInfo, main event thread complete end.");
 }
 
-/**
- * @brief GetProcessInfo Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param ProcessInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetProcessInfoAsync(napi_env env, napi_value *args, const size_t argCallback, ProcessInfoCB *processInfoCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -1202,12 +1011,6 @@ napi_value GetProcessInfoAsync(napi_env env, napi_value *args, const size_t argC
     return result;
 }
 
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetProcessInfoPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetProcessInfo, main event thread complete.");
@@ -1227,14 +1030,6 @@ void GetProcessInfoPromiseCompleteCB(napi_env env, napi_status status, void *dat
     HILOG_INFO("NAPI_GetProcessInfo, main event thread complete end.");
 }
 
-/**
- * @brief GetProcessInfo Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param ProcessInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetProcessInfoPromise(napi_env env, ProcessInfoCB *processInfoCB)
 {
     HILOG_INFO("%{public}s, promise.", __func__);
@@ -1262,14 +1057,6 @@ napi_value GetProcessInfoPromise(napi_env env, ProcessInfoCB *processInfoCB)
     return promise;
 }
 
-/**
- * @brief GetProcessInfo processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param ProcessInfoCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetProcessInfoWrap(napi_env env, napi_callback_info info, ProcessInfoCB *processInfoCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -1299,13 +1086,6 @@ napi_value GetProcessInfoWrap(napi_env env, napi_callback_info info, ProcessInfo
     return ret;
 }
 
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to ProcessInfoCB on success, nullptr on failure.
- */
 ProcessInfoCB *CreateProcessInfoCBInfo(napi_env env)
 {
     HILOG_INFO("%{public}s, called.", __func__);
@@ -1332,13 +1112,6 @@ ProcessInfoCB *CreateProcessInfoCBInfo(napi_env env)
     return processInfoCB;
 }
 
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to ElementNameCB on success, nullptr on failure.
- */
 ElementNameCB *CreateElementNameCBInfo(napi_env env)
 {
     HILOG_INFO("%{public}s, called.", __func__);
@@ -1393,12 +1166,6 @@ napi_value WrapElementName(napi_env env, ElementNameCB *elementNameCB)
     return result;
 }
 
-/**
- * @brief GetElementName asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetElementNameExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetElementName, worker pool thread execute.");
@@ -1432,12 +1199,6 @@ void GetElementNameExecuteCB(napi_env env, void *data)
     HILOG_INFO("NAPI_GetElementName, worker pool thread execute end.");
 }
 
-/**
- * @brief The callback at the end of the asynchronous callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetElementNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetElementName, main event thread complete.");
@@ -1465,12 +1226,6 @@ void GetElementNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
     HILOG_INFO("NAPI_GetElementName, main event thread complete end.");
 }
 
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetElementNamePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetElementName, main event thread complete.");
@@ -1490,14 +1245,6 @@ void GetElementNamePromiseCompleteCB(napi_env env, napi_status status, void *dat
     HILOG_INFO("NAPI_GetElementName, main event thread complete end.");
 }
 
-/**
- * @brief GetElementName Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param elementNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetElementNamePromise(napi_env env, ElementNameCB *elementNameCB)
 {
     HILOG_INFO("%{public}s, promise.", __func__);
@@ -1525,16 +1272,6 @@ napi_value GetElementNamePromise(napi_env env, ElementNameCB *elementNameCB)
     return promise;
 }
 
-/**
- * @brief GetElementName Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param elementNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetElementNameAsync(napi_env env, napi_value *args, const size_t argCallback, ElementNameCB *elementNameCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -1565,14 +1302,6 @@ napi_value GetElementNameAsync(napi_env env, napi_value *args, const size_t argC
     return result;
 }
 
-/**
- * @brief GetElementName processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param elementNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetElementNameWrap(napi_env env, napi_callback_info info, ElementNameCB *elementNameCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -1602,13 +1331,6 @@ napi_value GetElementNameWrap(napi_env env, napi_callback_info info, ElementName
     return ret;
 }
 
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to ProcessNameCB on success, nullptr on failure.
- */
 ProcessNameCB *CreateProcessNameCBInfo(napi_env env)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -1635,12 +1357,6 @@ ProcessNameCB *CreateProcessNameCBInfo(napi_env env)
     return processNameCB;
 }
 
-/**
- * @brief GetProcessName asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetProcessNameExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetProcessName, worker pool thread execute.");
@@ -1674,12 +1390,6 @@ napi_value WrapProcessName(napi_env env, ProcessNameCB *processNameCB)
     return result;
 }
 
-/**
- * @brief The callback at the end of the asynchronous callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetProcessNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetProcessName, main event thread complete.");
@@ -1707,12 +1417,6 @@ void GetProcessNameAsyncCompleteCB(napi_env env, napi_status status, void *data)
     HILOG_INFO("NAPI_GetProcessName, main event thread complete end.");
 }
 
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetProcessNamePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetProcessName, main event thread complete.");
@@ -1732,16 +1436,6 @@ void GetProcessNamePromiseCompleteCB(napi_env env, napi_status status, void *dat
     HILOG_INFO("NAPI_GetProcessName, main event thread complete end.");
 }
 
-/**
- * @brief GetProcessName Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param ProcessNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetProcessNameAsync(napi_env env, napi_value *args, const size_t argCallback, ProcessNameCB *processNameCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -1772,14 +1466,6 @@ napi_value GetProcessNameAsync(napi_env env, napi_value *args, const size_t argC
     return result;
 }
 
-/**
- * @brief GetProcessName Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param ProcessNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetProcessNamePromise(napi_env env, ProcessNameCB *processNameCB)
 {
     HILOG_INFO("%{public}s, promise.", __func__);
@@ -1807,14 +1493,6 @@ napi_value GetProcessNamePromise(napi_env env, ProcessNameCB *processNameCB)
     return promise;
 }
 
-/**
- * @brief GetProcessName processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param ProcessNameCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetProcessNameWrap(napi_env env, napi_callback_info info, ProcessNameCB *processNameCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -1844,13 +1522,6 @@ napi_value GetProcessNameWrap(napi_env env, napi_callback_info info, ProcessName
     return ret;
 }
 
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to CallingBundleCB on success, nullptr on failure.
- */
 CallingBundleCB *CreateCallingBundleCBInfo(napi_env env)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -1877,12 +1548,6 @@ CallingBundleCB *CreateCallingBundleCBInfo(napi_env env)
     return callingBundleCB;
 }
 
-/**
- * @brief GetCallingBundle asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetCallingBundleExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetCallingBundle, worker pool thread execute.");
@@ -1916,12 +1581,6 @@ napi_value WrapCallingBundle(napi_env env, CallingBundleCB *callingBundleCB)
     return result;
 }
 
-/**
- * @brief The callback at the end of the asynchronous callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetCallingBundleAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetCallingBundle, main event thread complete.");
@@ -1949,12 +1608,6 @@ void GetCallingBundleAsyncCompleteCB(napi_env env, napi_status status, void *dat
     HILOG_INFO("NAPI_GetCallingBundle, main event thread complete end.");
 }
 
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetCallingBundlePromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetCallingBundle, main event thread complete.");
@@ -1974,16 +1627,6 @@ void GetCallingBundlePromiseCompleteCB(napi_env env, napi_status status, void *d
     HILOG_INFO("NAPI_GetCallingBundle, main event thread complete end.");
 }
 
-/**
- * @brief GetCallingBundle Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetCallingBundleAsync(
     napi_env env, napi_value *args, const size_t argCallback, CallingBundleCB *callingBundleCB)
 {
@@ -2015,14 +1658,6 @@ napi_value GetCallingBundleAsync(
     return result;
 }
 
-/**
- * @brief GetCallingBundle Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetCallingBundlePromise(napi_env env, CallingBundleCB *callingBundleCB)
 {
     HILOG_INFO("%{public}s, promise.", __func__);
@@ -2050,14 +1685,6 @@ napi_value GetCallingBundlePromise(napi_env env, CallingBundleCB *callingBundleC
     return promise;
 }
 
-/**
- * @brief GetCallingBundle processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetCallingBundleWrap(napi_env env, napi_callback_info info, CallingBundleCB *callingBundleCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -2087,13 +1714,6 @@ napi_value GetCallingBundleWrap(napi_env env, napi_callback_info info, CallingBu
     return ret;
 }
 
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to CallingBundleCB on success, nullptr on failure.
- */
 GetOrCreateLocalDirCB *CreateGetOrCreateLocalDirCBInfo(napi_env env)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -2120,12 +1740,6 @@ GetOrCreateLocalDirCB *CreateGetOrCreateLocalDirCBInfo(napi_env env)
     return getOrCreateLocalDirCB;
 }
 
-/**
- * @brief GetOrCreateLocalDir asynchronous processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetOrCreateLocalDirExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_GetOrCreateLocalDir, worker pool thread execute.");
@@ -2183,12 +1797,6 @@ napi_value WrapGetOrCreateLocalDir(napi_env env, GetOrCreateLocalDirCB *getOrCre
     return result;
 }
 
-/**
- * @brief The callback at the end of the asynchronous callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetOrCreateLocalDirAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetOrCreateLocalDir, main event thread complete.");
@@ -2216,12 +1824,6 @@ void GetOrCreateLocalDirAsyncCompleteCB(napi_env env, napi_status status, void *
     HILOG_INFO("NAPI_GetOrCreateLocalDir, main event thread complete end.");
 }
 
-/**
- * @brief The callback at the end of the Promise callback.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param data Point to asynchronous processing of data.
- */
 void GetOrCreateLocalDirPromiseCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("NAPI_GetOrCreateLocalDir, main event thread complete.");
@@ -2241,16 +1843,6 @@ void GetOrCreateLocalDirPromiseCompleteCB(napi_env env, napi_status status, void
     HILOG_INFO("NAPI_GetOrCreateLocalDir, main event thread complete end.");
 }
 
-/**
- * @brief GetOrCreateLocalDir Async.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param args Indicates the arguments passed into the callback.
- * @param argcPromise Asynchronous data processing.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetOrCreateLocalDirAsync(
     napi_env env, napi_value *args, const size_t argCallback, GetOrCreateLocalDirCB *getOrCreateLocalDirCB)
 {
@@ -2283,14 +1875,6 @@ napi_value GetOrCreateLocalDirAsync(
     return result;
 }
 
-/**
- * @brief GetOrCreateLocalDir Promise.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetOrCreateLocalDirPromise(napi_env env, GetOrCreateLocalDirCB *getOrCreateLocalDirCB)
 {
     HILOG_INFO("%{public}s, promise.", __func__);
@@ -2318,14 +1902,6 @@ napi_value GetOrCreateLocalDirPromise(napi_env env, GetOrCreateLocalDirCB *getOr
     return promise;
 }
 
-/**
- * @brief GetOrCreateLocalDir processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetOrCreateLocalDirWrap(napi_env env, napi_callback_info info, GetOrCreateLocalDirCB *getOrCreateLocalDirCB)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -2355,14 +1931,6 @@ napi_value GetOrCreateLocalDirWrap(napi_env env, napi_callback_info info, GetOrC
     return ret;
 }
 
-/**
- * @brief Get bundle name.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetBundleName(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -2382,14 +1950,6 @@ napi_value NAPI_GetBundleName(napi_env env, napi_callback_info info)
     return ret;
 }
 
-/**
- * @brief Obtains information about the current application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetApplicationInfo(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s,called", __func__);
@@ -2411,14 +1971,6 @@ napi_value NAPI_GetApplicationInfo(napi_env env, napi_callback_info info)
     return ret;
 }
 
-/**
- * @brief Obtains the process Info this application.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetProcessInfo(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -2441,14 +1993,6 @@ napi_value NAPI_GetProcessInfo(napi_env env, napi_callback_info info)
     return ret;
 }
 
-/**
- * @brief Obtains the elementName object of the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetElementName(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -2471,14 +2015,6 @@ napi_value NAPI_GetElementName(napi_env env, napi_callback_info info)
     return ret;
 }
 
-/**
- * @brief Obtains the name of the current process.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetProcessName(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -2501,14 +2037,6 @@ napi_value NAPI_GetProcessName(napi_env env, napi_callback_info info)
     return ret;
 }
 
-/**
- * @brief Obtains the bundle name of the ability that called the current ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetCallingBundle(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -2531,14 +2059,6 @@ napi_value NAPI_GetCallingBundle(napi_env env, napi_callback_info info)
     return ret;
 }
 
-/**
- * @brief Get the local root dir of an app. If it is the first call, the dir will be created.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetOrCreateLocalDir(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -2561,13 +2081,6 @@ napi_value NAPI_GetOrCreateLocalDir(napi_env env, napi_callback_info info)
     return ret;
 }
 
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to CallingBundleCB on success, nullptr on failure.
- */
 DatabaseDirCB *CreateGetDatabaseDirCBInfo(napi_env env)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -2594,14 +2107,6 @@ DatabaseDirCB *CreateGetDatabaseDirCBInfo(napi_env env)
     return getDatabaseDirCB;
 }
 
-/**
- * @brief GetOrCreateLocalDir processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetDatabaseDirWrap(napi_env env, napi_callback_info info, DatabaseDirCB *getDatabaseDirCB)
 {
     HILOG_INFO("%{public}s, called.", __func__);
@@ -2651,14 +2156,6 @@ napi_value GetDatabaseDirWrap(napi_env env, napi_callback_info info, DatabaseDir
     return result;
 }
 
-/**
- * @brief Obtains the local database path. If it is the first call, the dir will be created.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetDatabaseDirSync(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -2682,13 +2179,6 @@ napi_value NAPI_GetDatabaseDirSync(napi_env env, napi_callback_info info)
     return ret;
 }
 
-/**
- * @brief Create asynchronous data.
- *
- * @param env The environment that the Node-API call is invoked under.
- *
- * @return Return a pointer to CallingBundleCB on success, nullptr on failure.
- */
 PreferencesDirCB *CreateGetPreferencesDirCBInfo(napi_env env)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -2715,14 +2205,6 @@ PreferencesDirCB *CreateGetPreferencesDirCBInfo(napi_env env)
     return getPreferencesDirCB;
 }
 
-/**
- * @brief GetOrCreateLocalDir processing function.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param CallingBundleCB Process data asynchronously.
- *
- * @return Return JS data successfully, otherwise return nullptr.
- */
 napi_value GetPreferencesDirWrap(napi_env env, napi_callback_info info, PreferencesDirCB *getPreferencesDirCB)
 {
     HILOG_INFO("%{public}s, called.", __func__);
@@ -2774,14 +2256,6 @@ napi_value GetPreferencesDirWrap(napi_env env, napi_callback_info info, Preferen
     return result;
 }
 
-/**
- * @brief Obtains the local database path. If it is the first call, the dir will be created.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_GetPreferencesDirSync(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -2805,42 +2279,18 @@ napi_value NAPI_GetPreferencesDirSync(napi_env env, napi_callback_info info)
     return ret;
 }
 
-/**
- * @brief Checks whether the configuration of this ability is changing.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return Returns true if the configuration of this ability is changing and false otherwise.
- */
 napi_value NAPI_IsUpdatingConfigurations(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called", __func__);
     return NAPI_IsUpdatingConfigurationsCommon(env, info, AbilityType::PAGE);
 }
 
-/**
- * @brief Informs the system of the time required for drawing this Page ability.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
 napi_value NAPI_PrintDrawnCompleted(napi_env env, napi_callback_info info)
 {
     HILOG_INFO("%{public}s called", __func__);
     return NAPI_PrintDrawnCompletedCommon(env, info, AbilityType::PAGE);
 }
 
-/**
- * @brief Context NAPI module registration.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param exports An empty object via the exports parameter as a convenience.
- *
- * @return The return value from Init is treated as the exports object for the module.
- */
 napi_value ContextPermissionInit(napi_env env, napi_value exports)
 {
     HILOG_INFO("Context::ContextPermissionInit called.");
