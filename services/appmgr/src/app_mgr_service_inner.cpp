@@ -1376,6 +1376,19 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
         return;
     }
 
+    ClearAppRunningData(appRecord, false);
+}
+
+void AppMgrServiceInner::ClearAppRunningData(const std::shared_ptr<AppRunningRecord> &appRecord, bool containsApp)
+{
+    if (!appRecord) {
+        return;
+    }
+
+    if (containsApp) {
+        appRunningManager_->RemoveAppRunningRecordById(appRecord->GetRecordId());
+    }
+
     FinishUserTestLocked("App died", -1, appRecord);
 
     // clear uri permission
@@ -2023,7 +2036,7 @@ int AppMgrServiceInner::FinishUserTest(
 }
 
 int AppMgrServiceInner::FinishUserTestLocked(
-    const std::string &msg, const int &resultCode, std::shared_ptr<AppRunningRecord> &appRecord)
+    const std::string &msg, const int &resultCode, const std::shared_ptr<AppRunningRecord> &appRecord)
 {
     HILOG_INFO("Enter");
     if (!appRecord) {
