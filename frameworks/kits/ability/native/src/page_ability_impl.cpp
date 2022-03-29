@@ -44,10 +44,8 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         return;
     }
 
-    if (lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND ||
-        lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND_NEW) {
-        if (targetState.state == AAFwk::ABILITY_STATE_ACTIVE ||
-            targetState.state == AAFwk::ABILITY_STATE_INACTIVE) {
+    if (lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND || lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND_NEW) {
+        if (targetState.state == AAFwk::ABILITY_STATE_ACTIVE || targetState.state == AAFwk::ABILITY_STATE_INACTIVE) {
             HILOG_ERROR("Invalid state.");
             return;
         }
