@@ -64,6 +64,7 @@ const std::string FORM_HOST_BUNDLE_NAME = "com.form.host.app";
 const int32_t PARAM_FORM_DIMENSION_VALUE = 1;
 
 const std::string KEY_UID = "uid";
+const std::string KEY_USER_ID = "userId";
 const std::string KEY_BUNDLE_NAME = "bundleName";
 const std::string DEVICE_ID = "ohos-phone1";
 const std::string DEF_LABEL1 = "PermissionFormRequireGrant";
@@ -76,6 +77,8 @@ public:
     void TearDown();
     void CreateEventData(std::string bundle, int64_t formId,
         int callingUid, std::string actionType, EventFwk::CommonEventData &eventData);
+    void CreateEventData(std::string bundle, int64_t formId,
+        int callingUid, int32_t userId, std::string actionType, EventFwk::CommonEventData &eventData);
     void CreateFormRecordAndFormInfo(std::string bundle, int64_t formId, int callingUid);
     void ClearFormRecord(int64_t formId);
 
@@ -128,7 +131,16 @@ void FmsFormSysEventReceiverTest::CreateEventData(std::string bundle, int64_t fo
     want.SetParam(KEY_UID, callingUid);
     eventData.SetWant(want);
 }
-
+void FmsFormSysEventReceiverTest::CreateEventData(std::string bundle, int64_t formId,
+    int callingUid, int32_t userId, std::string actionType, EventFwk::CommonEventData &eventData)
+{
+    Want want;
+    want.SetAction(actionType);
+    want.SetBundle(bundle);
+    want.SetParam(KEY_UID, callingUid);
+    want.SetParam(KEY_USER_ID, userId);
+    eventData.SetWant(want);
+}
 void FmsFormSysEventReceiverTest::CreateFormRecordAndFormInfo(std::string bundle, int64_t formId, int callingUid)
 {
     FormItemInfo record;
@@ -267,7 +279,7 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_003, TestSize.Level0)
     FormSysEventReceiver testCase;
     testCase.OnReceiveEvent(eventData);
 
-    ASSERT_FALSE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
+    ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
 
     ClearFormRecord(formId);
 

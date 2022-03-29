@@ -34,6 +34,7 @@
 #include "mock_form_host_client.h"
 #include "permission/permission_kit.h"
 #include "permission/permission.h"
+#include "power_mgr_client.h"
 #include "running_process_info.h"
 #include "system_ability_definition.h"
 
@@ -113,7 +114,6 @@ void FmsFormProviderMgrTest::TearDown()
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  AcquireForm works with invalid formid.
  */
-
 HWTEST_F(FmsFormProviderMgrTest, AcquireForm_001, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_001 start";
@@ -137,7 +137,6 @@ HWTEST_F(FmsFormProviderMgrTest, AcquireForm_001, TestSize.Level0)
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  AcquireForm works without formrecord.
  */
-
 HWTEST_F(FmsFormProviderMgrTest, AcquireForm_002, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_002 start";
@@ -153,7 +152,6 @@ HWTEST_F(FmsFormProviderMgrTest, AcquireForm_002, TestSize.Level0)
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_002 end";
 }
 
-
 /*
  * Feature: FmsFormProviderMgr
  * Function: FormMgr
@@ -162,7 +160,6 @@ HWTEST_F(FmsFormProviderMgrTest, AcquireForm_002, TestSize.Level0)
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  AcquireForm works without form host record.
  */
-
 HWTEST_F(FmsFormProviderMgrTest, AcquireForm_003, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_003 start";
@@ -188,7 +185,6 @@ HWTEST_F(FmsFormProviderMgrTest, AcquireForm_003, TestSize.Level0)
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  RefreshForm works without form host record.
  */
-
 HWTEST_F(FmsFormProviderMgrTest, RefreshForm_001, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_004 start";
@@ -214,7 +210,6 @@ HWTEST_F(FmsFormProviderMgrTest, RefreshForm_001, TestSize.Level0)
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  RefreshForm works without form host record.
  */
-
 HWTEST_F(FmsFormProviderMgrTest, RefreshForm_002, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_005 start";
@@ -229,7 +224,13 @@ HWTEST_F(FmsFormProviderMgrTest, RefreshForm_002, TestSize.Level0)
     FormRecord realFormRecord = FormDataMgr::GetInstance().AllotFormRecord(record, callingUid);
     FormItemInfo info;
     FormDataMgr::GetInstance().AllotFormHostRecord(info, token_, formId, callingUid);
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_PROVIDER_DEL_FAIL, FormProviderMgr::GetInstance().RefreshForm(formId, want));
+    bool screenOnFlag = PowerMgr::PowerMgrClient::GetInstance().IsScreenOn();
+    if (!screenOnFlag) {
+        EXPECT_EQ(ERR_OK, FormProviderMgr::GetInstance().RefreshForm(formId, want));
+    } else {
+        EXPECT_EQ(ERR_APPEXECFWK_FORM_PROVIDER_DEL_FAIL, FormProviderMgr::GetInstance().RefreshForm(formId, want));
+    }
+
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_005 end";
 }
 }
