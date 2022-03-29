@@ -506,6 +506,7 @@ public:
 
     int VerifyAccountPermission(const std::string &permissionName, const int userId);
 
+    void ClearAppRunningData(const std::shared_ptr<AppRunningRecord> &appRecord, bool containsApp);
 private:
 
     void StartEmptyResidentProcess(const BundleInfo &info, const std::string &processName, int restartCount);
@@ -701,8 +702,6 @@ private:
         const std::shared_ptr<AppRunningRecord> appRecord, pid_t &renderPid);
 
     void OnRenderRemoteDied(const wptr<IRemoteObject> &remote);
-
-    void ClearAppRunningData(const std::shared_ptr<AppRunningRecord> &appRecord, bool containsApp);
 private:
     /**
      * ClearUpApplicationData, clear the application data.
@@ -743,7 +742,7 @@ private:
     void KillApplicationByRecord(const std::shared_ptr<AppRunningRecord> &appRecord);
     void SendHiSysEvent(const int32_t innerEventId, const int64_t eventId);
     int FinishUserTestLocked(
-        const std::string &msg, const int &resultCode, std::shared_ptr<AppRunningRecord> &appRecord);
+        const std::string &msg, const int &resultCode, const std::shared_ptr<AppRunningRecord> &appRecord);
     const std::string TASK_ON_CALLBACK_DIED = "OnCallbackDiedTask";
     std::vector<sptr<IApplicationStateObserver>> appStateObservers_;
     std::map<sptr<IRemoteObject>, sptr<IRemoteObject::DeathRecipient>> recipientMap_;

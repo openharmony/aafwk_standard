@@ -15,6 +15,7 @@
 
 #include "module_running_record.h"
 #include "app_mgr_service_inner.h"
+#include "app_running_record.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
@@ -302,14 +303,9 @@ ModuleRecordState ModuleRunningRecord::GetState() const
     return owenState_;
 }
 
-void ModuleRunningRecord::SetAppRunningRecord(const std::shared_ptr<AppRunningRecord> &appRunningRecord);
+void ModuleRunningRecord::SetAppRunningRecord(const std::shared_ptr<AppRunningRecord> &appRunningRecord)
 {
     appRunningRecord_ = appRunningRecord;
-}
-
-const std::shared_ptr<AppRunningRecord> &ModuleRunningRecord::GetAppRunningRecord()
-{
-    return appRunningRecord_.lock();
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

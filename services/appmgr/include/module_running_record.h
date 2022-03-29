@@ -38,6 +38,7 @@ enum class ModuleRecordState {
 };
 
 class AppMgrServiceInner;
+class AppRunningRecord;
 class ModuleRunningRecord {
 public:
     ModuleRunningRecord(
@@ -169,7 +170,6 @@ public:
     void SetApplicationClient(std::shared_ptr<AppLifeCycleDeal> &appLifeCycleDeal);
 
     void SetAppRunningRecord(const std::shared_ptr<AppRunningRecord> &appRunningRecord);
-    const std::shared_ptr<AppRunningRecord> &GetAppRunningRecord();
 
     const std::shared_ptr<ApplicationInfo> GetAppInfo();
 

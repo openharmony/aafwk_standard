@@ -2036,7 +2036,7 @@ int AppMgrServiceInner::FinishUserTest(
 }
 
 int AppMgrServiceInner::FinishUserTestLocked(
-    const std::string &msg, const int &resultCode, std::shared_ptr<AppRunningRecord> &appRecord)
+    const std::string &msg, const int &resultCode, const std::shared_ptr<AppRunningRecord> &appRecord)
 {
     HILOG_INFO("Enter");
     if (!appRecord) {
