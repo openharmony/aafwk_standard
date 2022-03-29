@@ -485,16 +485,10 @@ private:
     } Action;
 
     std::shared_ptr<AbilityLifecycleCallbacks> abilityLifecycleCallbacks_;
-    std::shared_ptr<ApplicationImpl> applactionImpl_;
+    std::shared_ptr<ApplicationImpl> applicationImpl_;
     std::shared_ptr<ContextDeal> contextDeal_;
 
 private:
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Multimodal Events Register.
-     */
-    void WindowEventRegister();
-#endif
     bool hasSaveData_ = false;
     bool needSaveDate_ = false;
     PacMap restoreData_;

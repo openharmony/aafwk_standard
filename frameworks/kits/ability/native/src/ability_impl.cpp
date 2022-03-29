@@ -96,13 +96,6 @@ void AbilityImpl::Start(const Want &want)
 #endif
 
     abilityLifecycleCallbacks_->OnAbilityStart(ability_);
-#ifdef SUPPORT_GRAPHICS
-    // Multimodal Events Register
-    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (!ability_->GetAbilityInfo()->isStageBasedModel)) {
-        WindowEventRegister();
-    }
-#endif
     HILOG_INFO("%{public}s end.", __func__);
 }
 
@@ -895,22 +888,6 @@ void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::Poin
 {
     HILOG_INFO("AbilityImpl::DoPointerEvent called.");
     abilityImpl_->DoPointerEvent(pointerEvent);
-}
-
-/**
- * @brief Multimodal Events Register.
- */
-void AbilityImpl::WindowEventRegister()
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    if (!ability_->GetAbilityInfo()->isStageBasedModel) {
-        auto window = ability_->GetWindow();
-        if (window) {
-            std::shared_ptr<MMI::IInputEventConsumer> inputEventListener =
-                std::make_shared<AbilityImpl::InputEventConsumerImpl>(shared_from_this());
-            window->AddInputEventListener(inputEventListener);
-        }
-    }
 }
 #endif
 
