@@ -751,7 +751,7 @@ bool AbilitySchedulerProxy::ScheduleRegisterObserver(const Uri &uri, const sptr<
         return false;
     }
 
-    if (!data.WriteParcelable(dataObserver->AsObject())) {
+    if (!data.WriteRemoteObject(dataObserver->AsObject())) {
         HILOG_ERROR("%{public}s failed to WriteParcelable dataObserver ", __func__);
         return false;
     }
@@ -788,7 +788,7 @@ bool AbilitySchedulerProxy::ScheduleUnregisterObserver(const Uri &uri, const spt
         return false;
     }
 
-    if (!data.WriteParcelable(dataObserver->AsObject())) {
+    if (!data.WriteRemoteObject(dataObserver->AsObject())) {
         HILOG_ERROR("%{public}s failed to WriteParcelable dataObserver ", __func__);
         return false;
     }

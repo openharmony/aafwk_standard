@@ -230,13 +230,13 @@ void AbilityImpl::AfterUnFocused()
 void AbilityImpl::AfterFocused()
 {
     HILOG_INFO("%{public}s begin.", __func__);
-    if (ability_->GetAbilityInfo()->isStageBasedModel) {
-        HILOG_INFO("new version ability, do nothing when after focused.");
+    if (!ability_ || !ability_->GetAbilityInfo() || !contextDeal_ || !handler_) {
+        HILOG_ERROR("AbilityImpl::AfterFocused failed");
         return;
     }
 
-    if (!ability_ || !ability_->GetAbilityInfo() || !contextDeal_ || !handler_) {
-        HILOG_ERROR("AbilityImpl::AfterFocused failed");
+    if (ability_->GetAbilityInfo()->isStageBasedModel) {
+        HILOG_INFO("new version ability, do nothing when after focused.");
         return;
     }
 

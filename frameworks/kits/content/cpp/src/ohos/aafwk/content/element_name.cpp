@@ -59,17 +59,14 @@ void ElementName::ClearElement(ElementName *element)
 ElementName::ElementName(const std::string &deviceId, const std::string &bundleName, const std::string &abilityName)
     : deviceId_(deviceId), bundleName_(bundleName), abilityName_(abilityName)
 {
-    ABILITYBASE_LOGD("instance is created with parameters");
 }
 
 ElementName::ElementName()
 {
-    ABILITYBASE_LOGD("instance is created without parameter");
 }
 
 ElementName::~ElementName()
 {
-    ABILITYBASE_LOGD("instance is destroyed");
 }
 
 std::string ElementName::GetURI() const
