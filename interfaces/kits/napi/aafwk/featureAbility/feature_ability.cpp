@@ -173,9 +173,9 @@ napi_value StartAbilityForResultAsync(napi_env env, AsyncCallbackInfo *asyncCall
         return nullptr;
     }
     napi_value resourceName = 0;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
-    napi_create_async_work(
+    NAPI_CALL(env, napi_create_async_work(
         env,
         nullptr,
         resourceName,
@@ -207,10 +207,10 @@ napi_value StartAbilityForResultAsync(napi_env env, AsyncCallbackInfo *asyncCall
             HILOG_INFO("NAPI_StartAbilityForResult, main event thread complete end.");
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     napi_value result = 0;
-    napi_get_null(env, &result);
+    NAPI_CALL(env, napi_get_null(env, &result));
     HILOG_INFO("%{public}s, asyncCallback end.", __func__);
     return result;
 }
@@ -343,15 +343,15 @@ napi_value SetResultAsync(
         return nullptr;
     }
     napi_value resourceName = 0;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    napi_typeof(env, args[argCallback], &valuetype);
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
         napi_create_reference(env, args[argCallback], 1, &asyncCallbackInfo->cbInfo.callback);
     }
 
-    napi_create_async_work(
+    NAPI_CALL(env, napi_create_async_work(
         env,
         nullptr,
         resourceName,
@@ -388,10 +388,10 @@ napi_value SetResultAsync(
             HILOG_INFO("NAPI_SetResult, main event thread complete end.");
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     napi_value result = 0;
-    napi_get_null(env, &result);
+    NAPI_CALL(env, napi_get_null(env, &result));
     HILOG_INFO("%{public}s, asyncCallback end", __func__);
     return result;
 }
@@ -404,13 +404,13 @@ napi_value SetResultPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
         return nullptr;
     }
     napi_value resourceName = 0;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     napi_deferred deferred;
     napi_value promise = 0;
-    napi_create_promise(env, &deferred, &promise);
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
     asyncCallbackInfo->deferred = deferred;
 
-    napi_create_async_work(
+    NAPI_CALL(env, napi_create_async_work(
         env,
         nullptr,
         resourceName,
@@ -437,8 +437,8 @@ napi_value SetResultPromise(napi_env env, AsyncCallbackInfo *asyncCallbackInfo)
             HILOG_INFO("NAPI_SetResult,  main event thread complete end.");
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     HILOG_INFO("%{public}s, promise end", __func__);
     return promise;
 }
@@ -519,15 +519,15 @@ napi_value TerminateAbilityAsync(
         return nullptr;
     }
     napi_value resourceName = 0;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    napi_typeof(env, args[argCallback], &valuetype);
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        napi_create_reference(env, args[argCallback], 1, &asyncCallbackInfo->cbInfo.callback);
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &asyncCallbackInfo->cbInfo.callback));
     }
 
-    napi_create_async_work(
+    NAPI_CALL(env, napi_create_async_work(
         env,
         nullptr,
         resourceName,
@@ -562,10 +562,10 @@ napi_value TerminateAbilityAsync(
             HILOG_INFO("NAPI_TerminateAbility, main event thread complete end.");
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     napi_value result = 0;
-    napi_get_null(env, &result);
+    NAPI_CALL(env, napi_get_null(env, &result));
     HILOG_INFO("%{public}s, asyncCallback end", __func__);
     return result;
 }
@@ -578,14 +578,14 @@ napi_value TerminateAbilityPromise(napi_env env, AsyncCallbackInfo *asyncCallbac
         return nullptr;
     }
     napi_value resourceName = 0;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     napi_deferred deferred;
     napi_value promise = 0;
-    napi_create_promise(env, &deferred, &promise);
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
 
     asyncCallbackInfo->deferred = deferred;
 
-    napi_create_async_work(
+    NAPI_CALL(env, napi_create_async_work(
         env,
         nullptr,
         resourceName,
@@ -610,8 +610,8 @@ napi_value TerminateAbilityPromise(napi_env env, AsyncCallbackInfo *asyncCallbac
             HILOG_INFO("NAPI_TerminateAbility,  main event thread complete end.");
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     HILOG_INFO("%{public}s, promise end", __func__);
     return promise;
 }
@@ -715,14 +715,14 @@ napi_value HasWindowFocusAsync(
         return nullptr;
     }
     napi_value resourceName = 0;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     napi_valuetype valuetype = napi_undefined;
-    napi_typeof(env, args[argCallback], &valuetype);
+    NAPI_CALL(env, napi_typeof(env, args[argCallback], &valuetype));
     if (valuetype == napi_function) {
-        napi_create_reference(env, args[argCallback], 1, &asyncCallbackInfo->cbInfo.callback);
+        NAPI_CALL(env, napi_create_reference(env, args[argCallback], 1, &asyncCallbackInfo->cbInfo.callback));
     }
-    napi_create_async_work(
+    NAPI_CALL(env, napi_create_async_work(
         env,
         nullptr,
         resourceName,
@@ -758,10 +758,10 @@ napi_value HasWindowFocusAsync(
             HILOG_INFO("NAPI_HasWindowFocus, main event thread complete end.");
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     napi_value result = 0;
-    napi_get_null(env, &result);
+    NAPI_CALL(env, napi_get_null(env, &result));
     HILOG_INFO("%{public}s, asyncCallback end.", __func__);
     return result;
 }
@@ -774,13 +774,13 @@ napi_value HasWindowFocusPromise(napi_env env, AsyncCallbackInfo *asyncCallbackI
         return nullptr;
     }
     napi_value resourceName = 0;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     napi_deferred deferred;
     napi_value promise = 0;
-    napi_create_promise(env, &deferred, &promise);
+    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
     asyncCallbackInfo->deferred = deferred;
 
-    napi_create_async_work(
+    NAPI_CALL(env, napi_create_async_work(
         env,
         nullptr,
         resourceName,
@@ -806,8 +806,8 @@ napi_value HasWindowFocusPromise(napi_env env, AsyncCallbackInfo *asyncCallbackI
             HILOG_INFO("NAPI_HasWindowFocus, main event thread complete end.");
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
     HILOG_INFO("%{public}s, promise end.", __func__);
     return promise;
 }
@@ -1303,16 +1303,16 @@ void GetDataAbilityHelperAsyncCompleteCB(napi_env env, napi_status status, void 
 {
     HILOG_INFO("NAPI_GetDataAbilityHelper, main event thread complete.");
     DataAbilityHelperCB *dataAbilityHelperCB = static_cast<DataAbilityHelperCB *>(data);
+    std::unique_ptr<DataAbilityHelperCB> callbackPtr {dataAbilityHelperCB};
     napi_value uri = nullptr;
     napi_value callback = nullptr;
     napi_value undefined = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
     napi_value callResult = nullptr;
-    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
-    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
-    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->cbBase.cbInfo.callback, &callback));
-    NAPI_CALL_RETURN_VOID(
-        env, napi_new_instance(env, GetGlobalDataAbilityHelper(env), 1, &uri, &dataAbilityHelperCB->result));
+    napi_get_undefined(env, &undefined);
+    napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri);
+    napi_get_reference_value(env, dataAbilityHelperCB->cbBase.cbInfo.callback, &callback);
+    napi_new_instance(env, GetGlobalDataAbilityHelper(env), 1, &uri, &dataAbilityHelperCB->result);
     if (IsTypeForNapiValue(env, dataAbilityHelperCB->result, napi_object)) {
         result[PARAM1] = dataAbilityHelperCB->result;
     } else {
@@ -1320,14 +1320,11 @@ void GetDataAbilityHelperAsyncCompleteCB(napi_env env, napi_status status, void 
         result[PARAM1] = WrapVoidToJS(env);
     }
     result[PARAM0] = GetCallbackErrorValue(env, NO_ERROR);
-    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult));
-
+    napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
     if (dataAbilityHelperCB->cbBase.cbInfo.callback != nullptr) {
-        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, dataAbilityHelperCB->cbBase.cbInfo.callback));
+        napi_delete_reference(env, dataAbilityHelperCB->cbBase.cbInfo.callback);
     }
-    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, dataAbilityHelperCB->cbBase.asyncWork));
-    delete dataAbilityHelperCB;
-    dataAbilityHelperCB = nullptr;
+    napi_delete_async_work(env, dataAbilityHelperCB->cbBase.asyncWork);
     HILOG_INFO("NAPI_GetDataAbilityHelper, main event thread complete end.");
 }
 
@@ -1335,22 +1332,20 @@ void GetDataAbilityHelperPromiseCompleteCB(napi_env env, napi_status status, voi
 {
     HILOG_INFO("NAPI_GetDataAbilityHelper,  main event thread complete.");
     DataAbilityHelperCB *dataAbilityHelperCB = static_cast<DataAbilityHelperCB *>(data);
+    std::unique_ptr<DataAbilityHelperCB> callbackPtr {dataAbilityHelperCB};
     napi_value uri = nullptr;
     napi_value result = nullptr;
-    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri));
-    NAPI_CALL_RETURN_VOID(
-        env, napi_new_instance(env, GetGlobalDataAbilityHelper(env), 1, &uri, &dataAbilityHelperCB->result));
+    napi_get_reference_value(env, dataAbilityHelperCB->uri, &uri);
+    napi_new_instance(env, GetGlobalDataAbilityHelper(env), 1, &uri, &dataAbilityHelperCB->result);
     if (IsTypeForNapiValue(env, dataAbilityHelperCB->result, napi_object)) {
         result = dataAbilityHelperCB->result;
-        NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, dataAbilityHelperCB->cbBase.deferred, result));
+        napi_resolve_deferred(env, dataAbilityHelperCB->cbBase.deferred, result);
     } else {
         result = GetCallbackErrorValue(env, dataAbilityHelperCB->cbBase.errCode);
         napi_reject_deferred(env, dataAbilityHelperCB->cbBase.deferred, result);
         HILOG_INFO("NAPI_GetDataAbilityHelper, helper is nullptr.");
     }
-    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, dataAbilityHelperCB->cbBase.asyncWork));
-    delete dataAbilityHelperCB;
-    dataAbilityHelperCB = nullptr;
+    napi_delete_async_work(env, dataAbilityHelperCB->cbBase.asyncWork);
     HILOG_INFO("NAPI_GetDataAbilityHelper,  main event thread complete end.");
 }
 
