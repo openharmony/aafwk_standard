@@ -45,7 +45,7 @@ public:
     using ConnectListType = std::list<std::shared_ptr<ConnectionRecord>>;
     using RecipientMapType = std::map<sptr<IRemoteObject>, sptr<IRemoteObject::DeathRecipient>>;
 
-    AbilityConnectManager();
+    explicit AbilityConnectManager(int userId);
     virtual ~AbilityConnectManager();
 
     /**
@@ -226,11 +226,14 @@ public:
      *
      * @param abilityRecord, service ability record.
      */
-    void OnAbilityDied(const std::shared_ptr<AbilityRecord> &abilityRecord);
+    void OnAbilityDied(const std::shared_ptr<AbilityRecord> &abilityRecord, int32_t currentUserId);
 
     void DumpState(std::vector<std::string> &info, bool isClient, const std::string &args = "") const;
 
     void StopAllExtensions();
+
+    void StartRootLauncher(const std::shared_ptr<AbilityRecord> &abilityRecord);
+    void OnTimeOut(uint32_t msgId, int64_t eventId);
 
     // MSG 0 - 20 represents timeout message
     static constexpr uint32_t LOAD_TIMEOUT_MSG = 0;
@@ -323,6 +326,7 @@ private:
     void HandleStopTimeoutTask(const std::shared_ptr<AbilityRecord> &abilityRecord);
     void HandleDisconnectTask(const ConnectListType &connectlist);
     void HandleTerminateDisconnectTask(const ConnectListType& connectlist);
+    void HandleCommandTimeoutTask(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
     /**
      * IsAbilityConnected.
@@ -403,7 +407,7 @@ private:
      *
      * @param abilityRecord, died ability.
      */
-    void HandleAbilityDiedTask(const std::shared_ptr<AbilityRecord> &abilityRecord);
+    void HandleAbilityDiedTask(const std::shared_ptr<AbilityRecord> &abilityRecord, int32_t currentUserId);
 
     /**
      * PostTimeOutTask.
@@ -415,6 +419,11 @@ private:
 
     bool IsAbilityNeedRestart(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
+    void PrintTimeOutLog(const std::shared_ptr<AbilityRecord> &ability, uint32_t msgId);
+
+    std::shared_ptr<AbilityRecord> GetAbilityRecordByEventId(int64_t eventId);
+    void HandleInactiveTimeout(const std::shared_ptr<AbilityRecord> &ability);
+
 private:
     const std::string TASK_ON_CALLBACK_DIED = "OnCallbackDiedTask";
     const std::string TASK_ON_ABILITY_DIED = "OnAbilityDiedTask";
@@ -424,6 +433,7 @@ private:
     ServiceMapType serviceMap_;
     RecipientMapType recipientMap_;
     std::shared_ptr<AppExecFwk::EventHandler> eventHandler_;
+    int userId_;
 
     DISALLOW_COPY_AND_MOVE(AbilityConnectManager);
 };
