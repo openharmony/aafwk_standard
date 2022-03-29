@@ -214,7 +214,7 @@ HWTEST_F(AbilityManagerServiceDumpTest, AbilityManagerService_DataDumpSysStateIn
  */
 HWTEST_F(AbilityManagerServiceDumpTest, AbilityManagerService_OnAppStateChanged_0100, TestSize.Level1)
 {
-    abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
+    abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
     EXPECT_NE(abilityMs_->connectManager_, nullptr);
 
     abilityMs_->useNewMission_ = true;
