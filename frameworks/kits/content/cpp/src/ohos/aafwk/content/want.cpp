@@ -1995,13 +1995,15 @@ bool Want::ReadFromJson(nlohmann::json &wantJson)
     std::string parametersString = wantJson.at("parameters").get<std::string>();
     WantParams parameters = WantParamWrapper::ParseWantParams(parametersString);
     SetParams(parameters);
-
-    std::vector<std::string> entities;
-    wantJson.at("entities").get_to<std::vector<std::string>>(entities);
-    for (size_t i = 0; i < entities.size(); i++) {
-        AddEntity(entities[i]);
+    if (wantJson.at("entities").is_null()) {
+        ABILITYBASE_LOGI("entities is null");
+    } else {
+        std::vector<std::string> entities;
+        wantJson.at("entities").get_to<std::vector<std::string>>(entities);
+        for (size_t i = 0; i < entities.size(); i++) {
+            AddEntity(entities[i]);
+        }
     }
-
     return true;
 }
 
