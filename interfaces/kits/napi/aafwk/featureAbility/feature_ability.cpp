@@ -1324,6 +1324,9 @@ void GetDataAbilityHelperAsyncCompleteCB(napi_env env, napi_status status, void 
     if (dataAbilityHelperCB->cbBase.cbInfo.callback != nullptr) {
         napi_delete_reference(env, dataAbilityHelperCB->cbBase.cbInfo.callback);
     }
+    if (dataAbilityHelperCB->uri != nullptr) {
+        napi_delete_reference(env, dataAbilityHelperCB->uri);
+    }
     napi_delete_async_work(env, dataAbilityHelperCB->cbBase.asyncWork);
     HILOG_INFO("NAPI_GetDataAbilityHelper, main event thread complete end.");
 }
@@ -1344,6 +1347,10 @@ void GetDataAbilityHelperPromiseCompleteCB(napi_env env, napi_status status, voi
         result = GetCallbackErrorValue(env, dataAbilityHelperCB->cbBase.errCode);
         napi_reject_deferred(env, dataAbilityHelperCB->cbBase.deferred, result);
         HILOG_INFO("NAPI_GetDataAbilityHelper, helper is nullptr.");
+    }
+
+    if (dataAbilityHelperCB->uri != nullptr) {
+        napi_delete_reference(env, dataAbilityHelperCB->uri);
     }
     napi_delete_async_work(env, dataAbilityHelperCB->cbBase.asyncWork);
     HILOG_INFO("NAPI_GetDataAbilityHelper,  main event thread complete end.");

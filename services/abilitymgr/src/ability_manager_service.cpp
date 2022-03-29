@@ -111,7 +111,7 @@ const int32_t GET_PARAMETER_INCORRECT = -9;
 const int32_t GET_PARAMETER_OTHER = -1;
 const int32_t SIZE_10 = 10;
 const bool isRamConstrainedDevice = false;
-const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.dalvikheaplimit";
+const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.arkheaplimit";
 const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
 const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
 const std::string ACTION_CHOOSE = "ohos.want.action.select";
@@ -3315,7 +3315,7 @@ void AbilityManagerService::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &me
 int AbilityManagerService::GetAppMemorySize()
 {
     HILOG_INFO("service GetAppMemorySize start");
-    const char *key = "const.product.dalvikheaplimit";
+    const char *key = "const.product.arkheaplimit";
     const char *def = "512m";
     char *valueGet = nullptr;
     unsigned int len = 128;
