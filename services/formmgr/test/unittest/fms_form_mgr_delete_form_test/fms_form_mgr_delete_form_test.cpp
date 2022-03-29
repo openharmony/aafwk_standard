@@ -120,14 +120,14 @@ HWTEST_F(FmsFormMgrDeleteFormTest, DeleteForm_001, TestSize.Level0)
     FormDataMgr::GetInstance().ClearFormRecords();
     std::vector<FormDBInfo> oldFormDBInfos;
     FormDbCache::GetInstance().GetAllFormInfo(oldFormDBInfos);
-    FormDbCache::GetInstance().DeleteFormInfoByBundleName(FORM_HOST_BUNDLE_NAME, oldFormDBInfos);
+    FormDbCache::GetInstance().DeleteFormInfoByBundleName(FORM_PROVIDER_BUNDLE_NAME, oldFormDBInfos);
 
     int64_t formId {12001};
     int callingUid = IPCSkeleton::GetCallingUid();
     // Create cache
     FormItemInfo record1;
     record1.SetFormId(formId);
-    record1.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
+    record1.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     record1.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     record1.SetTemporaryFlag(false);
     FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1, callingUid);
@@ -252,7 +252,7 @@ HWTEST_F(FmsFormMgrDeleteFormTest, DeleteForm_006, TestSize.Level0)
     int callingUid = IPCSkeleton::GetCallingUid();
     FormItemInfo record1;
     record1.SetFormId(formId);
-    record1.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
+    record1.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     record1.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     record1.SetTemporaryFlag(false);
     FormDataMgr::GetInstance().AllotFormRecord(record1, callingUid);
@@ -285,7 +285,7 @@ HWTEST_F(FmsFormMgrDeleteFormTest, DeleteForm_007, TestSize.Level0)
     // Create cache
     FormItemInfo record1;
     record1.SetFormId(formId);
-    record1.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
+    record1.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     record1.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     record1.SetTemporaryFlag(false);
     FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1, callingUid);
@@ -339,7 +339,7 @@ HWTEST_F(FmsFormMgrDeleteFormTest, DeleteForm_008, TestSize.Level0)
     int callingUid = IPCSkeleton::GetCallingUid();
     FormItemInfo record1;
     record1.SetFormId(formId);
-    record1.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
+    record1.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     record1.SetAbilityName("");
     record1.SetTemporaryFlag(false);
     FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1, callingUid);

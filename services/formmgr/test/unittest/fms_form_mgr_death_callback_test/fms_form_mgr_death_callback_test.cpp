@@ -22,6 +22,7 @@
 #include "form_db_cache.h"
 #include "form_host_interface.h"
 #define private public
+#include "form_info_mgr.h"
 #include "form_mgr.h"
 #undef private
 #include "form_mgr_service.h"
@@ -69,6 +70,7 @@ public:
     void SetUp();
     void TearDown();
 
+    void CreateProviderData();
 protected:
     sptr<MockFormHostClient> token_;
     std::shared_ptr<FormMgrService> formyMgrServ_ = DelayedSingleton<FormMgrService>::GetInstance();
@@ -109,6 +111,29 @@ void FmsFormMgrDeathCallbackTest::SetUp()
 void FmsFormMgrDeathCallbackTest::TearDown()
 {}
 
+void FmsFormMgrDeathCallbackTest::CreateProviderData()
+{
+    std::unordered_map<std::string, std::shared_ptr<BundleFormInfo>> bundleFormInfoMap;
+    std::shared_ptr<BundleFormInfo> bundleFormInfo = std::make_shared<BundleFormInfo>(FORM_PROVIDER_BUNDLE_NAME);
+    std::vector<FormInfo> formInfos;
+    FormInfo formInfo;
+    formInfo.bundleName = FORM_PROVIDER_BUNDLE_NAME;
+    formInfo.abilityName = FORM_PROVIDER_ABILITY_NAME;
+    formInfo.moduleName = PARAM_PROVIDER_MODULE_NAME;
+    formInfo.name = PARAM_FORM_NAME;
+    formInfo.updateEnabled = true;
+    formInfo.updateDuration = 1;
+    formInfo.scheduledUpdateTime = "06:06";
+    formInfo.jsComponentName = FORM_JS_COMPOMENT_NAME;
+    formInfo.formVisibleNotify = true;
+    formInfo.supportDimensions = {1, 2};
+    formInfo.defaultDimension = 1;
+    formInfos.emplace_back(formInfo);
+    bundleFormInfo->formInfos_ = formInfos;
+    bundleFormInfoMap.emplace(FORM_PROVIDER_BUNDLE_NAME, bundleFormInfo);
+
+    FormInfoMgr::GetInstance().bundleFormInfoMap_ = bundleFormInfoMap;
+}
 /*
  * Feature: FormMgrService
  * Function: FormMgr::FormMgrDeathRecipient
@@ -120,6 +145,7 @@ void FmsFormMgrDeathCallbackTest::TearDown()
 HWTEST_F(FmsFormMgrDeathCallbackTest, OnRemoteDied_001, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_death_callback_test_001 start";
+    CreateProviderData();
     // No cache
     FormJsInfo formJsInfo;
     Want want;
