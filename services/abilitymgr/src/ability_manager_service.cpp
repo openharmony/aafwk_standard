@@ -50,7 +50,6 @@
 #include "ui_service_mgr_client.h"
 #include "locale_config.h"
 #endif
-#include "lock_screen_white_list.h"
 #include "mission_info_mgr.h"
 #include "permission_constants.h"
 #include "permission_verification.h"
@@ -235,22 +234,6 @@ bool AbilityManagerService::Init()
 
     auto startSystemTask = [aams = shared_from_this()]() { aams->StartSystemApplication(); };
     handler_->PostTask(startSystemTask, "startLauncherAbility");
-    auto creatWhiteListTask = [aams = shared_from_this()]() {
-        if (access(AmsWhiteList::AMS_WHITE_LIST_DIR_PATH.c_str(), F_OK) != 0) {
-            if (mkdir(AmsWhiteList::AMS_WHITE_LIST_DIR_PATH.c_str(), S_IRWXO | S_IRWXG | S_IRWXU)) {
-                HILOG_ERROR("mkdir AmsWhiteList::AMS_WHITE_LIST_DIR_PATH Fail");
-                return;
-            }
-        }
-        if (aams->IsExistFile(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH)) {
-            HILOG_INFO("file exists");
-            return;
-        }
-        HILOG_INFO("no such file, create...");
-        std::ofstream outFile(AmsWhiteList::AMS_WHITE_LIST_FILE_PATH, std::ios::out);
-        outFile.close();
-    };
-    handler_->PostTask(creatWhiteListTask, "creatWhiteList");
     HILOG_INFO("Init success.");
     return true;
 }
@@ -317,9 +300,9 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
-    HILOG_DEBUG("userId : %{public}d, singleUser is : %{public}d",
-        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+    validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
+    HILOG_DEBUG("userId : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
@@ -399,9 +382,9 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
-    HILOG_DEBUG("userId : %{public}d, singleUser is : %{public}d",
-        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+    validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
+    HILOG_DEBUG("userId : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
@@ -476,9 +459,9 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
-    HILOG_DEBUG("userId : %{public}d, singleUser is : %{public}d",
-        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+    validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
+    HILOG_DEBUG("userId : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
@@ -888,6 +871,7 @@ int AbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, co
         return ERR_INVALID_VALUE;
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
@@ -960,9 +944,9 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
-    int32_t validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : userId;
-    HILOG_DEBUG("validUserId : %{public}d, singleUser is : %{public}d",
-        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+    int32_t validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : userId;
+    HILOG_DEBUG("validUserId : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
@@ -1630,7 +1614,7 @@ sptr<IAbilityScheduler> AbilityManagerService::AcquireDataAbility(
         return nullptr;
     }
 
-    if (abilityRequest.abilityInfo.applicationInfo.singleUser) {
+    if (abilityRequest.abilityInfo.applicationInfo.singleton) {
         userId = U0_USER_ID;
     }
 
@@ -2284,6 +2268,7 @@ void AbilityManagerService::AddWindowInfo(const sptr<IRemoteObject> &token, int3
         return;
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER(abilityRecord);
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
@@ -2609,9 +2594,9 @@ int AbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
     }
 
     auto abilityInfo = abilityRequest.abilityInfo;
-    validUserId = abilityInfo.applicationInfo.singleUser ? U0_USER_ID : validUserId;
-    HILOG_DEBUG("validUserId : %{public}d, singleUser is : %{public}d",
-        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleUser));
+    validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
+    HILOG_DEBUG("validUserId : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
@@ -3122,6 +3107,7 @@ bool AbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
         return false;
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    CHECK_POINTER_RETURN_BOOL(abilityRecord);
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto stackManager = GetStackManagerByUserId(userId);
     if (!stackManager) {
@@ -3485,9 +3471,9 @@ int AbilityManagerService::StartAbilityByCall(
         return RESOLVE_CALL_NO_PERMISSIONS;
     }
 
-    HILOG_DEBUG("abilityInfo.applicationInfo.singleUser is %{public}s",
-        abilityRequest.abilityInfo.applicationInfo.singleUser ? "true" : "false");
-    if (abilityRequest.abilityInfo.applicationInfo.singleUser) {
+    HILOG_DEBUG("abilityInfo.applicationInfo.singleton is %{public}s",
+        abilityRequest.abilityInfo.applicationInfo.singleton ? "true" : "false");
+    if (abilityRequest.abilityInfo.applicationInfo.singleton) {
         auto missionListManager = GetListManagerByUserId(U0_USER_ID);
         if (missionListManager == nullptr) {
             HILOG_ERROR("missionListManager is Null. userId=%{public}d", U0_USER_ID);
@@ -4458,8 +4444,8 @@ void AbilityManagerService::StartupResidentProcess(int userId)
         return;
     }
 
-    HILOG_INFO("StartupResidentProcess GetBundleInfos size: %{public}u, userId: %{public}d",
-        bundleInfos.size(), userId);
+    HILOG_INFO("StartupResidentProcess GetBundleInfos size: %{public}lu, userId: %{public}d",
+        (unsigned long)bundleInfos.size(), userId);
 
     StartMainElement(userId, bundleInfos);
     if (!bundleInfos.empty()) {

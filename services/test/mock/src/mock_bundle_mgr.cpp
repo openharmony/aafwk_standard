@@ -87,7 +87,7 @@ bool BundleMgrService::QueryAbilityInfo(const AAFwk::Want &want, int32_t flags, 
 {
     auto flag = QueryAbilityInfo(want, abilityInfo);
     if (userId == ERROR_USER_ID_U256) {
-        abilityInfo.applicationInfo.singleUser = false;
+        abilityInfo.applicationInfo.singleton = false;
     }
     return flag;
 
