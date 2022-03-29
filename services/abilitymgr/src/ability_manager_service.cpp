@@ -2980,7 +2980,7 @@ bool AbilityManagerService::VerificationAllToken(const sptr<IRemoteObject> &toke
     return false;
 }
 
-const std::shared_ptr<DataAbilityManager> &AbilityManagerService::GetDataAbilityManager(
+std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManager(
     const sptr<IAbilityScheduler> &scheduler)
 {
     if (scheduler == nullptr) {
@@ -2989,7 +2989,7 @@ const std::shared_ptr<DataAbilityManager> &AbilityManagerService::GetDataAbility
     }
 
     std::shared_lock<std::shared_mutex> lock(managersMutex_);
-    for (auto item: dataAbilityManagers_) {
+    for (auto& item: dataAbilityManagers_) {
         if (item.second && item.second->ContainsDataAbility(scheduler)) {
             return item.second;
         }
