@@ -56,20 +56,17 @@ bool& GetDataAbilityHelperStatus()
 
 bool CheckAbilityType(AbilityType typeInAbility, AbilityType typeWant)
 {
-    HILOG_INFO("%{public}s called.", __func__);
     switch (typeWant) {
         case AbilityType::PAGE:
             return typeInAbility == AbilityType::PAGE;
         default:
             return typeInAbility != AbilityType::PAGE;
     }
-    HILOG_INFO("%{public}s end.", __func__);
     return false;
 }
 
 bool CheckAbilityType(const CBBase *cbBase)
 {
-    HILOG_INFO("%{public}s called.", __func__);
     if (cbBase == nullptr) {
         HILOG_ERROR("%{public}s cbBase == nullptr", __func__);
         return false;
@@ -85,7 +82,6 @@ bool CheckAbilityType(const CBBase *cbBase)
         HILOG_ERROR("%{public}s info == nullptr", __func__);
         return false;
     }
-    HILOG_INFO("%{public}s end.", __func__);
     return CheckAbilityType((AbilityType)info->type, cbBase->abilityType);
 }
 
@@ -136,7 +132,6 @@ bool CheckAbilityType(const AsyncCallbackInfo *asyncCallbackInfo)
 
 void SaveAppInfo(AppInfo_ &appInfo, const ApplicationInfo &appInfoOrg)
 {
-    HILOG_INFO("%{public}s.", __func__);
     appInfo.name = appInfoOrg.name;
     appInfo.description = appInfoOrg.description;
     appInfo.descriptionId = appInfoOrg.descriptionId;
@@ -158,7 +153,6 @@ void SaveAppInfo(AppInfo_ &appInfo, const ApplicationInfo &appInfoOrg)
         appInfo.moduleInfos.emplace_back(appInfoOrg.moduleInfos.at(i));
     }
     appInfo.entryDir = appInfoOrg.entryDir;
-    HILOG_INFO("%{public}s end.", __func__);
 }
 
 napi_value GetContinueAbilityOptionsInfoCommon(
@@ -2662,7 +2656,6 @@ napi_value GetWantWrap(napi_env env, napi_callback_info info, AsyncCallbackInfo 
  */
 napi_value NAPI_GetWantCommon(napi_env env, napi_callback_info info, AbilityType abilityType)
 {
-    HILOG_INFO("%{public}s, called.", __func__);
     AsyncCallbackInfo *asyncCallbackInfo = CreateAsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s, asyncCallbackInfo == nullptr", __func__);
@@ -2680,7 +2673,6 @@ napi_value NAPI_GetWantCommon(napi_env env, napi_callback_info info, AbilityType
         }
         ret = WrapVoidToJS(env);
     }
-    HILOG_INFO("%{public}s, end.", __func__);
     return ret;
 }
 
@@ -4489,14 +4481,12 @@ napi_value NAPI_StartBackgroundRunningCommon(napi_env env, napi_callback_info in
 
 void CancelBackgroundRunningExecuteCB(napi_env env, void *data)
 {
-    HILOG_INFO("NAPI_PACancelBackgroundRunning, worker pool thread execute.");
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo->ability != nullptr) {
         asyncCallbackInfo->ability->StopBackgroundRunning();
     } else {
         HILOG_ERROR("NAPI_PACancelBackgroundRunning, ability == nullptr");
     }
-    HILOG_INFO("NAPI_PACancelBackgroundRunning, worker pool thread execute end.");
 }
 
 napi_value CancelBackgroundRunningAsync(

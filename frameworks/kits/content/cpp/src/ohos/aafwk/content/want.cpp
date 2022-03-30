@@ -1923,14 +1923,12 @@ bool Want::CheckAndSetParameters(Want &want, const std::string &key, std::string
 
 void Want::DumpInfo(int level) const
 {
-    ABILITYBASE_LOGI("==================Want::DumpInfo level: %{public}d start=============", level);
     operation_.DumpInfo(level);
     parameters_.DumpInfo(level);
 
     if (picker_ != nullptr) {
         picker_->DumpInfo(level + 1);
     }
-    ABILITYBASE_LOGI("==================Want::DumpInfo level: %{public}d end=============", level);
 }
 
 nlohmann::json Want::ToJson() const
@@ -1995,13 +1993,15 @@ bool Want::ReadFromJson(nlohmann::json &wantJson)
     std::string parametersString = wantJson.at("parameters").get<std::string>();
     WantParams parameters = WantParamWrapper::ParseWantParams(parametersString);
     SetParams(parameters);
-
-    std::vector<std::string> entities;
-    wantJson.at("entities").get_to<std::vector<std::string>>(entities);
-    for (size_t i = 0; i < entities.size(); i++) {
-        AddEntity(entities[i]);
+    if (wantJson.at("entities").is_null()) {
+        ABILITYBASE_LOGI("entities is null");
+    } else {
+        std::vector<std::string> entities;
+        wantJson.at("entities").get_to<std::vector<std::string>>(entities);
+        for (size_t i = 0; i < entities.size(); i++) {
+            AddEntity(entities[i]);
+        }
     }
-
     return true;
 }
 
