@@ -27,8 +27,7 @@
 
 namespace OHOS {
 namespace AAFwk {
-
-AbilityConnectManager::AbilityConnectManager()
+AbilityConnectManager::AbilityConnectManager(int userId) : userId_(userId)
 {}
 
 AbilityConnectManager::~AbilityConnectManager()
@@ -210,6 +209,10 @@ void AbilityConnectManager::GetOrCreateServiceRecord(const AbilityRequest &abili
         targetService = AbilityRecord::CreateAbilityRecord(abilityRequest);
         if (isCreatedByConnect && targetService != nullptr) {
             targetService->SetCreateByConnectMode();
+        }
+        if (targetService && abilityRequest.abilityInfo.name == AbilityConfig::LAUNCHER_ABILITY_NAME) {
+            targetService->SetLauncherRoot();
+            targetService->SetRestarting(abilityRequest.restart, abilityRequest.restartCount);
         }
         serviceMap_.emplace(element.GetURI(), targetService);
         isLoadedAbility = false;
@@ -584,6 +587,22 @@ std::list<std::shared_ptr<ConnectionRecord>> AbilityConnectManager::GetConnectRe
     return connectList;
 }
 
+std::shared_ptr<AbilityRecord> AbilityConnectManager::GetAbilityRecordByEventId(int64_t eventId)
+{
+    std::lock_guard<std::recursive_mutex> guard(Lock_);
+    auto IsMatch = [eventId](auto service) {
+        if (!service.second) {
+            return false;
+        }
+        return eventId == service.second->GetEventId();
+    };
+    auto serviceRecord = std::find_if(serviceMap_.begin(), serviceMap_.end(), IsMatch);
+    if (serviceRecord != serviceMap_.end()) {
+        return serviceRecord->second;
+    }
+    return nullptr;
+}
+
 void AbilityConnectManager::RemoveAll()
 {
     serviceMap_.clear();
@@ -594,6 +613,13 @@ void AbilityConnectManager::LoadAbility(const std::shared_ptr<AbilityRecord> &ab
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     CHECK_POINTER(abilityRecord);
+    abilityRecord->SetStartTime();
+
+    if (!abilityRecord->CanRestartRootLauncher()) {
+        HILOG_ERROR("Root launcher restart is out of max count.");
+        RemoveServiceAbility(abilityRecord);
+        return;
+    }
 
     PostTimeOutTask(abilityRecord, AbilityManagerService::LOAD_TIMEOUT_MSG);
 
@@ -613,8 +639,6 @@ void AbilityConnectManager::LoadAbility(const std::shared_ptr<AbilityRecord> &ab
     DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
         token, perToken, abilityRecord->GetAbilityInfo(), abilityRecord->GetApplicationInfo(),
         abilityRecord->GetWant());
-
-    abilityRecord->SetStartTime();
 }
 
 void AbilityConnectManager::PostTimeOutTask(const std::shared_ptr<AbilityRecord> &abilityRecord, uint32_t messageId)
@@ -669,10 +693,45 @@ void AbilityConnectManager::HandleStartTimeoutTask(const std::shared_ptr<Ability
         abilityRecord->RemoveConnectRecordFromList(connectRecord);
         RemoveConnectionRecordFromMap(connectRecord);
     }
+
     if (resultCode == LOAD_ABILITY_TIMEOUT) {
         HILOG_DEBUG("Load time out , remove target service record from services map.");
         RemoveServiceAbility(abilityRecord);
     }
+    if (abilityRecord->GetAbilityInfo().name == AbilityConfig::LAUNCHER_ABILITY_NAME) {
+        // terminate the timeout root launcher.
+        DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(abilityRecord->GetToken());
+        if (resultCode == LOAD_ABILITY_TIMEOUT) {
+            StartRootLauncher(abilityRecord);
+        }
+    }
+}
+
+void AbilityConnectManager::HandleCommandTimeoutTask(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    HILOG_DEBUG("HandleCommandTimeoutTask start");
+    std::lock_guard<std::recursive_mutex> guard(Lock_);
+    CHECK_POINTER(abilityRecord);
+    if (abilityRecord->GetAbilityInfo().name == AbilityConfig::LAUNCHER_ABILITY_NAME) {
+        HILOG_DEBUG("Handle root launcher command timeout.");
+        // terminate the timeout root launcher.
+        DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(abilityRecord->GetToken());
+    }
+    HILOG_DEBUG("HandleCommandTimeoutTask end");
+}
+
+void AbilityConnectManager::StartRootLauncher(const std::shared_ptr<AbilityRecord> &abilityRecord)
+{
+    CHECK_POINTER(abilityRecord);
+    AbilityRequest requestInfo;
+    requestInfo.want = abilityRecord->GetWant();
+    requestInfo.abilityInfo = abilityRecord->GetAbilityInfo();
+    requestInfo.appInfo = abilityRecord->GetApplicationInfo();
+    requestInfo.restart = true;
+    requestInfo.restartCount = abilityRecord->GetRestartCount() - 1;
+
+    HILOG_DEBUG("restart root launcher, number:%{public}d", requestInfo.restartCount);
+    StartAbilityLocked(requestInfo);
 }
 
 void AbilityConnectManager::HandleStopTimeoutTask(const std::shared_ptr<AbilityRecord> &abilityRecord)
@@ -773,6 +832,7 @@ void AbilityConnectManager::CommandAbility(const std::shared_ptr<AbilityRecord> 
                                std::to_string(abilityRecord->GetStartId());
         auto timeoutTask = [abilityRecord, connectManager = shared_from_this()]() {
             HILOG_ERROR("Command ability timeout. %{public}s", abilityRecord->GetAbilityInfo().name.c_str());
+            connectManager->HandleCommandTimeoutTask(abilityRecord);
         };
         eventHandler_->PostTask(timeoutTask, taskName, AbilityManagerService::COMMAND_TIMEOUT);
         // scheduling command ability
@@ -897,7 +957,7 @@ void AbilityConnectManager::HandleCallBackDiedTask(const sptr<IRemoteObject> &co
     DisconnectAbilityLocked(object);
 }
 
-void AbilityConnectManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &abilityRecord)
+void AbilityConnectManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &abilityRecord, int32_t currentUserId)
 {
     HILOG_INFO("On ability died.");
     CHECK_POINTER(abilityRecord);
@@ -907,11 +967,45 @@ void AbilityConnectManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &
         return;
     }
     if (eventHandler_) {
-        auto task = [abilityRecord, connectManager = shared_from_this()]() {
-            connectManager->HandleAbilityDiedTask(abilityRecord);
+        auto task = [abilityRecord, connectManager = shared_from_this(), currentUserId]() {
+            connectManager->HandleAbilityDiedTask(abilityRecord, currentUserId);
         };
         eventHandler_->PostTask(task, TASK_ON_ABILITY_DIED);
     }
+}
+
+void AbilityConnectManager::OnTimeOut(uint32_t msgId, int64_t eventId)
+{
+    HILOG_DEBUG("On timeout, msgId is %{public}d", msgId);
+    std::lock_guard<std::recursive_mutex> guard(Lock_);
+    auto abilityRecord = GetAbilityRecordByEventId(eventId);
+    if (abilityRecord == nullptr) {
+        HILOG_ERROR("AbilityConnectManager on time out event: ability record is nullptr.");
+        return;
+    }
+    HILOG_DEBUG("Ability timeout ,msg:%{public}d,name:%{public}s", msgId, abilityRecord->GetAbilityInfo().name.c_str());
+
+    switch (msgId) {
+        case AbilityManagerService::INACTIVE_TIMEOUT_MSG:
+            HandleInactiveTimeout(abilityRecord);
+            break;
+        default:
+            break;
+    }
+}
+
+void AbilityConnectManager::HandleInactiveTimeout(const std::shared_ptr<AbilityRecord> &ability)
+{
+    HILOG_DEBUG("HandleInactiveTimeout start");
+    std::lock_guard<std::recursive_mutex> guard(Lock_);
+    CHECK_POINTER(ability);
+    if (ability->GetAbilityInfo().name == AbilityConfig::LAUNCHER_ABILITY_NAME) {
+        HILOG_DEBUG("Handle root launcher inactive timeout.");
+        // terminate the timeout root launcher.
+        DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(ability->GetToken());
+    }
+
+    HILOG_DEBUG("HandleInactiveTimeout end");
 }
 
 bool AbilityConnectManager::IsAbilityNeedRestart(const std::shared_ptr<AbilityRecord> &abilityRecord)
@@ -960,7 +1054,8 @@ bool AbilityConnectManager::IsAbilityNeedRestart(const std::shared_ptr<AbilityRe
     return (findIter != keepAliveAbilities.end());
 }
 
-void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityRecord> &abilityRecord)
+void AbilityConnectManager::HandleAbilityDiedTask(
+    const std::shared_ptr<AbilityRecord> &abilityRecord, int32_t currentUserId)
 {
     HILOG_INFO("Handle ability died task.");
     std::lock_guard<std::recursive_mutex> guard(Lock_);
@@ -976,8 +1071,20 @@ void AbilityConnectManager::HandleAbilityDiedTask(const std::shared_ptr<AbilityR
         requestInfo.want = abilityRecord->GetWant();
         requestInfo.abilityInfo = abilityRecord->GetAbilityInfo();
         requestInfo.appInfo = abilityRecord->GetApplicationInfo();
+        requestInfo.restart = true;
 
         RemoveServiceAbility(abilityRecord);
+        if (currentUserId != userId_ &&
+            abilityRecord->GetAbilityInfo().name == AbilityConfig::LAUNCHER_ABILITY_NAME) {
+            HILOG_WARN("delay restart root launcher until switch user.");
+            return;
+        }
+
+        if (abilityRecord->GetAbilityInfo().name == AbilityConfig::LAUNCHER_ABILITY_NAME) {
+            requestInfo.restartCount = abilityRecord->GetRestartCount() - 1;
+            HILOG_DEBUG("restart root launcher, number:%{public}d", requestInfo.restartCount);
+        }
+
         StartAbilityLocked(requestInfo);
         return;
     }

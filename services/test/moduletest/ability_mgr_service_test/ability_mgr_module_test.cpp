@@ -167,7 +167,7 @@ static void OnStartAms()
 
         AbilityMgrModuleTest::abilityMgrServ_->handler_ =std::make_shared<AbilityEventHandler>(
             AbilityMgrModuleTest::abilityMgrServ_->eventLoop_, AbilityMgrModuleTest::abilityMgrServ_);
-        AbilityMgrModuleTest::abilityMgrServ_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        AbilityMgrModuleTest::abilityMgrServ_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         AbilityMgrModuleTest::abilityMgrServ_->connectManagers_.emplace(0,
             AbilityMgrModuleTest::abilityMgrServ_->connectManager_);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->handler_);
