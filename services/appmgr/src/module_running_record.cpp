@@ -96,9 +96,8 @@ const std::map<const sptr<IRemoteObject>, std::shared_ptr<AbilityRunningRecord>>
 std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::GetAbilityByTerminateLists(
     const sptr<IRemoteObject> &token) const
 {
-    HILOG_INFO("Get ability by terminateLists.");
     if (!token) {
-        HILOG_ERROR("token is null");
+        HILOG_ERROR("GetAbilityByTerminateLists error, token is null");
         return nullptr;
     }
     const auto &iter = terminateAbilitys_.find(token);
