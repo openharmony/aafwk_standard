@@ -33,6 +33,7 @@
 #include "mock_form_host_client.h"
 #include "permission/permission.h"
 #include "permission/permission_kit.h"
+#include "power_mgr_client.h"
 #include "running_process_info.h"
 #include "system_ability_definition.h"
 
@@ -119,11 +120,11 @@ HWTEST_F(FmsFormMgrMessageEventTest, MessageEvent_001, TestSize.Level0)
     GTEST_LOG_(INFO) << "fms_form_mgr_message_event_test_001 start";
 
     int64_t formId {10000001};
-    int callingUid {0};
+    int callingUid {20000007};
     // Create cache
     FormItemInfo record1;
     record1.SetFormId(formId);
-    record1.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
+    record1.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     record1.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     record1.SetTemporaryFlag(false);
     FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1, callingUid);
@@ -144,7 +145,13 @@ HWTEST_F(FmsFormMgrMessageEventTest, MessageEvent_001, TestSize.Level0)
     want.SetParam(Constants::PARAM_FORM_NAME_KEY, PARAM_FORM_NAME);
     want.SetElementName(DEVICE_ID, FORM_PROVIDER_BUNDLE_NAME, FORM_PROVIDER_ABILITY_NAME);
     want.SetParam(Constants::PARAM_MESSAGE_KEY, FORM_MESSAGE_EVENT_VALUE_1);
-    EXPECT_EQ(ERR_OK, FormMgr::GetInstance().MessageEvent(formId, want, token_));
+
+    bool screenOnFlag = PowerMgr::PowerMgrClient::GetInstance().IsScreenOn();
+    if (!screenOnFlag) {
+        EXPECT_EQ(ERR_APPEXECFWK_FORM_COMMON_CODE, FormMgr::GetInstance().MessageEvent(formId, want, token_));
+    } else {
+        EXPECT_EQ(ERR_OK, FormMgr::GetInstance().MessageEvent(formId, want, token_));
+    }
 
     GTEST_LOG_(INFO) << "fms_form_mgr_message_event_test_001 end";
 }

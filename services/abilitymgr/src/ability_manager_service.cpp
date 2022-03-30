@@ -111,7 +111,7 @@ const int32_t GET_PARAMETER_INCORRECT = -9;
 const int32_t GET_PARAMETER_OTHER = -1;
 const int32_t SIZE_10 = 10;
 const bool isRamConstrainedDevice = false;
-const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.dalvikheaplimit";
+const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.arkheaplimit";
 const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
 const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
 const std::string ACTION_CHOOSE = "ohos.want.action.select";
@@ -2916,7 +2916,7 @@ bool AbilityManagerService::VerificationAllToken(const sptr<IRemoteObject> &toke
     return false;
 }
 
-const std::shared_ptr<DataAbilityManager> &AbilityManagerService::GetDataAbilityManager(
+std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManager(
     const sptr<IAbilityScheduler> &scheduler)
 {
     if (scheduler == nullptr) {
@@ -2925,7 +2925,7 @@ const std::shared_ptr<DataAbilityManager> &AbilityManagerService::GetDataAbility
     }
 
     std::shared_lock<std::shared_mutex> lock(managersMutex_);
-    for (auto item: dataAbilityManagers_) {
+    for (auto& item: dataAbilityManagers_) {
         if (item.second && item.second->ContainsDataAbility(scheduler)) {
             return item.second;
         }
@@ -3315,7 +3315,7 @@ void AbilityManagerService::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &me
 int AbilityManagerService::GetAppMemorySize()
 {
     HILOG_INFO("service GetAppMemorySize start");
-    const char *key = "const.product.dalvikheaplimit";
+    const char *key = "const.product.arkheaplimit";
     const char *def = "512m";
     char *valueGet = nullptr;
     unsigned int len = 128;

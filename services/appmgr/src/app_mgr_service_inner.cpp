@@ -1196,7 +1196,6 @@ void AppMgrServiceInner::StateChangedNotifyObserver(const AbilityStateData abili
 
 void AppMgrServiceInner::OnProcessCreated(const std::shared_ptr<AppRunningRecord> &appRecord)
 {
-    HILOG_DEBUG("OnProcessCreated begin.");
     if (!appRecord) {
         HILOG_ERROR("app record is null");
         return;
@@ -1210,7 +1209,6 @@ void AppMgrServiceInner::OnProcessCreated(const std::shared_ptr<AppRunningRecord
             observer->OnProcessCreated(data);
         }
     }
-    HILOG_DEBUG("end");
 }
 
 void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord)
@@ -1374,6 +1372,19 @@ void AppMgrServiceInner::OnRemoteDied(const wptr<IRemoteObject> &remote, bool is
     auto appRecord = appRunningManager_->OnRemoteDied(remote);
     if (!appRecord) {
         return;
+    }
+
+    ClearAppRunningData(appRecord, false);
+}
+
+void AppMgrServiceInner::ClearAppRunningData(const std::shared_ptr<AppRunningRecord> &appRecord, bool containsApp)
+{
+    if (!appRecord) {
+        return;
+    }
+
+    if (containsApp) {
+        appRunningManager_->RemoveAppRunningRecordById(appRecord->GetRecordId());
     }
 
     FinishUserTestLocked("App died", -1, appRecord);
@@ -2023,7 +2034,7 @@ int AppMgrServiceInner::FinishUserTest(
 }
 
 int AppMgrServiceInner::FinishUserTestLocked(
-    const std::string &msg, const int &resultCode, std::shared_ptr<AppRunningRecord> &appRecord)
+    const std::string &msg, const int &resultCode, const std::shared_ptr<AppRunningRecord> &appRecord)
 {
     HILOG_INFO("Enter");
     if (!appRecord) {

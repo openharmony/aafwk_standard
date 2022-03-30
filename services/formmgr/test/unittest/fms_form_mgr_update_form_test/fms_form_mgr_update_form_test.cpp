@@ -21,6 +21,7 @@
 #define private public
 #include "form_mgr.h"
 #undef private
+#include "form_mgr_adapter.h"
 #include "form_mgr_service.h"
 #include "if_system_ability_manager.h"
 #include "inner_bundle_info.h"
@@ -115,21 +116,21 @@ HWTEST_F(FmsFormMgrUpdateFormTest, UpdateForm_001, TestSize.Level0)
 
     // param editor
     int64_t formId {100L};
-    int32_t callingUid {0};
-    std::string bandleName = FORM_HOST_BUNDLE_NAME;
+    int32_t callingUid {20000001};
+    std::string bandleName = FORM_PROVIDER_BUNDLE_NAME;
     FormProviderData formProviderData = FormProviderData(std::string("{\"city\": \"beijing001\"}"));
 
     // add formRecord
     FormItemInfo formItemInfo;
     formItemInfo.SetFormId(formId);
-    formItemInfo.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
+    formItemInfo.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     formItemInfo.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     formItemInfo.SetTemporaryFlag(false);
     FormDataMgr::GetInstance().AllotFormRecord(formItemInfo, callingUid);
 
     FormItemInfo formItemInfo1;
     formItemInfo1.SetFormId(1000L);
-    formItemInfo1.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
+    formItemInfo1.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     formItemInfo1.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     formItemInfo1.SetTemporaryFlag(true);
     FormDataMgr::GetInstance().AllotFormRecord(formItemInfo1, callingUid);
@@ -167,7 +168,7 @@ HWTEST_F(FmsFormMgrUpdateFormTest, UpdateForm_003, TestSize.Level0)
     // add formRecord
     FormItemInfo formItemInfo;
     formItemInfo.SetFormId(formId);
-    formItemInfo.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
+    formItemInfo.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     formItemInfo.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     formItemInfo.SetTemporaryFlag(false);
     FormDataMgr::GetInstance().AllotFormRecord(formItemInfo, callingUid);
@@ -177,7 +178,8 @@ HWTEST_F(FmsFormMgrUpdateFormTest, UpdateForm_003, TestSize.Level0)
     FormDataMgr::GetInstance().AllotFormHostRecord(itemInfo, token_, formId, callingUid);
 
     // test exec
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_INVALID_PARAM, FormMgr::GetInstance().UpdateForm(formId, formProviderData));
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_INVALID_PARAM,
+        FormMgrAdapter::GetInstance().UpdateForm(formId, bandleName, formProviderData));
 
     GTEST_LOG_(INFO) << "fms_form_mgr_client_updateForm_test_003 end";
 }
@@ -249,7 +251,7 @@ HWTEST_F(FmsFormMgrUpdateFormTest, UpdateForm_005, TestSize.Level0)
     FormDataMgr::GetInstance().AllotFormHostRecord(itemInfo, token_, formId, callingUid);
 
     // test exec
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_NOT_EXIST_ID, FormMgr::GetInstance().UpdateForm(formId, formProviderData));
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_INVALID_PARAM, FormMgr::GetInstance().UpdateForm(formId, formProviderData));
 
     GTEST_LOG_(INFO) << "fms_form_mgr_client_updateForm_test_005 end";
 }
@@ -305,7 +307,7 @@ HWTEST_F(FmsFormMgrUpdateFormTest, UpdateForm_007, TestSize.Level0)
     // param editor
     int64_t formId {700L};
     int32_t callingUid {0};
-    std::string bandleName = FORM_HOST_BUNDLE_NAME;
+    std::string bandleName = FORM_PROVIDER_BUNDLE_NAME;
     std::string jsonData = std::string("{");
     for (int i = 0; i < 1024; i = i + 1) {
         jsonData = jsonData + std::string("\"city" + std::to_string(i) + "\"" + ":" + "\"beijing007\"");
@@ -319,7 +321,7 @@ HWTEST_F(FmsFormMgrUpdateFormTest, UpdateForm_007, TestSize.Level0)
     // add formRecord
     FormItemInfo formItemInfo;
     formItemInfo.SetFormId(formId);
-    formItemInfo.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
+    formItemInfo.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     formItemInfo.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     formItemInfo.SetTemporaryFlag(false);
     FormRecord formRecord = FormDataMgr::GetInstance().AllotFormRecord(formItemInfo, callingUid);

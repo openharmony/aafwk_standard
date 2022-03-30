@@ -56,23 +56,20 @@ void InnerInitWantOptionsData(std::map<std::string, unsigned int> &flagMap)
 
 napi_value WrapElementName(napi_env env, const ElementName &elementName)
 {
-    HILOG_INFO("%{public}s called.", __func__);
-
+    HILOG_INFO("%{public}s called. DeviceID=%{public}s, BundleName=%{public}s, AbilityName=%{public}s", __func__,
+        elementName.GetDeviceID().c_str(), elementName.GetBundleName().c_str(), elementName.GetAbilityName().c_str());
     napi_value jsObject = nullptr;
     NAPI_CALL(env, napi_create_object(env, &jsObject));
 
     napi_value jsValue = nullptr;
-    HILOG_INFO("%{public}s called. deviceID=%{public}s", __func__, elementName.GetDeviceID().c_str());
     NAPI_CALL(env, napi_create_string_utf8(env, elementName.GetDeviceID().c_str(), NAPI_AUTO_LENGTH, &jsValue));
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "deviceId", jsValue));
 
     jsValue = nullptr;
-    HILOG_INFO("%{public}s called. GetBundleName=%{public}s", __func__, elementName.GetBundleName().c_str());
     NAPI_CALL(env, napi_create_string_utf8(env, elementName.GetBundleName().c_str(), NAPI_AUTO_LENGTH, &jsValue));
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "bundleName", jsValue));
 
     jsValue = nullptr;
-    HILOG_INFO("%{public}s called. GetAbilityName=%{public}s", __func__, elementName.GetAbilityName().c_str());
     NAPI_CALL(env, napi_create_string_utf8(env, elementName.GetAbilityName().c_str(), NAPI_AUTO_LENGTH, &jsValue));
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "abilityName", jsValue));
 
@@ -524,7 +521,6 @@ bool InnerWrapWantParamsArray(napi_env env, napi_value jsObject, const std::stri
 
 napi_value WrapWantParams(napi_env env, const AAFwk::WantParams &wantParams)
 {
-    HILOG_INFO("%{public}s called.", __func__);
     napi_value jsObject = nullptr;
     NAPI_CALL(env, napi_create_object(env, &jsObject));
 
