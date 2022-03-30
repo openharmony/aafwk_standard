@@ -66,11 +66,11 @@ napi_value WrapElementName(napi_env env, const ElementName &elementName)
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "deviceId", jsValue));
 
     jsValue = nullptr;
-    NAPI_CALL(env, napi_create_string_utf8(env, , NAPI_AUTO_LENGTH, &jsValue));
+    NAPI_CALL(env, napi_create_string_utf8(env, elementName.GetBundleName().c_str(), NAPI_AUTO_LENGTH, &jsValue));
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "bundleName", jsValue));
 
     jsValue = nullptr;
-    NAPI_CALL(env, napi_create_string_utf8(env, , NAPI_AUTO_LENGTH, &jsValue));
+    NAPI_CALL(env, napi_create_string_utf8(env, elementName.GetAbilityName().c_str(), NAPI_AUTO_LENGTH, &jsValue));
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "abilityName", jsValue));
 
     return jsObject;
