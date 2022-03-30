@@ -128,6 +128,7 @@ void FormProviderData::AddImageData(std::string picName, int fd)
 {
     HILOG_INFO("%{public}s called. fd is %{public}d", __func__, fd);
     if (fd < 0) {
+        HILOG_ERROR("fd is invalid.");
         return;
     }
 
@@ -162,6 +163,8 @@ void FormProviderData::ParseImagesData()
     for (auto iter = jsonImages.begin(); iter != jsonImages.end(); iter++) {
         if (iter->is_number_integer()) {
             AddImageData(iter.key(), iter.value());
+        } else {
+            HILOG_ERROR("fd is not number integer.");
         }
     }
 }
@@ -279,7 +282,8 @@ bool FormProviderData::ReadFromParcel(Parcel &parcel)
 
                 int32_t len = parcel.ReadInt32();
                 std::pair<sptr<Ashmem>, int32_t> imageDataRecord = std::make_pair(ashmem, len);
-                imageDataMap_.emplace(Str16ToStr8(parcel.ReadString16()), imageDataRecord);
+                auto picName = Str16ToStr8(parcel.ReadString16());
+                imageDataMap_[picName] = imageDataRecord;
             }
             break;
         }
