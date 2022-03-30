@@ -166,12 +166,14 @@ bool UnwrapRequestPermissionsFromUser(
     CallbackInfo* aceCallbackInfoPermission = new CallbackInfo();
     aceCallbackInfoPermission->env = env;
     napi_valuetype valuetype = napi_undefined;
-    NAPI_CALL_BASE(env, napi_typeof(env, argv[PARAM2], &valuetype), false);
+    napi_typeof(env, argv[PARAM2], &valuetype);
     if (valuetype != napi_function) {
         HILOG_INFO("%{public}s called, parameters is invalid", __func__);
+        delete aceCallbackInfoPermission;
+        aceCallbackInfoPermission = nullptr;
         return false;
     }
-    NAPI_CALL_BASE(env, napi_create_reference(env, argv[PARAM2], 1, &(aceCallbackInfoPermission->callback)), false);
+    napi_create_reference(env, argv[PARAM2], 1, &(aceCallbackInfoPermission->callback));
     asyncCallbackInfo->aceCallback = aceCallbackInfoPermission;
 
     std::vector<std::string> permissionList;
