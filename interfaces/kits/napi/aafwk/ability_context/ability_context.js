@@ -36,20 +36,25 @@ class AbilityContext extends Context {
         return this.__context_impl__.startAbilityWithAccount(want, accountId, options, callback)
     }
 
-    async startAbilityByCall(want) {
-        if (typeof want !== 'object' || want == null) {
-            console.log("AbilityContext::startAbilityByCall input param error");
-            return null;
-        }
+    startAbilityByCall(want) {
+        return new Promise(async (resolve, reject) => {
+            if (typeof want !== 'object' || want == null) {
+                console.log("AbilityContext::startAbilityByCall input param error");
+                reject(new Error("function input parameter error"));
+                return;
+            }
 
-        let callee = await this.__context_impl__.startAbilityByCall(want);
-        if (typeof callee === 'object' && callee != null) {
-            console.log("AbilityContext::startAbilityByCall");
-            return new Caller(callee);
-         } else {
-            console.log("AbilityContext::startAbilityByCall Obtain remoteObject failed");
-            return null;
-        }
+            let callee = await this.__context_impl__.startAbilityByCall(want);
+            if (callee == null || typeof callee !== 'object') {
+                console.log("AbilityContext::startAbilityByCall Obtain remoteObject failed");
+                reject(new Error("function request remote error"));
+                return;
+            }
+
+            resolve(new Caller(callee));
+            console.log("AbilityContext::startAbilityByCall success");
+            return;
+        });
     }
 
     startAbilityForResult(want, options, callback) {
