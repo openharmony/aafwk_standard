@@ -204,6 +204,18 @@ void FormDataMgr::CreateFormInfo(const int64_t formId, const FormRecord &record,
     formInfo.versionName = record.versionName;
     formInfo.compatibleVersion = record.compatibleVersion;
     formInfo.icon = record.icon;
+    auto sharedImageMap = record.formProviderInfo.GetFormData().GetImageDataMap();
+    if (sharedImageMap.size() > FormJsInfo::IMAGE_DATA_THRESHOLD) {
+        return;
+    }
+    for (auto entry : sharedImageMap) {
+        auto picName = entry.first;
+        auto ashmem = entry.second.first;
+        auto fd = ashmem->GetAshmemFd();
+        auto len = ashmem->GetAshmemSize();
+        std::pair<int, int32_t> imageDataPair = std::make_pair(fd, len);
+        formInfo.imageDataMap[picName] = imageDataPair;
+    }
 }
 /**
  * @brief Check temp form count is max.
