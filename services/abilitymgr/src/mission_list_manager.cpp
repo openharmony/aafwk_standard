@@ -1316,7 +1316,7 @@ void MissionListManager::PrintTimeOutLog(const std::shared_ptr<AbilityRecord> &a
         return;
     }
 
-    AppExecFwk::RunningProcessInfo processInfo;
+    AppExecFwk::RunningProcessInfo processInfo = {};
     DelayedSingleton<AppScheduler>::GetInstance()->GetRunningProcessInfoByToken(ability->GetToken(), processInfo);
     std::string msgContent;
     switch (msgId) {
@@ -1349,6 +1349,12 @@ void MissionListManager::PrintTimeOutLog(const std::shared_ptr<AbilityRecord> &a
         EVENT_KEY_PACKAGE_NAME, processInfo.bundleNames,
         EVENT_KEY_PROCESS_NAME, processInfo.processName_,
         EVENT_KEY_MESSAGE, msgContent);
+    
+    HILOG_WARN("LIFECYCLE_TIMEOUT: uid：%{public}d, pid：%{public}d, abilityName: %{public}s, msg: %{public}s",
+        processInfo.uid_,
+        processInfo.pid_,
+        ability->GetAbilityInfo().name.c_str(),
+        msgContent.c_str());
 }
 
 void MissionListManager::UpdateMissionSnapshot(const std::shared_ptr<AbilityRecord>& abilityRecord)
@@ -1831,9 +1837,15 @@ void MissionListManager::BackToLauncher()
     CHECK_POINTER(launcherList_);
 
     auto launcherRootAbility = launcherList_->GetLauncherRoot();
-    CHECK_POINTER_LOG(launcherRootAbility, "There is no root launcher ability, back to launcher failed.");
+    if (!launcherRootAbility) {
+        HILOG_WARN("no root launcher ability, no need back to launcher.");
+        return;
+    }
     auto launcherRootMission = launcherRootAbility->GetMission();
-    CHECK_POINTER_LOG(launcherRootMission, "There is no root launcher mission, back to launcher failed.");
+    if (!launcherRootMission) {
+        HILOG_WARN("no root launcher mission, no need back to launcher.");
+        return;
+    }
 
     std::queue<AbilityRequest> emptyQueue;
     std::swap(waittingAbilityQueue_, emptyQueue);

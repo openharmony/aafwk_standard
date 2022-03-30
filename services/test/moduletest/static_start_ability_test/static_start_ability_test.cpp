@@ -113,7 +113,7 @@ void StaticStartAbilityTest::SetUpTestCase(void)
 
     StaticStartAbilityTest::abilityMgrServ_->handler_ =std::make_shared<AbilityEventHandler>(
         StaticStartAbilityTest::abilityMgrServ_->eventLoop_, StaticStartAbilityTest::abilityMgrServ_);
-    StaticStartAbilityTest::abilityMgrServ_->connectManager_ = std::make_shared<AbilityConnectManager>();
+    StaticStartAbilityTest::abilityMgrServ_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
     StaticStartAbilityTest::abilityMgrServ_->connectManagers_.emplace(0,
         StaticStartAbilityTest::abilityMgrServ_->connectManager_);
     EXPECT_TRUE(StaticStartAbilityTest::abilityMgrServ_->handler_);

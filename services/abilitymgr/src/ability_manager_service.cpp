@@ -2246,7 +2246,12 @@ int AbilityManagerService::ScheduleCommandAbilityDone(const sptr<IRemoteObject> 
 
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
-
+    // force timeout ability for test
+    if (IsNeedTimeoutForTest(abilityRecord->GetAbilityInfo().name, std::string("COMMAND"))) {
+        HILOG_WARN("force timeout ability for test, state:COMMAND, ability: %{public}s",
+            abilityRecord->GetAbilityInfo().name.c_str());
+        return ERR_OK;
+    }
     auto type = abilityRecord->GetAbilityInfo().type;
     if (type != AppExecFwk::AbilityType::SERVICE && type != AppExecFwk::AbilityType::EXTENSION) {
         HILOG_ERROR("Connect ability failed, target ability is not service.");
@@ -2629,7 +2634,7 @@ void AbilityManagerService::OnAbilityDied(std::shared_ptr<AbilityRecord> ability
 
     auto connectManager = GetConnectManagerByToken(abilityRecord->GetToken());
     if (connectManager) {
-        connectManager->OnAbilityDied(abilityRecord);
+        connectManager->OnAbilityDied(abilityRecord, GetUserId());
         return;
     }
 
@@ -2829,6 +2834,12 @@ void AbilityManagerService::HandleInactiveTimeOut(int64_t eventId)
     HILOG_DEBUG("Handle inactive timeout.");
     std::shared_lock<std::shared_mutex> lock(managersMutex_);
     for (auto& item : missionListManagers_) {
+        if (item.second) {
+            item.second->OnTimeOut(AbilityManagerService::INACTIVE_TIMEOUT_MSG, eventId);
+        }
+    }
+
+    for (auto& item : connectManagers_) {
         if (item.second) {
             item.second->OnTimeOut(AbilityManagerService::INACTIVE_TIMEOUT_MSG, eventId);
         }
@@ -3884,7 +3895,7 @@ void AbilityManagerService::InitConnectManager(int32_t userId, bool switchUser)
         }
     }
     if (!find) {
-        auto manager = std::make_shared<AbilityConnectManager>();
+        auto manager = std::make_shared<AbilityConnectManager>(userId);
         manager->SetEventHandler(handler_);
         std::unique_lock<std::shared_mutex> lock(managersMutex_);
         connectManagers_.emplace(userId, manager);
@@ -4308,9 +4319,11 @@ int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, c
         return ERR_OK;
     }
     if (state != AbilityRecord::ConvertAbilityState(AbilityState::INITIAL) &&
+        state != AbilityRecord::ConvertAbilityState(AbilityState::INACTIVE) &&
         state != AbilityRecord::ConvertAbilityState(AbilityState::FOREGROUND_NEW) &&
         state != AbilityRecord::ConvertAbilityState(AbilityState::BACKGROUND_NEW) &&
-        state != AbilityRecord::ConvertAbilityState(AbilityState::TERMINATING)) {
+        state != AbilityRecord::ConvertAbilityState(AbilityState::TERMINATING) &&
+        state != std::string("COMMAND")) {
         HILOG_ERROR("lifecycle state is invalid.");
         return INVALID_DATA;
     }
