@@ -373,8 +373,6 @@ void Operation::SetEntities(const std::vector<std::string> &entities)
 
 void Operation::DumpInfo(int level) const
 {
-    ABILITYBASE_LOGI("=======Operation::DumpInfo level: %{public}d start=============", level);
-
     ABILITYBASE_LOGI("===Operation::abilityName_ %{public}s =============", abilityName_.c_str());
     ABILITYBASE_LOGI("===Operation::action_ %{public}s =============", action_.c_str());
     ABILITYBASE_LOGI("===Operation::bundleName_ %{public}s =============", bundleName_.c_str());
@@ -386,8 +384,6 @@ void Operation::DumpInfo(int level) const
     }
     ABILITYBASE_LOGI("===Operation::flags_ %{public}ud =============", flags_);
     ABILITYBASE_LOGI("===Operation::uri_ %{public}s =============", uri_.ToString().c_str());
-
-    ABILITYBASE_LOGI("=======Operation::DumpInfo level: %{public}d end=============", level);
 }
 }  // namespace AAFwk
 }  // namespace OHOS
