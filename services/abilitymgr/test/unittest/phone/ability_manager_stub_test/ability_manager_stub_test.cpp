@@ -284,14 +284,15 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_009, TestSize.Level1)
 
     sptr<IRemoteObject> token = sptr<AppExecFwk::MockAbilityToken>(new (std::nothrow) AppExecFwk::MockAbilityToken());
     WriteInterfaceToken(data);
-    data.WriteParcelable(token);
-    data.WriteInt32(1);
+    bool ret = data.WriteRemoteObject(token);
+    ret |= data.WriteInt32(1);
     PacMap pMap;
     pMap.PutIntValue(std::string("1"), 1);
-    data.WriteParcelable(&pMap);
-    int res = stub_->OnRemoteRequest(IAbilityManager::ABILITY_TRANSITION_DONE, data, reply, option);
-
-    EXPECT_EQ(res, NO_ERROR);
+    ret |= data.WriteParcelable(&pMap);
+    if (ret) {
+        int res = stub_->OnRemoteRequest(IAbilityManager::ABILITY_TRANSITION_DONE, data, reply, option);
+        EXPECT_EQ(res, NO_ERROR);
+    }
 }
 
 /*

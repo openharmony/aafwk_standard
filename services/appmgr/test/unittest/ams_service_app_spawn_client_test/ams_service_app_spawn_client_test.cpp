@@ -33,7 +33,7 @@ using testing::Invoke;
 using testing::Return;
 
 // keep same with app_spawn_client.cpp
-const int32_t CONNECT_RETRY_MAX_TIMES = 15;
+const int32_t CONNECT_RETRY_MAX_TIMES = 2;
 
 // this function is only used to mock sleep method so ut can run without delay.
 int MockSleep([[maybe_unused]] uint32_t seconds)
