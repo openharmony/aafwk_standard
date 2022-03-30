@@ -586,6 +586,25 @@ void NAPIMissionContinue::SetEnv(const napi_env &env)
     env_ = env;
 }
 
+NAPIRemoteMissionListener::~NAPIRemoteMissionListener()
+{
+    if (env_ == nullptr) {
+        return;
+    }
+    if (notifyMissionsChangedRef_ != nullptr) {
+        napi_delete_reference(env_, notifyMissionsChangedRef_);
+        notifyMissionsChangedRef_ = nullptr;
+    }
+    if (notifySnapshotRef_ != nullptr) {
+        napi_delete_reference(env_, notifySnapshotRef_);
+        notifySnapshotRef_ = nullptr;
+    }
+    if (notifyNetDisconnectRef_ != nullptr) {
+        napi_delete_reference(env_, notifyNetDisconnectRef_);
+        notifyNetDisconnectRef_ = nullptr;
+    }
+}
+
 void NAPIRemoteMissionListener::SetEnv(const napi_env &env)
 {
     env_ = env;
