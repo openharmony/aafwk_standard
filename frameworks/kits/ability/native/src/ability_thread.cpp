@@ -93,8 +93,8 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
         return abilityName;
     }
 
-    HILOG_INFO("AbilityThread::ability attach the ability type is %{public}d", abilityInfo->type);
-    HILOG_INFO("AbilityThread::ability attach the ability is Native %{public}d", abilityInfo->isNativeAbility);
+    HILOG_INFO("AbilityThread::CreateAbilityName come, ability type is %{public}d, is Native %{public}d",
+        abilityInfo->type, abilityInfo->isNativeAbility);
 
     if (abilityInfo->isNativeAbility) {
         HILOG_INFO("AbilityThread::CreateAbilityName end, create native ability.");

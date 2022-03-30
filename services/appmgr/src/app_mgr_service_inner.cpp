@@ -767,7 +767,7 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::CreateAppRunningRecord(con
 void AppMgrServiceInner::TerminateAbility(const sptr<IRemoteObject> &token)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_DEBUG("AppMgrServiceInner::TerminateAbility begin");
+    HILOG_DEBUG("AppMgrServiceInner::TerminateAbility come");
     if (!token) {
         HILOG_ERROR("AppMgrServiceInner::TerminateAbility token is null!");
         return;
@@ -1059,15 +1059,15 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::GetAppRunningRecordByAbili
 void AppMgrServiceInner::AbilityTerminated(const sptr<IRemoteObject> &token)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_DEBUG("begin");
+    HILOG_DEBUG("AbilityTerminated come");
     if (!token) {
-        HILOG_ERROR("token is null!");
+        HILOG_ERROR("AbilityTerminated error, token is null!");
         return;
     }
 
     auto appRecord = appRunningManager_->GetTerminatingAppRunningRecord(token);
     if (!appRecord) {
-        HILOG_ERROR("app is not exist!");
+        HILOG_ERROR("AbilityTerminated error, appRecord is not exist!");
         return;
     }
 
@@ -1086,12 +1086,13 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::GetAppRunningRecordByAppRe
 void AppMgrServiceInner::OnAppStateChanged(
     const std::shared_ptr<AppRunningRecord> &appRecord, const ApplicationState state)
 {
-    HILOG_DEBUG("begin, state:%{public}d", static_cast<int32_t>(state));
     if (!appRecord) {
-        HILOG_ERROR("app record is null");
+        HILOG_ERROR("OnAppStateChanged come, app record is null");
         return;
     }
 
+    HILOG_DEBUG("OnAppStateChanged begin, bundleName is %{public}s, state:%{public}d",
+        appRecord->GetBundleName().c_str(), static_cast<int32_t>(state));
     for (const auto &callback : appStateCallbacks_) {
         if (callback != nullptr) {
             callback->OnAppStateChanged(WrapAppProcessData(appRecord, state));
@@ -1100,9 +1101,8 @@ void AppMgrServiceInner::OnAppStateChanged(
 
     if (state == ApplicationState::APP_STATE_FOREGROUND || state == ApplicationState::APP_STATE_BACKGROUND) {
         AppStateData data = WrapAppStateData(appRecord, state);
-        HILOG_DEBUG(
-            "OnForegroundApplicationChanged, size:%{public}d, name:%{public}s, uid:%{public}d, state:%{public}d",
-            (int32_t)appStateObservers_.size(), data.bundleName.c_str(), data.uid, data.state);
+        HILOG_DEBUG("OnForegroundApplicationChanged, name:%{public}s, uid:%{public}d, state:%{public}d",
+            data.bundleName.c_str(), data.uid, data.state);
         std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
         for (const auto &observer : appStateObservers_) {
             if (observer != nullptr) {
@@ -1113,8 +1113,8 @@ void AppMgrServiceInner::OnAppStateChanged(
 
     if (state == ApplicationState::APP_STATE_CREATE || state == ApplicationState::APP_STATE_TERMINATED) {
         AppStateData data = WrapAppStateData(appRecord, state);
-        HILOG_INFO("OnApplicationStateChanged, size:%{public}d, name:%{public}s, uid:%{public}d, state:%{public}d",
-            (int32_t)appStateObservers_.size(), data.bundleName.c_str(), data.uid, data.state);
+        HILOG_INFO("OnApplicationStateChanged, name:%{public}s, uid:%{public}d, state:%{public}d",
+            data.bundleName.c_str(), data.uid, data.state);
         std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
         for (const auto &observer : appStateObservers_) {
             if (observer != nullptr) {

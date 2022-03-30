@@ -620,7 +620,6 @@ std::shared_ptr<AbilityRunningRecord> AppRunningRecord::GetAbilityByTerminateLis
 {
     auto moduleRecord = GetModuleRunningRecordByTerminateLists(token);
     if (!moduleRecord) {
-        HILOG_ERROR("moduleRecord is not exit");
         return nullptr;
     }
     return moduleRecord->GetAbilityByTerminateLists(token);
@@ -750,10 +749,10 @@ void AppRunningRecord::TerminateAbility(const sptr<IRemoteObject> &token, const 
 
 void AppRunningRecord::AbilityTerminated(const sptr<IRemoteObject> &token)
 {
-    HILOG_INFO("Ability terminated.");
+    HILOG_INFO("AbilityTerminated come.");
     auto moduleRecord = GetModuleRunningRecordByTerminateLists(token);
     if (!moduleRecord) {
-        HILOG_ERROR("Can not find module record");
+        HILOG_ERROR("AbilityTerminated error, can not find module record");
         return;
     }
     moduleRecord->AbilityTerminated(token);
