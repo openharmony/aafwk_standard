@@ -496,6 +496,7 @@ void ExecuteBatchPromiseCompleteCB(napi_env env, napi_status status, void *data)
 void GetDataAbilityResultForResult(
     napi_env env, const std::vector<std::shared_ptr<DataAbilityResult>> dataAbilityResult, napi_value result);
 
+void DeleteDAHelperOnOffCB(DAHelperOnOffCB *onCB);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_NAPI_DATA_ABILITY_HELPER_H */
