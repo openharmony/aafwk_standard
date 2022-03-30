@@ -143,7 +143,6 @@ napi_value DataAbilityHelperConstructor(napi_env env, napi_callback_info info)
         dataAbilityHelperStatus = false;
         return nullptr;
     }
-    HILOG_INFO("dataAbilityHelper");
     g_dataAbilityHelperList.emplace_back(dataAbilityHelper);
     HILOG_INFO("dataAbilityHelperList.size = %{public}zu", g_dataAbilityHelperList.size());
 
@@ -154,14 +153,12 @@ napi_value DataAbilityHelperConstructor(napi_env env, napi_callback_info info)
         [](napi_env env, void *data, void *hint) {
             DataAbilityHelper *objectInfo = static_cast<DataAbilityHelper *>(data);
             HILOG_INFO("DAHelper finalize_cb regInstances_.size = %{public}zu", registerInstances_.size());
-            auto helper = std::find_if(registerInstances_.begin(),
+            auto onCBIter = std::find_if(registerInstances_.begin(),
                 registerInstances_.end(),
-                [&objectInfo](const DAHelperOnOffCB *helper) { return helper->dataAbilityHelper == objectInfo; });
-            if (helper != registerInstances_.end()) {
+                [&objectInfo](const DAHelperOnOffCB *onCB) { return onCB->dataAbilityHelper == objectInfo; });
+            if (onCBIter != registerInstances_.end()) {
                 HILOG_INFO("DataAbilityHelper finalize_cb find helper");
-                (*helper)->dataAbilityHelper->Release();
-                delete *helper;
-                registerInstances_.erase(helper);
+                DeleteDAHelperOnOffCB(*onCBIter);
             }
             HILOG_INFO("DAHelper finalize_cb regInstances_.size = %{public}zu", registerInstances_.size());
             g_dataAbilityHelperList.remove_if(
@@ -799,6 +796,13 @@ void RegisterExecuteCB(napi_env env, void *data)
 {
     HILOG_INFO("NAPI_Register, worker pool thread execute.");
     DAHelperOnOffCB *onCB = static_cast<DAHelperOnOffCB *>(data);
+    auto onCBIter = std::find(registerInstances_.begin(), registerInstances_.end(), onCB);
+    if (onCBIter == registerInstances_.end()) {
+        // onCB is invalid or onCB has been delete
+        HILOG_ERROR("%{public}s, input params onCB is invalid.", __func__);
+        return;
+    }
+
     if (onCB->dataAbilityHelper != nullptr) {
         if (onCB->result != INVALID_PARAMETER && !onCB->uri.empty() && onCB->cbBase.cbInfo.callback != nullptr) {
             OHOS::Uri uri(onCB->uri);
@@ -818,8 +822,9 @@ void RegisterCompleteCB(napi_env env, napi_status status, void *data)
         return;
     }
 
-    auto helper = std::find(registerInstances_.begin(), registerInstances_.end(), onCB);
-    if (helper == registerInstances_.end()) {
+    auto onCBIter = std::find(registerInstances_.begin(), registerInstances_.end(), onCB);
+    if (onCBIter == registerInstances_.end()) {
+        // onCB is invalid or onCB has been delete
         HILOG_ERROR("%{public}s, input params onCB is invalid.", __func__);
         return;
     }
@@ -827,13 +832,8 @@ void RegisterCompleteCB(napi_env env, napi_status status, void *data)
     if (onCB->result == NO_ERROR) {
         return;
     }
-    HILOG_INFO("NAPI_Register, input params onCB is invalid params, will be release");
-    if (onCB->observer) {
-        HILOG_INFO("NAPI_Register, call ReleaseJSCallback");
-        onCB->observer->ReleaseJSCallback();
-    }
-    delete onCB;
-    onCB = nullptr;
+    HILOG_INFO("NAPI_Register, input params onCB will be release");
+    DeleteDAHelperOnOffCB(onCB);
     HILOG_INFO("NAPI_Register, main event thread complete over an release invalid onCB.");
 }
 
@@ -3896,6 +3896,30 @@ void GetDataAbilityResultForResult(
         index++;
     }
     HILOG_INFO("%{public}s, NAPI_ExecuteBatch, getDataAbilityResultForResult end.", __func__);
+}
+
+void DeleteDAHelperOnOffCB(DAHelperOnOffCB *onCB)
+{
+    if (!onCB) {
+        HILOG_INFO("DeleteDAHelperOnOffCB, onCB is nullptr, no need delete");
+        return;
+    }
+
+    if (onCB->observer) {
+        HILOG_INFO("DeleteDAHelperOnOffCB, call ReleaseJSCallback");
+        onCB->observer->ReleaseJSCallback();
+        onCB->observer = nullptr;
+    }
+    if (onCB->dataAbilityHelper) {
+        HILOG_INFO("DeleteDAHelperOnOffCB, call Release");
+        onCB->dataAbilityHelper->Release();
+        onCB->dataAbilityHelper = nullptr;
+    }
+
+    (void)registerInstances_.erase(remove(registerInstances_.begin(), registerInstances_.end(), onCB),
+        registerInstances_.end());
+    delete onCB;
+    onCB = nullptr;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
