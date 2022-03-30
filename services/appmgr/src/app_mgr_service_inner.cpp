@@ -1196,7 +1196,6 @@ void AppMgrServiceInner::StateChangedNotifyObserver(const AbilityStateData abili
 
 void AppMgrServiceInner::OnProcessCreated(const std::shared_ptr<AppRunningRecord> &appRecord)
 {
-    HILOG_DEBUG("OnProcessCreated begin.");
     if (!appRecord) {
         HILOG_ERROR("app record is null");
         return;
@@ -1210,7 +1209,6 @@ void AppMgrServiceInner::OnProcessCreated(const std::shared_ptr<AppRunningRecord
             observer->OnProcessCreated(data);
         }
     }
-    HILOG_DEBUG("end");
 }
 
 void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord)
