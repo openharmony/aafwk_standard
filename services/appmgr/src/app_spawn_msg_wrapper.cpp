@@ -115,13 +115,7 @@ void AppSpawnMsgWrapper::DumpMsg() const
         return;
     }
     HILOG_INFO("************AppSpawnMsg*************");
-    HILOG_INFO("uid: %{public}d", msg_->uid);
-    HILOG_INFO("gid: %{public}d", msg_->gid);
-    for (uint32_t i = 0; i < msg_->gidCount; ++i) {
-        HILOG_INFO("gidTable[%{public}d]: %{public}d", i, msg_->gidTable[i]);
-    }
-    HILOG_INFO("procName: %{public}s", msg_->processName);
-    HILOG_INFO("soPath: %{private}s", msg_->soPath);
+    HILOG_INFO("uid: %{public}d, gid: %{public}d, procName: %{public}s", msg_->uid, msg_->gid, msg_->processName);
     HILOG_INFO("************************************");
 }
 
