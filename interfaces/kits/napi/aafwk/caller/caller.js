@@ -24,127 +24,168 @@ class Caller {
         this.releaseCall = false;
     }
 
-    async call(method, data) {
-        console.log("Caller call method [" + method + "]");
-        if (typeof method !== 'string' || typeof data !== 'object') {
-            console.log("Caller call " + typeof method + " " + typeof data);
-            throw new Error("function input parameter error");
+    call(method, data) {
+        return new Promise(async (resolve, reject) => {
+            console.log("Caller call method [" + method + "]");
+            if (typeof method !== 'string' || typeof data !== 'object') {
+                console.log("Caller call " + typeof method + " " + typeof data);
+                reject(new Error("function input parameter error"));
+                return;
+            }
+
+            if (method == '' || data == null) {
+                console.log("Caller call " + method + ", " + data);
+                reject(new Error("function input parameter error"));
+                return;
+            }
+
+            if (this.releaseCall == true) {
+                console.log("Caller call this.callee release");
+                reject(new Error("function inner object error"));
+                return;
+            }
+
+            if (this.__call_obj__.callee == null) {
+                console.log("Caller call this.callee is nullptr");
+                reject(new Error("function inner object error"));
+                return;
+            }
+
+            console.log("Caller call msgData rpc.MessageParcel create");
+            let msgData = rpc.MessageParcel.create();
+            msgData.writeString(method);
+            let msgReply = rpc.MessageParcel.create();
+            let option = rpc.MessageOption();
+            msgData.writeSequenceable(data);
+
+            let retData = undefined;
+            try {
+                retData = retData = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
+                console.log("Caller call msgData rpc.SendRequest called");
+                if (retData.errCode != 0) {
+                    msgData.reclaim();
+                    msgReply.reclaim();
+                    console.log("Caller call return errCode " + retData.errCode);
+                    reject(new Error("function execution exception"));
+                    return;
+                }
+            } catch (e) {
+                console.log("Caller call msgData rpc.sendRequest error " + e);
+            }
+
+            try {
+                let retval = retData.reply.readInt();
+                let str = retData.reply.readString();
+                if (retval === REQUEST_SUCCESS && str === 'object') {
+                    console.log("Caller call return str " + str);
+                    msgData.reclaim();
+                    msgReply.reclaim();
+                } else {
+                    console.log("Caller call retval is [" + retval + "], str [" + str + "]");
+                    msgData.reclaim();
+                    msgReply.reclaim();
+                    reject(new Error("function execution result is abnormal"));
+                    return;
+                }
+            } catch (e) {
+                console.log("Caller call msgData SendRequest retval error");
+                reject(new Error("function execution result is abnormal"));
+                return;
+            }
+
+            console.log("Caller call msgData SendRequest end");
+            resolve(undefined);
             return;
-        }
-
-        if (method == '' || data == null) {
-            console.log("Caller call " + method + ", " + data);
-            throw new Error("function input parameter error");
-            return;
-        }
-
-        if (this.releaseCall) {
-            console.log("Caller call this.callee release");
-            throw new Error("Function inner object error");
-            return;
-        }
-
-        if (this.__call_obj__.callee == null) {
-            console.log("Caller call this.callee is nullptr");
-            throw new Error("Function inner object error");
-            return;
-        }
-
-        let msgData = rpc.MessageParcel.create();
-        msgData.writeString(method);
-        let msgReply = rpc.MessageParcel.create();
-        let option = rpc.MessageOption();
-        msgData.writeSequenceable(data);
-
-        let status = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
-        if (!status) {
-            msgData.reclaim();
-            msgReply.reclaim();
-            console.log("Caller call return status " + status);
-            throw new Error("Function execution exception");
-            return ;
-        }
-
-        let retval = msgReply.readInt();
-        let str = msgReply.readString();
-        if (retval === REQUEST_SUCCESS && str === 'object') {
-            console.log("Caller call return str " + str);
-            msgData.reclaim();
-            msgReply.reclaim();
-        } else {
-            console.log("Caller call retval is [" + retval + "], str [" + str + "]");
-            msgData.reclaim();
-            msgReply.reclaim();
-            throw new Error("Function execution result is abnormal");
-        }
-
-        console.log("Caller call msgData SendRequest end");
-        return;
+        });
     }
 
-    async callWithResult(method, data) {
-        console.log("Caller callWithResult method [" + method + "]");
-        if (typeof method !== 'string' || typeof data !== 'object') {
-            console.log("Caller callWithResult " + typeof method + ", " + typeof data);
-            return undefined;
-        }
+    callWithResult(method, data) {
+        return new Promise(async (resolve, reject) => {
+            console.log("Caller callWithResult method [" + method + "]");
+            if (typeof method !== 'string' || typeof data !== 'object') {
+                console.log("Caller callWithResult " + typeof method + " " + typeof data);
+                reject(new Error("function input parameter error"));
+                return;
+            }
 
-        if (method == '' || data == null) {
-            console.log("Caller callWithResult " + method + ", " + data);
-            return undefined;
-        }
+            if (method == '' || data == null) {
+                console.log("Caller callWithResult " + method + ", " + data);
+                reject(new Error("function input parameter error"));
+                return;
+            }
 
-        if (this.releaseCall) {
-            console.log("Caller callWithResult this.callee release");
-            return undefined;
-        }
+            if (this.releaseCall == true) {
+                console.log("Caller callWithResult this.callee release");
+                reject(new Error("function inner object error"));
+                return;
+            }
 
-        if (this.__call_obj__.callee == null) {
-            console.log("Caller callWithResult this.callee is nullptr");
-            return undefined;
-        }
+            if (this.__call_obj__.callee == null) {
+                console.log("Caller callWithResult this.callee is nullptr");
+                reject(new Error("function inner object error"));
+                return;
+            }
 
-        let msgData = rpc.MessageParcel.create();
-        let msgReply = rpc.MessageParcel.create();
-        let option = rpc.MessageOption();
-        let reply = undefined;
-        msgData.writeString(method);
-        msgData.writeSequenceable(data);
-        let status = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
-        if (!status) {
-            console.log("Caller callWithResult return data " + status);
-            msgData.reclaim();
-            msgReply.reclaim();
-            return reply;
-        }
+            console.log("Caller callWithResult msgData rpc.MessageParcel create");
+            let msgData = rpc.MessageParcel.create();
+            msgData.writeString(method);
+            let msgReply = rpc.MessageParcel.create();
+            let option = rpc.MessageOption();
+            msgData.writeSequenceable(data);
 
-        let retval = msgReply.readInt();
-        let str = msgReply.readString();
-        if (retval === REQUEST_SUCCESS && str === 'object') {
-            reply = msgReply;
-            console.log("Caller callWithResult return data " + str);
-            msgData.reclaim();
-        } else {
-            console.log("Caller callWithResult retval is [" + retval + "], str [" + str + "]");
-            msgData.reclaim();
-            msgReply.reclaim();
-        }
+            let reply = undefined;
+            let retData = undefined;
+            try {
+                retData = retData = await this.__call_obj__.callee.sendRequest(EVENT_CALL_NOTIFY, msgData, msgReply, option);
+                console.log("Caller callWithResult msgData rpc.SendRequest called");
+                if (retData.errCode != 0) {
+                    msgData.reclaim();
+                    msgReply.reclaim();
+                    console.log("Caller callWithResult return errCode " + retData.errCode);
+                    reject(new Error("function execution exception"));
+                    return;
+                }
+            } catch (e) {
+                console.log("Caller call msgData rpc.MessageParcel error " + e);
+            }
 
-        console.log("Caller callWithResult sendMsg return");
-        return reply;
+            try {
+                let retval = retData.reply.readInt();
+                let str = retData.reply.readString();
+                if (retval === REQUEST_SUCCESS && str === 'object') {
+                    console.log("Caller callWithResult return str " + str);
+                    msgData.reclaim();
+                    reply = retData.reply;
+                } else {
+                    console.log("Caller callWithResult retval is [" + retval + "], str [" + str + "]");
+                    msgData.reclaim();
+                    msgReply.reclaim();
+                    reject(new Error("function execution result is abnormal"));
+                    return;
+                }
+            } catch (e) {
+                console.log("Caller callWithResult msgData SendRequest retval error");
+                reject(new Error("function execution result is abnormal"));
+                return;
+            }
+
+            console.log("Caller callWithResult msgData SendRequest end");
+            resolve(reply);
+            return;
+        });
     }
 
     release() {
         console.log("Caller release js called.");
         if (this.releaseCall == true) {
             console.log("Caller release remoteObj releaseState is true");
-            throw new Error("Caller release call remoteObj is released");
+            throw new Error("caller release call remoteObj is released");
             return;
         }
 
         if (this.__call_obj__.callee == null) {
             console.log("Caller release call remoteObj is released");
-            throw new Error("Caller release call remoteObj is released");
+            throw new Error("caller release call remoteObj is released");
             return;
         }
 
@@ -162,7 +203,7 @@ class Caller {
 
         if (this.releaseCall == true) {
             console.log("Caller onRelease remoteObj releaseState is true");
-            throw new Error("Caller onRelease call remoteObj is released");
+            throw new Error("caller onRelease call remoteObj is released");
             return;
         }
 
