@@ -706,7 +706,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_ConnectAbility_006, TestSize.
     want.SetElement(element);
     OHOS::sptr<IAbilityConnection> callback = new AbilityConnectCallback();
     auto result = abilityMs_->ConnectAbility(want, callback, nullptr, new_user_id_);
-    EXPECT_NE(OHOS::ERR_INVALID_VALUE, result);
+    EXPECT_EQ(OHOS::ERR_INVALID_VALUE, result);
     GTEST_LOG_(INFO) << "AbilityManagerServiceAccountTest Account_ConnectAbility_006 end";
 }
 

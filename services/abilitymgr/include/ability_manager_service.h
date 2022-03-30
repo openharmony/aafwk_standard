@@ -1075,7 +1075,7 @@ private:
 
     int CheckCallPermissions(const AbilityRequest &abilityRequest);
 
-    bool JudgeMultiUserConcurrency(const AppExecFwk::AbilityInfo &info, const int32_t userId);
+    bool JudgeMultiUserConcurrency(const int32_t userId);
     /**
      * dumpsys info
      *
