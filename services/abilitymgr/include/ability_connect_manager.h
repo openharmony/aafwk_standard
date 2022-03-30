@@ -419,8 +419,6 @@ private:
 
     bool IsAbilityNeedRestart(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
-    void PrintTimeOutLog(const std::shared_ptr<AbilityRecord> &ability, uint32_t msgId);
-
     std::shared_ptr<AbilityRecord> GetAbilityRecordByEventId(int64_t eventId);
     void HandleInactiveTimeout(const std::shared_ptr<AbilityRecord> &ability);
 
