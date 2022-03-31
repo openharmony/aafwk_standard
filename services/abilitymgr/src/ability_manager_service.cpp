@@ -225,7 +225,6 @@ bool AbilityManagerService::Init()
     amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
     amsConfigResolver_->Parse();
     HILOG_INFO("ams config parse");
-    useNewMission_ = amsConfigResolver_->IsUseNewMission();
     InitMissionListManager(userId, true);
     SwitchManagers(U0_USER_ID, false);
     int amsTimeOut = amsConfigResolver_->GetAMSTimeOutTime();
@@ -710,7 +709,7 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
 
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto type = abilityRecord->GetAbilityInfo().type;
-    auto stackManager = GetStackManagerByUserId(userId);
+    auto stackManager = currentStackManager_;
     auto connectManager = GetConnectManagerByUserId(userId);
     switch (type) {
         case AppExecFwk::AbilityType::SERVICE:
@@ -826,8 +825,7 @@ int AbilityManagerService::SetMissionDescriptionInfo(
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
-    auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
-    auto stackManager = GetStackManagerByUserId(userId);
+    auto stackManager = currentStackManager_;
     if (!stackManager) {
         return ERR_INVALID_VALUE;
     }
@@ -867,8 +865,7 @@ int AbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, co
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
-    auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
-    auto stackManager = GetStackManagerByUserId(userId);
+    auto stackManager = currentStackManager_;
     if (!stackManager) {
         return ERR_INVALID_VALUE;
     }
@@ -1715,15 +1712,11 @@ int AbilityManagerService::AttachAbilityThread(
 void AbilityManagerService::DumpFuncInit()
 {
     dumpFuncMap_[KEY_DUMP_ALL] = &AbilityManagerService::DumpInner;
-    dumpFuncMap_[KEY_DUMP_STACK_LIST] = &AbilityManagerService::DumpStackListInner;
     dumpFuncMap_[KEY_DUMP_STACK] = &AbilityManagerService::DumpStackInner;
     dumpFuncMap_[KEY_DUMP_MISSION] = &AbilityManagerService::DumpMissionInner;
-    dumpFuncMap_[KEY_DUMP_TOP_ABILITY] = &AbilityManagerService::DumpTopAbilityInner;
     dumpFuncMap_[KEY_DUMP_WAIT_QUEUE] = &AbilityManagerService::DumpWaittingAbilityQueueInner;
     dumpFuncMap_[KEY_DUMP_SERVICE] = &AbilityManagerService::DumpStateInner;
     dumpFuncMap_[KEY_DUMP_DATA] = &AbilityManagerService::DataDumpStateInner;
-    dumpFuncMap_[KEY_DUMP_FOCUS_ABILITY] = &AbilityManagerService::DumpFocusMapInner;
-    dumpFuncMap_[KEY_DUMP_WINDOW_MODE] = &AbilityManagerService::DumpWindowModeInner;
     dumpFuncMap_[KEY_DUMP_MISSION_LIST] = &AbilityManagerService::DumpMissionListInner;
     dumpFuncMap_[KEY_DUMP_MISSION_INFOS] = &AbilityManagerService::DumpMissionInfosInner;
 }
@@ -1968,21 +1961,6 @@ void AbilityManagerService::DumpInner(const std::string &args, std::vector<std::
     }
 }
 
-void AbilityManagerService::DumpStackListInner(const std::string &args, std::vector<std::string> &info)
-{
-    currentStackManager_->DumpStackList(info);
-}
-
-void AbilityManagerService::DumpFocusMapInner(const std::string &args, std::vector<std::string> &info)
-{
-    currentStackManager_->DumpFocusMap(info);
-}
-
-void AbilityManagerService::DumpWindowModeInner(const std::string &args, std::vector<std::string> &info)
-{
-    currentStackManager_->DumpWindowMode(info);
-}
-
 void AbilityManagerService::DumpMissionListInner(const std::string &args, std::vector<std::string> &info)
 {
     if (currentMissionListManager_) {
@@ -2027,11 +2005,6 @@ void AbilityManagerService::DumpMissionInner(const std::string &args, std::vecto
     int missionId = DEFAULT_INVAL_VALUE;
     (void)StrToInt(argList[1], missionId);
     currentMissionListManager_->DumpMission(missionId, info);
-}
-
-void AbilityManagerService::DumpTopAbilityInner(const std::string &args, std::vector<std::string> &info)
-{
-    currentStackManager_->DumpTopAbility(info);
 }
 
 void AbilityManagerService::DumpWaittingAbilityQueueInner(const std::string &args, std::vector<std::string> &info)
@@ -2270,7 +2243,7 @@ void AbilityManagerService::AddWindowInfo(const sptr<IRemoteObject> &token, int3
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER(abilityRecord);
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
-    auto stackManager = GetStackManagerByUserId(userId);
+    auto stackManager = currentStackManager_;
     if (!stackManager) {
         HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
         return ;
@@ -2331,23 +2304,6 @@ void AbilityManagerService::OnAppStateChanged(const AppInfo &info)
 std::shared_ptr<AbilityEventHandler> AbilityManagerService::GetEventHandler()
 {
     return handler_;
-}
-
-void AbilityManagerService::SetStackManager(int userId, bool switchUser)
-{
-    auto iterator = stackManagers_.find(userId);
-    if (iterator != stackManagers_.end()) {
-        if (switchUser) {
-            currentStackManager_ = iterator->second;
-        }
-    } else {
-        auto manager = std::make_shared<AbilityStackManager>(userId);
-        manager->Init();
-        stackManagers_.emplace(userId, manager);
-        if (switchUser) {
-            currentStackManager_ = manager;
-        }
-    }
 }
 
 void AbilityManagerService::InitMissionListManager(int userId, bool switchUser)
@@ -2652,11 +2608,6 @@ void AbilityManagerService::GetMaxRestartNum(int &max)
     }
 }
 
-bool AbilityManagerService::IsUseNewMission()
-{
-    return useNewMission_;
-}
-
 int AbilityManagerService::KillProcess(const std::string &bundleName)
 {
     HILOG_DEBUG("Kill process, bundleName: %{public}s", bundleName.c_str());
@@ -2938,16 +2889,6 @@ std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManager
     return nullptr;
 }
 
-std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManagerByUserId(int32_t userId)
-{
-    auto it = stackManagers_.find(userId);
-    if (it != stackManagers_.end()) {
-        return it->second;
-    }
-    HILOG_ERROR("%{public}s, Failed to get Manager. UserId = %{public}d", __func__, userId);
-    return nullptr;
-}
-
 std::shared_ptr<MissionListManager> AbilityManagerService::GetListManagerByUserId(int32_t userId)
 {
     std::shared_lock<std::shared_mutex> lock(managersMutex_);
@@ -2978,21 +2919,6 @@ std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManager
         return it->second;
     }
     HILOG_ERROR("%{public}s, Failed to get Manager. UserId = %{public}d", __func__, userId);
-    return nullptr;
-}
-
-std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManagerByToken(const sptr<IRemoteObject> &token)
-{
-    for (auto item: stackManagers_) {
-        if (item.second && item.second->GetAbilityRecordByToken(token)) {
-            return item.second;
-        }
-
-        if (item.second && item.second->GetAbilityFromTerminateList(token)) {
-            return item.second;
-        }
-    }
-
     return nullptr;
 }
 
@@ -3113,7 +3039,7 @@ bool AbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_RETURN_BOOL(abilityRecord);
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
-    auto stackManager = GetStackManagerByUserId(userId);
+    auto stackManager = currentStackManager_;
     if (!stackManager) {
         HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
         return ERR_INVALID_VALUE;
@@ -3182,7 +3108,7 @@ void AbilityManagerService::RestartAbility(const sptr<IRemoteObject> &token)
     CHECK_POINTER(abilityRecord);
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
 
-    auto stackManager = GetStackManagerByUserId(userId);
+    auto stackManager = currentStackManager_;
     if (!stackManager) {
         HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
         return;
@@ -3740,7 +3666,6 @@ void AbilityManagerService::UserStarted(int32_t userId)
 {
     HILOG_INFO("%{public}s", __func__);
     InitConnectManager(userId, false);
-    SetStackManager(userId, false);
     InitMissionListManager(userId, false);
     InitDataAbilityManager(userId, false);
     InitPendWantManager(userId, false);
@@ -3763,7 +3688,6 @@ void AbilityManagerService::SwitchManagers(int32_t userId, bool switchUser)
 {
     HILOG_INFO("%{public}s, SwitchManagers:%{public}d-----begin", __func__, userId);
     InitConnectManager(userId, switchUser);
-    SetStackManager(userId, switchUser);
     InitMissionListManager(userId, switchUser);
     InitDataAbilityManager(userId, switchUser);
     InitPendWantManager(userId, switchUser);
@@ -3816,19 +3740,6 @@ void AbilityManagerService::PauseOldConnectManager(int32_t userId)
     }
     manager->StopAllExtensions();
     HILOG_INFO("%{public}s, PauseOldConnectManager:%{public}d-----end", __func__, userId);
-}
-
-void AbilityManagerService::PauseOldStackManager(int32_t userId)
-{
-    auto it = stackManagers_.find(userId);
-    if (it == stackManagers_.end()) {
-        return;
-    }
-    auto manager = it->second;
-    if (!manager) {
-        return;
-    }
-    manager->PauseManager();
 }
 
 void AbilityManagerService::StartUserApps(int32_t userId, bool isBoot)

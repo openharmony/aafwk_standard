@@ -1114,11 +1114,7 @@ void AbilityConnectManager::DumpState(std::vector<std::string> &info, bool isCli
         }
     } else {
         auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
-        if (abilityMgr && abilityMgr->IsUseNewMission()) {
-            info.emplace_back("  ExtensionRecords:");
-        } else {
-            info.emplace_back("  serviceAbilityRecords:");
-        }
+        info.emplace_back("  ExtensionRecords:");
         for (auto &&service : serviceMap_) {
             info.emplace_back("    uri [" + service.first + "]");
             service.second->DumpService(info, isClient);

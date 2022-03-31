@@ -145,10 +145,6 @@ void AbilityManagerServiceTest::OnStartAms()
 
         abilityMs_->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         abilityMs_->currentMissionListManager_->Init();
-        int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
-        EXPECT_TRUE(abilityMs_->GetStackManager());
-        abilityMs_->stackManagers_.emplace(0, abilityMs_->GetStackManager());
         abilityMs_->eventLoop_->Run();
         return;
     }
@@ -595,20 +591,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_012, TestSize.Level1)
     OHOS::sptr<Token> token = new Token(record);
     auto res1 = abilityMs_->AbilityTransitionDone(token, OHOS::AAFwk::AbilityState::ACTIVE, saveData);
     EXPECT_EQ(res1, OHOS::ERR_INVALID_VALUE);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: SetStackManager and GetStackManager
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService SetStackManager and GetStackManager
- * EnvConditions: NA
- * CaseDescription: Verify set and get
- */
-HWTEST_F(AbilityManagerServiceTest, Interface_013, TestSize.Level1)
-{
-    abilityMs_->SetStackManager(0, true);
-    EXPECT_NE(nullptr, abilityMs_->GetStackManager());
 }
 
 /*
