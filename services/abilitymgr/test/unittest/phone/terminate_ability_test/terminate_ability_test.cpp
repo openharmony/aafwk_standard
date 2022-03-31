@@ -158,9 +158,6 @@ void TerminateAbilityTest::OnStartAms()
         g_aams->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         g_aams->currentMissionListManager_->Init();
 
-        int userId = g_aams->GetUserId();
-        g_aams->SetStackManager(userId, true);
-
         g_aams->eventLoop_->Run();
 
         return;

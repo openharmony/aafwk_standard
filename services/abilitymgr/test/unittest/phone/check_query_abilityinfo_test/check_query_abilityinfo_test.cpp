@@ -136,10 +136,6 @@ void CheckQueryAbilityinfoTest::OnStartAms()
 
         abilityMs_->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         abilityMs_->currentMissionListManager_->Init();
-        int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
-        EXPECT_TRUE(abilityMs_->GetStackManager());
-        abilityMs_->stackManagers_.emplace(0, abilityMs_->GetStackManager());
         abilityMs_->eventLoop_->Run();
         return;
     }

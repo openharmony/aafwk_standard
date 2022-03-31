@@ -82,7 +82,6 @@ void RunningInfosTest::OnStartAms()
         }
 
         abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
-        abilityMs_->useNewMission_ = true;
 
         abilityMs_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(abilityMs_->eventLoop_);
@@ -105,9 +104,6 @@ void RunningInfosTest::OnStartAms()
         abilityMs_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
         EXPECT_TRUE(abilityMs_->amsConfigResolver_);
         abilityMs_->amsConfigResolver_->Parse();
-        abilityMs_->useNewMission_ = abilityMs_->amsConfigResolver_->IsUseNewMission();
-
-        abilityMs_->SetStackManager(userId, true);
         abilityMs_->InitMissionListManager(userId, true);
         abilityMs_->connectManager_->SetEventHandler(abilityMs_->handler_);
         abilityMs_->eventLoop_->Run();

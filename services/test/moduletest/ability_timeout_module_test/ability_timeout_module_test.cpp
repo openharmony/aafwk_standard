@@ -160,9 +160,6 @@ void AbilityTimeoutModuleTest::MockOnStart()
     abilityMs_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
     EXPECT_TRUE(abilityMs_->amsConfigResolver_);
     abilityMs_->amsConfigResolver_->Parse();
-    abilityMs_->useNewMission_ = abilityMs_->amsConfigResolver_->IsUseNewMission();
-
-    abilityMs_->SetStackManager(userId, true);
 
     abilityMs_->InitMissionListManager(userId, true);
     abilityMs_->SwitchManagers(MOCK_U0_USER_ID, false);
@@ -186,7 +183,6 @@ void AbilityTimeoutModuleTest::MockOnStop()
     }
 
     abilityMs_->handler_->RemoveAllEvents();
-    abilityMs_->stackManagers_.clear();
     abilityMs_->currentStackManager_.reset();
     abilityMs_->connectManagers_.clear();
     abilityMs_->connectManager_.reset();

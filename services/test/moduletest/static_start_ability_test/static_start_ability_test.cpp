@@ -137,10 +137,6 @@ void StaticStartAbilityTest::SetUpTestCase(void)
     StaticStartAbilityTest::abilityMgrServ_->pendingWantManager_ = std::make_shared<PendingWantManager>();
     EXPECT_TRUE(StaticStartAbilityTest::abilityMgrServ_->pendingWantManager_);
 
-    int userId = StaticStartAbilityTest::abilityMgrServ_->GetUserId();
-    StaticStartAbilityTest::abilityMgrServ_->SetStackManager(userId, true);
-    StaticStartAbilityTest::abilityMgrServ_->stackManagers_.emplace(0,
-        StaticStartAbilityTest::abilityMgrServ_->GetStackManager());
     StaticStartAbilityTest::abilityMgrServ_->eventLoop_->Run();
 
     GTEST_LOG_(INFO) << "OnStart success";
