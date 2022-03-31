@@ -36,8 +36,6 @@
 #include "in_process_call_wrapper.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
 #include "permission_verification.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
@@ -45,8 +43,6 @@
 namespace OHOS {
 namespace AppExecFwk {
 using namespace std::chrono;
-using PermissionKit = OHOS::Security::Permission::PermissionKit;
-using PermissionState = OHOS::Security::Permission::PermissionState;
 
 const bool REGISTER_RESULT =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<FormMgrService>::GetInstance().get());

@@ -61,7 +61,6 @@ ohos_unittest("FmsFormSysEventReceiverTest") {
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/formmgr:fms_target",
     "//base/miscservices/time/services:time_service",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
@@ -78,6 +77,7 @@ ohos_unittest("FmsFormSysEventReceiverTest") {
   ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_core",
@@ -90,6 +90,5 @@ ohos_unittest("FmsFormSysEventReceiverTest") {
 
 group("unittest") {
   testonly = true
-
   deps = [ ":FmsFormSysEventReceiverTest" ]
 }
