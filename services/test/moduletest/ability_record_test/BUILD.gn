@@ -43,7 +43,6 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${services_path}/abilitymgr/src/ability_record_info.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_proxy.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_stub.cpp",
-    "${services_path}/abilitymgr/src/ability_stack_manager.cpp",
     "${services_path}/abilitymgr/src/ability_token_stub.cpp",
     "${services_path}/abilitymgr/src/app_scheduler.cpp",
     "${services_path}/abilitymgr/src/call_container.cpp",

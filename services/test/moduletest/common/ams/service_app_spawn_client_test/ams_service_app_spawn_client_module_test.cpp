@@ -42,7 +42,7 @@ using testing::Return;
 namespace {
 const uint32_t CYCLE_NUMBER = 10;
 const int32_t PID_VALUE = 13579;
-const int32_t CONNECT_RETRY_MAX_TIMES = 15;
+const int32_t CONNECT_RETRY_MAX_TIMES = 2;
 }  // namespace
 
 // this function is only used to mock sleep method so mst can run without delay.
