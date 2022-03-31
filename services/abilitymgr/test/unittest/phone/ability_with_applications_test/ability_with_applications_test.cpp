@@ -114,9 +114,6 @@ void AbilityWithApplicationsTest::OnStartabilityAms()
         abilityMs_->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         abilityMs_->currentMissionListManager_->Init();
 
-        int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
-
         abilityMs_->eventLoop_->Run();
 
         return;

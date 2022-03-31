@@ -77,11 +77,6 @@ std::string AmsConfigurationParameter::GetOrientation() const
     return orientation_;
 }
 
-bool AmsConfigurationParameter::IsUseNewMission() const
-{
-    return useNewMission_;
-}
-
 int AmsConfigurationParameter::GetANRTimeOutTime() const
 {
     return anrTime_;
@@ -161,9 +156,6 @@ int AmsConfigurationParameter::LoadAppConfigurationForStartUpService(nlohmann::j
             Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::APP_NOT_RESPONSE_PROCESS_TIMEOUT_TIME).get<int>();
         amsTime_ =
             Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::AMS_TIMEOUT_TIME).get<int>();
-        if (Object.at(AmsConfig::SERVICE_ITEM_AMS).contains(AmsConfig::USE_NEW_MISSION)) {
-            useNewMission_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::USE_NEW_MISSION).get<bool>();
-        }
         maxRestartNum_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::ROOT_LAUNCHER_RESTART_MAX).get<int>();
         HILOG_INFO("get ams service config succes!");
         ret = 0;

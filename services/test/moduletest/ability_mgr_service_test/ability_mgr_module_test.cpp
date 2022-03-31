@@ -191,11 +191,6 @@ static void OnStartAms()
         AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_);
 
-        int userId = AbilityMgrModuleTest::abilityMgrServ_->GetUserId();
-        AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId, true);
-        AbilityMgrModuleTest::abilityMgrServ_->stackManagers_.emplace(0,
-            AbilityMgrModuleTest::abilityMgrServ_->GetStackManager());
-
         AbilityMgrModuleTest::abilityMgrServ_->eventLoop_->Run();
 
         GTEST_LOG_(INFO) << "OnStart success";
