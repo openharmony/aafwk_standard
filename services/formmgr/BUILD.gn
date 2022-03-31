@@ -72,8 +72,6 @@ ohos_shared_library("libfms") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"FormMgrService\"",
-    "LOG_DOMAIN = 0xD001120",
     "AMS_LOG_TAG = \"FormMgrService\"",
     "AMS_LOG_DOMAIN = 0xD001120",
   ]
@@ -87,7 +85,6 @@ ohos_shared_library("libfms") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${kits_path}/appkit:app_context",
     "${services_path}/common:perm_verification",
 

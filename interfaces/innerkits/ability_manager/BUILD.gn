@@ -102,7 +102,6 @@ ohos_shared_library("ability_manager") {
   ]
 
   deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${kits_path}/ability/native:dummy_classes",
     "//third_party/jsoncpp:jsoncpp",
   ]
