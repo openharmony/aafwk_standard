@@ -289,8 +289,11 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         HILOG_ERROR("%{public}s VerificationAllToken failed.", __func__);
         return ERR_INVALID_VALUE;
     }
-
     int32_t validUserId = GetValidUserId(userId);
+    if (!JudgeMultiUserConcurrency(validUserId)) {
+        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
+        return ERR_INVALID_VALUE;
+    }
 
     AbilityRequest abilityRequest;
     auto result = GenerateAbilityRequest(want, requestCode, abilityRequest, callerToken, validUserId);
@@ -303,11 +306,6 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
     validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
     HILOG_DEBUG("userId : %{public}d, singleton is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
-
-    if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
-        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
-        return ERR_INVALID_VALUE;
-    }
 
     result = CheckStaticCfgPermission(abilityInfo);
     if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
@@ -372,8 +370,11 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
     if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
         return ERR_INVALID_VALUE;
     }
-
     int32_t validUserId = GetValidUserId(userId);
+    if (!JudgeMultiUserConcurrency(validUserId)) {
+        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
+        return ERR_INVALID_VALUE;
+    }
 
     AbilityRequest abilityRequest;
     auto result = GenerateAbilityRequest(want, requestCode, abilityRequest, callerToken, validUserId);
@@ -385,11 +386,6 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
     validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
     HILOG_DEBUG("userId : %{public}d, singleton is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
-
-    if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
-        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
-        return ERR_INVALID_VALUE;
-    }
 
     result = CheckStaticCfgPermission(abilityInfo);
     if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
@@ -448,8 +444,11 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
         return ERR_INVALID_VALUE;
     }
-
     int32_t validUserId = GetValidUserId(userId);
+    if (!JudgeMultiUserConcurrency(validUserId)) {
+        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
+        return ERR_INVALID_VALUE;
+    }
 
     AbilityRequest abilityRequest;
     auto result = GenerateAbilityRequest(want, requestCode, abilityRequest, callerToken, validUserId);
@@ -462,11 +461,6 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
     HILOG_DEBUG("userId : %{public}d, singleton is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
-
-    if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
-        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
-        return ERR_INVALID_VALUE;
-    }
 
     result = CheckStaticCfgPermission(abilityInfo);
     if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
@@ -937,6 +931,11 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin ConnectAbilityLocal", __func__);
+    if (!JudgeMultiUserConcurrency(userId)) {
+        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
+        return ERR_INVALID_VALUE;
+    }
+
     AbilityRequest abilityRequest;
     ErrCode result = GenerateAbilityRequest(want, DEFAULT_INVAL_VALUE, abilityRequest, callerToken, userId);
     if (result != ERR_OK) {
@@ -947,11 +946,6 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
     int32_t validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : userId;
     HILOG_DEBUG("validUserId : %{public}d, singleton is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
-
-    if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
-        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
-        return ERR_INVALID_VALUE;
-    }
 
     result = CheckStaticCfgPermission(abilityInfo);
     if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
@@ -2588,8 +2582,11 @@ int AbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Stop service ability.");
-
     int32_t validUserId = GetValidUserId(userId);
+    if (!JudgeMultiUserConcurrency(validUserId)) {
+        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
+        return ERR_INVALID_VALUE;
+    }
 
     AbilityRequest abilityRequest;
     auto result = GenerateAbilityRequest(want, DEFAULT_INVAL_VALUE, abilityRequest, nullptr, validUserId);
@@ -2602,11 +2599,6 @@ int AbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
     validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
     HILOG_DEBUG("validUserId : %{public}d, singleton is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
-
-    if (!JudgeMultiUserConcurrency(abilityRequest.abilityInfo, validUserId)) {
-        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
-        return ERR_INVALID_VALUE;
-    }
 
     auto type = abilityInfo.type;
     if (type != AppExecFwk::AbilityType::SERVICE && type != AppExecFwk::AbilityType::EXTENSION) {
@@ -4252,7 +4244,7 @@ void AbilityManagerService::UpdateCallerInfo(Want& want)
     want.SetParam(Want::PARAM_RESV_CALLER_PID, callerPid);
 }
 
-bool AbilityManagerService::JudgeMultiUserConcurrency(const AppExecFwk::AbilityInfo &info, const int32_t userId)
+bool AbilityManagerService::JudgeMultiUserConcurrency(const int32_t userId)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
 
