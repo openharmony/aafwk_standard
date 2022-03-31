@@ -339,13 +339,6 @@ public:
     std::shared_ptr<AbilityEventHandler> GetEventHandler();
 
     /**
-     * SetStackManager, set the user id of stack manager.
-     *
-     * @param userId, user id.
-     */
-    void SetStackManager(int userId, bool switchUser);
-
-    /**
      * GetStackManager, get the current stack manager.
      *
      * @return Returns AbilityStackManager ptr.
@@ -711,7 +704,6 @@ public:
     void OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord);
     void OnCallConnectDied(std::shared_ptr<CallRecord> callRecord);
     void GetMaxRestartNum(int &max);
-    bool IsUseNewMission();
     void HandleLoadTimeOut(int64_t eventId);
     void HandleActiveTimeOut(int64_t eventId);
     void HandleInactiveTimeOut(int64_t eventId);
@@ -1058,15 +1050,11 @@ private:
     int ReleaseRemoteAbility(const sptr<IRemoteObject> &connect, const AppExecFwk::ElementName &element);
 
     void DumpInner(const std::string &args, std::vector<std::string> &info);
-    void DumpStackListInner(const std::string &args, std::vector<std::string> &info);
     void DumpStackInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionInner(const std::string &args, std::vector<std::string> &info);
-    void DumpTopAbilityInner(const std::string &args, std::vector<std::string> &info);
     void DumpWaittingAbilityQueueInner(const std::string &args, std::vector<std::string> &info);
     void DumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DataDumpStateInner(const std::string &args, std::vector<std::string> &info);
-    void DumpFocusMapInner(const std::string &args, std::vector<std::string> &info);
-    void DumpWindowModeInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionListInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionInfosInner(const std::string &args, std::vector<std::string> &info);
     void DumpFuncInit();
@@ -1123,7 +1111,6 @@ private:
     void StartUserApps(int32_t userId, bool isBoot);
     void StartSystemAbilityByUser(int32_t userId, bool isBoot);
     void PauseOldUser(int32_t userId);
-    void PauseOldStackManager(int32_t userId);
     void PauseOldMissionListManager(int32_t userId);
     void PauseOldConnectManager(int32_t userId);
     bool IsSystemUI(const std::string &bundleName) const;
@@ -1131,11 +1118,9 @@ private:
     bool VerificationAllToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<DataAbilityManager> GetDataAbilityManager(const sptr<IAbilityScheduler> &scheduler);
     bool CheckDataAbilityRequest(AbilityRequest &abilityRequest);
-    std::shared_ptr<AbilityStackManager> GetStackManagerByUserId(int32_t userId);
     std::shared_ptr<MissionListManager> GetListManagerByUserId(int32_t userId);
     std::shared_ptr<AbilityConnectManager> GetConnectManagerByUserId(int32_t userId);
     std::shared_ptr<DataAbilityManager> GetDataAbilityManagerByUserId(int32_t userId);
-    std::shared_ptr<AbilityStackManager> GetStackManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<MissionListManager> GetListManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<AbilityConnectManager> GetConnectManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<DataAbilityManager> GetDataAbilityManagerByToken(const sptr<IRemoteObject> &token);
@@ -1175,7 +1160,6 @@ private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::shared_ptr<AbilityEventHandler> handler_;
     ServiceRunningState state_;
-    std::unordered_map<int, std::shared_ptr<AbilityStackManager>> stackManagers_;
     std::shared_ptr<AbilityStackManager> currentStackManager_;
     std::unordered_map<int, std::shared_ptr<AbilityConnectManager>> connectManagers_;
     std::shared_ptr<AbilityConnectManager> connectManager_;
@@ -1190,8 +1174,6 @@ private:
     const static std::map<std::string, AbilityManagerService::DumpKey> dumpMap;
     const static std::map<std::string, AbilityManagerService::DumpsysKey> dumpsysMap;
 
-    // new ams here
-    bool useNewMission_ {false};
     std::unordered_map<int, std::shared_ptr<MissionListManager>> missionListManagers_;
     std::shared_ptr<MissionListManager> currentMissionListManager_;
     std::shared_ptr<UserController> userController_;

@@ -39,7 +39,6 @@ const std::string AMS_TIMEOUT_TIME {"ams_timeout_time"};
 const std::string SYSTEM_CONFIGURATION {"system_configuration"};
 const std::string SYSTEM_ORIENTATION {"system_orientation"};
 const std::string STARTUP_MMS {"startup_mms"};
-const std::string USE_NEW_MISSION {"use_new_mission"};
 const std::string ROOT_LAUNCHER_RESTART_MAX {"root_launcher_restart_max"};
 }  // namespace AmsConfig
 
@@ -145,7 +144,6 @@ private:
     bool canStartUiNavigationBar_ {false};
     bool canStartPhoneService_ {false};
     bool canStartMms {false};
-    bool useNewMission_ {false};
     int maxRestartNum_ = 0;
     std::string orientation_ {""};
     int missionSaveTime_ {12 * 60 * 60 * 1000};

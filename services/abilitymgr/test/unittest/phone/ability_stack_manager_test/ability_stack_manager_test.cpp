@@ -100,9 +100,6 @@ void AbilityStackManagerTest::OnStartabilityMs()
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
 
-        int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
-
         abilityMs_->eventLoop_->Run();
 
         return;
@@ -4822,24 +4819,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_DeleteMissionRecordInSta
     EXPECT_EQ(ret, true);
     missionRecord = missionStack->GetTopMissionRecord();
     EXPECT_FALSE(missionRecord);
-}
-
-/*
- * Feature: AbilityStackManager
- * Function: SetShowOnLockScreenLocked
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_SetShowOnLockScreenLocked_0001, TestSize.Level1)
-{
-    stackManager_->Init();
-    auto result = stackManager_->StartAbility(musicAbilityRequest_);
-    EXPECT_EQ(0, result);
-
-    auto ret = stackManager_->SetShowOnLockScreenLocked("com.ix.hiMusic", true);
-    EXPECT_EQ(ret, ERR_OK);
 }
 
 /*

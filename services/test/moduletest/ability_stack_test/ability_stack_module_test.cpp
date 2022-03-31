@@ -94,9 +94,6 @@ void AbilityStackModuleTest::OnStartabilityMs(std::shared_ptr<AbilityManagerServ
         abilityMs->currentMissionListManager_->Init();
         abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs->pendingWantManager_);
-        int userId = abilityMs->GetUserId();
-        abilityMs->SetStackManager(userId, true);
-        abilityMs->stackManagers_.emplace(0, abilityMs->GetStackManager());
         abilityMs->eventLoop_->Run();
         return;
     }
@@ -144,7 +141,6 @@ void AbilityStackModuleTest::TearDown(void)
 {
     GTEST_LOG_(INFO) << "TearDown start";
     auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    ams->stackManagers_.clear();
     ams->currentStackManager_ = nullptr;
     stackManager_ = nullptr;
     ams->OnStop();
@@ -3847,84 +3843,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_076, TestSize.Level1)
     auto mission1 = abilityRecordMusic->GetMissionRecord();
     auto stack1 = mission->GetMissionStack()->GetMissionStackId();
     EXPECT_TRUE(stackManager_->IsSplitScreenStack(stack1));
-}
-
-/*
- * Feature: AaFwk
- * Function:DeleteMissionRecordInStackOnLockScreen
- * SubFunction: DeleteMissionRecordInStackOnLockScreen
- * FunctionPoints:
- * EnvConditions: NA
- * CaseDescription: delete mission record in stack on lock screen.
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_079, TestSize.Level1)
-{
-    stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
-    stackManager_->SetShowOnLockScreen("com.ix.hiRadio", false);
-    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
-    auto ref = stackManager_->StartAbility(radioAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(topAbilityRecordRadio);
-    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    auto callerToken = topAbilityRecordRadio->GetToken();
-    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    EXPECT_TRUE(handler);
-    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
-
-    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
-    ref = stackManager_->StartAbility(musicAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto abilityRecordMusic = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityRecordMusic);
-    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    callerToken = abilityRecordMusic->GetToken();
-    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecordMusic->GetEventId());
-    auto mission = abilityRecordMusic->GetMissionRecord();
-    EXPECT_TRUE(mission);
-    EXPECT_FALSE(stackManager_->DeleteMissionRecordInStackOnLockScreen(mission));
-}
-
-/*
- * Feature: AaFwk
- * Function:DeleteMissionRecordInStackOnLockScreen
- * SubFunction: DeleteMissionRecordInStackOnLockScreen
- * FunctionPoints:
- * EnvConditions: NA
- * CaseDescription: delete mission record in stack on lock screen.
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_080, TestSize.Level1)
-{
-    stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
-    stackManager_->SetShowOnLockScreen("com.ix.hiRadio", true);
-    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
-    auto ref = stackManager_->StartAbility(radioAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(topAbilityRecordRadio);
-    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    auto callerToken = topAbilityRecordRadio->GetToken();
-    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    EXPECT_TRUE(handler);
-    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
-
-    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
-    ref = stackManager_->StartAbility(musicAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto abilityRecordMusic = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityRecordMusic);
-    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    callerToken = abilityRecordMusic->GetToken();
-    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecordMusic->GetEventId());
-    auto mission = abilityRecordMusic->GetMissionRecord();
-    auto stack = mission->GetMissionStack();
-    EXPECT_TRUE(mission);
-    EXPECT_TRUE(stack);
-    EXPECT_TRUE(stackManager_->DeleteMissionRecordInStackOnLockScreen(mission));
-    EXPECT_TRUE(topAbilityRecordRadio->GetLockScreenState());
-    EXPECT_FALSE(abilityRecordMusic->GetLockScreenState());
-    EXPECT_FALSE(stack->IsTopMissionRecord(mission));
-    EXPECT_TRUE(stack->GetMissionRecordCount() == 0);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

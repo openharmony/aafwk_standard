@@ -116,10 +116,6 @@ void LifecycleTest::OnStartabilityAms()
         abilityMs_->currentMissionListManager_->Init();
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
-        int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
-        EXPECT_TRUE(abilityMs_->GetStackManager());
-        abilityMs_->stackManagers_.emplace(0, abilityMs_->GetStackManager());
         abilityMs_->eventLoop_->Run();
         return;
     }
