@@ -59,6 +59,7 @@ ohos_unittest("AppRunningProcessesInfoTest") {
   ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "appspawn:appspawn_socket_client",
     "bytrace_standard:bytrace_core",
     "hisysevent_native:libhisysevent",

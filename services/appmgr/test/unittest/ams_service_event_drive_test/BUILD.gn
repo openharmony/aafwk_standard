@@ -65,6 +65,7 @@ ohos_unittest("AmsServiceEventDriveTest") {
   ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
