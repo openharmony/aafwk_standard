@@ -559,7 +559,7 @@ void Ability::NotityContinuationResult(const Want& want, bool success)
     }
     int sessionId = want.GetIntParam(DMS_SESSION_ID, DEFAULT_DMS_SESSION_ID);
     std::string originDeviceId = want.GetStringParam(DMS_ORIGIN_DEVICE_ID);
-    HILOG_INFO("Ability::NotityContinuationComplete DeviceId: %{public}s", originDeviceId.c_str());
+    HILOG_DEBUG("Ability::NotityContinuationComplete DeviceId: %{public}s", originDeviceId.c_str());
     continuationManager_->NotifyCompleteContinuation(
         originDeviceId, sessionId, success, reverseContinuationSchedulerReplica_);
 }
@@ -1979,7 +1979,7 @@ void Ability::HandleCreateAsContinuation(const Want &want)
 
     int sessionId = want.GetIntParam(DMS_SESSION_ID, DEFAULT_DMS_SESSION_ID);
     std::string originDeviceId = want.GetStringParam(DMS_ORIGIN_DEVICE_ID);
-    HILOG_ERROR("Ability::HandleCreateAsContinuationoriginDeviceId: %{public}s", originDeviceId.c_str());
+    HILOG_DEBUG("Ability::HandleCreateAsContinuationoriginDeviceId: %{public}s", originDeviceId.c_str());
     continuationManager_->NotifyCompleteContinuation(
         originDeviceId, sessionId, success, reverseContinuationSchedulerReplica_);
 }

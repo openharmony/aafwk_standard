@@ -273,6 +273,7 @@ bool FormDataMgr::DeleteTempForm(const int64_t formId)
  */
 bool FormDataMgr::ExistTempForm(const int64_t formId) const
 {
+    std::lock_guard<std::mutex> lock(formTempMutex_);
     return (std::find(tempForms_.begin(), tempForms_.end(), formId) != tempForms_.end());
 }
 /**
