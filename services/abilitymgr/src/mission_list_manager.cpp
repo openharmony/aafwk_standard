@@ -33,11 +33,13 @@ constexpr char EVENT_KEY_MESSAGE[] = "MSG";
 constexpr char EVENT_KEY_PACKAGE_NAME[] = "PACKAGE_NAME";
 constexpr char EVENT_KEY_PROCESS_NAME[] = "PROCESS_NAME";
 constexpr uint32_t NEXTABILITY_TIMEOUT = 1000;         // ms
-std::string Time2str(time_t time)
+constexpr uint64_t NANO_SECOND_PER_SEC = 1000000000; // ns
+std::string GetCurrentTime()
 {
-    std::stringstream str;
-    str << time;
-    return str.str();
+    struct timespec tn;
+    clock_gettime(CLOCK_REALTIME, &tn);
+    uint64_t uTime = static_cast<uint64_t>(tn.tv_sec) * NANO_SECOND_PER_SEC + tn.tv_nsec;
+    return std::to_string(uTime);
 }
 }
 MissionListManager::MissionListManager(int userId) : userId_(userId) {}
@@ -171,13 +173,6 @@ int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromL
 
     MoveMissionToTargetList(isCallerFromLauncher, targetMissionList, mission);
     MoveMissionListToTop(targetMissionList);
-
-    // update inner mission info time
-    InnerMissionInfo innerMissionInfo;
-    DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(mission->GetMissionId(), innerMissionInfo);
-    innerMissionInfo.missionInfo.time = Time2str(time(0));
-    innerMissionInfo.missionInfo.runningState = 0;
-    DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(innerMissionInfo);
 
     auto targetAbilityRecord = mission->GetAbilityRecord();
     if (!targetAbilityRecord) {
@@ -348,7 +343,7 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
     info.uid = abilityRequest.uid;
     info.missionInfo.runningState = 0;
     info.missionInfo.continuable = abilityRequest.abilityInfo.continuable;
-    info.missionInfo.time = Time2str(time(0));
+    info.missionInfo.time = GetCurrentTime();
     info.missionInfo.iconPath = abilityRequest.appInfo.iconPath;
     info.missionInfo.want = abilityRequest.want;
 
@@ -855,6 +850,16 @@ void MissionListManager::CompleteForegroundNew(const std::shared_ptr<AbilityReco
 #endif
 
     auto mission = abilityRecord->GetMission();
+    if (mission) {
+        InnerMissionInfo info;
+        if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
+            mission->GetMissionId(), info) == 0) {
+            info.missionInfo.time = GetCurrentTime();
+            info.missionInfo.runningState = 0;
+            DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(info);
+        }
+    }
+
     if (mission && mission->IsMovingState()) {
         mission->SetMovingState(false);
         if (listenerController_) {
@@ -1160,7 +1165,7 @@ void MissionListManager::CompleteTerminateAndUpdateMission(const std::shared_ptr
                     result, abilityRecord->GetMissionId());
                 break;
             }
-            innerMissionInfo.missionInfo.time = Time2str(time(0));
+            innerMissionInfo.missionInfo.time = GetCurrentTime();
             innerMissionInfo.missionInfo.runningState = -1;
             DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(innerMissionInfo);
             HILOG_DEBUG("Destroy ability record count %{public}ld", abilityRecord.use_count());
@@ -1711,7 +1716,8 @@ void MissionListManager::UpdateMissionTimeStamp(const std::shared_ptr<AbilityRec
     if (!mission) {
         return;
     }
-    DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionTimeStamp(mission->GetMissionId(), Time2str(time(0)));
+    std::string curTime = GetCurrentTime();
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionTimeStamp(mission->GetMissionId(), curTime);
 }
 
 void MissionListManager::PostStartWaittingAbility()
