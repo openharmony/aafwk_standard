@@ -322,8 +322,6 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
     if (appState == ApplicationState::APP_STATE_READY || appState == ApplicationState::APP_STATE_BACKGROUND) {
         appRecord->SetState(ApplicationState::APP_STATE_FOREGROUND);
         OnAppStateChanged(appRecord, ApplicationState::APP_STATE_FOREGROUND);
-    } else if (appState == ApplicationState::APP_STATE_SUSPENDED) {
-        appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
     } else {
         HILOG_WARN("app name(%{public}s), app state(%{public}d)!",
             appRecord->GetName().c_str(),
@@ -346,8 +344,6 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
     if (appRecord->GetState() == ApplicationState::APP_STATE_FOREGROUND) {
         appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
         OnAppStateChanged(appRecord, ApplicationState::APP_STATE_BACKGROUND);
-    } else if (appRecord->GetState() == ApplicationState::APP_STATE_SUSPENDED) {
-        appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
     } else {
         HILOG_WARN("app name(%{public}s), app state(%{public}d)!",
             appRecord->GetName().c_str(),
@@ -777,9 +773,6 @@ void AppMgrServiceInner::TerminateAbility(const sptr<IRemoteObject> &token)
         HILOG_ERROR("AppMgrServiceInner::TerminateAbility app is not exist!");
         return;
     }
-    if (appRecord->GetState() == ApplicationState::APP_STATE_SUSPENDED) {
-        appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
-    }
 
     if (appRunningManager_) {
         appRunningManager_->TerminateAbility(token);
@@ -821,9 +814,6 @@ void AppMgrServiceInner::UpdateAbilityState(const sptr<IRemoteObject> &token, co
     if (state > AbilityState::ABILITY_STATE_BACKGROUND || state < AbilityState::ABILITY_STATE_FOREGROUND) {
         HILOG_ERROR("state is not foreground or background!");
         return;
-    }
-    if (appRecord->GetState() == ApplicationState::APP_STATE_SUSPENDED) {
-        appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
     }
 
     appRecord->UpdateAbilityState(token, state);
@@ -1020,11 +1010,6 @@ void AppMgrServiceInner::StartAbility(const sptr<IRemoteObject> &token, const sp
         return;
     }
 
-    ApplicationState appState = appRecord->GetState();
-    if (appState == ApplicationState::APP_STATE_SUSPENDED) {
-        appRecord->SetState(ApplicationState::APP_STATE_BACKGROUND);
-    }
-
     auto appInfo = std::make_shared<ApplicationInfo>(abilityInfo->applicationInfo);
     appRecord->AddModule(appInfo, abilityInfo, token, hapModuleInfo, want);
     auto moduleRecord = appRecord->GetModuleRecordByModuleName(appInfo->bundleName, hapModuleInfo.moduleName);
@@ -1043,6 +1028,7 @@ void AppMgrServiceInner::StartAbility(const sptr<IRemoteObject> &token, const sp
         ability->SetPreToken(preToken);
     }
 
+    ApplicationState appState = appRecord->GetState();
     if (appState == ApplicationState::APP_STATE_CREATE) {
         HILOG_ERROR("in create state, don't launch ability");
         return;
