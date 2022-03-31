@@ -19,7 +19,7 @@
 #include "string_ex.h"
 
 #include "hilog_wrapper.h"
-#include "parcel_macro.h"
+#include "parcel_macro_ability.h"
 
 namespace OHOS {
 namespace AppExecFwk {
