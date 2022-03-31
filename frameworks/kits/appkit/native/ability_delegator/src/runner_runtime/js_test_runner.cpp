@@ -23,6 +23,11 @@ namespace RunnerRuntime {
 std::unique_ptr<TestRunner> JsTestRunner::Create(const std::unique_ptr<Runtime> &runtime,
     const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo)
 {
+    if (!runtime) {
+        HILOG_ERROR("Invalid runtime");
+        return nullptr;
+    }
+
     if (!args) {
         HILOG_ERROR("Invalid ability delegator args");
         return nullptr;
