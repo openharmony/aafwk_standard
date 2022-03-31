@@ -3695,6 +3695,22 @@ void Ability::RequsetFocus(const Want &want)
     }
     abilityWindow_->OnPostAbilityForeground(sceneFlag_);
 }
+
+void Ability::SetWakeUpScreen(bool wakeUp)
+{
+    HILOG_INFO("SetWakeUpScreen wakeUp:%{public}d.", wakeUp);
+    if (abilityWindow_ == nullptr) {
+        HILOG_ERROR("Ability::OnBackground error. abilityWindow_ == nullptr.");
+        return;
+    }
+    HILOG_DEBUG("FA mode");
+    auto window = abilityWindow_->GetWindow();
+    if (window == nullptr) {
+        HILOG_ERROR("window nullptr.");
+        return;
+    }
+    window->SetTurnScreenOn(wakeUp);
+}
 #endif
 }  // namespace AppExecFwk
 }  // namespace OHOS
