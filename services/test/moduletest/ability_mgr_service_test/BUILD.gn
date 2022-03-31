@@ -41,7 +41,6 @@ ohos_moduletest("ability_mgr_module_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_record_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_proxy.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_scheduler_stub.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/src/ability_stack_manager.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/ability_token_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/call_container.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/call_record.cpp",

@@ -17,7 +17,6 @@
 
 #define private public
 #define protected public
-#include "ability_stack_manager.h"
 #include "screenshot_handler.h"
 #include "screenshot_response.h"
 #undef private

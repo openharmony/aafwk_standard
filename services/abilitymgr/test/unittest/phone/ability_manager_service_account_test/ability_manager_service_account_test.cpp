@@ -18,7 +18,6 @@
 #define protected public
 #include "ability_manager_service.h"
 #include "ability_event_handler.h"
-#include "ability_stack_manager.h"
 #include "ability_connect_manager.h"
 #include "ams_configuration_parameter.h"
 #undef private

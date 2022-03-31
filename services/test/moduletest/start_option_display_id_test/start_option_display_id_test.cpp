@@ -19,7 +19,6 @@
 #include "ability_manager_service.h"
 #include "ability_event_handler.h"
 #include "ams_configuration_parameter.h"
-#include "ability_stack_manager.h"
 #undef private
 #undef protected
 
@@ -94,7 +93,12 @@ void StartOptionDisplayIdTest::SetUp()
     WaitUntilTaskFinished();
 
     abilityMgrServ_->StartUser(USER_ID_U100);
-    auto topAbility = abilityMgrServ_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
+    auto missionListMgr = abilityMgrServ_->GetListManagerByUserId(USER_ID_U100);
+    if (!missionListMgr) {
+        return;
+    }
+
+    auto topAbility = missionListMgr->GetCurrentTopAbilityLocked();
     if (topAbility) {
         topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
     }
