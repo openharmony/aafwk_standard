@@ -36,7 +36,6 @@ bool ApplicationStateObserverProxy::WriteInterfaceToken(MessageParcel &data)
 
 void ApplicationStateObserverProxy::OnForegroundApplicationChanged(const AppStateData &appStateData)
 {
-    HILOG_DEBUG("begin");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_ASYNC);
@@ -55,12 +54,10 @@ void ApplicationStateObserverProxy::OnForegroundApplicationChanged(const AppStat
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void ApplicationStateObserverProxy::OnAbilityStateChanged(const AbilityStateData &abilityStateData)
 {
-    HILOG_DEBUG("OnAbilityStateChanged begin");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_ASYNC);
@@ -79,12 +76,10 @@ void ApplicationStateObserverProxy::OnAbilityStateChanged(const AbilityStateData
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void ApplicationStateObserverProxy::OnExtensionStateChanged(const AbilityStateData &abilityStateData)
 {
-    HILOG_DEBUG("OnExtensionStateChanged begin");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_ASYNC);
@@ -103,12 +98,10 @@ void ApplicationStateObserverProxy::OnExtensionStateChanged(const AbilityStateDa
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void ApplicationStateObserverProxy::OnProcessCreated(const ProcessData &processData)
 {
-    HILOG_DEBUG("begin");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_ASYNC);
@@ -127,12 +120,10 @@ void ApplicationStateObserverProxy::OnProcessCreated(const ProcessData &processD
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void ApplicationStateObserverProxy::OnProcessDied(const ProcessData &processData)
 {
-    HILOG_DEBUG("begin");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_ASYNC);
@@ -151,12 +142,10 @@ void ApplicationStateObserverProxy::OnProcessDied(const ProcessData &processData
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void ApplicationStateObserverProxy::OnApplicationStateChanged(const AppStateData &appStateData)
 {
-    HILOG_INFO("begin");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_ASYNC);
@@ -175,7 +164,6 @@ void ApplicationStateObserverProxy::OnApplicationStateChanged(const AppStateData
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_INFO("end");
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

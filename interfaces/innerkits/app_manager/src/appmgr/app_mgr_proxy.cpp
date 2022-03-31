@@ -36,7 +36,6 @@ bool AppMgrProxy::WriteInterfaceToken(MessageParcel &data)
 
 void AppMgrProxy::AttachApplication(const sptr<IRemoteObject> &obj)
 {
-    HILOG_DEBUG("AppMgrProxy::AttachApplication start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -57,12 +56,10 @@ void AppMgrProxy::AttachApplication(const sptr<IRemoteObject> &obj)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void AppMgrProxy::ApplicationForegrounded(const int32_t recordId)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -80,12 +77,10 @@ void AppMgrProxy::ApplicationForegrounded(const int32_t recordId)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void AppMgrProxy::ApplicationBackgrounded(const int32_t recordId)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -103,12 +98,10 @@ void AppMgrProxy::ApplicationBackgrounded(const int32_t recordId)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void AppMgrProxy::ApplicationTerminated(const int32_t recordId)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -126,13 +119,10 @@ void AppMgrProxy::ApplicationTerminated(const int32_t recordId)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 int32_t AppMgrProxy::CheckPermission(const int32_t recordId, const std::string &permission)
 {
-    HILOG_DEBUG("start");
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -152,13 +142,11 @@ int32_t AppMgrProxy::CheckPermission(const int32_t recordId, const std::string &
         HILOG_ERROR("SendRequest is failed, error code: %{public}d", ret);
         return ERR_PERMISSION_DENIED;
     }
-    HILOG_DEBUG("end");
     return reply.ReadInt32();
 }
 
 void AppMgrProxy::AbilityCleaned(const sptr<IRemoteObject> &token)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -179,12 +167,10 @@ void AppMgrProxy::AbilityCleaned(const sptr<IRemoteObject> &token)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 sptr<IAmsMgr> AppMgrProxy::GetAmsMgr()
 {
-    HILOG_DEBUG("begin to get Ams instance");
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
@@ -199,13 +185,11 @@ sptr<IAmsMgr> AppMgrProxy::GetAmsMgr()
         HILOG_ERROR("ams instance is nullptr");
         return nullptr;
     }
-    HILOG_DEBUG("get ams instance success");
     return amsMgr;
 }
 
 int32_t AppMgrProxy::ClearUpApplicationData(const std::string &bundleName)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -227,13 +211,11 @@ int32_t AppMgrProxy::ClearUpApplicationData(const std::string &bundleName)
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return ret;
     }
-    HILOG_DEBUG("end");
     return reply.ReadInt32();
 }
 
 int32_t AppMgrProxy::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -254,13 +236,11 @@ int32_t AppMgrProxy::GetAllRunningProcesses(std::vector<RunningProcessInfo> &inf
         return error;
     }
     int result = reply.ReadInt32();
-    HILOG_DEBUG("end");
     return result;
 }
 
 int32_t AppMgrProxy::GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -283,7 +263,6 @@ int32_t AppMgrProxy::GetProcessRunningInfosByUserId(std::vector<RunningProcessIn
         return error;
     }
     int result = reply.ReadInt32();
-    HILOG_DEBUG("end");
     return result;
 }
 
@@ -458,7 +437,6 @@ int AppMgrProxy::UnregisterApplicationStateObserver(
 
 int AppMgrProxy::GetForegroundApplications(std::vector<AppStateData> &list)
 {
-    HILOG_DEBUG("GetForegroundApplications start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -659,7 +637,6 @@ void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler
 
 void AppMgrProxy::PostANRTaskByProcessID(const pid_t pid)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -680,12 +657,10 @@ void AppMgrProxy::PostANRTaskByProcessID(const pid_t pid)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 int AppMgrProxy::BlockAppService()
 {
-    HILOG_DEBUG("%{public}s", __func__);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
