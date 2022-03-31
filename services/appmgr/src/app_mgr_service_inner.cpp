@@ -225,13 +225,14 @@ bool AppMgrServiceInner::GetBundleAndHapInfo(const AbilityInfo &abilityInfo,
     }
 
     auto userId = GetUserIdByUid(appInfo->uid);
+    HILOG_INFO("GetBundleAndHapInfo come, call bms GetBundleInfo and GetHapModuleInfo, userId is %{public}d", userId);
     bool bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleInfo(appInfo->bundleName,
         BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, userId));
     if (!bundleMgrResult) {
         HILOG_ERROR("GetBundleInfo is fail");
         return false;
     }
-    bundleMgrResult = bundleMgr_->GetHapModuleInfo(abilityInfo, hapModuleInfo);
+    bundleMgrResult = bundleMgr_->GetHapModuleInfo(abilityInfo, userId, hapModuleInfo);
     if (!bundleMgrResult) {
         HILOG_ERROR("GetHapModuleInfo is fail");
         return false;
