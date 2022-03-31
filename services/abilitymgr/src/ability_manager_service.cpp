@@ -101,6 +101,7 @@ static const int EXPERIENCE_MEM_THRESHOLD = 20;
 constexpr auto DATA_ABILITY_START_TIMEOUT = 5s;
 constexpr int32_t NON_ANONYMIZE_LENGTH = 6;
 constexpr uint32_t SCENE_FLAG_NORMAL = 0;
+constexpr int32_t DMS_UID = 5522;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const int32_t SWITCH_ACCOUNT_TRY = 3;
 const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
@@ -3524,7 +3525,7 @@ int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityReq
     auto isTargetSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(targetUid));
     HILOG_ERROR("isCallerSystemApp:%{public}d, isTargetSystemApp:%{public}d",
         isCallerSystemApp, isTargetSystemApp);
-    if (callerUid != SYSTEM_UID && !isCallerSystemApp) {
+    if (callerUid != SYSTEM_UID && !isCallerSystemApp && callerUid != DMS_UID) {
         HILOG_DEBUG("caller is common app.");
         std::string bundleName;
         bool result = IN_PROCESS_CALL(bms->GetBundleNameForUid(callerUid, bundleName));
