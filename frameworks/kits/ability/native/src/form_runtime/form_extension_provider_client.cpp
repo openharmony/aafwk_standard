@@ -24,8 +24,6 @@
 #include "form_supply_proxy.h"
 #include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
 
 namespace OHOS {
 namespace AbilityRuntime {

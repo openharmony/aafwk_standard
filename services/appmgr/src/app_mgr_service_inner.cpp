@@ -20,6 +20,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "accesstoken_kit.h"
 #include "application_state_observer_stub.h"
 #include "datetime_ex.h"
 #include "hilog_wrapper.h"
@@ -38,7 +39,6 @@
 #include "iservice_registry.h"
 #include "itest_observer.h"
 #include "os_account_manager.h"
-#include "permission/permission_kit.h"
 #include "permission_constants.h"
 #include "permission_verification.h"
 #include "system_ability_definition.h"
@@ -46,7 +46,6 @@
 #include "locale_config.h"
 #endif
 #include "uri_permission_manager_client.h"
-
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -570,10 +569,10 @@ void AppMgrServiceInner::ClearUpApplicationDataByUserId(
     }
 
     // request to clear user information permission.
-    int32_t result =
-        Permission::PermissionKit::RemoveUserGrantedReqPermissions(bundleName, userId);
+    auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, bundleName, 0);
+    int32_t result = AccessToken::AccessTokenKit::ClearUserGrantedPermissionState(tokenId);
     if (result) {
-        HILOG_ERROR("RemoveUserGrantedReqPermissions failed");
+        HILOG_ERROR("ClearUserGrantedPermissionState failed, ret:%{public}d", result);
         return;
     }
     // 2.delete bundle side user data

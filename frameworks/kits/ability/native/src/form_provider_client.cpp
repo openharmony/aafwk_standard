@@ -21,15 +21,10 @@
 #include "form_supply_proxy.h"
 #include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
 #include "string_ex.h"
 
 namespace OHOS {
 namespace AppExecFwk {
-using PermissionKit = OHOS::Security::Permission::PermissionKit;
-using PermissionState = OHOS::Security::Permission::PermissionState;
-
 /**
  * @brief Acquire to give back an ProviderFormInfo. This is sync API.
  * @param formId The Id of the form.

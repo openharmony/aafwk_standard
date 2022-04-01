@@ -684,7 +684,6 @@ ohos_unittest("form_provider_client_test") {
     deps = [
       "${INNERKITS_PATH}/want:want",
       "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
-      "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
       "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
       "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
       "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
@@ -701,6 +700,7 @@ ohos_unittest("form_provider_client_test") {
     ]
 
     external_deps = [
+      "access_token:libaccesstoken_sdk",
       "bundle_framework:appexecfwk_core",
       "form_runtime:form_manager",
       "hiviewdfx_hilog_native:libhilog",
