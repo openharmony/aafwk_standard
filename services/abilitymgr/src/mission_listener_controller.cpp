@@ -27,10 +27,6 @@ using Cmd = IMissionListener::MissionListenerCmd;
 
 MissionListenerController::MissionListenerController()
 {
-    listenerFunMap_[Cmd::ON_MISSION_CREATED] = &IMissionListener::OnMissionCreated;
-    listenerFunMap_[Cmd::ON_MISSION_DESTROYED] = &IMissionListener::OnMissionDestroyed;
-    listenerFunMap_[Cmd::ON_MISSION_SNAPSHOT_CHANGED] = &IMissionListener::OnMissionSnapshotChanged;
-    listenerFunMap_[Cmd::ON_MISSION_MOVED_TO_FRONT] = &IMissionListener::OnMissionMovedToFront;
 }
 
 MissionListenerController::~MissionListenerController()
@@ -111,7 +107,8 @@ void MissionListenerController::NotifyMissionCreated(int32_t missionId)
             HILOG_ERROR("self is nullptr, NotifyMissionCreated failed.");
             return;
         }
-        self->NotifyListeners(missionId, Cmd::ON_MISSION_CREATED);
+        HILOG_INFO("notify listeners mission is created, missionId:%{public}d.", missionId);
+        self->CallListeners(&IMissionListener::OnMissionCreated, missionId);
     };
     handler_->PostTask(task);
 }
@@ -128,7 +125,8 @@ void MissionListenerController::NotifyMissionDestroyed(int32_t missionId)
             HILOG_ERROR("self is nullptr, NotifyMissionDestroyed failed.");
             return;
         }
-        self->NotifyListeners(missionId, Cmd::ON_MISSION_DESTROYED);
+        HILOG_INFO("notify listeners mission is destroyed, missionId:%{public}d.", missionId);
+        self->CallListeners(&IMissionListener::OnMissionDestroyed, missionId);
     };
     handler_->PostTask(task);
 }
@@ -151,7 +149,7 @@ void MissionListenerController::HandleUnInstallApp(const std::list<int32_t> &mis
             return;
         }
         for (auto id : missions) {
-            self->NotifyListeners(id, Cmd::ON_MISSION_DESTROYED);
+            self->CallListeners(&IMissionListener::OnMissionDestroyed, id);
         }
     };
     handler_->PostTask(task);
@@ -171,7 +169,8 @@ void MissionListenerController::NotifyMissionSnapshotChanged(int32_t missionId)
             HILOG_ERROR("self is nullptr, NotifyMissionSnapshotChanged failed.");
             return;
         }
-        self->NotifyListeners(missionId, Cmd::ON_MISSION_SNAPSHOT_CHANGED);
+        HILOG_INFO("notify listeners mission snapshot changed, missionId:%{public}d.", missionId);
+        self->CallListeners(&IMissionListener::OnMissionSnapshotChanged, missionId);
     };
     handler_->PostTask(task);
 }
@@ -189,32 +188,10 @@ void MissionListenerController::NotifyMissionMovedToFront(int32_t missionId)
             HILOG_ERROR("self is nullptr, NotifyMissionSnapshotChanged failed.");
             return;
         }
-        self->NotifyListeners(missionId, Cmd::ON_MISSION_MOVED_TO_FRONT);
+        HILOG_INFO("notify listeners mission is moved to front, missionId:%{public}d.", missionId);
+        self->CallListeners(&IMissionListener::OnMissionMovedToFront, missionId);
     };
     handler_->PostTask(task);
-}
-
-void MissionListenerController::NotifyListeners(int32_t missionId, IMissionListener::MissionListenerCmd cmd)
-{
-    HILOG_INFO("notify mission listeners begin, cmd:%{public}d", cmd);
-    auto it = listenerFunMap_.find(cmd);
-    if (it == listenerFunMap_.end()) {
-        HILOG_ERROR("invalid cmd:%{public}d", cmd);
-        return;
-    }
-    auto fun = it->second;
-    if (!fun) {
-        HILOG_ERROR("find fun failed, cmd:%{public}d", cmd);
-        return;
-    }
-
-    std::lock_guard<std::recursive_mutex> guard(listenerLock_);
-    for (auto listener : missionListeners_) {
-        if (listener) {
-            (listener->*fun)(missionId);
-        }
-    }
-    HILOG_INFO("notify mission listeners end, cmd:%{public}d", cmd);
 }
 
 void MissionListenerController::OnListenerDied(const wptr<IRemoteObject> &remote)
