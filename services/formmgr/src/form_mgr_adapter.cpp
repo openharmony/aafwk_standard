@@ -17,6 +17,7 @@
 #include <regex>
 
 #include "appexecfwk_errors.h"
+#include "bundle_active_client.h"
 #include "form_acquire_connection.h"
 #include "form_acquire_state_connection.h"
 #include "form_ams_helper.h"
@@ -241,6 +242,9 @@ ErrCode FormMgrAdapter::HandleDeleteForm(const int64_t formId, const sptr<IRemot
         return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
     }
 
+    DeviceUsageStats::BundleActiveEvent event(dbRecord.bundleName, dbRecord.moduleName, dbRecord.formName,
+        dbRecord.specification, dbRecord.formId, DeviceUsageStats::BundleActiveEvent::FORM_IS_REMOVED);
+
     int callingUid = IPCSkeleton::GetCallingUid();
     int32_t userId = GetCurrentUserId(callingUid);
     bool isSelfDbFormId = (userId == dbRecord.userId) && ((std::find(dbRecord.formUserUids.begin(),
@@ -260,6 +264,7 @@ ErrCode FormMgrAdapter::HandleDeleteForm(const int64_t formId, const sptr<IRemot
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
 
+    DeviceUsageStats::BundleActiveClient::GetInstance().ReportEvent(event, userId);
     return ERR_OK;
 }
 
@@ -1424,8 +1429,51 @@ int FormMgrAdapter::MessageEvent(const int64_t formId, const Want &want, const s
         return ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF;
     }
 
+    auto errCode = FormProviderMgr::GetInstance().MessageEvent(matchedFormId, record, want);
+    if (errCode != ERR_OK) {
+        return errCode;
+    }
     HILOG_INFO("%{public}s, find target client.", __func__);
-    return FormProviderMgr::GetInstance().MessageEvent(matchedFormId, record, want);
+
+    if (!FormDataMgr::GetInstance().ExistTempForm(matchedFormId)) {
+        int callingUid = IPCSkeleton::GetCallingUid();
+        int32_t userId = GetCurrentUserId(callingUid);
+        DeviceUsageStats::BundleActiveEvent event(record.bundleName, record.moduleName, record.formName,
+            record.specification, record.formId, DeviceUsageStats::BundleActiveEvent::FORM_IS_CLICKED);
+        DeviceUsageStats::BundleActiveClient::GetInstance().ReportEvent(event, userId);
+    }
+    return ERR_OK;
+}
+
+/**
+ * @brief Process js router event.
+ * @param formId Indicates the unique id of form.
+ * @return Returns true if execute success, false otherwise.
+ */
+int FormMgrAdapter::RouterEvent(const int64_t formId)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    if (formId <= 0) {
+        HILOG_ERROR("%{public}s form formId or bundleName is invalid", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
+    FormRecord record;
+    bool bGetRecord = FormDataMgr::GetInstance().GetFormRecord(matchedFormId, record);
+    if (!bGetRecord) {
+        HILOG_ERROR("%{public}s fail, not exist such form:%{public}" PRId64 "", __func__, matchedFormId);
+        return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
+    }
+
+    if (!FormDataMgr::GetInstance().ExistTempForm(matchedFormId)) {
+        int callingUid = IPCSkeleton::GetCallingUid();
+        int32_t userId = GetCurrentUserId(callingUid);
+        DeviceUsageStats::BundleActiveEvent event(record.bundleName, record.moduleName, record.formName,
+            record.specification, record.formId, DeviceUsageStats::BundleActiveEvent::FORM_IS_CLICKED);
+        DeviceUsageStats::BundleActiveClient::GetInstance().ReportEvent(event, userId);
+    }
+    return ERR_OK;
 }
 
 int FormMgrAdapter::HandleUpdateFormFlag(std::vector<int64_t> formIds,
