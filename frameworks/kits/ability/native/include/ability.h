@@ -457,6 +457,8 @@ public:
      * @return Returns true if this ability currently has window focus; returns false otherwise.
      */
     bool HasWindowFocus();
+
+    void SetShowOnLockScreen(bool showOnLockScreen);
 #endif
 
     /**
@@ -1667,6 +1669,7 @@ private:
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
 #ifdef SUPPORT_GRAPHICS
     bool bWindowFocus_ = false;
+    bool showOnLockScreen_ = false;
 #endif
     int compatibleVersion_ = 0;
 

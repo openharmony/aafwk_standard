@@ -644,17 +644,6 @@ ErrCode AbilityManagerClient::GetWantSenderInfo(const sptr<IWantSender> &target,
     return abms->GetWantSenderInfo(target, info);
 }
 
-ErrCode AbilityManagerClient::SetShowOnLockScreen(bool isAllow)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->SetShowOnLockScreen(isAllow);
-}
-
-/**
- * Get system memory information.
- * @param SystemMemoryAttr, memory information.
- */
 void AbilityManagerClient::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo)
 {
     auto abms = GetAbilityManager();

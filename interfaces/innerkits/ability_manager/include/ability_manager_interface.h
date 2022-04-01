@@ -532,13 +532,6 @@ public:
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) = 0;
 
     virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) = 0;
-    /**
-     * set lock screen Permit list
-     *
-     * @param isAllow whether to allow startup on lock screen.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int SetShowOnLockScreen(bool isAllow) = 0;
 
     /**
      * Get system memory information.

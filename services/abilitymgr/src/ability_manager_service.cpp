@@ -1313,22 +1313,6 @@ int AbilityManagerService::GetPendingRequestWant(const sptr<IWantSender> &target
     return pendingWantManager_->GetPendingRequestWant(target, want);
 }
 
-int AbilityManagerService::SetShowOnLockScreen(bool isAllow)
-{
-    HILOG_INFO("SetShowOnLockScreen");
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
-    auto bms = GetBundleManager();
-    CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
-    int callerUid = IPCSkeleton::GetCallingUid();
-    std::string bundleName;
-    bool result = IN_PROCESS_CALL(bms->GetBundleNameForUid(callerUid, bundleName));
-    if (!result) {
-        HILOG_ERROR("GetBundleNameForUid fail");
-        return GET_BUNDLENAME_BY_UID_FAIL;
-    }
-    return currentStackManager_->SetShowOnLockScreen(bundleName, isAllow);
-}
-
 int AbilityManagerService::LockMissionForCleanup(int32_t missionId)
 {
     HILOG_INFO("request unlock mission for clean up all, id :%{public}d", missionId);
