@@ -478,14 +478,6 @@ public:
     ErrCode SetMissionStackSetting(const StackSetting &stackSetting);
 
     /**
-     * set lock screen Permit list
-     *
-     * @param isAllow whether to allow startup on lock screen.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode SetShowOnLockScreen(bool isAllow);
-
-    /**
      * Get system memory information.
      * @param SystemMemoryAttr, memory information.
      */

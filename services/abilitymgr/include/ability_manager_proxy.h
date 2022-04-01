@@ -497,13 +497,6 @@ public:
     virtual int GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want) override;
 
     virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) override;
-    /**
-     * set lock screen Permit list
-     *
-     * @param isAllow whether to allow startup on lock screen.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int SetShowOnLockScreen(bool isAllow) override;
 
     /**
      * Get system memory information.

@@ -112,7 +112,6 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[SET_MISSION_INFO] = &AbilityManagerStub::SetMissionDescriptionInfoInner;
     requestFuncMap_[GET_MISSION_LOCK_MODE_STATE] = &AbilityManagerStub::GetMissionLockModeStateInner;
     requestFuncMap_[UPDATE_CONFIGURATION] = &AbilityManagerStub::UpdateConfigurationInner;
-    requestFuncMap_[SET_SHOW_ON_LOCK_SCREEN] = &AbilityManagerStub::SetShowOnLockScreenInner;
     requestFuncMap_[GET_SYSTEM_MEMORY_ATTR] = &AbilityManagerStub::GetSystemMemoryAttrInner;
     requestFuncMap_[GET_APP_MEMORY_SIZE] = &AbilityManagerStub::GetAppMemorySizeInner;
     requestFuncMap_[IS_RAM_CONSTRAINED_DEVICE] = &AbilityManagerStub::IsRamConstrainedDeviceInner;
@@ -962,17 +961,6 @@ int AbilityManagerStub::GetWantSenderInfoInner(MessageParcel &data, MessageParce
         return ERR_INVALID_VALUE;
     }
     reply.WriteParcelable(info.get());
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::SetShowOnLockScreenInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto isAllow = data.ReadBool();
-    int result = SetShowOnLockScreen(isAllow);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("SetShowOnLockScreen error");
-        return ERR_INVALID_VALUE;
-    }
     return NO_ERROR;
 }
 

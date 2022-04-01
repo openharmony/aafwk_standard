@@ -1628,32 +1628,6 @@ int AbilityManagerProxy::GetWantSenderInfo(const sptr<IWantSender> &target, std:
     return NO_ERROR;
 }
 
-int AbilityManagerProxy::SetShowOnLockScreen(bool isAllow)
-{
-    int error;
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteBool(isAllow)) {
-        HILOG_ERROR("data write failed.");
-        return ERR_INVALID_VALUE;
-    }
-    error = Remote()->SendRequest(IAbilityManager::SET_SHOW_ON_LOCK_SCREEN, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Send request error: %{public}d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
-/**
- * Get system memory information.
- * @param SystemMemoryAttr, memory information.
- */
 void AbilityManagerProxy::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo)
 {
     MessageParcel data;

@@ -522,14 +522,6 @@ public:
      */
     bool SetMissionInformation(const MissionInformation &missionInformation) override;
 
-    /**
-     * set lock screen
-     *
-     * @param isAllow is it allow wake up screen.
-     *
-     */
-    void SetShowOnLockScreen(bool isAllow) override;
-
 private:
     std::shared_ptr<Context> baseContext_;
 };

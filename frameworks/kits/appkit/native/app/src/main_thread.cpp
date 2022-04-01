@@ -571,7 +571,6 @@ bool MainThread::CheckLaunchApplicationParam(const AppLaunchData &appLaunchData)
  */
 bool MainThread::CheckAbilityItem(const std::shared_ptr<AbilityLocalRecord> &record) const
 {
-    HILOG_INFO("MainThread::CheckAbilityItem called start.");
     if (record == nullptr) {
         HILOG_ERROR("MainThread::checkAbilityItem record is null");
         return false;
@@ -589,8 +588,6 @@ bool MainThread::CheckAbilityItem(const std::shared_ptr<AbilityLocalRecord> &rec
         HILOG_ERROR("MainThread::checkAbilityItem token is null");
         return false;
     }
-
-    HILOG_INFO("MainThread::CheckAbilityItem called end.");
     return true;
 }
 
