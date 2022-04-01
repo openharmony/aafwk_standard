@@ -74,10 +74,8 @@ void FmsFormMgrNotifyVisibleFormsTest::SetUp(void)
     // Permission install
     int userId = 0;
     auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, FORM_PROVIDER_BUNDLE_NAME, 0);
-    EXPECT_NE(tokenId, 0);
     auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
-    auto ret = AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
-    EXPECT_EQ(ret, 0);
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
 }
 
 void FmsFormMgrNotifyVisibleFormsTest::TearDown(void)
@@ -342,11 +340,8 @@ HWTEST_F(FmsFormMgrNotifyVisibleFormsTest, FmsFormMgrNotifyVisibleFormsTest_Noti
     // Permission install
     int userId = 0;
     auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, FORM_PROVIDER_BUNDLE_NAME, 0);
-    EXPECT_NE(tokenId, 0);
     auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
-    auto ret = AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
-    EXPECT_EQ(ret, 0);
-
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
     EXPECT_EQ(ERR_OK, FormMgr::GetInstance().NotifyWhetherVisibleForms(formIds, token_, Constants::FORM_VISIBLE));
     GTEST_LOG_(INFO) << "FmsFormMgrNotifyVisibleFormsTest_NotifyVisibleForms_008 end";
 }
