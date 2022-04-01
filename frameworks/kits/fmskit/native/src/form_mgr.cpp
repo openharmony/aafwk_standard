@@ -265,6 +265,22 @@ int FormMgr::MessageEvent(const int64_t formId, const Want &want, const sptr<IRe
 }
 
 /**
+ * @brief Process js router event.
+ * @param formId Indicates the unique id of form.
+ * @return Returns true if execute success, false otherwise.
+ */
+int FormMgr::RouterEvent(const int64_t formId)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    int errCode = Connect();
+    if (errCode != ERR_OK) {
+        HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
+        return errCode;
+    }
+    return remoteProxy_->RouterEvent(formId);
+}
+
+/**
  * @brief Set next refresh time.
  * @param formId The id of the form.
  * @param nextTime Next refresh time.

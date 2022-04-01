@@ -86,6 +86,8 @@ FormMgrStub::FormMgrStub()
         &FormMgrStub::HandleGetFormsInfoByApp;
     memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_GET_FORMS_INFO_BY_MODULE)] =
         &FormMgrStub::HandleGetFormsInfoByModule;
+    memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_ROUTER_EVENT)] =
+        &FormMgrStub::HandleRouterEvent;
 }
 
 FormMgrStub::~FormMgrStub()
@@ -419,6 +421,22 @@ int32_t FormMgrStub::HandleMessageEvent(MessageParcel &data, MessageParcel &repl
     }
 
     int32_t result = MessageEvent(formId, *want, client);
+    reply.WriteInt32(result);
+    return result;
+}
+
+/**
+ * @brief Handle RouterEvent message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormMgrStub::HandleRouterEvent(MessageParcel &data, MessageParcel &reply)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    int64_t formId = data.ReadInt64();
+
+    int32_t result = RouterEvent(formId);
     reply.WriteInt32(result);
     return result;
 }
