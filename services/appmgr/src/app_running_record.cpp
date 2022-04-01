@@ -295,8 +295,8 @@ void AppRunningRecord::RemoveModuleRecord(const std::shared_ptr<ModuleRunningRec
         if (iter != item.second.end()) {
             iter = item.second.erase(iter);
             if (item.second.empty()) {
-                hapModules_.erase(item.first);
                 appInfos_.erase(item.first);
+                hapModules_.erase(item.first);
             }
             return;
         }
