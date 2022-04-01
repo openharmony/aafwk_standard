@@ -1610,6 +1610,7 @@ napi_value ContinueAbilityPromise(napi_env env, napi_value *args, AsyncCallbackI
     return promise;
 }
 
+#ifdef SUPPORT_GRAPHICS
 static Ability* GetJSAbilityObject(napi_env env)
 {
     HILOG_INFO("%{public}s,called", __func__);
@@ -1625,7 +1626,6 @@ static Ability* GetJSAbilityObject(napi_env env)
     return ability;
 }
 
-#ifdef SUPPORT_GRAPHICS
 static void SetShowOnLockScreenAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s,called", __func__);
