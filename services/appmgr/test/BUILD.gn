@@ -34,7 +34,6 @@ config("appmgr_test_config") {
     "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
     "//base/notification/ces_standard/frameworks/core/include",
     "//base/notification/ces_standard/interfaces/innerkits/native/include",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk/main/cpp/include",
     "//base/global/i18n_standard/frameworks/intl/include",
     "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include",
   ]
@@ -91,7 +90,6 @@ ohos_source_set("appmgr_test_source") {
   }
   deps = [
     "${services_path}/common:perm_verification",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",

@@ -55,8 +55,6 @@
 #include "key_event.h"
 #endif
 #include "ohos_application.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
 #include "reverse_continuation_scheduler_primary.h"
 #include "reverse_continuation_scheduler_replica.h"
 #include "reverse_continuation_scheduler_replica_handler_interface.h"
@@ -68,9 +66,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-using PermissionKit = OHOS::Security::Permission::PermissionKit;
-using PermissionState = OHOS::Security::Permission::PermissionState;
-
 // REGISTER_AA(Ability)
 const std::string Ability::SYSTEM_UI("com.ohos.systemui");
 const std::string Ability::STATUS_BAR("com.ohos.systemui.statusbar.MainAbility");
