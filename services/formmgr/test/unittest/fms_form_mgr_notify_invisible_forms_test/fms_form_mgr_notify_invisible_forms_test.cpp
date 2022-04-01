@@ -71,10 +71,8 @@ void FmsFormMgrNotifyInvisibleFormsTest::SetUp(void)
     // Permission install
     int userId = 0;
     auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, FORM_HOST_BUNDLE_NAME, 0);
-    EXPECT_NE(tokenId, 0);
     auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
-    auto ret = AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
-    EXPECT_EQ(ret, 0);
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
 }
 
 void FmsFormMgrNotifyInvisibleFormsTest::TearDown(void)
@@ -253,11 +251,8 @@ TestSize.Level0)
     // Permission install (mockBundleName)
     int userId = 0;
     auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, mockBundleName, 0);
-    EXPECT_NE(tokenId, 0);
     auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
-    auto ret = AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
-    EXPECT_EQ(ret, 0);
-
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
     EXPECT_EQ(ERR_OK, FormMgr::GetInstance().NotifyWhetherVisibleForms(formIds, token_, Constants::FORM_INVISIBLE));
     GTEST_LOG_(INFO) << "FmsFormMgrNotifyInvisibleFormsTest_NotifyInvisibleForms_007 end";
 }
