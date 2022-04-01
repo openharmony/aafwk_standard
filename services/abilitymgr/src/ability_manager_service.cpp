@@ -1327,7 +1327,7 @@ int AbilityManagerService::SetShowOnLockScreen(bool isAllow)
 int AbilityManagerService::LockMissionForCleanup(int32_t missionId)
 {
     HILOG_INFO("request unlock mission for clean up all, id :%{public}d", missionId);
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
+    CHECK_POINTER_AND_RETURN(currentMissionListManager_, ERR_NO_INIT);
 
     if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
@@ -1339,7 +1339,7 @@ int AbilityManagerService::LockMissionForCleanup(int32_t missionId)
 int AbilityManagerService::UnlockMissionForCleanup(int32_t missionId)
 {
     HILOG_INFO("request unlock mission for clean up all, id :%{public}d", missionId);
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
+    CHECK_POINTER_AND_RETURN(currentMissionListManager_, ERR_NO_INIT);
 
     if (VerifyMissionPermission() == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
@@ -3169,6 +3169,7 @@ void AbilityManagerService::ConnectBmsService()
 {
     HILOG_DEBUG("%{public}s", __func__);
     HILOG_INFO("Waiting AppMgr Service run completed.");
+    CHECK_POINTER(appScheduler_);
     while (!appScheduler_->Init(shared_from_this())) {
         HILOG_ERROR("failed to init appScheduler_");
         usleep(REPOLL_TIME_MICRO_SECONDS);
@@ -4519,7 +4520,7 @@ int AbilityManagerService::BlockAmsService()
         HILOG_DEBUG("%{public}s begain post block ams service task", __func__);
         auto BlockAmsServiceTask = [aams = shared_from_this()]() {
             while (1) {
-                HILOG_DEBUG("%{public}s begain block ams service", __func__);
+                HILOG_DEBUG("%{public}s begain waiting", __func__);
                 std::this_thread::sleep_for(BLOCK_AMS_SERVICE_TIME*1s);
             }
         };
