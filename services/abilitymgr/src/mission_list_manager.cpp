@@ -715,6 +715,7 @@ std::shared_ptr<AbilityRecord> MissionListManager::GetAbilityRecordByToken(
         return nullptr;
     }
 
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
     // first find in terminating list
     for (auto ability : terminateAbilityList_) {
         if (ability && token == ability->GetToken()->AsObject()) {

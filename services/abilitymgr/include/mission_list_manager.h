@@ -421,7 +421,7 @@ private:
 
 private:
     int userId_;
-    std::recursive_mutex managerLock_;
+    mutable std::recursive_mutex managerLock_;
     // launcher list is also in currentMissionLists_
     std::list<std::shared_ptr<MissionList>> currentMissionLists_;
     // only manager the ability of standard in the default list
