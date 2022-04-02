@@ -92,7 +92,6 @@ public:
 
     int ReleaseAbility(const sptr<IAbilityConnection> &connect, const AppExecFwk::ElementName &element) override;
 
-    MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
     MOCK_METHOD1(MoveMissionToTop, int(int32_t missionId));
     MOCK_METHOD1(KillProcess, int(const std::string &bundleName));
     MOCK_METHOD2(UninstallApp, int(const std::string &bundleName, int32_t uid));
@@ -150,8 +149,6 @@ public:
     int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override;
     bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
 
-    int RemoveMission(int id) override;
-
     int PowerOff() override;
     int PowerOn() override;
     int LockMission(int missionId) override
@@ -184,12 +181,6 @@ public:
 
     int ReleaseDataAbility(
         sptr<IAbilityScheduler> dataAbilityScheduler, const sptr<IRemoteObject> &callerToken) override
-    {
-        return 0;
-    }
-
-    int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList) override
     {
         return 0;
     }

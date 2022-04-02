@@ -260,26 +260,11 @@ ErrCode AbilityManagerClient::Connect()
     return ERR_OK;
 }
 
-ErrCode AbilityManagerClient::GetAllStackInfo(StackInfo &stackInfo)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->GetAllStackInfo(stackInfo);
-}
-
 ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->StopServiceAbility(want);
-}
-
-ErrCode AbilityManagerClient::GetRecentMissions(
-    const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->GetRecentMissions(numMax, flags, recentList);
 }
 
 ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, MissionSnapshot &missionSnapshot)
@@ -335,22 +320,6 @@ ErrCode AbilityManagerClient::MoveMissionToEnd(const sptr<IRemoteObject> &token,
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->MoveMissionToEnd(token, nonFirst);
-}
-
-ErrCode AbilityManagerClient::RemoveMissions(std::vector<int> missionId)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    int error = ERR_OK;
-    for (auto it : missionId) {
-        error = abms->RemoveMission(it);
-        if (error != ERR_OK) {
-            HILOG_ERROR("Failed, error:%{private}d", error);
-            break;
-        }
-    }
-
-    return error;
 }
 
 ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)

@@ -553,49 +553,6 @@ HWTEST_F(DumpModuleTest, dump_module_test_09, TestSize.Level2)
 
 /*
  * Feature: Aafwk
- * Function: GetAllStackInfo
- * SubFunction: NA
- * FunctionPoints: test AbilityManagerService GetAllStackInfo
- * EnvConditions: System running normally
- * CaseDescription: Get info of all stacks
- */
-
-HWTEST_F(DumpModuleTest, dump_module_test_010, TestSize.Level2)
-{
-    std::string args;
-    StackInfo stackInfo;
-    g_abilityMs->GetAllStackInfo(stackInfo);
-
-    int findFlag = 0;
-    for (auto &stackInfo : stackInfo.missionStackInfos) {
-        for (auto &missionRecord : stackInfo.missionRecords) {
-
-            if (SearchAbilityNameFromStackInfo(G_TESTABILITY1.GetAbilityName(), missionRecord.abilityRecordInfos)) {
-                ++findFlag;
-            }
-            if (SearchAbilityNameFromStackInfo(G_TESTABILITY2.GetAbilityName(), missionRecord.abilityRecordInfos)) {
-                ++findFlag;
-            }
-            if (SearchAbilityNameFromStackInfo(G_TESTABILITY3.GetAbilityName(), missionRecord.abilityRecordInfos)) {
-                ++findFlag;
-            }
-            if (SearchAbilityNameFromStackInfo(G_TESTABILITY4.GetAbilityName(), missionRecord.abilityRecordInfos)) {
-                ++findFlag;
-            }
-            if (SearchAbilityNameFromStackInfo(G_TESTABILITY6.GetAbilityName(), missionRecord.abilityRecordInfos)) {
-                ++findFlag;
-            }
-            if (SearchAbilityNameFromStackInfo(G_LAUNCHABILITY.GetAbilityName(), missionRecord.abilityRecordInfos)) {
-                ++findFlag;
-            }
-        }
-    }
-
-    EXPECT_EQ(6, findFlag);
-}
-
-/*
- * Feature: Aafwk
  * Function: DumpWaittingAbilityQueue
  * SubFunction: NA
  * FunctionPoints: test AbilityStackManager DumpWaittingAbilityQueue

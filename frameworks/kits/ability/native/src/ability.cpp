@@ -2018,22 +2018,6 @@ Uri Ability::OnSetCaller()
 }
 
 /**
- * @brief Call this when your ability should be closed and the mission should be completely removed as a part of
- * finishing the root ability of the mission.
- */
-void Ability::TerminateAndRemoveMission()
-{
-    HILOG_INFO("%{public}s begin.", __func__);
-    auto state = GetState();
-    if (state > AbilityLifecycleExecutor::LifecycleState::INITIAL) {
-        HILOG_INFO("Ability::TerminateAndRemoveMission the GetState retval is %d", state);
-        return;
-    }
-    AbilityContext::TerminateAndRemoveMission();
-    HILOG_INFO("%{public}s end.", __func__);
-}
-
-/**
  * @brief Create a PostEvent timeout task. The default delay is 5000ms
  *
  * @return Return a smart pointer to a timeout object

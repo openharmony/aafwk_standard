@@ -229,7 +229,6 @@ group("unittest") {
       "unittest/phone/mission_list_manager_ut_test:unittest",
       "unittest/phone/mission_list_test:unittest",
       "unittest/phone/mission_record_test:unittest",
-      "unittest/phone/mission_stack_test:unittest",
       "unittest/phone/resume_mission_container_test:unittest",
       "unittest/phone/screenshot_handler_test:unittest",
       "unittest/phone/specified_mission_list_test:unittest",

@@ -444,12 +444,6 @@ public:
     int GetMissionId() override;
 
     /**
-     * @brief Call this when your ability should be closed and the mission should be completely removed as a part of
-     * finishing the root ability of the mission.
-     */
-    void TerminateAndRemoveMission() override;
-
-    /**
      * @brief Obtains a task dispatcher that is bound to the UI thread.
      *
      * @return Returns the task dispatcher that is bound to the UI thread.

@@ -50,9 +50,6 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[DISCONNECT_ABILITY_DONE] = &AbilityManagerStub::ScheduleDisconnectAbilityDoneInner;
     requestFuncMap_[ADD_WINDOW_INFO] = &AbilityManagerStub::AddWindowInfoInner;
     requestFuncMap_[TERMINATE_ABILITY_RESULT] = &AbilityManagerStub::TerminateAbilityResultInner;
-    requestFuncMap_[LIST_STACK_INFO] = &AbilityManagerStub::GetAllStackInfoInner;
-    requestFuncMap_[GET_RECENT_MISSION] = &AbilityManagerStub::GetRecentMissionsInner;
-    requestFuncMap_[REMOVE_MISSION] = &AbilityManagerStub::RemoveMissionInner;
     requestFuncMap_[COMMAND_ABILITY_DONE] = &AbilityManagerStub::ScheduleCommandAbilityDoneInner;
     requestFuncMap_[GET_MISSION_SNAPSHOT] = &AbilityManagerStub::GetMissionSnapshotInner;
     requestFuncMap_[ACQUIRE_DATA_ABILITY] = &AbilityManagerStub::AcquireDataAbilityInner;
@@ -279,50 +276,6 @@ int AbilityManagerStub::TerminateAbilityResultInner(MessageParcel &data, Message
     int startId = data.ReadInt32();
     int32_t result = TerminateAbilityResult(token, startId);
     reply.WriteInt32(result);
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::GetAllStackInfoInner(MessageParcel &data, MessageParcel &reply)
-{
-    StackInfo stackInfo;
-    int32_t result = GetAllStackInfo(stackInfo);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("GetAllStackInfo result error");
-        return ERR_INVALID_VALUE;
-    }
-    if (!reply.WriteParcelable(&stackInfo)) {
-        HILOG_ERROR("GetAllStackInfo error");
-        return ERR_INVALID_VALUE;
-    }
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::GetRecentMissionsInner(MessageParcel &data, MessageParcel &reply)
-{
-    int numMax = data.ReadInt32();
-    int flags = data.ReadInt32();
-    std::vector<AbilityMissionInfo> missionInfos;
-    int32_t result = GetRecentMissions(numMax, flags, missionInfos);
-    reply.WriteInt32(missionInfos.size());
-    for (auto &it : missionInfos) {
-        if (!reply.WriteParcelable(&it)) {
-            return ERR_INVALID_VALUE;
-        }
-    }
-    if (!reply.WriteInt32(result)) {
-        return ERR_INVALID_VALUE;
-    }
-    return result;
-}
-
-int AbilityManagerStub::RemoveMissionInner(MessageParcel &data, MessageParcel &reply)
-{
-    int id = data.ReadInt32();
-    int32_t result = RemoveMission(id);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("remove mission error.");
-        return ERR_INVALID_VALUE;
-    }
     return NO_ERROR;
 }
 

@@ -88,19 +88,14 @@ public:
     ErrCode GetTerminateAbility();
     ErrCode GetTerminateAbilityResult();
     ErrCode GetIsFirstInMission();
-    ErrCode GetRemoveMissions();
 
     void SetStartAbility(ErrCode tValue);
     void SetTerminateAbility(ErrCode tValue);
     void SetTerminateAbilityResult(ErrCode tValue);
     void SetIsFirstInMission(ErrCode tValue);
-    void SetRemoveMissions(ErrCode tValue);
 
     int GetTerminateAbilityValue();
     void SetTerminateAbilityValue(int nValue);
-
-    int GetRemoveMissionsValue();
-    void ChangeRemoveMissionsValue();
 
     int GetMockMissionId();
     void SetMockMissionId(int missionId);
@@ -119,10 +114,8 @@ private:
     ErrCode terminateAbility_;
     ErrCode terminateAbilityResult_;
     ErrCode isFirstInMission_;
-    ErrCode removeMissionsE_;
 
     int terminateAbilityValue_;
-    int removeMissions_;
     int missionId_;
     bool moveMissionToEnd_;
 };

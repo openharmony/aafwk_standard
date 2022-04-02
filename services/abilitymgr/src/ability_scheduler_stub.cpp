@@ -644,7 +644,7 @@ int AbilitySchedulerStub::CallRequestInner(MessageParcel &data, MessageParcel &r
     }
 
     if (!reply.WriteInt32(NO_ERROR)) {
-        HILOG_ERROR("GetAllStackInfo result error");
+        HILOG_ERROR("CallRequestInner result error");
         return ERR_INVALID_VALUE;
     }
 

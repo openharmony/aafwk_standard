@@ -143,13 +143,6 @@ void MainAbility::OnSetCallerCase1(int code)
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST, code, std::to_string(result));
 }
 
-void MainAbility::TerminateAndRemoveMissonCase1(int code)
-{
-    bool result = true;
-    TestUtils::PublishEvent(g_EVENT_RESP_FIRST, code, std::to_string(result));
-    TerminateAndRemoveMission();
-}
-
 void MainAbility::TerminateAbilityResultCase1(int code)
 {
     bool result = TerminateAbilityResult(1);

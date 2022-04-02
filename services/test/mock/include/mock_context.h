@@ -82,7 +82,6 @@ public:
     virtual void SetColorMode(int mode) = 0;
     virtual int GetColorMode() = 0;
     virtual int GetMissionId() = 0;
-    virtual void TerminateAndRemoveMission() = 0;
     virtual void StartAbilities(const std::vector<AAFwk::Want> &wants) = 0;
     virtual bool IsFirstInMission() = 0;
     virtual std::shared_ptr<TaskDispatcher> GetUITaskDispatcher() = 0;

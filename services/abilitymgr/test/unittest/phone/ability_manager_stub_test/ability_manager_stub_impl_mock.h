@@ -184,36 +184,7 @@ public:
         return 0;
     }
 
-    virtual int GetAllStackInfo(StackInfo &stackInfo)
-    {
-        return 0;
-    }
-
-    virtual int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
-    {
-        AbilityMissionInfo info;
-        info.id = 1;
-        AppExecFwk::ElementName baseEle("baseDevice", "baseBundle", "baseAbility");
-        info.baseAbility = baseEle;
-        Want want;
-        want.SetElement(baseEle);
-        info.baseWant = want;
-        AppExecFwk::ElementName topEle("topDevice", "topBundle", "topAbility");
-        info.topAbility = topEle;
-        info.size = 1;
-        info.missionDescription.iconPath = "icon path";
-        info.missionDescription.label = "label";
-        recentList.emplace_back(info);
-        return 0;
-    }
-
     int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
-    {
-        return 0;
-    }
-
-    virtual int RemoveMission(int id)
     {
         return 0;
     }
