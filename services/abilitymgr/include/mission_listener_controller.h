@@ -93,7 +93,7 @@ private:
         std::lock_guard<std::recursive_mutex> guard(listenerLock_);
         for (auto listener : missionListeners_) {
             if (listener) {
-                (listener->*func)(std::forward<Args>(agrs)...);
+                (listener->*func)(std::forward<Args>(args)...);
             }
         }
     }
