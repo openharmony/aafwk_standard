@@ -46,8 +46,6 @@ ohos_unittest("FmsFormMgrMessageEventTest") {
   configs = [
     "${services_path}/formmgr/test:formmgr_test_config",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms_config",
-
-    # "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:bundlemgr_sdk_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -59,12 +57,9 @@ ohos_unittest("FmsFormMgrMessageEventTest") {
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/formmgr:fms_target",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-
-    #"${appexecfwk_path}/services/bundlemgr:bms_target",
     "//foundation/aafwk/standard/services/abilitymgr:abilityms_target",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
@@ -73,15 +68,17 @@ ohos_unittest("FmsFormMgrMessageEventTest") {
   ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_core",
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "power_manager_native:powermgr_client",
   ]
 }
 
 group("unittest") {
   testonly = true
-  # deps = [ ":FmsFormMgrMessageEventTest" ]
+  deps = [ ":FmsFormMgrMessageEventTest" ]
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,7 +58,7 @@ int RemoteRegisterServiceStub::RegisterInner(MessageParcel &data, MessageParcel 
 {
     HILOG_INFO("%{public}s called begin", __func__);
     std::string bundleName = data.ReadString();
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
     ExtraParams *pExtras = nullptr;
     int32_t extraId = data.ReadInt32();
     if (extraId != 0) {

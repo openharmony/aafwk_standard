@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,8 @@
  */
 
 #include <gtest/gtest.h>
+
+#include "accesstoken_kit.h"
 #include "form_ams_helper.h"
 #include "form_bms_helper.h"
 #define private public
@@ -32,8 +34,7 @@
 #include "mock_ability_manager.h"
 #include "mock_bundle_manager.h"
 #include "mock_form_host_client.h"
-#include "permission/permission_kit.h"
-#include "permission/permission.h"
+#include "power_mgr_client.h"
 #include "running_process_info.h"
 #include "system_ability_definition.h"
 
@@ -85,21 +86,10 @@ void FmsFormProviderMgrTest::SetUp()
     token_ = new (std::nothrow) MockFormHostClient();
 
     // Permission install
-    std::vector<Permission::PermissionDef> permList;
-    Permission::PermissionDef permDef;
-    permDef.permissionName = PERMISSION_NAME_REQUIRE_FORM;
-    permDef.bundleName = FORM_PROVIDER_BUNDLE_NAME;
-    permDef.grantMode = Permission::GrantMode::USER_GRANT;
-    permDef.availableScope = Permission::AvailableScope::AVAILABLE_SCOPE_ALL;
-    permDef.label = DEF_LABEL1;
-    permDef.labelId = 1;
-    permDef.description = DEF_LABEL1;
-    permDef.descriptionId = 1;
-    permList.emplace_back(permDef);
-    Permission::PermissionKit::AddDefPermissions(permList);
-    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_PROVIDER_BUNDLE_NAME,
-        {PERMISSION_NAME_REQUIRE_FORM}, 0);
-    Permission::PermissionKit::GrantUserGrantedPermission(FORM_PROVIDER_BUNDLE_NAME, PERMISSION_NAME_REQUIRE_FORM, 0);
+    int userId = 0;
+    auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, FORM_PROVIDER_BUNDLE_NAME, 0);
+    auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
 }
 
 void FmsFormProviderMgrTest::TearDown()
@@ -113,7 +103,6 @@ void FmsFormProviderMgrTest::TearDown()
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  AcquireForm works with invalid formid.
  */
-
 HWTEST_F(FmsFormProviderMgrTest, AcquireForm_001, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_001 start";
@@ -137,7 +126,6 @@ HWTEST_F(FmsFormProviderMgrTest, AcquireForm_001, TestSize.Level0)
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  AcquireForm works without formrecord.
  */
-
 HWTEST_F(FmsFormProviderMgrTest, AcquireForm_002, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_002 start";
@@ -153,7 +141,6 @@ HWTEST_F(FmsFormProviderMgrTest, AcquireForm_002, TestSize.Level0)
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_002 end";
 }
 
-
 /*
  * Feature: FmsFormProviderMgr
  * Function: FormMgr
@@ -162,7 +149,6 @@ HWTEST_F(FmsFormProviderMgrTest, AcquireForm_002, TestSize.Level0)
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  AcquireForm works without form host record.
  */
-
 HWTEST_F(FmsFormProviderMgrTest, AcquireForm_003, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_003 start";
@@ -188,7 +174,6 @@ HWTEST_F(FmsFormProviderMgrTest, AcquireForm_003, TestSize.Level0)
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  RefreshForm works without form host record.
  */
-
 HWTEST_F(FmsFormProviderMgrTest, RefreshForm_001, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_004 start";
@@ -214,7 +199,6 @@ HWTEST_F(FmsFormProviderMgrTest, RefreshForm_001, TestSize.Level0)
  * EnvConditions: Mobile that can run ohos test framework
  * CaseDescription: Verify if  RefreshForm works without form host record.
  */
-
 HWTEST_F(FmsFormProviderMgrTest, RefreshForm_002, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_005 start";
@@ -229,7 +213,13 @@ HWTEST_F(FmsFormProviderMgrTest, RefreshForm_002, TestSize.Level0)
     FormRecord realFormRecord = FormDataMgr::GetInstance().AllotFormRecord(record, callingUid);
     FormItemInfo info;
     FormDataMgr::GetInstance().AllotFormHostRecord(info, token_, formId, callingUid);
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_PROVIDER_DEL_FAIL, FormProviderMgr::GetInstance().RefreshForm(formId, want));
+    bool screenOnFlag = PowerMgr::PowerMgrClient::GetInstance().IsScreenOn();
+    if (!screenOnFlag) {
+        EXPECT_EQ(ERR_OK, FormProviderMgr::GetInstance().RefreshForm(formId, want));
+    } else {
+        EXPECT_EQ(ERR_APPEXECFWK_FORM_PROVIDER_DEL_FAIL, FormProviderMgr::GetInstance().RefreshForm(formId, want));
+    }
+
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_005 end";
 }
 }

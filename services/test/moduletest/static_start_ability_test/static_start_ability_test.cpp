@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -113,7 +113,7 @@ void StaticStartAbilityTest::SetUpTestCase(void)
 
     StaticStartAbilityTest::abilityMgrServ_->handler_ =std::make_shared<AbilityEventHandler>(
         StaticStartAbilityTest::abilityMgrServ_->eventLoop_, StaticStartAbilityTest::abilityMgrServ_);
-    StaticStartAbilityTest::abilityMgrServ_->connectManager_ = std::make_shared<AbilityConnectManager>();
+    StaticStartAbilityTest::abilityMgrServ_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
     StaticStartAbilityTest::abilityMgrServ_->connectManagers_.emplace(0,
         StaticStartAbilityTest::abilityMgrServ_->connectManager_);
     EXPECT_TRUE(StaticStartAbilityTest::abilityMgrServ_->handler_);
@@ -137,10 +137,6 @@ void StaticStartAbilityTest::SetUpTestCase(void)
     StaticStartAbilityTest::abilityMgrServ_->pendingWantManager_ = std::make_shared<PendingWantManager>();
     EXPECT_TRUE(StaticStartAbilityTest::abilityMgrServ_->pendingWantManager_);
 
-    int userId = StaticStartAbilityTest::abilityMgrServ_->GetUserId();
-    StaticStartAbilityTest::abilityMgrServ_->SetStackManager(userId, true);
-    StaticStartAbilityTest::abilityMgrServ_->stackManagers_.emplace(0,
-        StaticStartAbilityTest::abilityMgrServ_->GetStackManager());
     StaticStartAbilityTest::abilityMgrServ_->eventLoop_->Run();
 
     GTEST_LOG_(INFO) << "OnStart success";

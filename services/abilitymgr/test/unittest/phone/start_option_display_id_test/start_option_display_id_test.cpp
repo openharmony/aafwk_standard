@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,6 @@
 #include "ability_manager_service.h"
 #include "ability_event_handler.h"
 #include "ams_configuration_parameter.h"
-#include "ability_stack_manager.h"
 #undef private
 #undef protected
 
@@ -94,7 +93,12 @@ void StartOptionDisplayIdTest::SetUp()
     WaitUntilTaskFinished();
 
     abilityMs_->StartUser(USER_ID_U100);
-    auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
+    auto missionListMgr = abilityMs_->GetListManagerByUserId(USER_ID_U100);
+    if (!missionListMgr) {
+        return;
+    }
+
+    auto topAbility = missionListMgr->GetCurrentTopAbilityLocked();
     if (topAbility) {
         topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
     }

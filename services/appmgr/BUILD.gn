@@ -20,15 +20,15 @@ config("appmgr_config") {
     "include",
     "${services_path}/common/include",
     "//base/startup/appspawn_standard/interfaces/innerkits/include",
-    "//foundation/aafwk/standard/tools/aa/include",
+    "${aafwk_path}/tools/aa/include",
   ]
 }
 
 group("ams_target") {
   deps = [
     ":libams",
-    "examples:appmgrserviceregtest",
-    "examples:appspawnclienttest",
+    #"examples:appmgrserviceregtest",
+    #"examples:appspawnclienttest",
   ]
 }
 
@@ -53,6 +53,8 @@ ohos_shared_library("libams") {
   ]
 
   defines = [
+    "APP_LOG_TAG = \"AppMgrService\"",
+    "LOG_DOMAIN = 0xD001110",
     "AMS_LOG_TAG = \"AppMgrService\"",
     "AMS_LOG_DOMAIN = 0xD001110",
   ]
@@ -68,16 +70,12 @@ ohos_shared_library("libams") {
     "${services_path}/common:perm_verification",
   ]
 
-  if (ability_runtime_graphics) {
-    deps += [ "//base/global/i18n_standard/frameworks/intl:intl_util" ]
-    defines += [ "SUPPORT_GRAPHICS" ]
-  }
-
   external_deps = [
     "ability_base:base",
     "ability_base:configuration",
     "ability_base:want",
     "ability_runtime:app_manager",
+    "access_token:libaccesstoken_sdk",
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
@@ -88,14 +86,18 @@ ohos_shared_library("libams") {
     "hicollie_native:libhicollie",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
-    "i18n_standard:intl_util",
     "ipc:ipc_core",
     "os_account_standard:os_account_innerkits",
-    "permission_standard:libpermissionsdk_standard",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
+
+  if (ability_runtime_graphics) {
+    defines += [ "SUPPORT_GRAPHICS" ]
+    deps += []
+    external_deps += [ "i18n_standard:intl_util" ]
+  }
 
   subsystem_name = "aafwk"
   part_name = "ability_runtime"

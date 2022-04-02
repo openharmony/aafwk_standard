@@ -12,15 +12,14 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
 
 ohos_shared_library("appmanager_napi") {
-  include_dirs =
-      [ "//foundation/multimedia/image_standard/interfaces/innerkits/include" ]
+  include_dirs = []
 
   if (ability_runtime_graphics) {
-    include_dirs +=
-        [ "//foundation/appexecfwk/standard/kits/appkit/napi/app_manager" ]
+    include_dirs += [ "./" ]
   }
 
   sources = [
@@ -29,9 +28,9 @@ ohos_shared_library("appmanager_napi") {
     "js_app_manager_utils.cpp",
   ]
 
-  configs = [ "//foundation/aafwk/standard/services/common:common_config" ]
+  configs = [ "${aafwk_path}/services/common:common_config" ]
 
-  deps = [ "//foundation/aafwk/standard/services/abilitymgr:abilityms" ]
+  deps = [ "${aafwk_path}/services/abilitymgr:abilityms" ]
 
   external_deps = [
     "ability_base:base",
@@ -44,12 +43,14 @@ ohos_shared_library("appmanager_napi") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "multimedia_image_standard:image",
     "napi:ace_napi",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimedia_image_standard:image" ]
+  }
 
   relative_install_dir = "module/application"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -59,17 +59,14 @@ void ElementName::ClearElement(ElementName *element)
 ElementName::ElementName(const std::string &deviceId, const std::string &bundleName, const std::string &abilityName)
     : deviceId_(deviceId), bundleName_(bundleName), abilityName_(abilityName)
 {
-    ABILITYBASE_LOGD("instance is created with parameters");
 }
 
 ElementName::ElementName()
 {
-    ABILITYBASE_LOGD("instance is created without parameter");
 }
 
 ElementName::~ElementName()
 {
-    ABILITYBASE_LOGD("instance is destroyed");
 }
 
 std::string ElementName::GetURI() const

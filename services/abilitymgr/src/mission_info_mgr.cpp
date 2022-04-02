@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -119,6 +119,10 @@ bool MissionInfoMgr::UpdateMissionInfo(const InnerMissionInfo &missionInfo)
     if (missionInfo.missionInfo.time == listIter->missionInfo.time) {
         // time not changes, no need sort again
         *listIter = missionInfo;
+        if (!taskDataPersistenceMgr_->SaveMissionInfo(missionInfo)) {
+            HILOG_ERROR("save mission info failed.");
+            return false;
+        }
         return true;
     }
 
@@ -279,7 +283,7 @@ bool MissionInfoMgr::FindReusedSingletonMission(const std::string &missionName, 
     );
 
     if (it == missionInfoList_.end()) {
-        HILOG_ERROR("can not find target singleton mission:%{public}s", missionName.c_str());
+        HILOG_WARN("can not find target singleton mission:%{public}s", missionName.c_str());
         return false;
     }
     info = *it;
@@ -321,10 +325,8 @@ int MissionInfoMgr::UpdateMissionLabel(int32_t missionId, const std::string& lab
         return -1;
     }
 
-    InnerMissionInfo updateInfo = *it;
-    updateInfo.missionInfo.label = label;
-
-    if (!taskDataPersistenceMgr_->SaveMissionInfo(updateInfo)) {
+    it->missionInfo.label = label;
+    if (!taskDataPersistenceMgr_->SaveMissionInfo(*it)) {
         HILOG_ERROR("save mission info failed.");
         return -1;
     }
@@ -414,7 +416,9 @@ bool MissionInfoMgr::UpdateMissionSnapshot(int32_t missionId, const sptr<IRemote
         HILOG_ERROR("snapshot: taskDataPersistenceMgr_ is nullptr");
         return false;
     }
+#ifdef SUPPORT_GRAPHICS
     missionSnapshot.snapshot = snapshot.GetPixelMap();
+#endif
     missionSnapshot.topAbility = it->missionInfo.want.GetElement();
     if (!taskDataPersistenceMgr_->SaveMissionSnapshot(missionId, missionSnapshot)) {
         HILOG_ERROR("snapshot: save mission snapshot failed");
@@ -425,9 +429,9 @@ bool MissionInfoMgr::UpdateMissionSnapshot(int32_t missionId, const sptr<IRemote
 }
 
 bool MissionInfoMgr::GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
-    MissionSnapshot& missionSnapshot) const
+    MissionSnapshot& missionSnapshot, bool force) const
 {
-    HILOG_ERROR("mission_list_info GetMissionSnapshot, missionId:%{public}d", missionId);
+    HILOG_INFO("mission_list_info GetMissionSnapshot, missionId:%{public}d, force:%{public}d", missionId, force);
     auto it = find_if(missionInfoList_.begin(), missionInfoList_.end(), [missionId](const InnerMissionInfo &info) {
         return missionId == info.missionInfo.id;
     });
@@ -439,6 +443,12 @@ bool MissionInfoMgr::GetMissionSnapshot(int32_t missionId, const sptr<IRemoteObj
         HILOG_ERROR("snapshot: taskDataPersistenceMgr_ is nullptr");
         return false;
     }
+
+    if (force) {
+        HILOG_INFO("force to get snapshot");
+        return UpdateMissionSnapshot(missionId, abilityToken, missionSnapshot);
+    }
+
     if (taskDataPersistenceMgr_->GetMissionSnapshot(missionId, missionSnapshot)) {
         missionSnapshot.topAbility = it->missionInfo.want.GetElement();
         HILOG_ERROR("mission_list_info GetMissionSnapshot, find snapshot OK, missionId:%{public}d", missionId);

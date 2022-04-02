@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -118,6 +118,7 @@ NativeValue *AbilityLifecycleStateInit(NativeEngine *engine)
         return nullptr;
     }
 
+    object->SetProperty("UNINITIALIZED", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::UNINITIALIZED));
     object->SetProperty("CREATE", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::CREATE));
     object->SetProperty("FOREGROUND", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::FOREGROUND));
     object->SetProperty("BACKGROUND", CreateJsValue(*engine, (int32_t)AbilityLifecycleState::BACKGROUND));

@@ -37,16 +37,15 @@ public:
     MOCK_METHOD2(Delete, int(const Uri &, const NativeRdb::DataAbilityPredicates &));
     MOCK_METHOD3(Query, std::shared_ptr<NativeRdb::AbsSharedResultSet>(
                             const Uri &, std::vector<std::string> &, const NativeRdb::DataAbilityPredicates &));
+    MOCK_METHOD4(Call, std::shared_ptr<PacMap>(const Uri &, const std::string &, const std::string &, const PacMap &));
     MOCK_METHOD1(GetType, std::string(const Uri &uri));
     MOCK_METHOD2(OpenRawFile, int(const Uri &uri, const std::string &mode));
     MOCK_METHOD2(Reload, bool(const Uri &uri, const PacMap &extras));
     MOCK_METHOD2(BatchInsert, int(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values));
     MOCK_METHOD1(NormalizeUri, Uri(const Uri &));
     MOCK_METHOD1(DenormalizeUri, Uri(const Uri &));
-#ifdef SUPPORT_GRAPHICS
     MOCK_METHOD2(NotifyMultiWinModeChanged, void(int32_t winModeKey, bool flag));
     MOCK_METHOD1(NotifyTopActiveAbilityChanged, void(bool flag));
-#endif
     MOCK_METHOD2(ScheduleRegisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));
     MOCK_METHOD2(
         ScheduleUnregisterObserver, bool(const Uri &uri, const sptr<AAFwk::IDataAbilityObserver> &dataObserver));

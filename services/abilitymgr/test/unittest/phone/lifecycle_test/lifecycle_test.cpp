@@ -101,7 +101,7 @@ void LifecycleTest::OnStartabilityAms()
         abilityMs_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(abilityMs_->eventLoop_);
         abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
-        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         abilityMs_->connectManagers_.emplace(0, abilityMs_->connectManager_);
         EXPECT_TRUE(abilityMs_->handler_);
         EXPECT_TRUE(abilityMs_->connectManager_);
@@ -116,10 +116,6 @@ void LifecycleTest::OnStartabilityAms()
         abilityMs_->currentMissionListManager_->Init();
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
-        int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
-        EXPECT_TRUE(abilityMs_->GetStackManager());
-        abilityMs_->stackManagers_.emplace(0, abilityMs_->GetStackManager());
         abilityMs_->eventLoop_->Run();
         return;
     }

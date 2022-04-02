@@ -61,11 +61,11 @@ void AaCommandStartTest::TearDown()
 void AaCommandStartTest::MakeMockObjects() const
 {
     // mock a stub
-    auto managerStubPtr = sptr<IRemoteObject>(new MockAbilityManagerStub());
+    auto managerStubPtr = sptr<IAbilityManager>(new MockAbilityManagerStub());
 
     // set the mock stub
     auto managerClientPtr = AbilityManagerClient::GetInstance();
-    managerClientPtr->remoteObject_ = managerStubPtr;
+    managerClientPtr->proxy_ = managerStubPtr;
 }
 
 /**

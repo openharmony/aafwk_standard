@@ -22,7 +22,6 @@ config("ipc_test_config") {
     "$ZIDL_TEST_DIR/include",
     "$IPC_SUBSYSTEM_DIR/utils/include",
     "$IPC_SUBSYSTEM_DIR/ipc/native/src/mock/include",
-    "//utils/system/safwk/native/include",
   ]
 }
 

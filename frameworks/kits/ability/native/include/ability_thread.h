@@ -220,6 +220,9 @@ public:
      */
     int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value);
 
+    std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap);
+
     /**
      * @brief Updates data records in the database.
      *
@@ -286,7 +289,6 @@ public:
      */
     int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
 
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief notify multi window mode changed.
      *
@@ -301,7 +303,6 @@ public:
      * @param flag true: Indicates this ability is top active ability
      */
     void NotifyTopActiveAbilityChanged(bool flag);
-#endif
 
     /**
      * @brief continue ability to target device.

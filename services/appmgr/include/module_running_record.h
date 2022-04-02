@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +38,7 @@ enum class ModuleRecordState {
 };
 
 class AppMgrServiceInner;
+class AppRunningRecord;
 class ModuleRunningRecord {
 public:
     ModuleRunningRecord(
@@ -168,6 +169,8 @@ public:
 
     void SetApplicationClient(std::shared_ptr<AppLifeCycleDeal> &appLifeCycleDeal);
 
+    void SetAppRunningRecord(const std::shared_ptr<AppRunningRecord> &appRunningRecord);
+
     const std::shared_ptr<ApplicationInfo> GetAppInfo();
 
 private:
@@ -179,6 +182,7 @@ private:
     std::map<const sptr<IRemoteObject>, std::shared_ptr<AbilityRunningRecord>> abilities_;
     std::map<const sptr<IRemoteObject>, std::shared_ptr<AbilityRunningRecord>> terminateAbilitys_;
     std::weak_ptr<AppMgrServiceInner> appMgrServiceInner_;
+    std::weak_ptr<AppRunningRecord> appRunningRecord_;
     std::shared_ptr<AppLifeCycleDeal> appLifeCycleDeal_;
     std::shared_ptr<ApplicationInfo> appInfo_;  // the application's info
     std::shared_ptr<AMSEventHandler> eventHandler_;

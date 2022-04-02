@@ -426,7 +426,6 @@ public:
 
     int GetMissionSnapshot(int32_t missionId, MissionPixelMap &missionPixelMap);
 
-    int SetShowOnLockScreen(const std::string &bundleName, bool isAllow);
     void UpdateLockScreenState(bool isLockScreen);
 
     bool IsStarted();
@@ -651,9 +650,11 @@ private:
      * @return Returns ERR_OK on success, others on failure.
      */
     int MoveMissionsToStackLocked(const std::list<MissionOption> &missionOptions);
+#ifdef SUPPORT_GRAPHICS
     int CheckMultiWindowCondition(const std::list<MissionOption> &missionOptions) const;
     int CheckMultiWindowCondition(const std::shared_ptr<AbilityRecord> &currentTopAbility,
         const std::shared_ptr<AbilityRecord> &topFullAbility, const AbilityRequest &abilityRequest) const;
+#endif
     bool CheckSplitSrceenCondition(
         const AbilityRequest &abilityRequest, const std::shared_ptr<AbilityRecord> &topFullAbility) const;
     bool CheckMissionStackWillOverflow(const std::list<MissionOption> &missionOptions) const;
@@ -701,7 +702,6 @@ private:
         std::shared_ptr<AbilityRecord> lastTopAbility, std::shared_ptr<AbilityRecord> targetAbility,
         std::shared_ptr<AbilityRecord> &needBackgroundAbility);
 
-    int SetShowOnLockScreenLocked(const std::string &bundleName, bool isAllow);
     /**
      * minimize multiwindow by mission id.
      * @param missionId, the id of target mission
@@ -783,7 +783,9 @@ private:
     std::map<int, std::weak_ptr<AbilityRecord>> focusAbilityRecordMap_;  // abilities has been focused ,
                                                                          // key : display id, value: focused ability
     std::shared_ptr<ResumeMissionContainer> resumeMissionContainer_;
+#ifdef SUPPORT_GRAPHICS
     std::shared_ptr<ScreenshotHandler> screenshotHandler_;
+#endif
     static int64_t splitScreenStackId;
     const static std::map<SystemWindowMode, std::string> windowModeToStrMap_;
     std::shared_ptr<LockScreenEventSubscriber> subscriber_ = nullptr;

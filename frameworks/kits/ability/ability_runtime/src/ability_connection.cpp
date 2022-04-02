@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,8 +39,8 @@ void AbilityConnection::OnAbilityConnectDone(
     SetRemoteObject(remoteObject);
     SetResultCode(resultCode);
     abilityConnectCallback_->OnAbilityConnectDone(element, remoteObject, resultCode);
-    HILOG_DEBUG("%{public}s end, remoteObject:%{public}p, bundleName:%{public}s, abilityName:%{public}s.",
-        __func__, remoteObject.GetRefPtr(), element.GetBundleName().c_str(), element.GetAbilityName().c_str());
+    HILOG_DEBUG("%{public}s end, bundleName:%{public}s, abilityName:%{public}s.",
+        __func__, element.GetBundleName().c_str(), element.GetAbilityName().c_str());
 }
 
 void AbilityConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode)

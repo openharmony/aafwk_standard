@@ -17,7 +17,6 @@
 
 #define private public
 #define protected public
-#include "ability_stack_manager.h"
 #include "screenshot_handler.h"
 #include "screenshot_response.h"
 #undef private
@@ -76,7 +75,6 @@ void ScreenShotHandlerTest::TearDown()
  */
 HWTEST_F(ScreenShotHandlerTest, ability_screenshot_response_001, TestSize.Level1)
 {
-#ifdef SUPPORT_GRAPHICS
     OHOS::WMImageInfo info;
     info.width = 1;
     info.size = 5;
@@ -90,7 +88,6 @@ HWTEST_F(ScreenShotHandlerTest, ability_screenshot_response_001, TestSize.Level1
     EXPECT_EQ(infos.height, static_cast<uint32_t>(2));
     EXPECT_EQ(infos.format, static_cast<uint32_t>(3));
     EXPECT_EQ(infos.data, nullptr);
-#endif
 }
 
 /*
@@ -103,7 +100,6 @@ HWTEST_F(ScreenShotHandlerTest, ability_screenshot_response_001, TestSize.Level1
  */
 HWTEST_F(ScreenShotHandlerTest, ability_screenshot_handler_001, TestSize.Level1)
 {
-#ifdef SUPPORT_GRAPHICS
     int missionId = 0;
     OHOS::WMImageInfo info;
     info.width = 1;
@@ -120,7 +116,6 @@ HWTEST_F(ScreenShotHandlerTest, ability_screenshot_handler_001, TestSize.Level1)
     EXPECT_EQ(imageInfo.height, static_cast<uint32_t>(2));
     EXPECT_EQ(imageInfo.format, static_cast<uint32_t>(3));
     EXPECT_EQ(imageInfo.data, nullptr);
-#endif
 }
 
 /*

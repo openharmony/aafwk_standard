@@ -17,6 +17,7 @@
 #include <thread>
 #include <string>
 
+#include "accesstoken_kit.h"
 #include "appexecfwk_errors.h"
 #define private public
 #include "form_bms_helper.h"
@@ -29,13 +30,11 @@
 #include "hilog_wrapper.h"
 #include "mock_form_host_client.h"
 #include "mock_bundle_manager.h"
-#include "permission/permission_def.h"
-#include "permission/permission_kit.h"
-#include "permission/permission.h"
 
 using namespace testing::ext;
 using namespace OHOS;
 using namespace OHOS::AppExecFwk;
+using namespace OHOS::Security;
 
 namespace {
 const std::string FORM_HOST_BUNDLE_NAME = "com.form.provider.service";
@@ -70,24 +69,10 @@ void FmsFormMgrNotifyInvisibleFormsTest::SetUp(void)
     token_ = new (std::nothrow) OHOS::AppExecFwk::MockFormHostClient();
 
     // Permission install
-    std::vector<OHOS::Security::Permission::PermissionDef> permList;
-    OHOS::Security::Permission::PermissionDef permDef;
-    permDef.permissionName = PERMISSION_NAME_REQUIRE_FORM;
-    permDef.bundleName = FORM_HOST_BUNDLE_NAME;
-    permDef.grantMode = OHOS::Security::Permission::GrantMode::USER_GRANT;
-    permDef.availableScope = OHOS::Security::Permission::AvailableScope::AVAILABLE_SCOPE_ALL;
-    permDef.label = DEF_LABEL1;
-    permDef.labelId = 1;
-    permDef.description = DEF_LABEL1;
-    permDef.descriptionId = 1;
-    permList.emplace_back(permDef);
-    OHOS::Security::Permission::PermissionKit::AddDefPermissions(permList);
-    std::vector<std::string> permnameList;
-    permnameList.emplace_back(PERMISSION_NAME_REQUIRE_FORM);
-    OHOS::Security::Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_HOST_BUNDLE_NAME,
-        permnameList, 0);
-    OHOS::Security::Permission::PermissionKit::GrantUserGrantedPermission(FORM_HOST_BUNDLE_NAME,
-        PERMISSION_NAME_REQUIRE_FORM, 0);
+    int userId = 0;
+    auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, FORM_HOST_BUNDLE_NAME, 0);
+    auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
 }
 
 void FmsFormMgrNotifyInvisibleFormsTest::TearDown(void)
@@ -264,23 +249,10 @@ TestSize.Level0)
     FormDataMgr::GetInstance().AllotFormHostRecord(iteminfo, token_, formId, 0);
 
     // Permission install (mockBundleName)
-    std::vector<OHOS::Security::Permission::PermissionDef> permList;
-    OHOS::Security::Permission::PermissionDef permDef;
-    permDef.permissionName = PERMISSION_NAME_REQUIRE_FORM;
-    permDef.bundleName = mockBundleName;
-    permDef.grantMode = OHOS::Security::Permission::GrantMode::USER_GRANT;
-    permDef.availableScope = OHOS::Security::Permission::AvailableScope::AVAILABLE_SCOPE_ALL;
-    permDef.label = DEF_LABEL1;
-    permDef.labelId = 1;
-    permDef.description = DEF_LABEL1;
-    permDef.descriptionId = 1;
-    permList.emplace_back(permDef);
-    OHOS::Security::Permission::PermissionKit::AddDefPermissions(permList);
-    OHOS::Security::Permission::PermissionKit::AddUserGrantedReqPermissions(mockBundleName,
-    {PERMISSION_NAME_REQUIRE_FORM}, 0);
-    OHOS::Security::Permission::PermissionKit::GrantUserGrantedPermission(mockBundleName,
-    PERMISSION_NAME_REQUIRE_FORM, 0);
-
+    int userId = 0;
+    auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, mockBundleName, 0);
+    auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
     EXPECT_EQ(ERR_OK, FormMgr::GetInstance().NotifyWhetherVisibleForms(formIds, token_, Constants::FORM_INVISIBLE));
     GTEST_LOG_(INFO) << "FmsFormMgrNotifyInvisibleFormsTest_NotifyInvisibleForms_007 end";
 }

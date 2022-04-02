@@ -29,7 +29,7 @@ bool SenderInfo::ReadFromParcel(Parcel &parcel)
     HILOG_INFO("%{public}s:begin.", __func__);
 
     code = parcel.ReadInt32();
-    auto wantResquest = parcel.ReadParcelable<Want>();
+    std::unique_ptr<Want> wantResquest(parcel.ReadParcelable<Want>());
     if (wantResquest == nullptr) {
         HILOG_ERROR("%{public}s:wantResquest is nullptr.", __func__);
         return false;

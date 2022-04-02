@@ -130,6 +130,7 @@ struct AbilityRequest {
     int32_t uid = 0;
     int requestCode = -1;
     bool restart = false;
+    int32_t restartCount = -1;
 
     // call ability
     int callerUid = -1;
@@ -600,7 +601,6 @@ public:
      */
     bool IsConnectListEmpty();
 
-#ifdef SUPPORT_GRAPHICS
     /**
      * add ability's window info to record.
      *
@@ -613,6 +613,7 @@ public:
      */
     void RemoveWindowInfo();
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * get ability's window info from record.
      *
@@ -749,6 +750,8 @@ public:
     bool GetPowerState() const;
 
     void SetRestarting(const bool isRestart);
+    void SetRestarting(const bool isRestart, int32_t canReStartCount);
+    int32_t GetRestartCount() const;
     bool IsRestarting() const;
     void SetAppState(const AppState &state);
     AppState GetAppState() const;
@@ -801,6 +804,8 @@ public:
     void RemoveWindowMode();
     LifeCycleStateInfo lifeCycleStateInfo_;                // target life state info
     int BlockAbility();
+    
+    bool CanRestartRootLauncher();
 
 protected:
     void SendEvent(uint32_t msg, uint32_t timeOut);

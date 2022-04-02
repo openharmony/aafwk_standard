@@ -209,7 +209,7 @@ napi_value UnwrapDataAbilityPredicatesBackReferences(
     return result;
 }
 
-void SetNamedProperty(napi_env env, napi_value obj, const char *propName, const int propValue)
+void SetNamedProperty(napi_env env, napi_value obj, const char *propName, int propValue)
 {
     napi_value prop = nullptr;
     napi_create_int32(env, propValue, &prop);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,9 +38,17 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
     if ((lifecycleState_ == targetState.state) && !targetState.isNewWant) {
         if (ability_ != nullptr && targetState.state == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
             ability_->RequsetFocus(want);
+            AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
         }
         HILOG_ERROR("Org lifeCycleState equals to Dst lifeCycleState.");
         return;
+    }
+
+    if (lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND || lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND_NEW) {
+        if (targetState.state == AAFwk::ABILITY_STATE_ACTIVE || targetState.state == AAFwk::ABILITY_STATE_INACTIVE) {
+            HILOG_ERROR("Invalid state.");
+            return;
+        }
     }
 
     SetLifeCycleStateInfo(targetState);
@@ -153,6 +161,13 @@ bool PageAbilityImpl::AbilityTransactionNew(const Want &want, const AAFwk::LifeC
             Stop();
             break;
         }
+        case AAFwk::ABILITY_STATE_INACTIVE: {
+            if (lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) {
+                Inactive();
+            }
+            ret = false;
+            break;
+        }
         case AAFwk::ABILITY_STATE_FOREGROUND_NEW: {
             if (lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND_NEW ||
                 lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND) {
@@ -164,6 +179,17 @@ bool PageAbilityImpl::AbilityTransactionNew(const Want &want, const AAFwk::LifeC
             SerUriString(targetState.caller.deviceId + "/" + targetState.caller.bundleName + "/" +
                          targetState.caller.abilityName);
             Active();
+            if (ability_) {
+                ability_->RequsetFocus(want);
+            }
+            break;
+        }
+        case AAFwk::ABILITY_STATE_ACTIVE: {
+            if (lifecycleState_ == AAFwk::ABILITY_STATE_BACKGROUND) {
+                Foreground(want);
+            }
+            Active();
+            ret = false;
             break;
         }
         case AAFwk::ABILITY_STATE_BACKGROUND_NEW: {
@@ -198,9 +224,9 @@ void PageAbilityImpl::DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
         HILOG_ERROR("PageAbilityImpl::DoKeyDown ability_ == nullptr");
         return;
     }
-    auto abilitInfo = ability_->GetAbilityInfo();
+    auto abilityInfo = ability_->GetAbilityInfo();
     HILOG_INFO("PageAbilityImpl::DoKeyDown called %{public}s And Focus is %{public}s",
-        abilitInfo->name.c_str(),
+        abilityInfo->name.c_str(),
         ability_->HasWindowFocus() ? "true" : "false");
 
     ability_->OnKeyDown(keyEvent);
@@ -222,9 +248,9 @@ void PageAbilityImpl::DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
         HILOG_ERROR("PageAbilityImpl::DoKeyUp ability_ == nullptr");
         return;
     }
-    auto abilitInfo = ability_->GetAbilityInfo();
+    auto abilityInfo = ability_->GetAbilityInfo();
     HILOG_INFO("PageAbilityImpl::DoKeyUp called %{public}s And Focus is %{public}s",
-        abilitInfo->name.c_str(),
+        abilityInfo->name.c_str(),
         ability_->HasWindowFocus() ? "true" : "false");
 
     ability_->OnKeyUp(keyEvent);
@@ -246,9 +272,9 @@ void PageAbilityImpl::DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointer
         HILOG_ERROR("PageAbilityImpl::DoPointerEvent ability_ == nullptr");
         return;
     }
-    auto abilitInfo = ability_->GetAbilityInfo();
+    auto abilityInfo = ability_->GetAbilityInfo();
     HILOG_INFO("PageAbilityImpl::DoPointerEvent called %{public}s And Focus is %{public}s",
-        abilitInfo->name.c_str(),
+        abilityInfo->name.c_str(),
         ability_->HasWindowFocus() ? "true" : "false");
 
     ability_->OnPointerEvent(pointerEvent);

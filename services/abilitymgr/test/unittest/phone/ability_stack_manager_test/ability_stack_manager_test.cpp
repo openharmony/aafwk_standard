@@ -84,7 +84,7 @@ void AbilityStackManagerTest::OnStartabilityMs()
         EXPECT_TRUE(abilityMs_->eventLoop_);
 
         abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
-        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         EXPECT_TRUE(abilityMs_->handler_);
         EXPECT_TRUE(abilityMs_->connectManager_);
 
@@ -99,9 +99,6 @@ void AbilityStackManagerTest::OnStartabilityMs()
 
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
-
-        int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
 
         abilityMs_->eventLoop_->Run();
 
@@ -1093,6 +1090,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_028, TestSize.
  */
 HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_029, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     stackManager_->Init();
     int result = stackManager_->StartAbility(musicAbilityRequest_);
     EXPECT_EQ(0, result);
@@ -1113,6 +1111,7 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_operating_029, TestSize.
     EXPECT_EQ(static_cast<int>(stackManager_->windowTokenToAbilityMap_.size()), 1);
     stackManager_->AddWindowInfo(token, 2);
     EXPECT_EQ(static_cast<int>(stackManager_->windowTokenToAbilityMap_.size()), 1);
+#endif
 }
 
 /*
@@ -4820,24 +4819,6 @@ HWTEST_F(AbilityStackManagerTest, ability_stack_manager_DeleteMissionRecordInSta
     EXPECT_EQ(ret, true);
     missionRecord = missionStack->GetTopMissionRecord();
     EXPECT_FALSE(missionRecord);
-}
-
-/*
- * Feature: AbilityStackManager
- * Function: SetShowOnLockScreenLocked
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AbilityStackManagerTest, ability_stack_manager_SetShowOnLockScreenLocked_0001, TestSize.Level1)
-{
-    stackManager_->Init();
-    auto result = stackManager_->StartAbility(musicAbilityRequest_);
-    EXPECT_EQ(0, result);
-
-    auto ret = stackManager_->SetShowOnLockScreenLocked("com.ix.hiMusic", true);
-    EXPECT_EQ(ret, ERR_OK);
 }
 
 /*

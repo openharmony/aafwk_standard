@@ -165,6 +165,19 @@ public:
     virtual int Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates) = 0;
 
     /**
+     * @brief Calls the method of the Data ability.
+     *
+     * @param uri Indicates the Data ability of the method to call.
+     * @param method Indicates the method to call.
+     * @param arg Indicates the parameter of the String type.
+     * @param pacMap Defines a PacMap object for storing a series of values.
+     *
+     * @return Returns the call result.
+     */
+    virtual std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap) = 0;
+
+    /**
      * @brief Deletes one or more data records from the database.
      *
      * @param uri Indicates the path of data to query.
@@ -228,7 +241,6 @@ public:
      */
     virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) = 0;
 
-#ifdef SUPPORT_GRAPHICS
     virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) = 0;
 
     /**
@@ -237,7 +249,6 @@ public:
      * @param flag true: Indicates this ability is top active ability
      */
     virtual void NotifyTopActiveAbilityChanged(bool flag) = 0;
-#endif
 
     /**
      * @brief Notifies the registered observers of a change to the data resource specified by Uri.
@@ -375,7 +386,9 @@ public:
         DUMP_ABILITY_RUNNER_INNER,
 
         // block ability runner
-        BLOCK_ABILITY_INNER
+        BLOCK_ABILITY_INNER,
+
+        SCHEDULE_CALL
     };
 };
 }  // namespace AAFwk

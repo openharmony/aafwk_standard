@@ -38,12 +38,12 @@ WorkerPool::WorkerPool(const std::shared_ptr<WorkerPoolConfig> &config)
     WorkerPool::factory_ = std::make_shared<DefaultThreadFactory>();
     initFlag_.store(Init(config));
     stop_.store(false);
+    guardNotify_.store(false);
 }
 
 WorkerPool::~WorkerPool()
 {
     control_ = 0;
-
     HILOG_INFO("WorkerPool::~WorkerPool");
 }
 
@@ -74,7 +74,7 @@ bool WorkerPool::CheckConfigParams(const std::shared_ptr<WorkerPoolConfig> &conf
 
     if (!CheckThreadCount(maxThreadCount, coreThreadCount)) {
         HILOG_ERROR("WorkerPool::CheckConfigParams parameters are illegal, maxThreadCount %{public}d is less than "
-                 "coreThreadCount %{public}d",
+            "coreThreadCount %{public}d",
             maxThreadCount,
             coreThreadCount);
         return false;
@@ -167,7 +167,9 @@ void WorkerPool::InterruptWorkers(void)
 
     {
         std::unique_lock<std::mutex> lock(exitPoolLock_);
-        exitGuard_.wait(lock);
+        exitGuard_.wait(lock, [this] {
+            return this->guardNotify_.load();
+        });
         if (guardThread_->joinable()) {
             HILOG_INFO("WorkerPool::InterruptWorkers guardThread_ joinable");
             guardThread_->join();
@@ -200,6 +202,7 @@ void WorkerPool::CreateGuardThread()
                 }
             }
             if (stop_.load() && exitPool_.empty() && pool_.empty()) {
+                guardNotify_.store(true);
                 exitGuard_.notify_all();
                 HILOG_INFO("WorkerPool::CreateGuardThread break while");
                 break;
@@ -243,7 +246,7 @@ bool WorkerPool::AddWorker(const std::shared_ptr<Delegate> &delegate, const std:
         }
         if (!IsRunning(value)) {
             HILOG_INFO("WorkerPool::AddWorker thread pool is not running. value=%{public}d, closing=%{public}d, "
-                     "count_bits=%{public}d",
+                "count_bits=%{public}d",
                 value,
                 CLOSING,
                 COUNT_BITS);
@@ -256,7 +259,6 @@ bool WorkerPool::AddWorker(const std::shared_ptr<Delegate> &delegate, const std:
                 HILOG_ERROR("WorkerPool::AddWorker create thread fail");
                 break;
             }
-
             newThread->CreateThread();
 
             HILOG_INFO("WorkerPool::AddWorker create new thread");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,10 +38,6 @@ std::shared_ptr<RenderRecord> RenderRecord::CreateRenderRecord(pid_t hostPid, co
     }
 
     auto renderRecord = std::make_shared<RenderRecord>(hostPid, renderParam, ipcFd, sharedFd, host);
-    if (!renderRecord) {
-        HILOG_ERROR("create render record failed, hostPid:%{public}d.", hostPid);
-        return nullptr;
-    }
 
     return renderRecord;
 }
@@ -614,7 +610,6 @@ std::shared_ptr<AbilityRunningRecord> AppRunningRecord::GetAbilityRunningRecordB
 {
     auto moduleRecord = GetModuleRunningRecordByToken(token);
     if (!moduleRecord) {
-        HILOG_ERROR("moduleRecord is not exit");
         return nullptr;
     }
     return moduleRecord->GetAbilityRunningRecordByToken(token);
@@ -625,7 +620,6 @@ std::shared_ptr<AbilityRunningRecord> AppRunningRecord::GetAbilityByTerminateLis
 {
     auto moduleRecord = GetModuleRunningRecordByTerminateLists(token);
     if (!moduleRecord) {
-        HILOG_ERROR("moduleRecord is not exit");
         return nullptr;
     }
     return moduleRecord->GetAbilityByTerminateLists(token);
@@ -755,10 +749,10 @@ void AppRunningRecord::TerminateAbility(const sptr<IRemoteObject> &token, const 
 
 void AppRunningRecord::AbilityTerminated(const sptr<IRemoteObject> &token)
 {
-    HILOG_INFO("Ability terminated.");
+    HILOG_INFO("AbilityTerminated come.");
     auto moduleRecord = GetModuleRunningRecordByTerminateLists(token);
     if (!moduleRecord) {
-        HILOG_ERROR("Can not find module record");
+        HILOG_ERROR("AbilityTerminated error, can not find module record");
         return;
     }
     moduleRecord->AbilityTerminated(token);
@@ -1061,6 +1055,16 @@ void AppRunningRecord::SetDebugApp(bool isDebugApp)
 {
     HILOG_INFO("SetDebugApp come, value is %{public}d", isDebugApp);
     isDebugApp_ = isDebugApp;
+}
+
+void AppRunningRecord::SetKilling()
+{
+    isKilling_ = true;
+}
+
+bool AppRunningRecord::IsKilling() const
+{
+    return isKilling_;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

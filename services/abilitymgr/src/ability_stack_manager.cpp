@@ -52,8 +52,10 @@ void AbilityStackManager::Init()
 
     resumeMissionContainer_ = std::make_shared<ResumeMissionContainer>(
         DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler());
+#ifdef SUPPORT_GRAPHICS
     screenshotHandler_ = std::make_shared<ScreenshotHandler>();
     powerStorage_ = std::make_shared<PowerStorage>();
+#endif
     if (!SubscribeEvent()) {
         HILOG_ERROR("SubscribeEvent Error.");
     }
@@ -273,10 +275,10 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
     CHECK_POINTER_AND_RETURN(topFullStack, ERR_INVALID_DATA);
     auto topFullAbility = topFullStack->GetTopAbilityRecord();
     CHECK_POINTER_AND_RETURN(topFullAbility, ERR_INVALID_DATA);
-
+#ifdef SUPPORT_GRAPHICS
     CHECK_RET_RETURN_RET(CheckMultiWindowCondition(currentTopAbility, topFullAbility, abilityRequest),
         "Check multiwindow condition is failed.");
-
+#endif
     // 1. choose target mission stack
     auto targetStack = GetTargetMissionStack(abilityRequest);
     CHECK_POINTER_AND_RETURN(targetStack, CREATE_MISSION_STACK_FAILED);
@@ -1301,6 +1303,7 @@ int AbilityStackManager::DispatchTerminate(const std::shared_ptr<AbilityRecord> 
 
 void AbilityStackManager::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
 {
+#ifdef SUPPORT_GRAPHICS
     HILOG_DEBUG("Add window id.");
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
     // create WindowInfo and add to its AbilityRecord
@@ -1325,6 +1328,7 @@ void AbilityStackManager::AddWindowInfo(const sptr<IRemoteObject> &token, int32_
         windowTokenToAbilityMap_[windowToken] = abilityRecord;
         HILOG_INFO("Add windowInfo complete, ability:%{public}s", abilityRecord->GetAbilityInfo().name.c_str());
     }
+#endif
 }
 
 void AbilityStackManager::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state)
@@ -1764,11 +1768,13 @@ void AbilityStackManager::CompleteTerminate(const std::shared_ptr<AbilityRecord>
         // Don't return here
         HILOG_ERROR("AppMS fail to terminate ability.");
     }
+#ifdef SUPPORT_GRAPHICS
     // destroy abilityRecord
     auto windowInfo = abilityRecord->GetWindowInfo();
     if (windowInfo != nullptr) {
         windowTokenToAbilityMap_.erase(windowInfo->windowToken_);
     }
+#endif
 
     if (abilityRecord->IsRestarting()) {
         abilityRecord->SetAbilityState(AbilityState::INITIAL);
@@ -3067,7 +3073,7 @@ int AbilityStackManager::GenerateMissinOptionsOfSplitScreen(
             missionOptions.push_front(optionSecondary);
             HILOG_DEBUG("splitscreen stack will add two missions together.");
         } else {
-            HILOG_DEBUG("splitscreen stack will emplace mission： winmode：%{public}d", primary.winModeKey);
+            HILOG_DEBUG("splitscreen stack will emplace mission, winmode: %{public}d", primary.winModeKey);
         }
     }
     return ERR_OK;
@@ -3080,10 +3086,10 @@ int AbilityStackManager::MoveMissionsToStackLocked(const std::list<MissionOption
 #else
     HILOG_DEBUG("Request mission option size :%{public}lu", missionOptions.size());
 #endif
-
+#ifdef SUPPORT_GRAPHICS
     // check condition whether can enter or exit multiwindow mode.
     CHECK_RET_RETURN_RET(CheckMultiWindowCondition(missionOptions), "check multiwindow condition is failed.");
-
+#endif
     // complete mission stack moving and notify ability window mode has changed.
     auto lastTopAbility = GetCurrentTopAbility();
     isMultiWinMoving_ = true;
@@ -3328,6 +3334,7 @@ SystemWindowMode AbilityStackManager::GetLatestSystemWindowMode()
     }
 }
 
+#ifdef SUPPORT_GRAPHICS
 int AbilityStackManager::CheckMultiWindowCondition(const std::list<MissionOption> &missionOptions) const
 {
     HILOG_DEBUG("Check multi window condition.");
@@ -3430,6 +3437,7 @@ int AbilityStackManager::CheckMultiWindowCondition(const std::shared_ptr<Ability
 
     return ERR_OK;
 }
+#endif
 
 bool AbilityStackManager::CheckSplitSrceenCondition(
     const AbilityRequest &abilityRequest, const std::shared_ptr<AbilityRecord> &topFullAbility) const
@@ -3850,18 +3858,6 @@ int AbilityStackManager::PowerOnLocked()
         }
         storageInActiveAbility->ProcessActivate();
     }
-    return ERR_OK;
-}
-
-int AbilityStackManager::SetShowOnLockScreen(const std::string &bundleName, bool isAllow)
-{
-    HILOG_INFO("SetShowOnLockScreen");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    return SetShowOnLockScreenLocked(bundleName, isAllow);
-}
-
-int AbilityStackManager::SetShowOnLockScreenLocked(const std::string &bundleName, bool isAllow)
-{
     return ERR_OK;
 }
 
@@ -4367,6 +4363,7 @@ void AbilityStackManager::CheckMissionRecordIsResume(const std::shared_ptr<Missi
 
 int AbilityStackManager::GetMissionSnapshot(int32_t missionId, MissionPixelMap &missionPixelMap)
 {
+#ifdef SUPPORT_GRAPHICS
     HILOG_INFO("Get mission snapshot.");
 
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
@@ -4398,6 +4395,7 @@ int AbilityStackManager::GetMissionSnapshot(int32_t missionId, MissionPixelMap &
     missionPixelMap.imageInfo.format = imageInfo.format;
     missionPixelMap.imageInfo.size = imageInfo.size;
     missionPixelMap.imageInfo.shmKey = SharedMemory::PushSharedMemory(imageInfo.data, imageInfo.size);
+#endif
     return ERR_OK;
 }
 

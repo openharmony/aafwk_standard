@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,6 +51,7 @@ private:
     int UpdatetInner(MessageParcel &data, MessageParcel &reply);
     int DeleteInner(MessageParcel &data, MessageParcel &reply);
     int QueryInner(MessageParcel &data, MessageParcel &reply);
+    int CallInner(MessageParcel &data, MessageParcel &reply);
     int GetTypeInner(MessageParcel &data, MessageParcel &reply);
     int ReloadInner(MessageParcel &data, MessageParcel &reply);
     int BatchInsertInner(MessageParcel &data, MessageParcel &reply);
@@ -61,10 +62,8 @@ private:
     int DenormalizeUriInner(MessageParcel &data, MessageParcel &reply);
     int UpdateConfigurationInner(MessageParcel &data, MessageParcel &reply);
     int ExecuteBatchInner(MessageParcel &data, MessageParcel &reply);
-#ifdef SUPPORT_GRAPHICS
     int MutiWinModeChangedInner(MessageParcel &data, MessageParcel &reply);
     int TopActiveAbilityChangedInner(MessageParcel &data, MessageParcel &reply);
-#endif
     int NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply);
     int DumpAbilityInfoInner(MessageParcel& data, MessageParcel& reply);
     int CallRequestInner(MessageParcel &data, MessageParcel &reply);

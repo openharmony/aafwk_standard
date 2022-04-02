@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -76,7 +76,13 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
         int userId = want.GetIntParam(KEY_USER_ID, 0);
         HandleProviderUpdated(bundleName, userId);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED) {
-        int uid = want.GetIntParam(KEY_UID, 0);
+        int userId = want.GetIntParam(KEY_USER_ID, 0);
+        sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+        if (iBundleMgr == nullptr) {
+            HILOG_ERROR("%{public}s error, failed to get IBundleMgr.", __func__);
+            return;
+        }
+        int uid = IN_PROCESS_CALL(iBundleMgr->GetUidByBundleName(bundleName, userId));
         HandleBundleDataCleared(bundleName, uid);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_UID_REMOVED) {
         int32_t userId = want.GetIntParam(KEY_USER_ID, -1);
@@ -127,8 +133,11 @@ void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, 
         }
 
         HILOG_INFO("%{public}s, no such form anymore, delete it:%{public}s", __func__, formRecord.formName.c_str());
-        (!formRecord.formTempFlg) ? FormDbCache::GetInstance().DeleteFormInfo(formId) :
+        if (formRecord.formTempFlg) {
             FormDataMgr::GetInstance().DeleteTempForm(formId);
+        } else {
+            FormDbCache::GetInstance().DeleteFormInfo(formId);
+        }
         removedForms.emplace_back(formId);
         FormDataMgr::GetInstance().DeleteFormRecord(formId);
     }
@@ -430,7 +439,7 @@ void FormSysEventReceiver::GetTimerCfg(const bool updateEnabled,
         hour = std::stoi(temp[0]);
         min = std::stoi(temp[1]);
         if (hour < Constants::MIN_TIME || hour > Constants::MAX_HOUR || min < Constants::MIN_TIME || min >
-            Constants::MAX_MININUTE) {
+            Constants::MAX_MINUTE) {
             HILOG_ERROR("%{public}s, time is invalid", __func__);
             return;
         }

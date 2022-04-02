@@ -78,7 +78,7 @@ void AbilityStackModuleTest::OnStartabilityMs(std::shared_ptr<AbilityManagerServ
         abilityMs->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(abilityMs->eventLoop_);
         abilityMs->handler_ = std::make_shared<AbilityEventHandler>(abilityMs->eventLoop_, abilityMs);
-        abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         abilityMs->connectManagers_.emplace(0, abilityMs->connectManager_);
         EXPECT_TRUE(abilityMs->handler_);
         EXPECT_TRUE(abilityMs->connectManager_);
@@ -94,9 +94,6 @@ void AbilityStackModuleTest::OnStartabilityMs(std::shared_ptr<AbilityManagerServ
         abilityMs->currentMissionListManager_->Init();
         abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs->pendingWantManager_);
-        int userId = abilityMs->GetUserId();
-        abilityMs->SetStackManager(userId, true);
-        abilityMs->stackManagers_.emplace(0, abilityMs->GetStackManager());
         abilityMs->eventLoop_->Run();
         return;
     }
@@ -144,7 +141,6 @@ void AbilityStackModuleTest::TearDown(void)
 {
     GTEST_LOG_(INFO) << "TearDown start";
     auto ams = DelayedSingleton<AbilityManagerService>::GetInstance();
-    ams->stackManagers_.clear();
     ams->currentStackManager_ = nullptr;
     stackManager_ = nullptr;
     ams->OnStop();
@@ -268,6 +264,7 @@ ApplicationInfo AbilityStackModuleTest::CreateAppInfo(const std::string &appName
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_getMissionSnapshot_001, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     WindowManagerServiceMock *mockWindowManager = new WindowManagerServiceMock();
     // set mock
@@ -303,6 +300,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_getMissionSnapshot_001, Test
     EXPECT_TRUE(missionPixelMap.imageInfo.height== 3);
     EXPECT_TRUE(missionPixelMap.imageInfo.format == 10);
     EXPECT_TRUE(ERR_OK == ret);
+#endif
 }
 
 /*
@@ -721,6 +719,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_008, TestSize.Level1)
  */
 HWTEST_F(AbilityStackModuleTest, ability_stack_test_009, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_009 start";
 
     std::string abilityName = "ability_name";
@@ -743,6 +742,7 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_009, TestSize.Level1)
     EXPECT_TRUE(abilityRecord->GetWindowInfo() != nullptr);
 
     GTEST_LOG_(INFO) << "AbilityStackModuleTest ability_stack_test_009 end";
+#endif
 }
 
 /*
@@ -2190,10 +2190,8 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_044, TestSize.Level1)
     EXPECT_CALL(*scheduler, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecord->SetScheduler(scheduler);
 
-#ifdef SUPPORT_GRAPHICS
     EXPECT_CALL(*scheduler, NotifyMultiWinModeChanged(testing::_, testing::_)).Times(1);
     EXPECT_CALL(*scheduler, NotifyTopActiveAbilityChanged(testing::_)).Times(2);
-#endif
 
     EXPECT_EQ(topAbilityRecord->GetMissionStackId(), FLOATING_MISSION_STACK_ID);
 
@@ -2310,13 +2308,11 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_046, TestSize.Level1)
     EXPECT_CALL(*schedulerluncher, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecordlauncher->SetScheduler(schedulerluncher);
 
-#ifdef SUPPORT_GRAPHICS
     auto getFocusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
 
     EXPECT_CALL(*schedulerluncher, NotifyTopActiveAbilityChanged(testing::_))
         .Times(testing::AtLeast(1))
         .WillOnce(testing::Invoke(getFocusChangeFlag));
-#endif
 
     EXPECT_FALSE(musicAbilityRecord->IsToEnd());
 
@@ -2362,7 +2358,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_047, TestSize.Level1)
     EXPECT_CALL(*schedulerluncher, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecordLuncher->SetScheduler(schedulerluncher);
 
-#ifdef SUPPORT_GRAPHICS
     auto getFocusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
     auto loseFocusChangeFlag = [](bool flag) { EXPECT_FALSE(flag); };
 
@@ -2378,7 +2373,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_047, TestSize.Level1)
     EXPECT_CALL(*scheduler, NotifyTopActiveAbilityChanged(testing::_))
         .Times(testing::AtLeast(1))
         .WillOnce(testing::Invoke(loseFocusChangeFlag));
-#endif
 
     // make sure both are active
     topAbilityRecordLuncher->SetAbilityState(OHOS::AAFwk::ACTIVE);
@@ -2436,13 +2430,11 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_048, TestSize.Level1)
     EXPECT_CALL(*schedulerMusic, AsObject()).WillRepeatedly(Return(nullptr));
     musicAbilityRecord->SetScheduler(schedulerMusic);
 
-#ifdef SUPPORT_GRAPHICS
     auto loseFocusChangeFlag = [](bool flag) { EXPECT_FALSE(flag); };
 
     EXPECT_CALL(*schedulerMusic, NotifyTopActiveAbilityChanged(testing::_))
         .Times(testing::AtLeast(1))
         .WillOnce(testing::Invoke(loseFocusChangeFlag));
-#endif
 
     // set RadioAbility scheduler
     OHOS::sptr<MockAbilityScheduler> scheduler(new MockAbilityScheduler());
@@ -2493,7 +2485,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_049, TestSize.Level1)
     EXPECT_CALL(*schedulerluncher, AsObject()).WillRepeatedly(Return(nullptr));
     topAbilityRecordLuncher->SetScheduler(schedulerluncher);
 
-#ifdef SUPPORT_GRAPHICS
     auto getFocusChangeFlag = [](bool flag) { EXPECT_TRUE(flag); };
     auto loseFocusChangeFlag = [](bool flag) { EXPECT_FALSE(flag); };
 
@@ -2511,7 +2502,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_049, TestSize.Level1)
         .Times(testing::AtLeast(1))
         .WillOnce(testing::Invoke(loseFocusChangeFlag))
         .WillOnce(testing::Invoke(getFocusChangeFlag));
-#endif
 
     // make sure both are active
     topAbilityRecordLuncher->SetAbilityState(OHOS::AAFwk::ACTIVE);
@@ -3853,84 +3843,6 @@ HWTEST_F(AbilityStackModuleTest, ability_stack_test_076, TestSize.Level1)
     auto mission1 = abilityRecordMusic->GetMissionRecord();
     auto stack1 = mission->GetMissionStack()->GetMissionStackId();
     EXPECT_TRUE(stackManager_->IsSplitScreenStack(stack1));
-}
-
-/*
- * Feature: AaFwk
- * Function:DeleteMissionRecordInStackOnLockScreen
- * SubFunction: DeleteMissionRecordInStackOnLockScreen
- * FunctionPoints:
- * EnvConditions: NA
- * CaseDescription: delete mission record in stack on lock screen.
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_079, TestSize.Level1)
-{
-    stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
-    stackManager_->SetShowOnLockScreen("com.ix.hiRadio", false);
-    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
-    auto ref = stackManager_->StartAbility(radioAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(topAbilityRecordRadio);
-    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    auto callerToken = topAbilityRecordRadio->GetToken();
-    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    EXPECT_TRUE(handler);
-    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
-
-    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
-    ref = stackManager_->StartAbility(musicAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto abilityRecordMusic = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityRecordMusic);
-    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    callerToken = abilityRecordMusic->GetToken();
-    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecordMusic->GetEventId());
-    auto mission = abilityRecordMusic->GetMissionRecord();
-    EXPECT_TRUE(mission);
-    EXPECT_FALSE(stackManager_->DeleteMissionRecordInStackOnLockScreen(mission));
-}
-
-/*
- * Feature: AaFwk
- * Function:DeleteMissionRecordInStackOnLockScreen
- * SubFunction: DeleteMissionRecordInStackOnLockScreen
- * FunctionPoints:
- * EnvConditions: NA
- * CaseDescription: delete mission record in stack on lock screen.
- */
-HWTEST_F(AbilityStackModuleTest, ability_stack_test_080, TestSize.Level1)
-{
-    stackManager_->SetShowOnLockScreen("com.ix.hiMusic", true);
-    stackManager_->SetShowOnLockScreen("com.ix.hiRadio", true);
-    auto radioAbilityRequest = GenerateAbilityRequest("device", "RadioAbility", "radio", "com.ix.hiRadio");
-    auto ref = stackManager_->StartAbility(radioAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto topAbilityRecordRadio = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(topAbilityRecordRadio);
-    topAbilityRecordRadio->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    auto callerToken = topAbilityRecordRadio->GetToken();
-    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    EXPECT_TRUE(handler);
-    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, topAbilityRecordRadio->GetEventId());
-
-    auto musicAbilityRequest = GenerateAbilityRequest("device", "MusicAbility", "music", "com.ix.hiMusic");
-    ref = stackManager_->StartAbility(musicAbilityRequest);
-    EXPECT_EQ(ERR_OK, ref);
-    auto abilityRecordMusic = stackManager_->GetCurrentTopAbility();
-    EXPECT_TRUE(abilityRecordMusic);
-    abilityRecordMusic->SetAbilityState(OHOS::AAFwk::ACTIVE);
-    callerToken = abilityRecordMusic->GetToken();
-    handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecordMusic->GetEventId());
-    auto mission = abilityRecordMusic->GetMissionRecord();
-    auto stack = mission->GetMissionStack();
-    EXPECT_TRUE(mission);
-    EXPECT_TRUE(stack);
-    EXPECT_TRUE(stackManager_->DeleteMissionRecordInStackOnLockScreen(mission));
-    EXPECT_TRUE(topAbilityRecordRadio->GetLockScreenState());
-    EXPECT_FALSE(abilityRecordMusic->GetLockScreenState());
-    EXPECT_FALSE(stack->IsTopMissionRecord(mission));
-    EXPECT_TRUE(stack->GetMissionRecordCount() == 0);
 }
 }  // namespace AAFwk
 }  // namespace OHOS

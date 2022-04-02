@@ -27,6 +27,7 @@ TaskExecutor::TaskExecutor(const std::shared_ptr<WorkerPoolConfig> &config) : Wo
     delayTasks_ = std::make_shared<DelayQueue>();
     pendingTasks_ = std::make_shared<BlockingQueue>();
 }
+
 TaskExecutor::~TaskExecutor()
 {
     if ((consumer_) && consumer_->joinable()) {
@@ -70,7 +71,6 @@ ErrCode TaskExecutor::DoWorks(const std::shared_ptr<WorkerThread> &worker)
     bool done = false;
     while (((task != nullptr && done == false) || ((task = GetTask(worker)) != nullptr))) {
         HILOG_INFO("TaskExecutor::DoWorks loop tasks.");
-
         if (task) {
             BeforeRun(task);
             task->Run();
@@ -87,6 +87,7 @@ ErrCode TaskExecutor::DoWorks(const std::shared_ptr<WorkerThread> &worker)
     HILOG_INFO("TaskExecutor::DoWorks end");
     return ERR_OK;
 }
+
 std::shared_ptr<Task> TaskExecutor::GetTask(const std::shared_ptr<WorkerThread> &workerThread)
 {
     bool isTimeout = false;
@@ -120,7 +121,7 @@ std::shared_ptr<Task> TaskExecutor::GetTask(const std::shared_ptr<WorkerThread> 
         std::shared_ptr<PriorityTaskWrapper> next =
             needCheckTimeout ? pendingTasks_->Poll(GetKeepAliveTime()) : pendingTasks_->Take();
 
-        if (next != nullptr && next->task_ != nullptr) {
+        if ((next != nullptr) && (next->task_ != nullptr)) {
             HILOG_INFO("TaskExecutor::GetTask end: loop thread %{public}s get next task",
                 workerThread->GetThreadName().c_str());
             return next->task_;
@@ -205,7 +206,7 @@ void TaskExecutor::Consume()
     for (;;) {
         if (terminated_.load() && delayTasks_->Empty()) {
             HILOG_INFO("TaskExecutor::Consume delay task is empty");
-            break;
+            return;
         }
         std::shared_ptr<DelayTaskWrapper> delayTaskWrapper = delayTasks_->Take();
         if (delayTaskWrapper == nullptr || delayTaskWrapper->runnable_ == nullptr) {

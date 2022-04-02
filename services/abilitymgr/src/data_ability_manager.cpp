@@ -67,8 +67,7 @@ sptr<IAbilityScheduler> DataAbilityManager::Acquire(
             return nullptr;
         }
         HILOG_INFO("Ability '%{public}s' acquiring data ability '%{public}s'...",
-            clientAbilityRecord->GetAbilityInfo().name.c_str(),
-            dataAbilityName.c_str());
+            clientAbilityRecord->GetAbilityInfo().name.c_str(), dataAbilityName.c_str());
     } else {
         HILOG_INFO("Loading data ability '%{public}s'...", dataAbilityName.c_str());
     }
@@ -85,13 +84,14 @@ sptr<IAbilityScheduler> DataAbilityManager::Acquire(
     if (it == dataAbilityRecordsLoaded_.end()) {
         HILOG_DEBUG("Acquiring data ability is not existed, loading...");
         dataAbilityRecord = LoadLocked(dataAbilityName, abilityRequest);
-        if (!dataAbilityRecord) {
-            HILOG_ERROR("Failed to load data ability '%{public}s'.", dataAbilityName.c_str());
-            return nullptr;
-        }
     } else {
         HILOG_DEBUG("Acquiring data ability is existed .");
         dataAbilityRecord = it->second;
+    }
+
+    if (!dataAbilityRecord) {
+        HILOG_ERROR("Failed to load data ability '%{public}s'.", dataAbilityName.c_str());
+        return nullptr;
     }
 
     auto scheduler = dataAbilityRecord->GetScheduler();
@@ -131,13 +131,13 @@ int DataAbilityManager::Release(
         DumpLocked(__func__, __LINE__);
     }
 
-    DataAbilityRecordPtrMap::iterator it;
     DataAbilityRecordPtr dataAbilityRecord;
 
-    for (it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
+    for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
         if (it->second && it->second->GetScheduler() &&
             it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
             dataAbilityRecord = it->second;
+            HILOG_INFO("Releasing data ability '%{public}s'...", it->first.c_str());
             break;
         }
     }
@@ -160,7 +160,6 @@ int DataAbilityManager::Release(
         return ERR_UNKNOWN_OBJECT;
     }
 
-    HILOG_INFO("Releasing data ability '%{public}s'...", it->first.c_str());
     dataAbilityRecord->RemoveClient(client, isSystem);
 
     if (DEBUG_ENABLED) {
@@ -177,10 +176,9 @@ bool DataAbilityManager::ContainsDataAbility(const sptr<IAbilityScheduler> &sche
     CHECK_POINTER_AND_RETURN(scheduler, ERR_NULL_OBJECT);
 
     std::lock_guard<std::mutex> locker(mutex_);
-
-    DataAbilityRecordPtrMap::iterator it;
-    for (it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
-        if (it->second->GetScheduler() != nullptr && it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
+    for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
+        if (it->second && it->second->GetScheduler() &&
+            it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
             return true;
         }
     }
@@ -203,15 +201,16 @@ int DataAbilityManager::AttachAbilityThread(const sptr<IAbilityScheduler> &sched
 
     HILOG_INFO("Attaching data ability...");
 
-    DataAbilityRecordPtrMap::iterator it = dataAbilityRecordsLoading_.begin();
-    DataAbilityRecordPtr dataAbilityRecord;
     auto record = Token::GetAbilityRecordByToken(token);
     std::string abilityName = "";
     if (record != nullptr) {
         abilityName = record->GetAbilityInfo().name;
     }
-    for (it = dataAbilityRecordsLoading_.begin(); it != dataAbilityRecordsLoading_.end(); ++it) {
-        if (it->second->GetToken() == token) {
+
+    DataAbilityRecordPtr dataAbilityRecord;
+    auto it = dataAbilityRecordsLoading_.begin();
+    for (; it != dataAbilityRecordsLoading_.end(); ++it) {
+        if (it->second && it->second->GetToken() == token) {
             dataAbilityRecord = it->second;
             break;
         }
@@ -259,7 +258,7 @@ int DataAbilityManager::AbilityTransitionDone(const sptr<IRemoteObject> &token, 
         abilityName = record->GetAbilityInfo().name;
     }
     for (it = dataAbilityRecordsLoading_.begin(); it != dataAbilityRecordsLoading_.end(); ++it) {
-        if (it->second->GetToken() == token) {
+        if (it->second && it->second->GetToken() == token) {
             dataAbilityRecord = it->second;
             break;
         }
@@ -295,12 +294,14 @@ void DataAbilityManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &abi
         }
         if (abilityRecord->GetAbilityInfo().type == AppExecFwk::AbilityType::DATA) {
             // If 'abilityRecord' is a data ability server, trying to remove it from 'dataAbilityRecords_'.
-            for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
-                if (it->second->GetAbilityRecord() == abilityRecord) {
+            for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end();) {
+                if (it->second && it->second->GetAbilityRecord() == abilityRecord) {
                     it->second->KillBoundClientProcesses();
                     HILOG_DEBUG("Removing died data ability record...");
-                    dataAbilityRecordsLoaded_.erase(it);
+                    it = dataAbilityRecordsLoaded_.erase(it);
                     break;
+                } else {
+                    ++it;
                 }
             }
         }
@@ -309,7 +310,9 @@ void DataAbilityManager::OnAbilityDied(const std::shared_ptr<AbilityRecord> &abi
         }
         // If 'abilityRecord' is a data ability client, tring to remove it from all servers.
         for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
-            it->second->RemoveClients(abilityRecord);
+            if (it->second) {
+                it->second->RemoveClients(abilityRecord);
+            }
         }
         if (DEBUG_ENABLED) {
             DumpLocked(__func__, __LINE__);
@@ -324,6 +327,9 @@ void DataAbilityManager::OnAppStateChanged(const AppInfo &info)
     std::lock_guard<std::mutex> locker(mutex_);
 
     for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
+        if (!it->second) {
+            continue;
+        }
         auto abilityRecord = it->second->GetAbilityRecord();
         if (abilityRecord && (info.processName == abilityRecord->GetAbilityInfo().process ||
                                  info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
@@ -339,6 +345,9 @@ void DataAbilityManager::OnAppStateChanged(const AppInfo &info)
     }
 
     for (auto it = dataAbilityRecordsLoading_.begin(); it != dataAbilityRecordsLoading_.end(); ++it) {
+        if (!it->second) {
+            continue;
+        }
         auto abilityRecord = it->second->GetAbilityRecord();
         if (abilityRecord && (info.processName == abilityRecord->GetAbilityInfo().process ||
                                  info.processName == abilityRecord->GetApplicationInfo().bundleName)) {
@@ -361,6 +370,9 @@ std::shared_ptr<AbilityRecord> DataAbilityManager::GetAbilityRecordById(int64_t 
     std::lock_guard<std::mutex> locker(mutex_);
 
     for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
+        if (!it->second) {
+            continue;
+        }
         auto abilityRecord = it->second->GetAbilityRecord();
         if (abilityRecord->GetRecordId() == id) {
             return abilityRecord;
@@ -378,12 +390,18 @@ std::shared_ptr<AbilityRecord> DataAbilityManager::GetAbilityRecordByToken(const
 
     std::lock_guard<std::mutex> locker(mutex_);
     for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
+        if (!it->second) {
+            continue;
+        }
         auto abilityRecord = it->second->GetAbilityRecord();
         if (abilityRecord == Token::GetAbilityRecordByToken(token)) {
             return abilityRecord;
         }
     }
     for (auto it = dataAbilityRecordsLoading_.begin(); it != dataAbilityRecordsLoading_.end(); ++it) {
+        if (!it->second) {
+            continue;
+        }
         auto abilityRecord = it->second->GetAbilityRecord();
         if (abilityRecord == Token::GetAbilityRecordByToken(token)) {
             return abilityRecord;
@@ -401,7 +419,8 @@ std::shared_ptr<AbilityRecord> DataAbilityManager::GetAbilityRecordByScheduler(c
     std::lock_guard<std::mutex> locker(mutex_);
 
     for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
-        if (it->second->GetScheduler() != nullptr && it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
+        if (it->second && it->second->GetScheduler() &&
+            it->second->GetScheduler()->AsObject() == scheduler->AsObject()) {
             return it->second->GetAbilityRecord();
         }
     }
@@ -452,6 +471,11 @@ DataAbilityManager::DataAbilityRecordPtr DataAbilityManager::LoadLocked(
         dataAbilityRecord = it->second;
     }
 
+    if (!dataAbilityRecord) {
+        HILOG_ERROR("Failed to load data ability '%{public}s'.", name.c_str());
+        return nullptr;
+    }
+
     HILOG_INFO("Waiting for data ability loaded...");
 
     // Waiting for data ability loaded.
@@ -480,14 +504,18 @@ void DataAbilityManager::DumpLocked(const char *func, int line)
 
     for (auto it = dataAbilityRecordsLoaded_.begin(); it != dataAbilityRecordsLoaded_.end(); ++it) {
         HILOG_INFO("'%{public}s':", it->first.c_str());
-        it->second->Dump();
+        if (it->second) {
+            it->second->Dump();
+        }
     }
 
     HILOG_INFO("Loading data ability count: %{public}zu", dataAbilityRecordsLoading_.size());
 
     for (auto it = dataAbilityRecordsLoading_.begin(); it != dataAbilityRecordsLoading_.end(); ++it) {
         HILOG_INFO("'%{public}s':", it->first.c_str());
-        it->second->Dump();
+        if (it->second) {
+            it->second->Dump();
+        }
     }
 }
 
@@ -499,7 +527,9 @@ void DataAbilityManager::DumpState(std::vector<std::string> &info, const std::st
             [&args](const auto &dataAbilityRecord) { return dataAbilityRecord.first.compare(args) == 0; });
         if (it != dataAbilityRecordsLoaded_.end()) {
             info.emplace_back("AbilityName [ " + it->first + " ]");
-            it->second->Dump(info);
+            if (it->second) {
+                it->second->Dump(info);
+            }
         } else {
             info.emplace_back(args + ": Nothing to dump.");
         }
@@ -507,10 +537,11 @@ void DataAbilityManager::DumpState(std::vector<std::string> &info, const std::st
         info.emplace_back("dataAbilityRecords:");
         for (auto &&dataAbilityRecord : dataAbilityRecordsLoaded_) {
             info.emplace_back("  uri [" + dataAbilityRecord.first + "]");
-            dataAbilityRecord.second->Dump(info);
+            if (dataAbilityRecord.second) {
+                dataAbilityRecord.second->Dump(info);
+            }
         }
     }
-    return;
 }
 
 void DataAbilityManager::DumpSysState(std::vector<std::string> &info, bool isClient, const std::string &args) const
@@ -521,9 +552,12 @@ void DataAbilityManager::DumpSysState(std::vector<std::string> &info, bool isCli
             [&args](const auto &dataAbilityRecord) { return dataAbilityRecord.first.compare(args) == 0; });
         if (it != dataAbilityRecordsLoaded_.end()) {
             info.emplace_back("AbilityName [ " + it->first + " ]");
-            it->second->Dump(info);
+            if (it->second) {
+                it->second->Dump(info);
+            }
             // add dump client info
-            if (isClient && it->second->GetScheduler() && it->second->GetAbilityRecord()->IsReady()) {
+            if (isClient && it->second && it->second->GetScheduler() &&
+                it->second->GetAbilityRecord() && it->second->GetAbilityRecord()->IsReady()) {
                 std::vector<std::string> params;
                 it->second->GetScheduler()->DumpAbilityInfo(params, info);
                 AppExecFwk::Configuration config;
@@ -538,11 +572,14 @@ void DataAbilityManager::DumpSysState(std::vector<std::string> &info, bool isCli
         info.emplace_back("  dataAbilityRecords:");
         for (auto &&dataAbilityRecord : dataAbilityRecordsLoaded_) {
             info.emplace_back("    uri [" + dataAbilityRecord.first + "]");
-            dataAbilityRecord.second->Dump(info);
-            dataAbilityRecord.second->GetScheduler();
+            if (dataAbilityRecord.second) {
+                dataAbilityRecord.second->Dump(info);
+                dataAbilityRecord.second->GetScheduler();
+            }
             // add dump client info
-            if (isClient && dataAbilityRecord.second->GetScheduler()
-                && dataAbilityRecord.second->GetAbilityRecord()->IsReady()) {
+            if (isClient && dataAbilityRecord.second && dataAbilityRecord.second->GetScheduler() &&
+                dataAbilityRecord.second->GetAbilityRecord() &&
+                dataAbilityRecord.second->GetAbilityRecord()->IsReady()) {
                 std::vector<std::string> params;
                 dataAbilityRecord.second->GetScheduler()->DumpAbilityInfo(params, info);
                 AppExecFwk::Configuration config;

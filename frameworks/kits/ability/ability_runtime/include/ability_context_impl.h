@@ -36,7 +36,7 @@ public:
     bool IsUpdatingConfigurations() override;
     bool PrintDrawnCompleted() override;
     std::string GetDatabaseDir() override;
-    std::string GetStorageDir() override;
+    std::string GetPreferencesDir() override;
     std::string GetDistributedFilesDir() override;
     void SwitchArea(int mode) override;
     std::string GetBundleName() const override;

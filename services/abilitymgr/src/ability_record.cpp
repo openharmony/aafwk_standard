@@ -171,7 +171,7 @@ int AbilityRecord::LoadAbility()
         return ERR_INVALID_VALUE;
     }
 
-    if (isLauncherRoot_ && isRestarting_ && IsLauncherAbility() && (restartCount_ <= 0)) {
+    if (!CanRestartRootLauncher()) {
         HILOG_ERROR("Root launcher restart is out of max count.");
         return ERR_INVALID_VALUE;
     }
@@ -192,6 +192,15 @@ int AbilityRecord::LoadAbility()
     }
     return DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
         token_, callerToken_, abilityInfo_, applicationInfo_, want_);
+}
+
+bool AbilityRecord::CanRestartRootLauncher()
+{
+    if (isLauncherRoot_ && isRestarting_ && IsLauncherAbility() && (restartCount_ <= 0)) {
+        HILOG_ERROR("Root launcher restart is out of max count.");
+        return false;
+    }
+    return true;
 }
 
 void AbilityRecord::ForegroundAbility(uint32_t sceneFlag)
@@ -274,7 +283,6 @@ int AbilityRecord::TerminateAbility()
     return DelayedSingleton<AppScheduler>::GetInstance()->TerminateAbility(token_);
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityRecord::SetMissionRecord(const std::shared_ptr<MissionRecord> &missionRecord)
 {
     missionRecord_ = missionRecord;
@@ -305,7 +313,6 @@ int AbilityRecord::GetMissionRecordId() const
     }
     return DEFAULT_INVAL_VALUE;
 }
-#endif
 
 const AppExecFwk::AbilityInfo &AbilityRecord::GetAbilityInfo() const
 {
@@ -663,14 +670,12 @@ void AbilityRecord::RestoreAbilityState()
     isRestarting_ = false;
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityRecord::TopActiveAbilityChanged(bool flag)
 {
     HILOG_INFO("%{public}s called, isTop: %{public}d", __func__, flag);
     CHECK_POINTER(scheduler_);
     scheduler_->NotifyTopActiveAbilityChanged(flag);
 }
-#endif
 
 void AbilityRecord::SetWant(const Want &want)
 {
@@ -744,11 +749,11 @@ void AbilityRecord::AddConnectRecordToList(const std::shared_ptr<ConnectionRecor
     auto it = std::find(connRecordList_.begin(), connRecordList_.end(), connRecord);
     // found it
     if (it != connRecordList_.end()) {
-        HILOG_DEBUG("Found it in list, so no need to add same connection(%{public}p)", connRecord.get());
+        HILOG_DEBUG("Found it in list, so no need to add same connection");
         return;
     }
     // no found then add new connection to list
-    HILOG_DEBUG("No found in list, so add new connection(%{public}p) to list", connRecord.get());
+    HILOG_DEBUG("No found in list, so add new connection to list");
     connRecordList_.push_back(connRecord);
 }
 
@@ -804,7 +809,6 @@ std::shared_ptr<AbilityRecord> AbilityRecord::GetCallerRecord() const
     return callerList_.back()->GetCaller();
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityRecord::AddWindowInfo(int windowToken)
 {
     windowInfo_ = std::make_shared<WindowInfo>(windowToken);
@@ -815,17 +819,18 @@ void AbilityRecord::RemoveWindowInfo()
 {
     windowInfo_.reset();
 }
-#endif
 
 bool AbilityRecord::IsConnectListEmpty()
 {
     return connRecordList_.empty();
 }
 
+#ifdef SUPPORT_GRAPHICS
 std::shared_ptr<WindowInfo> AbilityRecord::GetWindowInfo() const
 {
     return windowInfo_;
 }
+#endif
 
 std::shared_ptr<ConnectionRecord> AbilityRecord::GetConnectingRecord() const
 {
@@ -1029,8 +1034,12 @@ void AbilityRecord::DumpService(std::vector<std::string> &info, bool isClient) c
     info.emplace_back("      bundle name [" + GetAbilityInfo().bundleName + "]");
     info.emplace_back("      ability type [SERVICE]");
     info.emplace_back("      app state #" + AbilityRecord::ConvertAppState(appState_));
-    info.emplace_back("      Connections: " + std::to_string(connRecordList_.size()));
 
+    if (isLauncherRoot_) {
+        info.emplace_back("      can restart num #" + std::to_string(restartCount_));
+    }
+
+    info.emplace_back("      Connections: " + std::to_string(connRecordList_.size()));
     for (auto &&conn : connRecordList_) {
         if (conn) {
             conn->Dump(info);
@@ -1092,7 +1101,6 @@ void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
         return;
     }
 
-    isReady_ = false;
     if (scheduler_ != nullptr && schedulerDeathRecipient_ != nullptr) {
         auto schedulerObject = scheduler_->AsObject();
         if (schedulerObject != nullptr) {
@@ -1258,11 +1266,28 @@ bool AbilityRecord::GetPowerState() const
 void AbilityRecord::SetRestarting(const bool isRestart)
 {
     isRestarting_ = isRestart;
+    HILOG_DEBUG("SetRestarting: %{public}d", isRestarting_);
 
     if (isLauncherRoot_ && IsLauncherAbility()) {
         restartCount_ = isRestart ? (--restartCount_) : restratMax_;
         HILOG_INFO("root launcher restart count: %{public}d", restartCount_);
     }
+}
+
+void AbilityRecord::SetRestarting(const bool isRestart, int32_t canReStartCount)
+{
+    isRestarting_ = isRestart;
+    HILOG_DEBUG("SetRestarting: %{public}d, restart count: %{public}d", isRestarting_, canReStartCount);
+
+    if (isLauncherRoot_ && IsLauncherAbility()) {
+        restartCount_ = isRestart ? canReStartCount : restratMax_;
+        HILOG_INFO("root launcher restart count: %{public}d", restartCount_);
+    }
+}
+
+int32_t AbilityRecord::GetRestartCount() const
+{
+    return restartCount_;
 }
 
 bool AbilityRecord::IsRestarting() const
@@ -1295,7 +1320,6 @@ void AbilityRecord::ClearFlag()
     appState_ = AppState::END;
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityRecord::SetLockScreenState(const bool isLock)
 {
     isLockScreenState_ = isLock;
@@ -1305,7 +1329,6 @@ bool AbilityRecord::GetLockScreenState() const
 {
     return isLockScreenState_;
 }
-#endif
 
 void AbilityRecord::SetMovingBackgroundFlag(bool isMoving)
 {
@@ -1317,7 +1340,6 @@ bool AbilityRecord::IsMovingBackground() const
     return isMovingBackground_;
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityRecord::SetLockScreenRoot()
 {
     isLockScreenRoot_ = true;
@@ -1337,7 +1359,6 @@ bool AbilityRecord::GetPowerStateLockScreen() const
 {
     return isPowerStateLockScreen_;
 }
-#endif
 
 bool AbilityRecord::IsNewVersion()
 {
@@ -1362,7 +1383,6 @@ void AbilityRecord::NotifyContinuationResult(int32_t result)
     lifecycleDeal_->NotifyContinuationResult(result);
 }
 
-#ifdef SUPPORT_GRAPHICS
 std::shared_ptr<MissionList> AbilityRecord::GetOwnedMissionList() const
 {
     return missionList_.lock();
@@ -1386,7 +1406,6 @@ void AbilityRecord::SetMission(const std::shared_ptr<Mission> &mission)
     }
     mission_ = mission;
 }
-#endif
 
 void AbilityRecord::SetMinimizeReason(bool fromUser)
 {
@@ -1398,7 +1417,6 @@ bool AbilityRecord::IsMinimizeFromUser() const
     return minimizeReason_;
 }
 
-#ifdef SUPPORT_GRAPHICS
 std::shared_ptr<Mission> AbilityRecord::GetMission() const
 {
     return mission_.lock();
@@ -1408,7 +1426,6 @@ int32_t AbilityRecord::GetMissionId() const
 {
     return missionId_;
 }
-#endif
 
 void AbilityRecord::SetSpecifiedFlag(const std::string &flag)
 {

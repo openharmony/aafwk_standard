@@ -20,7 +20,7 @@ namespace OHOS {
 namespace AppExecFwk {
 bool FormProviderInfo::ReadFromParcel(Parcel &parcel)
 {
-    auto bindingData = parcel.ReadParcelable<FormProviderData>();
+    std::unique_ptr<FormProviderData> bindingData(parcel.ReadParcelable<FormProviderData>());
     jsBindingData_ = *bindingData;
     return true;
 }

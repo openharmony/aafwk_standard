@@ -157,6 +157,12 @@ public:
      * @return Returns true on success, false on failure.
      */
     bool GetDynamicItem(const int64_t formId, DynamicRefreshItem &dynamicItem);
+    /**
+     * @brief Set time speed.
+     * @param timeSpeed The time speed.
+     */
+    void SetTimeSpeed(int32_t timeSpeed);
+
 private:
     /**
      * @brief Add update at timer.
@@ -305,7 +311,7 @@ private:
      * @param updateAtTime The next update time.
      * @return Returns WantAgent.
      */
-    std::shared_ptr<WantAgent> GetUpdateAtWantAgent(long updateAtTime);
+    std::shared_ptr<WantAgent> GetUpdateAtWantAgent(long updateAtTime, int32_t userId);
     /**
      * @brief Get WantAgent.
      * @return Returns WantAgent.
@@ -358,6 +364,7 @@ private:
     std::vector<DynamicRefreshItem> dynamicRefreshTasks_;
     std::shared_ptr<TimerReceiver> timerReceiver_ = nullptr;
     std::unique_ptr<ThreadPool> taskExecutor_ = nullptr;
+    int32_t timeSpeed_ = 1;
 
     std::shared_ptr<Utils::Timer> intervalTimer_ = nullptr;
     uint64_t updateAtTimerId_ = 0L;

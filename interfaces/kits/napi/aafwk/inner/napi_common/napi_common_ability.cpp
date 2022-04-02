@@ -56,20 +56,17 @@ bool& GetDataAbilityHelperStatus()
 
 bool CheckAbilityType(AbilityType typeInAbility, AbilityType typeWant)
 {
-    HILOG_INFO("%{public}s called.", __func__);
     switch (typeWant) {
         case AbilityType::PAGE:
             return typeInAbility == AbilityType::PAGE;
         default:
             return typeInAbility != AbilityType::PAGE;
     }
-    HILOG_INFO("%{public}s end.", __func__);
     return false;
 }
 
 bool CheckAbilityType(const CBBase *cbBase)
 {
-    HILOG_INFO("%{public}s called.", __func__);
     if (cbBase == nullptr) {
         HILOG_ERROR("%{public}s cbBase == nullptr", __func__);
         return false;
@@ -85,7 +82,6 @@ bool CheckAbilityType(const CBBase *cbBase)
         HILOG_ERROR("%{public}s info == nullptr", __func__);
         return false;
     }
-    HILOG_INFO("%{public}s end.", __func__);
     return CheckAbilityType((AbilityType)info->type, cbBase->abilityType);
 }
 
@@ -136,7 +132,6 @@ bool CheckAbilityType(const AsyncCallbackInfo *asyncCallbackInfo)
 
 void SaveAppInfo(AppInfo_ &appInfo, const ApplicationInfo &appInfoOrg)
 {
-    HILOG_INFO("%{public}s.", __func__);
     appInfo.name = appInfoOrg.name;
     appInfo.description = appInfoOrg.description;
     appInfo.descriptionId = appInfoOrg.descriptionId;
@@ -158,7 +153,6 @@ void SaveAppInfo(AppInfo_ &appInfo, const ApplicationInfo &appInfoOrg)
         appInfo.moduleInfos.emplace_back(appInfoOrg.moduleInfos.at(i));
     }
     appInfo.entryDir = appInfoOrg.entryDir;
-    HILOG_INFO("%{public}s end.", __func__);
 }
 
 napi_value GetContinueAbilityOptionsInfoCommon(
@@ -333,7 +327,13 @@ void GetFilesDirExecuteCallback(napi_env env, void *data)
     }
 
     asyncCallbackInfo->native_data.data_type = NVT_STRING;
-    asyncCallbackInfo->native_data.str_value = asyncCallbackInfo->ability->GetFilesDir();
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext = asyncCallbackInfo->ability->GetAbilityContext();
+    if (abilityContext == nullptr) {
+        HILOG_ERROR("%{public}s GetAbilityContext is nullptr", __func__);
+        asyncCallbackInfo->error_code = NAPI_ERR_ACE_ABILITY;
+        return;
+    }
+    asyncCallbackInfo->native_data.str_value = abilityContext->GetFilesDir();
     HILOG_INFO("%{public}s end. filesDir=%{public}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
 }
 
@@ -485,7 +485,13 @@ void GetOrCreateDistributedDirExecuteCallback(napi_env env, void *data)
     }
 
     asyncCallbackInfo->native_data.data_type = NVT_STRING;
-    asyncCallbackInfo->native_data.str_value = asyncCallbackInfo->ability->GetDistributedDir();
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext = asyncCallbackInfo->ability->GetAbilityContext();
+    if (abilityContext == nullptr) {
+        HILOG_ERROR("%{public}s GetAbilityContext is nullptr", __func__);
+        asyncCallbackInfo->error_code = NAPI_ERR_ACE_ABILITY;
+        return;
+    }
+    asyncCallbackInfo->native_data.str_value = abilityContext->GetDistributedFilesDir();
     HILOG_INFO("%{public}s end. filesDir=%{public}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
 }
 
@@ -589,7 +595,13 @@ void GetCacheDirExecuteCallback(napi_env env, void *data)
     }
 
     asyncCallbackInfo->native_data.data_type = NVT_STRING;
-    asyncCallbackInfo->native_data.str_value = asyncCallbackInfo->ability->GetCacheDir();
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext = asyncCallbackInfo->ability->GetAbilityContext();
+    if (abilityContext == nullptr) {
+        HILOG_ERROR("%{public}s GetAbilityContext is nullptr", __func__);
+        asyncCallbackInfo->error_code = NAPI_ERR_ACE_ABILITY;
+        return;
+    }
+    asyncCallbackInfo->native_data.str_value = abilityContext->GetCacheDir();
     HILOG_INFO("%{public}s end. CacheDir=%{public}s", __func__, asyncCallbackInfo->native_data.str_value.c_str());
 }
 
@@ -2644,7 +2656,6 @@ napi_value GetWantWrap(napi_env env, napi_callback_info info, AsyncCallbackInfo 
  */
 napi_value NAPI_GetWantCommon(napi_env env, napi_callback_info info, AbilityType abilityType)
 {
-    HILOG_INFO("%{public}s, called.", __func__);
     AsyncCallbackInfo *asyncCallbackInfo = CreateAsyncCallbackInfo(env);
     if (asyncCallbackInfo == nullptr) {
         HILOG_ERROR("%{public}s, asyncCallbackInfo == nullptr", __func__);
@@ -2662,7 +2673,6 @@ napi_value NAPI_GetWantCommon(napi_env env, napi_callback_info info, AbilityType
         }
         ret = WrapVoidToJS(env);
     }
-    HILOG_INFO("%{public}s, end.", __func__);
     return ret;
 }
 
@@ -3060,7 +3070,7 @@ bool UnwrapParamForWant(napi_env env, napi_value args, AbilityType abilityType, 
         if (!UnwrapAbilityStartSetting(env, jsSettingObj, *(param.setting))) {
             HILOG_ERROR("%{public}s, unwrap abilityStartSetting falied.", __func__);
         }
-        HILOG_INFO("%{public}s abilityStartSetting = %{public}p.", __func__, param.setting.get());
+        HILOG_INFO("%{public}s abilityStartSetting", __func__);
     }
 
     HILOG_INFO("%{public}s end.", __func__);
@@ -3578,7 +3588,7 @@ napi_value ConnectAbilityWrap(napi_env env, napi_callback_info info, ConnectAbil
         // match bundlename && abilityname
         connectAbilityCB->id = item->first.id;
         connectAbilityCB->abilityConnection = item->second;
-        HILOG_INFO("%{public}s find connection:%{public}p exist", __func__, item->second.GetRefPtr());
+        HILOG_INFO("%{public}s find connection exist", __func__);
     } else {
         sptr<NAPIAbilityConnection> conn(new (std::nothrow) NAPIAbilityConnection());
         connectAbilityCB->id = serialNumber_;
@@ -3592,7 +3602,7 @@ napi_value ConnectAbilityWrap(napi_env env, napi_callback_info info, ConnectAbil
         } else {
             serialNumber_ = 0;
         }
-        HILOG_INFO("%{public}s not find connection, make new one:%{public}p.", __func__, conn.GetRefPtr());
+        HILOG_INFO("%{public}s not find connection, make new one", __func__);
     }
     HILOG_INFO("%{public}s id:%{public}" PRId64, __func__, connectAbilityCB->id);
 
@@ -3871,7 +3881,7 @@ napi_value DisConnectAbilityWrap(napi_env env, napi_callback_info info, ConnectA
         // match id
         connectAbilityCB->want = item->first.want;
         connectAbilityCB->abilityConnection = item->second;
-        HILOG_INFO("%{public}s find conn ability:%{public}p exist", __func__, item->second.GetRefPtr());
+        HILOG_INFO("%{public}s find conn ability exist", __func__);
     } else {
         HILOG_INFO("%{public}s not find conn ability exist.", __func__);
         HILOG_INFO("%{public}s there is no ability to disconnect.", __func__);
@@ -4471,14 +4481,12 @@ napi_value NAPI_StartBackgroundRunningCommon(napi_env env, napi_callback_info in
 
 void CancelBackgroundRunningExecuteCB(napi_env env, void *data)
 {
-    HILOG_INFO("NAPI_PACancelBackgroundRunning, worker pool thread execute.");
     AsyncCallbackInfo *asyncCallbackInfo = static_cast<AsyncCallbackInfo *>(data);
     if (asyncCallbackInfo->ability != nullptr) {
         asyncCallbackInfo->ability->StopBackgroundRunning();
     } else {
         HILOG_ERROR("NAPI_PACancelBackgroundRunning, ability == nullptr");
     }
-    HILOG_INFO("NAPI_PACancelBackgroundRunning, worker pool thread execute end.");
 }
 
 napi_value CancelBackgroundRunningAsync(

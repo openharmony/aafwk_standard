@@ -32,7 +32,8 @@ struct UserTestRecord : public Parcelable {
     AAFwk::Want want;
     sptr<IRemoteObject> observer;
     bool isFinished;
-    UserTestRecord() : observer(nullptr), isFinished(false)
+    int32_t userId;
+    UserTestRecord() : observer(nullptr), isFinished(false), userId(-1)
     {}
 
     bool ReadFromParcel(Parcel &parcel);

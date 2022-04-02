@@ -113,7 +113,6 @@ bool SetSyncRemoteMissionsContext(const napi_env &env, const napi_value &value,
         return false;
     }
     context->deviceId = deviceId;
-    HILOG_INFO("%{public}s deviceId:%{public}s", __func__, context->deviceId.c_str());
 
     if (isStart) {
         if (!SetStartSyncMissionsContext (env, value, context)) {
@@ -542,7 +541,6 @@ napi_value RegisterMissonWrap(napi_env env, napi_callback_info info, RegisterMis
         return nullptr;
     }
     registerMissonCB->deviceId = deviceId;
-    HILOG_INFO("%{public}s deviceId:%{public}s", __func__, registerMissonCB->deviceId.c_str());
 
     if (argcAsync > 1 && !CreateCallbackReference(env, args[1], registerMissonCB)) {
         HILOG_ERROR("%{public}s, Wrong arguments.", __func__);
@@ -588,6 +586,25 @@ void NAPIMissionContinue::SetEnv(const napi_env &env)
     env_ = env;
 }
 
+NAPIRemoteMissionListener::~NAPIRemoteMissionListener()
+{
+    if (env_ == nullptr) {
+        return;
+    }
+    if (notifyMissionsChangedRef_ != nullptr) {
+        napi_delete_reference(env_, notifyMissionsChangedRef_);
+        notifyMissionsChangedRef_ = nullptr;
+    }
+    if (notifySnapshotRef_ != nullptr) {
+        napi_delete_reference(env_, notifySnapshotRef_);
+        notifySnapshotRef_ = nullptr;
+    }
+    if (notifyNetDisconnectRef_ != nullptr) {
+        napi_delete_reference(env_, notifyNetDisconnectRef_);
+        notifyNetDisconnectRef_ = nullptr;
+    }
+}
+
 void NAPIRemoteMissionListener::SetEnv(const napi_env &env)
 {
     env_ = env;
@@ -622,7 +639,6 @@ void UvWorkNotifyMissionChanged(uv_work_t *work, int status)
         return;
     }
     napi_value result = nullptr;
-    HILOG_INFO("UvWorkNotifyMissionChanged, deviceId = %{public}s", registerMissonCB->deviceId.c_str());
     result =
         WrapString(registerMissonCB->cbBase.cbInfo.env, registerMissonCB->deviceId.c_str(), "deviceId");
 
@@ -691,10 +707,8 @@ void UvWorkNotifySnapshot(uv_work_t *work, int status)
         return;
     }
     napi_value result[2] = {0};
-    HILOG_INFO("UvWorkNotifySnapshot, deviceId = %{public}s", registerMissonCB->deviceId.c_str());
     result[0] =
         WrapString(registerMissonCB->cbBase.cbInfo.env, registerMissonCB->deviceId.c_str(), "deviceId");
-    HILOG_INFO("UvWorkNotifySnapshot, missionId = %{public}d", registerMissonCB->missionId);
     result[1] =
         WrapInt32(registerMissonCB->cbBase.cbInfo.env, registerMissonCB->missionId, "missionId");
 
@@ -713,7 +727,6 @@ void UvWorkNotifySnapshot(uv_work_t *work, int status)
 
 void NAPIRemoteMissionListener::NotifySnapshot(const std::string& deviceId, int32_t missionId)
 {
-    HILOG_INFO("%{public}s, called. deviceId = %{public}s", __func__, deviceId.c_str());
     uv_loop_s *loop = nullptr;
 
     napi_get_uv_event_loop(env_, &loop);
@@ -764,7 +777,6 @@ void UvWorkNotifyNetDisconnect(uv_work_t *work, int status)
         return;
     }
     napi_value result[2] = {0};
-    HILOG_INFO("UvWorkNotifyNetDisconnect, deviceId = %{public}s", registerMissonCB->deviceId.c_str());
     result[0] =
         WrapString(registerMissonCB->cbBase.cbInfo.env, registerMissonCB->deviceId.c_str(), "deviceId");
     HILOG_INFO("UvWorkNotifyNetDisconnect, state = %{public}d", registerMissonCB->state);
@@ -786,8 +798,7 @@ void UvWorkNotifyNetDisconnect(uv_work_t *work, int status)
 
 void NAPIRemoteMissionListener::NotifyNetDisconnect(const std::string& deviceId, int32_t state)
 {
-    HILOG_INFO("%{public}s called. deviceId = %{public}s. state = %{public}d", __func__,
-        deviceId.c_str(), state);
+    HILOG_INFO("%{public}s called. state = %{public}d", __func__, state);
     uv_loop_s *loop = nullptr;
 
     napi_get_uv_event_loop(env_, &loop);
@@ -949,7 +960,6 @@ bool GetUnRegisterMissonDeviceId(napi_env env, const napi_value& value, Register
         return false;
     }
     registerMissonCB->deviceId = deviceId;
-    HILOG_INFO("%{public}s deviceId:%{public}s", __func__, registerMissonCB->deviceId.c_str());
     HILOG_INFO("%{public}s called end.", __func__);
     return true;
 }

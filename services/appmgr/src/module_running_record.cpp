@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 #include "module_running_record.h"
 #include "app_mgr_service_inner.h"
+#include "app_running_record.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
@@ -95,9 +96,8 @@ const std::map<const sptr<IRemoteObject>, std::shared_ptr<AbilityRunningRecord>>
 std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::GetAbilityByTerminateLists(
     const sptr<IRemoteObject> &token) const
 {
-    HILOG_INFO("Get ability by terminateLists.");
     if (!token) {
-        HILOG_ERROR("token is null");
+        HILOG_ERROR("GetAbilityByTerminateLists error, token is null");
         return nullptr;
     }
     const auto &iter = terminateAbilitys_.find(token);
@@ -224,7 +224,12 @@ void ModuleRunningRecord::TerminateAbility(const sptr<IRemoteObject> &token, con
     if (appLifeCycleDeal_) {
         appLifeCycleDeal_->ScheduleCleanAbility(token);
     } else {
-        HILOG_ERROR("appLifeCycleDeal_ is null");
+        HILOG_WARN("appLifeCycleDeal_ is null");
+        auto serviceInner = appMgrServiceInner_.lock();
+        auto appRunningRecord = appRunningRecord_.lock();
+        if (serviceInner) {
+            serviceInner->ClearAppRunningData(appRunningRecord, true);
+        }
     }
 
     HILOG_INFO("ModuleRunningRecord::TerminateAbility end");
@@ -295,6 +300,11 @@ void ModuleRunningRecord::SetApplicationClient(std::shared_ptr<AppLifeCycleDeal>
 ModuleRecordState ModuleRunningRecord::GetState() const
 {
     return owenState_;
+}
+
+void ModuleRunningRecord::SetAppRunningRecord(const std::shared_ptr<AppRunningRecord> &appRunningRecord)
+{
+    appRunningRecord_ = appRunningRecord;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

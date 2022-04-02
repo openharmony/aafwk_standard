@@ -54,7 +54,7 @@ public:
      * @param useNewMission new mission flag.
      */
     static void SetUseNewMission(bool useNewMission);
- 
+
     /**
      * @brief Get if use new mission.
      *
@@ -216,6 +216,9 @@ public:
      */
     virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value);
 
+    virtual std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap);
+
     /**
      * @brief Updates data records in the database.
      *
@@ -362,6 +365,7 @@ public:
     int GetCompatibleVersion();
 #ifdef SUPPORT_GRAPHICS
     void AfterUnFocused();
+    void AfterFocused();
 #endif
 protected:
     /**
@@ -454,7 +458,7 @@ public:
     void AfterForeground() override;
     void AfterBackground() override;
     void AfterFocused() override;
-    void AfterUnFocused() override;
+    void AfterUnfocused() override;
 private:
     sptr<IRemoteObject> token_ = nullptr;
     std::weak_ptr<AbilityImpl> owner_;
@@ -463,6 +467,7 @@ private:
 class InputEventConsumerImpl : public MMI::IInputEventConsumer {
 public:
     explicit InputEventConsumerImpl(const std::shared_ptr<AbilityImpl>& abilityImpl) : abilityImpl_(abilityImpl) {}
+    ~InputEventConsumerImpl() = default;
     void OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const override;
     void OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const override;
     void OnInputEvent(std::shared_ptr<MMI::AxisEvent> axisEvent) const override {}
@@ -480,16 +485,10 @@ private:
     } Action;
 
     std::shared_ptr<AbilityLifecycleCallbacks> abilityLifecycleCallbacks_;
-    std::shared_ptr<ApplicationImpl> applactionImpl_;
+    std::shared_ptr<ApplicationImpl> applicationImpl_;
     std::shared_ptr<ContextDeal> contextDeal_;
 
 private:
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Multimodal Events Register.
-     */
-    void WindowEventRegister();
-#endif
     bool hasSaveData_ = false;
     bool needSaveDate_ = false;
     PacMap restoreData_;

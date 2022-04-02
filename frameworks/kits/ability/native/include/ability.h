@@ -59,6 +59,9 @@
 #include "window_scene.h"
 #include "wm_common.h"
 #endif
+#ifndef SUPPORT_GRAPHICS
+#include "inttypes.h"
+#endif
 #include "../../ability_runtime/include/ability_context.h"
 
 using Uri = OHOS::Uri;
@@ -454,6 +457,8 @@ public:
      * @return Returns true if this ability currently has window focus; returns false otherwise.
      */
     bool HasWindowFocus();
+
+    void SetShowOnLockScreen(bool showOnLockScreen);
 #endif
 
     /**
@@ -526,6 +531,9 @@ public:
      * @return Returns the index of the newly inserted data record.
      */
     virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value);
+
+    virtual std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap);
 
     /**
      * @brief Called when the system configuration is updated.
@@ -1661,6 +1669,7 @@ private:
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
 #ifdef SUPPORT_GRAPHICS
     bool bWindowFocus_ = false;
+    bool showOnLockScreen_ = false;
 #endif
     int compatibleVersion_ = 0;
 

@@ -28,6 +28,7 @@
 namespace OHOS {
 namespace AppExecFwk {
 const std::string JSON_EMPTY_STRING = "{}";
+const std::string JSON_IMAGES_STRING = "formImages";
 
 /**
  * @brief Constructor.
@@ -46,6 +47,7 @@ FormProviderData::FormProviderData()
 FormProviderData::FormProviderData(nlohmann::json &jsonData)
 {
     jsonFormProviderData_ = jsonData;
+    ParseImagesData();
 }
 
 /**
@@ -65,6 +67,7 @@ FormProviderData::FormProviderData(std::string jsonDataString)
         return;
     }
     jsonFormProviderData_ = jsonObject;
+    ParseImagesData();
 }
 
 /**
@@ -123,7 +126,7 @@ void FormProviderData::AddImageData(std::string picName, char *data, int32_t siz
  */
 void FormProviderData::AddImageData(std::string picName, int fd)
 {
-    HILOG_INFO("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called. fd is %{public}d", __func__, fd);
     if (fd < 0) {
         return;
     }
@@ -144,6 +147,23 @@ void FormProviderData::AddImageData(std::string picName, int fd)
     }
     AddImageData(picName, data, size);
     HILOG_INFO("%{public}s called end.", __func__);
+}
+
+void FormProviderData::ParseImagesData()
+{
+    if (jsonFormProviderData_ == nullptr) {
+        HILOG_ERROR("Form provider json data is nullptr.");
+        return;
+    }
+    if (!jsonFormProviderData_.contains(JSON_IMAGES_STRING)) {
+        return;
+    }
+    nlohmann::json jsonImages = jsonFormProviderData_.at(JSON_IMAGES_STRING);
+    for (auto iter = jsonImages.begin(); iter != jsonImages.end(); iter++) {
+        if (iter->is_number_integer()) {
+            AddImageData(iter.key(), iter.value());
+        }
+    }
 }
 
 /**

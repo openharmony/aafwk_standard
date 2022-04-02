@@ -31,7 +31,7 @@ namespace OHOS {
 namespace AAFwk {
 namespace {
 const std::string SHORT_OPTIONS = "ch:d:a:b:p:s:CD";
-const struct option LONG_OPTIONS[] = {
+constexpr struct option LONG_OPTIONS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"device", required_argument, nullptr, 'd'},
     {"ability", required_argument, nullptr, 'a'},
@@ -43,13 +43,13 @@ const struct option LONG_OPTIONS[] = {
     {nullptr, 0, nullptr, 0},
 };
 const std::string SHORT_OPTIONS_ApplicationNotRespondin = "hp:";
-const struct option LONG_OPTIONS_ApplicationNotRespondin[] = {
+constexpr struct option LONG_OPTIONS_ApplicationNotRespondin[] = {
     {"help", no_argument, nullptr, 'h'},
     {"pid", required_argument, nullptr, 'p'},
     {nullptr, 0, nullptr, 0},
 };
 const std::string SHORT_OPTIONS_DUMP = "has:m:lud::e::LS";
-const struct option LONG_OPTIONS_DUMP[] = {
+constexpr struct option LONG_OPTIONS_DUMP[] = {
     {"help", no_argument, nullptr, 'h'},
     {"all", no_argument, nullptr, 'a'},
     {"stack", required_argument, nullptr, 's'},
@@ -63,7 +63,7 @@ const struct option LONG_OPTIONS_DUMP[] = {
     {nullptr, 0, nullptr, 0},
 };
 const std::string SHORT_OPTIONS_DUMPSYS = "hal::i:e::p::r::d::u:c";
-const struct option LONG_OPTIONS_DUMPSYS[] = {
+constexpr struct option LONG_OPTIONS_DUMPSYS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"all", no_argument, nullptr, 'a'},
     {"mission-list", no_argument, nullptr, 'l'},
@@ -625,7 +625,6 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 resultReceiver_.append(HELP_MSG_DUMPSYS);
                 result = OHOS::ERR_INVALID_VALUE;
                 return result;
-                break;
             }
             case 'a': {
                 if (isfirstCommand == false) {
@@ -643,9 +642,10 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 if (isfirstCommand == false) {
                     isfirstCommand = true;
                 } else {
-                    // 'aa dumpsys -i 10 -element -lastpage'
-                    // 'aa dumpsys -i 10 -render -lastpage'
-                    if (strcmp(optarg, "astpage")) {
+                    // 'aa dump -i 10 -element -lastpage'
+                    // 'aa dump -i 10 -render -lastpage'
+                    // 'aa dump -i 10 -layer'
+                    if (strcmp(optarg, "astpage") && strcmp(optarg, "ayer")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -708,8 +708,10 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 if (isfirstCommand == false && optarg == nullptr) {
                     isfirstCommand = true;
                 } else {
-                    // 'aa dumpsys -i 10 -render'
-                    if (strcmp(optarg, "ender")) {
+                    // 'aa dump -i 10 -render'
+                    // 'aa dump -i 10 -rotation'
+                    // 'aa dump -i 10 -frontend'
+                    if (strcmp(optarg, "ender") && strcmp(optarg, "otation") && strcmp(optarg, "ontend")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -742,9 +744,11 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                 break;
             }
             case '?': {
-                result = OHOS::ERR_INVALID_VALUE;
-                resultReceiver_.append(HELP_MSG_DUMPSYS);
-                return result;
+                if (!isfirstCommand) {
+                    result = OHOS::ERR_INVALID_VALUE;
+                    resultReceiver_.append(HELP_MSG_DUMPSYS);
+                    return result;
+                }
                 break;
             }
             default: {
@@ -1408,8 +1412,9 @@ ErrCode AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID()
         abilityMs_ = GetAbilityManagerService();
         if (abilityMs_ == nullptr) {
             std::cout << "abilityMsObj is nullptr";
+        } else {
+            abilityMs_->SendANRProcessID(atoi(pid.c_str()));
         }
-        abilityMs_->SendANRProcessID(atoi(pid.c_str()));
     } else {
         resultReceiver_.append(HELP_ApplicationNotRespondin+ "\n");
         result = OHOS::ERR_INVALID_VALUE;

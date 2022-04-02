@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,13 +27,13 @@ const int32_t LIMIT_PARCEL_SIZE = 1024;
 
 void SplitString(const std::string &source, std::vector<std::string> &strings)
 {
-    int splitSize = (source.size() / LIMIT_PARCEL_SIZE);
+    size_t splitSize = (source.size() / LIMIT_PARCEL_SIZE);
     if ((source.size() % LIMIT_PARCEL_SIZE) != 0) {
         splitSize++;
     }
-    HILOG_DEBUG("the dump string split into %{public}d size", splitSize);
-    for (int i = 0; i < splitSize; i++) {
-        int32_t start = LIMIT_PARCEL_SIZE * i;
+    HILOG_DEBUG("the dump string split into %{public}zu size", splitSize);
+    for (size_t i = 0; i < splitSize; i++) {
+        size_t start = LIMIT_PARCEL_SIZE * i;
         strings.emplace_back(source.substr(start, LIMIT_PARCEL_SIZE));
     }
 }
@@ -134,7 +134,7 @@ int32_t FormMgrStub::HandleAddForm(MessageParcel &data, MessageParcel &reply)
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> client = data.ReadRemoteObject();
     if (client == nullptr) {
         HILOG_ERROR("%{public}s, failed to RemoteObject invalidate", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
@@ -156,7 +156,7 @@ int32_t FormMgrStub::HandleAddForm(MessageParcel &data, MessageParcel &reply)
 int32_t FormMgrStub::HandleDeleteForm(MessageParcel &data, MessageParcel &reply)
 {
     int64_t formId = data.ReadInt64();
-    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> client = data.ReadRemoteObject();
     if (client == nullptr) {
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -173,7 +173,7 @@ int32_t FormMgrStub::HandleDeleteForm(MessageParcel &data, MessageParcel &reply)
 int32_t FormMgrStub::HandleReleaseForm(MessageParcel &data, MessageParcel &reply)
 {
     int64_t formId = data.ReadInt64();
-    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> client = data.ReadRemoteObject();
     if (client == nullptr) {
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -192,9 +192,8 @@ int32_t FormMgrStub::HandleReleaseForm(MessageParcel &data, MessageParcel &reply
 int32_t FormMgrStub::HandleUpdateForm(MessageParcel &data, MessageParcel &reply)
 {
     int64_t formId = data.ReadInt64();
-    std::string bundleName = data.ReadString();
     std::unique_ptr<FormProviderData> formBindingData(data.ReadParcelable<FormProviderData>());
-    int32_t result = UpdateForm(formId, bundleName, *formBindingData);
+    int32_t result = UpdateForm(formId, *formBindingData);
     reply.WriteInt32(result);
     return result;
 }
@@ -225,9 +224,9 @@ int32_t FormMgrStub::HandleLifecycleUpdate(MessageParcel &data, MessageParcel &r
     if (!ret) {
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> client = data.ReadRemoteObject();
     if (client == nullptr) {
-        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        HILOG_ERROR("%{public}s, failed to get remote object.", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     int32_t updateType = data.ReadInt32();
@@ -247,9 +246,9 @@ int32_t FormMgrStub::HandleRequestForm(MessageParcel &data, MessageParcel &reply
 
     int64_t formId = data.ReadInt64();
 
-    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> client = data.ReadRemoteObject();
     if (client == nullptr) {
-        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        HILOG_ERROR("%{public}s, failed to get remote object.", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -277,7 +276,7 @@ int32_t FormMgrStub::HandleNotifyWhetherVisibleForms(MessageParcel &data, Messag
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> client = data.ReadRemoteObject();
     if (client == nullptr) {
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -297,7 +296,7 @@ int32_t FormMgrStub::HandleNotifyWhetherVisibleForms(MessageParcel &data, Messag
 int32_t FormMgrStub::HandleCastTempForm(MessageParcel &data, MessageParcel &reply)
 {
     int64_t formId = data.ReadInt64();
-    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> client = data.ReadRemoteObject();
     if (client == nullptr) {
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -413,9 +412,9 @@ int32_t FormMgrStub::HandleMessageEvent(MessageParcel &data, MessageParcel &repl
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    sptr<IRemoteObject> client = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> client = data.ReadRemoteObject();
     if (client == nullptr) {
-        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        HILOG_ERROR("%{public}s, failed to get remote object.", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
@@ -514,9 +513,9 @@ int32_t FormMgrStub::HandleDeleteInvalidForms(MessageParcel &data, MessageParcel
         HILOG_ERROR("%{public}s, failed to ReadInt64Vector", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    sptr<IRemoteObject> callerToken = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> callerToken = data.ReadRemoteObject();
     if (callerToken == nullptr) {
-        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        HILOG_ERROR("%{public}s, failed to get remote object.", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     int32_t numFormsDeleted = 0;
@@ -547,9 +546,9 @@ int32_t FormMgrStub::HandleAcquireFormState(MessageParcel &data, MessageParcel &
         HILOG_ERROR("%{public}s, failed to ReadParcelable want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    sptr<IRemoteObject> callerToken = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> callerToken = data.ReadRemoteObject();
     if (callerToken == nullptr) {
-        HILOG_ERROR("%{public}s, failed to ReadParcelable<IRemoteObject>", __func__);
+        HILOG_ERROR("%{public}s, failed to get remote object.", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     int32_t result = AcquireFormState(*want, callerToken, stateInfo);

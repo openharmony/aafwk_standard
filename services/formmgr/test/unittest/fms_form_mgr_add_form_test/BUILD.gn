@@ -59,7 +59,6 @@ ohos_unittest("FmsFormMgrAddFormTest") {
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/formmgr:fms_target",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
@@ -72,6 +71,7 @@ ohos_unittest("FmsFormMgrAddFormTest") {
   ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_core",
     "form_runtime:form_manager",
@@ -82,5 +82,5 @@ ohos_unittest("FmsFormMgrAddFormTest") {
 
 group("unittest") {
   testonly = true
-  # deps = [ ":FmsFormMgrAddFormTest" ]
+  deps = [ ":FmsFormMgrAddFormTest" ]
 }

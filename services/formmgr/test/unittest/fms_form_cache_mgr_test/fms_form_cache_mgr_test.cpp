@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -134,7 +134,7 @@ HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_004, TestSize.Level0)
  * Function: AddData
  * FunctionPoints: FormCacheMgr AddData interface
  * EnvConditions: Mobile that can run ohos test framework
- * CaseDescription: add data but key conflict
+ * CaseDescription: add data when key conflict
  */
 HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_010, TestSize.Level0)
 {
@@ -143,7 +143,7 @@ HWTEST_F(FmsFormCacheMgrTest, FmsFormCacheMgrTest_010, TestSize.Level0)
     std::string dataResult1 = "{'a':'1','b':'2'}";
     std::string dataResult2 = "{'a':'2','b':'2'}";
     formCacheMgr_.AddData(PARAM_FORM_ID_FIRST, dataResult1);
-    EXPECT_FALSE(formCacheMgr_.AddData(PARAM_FORM_ID_FIRST, dataResult2));
+    EXPECT_TRUE(formCacheMgr_.AddData(PARAM_FORM_ID_FIRST, dataResult2));
 
     GTEST_LOG_(INFO) << "fms_form_cache_mgr_test_010 end";
 }

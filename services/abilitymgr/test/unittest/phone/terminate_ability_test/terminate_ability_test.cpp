@@ -137,7 +137,7 @@ void TerminateAbilityTest::OnStartAms()
         EXPECT_TRUE(g_aams->eventLoop_);
 
         g_aams->handler_ = std::make_shared<AbilityEventHandler>(g_aams->eventLoop_, g_aams);
-        g_aams->connectManager_ = std::make_shared<AbilityConnectManager>();
+        g_aams->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         g_aams->connectManagers_.emplace(0, g_aams->connectManager_);
         EXPECT_TRUE(g_aams->handler_);
         EXPECT_TRUE(g_aams->connectManager_);
@@ -157,9 +157,6 @@ void TerminateAbilityTest::OnStartAms()
 
         g_aams->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         g_aams->currentMissionListManager_->Init();
-
-        int userId = g_aams->GetUserId();
-        g_aams->SetStackManager(userId, true);
 
         g_aams->eventLoop_->Run();
 

@@ -205,7 +205,7 @@ Uri DataUriUtils::UriUpateLastPath(const Uri &dataUri, const string &updateLastP
 
     string uriString = dataUri.ToString();
     // find "/+lastPath"
-    int lastPathPos = uriString.rfind(string(SEPARATOR) + lastPath);
+    int lastPathPos = (int)uriString.rfind(string(SEPARATOR) + lastPath);
     if (lastPathPos == -1) {
         return dataUri;
     }

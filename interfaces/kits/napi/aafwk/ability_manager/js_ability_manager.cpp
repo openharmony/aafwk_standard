@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 #include <cstdint>
 
 #include "ability_manager_client.h"
+#include "errors.h"
 #include "hilog_wrapper.h"
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
@@ -118,26 +119,35 @@ private:
     NativeValue* OnUpdateConfiguration(NativeEngine &engine, NativeCallbackInfo &info)
     {
         HILOG_INFO("%{public}s is called", __FUNCTION__);
-        if (info.argc == 0) {
-            HILOG_ERROR("Not enough params");
-            return engine.CreateUndefined();
-        }
+        AsyncTask::CompleteCallback complete;
 
-        AppExecFwk::Configuration changeConfig;
-        if (!UnwrapConfiguration(reinterpret_cast<napi_env>(&engine),
-            reinterpret_cast<napi_value>(info.argv[0]), changeConfig)) {
-            HILOG_INFO("OnStartAbility start options is used.");
-            return engine.CreateUndefined();
-        }
-
-        AsyncTask::CompleteCallback complete = [changeConfig](NativeEngine& engine, AsyncTask& task, int32_t status) {
-            auto errcode = AbilityManagerClient::GetInstance()->UpdateConfiguration(changeConfig);
-            if (errcode == 0) {
-                task.Resolve(engine, engine.CreateUndefined());
-            } else {
-                task.Reject(engine, CreateJsError(engine, errcode, "update config failed."));
+        do {
+            if (info.argc == 0) {
+                HILOG_ERROR("Not enough params");
+                complete = [](NativeEngine& engine, AsyncTask& task, int32_t status) {
+                    task.Reject(engine, CreateJsError(engine, ERR_INVALID_VALUE, "no enough params."));
+                };
+                break;
             }
-        };
+
+            AppExecFwk::Configuration changeConfig;
+            if (!UnwrapConfiguration(reinterpret_cast<napi_env>(&engine),
+                reinterpret_cast<napi_value>(info.argv[0]), changeConfig)) {
+                complete = [](NativeEngine& engine, AsyncTask& task, int32_t status) {
+                    task.Reject(engine, CreateJsError(engine, ERR_INVALID_VALUE, "config is invalid."));
+                };
+                break;
+            }
+
+            complete = [changeConfig](NativeEngine& engine, AsyncTask& task, int32_t status) {
+                auto errcode = AbilityManagerClient::GetInstance()->UpdateConfiguration(changeConfig);
+                if (errcode == 0) {
+                    task.Resolve(engine, engine.CreateUndefined());
+                } else {
+                    task.Reject(engine, CreateJsError(engine, errcode, "update config failed."));
+                }
+            };
+        } while (0);
 
         NativeValue* lastParam = (info.argc == 1) ? nullptr : info.argv[1];
         NativeValue* result = nullptr;

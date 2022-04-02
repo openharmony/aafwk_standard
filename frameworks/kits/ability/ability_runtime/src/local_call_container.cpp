@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,8 +28,8 @@ int LocalCallContainer::StartAbilityInner(
         return ERR_INVALID_VALUE;
     }
 
-    if (want.GetElement().GetBundleName().empty()
-        || want.GetElement().GetAbilityName().empty()) {
+    if (want.GetElement().GetBundleName().empty() ||
+        want.GetElement().GetAbilityName().empty()) {
         HILOG_ERROR("the element of want is empty.");
         return ERR_INVALID_VALUE;
     }
@@ -102,7 +102,7 @@ int LocalCallContainer::Release(const std::shared_ptr<CallerCallBack>& callback)
     }
 
     // notify ams this connect need to release.
-    AppExecFwk::ElementName elementName = record->GetElementName() ;
+    AppExecFwk::ElementName elementName = record->GetElementName();
     auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
     if (abilityClient == nullptr) {
         HILOG_ERROR("LocalCallContainer::Resolve abilityClient is nullptr");

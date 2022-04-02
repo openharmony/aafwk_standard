@@ -42,10 +42,6 @@ ErrCode SpecTaskDispatcher::SyncDispatch(const std::shared_ptr<Runnable> &runnab
     }
 
     std::shared_ptr<Task> innerTask = std::make_shared<Task>(runnable, GetPriority(), shared_from_this());
-    if (innerTask == nullptr) {
-        HILOG_ERROR("SpecTaskDispatcher::SyncDispatch innerTask is nullptr");
-        return ERR_APPEXECFWK_CHECK_FAILED;
-    }
     TracePointBeforePost(innerTask, false, SYNC_DISPATCHER_TAG);
     HILOG_INFO("SpecTaskDispatcher::SyncDispatch into new sync task");
     handler_->DispatchSync(runnable);
@@ -68,10 +64,6 @@ std::shared_ptr<Revocable> SpecTaskDispatcher::AsyncDispatch(const std::shared_p
     }
 
     std::shared_ptr<Task> innerTask = std::make_shared<Task>(runnable, GetPriority(), shared_from_this());
-    if (innerTask == nullptr) {
-        HILOG_ERROR("SpecTaskDispatcher::AsyncDispatch innerTask is nullptr");
-        return nullptr;
-    }
     TracePointBeforePost(innerTask, true, ASYNC_DISPATCHER_TAG);
     HILOG_INFO("SpecTaskDispatcher::AsyncDispatch into new async task");
     handler_->Dispatch(runnable);
@@ -92,10 +84,6 @@ std::shared_ptr<Revocable> SpecTaskDispatcher::DelayDispatch(const std::shared_p
     }
 
     std::shared_ptr<Task> innerTask = std::make_shared<Task>(runnable, GetPriority(), shared_from_this());
-    if (innerTask == nullptr) {
-        HILOG_ERROR("SpecTaskDispatcher::DelayDispatch innerTask is nullptr");
-        return nullptr;
-    }
     TracePointBeforePost(innerTask, true, DELAY_DISPATCHER_TAG);
     handler_->Dispatch(runnable, delayMs);
     HILOG_INFO("SpecTaskDispatcher::DelayDispatch end");

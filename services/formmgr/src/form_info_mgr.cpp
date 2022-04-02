@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License")_;
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -306,7 +306,7 @@ ErrCode FormInfoMgr::GetFormsInfoByBundle(const std::string &bundleName, std::ve
     }
 
     if (!CheckBundlePermission() && !IsCaller(bundleName)) {
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ERR_APPEXECFWK_FORM_PERMISSION_DENY_BUNDLE;
     }
 
     std::shared_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
@@ -331,7 +331,7 @@ ErrCode FormInfoMgr::GetFormsInfoByModule(const std::string &bundleName, const s
     }
 
     if (!CheckBundlePermission() && !IsCaller(bundleName)) {
-        return ERR_APPEXECFWK_FORM_PERMISSION_DENY;
+        return ERR_APPEXECFWK_FORM_PERMISSION_DENY_BUNDLE;
     }
 
     std::shared_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);

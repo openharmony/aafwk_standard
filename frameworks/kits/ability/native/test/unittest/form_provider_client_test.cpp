@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-#include "appexecfwk_errors.h"
 #include <gtest/gtest.h>
+
+#include "accesstoken_kit.h"
+#include "appexecfwk_errors.h"
 #include "form_constants.h"
 #include "form_provider_client.h"
 #include "mock_form_supply_callback.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -57,24 +57,10 @@ void FormProviderClientTest::SetUp(void)
     instance_ = new FormProviderClient();
 
     // Permission install
-    std::vector<Permission::PermissionDef> permList;
-    Permission::PermissionDef permDef;
-    permDef.permissionName = PERMISSION_NAME_REQUIRE_FORM;
-    permDef.bundleName = FORM_MANAGER_SERVICE_BUNDLE_NAME;
-    permDef.grantMode = Permission::GrantMode::USER_GRANT;
-    permDef.availableScope = Permission::AvailableScope::AVAILABLE_SCOPE_ALL;
-    permDef.label = DEF_LABEL1;
-    permDef.labelId = 1;
-    permDef.description = DEF_LABEL1;
-    permDef.descriptionId = 1;
-    permList.emplace_back(permDef);
-    Permission::PermissionKit::AddDefPermissions(permList);
-    std::vector<std::string> permnameList;
-    permnameList.emplace_back(PERMISSION_NAME_REQUIRE_FORM);
-    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_MANAGER_SERVICE_BUNDLE_NAME,
-        permnameList, 0);
-    Permission::PermissionKit::GrantUserGrantedPermission(FORM_MANAGER_SERVICE_BUNDLE_NAME,
-        PERMISSION_NAME_REQUIRE_FORM, 0);
+    int userId = 0;
+    auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, FORM_MANAGER_SERVICE_BUNDLE_NAME, 0);
+    auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
 }
 
 void FormProviderClientTest::TearDown(void)
