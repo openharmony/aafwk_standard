@@ -153,7 +153,7 @@ zchar Char::GetCharInternal(const unsigned char *cur, /* [in] */
     }
     ignoreMask |= mask;
     result &= ~(ignoreMask << (BYTE_SHIFT * (num2Read - 1)));
-    size = num2Read;
+    size = (int)num2Read;
     return result;
 }
 }  // namespace AAFwk

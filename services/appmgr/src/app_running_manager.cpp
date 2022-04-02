@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -79,14 +79,16 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::CheckAppRunningRecordIsExis
             return ((pair.second->GetSignCode() == signCode) &&
                     (pair.second->GetProcessName() == processName) &&
                     (pair.second->GetJointUserId() == jointUserId) &&
-                    !(pair.second->IsTerminating()));
+                    !(pair.second->IsTerminating()) &&
+                    !(pair.second->IsKilling()));
     };
 
     // If it is not empty, look for whether it can come in the same process
     if (jointUserId.empty()) {
         for (const auto &item : appRunningRecordMap_) {
             const auto &appRecord = item.second;
-            if (appRecord && appRecord->GetProcessName() == processName && !(appRecord->IsTerminating())) {
+            if (appRecord && appRecord->GetProcessName() == processName &&
+                !(appRecord->IsTerminating()) && !(appRecord->IsKilling())) {
                 HILOG_INFO("appRecord->GetProcessName() : %{public}s", appRecord->GetProcessName().c_str());
                 auto appInfoList = appRecord->GetAppInfoList();
                 HILOG_INFO("appInfoList : %{public}zu", appInfoList.size());
@@ -172,7 +174,7 @@ bool AppRunningManager::GetPidsByUserId(int32_t userId, std::list<pid_t> &pids)
         }
     }
 
-    return (pids.empty() ? false : true);
+    return (!pids.empty());
 }
 
 bool AppRunningManager::ProcessExitByBundleNameAndUid(
@@ -190,6 +192,8 @@ bool AppRunningManager::ProcessExitByBundleNameAndUid(
             pid_t pid = appRecord->GetPriorityObject()->GetPid();
             if (iter != appInfoList.end() && pid > 0) {
                 pids.push_back(pid);
+
+                appRecord->SetKilling();
                 appRecord->ScheduleProcessSecurityExit();
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -203,7 +203,7 @@ auto HiBAckgroundMusicInfo = [](std::string bundleName, AbilityInfo &abilityInfo
     abilityInfo.name = elementTemp.GetAbilityName();
     abilityInfo.bundleName = elementTemp.GetBundleName();
     abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
-    abilityInfo.applicationInfo.singleUser = true;
+    abilityInfo.applicationInfo.singleton = true;
     abilityInfo.applicationName = "hiBackgroundMusic";
     abilityInfo.applicationInfo.name = "hiBackgroundMusic";
     abilityInfo.type = AbilityType::SERVICE;
@@ -215,7 +215,7 @@ auto HiBAckgroundDataInfo = [](std::string bundleName, AbilityInfo &abilityInfo,
     abilityInfo.name = elementTemp.GetAbilityName();
     abilityInfo.bundleName = elementTemp.GetBundleName();
     abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
-    abilityInfo.applicationInfo.singleUser = true;
+    abilityInfo.applicationInfo.singleton = true;
     abilityInfo.applicationName = "hiBackgroundData";
     abilityInfo.applicationInfo.name = "hiBackgroundData";
     abilityInfo.type = AbilityType::SERVICE;
@@ -227,7 +227,7 @@ auto HiSingleMusicInfo = [](std::string bundleName, AbilityInfo &abilityInfo, El
     abilityInfo.name = elementTemp.GetAbilityName();
     abilityInfo.bundleName = elementTemp.GetBundleName();
     abilityInfo.applicationInfo.bundleName = elementTemp.GetBundleName();
-    abilityInfo.applicationInfo.singleUser = true;
+    abilityInfo.applicationInfo.singleton = true;
     abilityInfo.applicationName = "hiSingleMusic";
     abilityInfo.applicationInfo.name = "hiSingleMusic";
     abilityInfo.type = AbilityType::PAGE;

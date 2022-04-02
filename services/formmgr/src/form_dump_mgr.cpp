@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,17 +30,17 @@ FormDumpMgr::~FormDumpMgr(){}
 void FormDumpMgr::DumpStorageFormInfos(const std::vector<FormDBInfo> &storageInfos, std::string &formInfos) const
 {
     for (const auto &info : storageInfos) {
-        formInfos += "  FormId #" + std::to_string(info.formId);
-        formInfos += "    formName [" + info.formName + "]";
-        formInfos += "    userId [" + std::to_string(info.userId) + "]";
-        formInfos += "    bundleName [" + info.bundleName + "]";
-        formInfos += "    moduleName [" + info.moduleName + "]";
-        formInfos += "    abilityName [" + info.abilityName + "]";
+        formInfos += "  FormId #" + std::to_string(info.formId) + "\n";
+        formInfos += "    formName [" + info.formName + "]\n";
+        formInfos += "    userId [" + std::to_string(info.userId) + "]\n";
+        formInfos += "    bundleName [" + info.bundleName + "]\n";
+        formInfos += "    moduleName [" + info.moduleName + "]\n";
+        formInfos += "    abilityName [" + info.abilityName + "]\n";
         formInfos += "    formUserUids [";
         for (auto &uId : info.formUserUids) {
-            formInfos += "      Uid [" + std::to_string(uId) + "]";
+            formInfos += " Uid[" + std::to_string(uId) + "] ";
         }
-        formInfos += "]" + LINE_SEPARATOR;
+        formInfos += "]\n" + LINE_SEPARATOR;
     }
 }
 /**
@@ -52,38 +52,38 @@ void FormDumpMgr::DumpFormInfos(const std::vector<FormRecord> &formRecordInfos, 
 {
     HILOG_INFO("%{public}s called.", __func__);
     for (const auto &info : formRecordInfos) {
-        formInfos += "  FormId [" + std::to_string(info.formId)  + "]";
-        formInfos += "    formName [" + info.formName + "]";
-        formInfos += "    bundleName [" + info.bundleName + "]";
-        formInfos += "    moduleName [" + info.moduleName + "]";
-        formInfos += "    abilityName [" + info.abilityName + "]";
-        formInfos += "    isInited [" + std::to_string(info.isInited) + "]";
-        formInfos += "    needRefresh [" + std::to_string(info.needRefresh) + "]";
-        formInfos += "    isEnableUpdate [" + std::to_string(info.isEnableUpdate) + "]";
-        formInfos += "    isCountTimerRefresh [" + std::to_string(info.isCountTimerRefresh) + "]";
-        formInfos += "    specification [" + std::to_string(info.specification) + "]";
-        formInfos += "    updateDuration [" + std::to_string(info.updateDuration) + "]";
-        formInfos += "    updateAtHour [" + std::to_string(info.updateAtHour) + "]";
-        formInfos += "    updateAtMin [" + std::to_string(info.updateAtMin) + "]";
-        formInfos += "    formTempFlg [" + std::to_string(info.formTempFlg) + "]";
-        formInfos += "    formVisibleNotify [" + std::to_string(info.formVisibleNotify) + "]";
-        formInfos += "    formVisibleNotifyState [" + std::to_string(info.formVisibleNotifyState) + "]";
-        formInfos += "    userId [" + std::to_string(info.userId) + "]";
+        formInfos += "  FormId [" + std::to_string(info.formId)  + "]\n";
+        formInfos += "    formName [" + info.formName + "]\n";
+        formInfos += "    bundleName [" + info.bundleName + "]\n";
+        formInfos += "    moduleName [" + info.moduleName + "]\n";
+        formInfos += "    abilityName [" + info.abilityName + "]\n";
+        formInfos += "    isInited [" + std::to_string(info.isInited) + "]\n";
+        formInfos += "    needRefresh [" + std::to_string(info.needRefresh) + "]\n";
+        formInfos += "    isEnableUpdate [" + std::to_string(info.isEnableUpdate) + "]\n";
+        formInfos += "    isCountTimerRefresh [" + std::to_string(info.isCountTimerRefresh) + "]\n";
+        formInfos += "    specification [" + std::to_string(info.specification) + "]\n";
+        formInfos += "    updateDuration [" + std::to_string(info.updateDuration) + "]\n";
+        formInfos += "    updateAtHour [" + std::to_string(info.updateAtHour) + "]\n";
+        formInfos += "    updateAtMin [" + std::to_string(info.updateAtMin) + "]\n";
+        formInfos += "    formTempFlg [" + std::to_string(info.formTempFlg) + "]\n";
+        formInfos += "    formVisibleNotify [" + std::to_string(info.formVisibleNotify) + "]\n";
+        formInfos += "    formVisibleNotifyState [" + std::to_string(info.formVisibleNotifyState) + "]\n";
+        formInfos += "    userId [" + std::to_string(info.userId) + "]\n";
 
         if (info.hapSourceDirs.size() > 0) {
             formInfos += "    hapSourceDirs [";
             for (auto &hapDir : info.hapSourceDirs) {
-                formInfos += "    hapSourceDir [" + hapDir + "]";
+                formInfos += " hapSourceDir[" + hapDir + "]";
             }
-            formInfos += "]";
+            formInfos += "]\n";
         }
 
         if (info.formUserUids.size() > 0) {
             formInfos += "    formUserUids [";
             for (auto &uId : info.formUserUids) {
-                formInfos += "    Uid [" + std::to_string(uId) + "]";
+                formInfos += " Uid[" + std::to_string(uId) + "] ";
             }
-            formInfos += "]";
+            formInfos += "]\n";
         }
 
         // formCacheData
@@ -91,7 +91,7 @@ void FormDumpMgr::DumpFormInfos(const std::vector<FormRecord> &formRecordInfos, 
         if (FormCacheMgr::GetInstance().GetData(info.formId, strCacheData)) {
             formInfos += "    formCacheData [";
             formInfos += strCacheData;
-            formInfos += "]" + LINE_SEPARATOR;
+            formInfos += "]\n" + LINE_SEPARATOR;
         }
     }
 
@@ -105,9 +105,9 @@ void FormDumpMgr::DumpFormInfos(const std::vector<FormRecord> &formRecordInfos, 
 void FormDumpMgr::DumpFormHostInfo(const FormHostRecord &formHostRecord, std::string &formInfo) const
 {
     HILOG_INFO("%{public}s called.", __func__);
-    formInfo += "  ================FormHostRecord=================";
-    formInfo += "  callerUid [" + std::to_string(formHostRecord.GetCallerUid()) + "]";
-    formInfo += "  hostBundleName [" + formHostRecord.GetHostBundleName() + "]";
+    formInfo += "  ================FormHostRecord=================\n";
+    formInfo += "  callerUid [" + std::to_string(formHostRecord.GetCallerUid()) + "]\n";
+    formInfo += "  hostBundleName [" + formHostRecord.GetHostBundleName() + "]\n";
     HILOG_INFO("%{public}s success. Host Form infos:%{public}s", __func__, formInfo.c_str());
 }
 
@@ -119,54 +119,54 @@ void FormDumpMgr::DumpFormHostInfo(const FormHostRecord &formHostRecord, std::st
 void FormDumpMgr::DumpFormInfo(const FormRecord &formRecordInfo, std::string &formInfo) const
 {
     HILOG_INFO("%{public}s called.", __func__);
-    formInfo += "  ================FormRecord=================";
-    formInfo += "  FormId [" + std::to_string(formRecordInfo.formId) + "]";
-    formInfo += "    formName [" + formRecordInfo.formName + "]";
-    formInfo += "    bundleName [" + formRecordInfo.bundleName + "]";
-    formInfo += "    moduleName [" + formRecordInfo.moduleName + "]";
-    formInfo += "    abilityName [" + formRecordInfo.abilityName + "]";
-    formInfo += "    isInited [" + std::to_string(formRecordInfo.isInited) + "]";
-    formInfo += "    needRefresh [" + std::to_string(formRecordInfo.needRefresh) + "]";
-    formInfo += "    isEnableUpdate [" + std::to_string(formRecordInfo.isEnableUpdate) + "]";
-    formInfo += "    isCountTimerRefresh [" + std::to_string(formRecordInfo.isCountTimerRefresh) + "]";
-    formInfo += "    specification [" + std::to_string(formRecordInfo.specification) + "]";
-    formInfo += "    updateDuration [" + std::to_string(formRecordInfo.updateDuration) + "]";
-    formInfo += "    updateAtHour [" + std::to_string(formRecordInfo.updateAtHour) + "]";
-    formInfo += "    updateAtMin [" + std::to_string(formRecordInfo.updateAtMin) + "]";
-    formInfo += "    formTempFlg [" + std::to_string(formRecordInfo.formTempFlg) + "]";
-    formInfo += "    formVisibleNotify [" + std::to_string(formRecordInfo.formVisibleNotify) + "]";
-    formInfo += "    formVisibleNotifyState [" + std::to_string(formRecordInfo.formVisibleNotifyState) + "]";
-    formInfo += "    formSrc [" + formRecordInfo.formSrc + "]";
-    formInfo += "    designWidth [" + std::to_string(formRecordInfo.formWindow.designWidth) + "]";
-    formInfo += "    autoDesignWidth [" + std::to_string(formRecordInfo.formWindow.autoDesignWidth) + "]";
-    formInfo += "    versionCode [" + std::to_string(formRecordInfo.versionCode) + "]";
-    formInfo += "    versionName [" + formRecordInfo.versionName + "]";
-    formInfo += "    compatibleVersion [" + std::to_string(formRecordInfo.compatibleVersion) + "]";
-    formInfo += "    icon [" + formRecordInfo.icon + "]";
-    formInfo += "    userId [" + std::to_string(formRecordInfo.userId) + "]";
+    formInfo += "  ================FormRecord=================\n";
+    formInfo += "  FormId [" + std::to_string(formRecordInfo.formId) + "]\n";
+    formInfo += "    formName [" + formRecordInfo.formName + "]\n";
+    formInfo += "    bundleName [" + formRecordInfo.bundleName + "]\n";
+    formInfo += "    moduleName [" + formRecordInfo.moduleName + "]\n";
+    formInfo += "    abilityName [" + formRecordInfo.abilityName + "]\n";
+    formInfo += "    isInited [" + std::to_string(formRecordInfo.isInited) + "]\n";
+    formInfo += "    needRefresh [" + std::to_string(formRecordInfo.needRefresh) + "]\n";
+    formInfo += "    isEnableUpdate [" + std::to_string(formRecordInfo.isEnableUpdate) + "]\n";
+    formInfo += "    isCountTimerRefresh [" + std::to_string(formRecordInfo.isCountTimerRefresh) + "]\n";
+    formInfo += "    specification [" + std::to_string(formRecordInfo.specification) + "]\n";
+    formInfo += "    updateDuration [" + std::to_string(formRecordInfo.updateDuration) + "]\n";
+    formInfo += "    updateAtHour [" + std::to_string(formRecordInfo.updateAtHour) + "]\n";
+    formInfo += "    updateAtMin [" + std::to_string(formRecordInfo.updateAtMin) + "]\n";
+    formInfo += "    formTempFlg [" + std::to_string(formRecordInfo.formTempFlg) + "]\n";
+    formInfo += "    formVisibleNotify [" + std::to_string(formRecordInfo.formVisibleNotify) + "]\n";
+    formInfo += "    formVisibleNotifyState [" + std::to_string(formRecordInfo.formVisibleNotifyState) + "]\n";
+    formInfo += "    formSrc [" + formRecordInfo.formSrc + "]\n";
+    formInfo += "    designWidth [" + std::to_string(formRecordInfo.formWindow.designWidth) + "]\n";
+    formInfo += "    autoDesignWidth [" + std::to_string(formRecordInfo.formWindow.autoDesignWidth) + "]\n";
+    formInfo += "    versionCode [" + std::to_string(formRecordInfo.versionCode) + "]\n";
+    formInfo += "    versionName [" + formRecordInfo.versionName + "]\n";
+    formInfo += "    compatibleVersion [" + std::to_string(formRecordInfo.compatibleVersion) + "]\n";
+    formInfo += "    icon [" + formRecordInfo.icon + "]\n";
+    formInfo += "    userId [" + std::to_string(formRecordInfo.userId) + "]\n";
 
     if (formRecordInfo.hapSourceDirs.size() > 0) {
         formInfo += "    hapSourceDirs [";
         for (auto &hapDir : formRecordInfo.hapSourceDirs) {
-            formInfo += "    hapSourceDir [" + hapDir + "]";
+            formInfo += " hapSourceDir[" + hapDir + "] ";
         }
-        formInfo += "]";
+        formInfo += "]\n";
     }
 
     if (formRecordInfo.formUserUids.size() > 0) {
         formInfo += "    formUserUids [";
         for (auto &uId : formRecordInfo.formUserUids) {
-            formInfo += "    Uid [" + std::to_string(uId) + "]";
+            formInfo += " Uid[" + std::to_string(uId) + "] ";
         }
-        formInfo += "]";
+        formInfo += "]\n";
     }
 
     // formCacheData
     std::string strCacheData;
     if (FormCacheMgr::GetInstance().GetData(formRecordInfo.formId, strCacheData)) {
-        formInfo += "    formCacheData [";
+        formInfo += "    formCacheData[";
         formInfo += strCacheData;
-        formInfo += "]" + LINE_SEPARATOR;
+        formInfo += "]\n" + LINE_SEPARATOR;
     }
 
     HILOG_INFO("%{public}s success. Form infos:%{public}s", __func__, formInfo.c_str());

@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -31,8 +31,8 @@ ohos_shared_library("libfms") {
   include_dirs = [
     "${services_path}/common:perm_verification",
     "${aafwk_path}/services/common/include",
-    "//foundation/appexecfwk/standard/common/log/include",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime",
+    "${appexecfwk_path}/common/log/include",
+    "${kits_path}/appkit/native/ability_runtime",
 
     #  "//third_party/libuuid",
   ]
@@ -72,6 +72,8 @@ ohos_shared_library("libfms") {
   ]
 
   defines = [
+    "APP_LOG_TAG = \"FormMgrService\"",
+    "LOG_DOMAIN = 0xD001120",
     "AMS_LOG_TAG = \"FormMgrService\"",
     "AMS_LOG_DOMAIN = 0xD001120",
   ]
@@ -86,8 +88,8 @@ ohos_shared_library("libfms") {
   }
   deps = [
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${kits_path}/appkit:app_context",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
 
     #  "//third_party/libuuid:libuuid_static",
   ]
@@ -110,7 +112,6 @@ ohos_shared_library("libfms") {
     "ipc:ipc_core",
     "os_account_standard:libaccountkits",
     "os_account_standard:os_account_innerkits",
-    "permission_standard:libpermissionsdk_standard",
     "power_manager_native:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",

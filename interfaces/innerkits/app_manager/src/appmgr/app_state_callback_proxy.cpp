@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,7 +42,19 @@ void AppStateCallbackProxy::OnAbilityRequestDone(const sptr<IRemoteObject> &toke
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+
+    if (token) {
+        if (!data.WriteBool(true) || !data.WriteRemoteObject(token.GetRefPtr())) {
+            HILOG_ERROR("Failed to write flag and token");
+            return;
+        }
+    } else {
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("Failed to write flag");
+            return;
+        }
+    }
+
     int32_t abilityState = static_cast<int32_t>(state);
     data.WriteInt32(abilityState);
     sptr<IRemoteObject> remote = Remote();

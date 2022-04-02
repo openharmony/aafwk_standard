@@ -146,7 +146,7 @@ public:
      *
      * @return Returns the local storage file.
      */
-    virtual std::string GetStorageDir() = 0;
+    virtual std::string GetPreferencesDir() = 0;
 
     /**
      * @brief Obtains the path distributed file of the application

@@ -12,26 +12,23 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 ohos_shared_library("particleability") {
   include_dirs = [
     "//third_party/node/src",
-    "//third_party/libuv/include",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
-    "//foundation/aafwk/standard/services/common/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/featureAbility",
+    "${services_path}/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
     "//third_party/jsoncpp",
     "//third_party/jsoncpp/include/json",
   ]
 
   sources = [
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_context.cpp",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_helper.cpp",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_operation.cpp",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/featureAbility/napi_context.cpp",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_helper.cpp",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_operation.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/src/js_utils.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/src/napi_data_ability_predicates.cpp",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/src/napi_result_set.cpp",
@@ -40,9 +37,9 @@ ohos_shared_library("particleability") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager:dataobs_manager",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${innerkits_path}/dataobs_manager:dataobs_manager",
+    "${kits_path}/appkit:appkit_native",
     "//third_party/jsoncpp:jsoncpp",
     "//third_party/libuv:uv_static",
   ]

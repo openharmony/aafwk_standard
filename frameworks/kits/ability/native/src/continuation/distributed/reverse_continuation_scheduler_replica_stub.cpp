@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,10 @@ ReverseContinuationSchedulerReplicaStub::~ReverseContinuationSchedulerReplicaStu
 int32_t ReverseContinuationSchedulerReplicaStub::PassPrimaryInner(MessageParcel &data, MessageParcel &reply)
 {
     HILOG_INFO("%{public}s called begin", __func__);
-    const sptr<IRemoteObject> primary = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> primary = nullptr;
+    if (data.ReadBool()) {
+        primary = data.ReadRemoteObject();
+    }
     PassPrimary(primary);
     HILOG_INFO("%{public}s called end", __func__);
     return NO_ERROR;

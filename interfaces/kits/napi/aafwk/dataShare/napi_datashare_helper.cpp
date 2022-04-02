@@ -223,12 +223,12 @@ napi_value DataShareHelperConstructor(napi_env env, napi_callback_info info)
     if (status != napi_ok || !isStageMode) {
         auto ability = OHOS::AbilityRuntime::GetCurrentAbility(env);
         NAPI_ASSERT(env, ability != nullptr, "DataShareHelperConstructor: failed to get native ability");
-        HILOG_INFO("FA Model: ability = %{public}p strUri = %{public}s", ability, strUri.c_str());
+        HILOG_INFO("FA Model: strUri = %{public}s", strUri.c_str());
         dataShareHelper = DataShareHelper::Creator(ability->GetContext(), want, std::make_shared<Uri>(strUri));
     } else {
         auto context = OHOS::AbilityRuntime::GetStageModeContext(env, argv[PARAM0]);
         NAPI_ASSERT(env, context != nullptr, "DataShareHelperConstructor: failed to get native context");
-        HILOG_INFO("Stage Model: context = %{public}p strUri = %{public}s", context.get(), strUri.c_str());
+        HILOG_INFO("Stage Model: strUri = %{public}s", strUri.c_str());
         dataShareHelper = DataShareHelper::Creator(context, want, std::make_shared<Uri>(strUri));
     }
     NAPI_ASSERT(env, dataShareHelper != nullptr, "DataShareHelperConstructor: dataShareHelper is nullptr");
@@ -323,7 +323,7 @@ napi_value InsertWrap(napi_env env, napi_callback_info info, DSHelperInsertCB *i
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("%{public}s,DataShareHelper objectInfo = %{public}p", __func__, objectInfo);
+    HILOG_INFO("%{public}s,set DataShareHelper objectInfo", __func__);
     insertCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -606,7 +606,7 @@ napi_value NotifyChangeWrap(napi_env env, napi_callback_info info, DSHelperNotif
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("DataShareHelper objectInfo = %{public}p", objectInfo);
+    HILOG_INFO("Set DataShareHelper objectInfo");
     notifyChangeCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -817,7 +817,7 @@ napi_value RegisterWrap(napi_env env, napi_callback_info info, DSHelperOnOffCB *
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("DataShareHelper objectInfo = %{public}p", objectInfo);
+    HILOG_INFO("Set DataShareHelper objectInfo");
     onCB->dataShareHelper = objectInfo;
 
     ret = RegisterAsync(env, args, argcAsync, argcPromise, onCB);
@@ -895,7 +895,10 @@ void RegisterCompleteCB(napi_env env, napi_status status, void *data)
         return;
     }
     HILOG_INFO("NAPI_Register, input params onCB is invalid params, will be release");
-    onCB->observer->ReleaseJSCallback();
+    if (onCB->observer) {
+        HILOG_INFO("NAPI_Register, call ReleaseJSCallback");
+        onCB->observer->ReleaseJSCallback();
+    }
     delete onCB;
     onCB = nullptr;
     HILOG_INFO("NAPI_Register, main event thread complete over an release invalid onCB.");
@@ -1404,7 +1407,7 @@ napi_value GetTypeWrap(napi_env env, napi_callback_info info, DSHelperGetTypeCB 
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("%{public}s,DataShareHelper objectInfo = %{public}p", __func__, objectInfo);
+    HILOG_INFO("%{public}s,DataShareHelper objectInfo", __func__);
     gettypeCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -1588,7 +1591,7 @@ napi_value GetFileTypesWrap(napi_env env, napi_callback_info info, DSHelperGetFi
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("%{public}s,DataShareHelper objectInfo = %{public}p", __func__, objectInfo);
+    HILOG_INFO("%{public}s,DataShareHelper objectInfo", __func__);
     getfiletypesCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -1792,7 +1795,7 @@ napi_value NormalizeUriWrap(napi_env env, napi_callback_info info, DSHelperNorma
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("%{public}s,DataShareHelper objectInfo = %{public}p", __func__, objectInfo);
+    HILOG_INFO("%{public}s,DataShareHelper objectInfo", __func__);
     normalizeuriCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -1971,7 +1974,7 @@ napi_value DenormalizeUriWrap(napi_env env, napi_callback_info info, DSHelperDen
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("%{public}s,DataShareHelper objectInfo = %{public}p", __func__, objectInfo);
+    HILOG_INFO("%{public}s,DataShareHelper objectInfo", __func__);
     denormalizeuriCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -2180,7 +2183,7 @@ napi_value DeleteWrap(napi_env env, napi_callback_info info, DSHelperDeleteCB *d
     UnwrapDataAbilityPredicates(deleteCB->predicates, env, args[PARAM1]);
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("%{public}s,DataShareHelper objectInfo = %{public}p", __func__, objectInfo);
+    HILOG_INFO("%{public}s,DataShareHelper objectInfo", __func__);
     deleteCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -2376,7 +2379,7 @@ napi_value UpdateWrap(napi_env env, napi_callback_info info, DSHelperUpdateCB *u
     UnwrapDataAbilityPredicates(updateCB->predicates, env, args[PARAM2]);
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("%{public}s,DataShareHelper objectInfo = %{public}p", __func__, objectInfo);
+    HILOG_INFO("%{public}s,DataShareHelper objectInfo", __func__);
     updateCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -2575,7 +2578,7 @@ napi_value OpenFileWrap(napi_env env, napi_callback_info info, DSHelperOpenFileC
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("%{public}s,DataShareHelper objectInfo = %{public}p", __func__, objectInfo);
+    HILOG_INFO("%{public}s,DataShareHelper objectInfo", __func__);
     openFileCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -2808,7 +2811,7 @@ napi_value BatchInsertWrap(napi_env env, napi_callback_info info, DSHelperBatchI
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("%{public}s,DataShareHelper objectInfo = %{public}p", __func__, objectInfo);
+    HILOG_INFO("%{public}s,DataShareHelper objectInfo", __func__);
     batchInsertCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -3014,7 +3017,7 @@ napi_value QueryWrap(napi_env env, napi_callback_info info, DSHelperQueryCB *que
     UnwrapDataAbilityPredicates(queryCB->predicates, env, args[PARAM2]);
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("%{public}s,DataShareHelper objectInfo = %{public}p", __func__, objectInfo);
+    HILOG_INFO("%{public}s,DataShareHelper objectInfo", __func__);
     queryCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {
@@ -3200,7 +3203,7 @@ napi_value ReleaseWrap(napi_env env, napi_callback_info info, DSHelperReleaseCB 
 
     DataShareHelper *objectInfo = nullptr;
     napi_unwrap(env, thisVar, (void **)&objectInfo);
-    HILOG_INFO("DataShareHelper ReleaseWrap objectInfo = %{public}p", objectInfo);
+    HILOG_INFO("DataShareHelper ReleaseWrap objectInfo");
     releaseCB->dataShareHelper = objectInfo;
 
     if (argcAsync > argcPromise) {

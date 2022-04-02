@@ -34,26 +34,26 @@ unsigned int WantAgentHelper::FlagsTransformer(const std::vector<WantAgentConsta
 {
     unsigned int wantFlags = 0;
     if (flags.empty()) {
-        wantFlags |= FLAG_UPDATE_CURRENT;
+        wantFlags |= (unsigned int)FLAG_UPDATE_CURRENT;
         return wantFlags;
     }
 
     for (auto flag : flags) {
         switch (flag) {
             case WantAgentConstant::Flags::ONE_TIME_FLAG:
-                wantFlags |= FLAG_ONE_SHOT;
+                wantFlags |= (unsigned int)FLAG_ONE_SHOT;
                 break;
             case WantAgentConstant::Flags::NO_BUILD_FLAG:
-                wantFlags |= FLAG_NO_CREATE;
+                wantFlags |= (unsigned int)FLAG_NO_CREATE;
                 break;
             case WantAgentConstant::Flags::CANCEL_PRESENT_FLAG:
-                wantFlags |= FLAG_CANCEL_CURRENT;
+                wantFlags |= (unsigned int)FLAG_CANCEL_CURRENT;
                 break;
             case WantAgentConstant::Flags::UPDATE_PRESENT_FLAG:
-                wantFlags |= FLAG_UPDATE_CURRENT;
+                wantFlags |= (unsigned int)FLAG_UPDATE_CURRENT;
                 break;
             case WantAgentConstant::Flags::CONSTANT_FLAG:
-                wantFlags |= FLAG_IMMUTABLE;
+                wantFlags |= (unsigned int)FLAG_IMMUTABLE;
                 break;
             default:
                 WANT_AGENT_LOGE("WantAgentHelper::flags is error.");

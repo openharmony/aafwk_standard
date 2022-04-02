@@ -34,6 +34,7 @@ namespace OHOS {
 namespace AppExecFwk {
 class AppServiceManager;
 class Configuration;
+class AppMgrRemoteHolder;
 class AppMgrClient {
 public:
     AppMgrClient();
@@ -210,20 +211,18 @@ public:
     /**
      * Start a user test
      */
-    virtual int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-        const BundleInfo &bundleInfo);
+    virtual int StartUserTestProcess(
+        const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo, int32_t userId);
 
     /**
      * @brief Finish user test.
      * @param msg user test message.
      * @param resultCode user test result Code.
      * @param bundleName user test bundleName.
-     * @param pid the user test process id.
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int FinishUserTest(
-        const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid);
+    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName);
 
     virtual void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
 
@@ -270,8 +269,7 @@ private:
     void SetServiceManager(std::unique_ptr<AppServiceManager> serviceMgr);
 
 private:
-    std::unique_ptr<AppServiceManager> serviceManager_;
-    sptr<IRemoteObject> remote_;
+    std::shared_ptr<AppMgrRemoteHolder> mgrHolder_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

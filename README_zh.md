@@ -61,15 +61,15 @@ foundation/
 └──foundation/aafwk/standard
    ├── frameworks
    │   └── kits
-   │       └── ability						# AbilityKit实现的核心代码
+   │       └── ability				# AbilityKit实现的核心代码
    ├── interfaces
    │   └── innerkits
-   │        └── want						# Ability之间交互的信息载体的对外接口
-   └── services
-       ├── abilitymgr						# Ability管理服务框架代码
-       ├── common							# 日志组件目录
-       ├── test								# 测试目录
-       └── tools							# aa命令代码目录
+   │       └── want						# Ability之间交互的信息载体的对外接口
+   ├── services
+   │   ├── abilitymgr					# Ability管理服务框架代码
+   │   ├── common							# 日志组件目录
+   │   └── test								# 测试目录
+   └── tools							    # aa命令代码目录
 ```
 
 ## 使用说明

@@ -265,7 +265,7 @@ ErrCode DataShareStub::CmdBatchInsert(MessageParcel &data, MessageParcel &reply)
 
     std::vector<NativeRdb::ValuesBucket> values;
     for (int i = 0; i < count; i++) {
-        NativeRdb::ValuesBucket *value = data.ReadParcelable<NativeRdb::ValuesBucket>();
+        std::unique_ptr<NativeRdb::ValuesBucket> value(data.ReadParcelable<NativeRdb::ValuesBucket>());
         if (value == nullptr) {
             HILOG_ERROR("DataShareStub value is nullptr, index = %{public}d", i);
             return ERR_INVALID_VALUE;
@@ -289,9 +289,14 @@ ErrCode DataShareStub::CmdRegisterObserver(MessageParcel &data, MessageParcel &r
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
     }
-    auto obServer = iface_cast<AAFwk::IDataAbilityObserver>(data.ReadParcelable<IRemoteObject>());
+    auto remoteObject = data.ReadRemoteObject();
+    if (remoteObject == nullptr) {
+        HILOG_ERROR("remoteObject is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    auto obServer = iface_cast<AAFwk::IDataAbilityObserver>(remoteObject);
     if (obServer == nullptr) {
-        HILOG_ERROR("DataShareStub obServer is nullptr");
+        HILOG_ERROR("the obServer creator is not exists");
         return ERR_INVALID_VALUE;
     }
 
@@ -310,9 +315,14 @@ ErrCode DataShareStub::CmdUnregisterObserver(MessageParcel &data, MessageParcel 
         HILOG_ERROR("DataShareStub uri is nullptr");
         return ERR_INVALID_VALUE;
     }
-    auto obServer = iface_cast<AAFwk::IDataAbilityObserver>(data.ReadParcelable<IRemoteObject>());
+    auto remoteObject = data.ReadRemoteObject();
+    if (remoteObject == nullptr) {
+        HILOG_ERROR("remoteObject is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    auto obServer = iface_cast<AAFwk::IDataAbilityObserver>(remoteObject);
     if (obServer == nullptr) {
-        HILOG_ERROR("DataShareStub obServer is nullptr");
+        HILOG_ERROR("the obServer creator is not exists");
         return ERR_INVALID_VALUE;
     }
 
@@ -395,7 +405,7 @@ ErrCode DataShareStub::CmdExecuteBatch(MessageParcel &data, MessageParcel &reply
     }
 
     std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> results = ExecuteBatch(operations);
-    int total = results.size();
+    int total = (int)(results.size());
     if (!reply.WriteInt32(total)) {
         HILOG_ERROR("DataShareStub::CmdExecuteBatchInner fail to WriteInt32 ret");
         return ERR_INVALID_VALUE;

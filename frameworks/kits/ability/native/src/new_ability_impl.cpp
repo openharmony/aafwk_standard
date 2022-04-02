@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,9 +36,13 @@ void NewAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Lif
         targetState.isNewWant,
         targetState.sceneFlag);
 #ifdef SUPPORT_GRAPHICS
+    if (ability_ != nullptr) {
+        ability_->sceneFlag_ = targetState.sceneFlag;
+    }
     if ((lifecycleState_ == targetState.state) && !targetState.isNewWant) {
         if (ability_ != nullptr && targetState.state == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
             ability_->RequsetFocus(want);
+            AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
         }
         HILOG_ERROR("Org lifeCycleState equals to Dst lifeCycleState.");
         return;
@@ -52,11 +56,7 @@ void NewAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Lif
         Start(want);
         CheckAndRestore();
     }
-#ifdef SUPPORT_GRAPHICS
-    if (ability_ != nullptr) {
-        ability_->sceneFlag_ = targetState.sceneFlag;
-    }
-#endif
+
     bool ret = false;
     ret = AbilityTransaction(want, targetState);
     if (ret) {
@@ -95,9 +95,15 @@ bool NewAbilityImpl::AbilityTransaction(const Want &want, const AAFwk::LifeCycle
                 NewWant(want);
             }
 #ifdef SUPPORT_GRAPHICS
-            Foreground(want);
+            if (lifecycleState_ == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
+                if (ability_) {
+                    ability_->RequsetFocus(want);
+                }
+            } else {
+                Foreground(want);
+                ret = false;
+            }
 #endif
-            ret = false;
             break;
         }
         case AAFwk::ABILITY_STATE_BACKGROUND_NEW: {

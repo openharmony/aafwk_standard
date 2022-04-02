@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -199,6 +199,7 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_004, TestSize.Level1)
  */
 HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_005, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_005 start";
     for (int i = 0; i < COUNT; i++) {
         sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
@@ -212,6 +213,7 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_005, TestSize.Level1)
     }
 
     GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_005 end";
+#endif
 }
 
 /*

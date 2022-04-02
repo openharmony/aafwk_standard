@@ -55,8 +55,6 @@
 #include "key_event.h"
 #endif
 #include "ohos_application.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
 #include "reverse_continuation_scheduler_primary.h"
 #include "reverse_continuation_scheduler_replica.h"
 #include "reverse_continuation_scheduler_replica_handler_interface.h"
@@ -68,9 +66,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-using PermissionKit = OHOS::Security::Permission::PermissionKit;
-using PermissionState = OHOS::Security::Permission::PermissionState;
-
 // REGISTER_AA(Ability)
 const std::string Ability::SYSTEM_UI("com.ohos.systemui");
 const std::string Ability::STATUS_BAR("com.ohos.systemui.statusbar.MainAbility");
@@ -91,7 +86,9 @@ static std::mutex formLock;
 constexpr int64_t SEC_TO_MILLISEC = 1000;
 constexpr int64_t MILLISEC_TO_NANOSEC = 1000000;
 #endif
+#ifdef DISTRIBUTED_DATA_OBJECT_ENABLE
 constexpr int32_t DISTRIBUTED_OBJECT_TIMEOUT = 10000;
+#endif
 
 Ability* Ability::Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime)
 {
@@ -135,12 +132,12 @@ void Ability::Init(const std::shared_ptr<AbilityInfo> &abilityInfo, const std::s
             continuationManager_.reset();
         } else {
             std::weak_ptr<ContinuationHandler> continuationHandler = continuationHandler_;
-            sptr<ReverseContinuationSchedulerPrimary> Primary = sptr<ReverseContinuationSchedulerPrimary>(
+            sptr<ReverseContinuationSchedulerPrimary> primary = sptr<ReverseContinuationSchedulerPrimary>(
                 new (std::nothrow) ReverseContinuationSchedulerPrimary(continuationHandler, handler_));
-            if (Primary == nullptr) {
-                HILOG_ERROR("Ability::Init failed,Primary create failed");
+            if (primary == nullptr) {
+                HILOG_ERROR("Ability::Init failed,primary create failed");
             } else {
-                continuationHandler_->SetPrimaryStub(Primary);
+                continuationHandler_->SetPrimaryStub(primary);
                 continuationHandler_->SetAbilityInfo(abilityInfo_);
             }
         }
@@ -508,6 +505,7 @@ bool Ability::IsRestoredInContinuation() const
 
 void Ability::WaitingDistributedObjectSyncComplete(const Want& want)
 {
+#ifdef DISTRIBUTED_DATA_OBJECT_ENABLE
     int sessionId = want.GetIntParam(DMS_SESSION_ID, DEFAULT_DMS_SESSION_ID);
     std::string originDeviceId = want.GetStringParam(DMS_ORIGIN_DEVICE_ID);
 
@@ -538,6 +536,9 @@ void Ability::WaitingDistributedObjectSyncComplete(const Want& want)
         handler_->PostTask(timeout, "Waiting_Sync_Timeout", DISTRIBUTED_OBJECT_TIMEOUT);
         HILOG_INFO("continuation set timeout end");
     }
+#else
+    NotityContinuationResult(want, true);
+#endif
 }
 
 void Ability::NotityContinuationResult(const Want& want, bool success)
@@ -553,7 +554,7 @@ void Ability::NotityContinuationResult(const Want& want, bool success)
     }
     int sessionId = want.GetIntParam(DMS_SESSION_ID, DEFAULT_DMS_SESSION_ID);
     std::string originDeviceId = want.GetStringParam(DMS_ORIGIN_DEVICE_ID);
-    HILOG_INFO("Ability::NotityContinuationComplete DeviceId: %{public}s", originDeviceId.c_str());
+    HILOG_DEBUG("Ability::NotityContinuationComplete DeviceId: %{public}s", originDeviceId.c_str());
     continuationManager_->NotifyCompleteContinuation(
         originDeviceId, sessionId, success, reverseContinuationSchedulerReplica_);
 }
@@ -898,6 +899,11 @@ bool Ability::HasWindowFocus()
 
     return false;
 }
+
+void Ability::SetShowOnLockScreen(bool showOnLockScreen)
+{
+    showOnLockScreen_ = showOnLockScreen;
+}
 #endif
 
 /**
@@ -986,6 +992,12 @@ std::string Ability::GetType(const Uri &uri)
 int Ability::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
     return 0;
+}
+
+std::shared_ptr<AppExecFwk::PacMap> Ability::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    return nullptr;
 }
 
 /**
@@ -1157,7 +1169,6 @@ bool Ability::IsTerminating()
 void Ability::OnAbilityResult(int requestCode, int resultCode, const Want &want)
 {}
 
-#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called back when the Back key is pressed.
  * The default implementation destroys the ability. You can override this method.
@@ -1177,7 +1188,6 @@ void Ability::OnBackPressed()
     }
     HILOG_INFO("%{public}s end.", __func__);
 }
-#endif
 
 /**
  * @brief Called when the launch mode of an ability is set to singleInstance. This happens when you re-launch an
@@ -1969,7 +1979,7 @@ void Ability::HandleCreateAsContinuation(const Want &want)
 
     int sessionId = want.GetIntParam(DMS_SESSION_ID, DEFAULT_DMS_SESSION_ID);
     std::string originDeviceId = want.GetStringParam(DMS_ORIGIN_DEVICE_ID);
-    HILOG_ERROR("Ability::HandleCreateAsContinuationoriginDeviceId: %{public}s", originDeviceId.c_str());
+    HILOG_DEBUG("Ability::HandleCreateAsContinuationoriginDeviceId: %{public}s", originDeviceId.c_str());
     continuationManager_->NotifyCompleteContinuation(
         originDeviceId, sessionId, success, reverseContinuationSchedulerReplica_);
 }
@@ -2290,7 +2300,7 @@ ErrCode Ability::UpdateForm(const int64_t formId, const FormProviderData &formPr
     }
 
     // update form request to fms
-    ErrCode result = FormMgr::GetInstance().UpdateForm(formId, abilityInfo_->bundleName, formProviderData);
+    ErrCode result = FormMgr::GetInstance().UpdateForm(formId, formProviderData);
     if (result != ERR_OK) {
         HILOG_ERROR("%{public}s error, update form for fms failed.", __func__);
     }
@@ -3072,7 +3082,11 @@ ErrCode Ability::GetFormsInfoByModule(std::string &bundleName, std::string &modu
  */
 std::string Ability::GetErrorMsg(const ErrCode errorCode)
 {
+#ifdef SUPPORT_GRAPHICS
     return FormMgr::GetInstance().GetErrorMessage(errorCode);
+#else
+    return nullptr;
+#endif
 }
 
 /**
@@ -3220,13 +3234,13 @@ void Ability::ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
     if (operation->IsInsertOperation()) {
         HILOG_INFO("Ability::ExecuteOperation IsInsertOperation");
         numRows = Insert(*(operation->GetUri().get()), *valuesBucket);
-    } else if (operation->IsDeleteOperation()) {
+    } else if (operation->IsDeleteOperation() && predicates) {
         HILOG_INFO("Ability::ExecuteOperation IsDeleteOperation");
         numRows = Delete(*(operation->GetUri().get()), *predicates);
-    } else if (operation->IsUpdateOperation()) {
+    } else if (operation->IsUpdateOperation() && predicates) {
         HILOG_INFO("Ability::ExecuteOperation IsUpdateOperation");
         numRows = Update(*(operation->GetUri().get()), *valuesBucket, *predicates);
-    } else if (operation->IsAssertOperation()) {
+    } else if (operation->IsAssertOperation() && predicates) {
         HILOG_INFO("Ability::ExecuteOperation IsAssertOperation");
         std::vector<std::string> columns;
         std::shared_ptr<NativeRdb::AbsSharedResultSet> queryResult =
@@ -3491,7 +3505,7 @@ bool Ability::CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultS
                 HILOG_ERROR("Ability::CheckAssertQueryResult strName is empty");
                 continue;
             }
-            if (strName.c_str() == strObject.c_str()) {
+            if (strName == strObject) {
                 HILOG_ERROR("Ability::CheckAssertQueryResult strName same to strObject");
                 continue;
             }
@@ -3624,8 +3638,8 @@ void Ability::OnChange(Rosen::DisplayId displayId)
     }
 
     configuration->CompareDifferent(changeKeyV, newConfig);
-    int size = changeKeyV.size();
-    HILOG_INFO("changeKeyV size :%{public}d", size);
+    uint32_t size = changeKeyV.size();
+    HILOG_INFO("changeKeyV size :%{public}u", size);
     if (!changeKeyV.empty()) {
         configuration->Merge(changeKeyV, newConfig);
         OnConfigurationUpdated(*configuration);
@@ -3674,8 +3688,8 @@ void Ability::OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to)
     }
 
     configuration->CompareDifferent(changeKeyV, newConfig);
-    int size = changeKeyV.size();
-    HILOG_INFO("changeKeyV size :%{public}d", size);
+    uint32_t size = changeKeyV.size();
+    HILOG_INFO("changeKeyV size :%{public}u", size);
     if (!changeKeyV.empty()) {
         configuration->Merge(changeKeyV, newConfig);
         OnConfigurationUpdated(*configuration);

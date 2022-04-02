@@ -167,7 +167,7 @@ static void OnStartAms()
 
         AbilityMgrModuleTest::abilityMgrServ_->handler_ =std::make_shared<AbilityEventHandler>(
             AbilityMgrModuleTest::abilityMgrServ_->eventLoop_, AbilityMgrModuleTest::abilityMgrServ_);
-        AbilityMgrModuleTest::abilityMgrServ_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        AbilityMgrModuleTest::abilityMgrServ_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         AbilityMgrModuleTest::abilityMgrServ_->connectManagers_.emplace(0,
             AbilityMgrModuleTest::abilityMgrServ_->connectManager_);
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->handler_);
@@ -190,11 +190,6 @@ static void OnStartAms()
 
         AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(AbilityMgrModuleTest::abilityMgrServ_->pendingWantManager_);
-
-        int userId = AbilityMgrModuleTest::abilityMgrServ_->GetUserId();
-        AbilityMgrModuleTest::abilityMgrServ_->SetStackManager(userId, true);
-        AbilityMgrModuleTest::abilityMgrServ_->stackManagers_.emplace(0,
-            AbilityMgrModuleTest::abilityMgrServ_->GetStackManager());
 
         AbilityMgrModuleTest::abilityMgrServ_->eventLoop_->Run();
 
@@ -674,6 +669,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_004, TestSize.Level1)
  */
 HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_005, TestSize.Level1)
 {
+#ifdef SUPPORT_GRAPHICS
     std::string abilityName = "MusicAbility";
     std::string bundleName = "com.ix.hiMusic";
 
@@ -695,6 +691,7 @@ HWTEST_F(AbilityMgrModuleTest, ability_mgr_service_test_005, TestSize.Level1)
     EXPECT_EQ((std::size_t)1, stackManager_->windowTokenToAbilityMap_.size());
     abilityRecord->RemoveWindowInfo();
     stackManager_->windowTokenToAbilityMap_.clear();
+#endif
 }
 
 /*

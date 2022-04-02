@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -96,13 +96,6 @@ void AbilityImpl::Start(const Want &want)
 #endif
 
     abilityLifecycleCallbacks_->OnAbilityStart(ability_);
-#ifdef SUPPORT_GRAPHICS
-    // Multimodal Events Register
-    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (!ability_->GetAbilityInfo()->isStageBasedModel)) {
-        WindowEventRegister();
-    }
-#endif
     HILOG_INFO("%{public}s end.", __func__);
 }
 
@@ -227,6 +220,30 @@ void AbilityImpl::AfterUnFocused()
     HILOG_INFO("%{public}s end.", __func__);
 }
 
+void AbilityImpl::AfterFocused()
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    if (!ability_ || !ability_->GetAbilityInfo() || !contextDeal_ || !handler_) {
+        HILOG_ERROR("AbilityImpl::AfterFocused failed");
+        return;
+    }
+
+    if (ability_->GetAbilityInfo()->isStageBasedModel) {
+        HILOG_INFO("new version ability, do nothing when after focused.");
+        return;
+    }
+
+    HILOG_INFO("fa mode ability, window after focused.");
+    auto task = [abilityImpl = shared_from_this(), ability = ability_, contextDeal = contextDeal_]() {
+        auto info = contextDeal->GetLifeCycleStateInfo();
+        info.state = AbilityLifeCycleState::ABILITY_STATE_ACTIVE;
+        Want want(*(ability->GetWant()));
+        abilityImpl->HandleAbilityTransaction(want, info);
+    };
+    handler_->PostTask(task);
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
 void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
@@ -259,10 +276,15 @@ void AbilityImpl::WindowLifeCycleImpl::AfterBackground()
 
 void AbilityImpl::WindowLifeCycleImpl::AfterFocused()
 {
-    HILOG_INFO("%{public}s.", __func__);
+    HILOG_INFO("%{public}s begin.", __func__);
+    auto owner = owner_.lock();
+    if (owner) {
+        owner->AfterFocused();
+    }
+    HILOG_INFO("%{public}s end.", __func__);
 }
 
-void AbilityImpl::WindowLifeCycleImpl::AfterUnFocused()
+void AbilityImpl::WindowLifeCycleImpl::AfterUnfocused()
 {
     HILOG_INFO("%{public}s begin.", __func__);
     auto owner = owner_.lock();
@@ -597,6 +619,13 @@ int AbilityImpl::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
     return -1;
 }
 
+std::shared_ptr<AppExecFwk::PacMap> AbilityImpl::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    HILOG_INFO("AbilityImpl::Call");
+    return nullptr;
+}
+
 /**
  * @brief Updates data records in the database.
  *
@@ -859,22 +888,6 @@ void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::Poin
 {
     HILOG_INFO("AbilityImpl::DoPointerEvent called.");
     abilityImpl_->DoPointerEvent(pointerEvent);
-}
-
-/**
- * @brief Multimodal Events Register.
- */
-void AbilityImpl::WindowEventRegister()
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    if (!ability_->GetAbilityInfo()->isStageBasedModel) {
-        auto window = ability_->GetWindow();
-        if (window) {
-            std::shared_ptr<MMI::IInputEventConsumer> inputEventListener =
-                std::make_shared<AbilityImpl::InputEventConsumerImpl>(shared_from_this());
-            window->AddInputEventListener(inputEventListener);
-        }
-    }
 }
 #endif
 

@@ -62,8 +62,8 @@ ohos_systemtest("FmsPerformanceTest") {
     "ces_standard:cesfwk_innerkits",
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
+    "input:libmmi-client",
     "ipc:ipc_core",
-    "multimodalinput_base:libmmi-client",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
   ]

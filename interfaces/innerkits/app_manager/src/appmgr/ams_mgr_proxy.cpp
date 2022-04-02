@@ -51,8 +51,31 @@ void AmsMgrProxy::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemo
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token);
-    data.WriteParcelable(preToken);
+
+    if (token) {
+        if (!data.WriteBool(true) || !data.WriteRemoteObject(token)) {
+            HILOG_ERROR("Failed to write flag and token");
+            return;
+        }
+    } else {
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("Failed to write flag");
+            return;
+        }
+    }
+
+    if (preToken) {
+        if (!data.WriteBool(true) || !data.WriteRemoteObject(preToken)) {
+            HILOG_ERROR("Failed to write flag and preToken");
+            return;
+        }
+    } else {
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("Failed to write flag");
+            return;
+        }
+    }
+
     data.WriteParcelable(abilityInfo.get());
     data.WriteParcelable(appInfo.get());
     if (!data.WriteParcelable(want.get())) {
@@ -80,7 +103,10 @@ void AmsMgrProxy::TerminateAbility(const sptr<IRemoteObject> &token)
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
+        HILOG_ERROR("Failed to write token");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         HILOG_ERROR("Remote() is NULL");
@@ -103,7 +129,10 @@ void AmsMgrProxy::UpdateAbilityState(const sptr<IRemoteObject> &token, const Abi
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
+        HILOG_ERROR("Failed to write token");
+        return;
+    }
     data.WriteInt32(static_cast<int32_t>(state));
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
@@ -127,7 +156,10 @@ void AmsMgrProxy::UpdateExtensionState(const sptr<IRemoteObject> &token, const E
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
+        HILOG_ERROR("Failed to write token");
+        return;
+    }
     data.WriteInt32(static_cast<int32_t>(state));
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
@@ -156,7 +188,19 @@ void AmsMgrProxy::RegisterAppStateCallback(const sptr<IAppStateCallback> &callba
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(callback->AsObject());
+
+    if (callback->AsObject()) {
+        if (!data.WriteBool(true) || !data.WriteRemoteObject(callback->AsObject())) {
+            HILOG_ERROR("Failed to write flag and callback");
+            return;
+        }
+    } else {
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("Failed to write flag");
+            return;
+        }
+    }
+
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         HILOG_ERROR("Remote() is nullptr");
@@ -180,8 +224,24 @@ void AmsMgrProxy::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, cons
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
-    data.WriteParcelable(preToken.GetRefPtr());
+
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
+        HILOG_ERROR("Failed to write token");
+        return;
+    }
+
+    if (preToken) {
+        if (!data.WriteBool(true) || !data.WriteRemoteObject(preToken.GetRefPtr())) {
+            HILOG_ERROR("Failed to write flag and preToken");
+            return;
+        }
+    } else {
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("Failed to write flag");
+            return;
+        }
+    }
+
     data.WriteInt32(static_cast<int32_t>(visibility));
     data.WriteInt32(static_cast<int32_t>(perceptibility));
     data.WriteInt32(static_cast<int32_t>(connectionState));
@@ -191,7 +251,7 @@ void AmsMgrProxy::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &token, cons
         return;
     }
     int32_t ret =
-        remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::TERMINATE_ABILITY), data, reply, option);
+        remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::ABILITY_BEHAVIOR_ANALYSIS), data, reply, option);
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
@@ -207,14 +267,17 @@ void AmsMgrProxy::KillProcessByAbilityToken(const sptr<IRemoteObject> &token)
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
+        HILOG_ERROR("Failed to write token");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         HILOG_ERROR("Remote() is NULL");
         return;
     }
-    int32_t ret =
-        remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::TERMINATE_ABILITY), data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(IAmsMgr::Message::KILL_PEOCESS_BY_ABILITY_TOKEN),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
@@ -353,7 +416,10 @@ void AmsMgrProxy::AbilityAttachTimeOut(const sptr<IRemoteObject> &token)
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
+        HILOG_ERROR("Failed to write token");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         HILOG_ERROR("Remote() is NULL");
@@ -376,7 +442,10 @@ void AmsMgrProxy::PrepareTerminate(const sptr<IRemoteObject> &token)
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
+        HILOG_ERROR("Failed to write token");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         HILOG_ERROR("Remote() is NULL");
@@ -401,7 +470,7 @@ void AmsMgrProxy::GetRunningProcessInfoByToken(
         return;
     }
 
-    if (!data.WriteParcelable(token.GetRefPtr())) {
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
         return;
     }
 
@@ -467,7 +536,10 @@ void AmsMgrProxy::RegisterStartSpecifiedAbilityResponse(const sptr<IStartSpecifi
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(response->AsObject());
+    if (!data.WriteRemoteObject(response->AsObject())) {
+        HILOG_ERROR("Failed to write remote object.");
+        return;
+    }
 
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {

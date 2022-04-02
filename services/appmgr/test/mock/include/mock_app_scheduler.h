@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,8 +26,8 @@ namespace OHOS {
 namespace AppExecFwk {
 class MockAppScheduler : public AppSchedulerHost {
 public:
-    MockAppScheduler(){};
-    virtual ~MockAppScheduler(){};
+    MockAppScheduler() = default;
+    virtual ~MockAppScheduler() = default;
     MOCK_METHOD0(ScheduleForegroundApplication, void());
     MOCK_METHOD0(ScheduleBackgroundApplication, void());
     MOCK_METHOD0(ScheduleTerminateApplication, void());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -136,6 +136,19 @@ public:
     virtual int Insert(const Uri &uri, const NativeRdb::ValuesBucket &value) override;
 
     /**
+     * @brief Calls the method of the Data ability.
+     *
+     * @param uri Indicates the Data ability of the method to call.
+     * @param method Indicates the method to call.
+     * @param arg Indicates the parameter of the String type.
+     * @param pacMap Defines a PacMap object for storing a series of values.
+     *
+     * @return Returns the call result.
+     */
+    virtual std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap) override;
+
+    /**
      * @brief Updates data records in the database.
      *
      * @param uri Indicates the path of data to update.
@@ -201,7 +214,6 @@ public:
      */
     int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values) override;
 
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief notify multi window mode changed.
      *
@@ -209,7 +221,6 @@ public:
      * @param flag Indicates this ability has been enter this mode.
      */
     void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override;
-#endif
 
     /**
      * @brief Registers an observer to DataObsMgr specified by the given Uri.
@@ -231,14 +242,12 @@ public:
      */
     bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override;
 
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief notify this ability is top active ability.
      *
      * @param flag true: Indicates this ability is top active ability
      */
     void NotifyTopActiveAbilityChanged(bool flag) override;
-#endif
 
     /**
      * @brief Notifies the registered observers of a change to the data resource specified by Uri.

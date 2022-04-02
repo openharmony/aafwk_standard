@@ -33,7 +33,6 @@ config("module_private_config") {
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
-    "//utils/system/safwk/native/include",
     "//foundation/aafwk/standard/services/common/include",
     "//foundation/aafwk/standard/frameworks/kits/test/mock/AMS",
     "//foundation/aafwk/standard/services/common/include",
@@ -121,7 +120,7 @@ ohos_moduletest("ability_moduletest") {
 
   if (ability_runtime_graphics) {
     deps += [ "//foundation/multimedia/image_standard/interfaces/innerkits:image_native" ]
-    external_deps += [ "multimodalinput_base:libmmi-client" ]
+    external_deps += [ "input:libmmi-client" ]
   }
 }
 
@@ -184,7 +183,7 @@ ohos_moduletest("ability_conetxt_test") {
     "native_appdatamgr:native_rdb",
   ]
   if (ability_runtime_graphics) {
-    external_deps += [ "multimodalinput_base:libmmi-client" ]
+    external_deps += [ "input:libmmi-client" ]
   }
 }
 
@@ -203,11 +202,11 @@ ohos_moduletest("ability_thread_call_request_module_test") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
   ]
@@ -288,7 +287,7 @@ ohos_moduletest("data_ability_operation_moduletest") {
 
   if (ability_runtime_graphics) {
     deps += [ "//foundation/multimedia/image_standard/interfaces/innerkits:image_native" ]
-    external_deps += [ "multimodalinput_base:libmmi-client" ]
+    external_deps += [ "input:libmmi-client" ]
   }
 }
 
@@ -335,7 +334,7 @@ ohos_moduletest("data_ability_helper_module_test") {
   ]
 
   if (ability_runtime_graphics) {
-    external_deps += [ "multimodalinput_base:libmmi-client" ]
+    external_deps += [ "input:libmmi-client" ]
   }
 }
 

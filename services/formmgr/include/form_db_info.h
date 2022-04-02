@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,6 +39,7 @@ struct FormDBInfo {
     FormDBInfo()
     {
         formId = -1;
+        userId = 0;
     }
 
     /**
@@ -346,9 +347,6 @@ public:
 private:
     FormDBInfo formDBInfo_;
 };
-
-// void to_json(nlohmann::json &jsonObject, const FormDBInfo &info);
-// void from_json(const nlohmann::json &jsonObject, FormDBInfo &info);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif  // FOUNDATION_APPEXECFWK_SERVICES_FORMMGR_INCLUDE_INNER_FORM_INFO_H

@@ -494,6 +494,9 @@ public:
     AppSpawnStartMsg GetStartMsg();
 
     void SendEventForSpecifiedAbility(uint32_t msg, int64_t timeOut);
+
+    void SetKilling();
+    bool IsKilling() const;
 private:
     /**
      * SearchTheModuleInfoNeedToUpdated, Get an uninitialized abilitystage data.
@@ -573,6 +576,8 @@ private:
     bool isDebugApp_ = false;
 
     std::shared_ptr<UserTestRecord> userTestRecord_ = nullptr;
+
+    bool isKilling_ = false;
 
     // render record
     std::shared_ptr<RenderRecord> renderRecord_ = nullptr;

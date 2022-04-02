@@ -308,11 +308,6 @@ public:
         return 0;
     }
 
-    virtual int SetShowOnLockScreen(bool isAllow) override
-    {
-        return 0;
-    }
-
     virtual int ClearUpApplicationData(const std::string &bundleName) override
     {
         return 0;

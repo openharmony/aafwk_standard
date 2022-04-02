@@ -17,7 +17,6 @@
 #define FOUNDATION_APPEXECFWK_OHOS_FORM_HOST_CLIENT_H
 
 #include <map>
-// #include "ability.h"
 #include "form_host_stub.h"
 #include "iremote_object.h"
 #include "iremote_stub.h"

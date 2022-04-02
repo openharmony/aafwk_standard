@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -282,16 +282,17 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_009, TestSize.Level1)
     MessageParcel reply;
     MessageOption option;
 
-    sptr<IRemoteObject> token = nullptr;
+    sptr<IRemoteObject> token = sptr<AppExecFwk::MockAbilityToken>(new (std::nothrow) AppExecFwk::MockAbilityToken());
     WriteInterfaceToken(data);
-    data.WriteParcelable(token);
-    data.WriteInt32(1);
+    bool ret = data.WriteRemoteObject(token);
+    ret |= data.WriteInt32(1);
     PacMap pMap;
     pMap.PutIntValue(std::string("1"), 1);
-    data.WriteParcelable(&pMap);
-    int res = stub_->OnRemoteRequest(IAbilityManager::ABILITY_TRANSITION_DONE, data, reply, option);
-
-    EXPECT_EQ(res, NO_ERROR);
+    ret |= data.WriteParcelable(&pMap);
+    if (ret) {
+        int res = stub_->OnRemoteRequest(IAbilityManager::ABILITY_TRANSITION_DONE, data, reply, option);
+        EXPECT_EQ(res, NO_ERROR);
+    }
 }
 
 /*
@@ -548,7 +549,7 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_020, TestSize.Level1)
     data.WriteParcelable(&element);
     int res = stub_->OnRemoteRequest(IAbilityManager::RELEASE_CALL_ABILITY, data, reply, option);
 
-    EXPECT_EQ(res, NO_ERROR);
+    EXPECT_EQ(res, ERR_INVALID_VALUE);
 }
 
 /*

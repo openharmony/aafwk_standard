@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,8 @@
  */
 
 #include <gtest/gtest.h>
+
+#include "accesstoken_kit.h"
 #include "form_ams_helper.h"
 #include "form_bms_helper.h"
 #define private public
@@ -35,8 +37,6 @@
 #include "mock_ability_manager.h"
 #include "mock_bundle_manager.h"
 #include "mock_form_host_client.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
 #include "running_process_info.h"
 #include "system_ability_definition.h"
 
@@ -70,6 +70,7 @@ public:
     void SetUp();
     void TearDown();
 
+    void CreateProviderData();
 protected:
     sptr<MockFormHostClient> token_;
     std::shared_ptr<FormMgrService> formyMgrServ_ = DelayedSingleton<FormMgrService>::GetInstance();
@@ -90,28 +91,39 @@ void FmsFormMgrAddFormTest::SetUp()
     token_ = new (std::nothrow) MockFormHostClient();
 
     // Permission install
-    std::vector<Permission::PermissionDef> permList;
-    Permission::PermissionDef permDef;
-    permDef.permissionName = PERMISSION_NAME_REQUIRE_FORM;
-    permDef.bundleName = FORM_PROVIDER_BUNDLE_NAME;
-    permDef.grantMode = Permission::GrantMode::USER_GRANT;
-    permDef.availableScope = Permission::AvailableScope::AVAILABLE_SCOPE_ALL;
-    permDef.label = DEF_LABEL1;
-    permDef.labelId = 1;
-    permDef.description = DEF_LABEL1;
-    permDef.descriptionId = 1;
-    permList.emplace_back(permDef);
-    Permission::PermissionKit::AddDefPermissions(permList);
-    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_PROVIDER_BUNDLE_NAME,
-        {PERMISSION_NAME_REQUIRE_FORM}, 0);
-    Permission::PermissionKit::GrantUserGrantedPermission(FORM_PROVIDER_BUNDLE_NAME, PERMISSION_NAME_REQUIRE_FORM, 0);
+    int userId = 0;
+    auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, FORM_PROVIDER_BUNDLE_NAME, 0);
+    auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
 }
 
 void FmsFormMgrAddFormTest::TearDown()
 {
     formyMgrServ_->OnStop();
 }
+void FmsFormMgrAddFormTest::CreateProviderData()
+{
+    std::unordered_map<std::string, std::shared_ptr<BundleFormInfo>> bundleFormInfoMap;
+    std::shared_ptr<BundleFormInfo> bundleFormInfo = std::make_shared<BundleFormInfo>(FORM_PROVIDER_BUNDLE_NAME);
+    std::vector<FormInfo> formInfos;
+    FormInfo formInfo;
+    formInfo.bundleName = FORM_PROVIDER_BUNDLE_NAME;
+    formInfo.abilityName = FORM_PROVIDER_ABILITY_NAME;
+    formInfo.moduleName = PARAM_PROVIDER_MODULE_NAME;
+    formInfo.name = PARAM_FORM_NAME;
+    formInfo.updateEnabled = true;
+    formInfo.updateDuration = 1;
+    formInfo.scheduledUpdateTime = "06:06";
+    formInfo.jsComponentName = FORM_JS_COMPOMENT_NAME;
+    formInfo.formVisibleNotify = true;
+    formInfo.supportDimensions = {1, 2};
+    formInfo.defaultDimension = 1;
+    formInfos.emplace_back(formInfo);
+    bundleFormInfo->formInfos_ = formInfos;
+    bundleFormInfoMap.emplace(FORM_PROVIDER_BUNDLE_NAME, bundleFormInfo);
 
+    FormInfoMgr::GetInstance().bundleFormInfoMap_ = bundleFormInfoMap;
+}
 /*
  * Feature: FormMgrService
  * Function: FormMgr
@@ -124,6 +136,7 @@ void FmsFormMgrAddFormTest::TearDown()
 HWTEST_F(FmsFormMgrAddFormTest, AddForm_001, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_001 start";
+    CreateProviderData();
     // No cache
     FormJsInfo formJsInfo;
     Want want;
@@ -180,6 +193,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_001, TestSize.Level0)
 HWTEST_F(FmsFormMgrAddFormTest, AddForm_002, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_002 start";
+    CreateProviderData();
 
     int64_t formId = 0x0ffabcff00000000;
     int callingUid {0};
@@ -252,6 +266,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_002, TestSize.Level0)
 HWTEST_F(FmsFormMgrAddFormTest, AddForm_003, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_003 start";
+    CreateProviderData();
 
     int64_t formId = 0x0ffabcdf00000000;
     int callingUid {0};
@@ -321,6 +336,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_003, TestSize.Level0)
 HWTEST_F(FmsFormMgrAddFormTest, AddForm_004, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_004 start";
+    CreateProviderData();
 
     int64_t formId = 0x0ffabcde00000000;
 
@@ -350,6 +366,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_004, TestSize.Level0)
 HWTEST_F(FmsFormMgrAddFormTest, AddForm_005, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_005 start";
+    CreateProviderData();
 
     int64_t formId = 0x0ffabcdd00000000;
     FormJsInfo formJsInfo;
@@ -385,6 +402,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_005, TestSize.Level0)
 HWTEST_F(FmsFormMgrAddFormTest, AddForm_006, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_006 start";
+    CreateProviderData();
 
     int64_t formId = 0x0ababcff00000000;
     int callingUid {0};
@@ -436,6 +454,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_006, TestSize.Level0)
 HWTEST_F(FmsFormMgrAddFormTest, AddForm_007, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_007 start";
+    CreateProviderData();
 
     int64_t formId = 0x0ababc5f00000000;
     int callingUid {0}, tempCount = 0;
@@ -495,6 +514,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_007, TestSize.Level0)
 HWTEST_F(FmsFormMgrAddFormTest, AddForm_008, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_008 start";
+    CreateProviderData();
     // clear old data
     FormDataMgr::GetInstance().formRecords_.clear();
     FormDataMgr::GetInstance().tempForms_.clear();
@@ -560,6 +580,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_008, TestSize.Level0)
 HWTEST_F(FmsFormMgrAddFormTest, AddForm_009, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_add_form_test_009 start";
+    CreateProviderData();
 
     int64_t formId = 0x0abcdabc00000000;
     int callingUid {0};

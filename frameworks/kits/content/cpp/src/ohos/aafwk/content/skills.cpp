@@ -19,7 +19,7 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace AAFwk {
 
-const int LENGTH_FOR_FINDMINETYPE = 3;
+const size_t LENGTH_FOR_FINDMINETYPE = 3;
 /**
  * @brief Default constructor used to create a Skills instance.
  */
@@ -804,7 +804,7 @@ bool Skills::FindMimeType(const std::string &type)
         return true;
     }
 
-    int typeLength = type.length();
+    size_t typeLength = type.length();
     if (typeLength == LENGTH_FOR_FINDMINETYPE && type == "*/*") {
         return !types.empty();
     }
@@ -816,7 +816,7 @@ bool Skills::FindMimeType(const std::string &type)
     }
 
     auto typeIt = type.find(0, 1, '/');
-    int slashpos = type.size() - typeIt;
+    size_t slashpos = type.size() - typeIt;
     if (slashpos > 0) {
         std::string typeSubstr = type.substr(0, slashpos);
 
@@ -828,8 +828,8 @@ bool Skills::FindMimeType(const std::string &type)
         }
 
         if (typeLength == slashpos + posOffset && type.at(slashpos + posNext) == '*') {
-            int numTypes = types.size();
-            for (int i = 0; i < numTypes; i++) {
+            size_t numTypes = types.size();
+            for (size_t i = 0; i < numTypes; i++) {
                 std::string value = types.at(i).GetPattern();
                 if (RegionMatches(type, 0, value, 0, slashpos + posNext)) {
                     return true;

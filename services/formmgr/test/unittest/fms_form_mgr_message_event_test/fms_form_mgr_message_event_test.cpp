@@ -14,6 +14,7 @@
  */
 #include <gtest/gtest.h>
 
+#include "accesstoken_kit.h"
 #include "form_ams_helper.h"
 #include "form_bms_helper.h"
 #include "form_data_mgr.h"
@@ -31,8 +32,7 @@
 #include "mock_ability_manager.h"
 #include "mock_bundle_manager.h"
 #include "mock_form_host_client.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
+#include "power_mgr_client.h"
 #include "running_process_info.h"
 #include "system_ability_definition.h"
 
@@ -55,7 +55,6 @@ const std::string FORM_PROVIDER_MODULE_SOURCE_DIR = "";
 const std::string FORM_HOST_BUNDLE_NAME = "com.form.host.app";
 
 const std::string DEVICE_ID = "ohos-phone1";
-const std::string DEF_LABEL1 = "PermissionFormRequireGrant";
 
 const std::string FORM_MESSAGE_EVENT_VALUE_1 = "event message1";
 
@@ -86,21 +85,10 @@ void FmsFormMgrMessageEventTest::SetUp()
     token_ = new (std::nothrow) MockFormHostClient();
 
     // Permission install
-    std::vector<Permission::PermissionDef> permList;
-    Permission::PermissionDef permDef;
-    permDef.permissionName = PERMISSION_NAME_REQUIRE_FORM;
-    permDef.bundleName = FORM_PROVIDER_BUNDLE_NAME;
-    permDef.grantMode = Permission::GrantMode::USER_GRANT;
-    permDef.availableScope = Permission::AvailableScope::AVAILABLE_SCOPE_ALL;
-    permDef.label = DEF_LABEL1;
-    permDef.labelId = 1;
-    permDef.description = DEF_LABEL1;
-    permDef.descriptionId = 1;
-    permList.emplace_back(permDef);
-    Permission::PermissionKit::AddDefPermissions(permList);
-    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_PROVIDER_BUNDLE_NAME,
-        {PERMISSION_NAME_REQUIRE_FORM}, 0);
-    Permission::PermissionKit::GrantUserGrantedPermission(FORM_PROVIDER_BUNDLE_NAME, PERMISSION_NAME_REQUIRE_FORM, 0);
+    int userId = 0;
+    auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, FORM_PROVIDER_BUNDLE_NAME, 0);
+    auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
 }
 
 void FmsFormMgrMessageEventTest::TearDown()
@@ -119,11 +107,11 @@ HWTEST_F(FmsFormMgrMessageEventTest, MessageEvent_001, TestSize.Level0)
     GTEST_LOG_(INFO) << "fms_form_mgr_message_event_test_001 start";
 
     int64_t formId {10000001};
-    int callingUid {0};
+    int callingUid {20000007};
     // Create cache
     FormItemInfo record1;
     record1.SetFormId(formId);
-    record1.SetProviderBundleName(FORM_HOST_BUNDLE_NAME);
+    record1.SetProviderBundleName(FORM_PROVIDER_BUNDLE_NAME);
     record1.SetAbilityName(FORM_PROVIDER_ABILITY_NAME);
     record1.SetTemporaryFlag(false);
     FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1, callingUid);
@@ -144,7 +132,13 @@ HWTEST_F(FmsFormMgrMessageEventTest, MessageEvent_001, TestSize.Level0)
     want.SetParam(Constants::PARAM_FORM_NAME_KEY, PARAM_FORM_NAME);
     want.SetElementName(DEVICE_ID, FORM_PROVIDER_BUNDLE_NAME, FORM_PROVIDER_ABILITY_NAME);
     want.SetParam(Constants::PARAM_MESSAGE_KEY, FORM_MESSAGE_EVENT_VALUE_1);
-    EXPECT_EQ(ERR_OK, FormMgr::GetInstance().MessageEvent(formId, want, token_));
+
+    bool screenOnFlag = PowerMgr::PowerMgrClient::GetInstance().IsScreenOn();
+    if (!screenOnFlag) {
+        EXPECT_EQ(ERR_APPEXECFWK_FORM_COMMON_CODE, FormMgr::GetInstance().MessageEvent(formId, want, token_));
+    } else {
+        EXPECT_EQ(ERR_OK, FormMgr::GetInstance().MessageEvent(formId, want, token_));
+    }
 
     GTEST_LOG_(INFO) << "fms_form_mgr_message_event_test_001 end";
 }

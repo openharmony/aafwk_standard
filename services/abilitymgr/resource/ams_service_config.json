@@ -6,11 +6,9 @@
         "startup_system_ui_status_bar" : true,
         "startup_system_ui_navigation_bar" : true,
         "startup_phone_service" : true,
-        "startup_contacts":true,
         "startup_mms":true,
         "mission_save_time" : 43200000,
         "root_launcher_restart_max":15,
-        "use_new_mission":true,
         "app_not_response_process_timeout_time" : 5000,
         "ams_timeout_time" : 60
     },

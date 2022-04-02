@@ -465,10 +465,11 @@ public:
      * @param want, want object.
      * @param observer, test observer remote object.
      * @param bundleInfo, bundle info.
+     * @param userId the user id.
      * @return Returns ERR_OK on success, others on failure.
      */
     int StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-        const AppExecFwk::BundleInfo &bundleInfo);
+        const AppExecFwk::BundleInfo &bundleInfo, int32_t userId);
 
     /**
      * @brief Finish user test.
@@ -505,6 +506,7 @@ public:
 
     int VerifyAccountPermission(const std::string &permissionName, const int userId);
 
+    void ClearAppRunningData(const std::shared_ptr<AppRunningRecord> &appRecord, bool containsApp);
 private:
 
     void StartEmptyResidentProcess(const BundleInfo &info, const std::string &processName, int restartCount);
@@ -587,6 +589,16 @@ private:
      * @return application task information.
      */
     const std::shared_ptr<AppTaskInfo> GetAppTaskInfoById(const int32_t recordId) const;
+
+    /**
+     * KillApplicationByUserId, kill the application by user ID.
+     *
+     * @param bundleName, bundle name in Application record.
+     * @param userId, user ID.
+     *
+     * @return ERR_OK, return back success, others fail.
+     */
+    int32_t KillApplicationByUserIdLocked(const std::string &bundleName, const int userId);
 
     /**
      * KillProcessByPid, Kill process by PID.
@@ -678,7 +690,7 @@ private:
     int GetHapModuleInfoForTestRunner(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
         const BundleInfo &bundleInfo, HapModuleInfo &hapModuleInfo);
     int StartEmptyProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &info,
-        const std::string &processName);
+        const std::string &processName, const int userId);
 
     void HandleStartSpecifiedAbilityTimeOut(const int64_t eventId);
 
@@ -690,7 +702,6 @@ private:
         const std::shared_ptr<AppRunningRecord> appRecord, pid_t &renderPid);
 
     void OnRenderRemoteDied(const wptr<IRemoteObject> &remote);
-
 private:
     /**
      * ClearUpApplicationData, clear the application data.
@@ -731,7 +742,7 @@ private:
     void KillApplicationByRecord(const std::shared_ptr<AppRunningRecord> &appRecord);
     void SendHiSysEvent(const int32_t innerEventId, const int64_t eventId);
     int FinishUserTestLocked(
-        const std::string &msg, const int &resultCode, std::shared_ptr<AppRunningRecord> &appRecord);
+        const std::string &msg, const int &resultCode, const std::shared_ptr<AppRunningRecord> &appRecord);
     const std::string TASK_ON_CALLBACK_DIED = "OnCallbackDiedTask";
     std::vector<sptr<IApplicationStateObserver>> appStateObservers_;
     std::map<sptr<IRemoteObject>, sptr<IRemoteObject::DeathRecipient>> recipientMap_;

@@ -124,7 +124,7 @@ void AbilityDumpTest::OnStartAms()
         EXPECT_TRUE(g_abilityMs->eventLoop_);
 
         g_abilityMs->handler_ = std::make_shared<AbilityEventHandler>(g_abilityMs->eventLoop_, g_abilityMs);
-        g_abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>();
+        g_abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         g_abilityMs->connectManagers_.emplace(0, g_abilityMs->connectManager_);
         EXPECT_TRUE(g_abilityMs->handler_);
         EXPECT_TRUE(g_abilityMs->connectManager_);
@@ -144,11 +144,6 @@ void AbilityDumpTest::OnStartAms()
 
         g_abilityMs->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(g_abilityMs->pendingWantManager_);
-
-        int userId = g_abilityMs->GetUserId();
-        g_abilityMs->SetStackManager(userId, true);
-        EXPECT_TRUE(g_abilityMs->GetStackManager());
-        g_abilityMs->stackManagers_.emplace(0, g_abilityMs->GetStackManager());
 
         g_abilityMs->eventLoop_->Run();
 

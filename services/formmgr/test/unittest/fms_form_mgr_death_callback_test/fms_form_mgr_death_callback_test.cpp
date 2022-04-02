@@ -14,6 +14,8 @@
  */
 
 #include <gtest/gtest.h>
+
+#include "accesstoken_kit.h"
 #include "form_ams_helper.h"
 #include "form_bms_helper.h"
 #define private public
@@ -22,6 +24,7 @@
 #include "form_db_cache.h"
 #include "form_host_interface.h"
 #define private public
+#include "form_info_mgr.h"
 #include "form_mgr.h"
 #undef private
 #include "form_mgr_service.h"
@@ -34,8 +37,6 @@
 #include "mock_bundle_manager.h"
 #include "mock_form_death_callback.h"
 #include "mock_form_host_client.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
 #include "running_process_info.h"
 #include "system_ability_definition.h"
 
@@ -69,6 +70,7 @@ public:
     void SetUp();
     void TearDown();
 
+    void CreateProviderData();
 protected:
     sptr<MockFormHostClient> token_;
     std::shared_ptr<FormMgrService> formyMgrServ_ = DelayedSingleton<FormMgrService>::GetInstance();
@@ -89,26 +91,38 @@ void FmsFormMgrDeathCallbackTest::SetUp()
     token_ = new (std::nothrow) MockFormHostClient();
 
     // Permission install
-    std::vector<Permission::PermissionDef> permList;
-    Permission::PermissionDef permDef;
-    permDef.permissionName = PERMISSION_NAME_REQUIRE_FORM;
-    permDef.bundleName = FORM_PROVIDER_BUNDLE_NAME;
-    permDef.grantMode = Permission::GrantMode::USER_GRANT;
-    permDef.availableScope = Permission::AvailableScope::AVAILABLE_SCOPE_ALL;
-    permDef.label = DEF_LABEL1;
-    permDef.labelId = 1;
-    permDef.description = DEF_LABEL1;
-    permDef.descriptionId = 1;
-    permList.emplace_back(permDef);
-    Permission::PermissionKit::AddDefPermissions(permList);
-    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_PROVIDER_BUNDLE_NAME,
-        {PERMISSION_NAME_REQUIRE_FORM}, 0);
-    Permission::PermissionKit::GrantUserGrantedPermission(FORM_PROVIDER_BUNDLE_NAME, PERMISSION_NAME_REQUIRE_FORM, 0);
+    int userId = 0;
+    auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, FORM_PROVIDER_BUNDLE_NAME, 0);
+    auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
 }
 
 void FmsFormMgrDeathCallbackTest::TearDown()
 {}
 
+void FmsFormMgrDeathCallbackTest::CreateProviderData()
+{
+    std::unordered_map<std::string, std::shared_ptr<BundleFormInfo>> bundleFormInfoMap;
+    std::shared_ptr<BundleFormInfo> bundleFormInfo = std::make_shared<BundleFormInfo>(FORM_PROVIDER_BUNDLE_NAME);
+    std::vector<FormInfo> formInfos;
+    FormInfo formInfo;
+    formInfo.bundleName = FORM_PROVIDER_BUNDLE_NAME;
+    formInfo.abilityName = FORM_PROVIDER_ABILITY_NAME;
+    formInfo.moduleName = PARAM_PROVIDER_MODULE_NAME;
+    formInfo.name = PARAM_FORM_NAME;
+    formInfo.updateEnabled = true;
+    formInfo.updateDuration = 1;
+    formInfo.scheduledUpdateTime = "06:06";
+    formInfo.jsComponentName = FORM_JS_COMPOMENT_NAME;
+    formInfo.formVisibleNotify = true;
+    formInfo.supportDimensions = {1, 2};
+    formInfo.defaultDimension = 1;
+    formInfos.emplace_back(formInfo);
+    bundleFormInfo->formInfos_ = formInfos;
+    bundleFormInfoMap.emplace(FORM_PROVIDER_BUNDLE_NAME, bundleFormInfo);
+
+    FormInfoMgr::GetInstance().bundleFormInfoMap_ = bundleFormInfoMap;
+}
 /*
  * Feature: FormMgrService
  * Function: FormMgr::FormMgrDeathRecipient
@@ -120,6 +134,7 @@ void FmsFormMgrDeathCallbackTest::TearDown()
 HWTEST_F(FmsFormMgrDeathCallbackTest, OnRemoteDied_001, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_death_callback_test_001 start";
+    CreateProviderData();
     // No cache
     FormJsInfo formJsInfo;
     Want want;

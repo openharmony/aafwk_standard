@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -237,13 +237,14 @@ int FormDataMgr::CheckEnoughForm(const int callingUid, const int32_t currentUser
                 return ERR_APPEXECFWK_FORM_MAX_SYSTEM_FORMS;
             }
             for (auto &userUid : record.formUserUids) {
-                if (userUid == callingUid) {
-                    if (++callingUidFormCounts >= Constants::MAX_RECORD_PER_APP) {
-                        HILOG_WARN("%{public}s, already use %{public}d forms", __func__, Constants::MAX_RECORD_PER_APP);
-                        return ERR_APPEXECFWK_FORM_MAX_FORMS_PER_CLIENT;
-                    }
-                    break;
+                if (userUid != callingUid) {
+                    continue;
                 }
+                if (++callingUidFormCounts >= Constants::MAX_RECORD_PER_APP) {
+                    HILOG_WARN("%{public}s, already use %{public}d forms", __func__, Constants::MAX_RECORD_PER_APP);
+                    return ERR_APPEXECFWK_FORM_MAX_FORMS_PER_CLIENT;
+                }
+                break;
             }
         }
     }
@@ -272,6 +273,7 @@ bool FormDataMgr::DeleteTempForm(const int64_t formId)
  */
 bool FormDataMgr::ExistTempForm(const int64_t formId) const
 {
+    std::lock_guard<std::mutex> lock(formTempMutex_);
     return (std::find(tempForms_.begin(), tempForms_.end(), formId) != tempForms_.end());
 }
 /**
@@ -1131,7 +1133,7 @@ void FormDataMgr::ParseAtTimerConfig(FormRecord &record, const FormItemInfo &inf
     hour = std::stoi(temp[0]);
     min = std::stoi(temp[1]);
     if (hour < Constants::MIN_TIME || hour > Constants::MAX_HOUR || min < Constants::MIN_TIME || min >
-        Constants::MAX_MININUTE) {
+        Constants::MAX_MINUTE) {
         HILOG_ERROR("%{public}s, time is invalid", __func__);
         return;
     }

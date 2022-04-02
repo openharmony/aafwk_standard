@@ -65,6 +65,9 @@ public:
     std::shared_ptr<NativeRdb::AbsSharedResultSet> Query(
         const Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates) override;
 
+    std::shared_ptr<AppExecFwk::PacMap> Call(
+        const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap) override;
+
     std::string GetType(const Uri &uri) override;
 
     int OpenRawFile(const Uri &uri, const std::string &mode) override;
@@ -73,13 +76,11 @@ public:
 
     int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values) override;
 
-#ifdef SUPPORT_GRAPHICS
     void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override;
 
     void NotifyTopActiveAbilityChanged(bool flag) override
     {
     };
-#endif
 
     Uri NormalizeUri(const Uri &uri) override;
     Uri DenormalizeUri(const Uri &uri) override;

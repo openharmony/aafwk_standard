@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -925,6 +925,7 @@ ErrCode FormMgrAdapter::AddNewFormRecord(const FormItemInfo &info, const int64_t
     // storage info
     if (!newInfo.IsTemporaryForm()) {
         if (ErrCode errorCode = FormDbCache::GetInstance().UpdateDBRecord(formId, formRecord); errorCode != ERR_OK) {
+            HILOG_ERROR("%{public}s fail, UpdateDBRecord failed", __func__);
             return errorCode;
         }
     }
@@ -941,21 +942,22 @@ ErrCode FormMgrAdapter::AddNewFormRecord(const FormItemInfo &info, const int64_t
 ErrCode FormMgrAdapter::AddFormTimer(const FormRecord &formRecord)
 {
     HILOG_INFO("%{public}s start", __func__);
-    if (formRecord.isEnableUpdate && !formRecord.formTempFlg) {
-        bool timerRet = false;
-        if (formRecord.updateDuration > 0) {
-            timerRet = FormTimerMgr::GetInstance().AddFormTimer(formRecord.formId,
-            formRecord.updateDuration, formRecord.userId);
-        } else {
-            timerRet = FormTimerMgr::GetInstance().AddFormTimer(formRecord.formId, formRecord.updateAtHour,
-                formRecord.updateAtMin, formRecord.userId);
-        }
-        if (!timerRet) {
-            HILOG_ERROR("%{public}s fail, add form timer failed", __func__);
-            return ERR_APPEXECFWK_FORM_COMMON_CODE;
-        }
+    if (!formRecord.isEnableUpdate || formRecord.formTempFlg) {
+        HILOG_INFO("%{public}s isEnableUpdate:%{public}d formTempFlg:%{public}d.",
+            __func__, formRecord.isEnableUpdate, formRecord.formTempFlg);
+        return ERR_OK;
     }
-    HILOG_INFO("%{public}s end", __func__);
+    if (formRecord.updateDuration > 0) {
+        bool ret = FormTimerMgr::GetInstance().AddFormTimer(formRecord.formId,
+            formRecord.updateDuration, formRecord.userId);
+        return ret ? ERR_OK : ERR_APPEXECFWK_FORM_COMMON_CODE;
+    }
+    if (formRecord.updateAtHour >= 0 && formRecord.updateAtMin >= 0) {
+        bool ret = FormTimerMgr::GetInstance().AddFormTimer(formRecord.formId,
+            formRecord.updateAtHour, formRecord.updateAtMin, formRecord.userId);
+        return ret ? ERR_OK : ERR_APPEXECFWK_FORM_COMMON_CODE;
+    }
+    HILOG_INFO("%{public}s no need add form timer.", __func__);
     return ERR_OK;
 }
 
@@ -1128,11 +1130,12 @@ ErrCode FormMgrAdapter::GetFormItemInfo(const AAFwk::Want &want, const BundleInf
     HILOG_DEBUG("GetFormItemInfo start.");
     int32_t dimensionId = want.GetIntParam(Constants::PARAM_FORM_DIMENSION_KEY, formInfo.defaultDimension);
     if (!IsDimensionValid(formInfo, dimensionId)) {
-        HILOG_ERROR("addForm, dimension is not valid");
+        HILOG_ERROR("GetFormItemInfo failed, dimension is not valid.");
         return ERR_APPEXECFWK_FORM_NO_SUCH_DIMENSION;
     }
 
     if (ErrCode ret = CreateFormItemInfo(bundleInfo, formInfo, formItemInfo); ret != ERR_OK) {
+        HILOG_ERROR("GetFormItemInfo failed, CreateFormItemInfo failed.");
         return ret;
     }
     formItemInfo.SetSpecificationId(dimensionId);
@@ -1207,6 +1210,9 @@ ErrCode FormMgrAdapter::CreateFormItemInfo(const BundleInfo &bundleInfo,
     for (const auto &abilityInfo : bundleInfo.abilityInfos) {
         if (abilityInfo.name == formInfo.abilityName) {
             itemInfo.SetAbilityModuleName(abilityInfo.moduleName);
+            if (!abilityInfo.isModuleJson) {
+                itemInfo.SetFormSrc("");
+            }
         }
     }
 

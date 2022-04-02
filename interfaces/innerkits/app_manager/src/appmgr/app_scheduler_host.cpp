@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -123,7 +123,11 @@ int32_t AppSchedulerHost::HandleScheduleLaunchAbility(MessageParcel &data, Messa
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = nullptr;
+    if (data.ReadBool()) {
+        token = data.ReadRemoteObject();
+    }
+
     std::shared_ptr<AAFwk::Want> want(data.ReadParcelable<AAFwk::Want>());
     ScheduleLaunchAbility(*abilityInfo, token, want);
     return NO_ERROR;
@@ -132,7 +136,7 @@ int32_t AppSchedulerHost::HandleScheduleLaunchAbility(MessageParcel &data, Messa
 int32_t AppSchedulerHost::HandleScheduleCleanAbility(MessageParcel &data, MessageParcel &reply)
 {
     BYTRACE(BYTRACE_TAG_APP);
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
     ScheduleCleanAbility(token);
     return NO_ERROR;
 }
@@ -211,6 +215,7 @@ int32_t AppSchedulerHost::HandleScheduleAcceptWant(MessageParcel &data, MessageP
     }
     auto moduleName = data.ReadString();
     ScheduleAcceptWant(*want, moduleName);
+    delete want;
     return NO_ERROR;
 }
 

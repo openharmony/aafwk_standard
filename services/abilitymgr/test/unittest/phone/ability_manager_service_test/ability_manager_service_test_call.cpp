@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -111,7 +111,7 @@ void AbilityManagerServiceTest::OnStartAms()
         EXPECT_TRUE(abilityMs_->eventLoop_);
 
         abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
-        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         abilityMs_->connectManagers_.emplace(0, abilityMs_->connectManager_);
         EXPECT_TRUE(abilityMs_->handler_);
         EXPECT_TRUE(abilityMs_->connectManager_);
@@ -129,10 +129,6 @@ void AbilityManagerServiceTest::OnStartAms()
 
         abilityMs_->currentMissionListManager_ = std::make_shared<MissionListManager>(0);
         abilityMs_->currentMissionListManager_->Init();
-        int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
-        EXPECT_TRUE(abilityMs_->GetStackManager());
-        abilityMs_->stackManagers_.emplace(0, abilityMs_->GetStackManager());
         abilityMs_->eventLoop_->Run();
         return;
     }

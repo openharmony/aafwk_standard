@@ -14,6 +14,8 @@
  */
 
 #include <gtest/gtest.h>
+
+#include "accesstoken_kit.h"
 #include "common_event_manager.h"
 #include "common_event_data.h"
 #include "common_event_support.h"
@@ -37,8 +39,6 @@
 #include "mock_ability_manager.h"
 #include "mock_bundle_manager.h"
 #include "mock_form_host_client.h"
-#include "permission/permission_kit.h"
-#include "permission/permission.h"
 #include "running_process_info.h"
 #include "system_ability_definition.h"
 
@@ -64,6 +64,7 @@ const std::string FORM_HOST_BUNDLE_NAME = "com.form.host.app";
 const int32_t PARAM_FORM_DIMENSION_VALUE = 1;
 
 const std::string KEY_UID = "uid";
+const std::string KEY_USER_ID = "userId";
 const std::string KEY_BUNDLE_NAME = "bundleName";
 const std::string DEVICE_ID = "ohos-phone1";
 const std::string DEF_LABEL1 = "PermissionFormRequireGrant";
@@ -76,6 +77,8 @@ public:
     void TearDown();
     void CreateEventData(std::string bundle, int64_t formId,
         int callingUid, std::string actionType, EventFwk::CommonEventData &eventData);
+    void CreateEventData(std::string bundle, int64_t formId,
+        int callingUid, int32_t userId, std::string actionType, EventFwk::CommonEventData &eventData);
     void CreateFormRecordAndFormInfo(std::string bundle, int64_t formId, int callingUid);
     void ClearFormRecord(int64_t formId);
 
@@ -99,21 +102,10 @@ void FmsFormSysEventReceiverTest::SetUp()
     token_ = new (std::nothrow) MockFormHostClient();
 
     // Permission install
-    std::vector<Permission::PermissionDef> permList;
-    Permission::PermissionDef permDef;
-    permDef.permissionName = PERMISSION_NAME_REQUIRE_FORM;
-    permDef.bundleName = FORM_PROVIDER_BUNDLE_NAME;
-    permDef.grantMode = Permission::GrantMode::USER_GRANT;
-    permDef.availableScope = Permission::AvailableScope::AVAILABLE_SCOPE_ALL;
-    permDef.label = DEF_LABEL1;
-    permDef.labelId = 1;
-    permDef.description = DEF_LABEL1;
-    permDef.descriptionId = 1;
-    permList.emplace_back(permDef);
-    Permission::PermissionKit::AddDefPermissions(permList);
-    Permission::PermissionKit::AddUserGrantedReqPermissions(FORM_PROVIDER_BUNDLE_NAME,
-        {PERMISSION_NAME_REQUIRE_FORM}, 0);
-    Permission::PermissionKit::GrantUserGrantedPermission(FORM_PROVIDER_BUNDLE_NAME, PERMISSION_NAME_REQUIRE_FORM, 0);
+    int userId = 0;
+    auto tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId, FORM_PROVIDER_BUNDLE_NAME, 0);
+    auto flag = OHOS::Security::AccessToken::PERMISSION_USER_FIXED;
+    AccessToken::AccessTokenKit::GrantPermission(tokenId, PERMISSION_NAME_REQUIRE_FORM, flag);
 }
 
 void FmsFormSysEventReceiverTest::TearDown()
@@ -128,7 +120,16 @@ void FmsFormSysEventReceiverTest::CreateEventData(std::string bundle, int64_t fo
     want.SetParam(KEY_UID, callingUid);
     eventData.SetWant(want);
 }
-
+void FmsFormSysEventReceiverTest::CreateEventData(std::string bundle, int64_t formId,
+    int callingUid, int32_t userId, std::string actionType, EventFwk::CommonEventData &eventData)
+{
+    Want want;
+    want.SetAction(actionType);
+    want.SetBundle(bundle);
+    want.SetParam(KEY_UID, callingUid);
+    want.SetParam(KEY_USER_ID, userId);
+    eventData.SetWant(want);
+}
 void FmsFormSysEventReceiverTest::CreateFormRecordAndFormInfo(std::string bundle, int64_t formId, int callingUid)
 {
     FormItemInfo record;
@@ -267,7 +268,7 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_003, TestSize.Level0)
     FormSysEventReceiver testCase;
     testCase.OnReceiveEvent(eventData);
 
-    ASSERT_FALSE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
+    ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
 
     ClearFormRecord(formId);
 

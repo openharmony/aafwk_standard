@@ -79,7 +79,7 @@ bool PermissionVerification::VerifyControllerPerm()
 unsigned int PermissionVerification::GetCallingTokenID()
 {
     auto callerToken = IPCSkeleton::GetCallingTokenID();
-    HILOG_DEBUG("callerToken : %{public}u", callerToken);
+    HILOG_DEBUG("callerToken : %{private}u", callerToken);
     return callerToken;
 }
 }  // namespace AAFwk

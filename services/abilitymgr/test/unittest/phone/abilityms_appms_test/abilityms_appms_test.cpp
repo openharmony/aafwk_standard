@@ -102,7 +102,7 @@ void AbilityMsAppmsTest::OnStartabilityAms()
         EXPECT_TRUE(abilityMs_->eventLoop_);
 
         abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
-        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         abilityMs_->dataAbilityManager_ = std::make_shared<DataAbilityManager>();
         abilityMs_->dataAbilityManagers_.emplace(0, abilityMs_->dataAbilityManager_);
         EXPECT_TRUE(abilityMs_->handler_);
@@ -119,9 +119,6 @@ void AbilityMsAppmsTest::OnStartabilityAms()
 
         abilityMs_->pendingWantManager_ = std::make_shared<PendingWantManager>();
         EXPECT_TRUE(abilityMs_->pendingWantManager_);
-
-        int userId = abilityMs_->GetUserId();
-        abilityMs_->SetStackManager(userId, true);
 
         abilityMs_->eventLoop_->Run();
 

@@ -12,16 +12,15 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/feature.gni")
 ohos_shared_library("featureability") {
   include_dirs = [
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common",
+    "./",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
-    "//third_party/jsoncpp",
-    "//third_party/jsoncpp/include/json",
   ]
 
   sources = [
@@ -37,10 +36,9 @@ ohos_shared_library("featureability") {
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager:dataobs_manager",
-    "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
-    "//third_party/jsoncpp:jsoncpp",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${innerkits_path}/dataobs_manager:dataobs_manager",
+    "${kits_path}/appkit:appkit_native",
     "//third_party/libuv:uv_static",
   ]
 
@@ -65,6 +63,10 @@ ohos_shared_library("featureability") {
 
     #"appdatamgr_jskits:rdb",
   ]
+
+  if (ability_runtime_graphics) {
+    defines = [ "SUPPORT_GRAPHICS" ]
+  }
 
   relative_install_dir = "module/ability"
 

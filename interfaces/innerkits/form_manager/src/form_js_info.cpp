@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,7 @@ bool FormJsInfo::ReadFromParcel(Parcel &parcel)
     compatibleVersion = parcel.ReadUint32();
     icon = Str16ToStr8(parcel.ReadString16());
 
-    auto bindingData = parcel.ReadParcelable<FormProviderData>();
+    std::unique_ptr<FormProviderData> bindingData(parcel.ReadParcelable<FormProviderData>());
     if (nullptr == bindingData){
         return false;
     }
@@ -151,12 +151,12 @@ bool FormJsInfo::WriteImageData(Parcel &parcel) const
                 HILOG_INFO("%{public}s unexpected image number %{public}zu", __func__, size);
                 break;
             }
-            auto messageParcel = static_cast<MessageParcel*>(&parcel);
             for (auto entry : sharedImageMap) {
+                auto messageParcel = static_cast<MessageParcel*>(&parcel);
                 if (!messageParcel->WriteAshmem(entry.second.first)) {
                     return false;
                 }
-                if (parcel.WriteString16(Str8ToStr16(entry.first))) {
+                if (!parcel.WriteString16(Str8ToStr16(entry.first))) {
                     return false;
                 }
             }
@@ -188,8 +188,8 @@ void FormJsInfo::ReadImageData(Parcel &parcel)
                 HILOG_WARN("%{public}s unexpected image number %{public}d", __func__, size);
                 break;
             }
-            auto messageParcel = static_cast<MessageParcel*>(&parcel);
             for (auto i = 0; i < size; i++) {
+                auto messageParcel = static_cast<MessageParcel*>(&parcel);
                 auto fd = messageParcel->ReadFileDescriptor();
                 auto len = parcel.ReadInt32();
                 auto picName = Str16ToStr8(parcel.ReadString16());

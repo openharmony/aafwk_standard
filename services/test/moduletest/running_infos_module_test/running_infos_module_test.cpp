@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -110,7 +110,6 @@ void RunningInfosModuleTest::OnStartAms()
         }
 
         abilityMgrServ_->state_ = ServiceRunningState::STATE_RUNNING;
-        abilityMgrServ_->useNewMission_ = true;
 
         abilityMgrServ_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(abilityMgrServ_->eventLoop_);
@@ -133,9 +132,7 @@ void RunningInfosModuleTest::OnStartAms()
         abilityMgrServ_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
         EXPECT_TRUE(abilityMgrServ_->amsConfigResolver_);
         abilityMgrServ_->amsConfigResolver_->Parse();
-        abilityMgrServ_->useNewMission_ = abilityMgrServ_->amsConfigResolver_->IsUseNewMission();
 
-        abilityMgrServ_->SetStackManager(userId, true);
         abilityMgrServ_->InitMissionListManager(userId, true);
         abilityMgrServ_->connectManager_->SetEventHandler(abilityMgrServ_->handler_);
         abilityMgrServ_->eventLoop_->Run();

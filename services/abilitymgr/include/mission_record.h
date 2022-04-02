@@ -215,7 +215,9 @@ public:
         return missionDescriptionInfo_;
     };
 
+#ifdef SUPPORT_GRAPHICS
     bool SupportMultWindow() const;
+#endif
 
     void SetMissionOption(const MissionOption &option);
     const MissionOption &GetMissionOption() const;

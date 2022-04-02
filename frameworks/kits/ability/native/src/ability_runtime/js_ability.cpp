@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -107,7 +107,7 @@ void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
         return;
     }
 
-    HILOG_INFO("Set ability context pointer: %{public}p", context.get());
+    HILOG_INFO("Set ability context");
 
     nativeObj->SetNativePointer(
         new std::weak_ptr<AbilityRuntime::Context>(context),

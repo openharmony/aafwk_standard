@@ -140,11 +140,12 @@ HWTEST_F(
     permissions.emplace_back("permission_1");
     permissions.emplace_back("permission_2");
     permissions.emplace_back("permission_3");
+    std::vector<int> permissionsState(permissions.size(), -1);
 
     std::shared_ptr<ContextDeal> deal = std::make_shared<ContextDeal>();
     deal->SetApplicationInfo(appInfo);
     context_->AttachBaseContext(deal);
-    context_->RequestPermissionsFromUser(permissions, 1004);
+    context_->RequestPermissionsFromUser(permissions, permissionsState, 1004);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

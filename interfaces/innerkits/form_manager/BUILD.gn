@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -19,12 +19,10 @@ config("formmgr_sdk_config") {
   include_dirs = [
     "include/",
     "//third_party/json/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "${kits_path}/ability/native/include",
+    "${innerkits_path}/ability_manager/include",
+    "${innerkits_path}/app_manager/include/appmgr",
     "${aafwk_path}/services/common/include",
-    "//foundation/appexecfwk/standard/common/log/include",
-    "//foundation/aafwk/standard/services/common/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -50,8 +48,8 @@ ohos_shared_library("form_manager") {
   ]
 
   defines = [
-    "APP_LOG_TAG = \"FormMgrService\"",
-    "LOG_DOMAIN = 0xD001120",
+    "AMS_LOG_TAG = \"FormMgrService\"",
+    "AMS_LOG_DOMAIN = 0xD001120",
   ]
 
   public_configs = [
@@ -59,10 +57,7 @@ ohos_shared_library("form_manager") {
     "${services_path}/formmgr:formmgr_config",
   ]
 
-  deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
-    "//third_party/jsoncpp:jsoncpp",
-  ]
+  deps = [ "//third_party/jsoncpp:jsoncpp" ]
 
   external_deps = [
     "ability_base:want",

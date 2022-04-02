@@ -343,7 +343,7 @@ int DataShareProxy::BatchInsert(const Uri &uri, const std::vector<NativeRdb::Val
         return ret;
     }
 
-    int count = values.size();
+    int count = (int)values.size();
     if (!data.WriteInt32(count)) {
         HILOG_ERROR("fail to WriteInt32 ret");
         return ret;
@@ -387,8 +387,14 @@ bool DataShareProxy::RegisterObserver(const Uri &uri, const sptr<AAFwk::IDataAbi
         return false;
     }
 
-    if (!data.WriteParcelable(dataObserver->AsObject())) {
-        HILOG_ERROR("%{public}s failed to WriteParcelable dataObserver ", __func__);
+    auto remoteObject = dataObserver->AsObject();
+    if (remoteObject == nullptr) {
+        HILOG_ERROR("remoteObject is nullptr");
+        return false;
+    }
+
+    if (!data.WriteRemoteObject(remoteObject)) {
+        HILOG_ERROR("%{public}s failed to WriteRemoteObject dataObserver ", __func__);
         return false;
     }
 
@@ -419,8 +425,14 @@ bool DataShareProxy::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDataA
         return false;
     }
 
-    if (!data.WriteParcelable(dataObserver->AsObject())) {
-        HILOG_ERROR("%{public}s failed to WriteParcelable dataObserver ", __func__);
+    auto remoteObject = dataObserver->AsObject();
+    if (remoteObject == nullptr) {
+        HILOG_ERROR("remoteObject is nullptr");
+        return false;
+    }
+
+    if (!data.WriteRemoteObject(remoteObject)) {
+        HILOG_ERROR("%{public}s failed to WriteRemoteObject dataObserver ", __func__);
         return false;
     }
 
@@ -541,7 +553,7 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> DataShareProxy::Exec
         return results;
     }
 
-    int count = operations.size();
+    int count = (int)operations.size();
     if (!data.WriteInt32(count)) {
         HILOG_ERROR("fail to WriteInt32 ret");
         return results;

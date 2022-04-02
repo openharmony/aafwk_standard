@@ -52,6 +52,8 @@ private:
 
 class NAPIRemoteMissionListener : public AAFwk::RemoteMissionListenerStub {
 public:
+    virtual ~NAPIRemoteMissionListener();
+
     void NotifyMissionsChanged(const std::string& deviceId) override;
     void NotifySnapshot(const std::string& deviceId, int32_t missionId) override;
     void NotifyNetDisconnect(const std::string& deviceId, int32_t state) override;

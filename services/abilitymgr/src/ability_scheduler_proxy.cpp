@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -57,7 +57,7 @@ void AbilitySchedulerProxy::SendResult(int requestCode, int resultCode, const Wa
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -77,7 +77,7 @@ void AbilitySchedulerProxy::ScheduleConnectAbility(const Want &want)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -95,7 +95,7 @@ void AbilitySchedulerProxy::ScheduleDisconnectAbility(const Want &want)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -114,7 +114,7 @@ void AbilitySchedulerProxy::ScheduleCommandAbility(const Want &want, bool restar
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -142,7 +142,7 @@ void AbilitySchedulerProxy::ScheduleSaveAbilityState()
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -156,7 +156,7 @@ void AbilitySchedulerProxy::ScheduleRestoreAbilityState(const PacMap &inState)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -174,7 +174,7 @@ void AbilitySchedulerProxy::ScheduleUpdateConfiguration(const AppExecFwk::Config
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -368,6 +368,58 @@ int AbilitySchedulerProxy::Insert(const Uri &uri, const NativeRdb::ValuesBucket 
     }
 
     return index;
+}
+
+/**
+ * @brief Inserts a single data record into the database.
+ *
+ * @param uri Indicates the path of the data to operate.
+ * @param value  Indicates the data record to insert. If this parameter is null, a blank row will be inserted.
+ *
+ * @return Returns the index of the inserted data record.
+ */
+std::shared_ptr<AppExecFwk::PacMap> AbilitySchedulerProxy::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        return nullptr;
+    }
+
+    if (!data.WriteParcelable(&uri)) {
+        HILOG_ERROR("fail to WriteParcelable uri");
+        return nullptr;
+    }
+
+    if (!data.WriteString(method)) {
+        HILOG_ERROR("fail to WriteString method");
+        return nullptr;
+    }
+
+    if (!data.WriteString(arg)) {
+        HILOG_ERROR("fail to WriteString arg");
+        return nullptr;
+    }
+
+    if (!data.WriteParcelable(&pacMap)) {
+        HILOG_ERROR("fail to WriteParcelable pacMap");
+        return nullptr;
+    }
+
+    int32_t err = Remote()->SendRequest(IAbilityScheduler::SCHEDULE_CALL, data, reply, option);
+    if (err != NO_ERROR) {
+        HILOG_ERROR("Call fail to SendRequest. err: %{public}d", err);
+        return nullptr;
+    }
+    std::shared_ptr<AppExecFwk::PacMap> result(reply.ReadParcelable<AppExecFwk::PacMap>());
+    if (!result) {
+        HILOG_ERROR("ReadParcelable value is nullptr.");
+        return nullptr;
+    }
+    return result;
 }
 
 /**
@@ -620,7 +672,7 @@ int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<NativeR
         return ret;
     }
 
-    int count = values.size();
+    int count = (int)values.size();
     if (!data.WriteInt32(count)) {
         HILOG_ERROR("fail to WriteInt32 ret");
         return ret;
@@ -647,7 +699,6 @@ int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<NativeR
     return ret;
 }
 
-#ifdef SUPPORT_GRAPHICS
 /**
  * @brief notify multi window mode changed.
  *
@@ -656,9 +707,10 @@ int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<NativeR
  */
 void AbilitySchedulerProxy::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
 {
+#ifdef SUPPORT_GRAPHICS
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -674,8 +726,8 @@ void AbilitySchedulerProxy::NotifyMultiWinModeChanged(int32_t winModeKey, bool f
     if (err != NO_ERROR) {
         HILOG_ERROR("NotifyMultiWinModeChanged fail to SendRequest. err: %{public}d", err);
     }
-}
 #endif
+}
 
 /**
  * @brief Registers an observer to DataObsMgr specified by the given Uri.
@@ -699,7 +751,7 @@ bool AbilitySchedulerProxy::ScheduleRegisterObserver(const Uri &uri, const sptr<
         return false;
     }
 
-    if (!data.WriteParcelable(dataObserver->AsObject())) {
+    if (!data.WriteRemoteObject(dataObserver->AsObject())) {
         HILOG_ERROR("%{public}s failed to WriteParcelable dataObserver ", __func__);
         return false;
     }
@@ -736,7 +788,7 @@ bool AbilitySchedulerProxy::ScheduleUnregisterObserver(const Uri &uri, const spt
         return false;
     }
 
-    if (!data.WriteParcelable(dataObserver->AsObject())) {
+    if (!data.WriteRemoteObject(dataObserver->AsObject())) {
         HILOG_ERROR("%{public}s failed to WriteParcelable dataObserver ", __func__);
         return false;
     }
@@ -789,9 +841,10 @@ bool AbilitySchedulerProxy::ScheduleNotifyChange(const Uri &uri)
  */
 void AbilitySchedulerProxy::NotifyTopActiveAbilityChanged(bool flag)
 {
+#ifdef SUPPORT_GRAPHICS
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
@@ -803,6 +856,7 @@ void AbilitySchedulerProxy::NotifyTopActiveAbilityChanged(bool flag)
     if (err != NO_ERROR) {
         HILOG_ERROR("NotifyTopActiveAbilityChanged fail to SendRequest. err: %{public}d", err);
     }
+#endif
 }
 
 /**
@@ -906,7 +960,7 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> AbilitySchedulerProx
         return results;
     }
 
-    int count = operations.size();
+    int count = (int)operations.size();
     if (!data.WriteInt32(count)) {
         HILOG_ERROR("AbilitySchedulerProxy::ExecuteBatch fail to WriteInt32 ret");
         return results;
@@ -948,7 +1002,7 @@ void AbilitySchedulerProxy::ContinueAbility(const std::string& deviceId)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         HILOG_ERROR("ContinueAbility fail to write token");
         return;
@@ -968,7 +1022,7 @@ void AbilitySchedulerProxy::NotifyContinuationResult(int32_t result)
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         HILOG_ERROR("NotifyContinuationResult fail to write token");
         return;

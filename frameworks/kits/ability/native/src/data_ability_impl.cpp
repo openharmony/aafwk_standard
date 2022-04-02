@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,7 +55,6 @@ void DataAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         default: {
             HILOG_ERROR("DataAbilityImpl::HandleAbilityTransaction state is error");
             return;
-            break;
         }
     }
 
@@ -209,6 +208,17 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityImpl::Query(
     }
 
     return ability_->Query(uri, columns, predicates);
+}
+
+std::shared_ptr<AppExecFwk::PacMap> DataAbilityImpl::Call(
+    const Uri &uri, const std::string &method, const std::string &arg, const AppExecFwk::PacMap &pacMap)
+{
+    if (ability_ == nullptr) {
+        HILOG_ERROR("DataAbilityImpl::Call ability_ is nullptr");
+        return nullptr;
+    }
+
+    return ability_->Call(uri, method, arg, pacMap);
 }
 
 /**

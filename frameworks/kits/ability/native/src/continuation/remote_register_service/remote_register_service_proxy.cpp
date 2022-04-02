@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,7 +43,7 @@ int RemoteRegisterServiceProxy::Register(const std::string &bundleName, const sp
 
     MessageParcel data;
     if (!data.WriteInterfaceToken(IRemoteRegisterService::GetDescriptor()) || !data.WriteString(bundleName) ||
-        data.WriteRemoteObject(token) || !data.WriteInt32(1) || !extras.Marshalling(data) ||
+        !data.WriteRemoteObject(token) || !data.WriteInt32(1) || !extras.Marshalling(data) ||
         !data.WriteRemoteObject(callback->AsObject())) {
         HILOG_ERROR("%{public}s Failed to write transfer data.", __func__);
         return IPC_INVOKER_WRITE_TRANS_ERR;

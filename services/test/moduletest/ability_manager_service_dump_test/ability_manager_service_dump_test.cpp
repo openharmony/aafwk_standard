@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -214,11 +214,8 @@ HWTEST_F(AbilityManagerServiceDumpTest, AbilityManagerService_DataDumpSysStateIn
  */
 HWTEST_F(AbilityManagerServiceDumpTest, AbilityManagerService_OnAppStateChanged_0100, TestSize.Level1)
 {
-    abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
+    abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
     EXPECT_NE(abilityMs_->connectManager_, nullptr);
-
-    abilityMs_->useNewMission_ = true;
-    EXPECT_EQ(abilityMs_->useNewMission_, true);
 
     Want want;
     OHOS::AppExecFwk::AbilityInfo abilityInfo;

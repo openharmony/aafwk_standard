@@ -26,14 +26,14 @@ namespace AppExecFwk {
 using namespace AAFwk;
 class mock_ability_mgr_host {
 public:
-    mock_ability_mgr_host() {};
-    ~mock_ability_mgr_host() {};
+    mock_ability_mgr_host() = default;
+    virtual ~mock_ability_mgr_host() = default;
 };
 
 class MockAbilityMgrStub : public IRemoteStub<AAFwk::IAbilityManager> {
 public:
     using Uri = OHOS::Uri;
-    MockAbilityMgrStub() = default;
+    explicit MockAbilityMgrStub() = default;
     virtual ~MockAbilityMgrStub() = default;
 
     virtual int StartAbility(const AAFwk::Want &want, int requestCode = -1) override
@@ -252,10 +252,7 @@ public:
     {
         return 0;
     }
-    virtual int SetShowOnLockScreen(bool isAllow) override
-    {
-        return 0;
-    }
+
     int MoveMissionToFloatingStack(const MissionOption &missionOption) override
     {
         return 0;

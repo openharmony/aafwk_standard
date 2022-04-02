@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,10 +33,9 @@
 #include "form_task_mgr.h"
 #include "form_timer_mgr.h"
 #include "hilog_wrapper.h"
+#include "in_process_call_wrapper.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
-#include "permission/permission.h"
-#include "permission/permission_kit.h"
 #include "permission_verification.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
@@ -44,8 +43,6 @@
 namespace OHOS {
 namespace AppExecFwk {
 using namespace std::chrono;
-using PermissionKit = OHOS::Security::Permission::PermissionKit;
-using PermissionState = OHOS::Security::Permission::PermissionState;
 
 const bool REGISTER_RESULT =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<FormMgrService>::GetInstance().get());
@@ -142,10 +139,21 @@ int FormMgrService::ReleaseForm(const int64_t formId, const sptr<IRemoteObject> 
  * @param formBindingData Form binding data.
  * @return Returns ERR_OK on success, others on failure.
  */
-int FormMgrService::UpdateForm(const int64_t formId,
-    const std::string &bundleName, const FormProviderData &formBindingData)
+int FormMgrService::UpdateForm(const int64_t formId, const FormProviderData &formBindingData)
 {
-    return FormMgrAdapter::GetInstance().UpdateForm(formId, bundleName, formBindingData);
+    // get IBundleMgr
+    sptr<IBundleMgr> bundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+    if (bundleMgr == nullptr) {
+        HILOG_ERROR("%{public}s error, failed to get bundleMgr.", __func__);
+        return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
+    }
+    std::string callerBundleName;
+    auto callingUid = IPCSkeleton::GetCallingUid();
+    if (!IN_PROCESS_CALL(bundleMgr->GetBundleNameForUid(callingUid, callerBundleName))) {
+        HILOG_ERROR("GetFormsInfoByModule, failed to get form config info.");
+        return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
+    }
+    return FormMgrAdapter::GetInstance().UpdateForm(formId, callerBundleName, formBindingData);
 }
 
 /**
@@ -395,7 +403,7 @@ ErrCode FormMgrService::Init()
     }
     FormDbCache::GetInstance().Start();
     FormInfoMgr::GetInstance().Start();
-
+    FormTimerMgr::GetInstance(); // Init FormTimerMgr
     HILOG_INFO("init success");
     return ERR_OK;
 }

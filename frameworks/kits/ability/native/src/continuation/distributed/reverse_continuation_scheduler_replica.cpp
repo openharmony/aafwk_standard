@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "reverse_continuation_scheduler_replica.h"
 #include "hilog_wrapper.h"
 
@@ -24,6 +25,7 @@ ReverseContinuationSchedulerReplica::ReverseContinuationSchedulerReplica(
     mainHandler_ = mainHandler;
     replicaHandler_ = replicaHandler;
 }
+
 void ReverseContinuationSchedulerReplica::PassPrimary(const sptr<IRemoteObject> &primary)
 {
     HILOG_INFO("%{public}s called begin", __func__);
@@ -42,6 +44,7 @@ void ReverseContinuationSchedulerReplica::PassPrimary(const sptr<IRemoteObject> 
     }
     HILOG_INFO("%{public}s called end", __func__);
 }
+
 bool ReverseContinuationSchedulerReplica::ReverseContinuation()
 {
     HILOG_INFO("%{public}s called begin", __func__);
@@ -61,6 +64,7 @@ bool ReverseContinuationSchedulerReplica::ReverseContinuation()
     HILOG_INFO("%{public}s called end", __func__);
     return true;
 }
+
 void ReverseContinuationSchedulerReplica::NotifyReverseResult(int reverseResult)
 {
     HILOG_INFO("%{public}s called begin", __func__);

@@ -112,7 +112,6 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[SET_MISSION_INFO] = &AbilityManagerStub::SetMissionDescriptionInfoInner;
     requestFuncMap_[GET_MISSION_LOCK_MODE_STATE] = &AbilityManagerStub::GetMissionLockModeStateInner;
     requestFuncMap_[UPDATE_CONFIGURATION] = &AbilityManagerStub::UpdateConfigurationInner;
-    requestFuncMap_[SET_SHOW_ON_LOCK_SCREEN] = &AbilityManagerStub::SetShowOnLockScreenInner;
     requestFuncMap_[GET_SYSTEM_MEMORY_ATTR] = &AbilityManagerStub::GetSystemMemoryAttrInner;
     requestFuncMap_[GET_APP_MEMORY_SIZE] = &AbilityManagerStub::GetAppMemorySizeInner;
     requestFuncMap_[IS_RAM_CONSTRAINED_DEVICE] = &AbilityManagerStub::IsRamConstrainedDeviceInner;
@@ -179,7 +178,10 @@ int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Mess
 
 int AbilityManagerStub::TerminateAbilityInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = nullptr;
+    if (data.ReadBool()) {
+        token = data.ReadRemoteObject();
+    }
     int resultCode = data.ReadInt32();
     Want *resultWant = data.ReadParcelable<Want>();
     bool flag = data.ReadBool();
@@ -198,7 +200,10 @@ int AbilityManagerStub::TerminateAbilityInner(MessageParcel &data, MessageParcel
 
 int AbilityManagerStub::TerminateAbilityByCallerInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto callerToken = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> callerToken = nullptr;
+    if (data.ReadBool()) {
+        callerToken = data.ReadRemoteObject();
+    }
     int requestCode = data.ReadInt32();
     int32_t result = TerminateAbilityByCaller(callerToken, requestCode);
     reply.WriteInt32(result);
@@ -207,7 +212,7 @@ int AbilityManagerStub::TerminateAbilityByCallerInner(MessageParcel &data, Messa
 
 int AbilityManagerStub::MinimizeAbilityInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto token = data.ReadParcelable<IRemoteObject>();
+    auto token = data.ReadRemoteObject();
     auto fromUser = data.ReadBool();
     int32_t result = MinimizeAbility(token, fromUser);
     reply.WriteInt32(result);
@@ -216,8 +221,8 @@ int AbilityManagerStub::MinimizeAbilityInner(MessageParcel &data, MessageParcel 
 
 int AbilityManagerStub::AttachAbilityThreadInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto scheduler = iface_cast<IAbilityScheduler>(data.ReadParcelable<IRemoteObject>());
-    auto token = data.ReadParcelable<IRemoteObject>();
+    auto scheduler = iface_cast<IAbilityScheduler>(data.ReadRemoteObject());
+    auto token = data.ReadRemoteObject();
     int32_t result = AttachAbilityThread(scheduler, token);
     reply.WriteInt32(result);
     return NO_ERROR;
@@ -225,7 +230,7 @@ int AbilityManagerStub::AttachAbilityThreadInner(MessageParcel &data, MessagePar
 
 int AbilityManagerStub::AbilityTransitionDoneInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto token = data.ReadParcelable<IRemoteObject>();
+    auto token = data.ReadRemoteObject();
     int targetState = data.ReadInt32();
     std::unique_ptr<PacMap> saveData(data.ReadParcelable<PacMap>());
     if (!saveData) {
@@ -239,8 +244,14 @@ int AbilityManagerStub::AbilityTransitionDoneInner(MessageParcel &data, MessageP
 
 int AbilityManagerStub::ScheduleConnectAbilityDoneInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto token = data.ReadParcelable<IRemoteObject>();
-    auto remoteObject = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = nullptr;
+    sptr<IRemoteObject> remoteObject = nullptr;
+    if (data.ReadBool()) {
+        token = data.ReadRemoteObject();
+    }
+    if (data.ReadBool()) {
+        remoteObject = data.ReadRemoteObject();
+    }
     int32_t result = ScheduleConnectAbilityDone(token, remoteObject);
     reply.WriteInt32(result);
     return NO_ERROR;
@@ -248,7 +259,7 @@ int AbilityManagerStub::ScheduleConnectAbilityDoneInner(MessageParcel &data, Mes
 
 int AbilityManagerStub::ScheduleDisconnectAbilityDoneInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto token = data.ReadParcelable<IRemoteObject>();
+    auto token = data.ReadRemoteObject();
     int32_t result = ScheduleDisconnectAbilityDone(token);
     reply.WriteInt32(result);
     return NO_ERROR;
@@ -256,7 +267,7 @@ int AbilityManagerStub::ScheduleDisconnectAbilityDoneInner(MessageParcel &data, 
 
 int AbilityManagerStub::AddWindowInfoInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
     int windowToken = data.ReadInt32();
     AddWindowInfo(token, windowToken);
     return NO_ERROR;
@@ -264,7 +275,7 @@ int AbilityManagerStub::AddWindowInfoInner(MessageParcel &data, MessageParcel &r
 
 int AbilityManagerStub::TerminateAbilityResultInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
     int startId = data.ReadInt32();
     int32_t result = TerminateAbilityResult(token, startId);
     reply.WriteInt32(result);
@@ -317,7 +328,7 @@ int AbilityManagerStub::RemoveMissionInner(MessageParcel &data, MessageParcel &r
 
 int AbilityManagerStub::ScheduleCommandAbilityDoneInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto token = data.ReadParcelable<IRemoteObject>();
+    auto token = data.ReadRemoteObject();
     int32_t result = ScheduleCommandAbilityDone(token);
     reply.WriteInt32(result);
     return NO_ERROR;
@@ -344,11 +355,11 @@ int AbilityManagerStub::AcquireDataAbilityInner(MessageParcel &data, MessageParc
 {
     std::unique_ptr<Uri> uri(new Uri(data.ReadString()));
     bool tryBind = data.ReadBool();
-    sptr<IRemoteObject> callerToken = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> callerToken = data.ReadRemoteObject();
     sptr<IAbilityScheduler> result = AcquireDataAbility(*uri, tryBind, callerToken);
     HILOG_DEBUG("acquire data ability %{public}s", result ? "ok" : "failed");
     if (result) {
-        reply.WriteParcelable(result->AsObject());
+        reply.WriteRemoteObject(result->AsObject());
     } else {
         reply.WriteParcelable(nullptr);
     }
@@ -357,8 +368,8 @@ int AbilityManagerStub::AcquireDataAbilityInner(MessageParcel &data, MessageParc
 
 int AbilityManagerStub::ReleaseDataAbilityInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto scheduler = iface_cast<IAbilityScheduler>(data.ReadParcelable<IRemoteObject>());
-    auto callerToken = data.ReadParcelable<IRemoteObject>();
+    auto scheduler = iface_cast<IAbilityScheduler>(data.ReadRemoteObject());
+    auto callerToken = data.ReadRemoteObject();
     int32_t result = ReleaseDataAbility(scheduler, callerToken);
     HILOG_DEBUG("release data ability ret = %d", result);
     reply.WriteInt32(result);
@@ -378,7 +389,7 @@ int AbilityManagerStub::MoveMissionToTopInner(MessageParcel &data, MessageParcel
 
 int AbilityManagerStub::MoveMissionToEndInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto token = data.ReadParcelable<IRemoteObject>();
+    auto token = data.ReadRemoteObject();
     auto nonFirst = data.ReadBool();
     int result = MoveMissionToEnd(token, nonFirst);
     if (!reply.WriteInt32(result)) {
@@ -444,7 +455,12 @@ int AbilityManagerStub::StartAbilityAddCallerInner(MessageParcel &data, MessageP
         HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
-    auto callerToken = data.ReadParcelable<IRemoteObject>();
+
+    sptr<IRemoteObject> callerToken = nullptr;
+    if (data.ReadBool()) {
+        callerToken = data.ReadRemoteObject();
+    }
+
     int32_t userId = data.ReadInt32();
     int requestCode = data.ReadInt32();
     int32_t result = StartAbility(*want, callerToken, userId, requestCode);
@@ -460,8 +476,14 @@ int AbilityManagerStub::ConnectAbilityInner(MessageParcel &data, MessageParcel &
         HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
-    auto callback = iface_cast<IAbilityConnection>(data.ReadParcelable<IRemoteObject>());
-    auto token = data.ReadParcelable<IRemoteObject>();
+    sptr<IAbilityConnection> callback = nullptr;
+    sptr<IRemoteObject> token = nullptr;
+    if (data.ReadBool()) {
+        callback = iface_cast<IAbilityConnection>(data.ReadRemoteObject());
+    }
+    if (data.ReadBool()) {
+        token = data.ReadRemoteObject();
+    }
     int32_t userId = data.ReadInt32();
     int32_t result = ConnectAbility(*want, callback, token, userId);
     reply.WriteInt32(result);
@@ -471,7 +493,7 @@ int AbilityManagerStub::ConnectAbilityInner(MessageParcel &data, MessageParcel &
 
 int AbilityManagerStub::DisconnectAbilityInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto callback = iface_cast<IAbilityConnection>(data.ReadParcelable<IRemoteObject>());
+    auto callback = iface_cast<IAbilityConnection>(data.ReadRemoteObject());
     int32_t result = DisconnectAbility(callback);
     HILOG_DEBUG("disconnect ability ret = %d", result);
     reply.WriteInt32(result);
@@ -543,7 +565,10 @@ int AbilityManagerStub::StartAbilityForSettingsInner(MessageParcel &data, Messag
         delete want;
         return ERR_INVALID_VALUE;
     }
-    auto callerToken = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> callerToken = nullptr;
+    if (data.ReadBool()) {
+        callerToken = data.ReadRemoteObject();
+    }
     int32_t userId = data.ReadInt32();
     int requestCode = data.ReadInt32();
     int32_t result = StartAbility(*want, *abilityStartSetting, callerToken, userId, requestCode);
@@ -566,7 +591,10 @@ int AbilityManagerStub::StartAbilityForOptionsInner(MessageParcel &data, Message
         delete want;
         return ERR_INVALID_VALUE;
     }
-    auto callerToken = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> callerToken = nullptr;
+    if (data.ReadBool()) {
+        callerToken = data.ReadRemoteObject();
+    }
     int32_t userId = data.ReadInt32();
     int requestCode = data.ReadInt32();
     int32_t result = StartAbility(*want, *startOptions, callerToken, userId, requestCode);
@@ -612,8 +640,8 @@ int AbilityManagerStub::MoveMissionToSplitScreenStackInner(MessageParcel &data, 
 
 int AbilityManagerStub::ChangeFocusAbilityInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto loseToken = data.ReadParcelable<IRemoteObject>();
-    auto getToken = data.ReadParcelable<IRemoteObject>();
+    auto loseToken = data.ReadRemoteObject();
+    auto getToken = data.ReadRemoteObject();
     auto result = ChangeFocusAbility(loseToken, getToken);
     reply.WriteInt32(result);
     return NO_ERROR;
@@ -674,7 +702,7 @@ int AbilityManagerStub::SetMissionStackSettingInner(MessageParcel &data, Message
 
 int AbilityManagerStub::IsFirstInMissionInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto token = data.ReadParcelable<IRemoteObject>();
+    auto token = data.ReadRemoteObject();
     auto result = IsFirstInMission(token);
     if (!reply.WriteBool(result)) {
         HILOG_ERROR("reply write failed.");
@@ -721,7 +749,7 @@ int AbilityManagerStub::UnlockMissionInner(MessageParcel &data, MessageParcel &r
 
 int AbilityManagerStub::SetMissionDescriptionInfoInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto token = data.ReadParcelable<IRemoteObject>();
+    auto token = data.ReadRemoteObject();
     std::unique_ptr<MissionDescriptionInfo> missionInfo(data.ReadParcelable<MissionDescriptionInfo>());
     int result = SetMissionDescriptionInfo(token, *missionInfo);
     if (!reply.WriteInt32(result)) {
@@ -758,14 +786,17 @@ int AbilityManagerStub::UpdateConfigurationInner(MessageParcel &data, MessagePar
 
 int AbilityManagerStub::GetWantSenderInner(MessageParcel &data, MessageParcel &reply)
 {
-    WantSenderInfo *wantSenderInfo = data.ReadParcelable<WantSenderInfo>();
+    std::unique_ptr<WantSenderInfo> wantSenderInfo(data.ReadParcelable<WantSenderInfo>());
     if (wantSenderInfo == nullptr) {
         HILOG_ERROR("wantSenderInfo is nullptr");
         return ERR_INVALID_VALUE;
     }
-    sptr<IRemoteObject> callerToken = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> callerToken = nullptr;
+    if (data.ReadBool()) {
+        callerToken = data.ReadRemoteObject();
+    }
     sptr<IWantSender> wantSender = GetWantSender(*wantSenderInfo, callerToken);
-    if (!reply.WriteParcelable(((wantSender == nullptr) ? nullptr : wantSender->AsObject()))) {
+    if (!reply.WriteRemoteObject(((wantSender == nullptr) ? nullptr : wantSender->AsObject()))) {
         HILOG_ERROR("failed to reply wantSender instance to client, for write parcel error");
         return ERR_INVALID_VALUE;
     }
@@ -774,12 +805,12 @@ int AbilityManagerStub::GetWantSenderInner(MessageParcel &data, MessageParcel &r
 
 int AbilityManagerStub::SendWantSenderInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (wantSender == nullptr) {
         HILOG_ERROR("wantSender is nullptr");
         return ERR_INVALID_VALUE;
     }
-    SenderInfo *senderInfo = data.ReadParcelable<SenderInfo>();
+    std::unique_ptr<SenderInfo> senderInfo(data.ReadParcelable<SenderInfo>());
     if (senderInfo == nullptr) {
         HILOG_ERROR("senderInfo is nullptr");
         return ERR_INVALID_VALUE;
@@ -791,7 +822,7 @@ int AbilityManagerStub::SendWantSenderInner(MessageParcel &data, MessageParcel &
 
 int AbilityManagerStub::CancelWantSenderInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (wantSender == nullptr) {
         HILOG_ERROR("wantSender is nullptr");
         return ERR_INVALID_VALUE;
@@ -802,7 +833,7 @@ int AbilityManagerStub::CancelWantSenderInner(MessageParcel &data, MessageParcel
 
 int AbilityManagerStub::GetPendingWantUidInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (wantSender == nullptr) {
         HILOG_ERROR("wantSender is nullptr");
         return ERR_INVALID_VALUE;
@@ -815,7 +846,7 @@ int AbilityManagerStub::GetPendingWantUidInner(MessageParcel &data, MessageParce
 
 int AbilityManagerStub::GetPendingWantUserIdInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (wantSender == nullptr) {
         HILOG_ERROR("wantSender is nullptr");
         return ERR_INVALID_VALUE;
@@ -828,7 +859,7 @@ int AbilityManagerStub::GetPendingWantUserIdInner(MessageParcel &data, MessagePa
 
 int AbilityManagerStub::GetPendingWantBundleNameInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (wantSender == nullptr) {
         HILOG_ERROR("wantSender is nullptr");
         return ERR_INVALID_VALUE;
@@ -841,7 +872,7 @@ int AbilityManagerStub::GetPendingWantBundleNameInner(MessageParcel &data, Messa
 
 int AbilityManagerStub::GetPendingWantCodeInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (wantSender == nullptr) {
         HILOG_ERROR("wantSender is nullptr");
         return ERR_INVALID_VALUE;
@@ -854,7 +885,7 @@ int AbilityManagerStub::GetPendingWantCodeInner(MessageParcel &data, MessageParc
 
 int AbilityManagerStub::GetPendingWantTypeInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (wantSender == nullptr) {
         HILOG_ERROR("wantSender is nullptr");
         return ERR_INVALID_VALUE;
@@ -867,12 +898,12 @@ int AbilityManagerStub::GetPendingWantTypeInner(MessageParcel &data, MessageParc
 
 int AbilityManagerStub::RegisterCancelListenerInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> sender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> sender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (sender == nullptr) {
         HILOG_ERROR("sender is nullptr");
         return ERR_INVALID_VALUE;
     }
-    sptr<IWantReceiver> receiver = iface_cast<IWantReceiver>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantReceiver> receiver = iface_cast<IWantReceiver>(data.ReadRemoteObject());
     if (receiver == nullptr) {
         HILOG_ERROR("receiver is nullptr");
         return ERR_INVALID_VALUE;
@@ -883,12 +914,12 @@ int AbilityManagerStub::RegisterCancelListenerInner(MessageParcel &data, Message
 
 int AbilityManagerStub::UnregisterCancelListenerInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> sender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> sender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (sender == nullptr) {
         HILOG_ERROR("sender is nullptr");
         return ERR_INVALID_VALUE;
     }
-    sptr<IWantReceiver> receiver = iface_cast<IWantReceiver>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantReceiver> receiver = iface_cast<IWantReceiver>(data.ReadRemoteObject());
     if (receiver == nullptr) {
         HILOG_ERROR("receiver is nullptr");
         return ERR_INVALID_VALUE;
@@ -899,7 +930,7 @@ int AbilityManagerStub::UnregisterCancelListenerInner(MessageParcel &data, Messa
 
 int AbilityManagerStub::GetPendingRequestWantInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (wantSender == nullptr) {
         HILOG_ERROR("wantSender is nullptr");
         return ERR_INVALID_VALUE;
@@ -917,7 +948,7 @@ int AbilityManagerStub::GetPendingRequestWantInner(MessageParcel &data, MessageP
 
 int AbilityManagerStub::GetWantSenderInfoInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadParcelable<IRemoteObject>());
+    sptr<IWantSender> wantSender = iface_cast<IWantSender>(data.ReadRemoteObject());
     if (wantSender == nullptr) {
         HILOG_ERROR("wantSender is nullptr");
         return ERR_INVALID_VALUE;
@@ -930,17 +961,6 @@ int AbilityManagerStub::GetWantSenderInfoInner(MessageParcel &data, MessageParce
         return ERR_INVALID_VALUE;
     }
     reply.WriteParcelable(info.get());
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::SetShowOnLockScreenInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto isAllow = data.ReadBool();
-    int result = SetShowOnLockScreen(isAllow);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("SetShowOnLockScreen error");
-        return ERR_INVALID_VALUE;
-    }
     return NO_ERROR;
 }
 
@@ -1010,9 +1030,9 @@ int AbilityManagerStub::StartContinuationInner(MessageParcel &data, MessageParce
         return ERR_NULL_OBJECT;
     }
 
-    sptr<IRemoteObject> abilityToken = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> abilityToken = data.ReadRemoteObject();
     if (abilityToken == nullptr) {
-        HILOG_ERROR("AbilityManagerStub: StartContinuationInner abilityToken readParcelable failed!");
+        HILOG_ERROR("Get abilityToken failed!");
         return ERR_NULL_OBJECT;
     }
     int32_t status = data.ReadInt32();
@@ -1067,7 +1087,7 @@ int AbilityManagerStub::UnlockMissionForCleanupInner(MessageParcel &data, Messag
 
 int AbilityManagerStub::RegisterMissionListenerInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IMissionListener> listener = iface_cast<IMissionListener>(data.ReadParcelable<IRemoteObject>());
+    sptr<IMissionListener> listener = iface_cast<IMissionListener>(data.ReadRemoteObject());
     if (listener == nullptr) {
         HILOG_ERROR("stub register mission listener, listener is nullptr.");
         return ERR_INVALID_VALUE;
@@ -1080,7 +1100,7 @@ int AbilityManagerStub::RegisterMissionListenerInner(MessageParcel &data, Messag
 
 int AbilityManagerStub::UnRegisterMissionListenerInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IMissionListener> listener = iface_cast<IMissionListener>(data.ReadParcelable<IRemoteObject>());
+    sptr<IMissionListener> listener = iface_cast<IMissionListener>(data.ReadRemoteObject());
     if (listener == nullptr) {
         HILOG_ERROR("stub unregister mission listener, listener is nullptr.");
         return ERR_INVALID_VALUE;
@@ -1161,7 +1181,7 @@ int AbilityManagerStub::MoveMissionToFrontInner(MessageParcel &data, MessageParc
 
 int AbilityManagerStub::GetMissionIdByTokenInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
     int32_t missionId = GetMissionIdByToken(token);
     if (!reply.WriteInt32(missionId)) {
         HILOG_ERROR("GetMissionIdByToken write missionId failed.");
@@ -1173,7 +1193,7 @@ int AbilityManagerStub::GetMissionIdByTokenInner(MessageParcel &data, MessagePar
 int AbilityManagerStub::MoveMissionToFrontByOptionsInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t missionId = data.ReadInt32();
-    StartOptions *startOptions = data.ReadParcelable<StartOptions>();
+    std::unique_ptr<StartOptions> startOptions(data.ReadParcelable<StartOptions>());
     if (startOptions == nullptr) {
         HILOG_ERROR("startOptions is nullptr");
         return ERR_INVALID_VALUE;
@@ -1196,8 +1216,11 @@ int AbilityManagerStub::StartAbilityByCallInner(MessageParcel &data, MessageParc
         return ERR_INVALID_VALUE;
     }
 
-    auto callback = iface_cast<IAbilityConnection>(data.ReadParcelable<IRemoteObject>());
-    auto callerToken = data.ReadParcelable<IRemoteObject>();
+    auto callback = iface_cast<IAbilityConnection>(data.ReadRemoteObject());
+    sptr<IRemoteObject> callerToken = nullptr;
+    if (data.ReadBool()) {
+        callerToken = data.ReadRemoteObject();
+    }
     int32_t result = StartAbilityByCall(*want, callback, callerToken);
 
     HILOG_DEBUG("resolve call ability ret = %d", result);
@@ -1212,13 +1235,13 @@ int AbilityManagerStub::StartAbilityByCallInner(MessageParcel &data, MessageParc
 
 int AbilityManagerStub::ReleaseInner(MessageParcel &data, MessageParcel &reply)
 {
-    auto callback = iface_cast<IAbilityConnection>(data.ReadParcelable<IRemoteObject>());
+    auto callback = iface_cast<IAbilityConnection>(data.ReadRemoteObject());
     if (callback == nullptr) {
         HILOG_ERROR("callback is nullptr");
         return ERR_INVALID_VALUE;
     }
 
-    auto element = data.ReadParcelable<AppExecFwk::ElementName>();
+    std::unique_ptr<AppExecFwk::ElementName> element(data.ReadParcelable<AppExecFwk::ElementName>());
     if (element == nullptr) {
         HILOG_ERROR("callback stub receive element is nullptr");
         return ERR_INVALID_VALUE;
@@ -1248,7 +1271,7 @@ int AbilityManagerStub::StopUserInner(MessageParcel &data, MessageParcel &reply)
     int32_t userId = data.ReadInt32();
     sptr<IStopUserCallback> callback = nullptr;
     if (data.ReadBool()) {
-        callback = iface_cast<IStopUserCallback>(data.ReadParcelable<IRemoteObject>());
+        callback = iface_cast<IStopUserCallback>(data.ReadRemoteObject());
     }
     int result = StopUser(userId, callback);
     if (!reply.WriteInt32(result)) {
@@ -1260,7 +1283,7 @@ int AbilityManagerStub::StopUserInner(MessageParcel &data, MessageParcel &reply)
 
 int AbilityManagerStub::SetMissionLabelInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
     if (!token) {
         HILOG_ERROR("SetMissionLabelInner read ability token failed.");
         return ERR_NULL_OBJECT;
@@ -1447,7 +1470,7 @@ int AbilityManagerStub::StartUserTestInner(MessageParcel &data, MessageParcel &r
         HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
-    auto observer = data.ReadParcelable<IRemoteObject>();
+    auto observer = data.ReadRemoteObject();
     int32_t result = StartUserTest(*want, observer);
     reply.WriteInt32(result);
     delete want;
@@ -1468,7 +1491,7 @@ int AbilityManagerStub::GetCurrentTopAbilityInner(MessageParcel &data, MessagePa
 {
     sptr<IRemoteObject> token;
     auto result = GetCurrentTopAbility(token);
-    if (!reply.WriteParcelable(token)) {
+    if (!reply.WriteRemoteObject(token)) {
         HILOG_ERROR("data write failed.");
         return ERR_INVALID_VALUE;
     }
@@ -1479,7 +1502,7 @@ int AbilityManagerStub::GetCurrentTopAbilityInner(MessageParcel &data, MessagePa
 
 int AbilityManagerStub::DelegatorDoAbilityForegroundInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
     auto result = DelegatorDoAbilityForeground(token);
     reply.WriteInt32(result);
 
@@ -1488,7 +1511,7 @@ int AbilityManagerStub::DelegatorDoAbilityForegroundInner(MessageParcel &data, M
 
 int AbilityManagerStub::DelegatorDoAbilityBackgroundInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
     auto result = DelegatorDoAbilityBackground(token);
     reply.WriteInt32(result);
     return NO_ERROR;
@@ -1506,8 +1529,8 @@ int AbilityManagerStub::DoAbilityBackground(const sptr<IRemoteObject> &token, ui
 
 int AbilityManagerStub::DoAbilityForegroundInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
-    int32_t flag = data.ReadUint32();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
+    uint32_t flag = data.ReadUint32();
     auto result = DoAbilityForeground(token, flag);
     reply.WriteInt32(result);
 
@@ -1516,8 +1539,8 @@ int AbilityManagerStub::DoAbilityForegroundInner(MessageParcel &data, MessagePar
 
 int AbilityManagerStub::DoAbilityBackgroundInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IRemoteObject> token = data.ReadParcelable<IRemoteObject>();
-    int32_t flag = data.ReadUint32();
+    sptr<IRemoteObject> token = data.ReadRemoteObject();
+    uint32_t flag = data.ReadUint32();
     auto result = DoAbilityBackground(token, flag);
     reply.WriteInt32(result);
     return NO_ERROR;

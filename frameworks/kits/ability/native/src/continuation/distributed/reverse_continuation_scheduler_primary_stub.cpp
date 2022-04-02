@@ -81,7 +81,7 @@ int ReverseContinuationSchedulerPrimaryStub::NotifyReplicaTerminatedInner(Messag
 int ReverseContinuationSchedulerPrimaryStub::ContinuationBackInner(MessageParcel &data, MessageParcel &reply)
 {
     HILOG_INFO("%{public}s called begin", __func__);
-    AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
+    std::unique_ptr<AAFwk::Want> want(data.ReadParcelable<AAFwk::Want>());
     if (want == nullptr) {
         HILOG_ERROR("ReverseContinuationSchedulerPrimaryStub::ContinuationBackInner want is nullptr");
         return -1;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -77,8 +77,8 @@ const std::string HELP_MSG_DUMPSYS = "usage: aa dump <options>\n"
                                   "  -a, --all                    dump all abilities\n"
                                   "  -l, --mission-list           dump mission list\n"
                                   "  -i, --ability                dump abilityRecordId\n"
-                                  "  -e, --extension              dump elementName (API7 ExtensionRecords,"
-                                                                  "API8 serviceAbilityRecords)\n"
+                                  "  -e, --extension              dump elementName (FA: serviceAbilityRecords,"
+                                                                  "Stage: ExtensionRecords)\n"
                                   "  -p, --pending                dump pendingWantRecordId\n"
                                   "  -r, --process                dump process\n"
                                   "  -d, --data                   dump the data abilities\n"
@@ -108,7 +108,7 @@ const std::string HELP_MSG_TEST =
 const std::string HELP_MSG_FORCE_STOP = "usage: aa force-stop <bundle-name>\n";
 const std::string HELP_MSG_BLOCK_ABILITY = "usage: aa block-ability <abilityrecordid>\n";
 const std::string HELP_MSG_FORCE_TIMEOUT =
-    "usage: aa force-timeout <ability-name> <INITIAL|FOREGROUND_NEW|BACKGROUND_NEW|TERMINATING>\n"
+    "usage: aa force-timeout <ability-name> <INITIAL|INACTIVE|COMMAND|FOREGROUND_NEW|BACKGROUND_NEW|TERMINATING>\n"
     "usage: aa force-timeout clean.";
 const std::string HELP_MSG_FORCE_TIMEOUT_CLEAN = "clean";
 

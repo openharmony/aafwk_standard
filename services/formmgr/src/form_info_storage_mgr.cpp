@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License")_;
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,12 +28,12 @@ const int32_t CHECK_INTERVAL = 100000;  // 100ms
 
 KvStoreDeathRecipientCallbackFormInfoStorage::KvStoreDeathRecipientCallbackFormInfoStorage()
 {
-    HILOG_INFO("create kvstore death recipient callback instance %{public}p", this);
+    HILOG_INFO("create kvstore death recipient callback instance");
 }
 
 KvStoreDeathRecipientCallbackFormInfoStorage::~KvStoreDeathRecipientCallbackFormInfoStorage()
 {
-    HILOG_INFO("destroy kvstore death recipient callback instance %{public}p", this);
+    HILOG_INFO("destroy kvstore death recipient callback instance");
 }
 
 void KvStoreDeathRecipientCallbackFormInfoStorage::OnRemoteDied()

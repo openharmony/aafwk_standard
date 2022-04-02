@@ -110,11 +110,10 @@ int FormMgr::ReleaseForm(const int64_t formId, const sptr<IRemoteObject> &caller
 /**
  * @brief Update form with formId, send formId to form manager service.
  * @param formId The Id of the form to update.
- * @param bundleName Provider ability bundleName.
  * @param formBindingData Form binding data.
  * @return Returns ERR_OK on success, others on failure.
  */
-int FormMgr::UpdateForm(const int64_t formId, const std::string &bundleName, const FormProviderData &formBindingData)
+int FormMgr::UpdateForm(const int64_t formId, const FormProviderData &formBindingData)
 {
     HILOG_INFO("%{public}s called.", __func__);
     int errCode = Connect();
@@ -122,7 +121,7 @@ int FormMgr::UpdateForm(const int64_t formId, const std::string &bundleName, con
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    return remoteProxy_->UpdateForm(formId, bundleName, formBindingData);
+    return remoteProxy_->UpdateForm(formId, formBindingData);
 }
 
 /**

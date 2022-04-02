@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License")_;
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,8 +42,8 @@ public:
     int32_t specification;
     bool isEnableUpdate = false;
     long updateDuration = false;
-    int updateAtHour = 0;
-    int updateAtMin = 0;
+    int updateAtHour = -1;
+    int updateAtMin = -1;
     FormProviderInfo formProviderInfo;
     std::vector<std::string> hapSourceDirs;
     std::string jsFormCodePath = "";

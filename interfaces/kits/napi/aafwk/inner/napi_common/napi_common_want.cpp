@@ -56,23 +56,20 @@ void InnerInitWantOptionsData(std::map<std::string, unsigned int> &flagMap)
 
 napi_value WrapElementName(napi_env env, const ElementName &elementName)
 {
-    HILOG_INFO("%{public}s called.", __func__);
-
+    HILOG_INFO("%{public}s called. DeviceID=%{public}s, BundleName=%{public}s, AbilityName=%{public}s", __func__,
+        elementName.GetDeviceID().c_str(), elementName.GetBundleName().c_str(), elementName.GetAbilityName().c_str());
     napi_value jsObject = nullptr;
     NAPI_CALL(env, napi_create_object(env, &jsObject));
 
     napi_value jsValue = nullptr;
-    HILOG_INFO("%{public}s called. deviceID=%{public}s", __func__, elementName.GetDeviceID().c_str());
     NAPI_CALL(env, napi_create_string_utf8(env, elementName.GetDeviceID().c_str(), NAPI_AUTO_LENGTH, &jsValue));
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "deviceId", jsValue));
 
     jsValue = nullptr;
-    HILOG_INFO("%{public}s called. GetBundleName=%{public}s", __func__, elementName.GetBundleName().c_str());
     NAPI_CALL(env, napi_create_string_utf8(env, elementName.GetBundleName().c_str(), NAPI_AUTO_LENGTH, &jsValue));
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "bundleName", jsValue));
 
     jsValue = nullptr;
-    HILOG_INFO("%{public}s called. GetAbilityName=%{public}s", __func__, elementName.GetAbilityName().c_str());
     NAPI_CALL(env, napi_create_string_utf8(env, elementName.GetAbilityName().c_str(), NAPI_AUTO_LENGTH, &jsValue));
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "abilityName", jsValue));
 
@@ -99,6 +96,7 @@ bool UnwrapElementName(napi_env env, napi_value param, ElementName &elementName)
     }
     return true;
 }
+
 bool InnerWrapWantParamsChar(
     napi_env env, napi_value jsObject, const std::string &key, const AAFwk::WantParams &wantParams)
 {
@@ -106,7 +104,6 @@ bool InnerWrapWantParamsChar(
     AAFwk::IChar *ao = AAFwk::IChar::Query(value);
     if (ao != nullptr) {
         std::string natValue(static_cast<Char *>(ao)->ToString());
-        HILOG_INFO("%{public}s called. key=%{public}s, value=%{private}s", __func__, key.c_str(), natValue.c_str());
         napi_value jsValue = WrapStringToJS(env, natValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -123,7 +120,6 @@ bool InnerWrapWantParamsString(
     AAFwk::IString *ao = AAFwk::IString::Query(value);
     if (ao != nullptr) {
         std::string natValue = AAFwk::String::Unbox(ao);
-        HILOG_INFO("%{public}s called. key=%{public}s, value=%{private}s", __func__, key.c_str(), natValue.c_str());
         napi_value jsValue = WrapStringToJS(env, natValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -155,7 +151,7 @@ bool InnerWrapWantParamsByte(
     auto value = wantParams.GetParam(key);
     AAFwk::IByte *bo = AAFwk::IByte::Query(value);
     if (bo != nullptr) {
-        int intValue = AAFwk::Byte::Unbox(bo);
+        int intValue = (int)AAFwk::Byte::Unbox(bo);
         napi_value jsValue = WrapInt32ToJS(env, intValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -188,7 +184,6 @@ bool InnerWrapWantParamsInt32(
     AAFwk::IInteger *ao = AAFwk::IInteger::Query(value);
     if (ao != nullptr) {
         int natValue = AAFwk::Integer::Unbox(ao);
-        HILOG_INFO("%{public}s called. key=%{public}s, value=%{private}d", __func__, key.c_str(), natValue);
         napi_value jsValue = WrapInt32ToJS(env, natValue);
         if (jsValue != nullptr) {
             NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
@@ -380,7 +375,7 @@ bool InnerWrapWantParamsArrayByte(napi_env env, napi_value jsObject, const std::
         if (ao->Get(i, iface) == ERR_OK) {
             AAFwk::IByte *iValue = AAFwk::IByte::Query(iface);
             if (iValue != nullptr) {
-                int intValue = AAFwk::Byte::Unbox(iValue);
+                int intValue = (int)AAFwk::Byte::Unbox(iValue);
                 natArray.push_back(intValue);
             }
         }
@@ -526,7 +521,6 @@ bool InnerWrapWantParamsArray(napi_env env, napi_value jsObject, const std::stri
 
 napi_value WrapWantParams(napi_env env, const AAFwk::WantParams &wantParams)
 {
-    HILOG_INFO("%{public}s called.", __func__);
     napi_value jsObject = nullptr;
     NAPI_CALL(env, napi_create_object(env, &jsObject));
 
@@ -568,10 +562,10 @@ napi_value WrapWantParams(napi_env env, const AAFwk::WantParams &wantParams)
 bool InnerSetWantParamsArrayString(
     const std::string &key, const std::vector<std::string> &value, AAFwk::WantParams &wantParams)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_IString);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             ao->Set(i, AAFwk::String::Box(value[i]));
         }
         wantParams.SetParam(key, ao);
@@ -583,10 +577,10 @@ bool InnerSetWantParamsArrayString(
 
 bool InnerSetWantParamsArrayInt(const std::string &key, const std::vector<int> &value, AAFwk::WantParams &wantParams)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_IInteger);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             ao->Set(i, AAFwk::Integer::Box(value[i]));
         }
         wantParams.SetParam(key, ao);
@@ -598,10 +592,10 @@ bool InnerSetWantParamsArrayInt(const std::string &key, const std::vector<int> &
 
 bool InnerSetWantParamsArrayLong(const std::string &key, const std::vector<long> &value, AAFwk::WantParams &wantParams)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_ILong);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             ao->Set(i, AAFwk::Long::Box(value[i]));
         }
         wantParams.SetParam(key, ao);
@@ -613,10 +607,10 @@ bool InnerSetWantParamsArrayLong(const std::string &key, const std::vector<long>
 
 bool InnerSetWantParamsArrayBool(const std::string &key, const std::vector<bool> &value, AAFwk::WantParams &wantParams)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_IBoolean);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             ao->Set(i, AAFwk::Boolean::Box(value[i]));
         }
         wantParams.SetParam(key, ao);
@@ -629,10 +623,10 @@ bool InnerSetWantParamsArrayBool(const std::string &key, const std::vector<bool>
 bool InnerSetWantParamsArrayDouble(
     const std::string &key, const std::vector<double> &value, AAFwk::WantParams &wantParams)
 {
-    long size = value.size();
+    size_t size = value.size();
     sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_IDouble);
     if (ao != nullptr) {
-        for (long i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             ao->Set(i, AAFwk::Double::Box(value[i]));
         }
         wantParams.SetParam(key, ao);
@@ -730,14 +724,12 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
         switch (jsValueType) {
             case napi_string: {
                 std::string natValue = UnwrapStringFromJS(env, jsProValue);
-                HILOG_INFO("%{public}s called. Property value=%{private}s.", __func__, natValue.c_str());
                 wantParams.SetParam(strProName, AAFwk::String::Box(natValue));
                 break;
             }
             case napi_boolean: {
                 bool natValue = false;
                 NAPI_CALL_BASE(env, napi_get_value_bool(env, jsProValue, &natValue), false);
-                HILOG_INFO("%{public}s called. Property value=%{private}s.", __func__, natValue ? "true" : "false");
                 wantParams.SetParam(strProName, AAFwk::Boolean::Box(natValue));
                 break;
             }
@@ -747,12 +739,10 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
                 bool isReadValue32 = false;
                 bool isReadDouble = false;
                 if (napi_get_value_int32(env, jsProValue, &natValue32) == napi_ok) {
-                    HILOG_INFO("%{public}s called. Property value=%{private}d.", __func__, natValue32);
                     isReadValue32 = true;
                 }
 
                 if (napi_get_value_double(env, jsProValue, &natValueDouble) == napi_ok) {
-                    HILOG_INFO("%{public}s called. Property value=%{private}lf.", __func__, natValueDouble);
                     isReadDouble = true;
                 }
 
@@ -773,10 +763,8 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
                 bool isArray = false;
                 if (napi_is_array(env, jsProValue, &isArray) == napi_ok) {
                     if (isArray) {
-                        HILOG_INFO("%{public}s called. %{public}s is array.", __func__, strProName.c_str());
                         InnerUnwrapWantParamsArray(env, strProName, jsProValue, wantParams);
                     } else {
-                        HILOG_INFO("%{public}s called. %{public}s is wantparams.", __func__, strProName.c_str());
                         InnerUnwrapWantParams(env, strProName, jsProValue, wantParams);
                     }
                 }

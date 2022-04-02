@@ -45,16 +45,15 @@ config("abilityms_config") {
     "${innerkits_path}/want/include/ohos/aafwk/content",
     "${services_path}/common/include",
     "//utils/native/base/include",
-    "//utils/system/safwk/native/include",
     "//prebuilts/jdk/jdk8/linux-x86/include",
     "//prebuilts/jdk/jdk8/linux-x86/include/linux",
     "//third_party/json/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
+    "${kits_path}/ability/native/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
     "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
-    "//foundation/aafwk/standard/tools/aa/include",
+    "${innerkits_path}/dataobs_manager/include",
+    "${aafwk_path}/tools/aa/include",
     "//base/hiviewdfx/hiview/adapter/utility/include",
     "//base/account/os_account/frameworks/common/account_error/include",
     "//base/account/os_account/frameworks/common/database/include",
@@ -83,14 +82,14 @@ config("abilityms_config") {
 
 ohos_shared_library("abilityms") {
   sources = abilityms_files
-  sources += [ "${services_path}/abilitymgr/src/sa_mgr_client.cpp" ]
+  sources += [ "src/sa_mgr_client.cpp" ]
 
   configs = [ ":abilityms_config" ]
   deps = [
     "${innerkits_path}/uri_permission:uri_permission_mgr",
+    "${kits_path}/ability/native:dummy_classes",
     "${services_path}/common:perm_verification",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
   ]
 
   external_deps = [
@@ -127,12 +126,15 @@ ohos_shared_library("abilityms") {
 
   if (ability_runtime_graphics) {
     deps += [
-      "//base/global/i18n_standard/frameworks/intl:intl_util",
       "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
-      "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
       "//third_party/libpng:libpng",
     ]
     public_deps = [ "//foundation/graphic/standard:libwmservice" ]
+    external_deps += [
+      "i18n_standard:intl_util",
+      "multimedia_image_standard:image_native",
+      "window_manager:libdm",
+    ]
   }
 
   subsystem_name = "aafwk"
@@ -140,7 +142,7 @@ ohos_shared_library("abilityms") {
 }
 
 ohos_prebuilt_etc("ams_service_config.json") {
-  source = "//foundation/aafwk/standard/services/abilitymgr/resource/ams_service_config.json"
+  source = "resource/ams_service_config.json"
   subsystem_name = "aafwk"
   part_name = "ability_runtime"
 }

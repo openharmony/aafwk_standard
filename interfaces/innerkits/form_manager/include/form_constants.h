@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -65,13 +65,16 @@ namespace Constants {
     // The max uid of system app.
     const int32_t MAX_SYSTEM_APP_UID = 10000;
 
+    const int MIN_TIME_SPEED = 1;
+    const int MAX_TIME_SPEED = 1000;
     const int MAX_HOUR = 23;
-    const int MAX_MININUTE = 59;
+    const int MAX_MINUTE = 59;
     const int MAX_SECOND = 60;
     const int MIN_TIME = 0;
     const int HOUR_PER_DAY = 24;
     const int MIN_PER_HOUR = 60;
     const int SEC_PER_MIN = 60;
+    const int MS_PER_DAY = 24 * 60 * 60 * 1000;
     const long TIME_1000 = 1000;
     const long TIME_1000000 = 1000000;
     const long TIME_CONVERSION = 30 * 60 * TIME_1000;

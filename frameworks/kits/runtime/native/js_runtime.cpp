@@ -21,9 +21,10 @@
 #include <fstream>
 
 #include "native_engine/impl/ark/ark_native_engine.h"
+#ifdef SUPPORT_GRAPHICS
 #include "core/common/container_scope.h"
 #include "declarative_module_preloader.h"
-
+#endif
 #include "event_handler.h"
 #include "hilog_wrapper.h"
 #include "js_runtime_utils.h"
@@ -57,11 +58,11 @@ public:
         }
     }
 
-    void StartDebugMode() override
+    void StartDebugMode(bool needBreakPoint) override
     {
         if (!debugMode_) {
-            HILOG_INFO("Ark VM is startint debug mode");
-            panda::JSNApi::StartDebugger(ARK_DEBUGGER_LIB_PATH, vm_, isDebugMode_);
+            HILOG_INFO("Ark VM is starting debug mode [%{public}s]", needBreakPoint ? "break" : "normal");
+            panda::JSNApi::StartDebugger(ARK_DEBUGGER_LIB_PATH, vm_, needBreakPoint);
             debugMode_ = true;
         }
     }
@@ -96,7 +97,6 @@ private:
     }
 
     panda::ecmascript::EcmaVM* vm_ = nullptr;
-    bool isDebugMode_ = true;
 };
 
 std::string GetLogContent(NativeCallbackInfo& info)
@@ -322,10 +322,11 @@ bool JsRuntime::Initialize(const Options& options)
         HILOG_ERROR("Failed to create reference for global.requireNapi");
         return false;
     }
-
+#ifdef SUPPORT_GRAPHICS
     if (options.loadAce) {
         OHOS::Ace::DeclarativeModulePreloader::Preload(*nativeEngine_);
     }
+#endif
     codePath_ = options.codePath;
 
     auto moduleManager = NativeModuleManager::GetInstance();
@@ -425,14 +426,18 @@ bool JsRuntime::RunScript(const std::string& path)
     return nativeEngine_->RunScript(path.c_str()) != nullptr;
 }
 
+#ifdef SUPPORT_GRAPHICS
 using OHOS::Ace::ContainerScope;
+#endif
 class TimerTask final {
 public:
     TimerTask(
         JsRuntime& jsRuntime, std::shared_ptr<NativeReference> jsFunction, const std::string &name, int64_t interval)
         : jsRuntime_(jsRuntime), jsFunction_(jsFunction), name_(name), interval_(interval)
     {
+#ifdef SUPPORT_GRAPHICS
         containerScopeId_ = ContainerScope::CurrentId();
+#endif
     }
 
     ~TimerTask() = default;
@@ -442,9 +447,10 @@ public:
         if (interval_ > 0) {
             jsRuntime_.PostTask(*this, name_, interval_);
         }
-
+#ifdef SUPPORT_GRAPHICS
         // call js function
         ContainerScope containerScope(containerScopeId_);
+#endif
         HandleScope handleScope(jsRuntime_);
 
         std::vector<NativeValue*> args_;
@@ -468,7 +474,9 @@ private:
     std::vector<std::shared_ptr<NativeReference>> jsArgs_;
     std::string name_;
     int64_t interval_ = 0;
+#ifdef SUPPORT_GRAPHICS
     int32_t containerScopeId_ = 0;
+#endif
 };
 
 void JsRuntime::PostTask(const TimerTask& task, const std::string& name, int64_t delayTime)

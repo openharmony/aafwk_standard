@@ -339,18 +339,19 @@ public:
     std::shared_ptr<AbilityEventHandler> GetEventHandler();
 
     /**
-     * SetStackManager, set the user id of stack manager.
-     *
-     * @param userId, user id.
-     */
-    void SetStackManager(int userId, bool switchUser);
-
-    /**
      * GetStackManager, get the current stack manager.
      *
      * @return Returns AbilityStackManager ptr.
      */
     std::shared_ptr<AbilityStackManager> GetStackManager();
+
+    /**
+     * @brief Ability hidump.
+     * @param fd Indicates the fd.
+     * @param args Indicates the params.
+     * @return Returns the dump result.
+     */
+    int Dump(int fd, const std::vector<std::u16string> &args) override;
 
     /**
      * DumpWaittingAbilityQueue.
@@ -629,14 +630,6 @@ public:
 
     virtual int GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info) override;
 
-    /**
-     * set lock screen Permit list
-     *
-     * @param isAllow whether to allow startup on lock screen.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int SetShowOnLockScreen(bool isAllow) override;
-
     virtual int LockMissionForCleanup(int32_t missionId) override;
 
     virtual int UnlockMissionForCleanup(int32_t missionId) override;
@@ -703,7 +696,6 @@ public:
     void OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord);
     void OnCallConnectDied(std::shared_ptr<CallRecord> callRecord);
     void GetMaxRestartNum(int &max);
-    bool IsUseNewMission();
     void HandleLoadTimeOut(int64_t eventId);
     void HandleActiveTimeOut(int64_t eventId);
     void HandleInactiveTimeOut(int64_t eventId);
@@ -987,12 +979,6 @@ private:
     void StartingSystemUiAbility(const SatrtUiMode &mode);
 
     /**
-     * starting contacts ability.
-     *
-     */
-    void StartingContactsAbility();
-
-    /**
      * starting mms ability.
      *
      */
@@ -1056,17 +1042,11 @@ private:
     int ReleaseRemoteAbility(const sptr<IRemoteObject> &connect, const AppExecFwk::ElementName &element);
 
     void DumpInner(const std::string &args, std::vector<std::string> &info);
-    void DumpStackListInner(const std::string &args, std::vector<std::string> &info);
     void DumpStackInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionInner(const std::string &args, std::vector<std::string> &info);
-    void DumpTopAbilityInner(const std::string &args, std::vector<std::string> &info);
     void DumpWaittingAbilityQueueInner(const std::string &args, std::vector<std::string> &info);
     void DumpStateInner(const std::string &args, std::vector<std::string> &info);
     void DataDumpStateInner(const std::string &args, std::vector<std::string> &info);
-    void DumpFocusMapInner(const std::string &args, std::vector<std::string> &info);
-#ifdef SUPPORT_GRAPHICS
-    void DumpWindowModeInner(const std::string &args, std::vector<std::string> &info);
-#endif
     void DumpMissionListInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionInfosInner(const std::string &args, std::vector<std::string> &info);
     void DumpFuncInit();
@@ -1075,7 +1055,7 @@ private:
 
     int CheckCallPermissions(const AbilityRequest &abilityRequest);
 
-    bool JudgeMultiUserConcurrency(const AppExecFwk::AbilityInfo &info, const int32_t userId);
+    bool JudgeMultiUserConcurrency(const int32_t userId);
     /**
      * dumpsys info
      *
@@ -1095,6 +1075,12 @@ private:
         const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
     void DataDumpSysStateInner(
         const std::string &args, std::vector<std::string> &info, bool isClient, bool isUserID, int userId);
+    ErrCode ProcessOneParam(std::string& args, std::string &result);
+    ErrCode ProcessTwoParam(const std::string& firstParam, const std::string& secondParam, std::string &result);
+    ErrCode ProcessThreeParam(const std::string& firstParam, const std::string& secondParam,
+        const std::string& thirdParam, std::string &result);
+    void ShowHelp(std::string &result);
+    void ShowIllealInfomation(std::string &result);
 
     void InitConnectManager(int32_t userId, bool switchUser);
     void InitDataAbilityManager(int32_t userId, bool switchUser);
@@ -1117,19 +1103,16 @@ private:
     void StartUserApps(int32_t userId, bool isBoot);
     void StartSystemAbilityByUser(int32_t userId, bool isBoot);
     void PauseOldUser(int32_t userId);
-    void PauseOldStackManager(int32_t userId);
     void PauseOldMissionListManager(int32_t userId);
     void PauseOldConnectManager(int32_t userId);
     bool IsSystemUI(const std::string &bundleName) const;
 
     bool VerificationAllToken(const sptr<IRemoteObject> &token);
-    const std::shared_ptr<DataAbilityManager> &GetDataAbilityManager(const sptr<IAbilityScheduler> &scheduler);
+    std::shared_ptr<DataAbilityManager> GetDataAbilityManager(const sptr<IAbilityScheduler> &scheduler);
     bool CheckDataAbilityRequest(AbilityRequest &abilityRequest);
-    std::shared_ptr<AbilityStackManager> GetStackManagerByUserId(int32_t userId);
     std::shared_ptr<MissionListManager> GetListManagerByUserId(int32_t userId);
     std::shared_ptr<AbilityConnectManager> GetConnectManagerByUserId(int32_t userId);
     std::shared_ptr<DataAbilityManager> GetDataAbilityManagerByUserId(int32_t userId);
-    std::shared_ptr<AbilityStackManager> GetStackManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<MissionListManager> GetListManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<AbilityConnectManager> GetConnectManagerByToken(const sptr<IRemoteObject> &token);
     std::shared_ptr<DataAbilityManager> GetDataAbilityManagerByToken(const sptr<IRemoteObject> &token);
@@ -1169,7 +1152,6 @@ private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::shared_ptr<AbilityEventHandler> handler_;
     ServiceRunningState state_;
-    std::unordered_map<int, std::shared_ptr<AbilityStackManager>> stackManagers_;
     std::shared_ptr<AbilityStackManager> currentStackManager_;
     std::unordered_map<int, std::shared_ptr<AbilityConnectManager>> connectManagers_;
     std::shared_ptr<AbilityConnectManager> connectManager_;
@@ -1184,8 +1166,6 @@ private:
     const static std::map<std::string, AbilityManagerService::DumpKey> dumpMap;
     const static std::map<std::string, AbilityManagerService::DumpsysKey> dumpsysMap;
 
-    // new ams here
-    bool useNewMission_ {false};
     std::unordered_map<int, std::shared_ptr<MissionListManager>> missionListManagers_;
     std::shared_ptr<MissionListManager> currentMissionListManager_;
     std::shared_ptr<UserController> userController_;
@@ -1196,7 +1176,6 @@ private:
 
     std::multimap<std::string, std::string> timeoutMap_;
 };
-
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_ABILITY_MANAGER_SERVICE_H

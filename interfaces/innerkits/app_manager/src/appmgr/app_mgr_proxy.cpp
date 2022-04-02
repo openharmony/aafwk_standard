@@ -36,14 +36,16 @@ bool AppMgrProxy::WriteInterfaceToken(MessageParcel &data)
 
 void AppMgrProxy::AttachApplication(const sptr<IRemoteObject> &obj)
 {
-    HILOG_DEBUG("AppMgrProxy::AttachApplication start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(obj.GetRefPtr());
+    if (!data.WriteRemoteObject(obj.GetRefPtr())) {
+        HILOG_ERROR("Failed to write remote object");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         HILOG_ERROR("Remote() is NULL");
@@ -54,12 +56,10 @@ void AppMgrProxy::AttachApplication(const sptr<IRemoteObject> &obj)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void AppMgrProxy::ApplicationForegrounded(const int32_t recordId)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -77,12 +77,10 @@ void AppMgrProxy::ApplicationForegrounded(const int32_t recordId)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void AppMgrProxy::ApplicationBackgrounded(const int32_t recordId)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -100,12 +98,10 @@ void AppMgrProxy::ApplicationBackgrounded(const int32_t recordId)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 void AppMgrProxy::ApplicationTerminated(const int32_t recordId)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -123,13 +119,10 @@ void AppMgrProxy::ApplicationTerminated(const int32_t recordId)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 int32_t AppMgrProxy::CheckPermission(const int32_t recordId, const std::string &permission)
 {
-    HILOG_DEBUG("start");
-
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -149,20 +142,21 @@ int32_t AppMgrProxy::CheckPermission(const int32_t recordId, const std::string &
         HILOG_ERROR("SendRequest is failed, error code: %{public}d", ret);
         return ERR_PERMISSION_DENIED;
     }
-    HILOG_DEBUG("end");
     return reply.ReadInt32();
 }
 
 void AppMgrProxy::AbilityCleaned(const sptr<IRemoteObject> &token)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    data.WriteParcelable(token.GetRefPtr());
+    if (!data.WriteRemoteObject(token.GetRefPtr())) {
+        HILOG_ERROR("Failed to write token");
+        return;
+    }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         HILOG_ERROR("Remote() is NULL");
@@ -173,12 +167,10 @@ void AppMgrProxy::AbilityCleaned(const sptr<IRemoteObject> &token)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 sptr<IAmsMgr> AppMgrProxy::GetAmsMgr()
 {
-    HILOG_DEBUG("begin to get Ams instance");
     MessageParcel data;
     MessageParcel reply;
     if (!WriteInterfaceToken(data)) {
@@ -187,19 +179,17 @@ sptr<IAmsMgr> AppMgrProxy::GetAmsMgr()
     if (!SendTransactCmd(IAppMgr::Message::APP_GET_MGR_INSTANCE, data, reply)) {
         return nullptr;
     }
-    sptr<IRemoteObject> object = reply.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> object = reply.ReadRemoteObject();
     sptr<IAmsMgr> amsMgr = iface_cast<IAmsMgr>(object);
     if (!amsMgr) {
         HILOG_ERROR("ams instance is nullptr");
         return nullptr;
     }
-    HILOG_DEBUG("get ams instance success");
     return amsMgr;
 }
 
 int32_t AppMgrProxy::ClearUpApplicationData(const std::string &bundleName)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -221,13 +211,11 @@ int32_t AppMgrProxy::ClearUpApplicationData(const std::string &bundleName)
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
         return ret;
     }
-    HILOG_DEBUG("end");
     return reply.ReadInt32();
 }
 
 int32_t AppMgrProxy::GetAllRunningProcesses(std::vector<RunningProcessInfo> &info)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -248,13 +236,11 @@ int32_t AppMgrProxy::GetAllRunningProcesses(std::vector<RunningProcessInfo> &inf
         return error;
     }
     int result = reply.ReadInt32();
-    HILOG_DEBUG("end");
     return result;
 }
 
 int32_t AppMgrProxy::GetProcessRunningInfosByUserId(std::vector<RunningProcessInfo> &info, int32_t userId)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -277,7 +263,6 @@ int32_t AppMgrProxy::GetProcessRunningInfosByUserId(std::vector<RunningProcessIn
         return error;
     }
     int result = reply.ReadInt32();
-    HILOG_DEBUG("end");
     return result;
 }
 
@@ -408,7 +393,7 @@ int AppMgrProxy::RegisterApplicationStateObserver(
     if (!WriteInterfaceToken(data)) {
         return ERR_FLATTEN_OBJECT;
     }
-    if (!data.WriteParcelable(observer->AsObject())) {
+    if (!data.WriteRemoteObject(observer->AsObject())) {
         HILOG_ERROR("observer write failed.");
         return ERR_FLATTEN_OBJECT;
     }
@@ -436,7 +421,7 @@ int AppMgrProxy::UnregisterApplicationStateObserver(
     if (!WriteInterfaceToken(data)) {
         return ERR_FLATTEN_OBJECT;
     }
-    if (!data.WriteParcelable(observer->AsObject())) {
+    if (!data.WriteRemoteObject(observer->AsObject())) {
         HILOG_ERROR("observer write failed.");
         return ERR_FLATTEN_OBJECT;
     }
@@ -452,7 +437,6 @@ int AppMgrProxy::UnregisterApplicationStateObserver(
 
 int AppMgrProxy::GetForegroundApplications(std::vector<AppStateData> &list)
 {
-    HILOG_DEBUG("GetForegroundApplications start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -477,8 +461,8 @@ int AppMgrProxy::GetForegroundApplications(std::vector<AppStateData> &list)
     return reply.ReadInt32();
 }
 
-int AppMgrProxy::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
-    const BundleInfo &bundleInfo)
+int AppMgrProxy::StartUserTestProcess(
+    const AAFwk::Want &want, const sptr<IRemoteObject> &observer, const BundleInfo &bundleInfo, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -491,12 +475,16 @@ int AppMgrProxy::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemot
         HILOG_ERROR("want write failed.");
         return ERR_FLATTEN_OBJECT;
     }
-    if (!data.WriteParcelable(observer)) {
+    if (!data.WriteRemoteObject(observer)) {
         HILOG_ERROR("observer write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     if (!data.WriteParcelable(&bundleInfo)) {
         HILOG_ERROR("bundleInfo write failed.");
+        return ERR_FLATTEN_OBJECT;
+    }
+    if (!data.WriteInt32(userId)) {
+        HILOG_ERROR("userId write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     int32_t ret =
@@ -508,8 +496,7 @@ int AppMgrProxy::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRemot
     return reply.ReadInt32();
 }
 
-int AppMgrProxy::FinishUserTest(
-    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+int AppMgrProxy::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -528,10 +515,6 @@ int AppMgrProxy::FinishUserTest(
     }
     if (!data.WriteString(bundleName)) {
         HILOG_ERROR("bundleName write failed.");
-        return ERR_FLATTEN_OBJECT;
-    }
-    if (!data.WriteInt32(pid)) {
-        HILOG_ERROR("pid write failed.");
         return ERR_FLATTEN_OBJECT;
     }
     int32_t ret =
@@ -641,7 +624,7 @@ void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler
     if (!WriteInterfaceToken(data)) {
         return;
     }
-    if (!data.WriteParcelable(renderScheduler)) {
+    if (!data.WriteRemoteObject(renderScheduler)) {
         HILOG_ERROR("renderScheduler write failed.");
         return;
     }
@@ -654,7 +637,6 @@ void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler
 
 void AppMgrProxy::PostANRTaskByProcessID(const pid_t pid)
 {
-    HILOG_DEBUG("start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option(MessageOption::TF_SYNC);
@@ -675,12 +657,10 @@ void AppMgrProxy::PostANRTaskByProcessID(const pid_t pid)
     if (ret != NO_ERROR) {
         HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
     }
-    HILOG_DEBUG("end");
 }
 
 int AppMgrProxy::BlockAppService()
 {
-    HILOG_DEBUG("%{public}s", __func__);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;

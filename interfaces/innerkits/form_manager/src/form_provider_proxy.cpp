@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,7 +48,7 @@ int FormProviderProxy::AcquireProviderFormInfo(
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -91,7 +91,7 @@ int FormProviderProxy::NotifyFormDelete(const int64_t formId, const Want &want, 
         HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -136,7 +136,7 @@ int FormProviderProxy::NotifyFormsDelete(
         HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -181,7 +181,7 @@ int FormProviderProxy::NotifyFormUpdate(const int64_t formId, const Want &want, 
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken.", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -235,7 +235,7 @@ int FormProviderProxy::EventNotify(const std::vector<int64_t> &formIds, const in
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken.", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -282,7 +282,7 @@ int FormProviderProxy::NotifyFormCastTempForm(
         HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -330,7 +330,7 @@ int FormProviderProxy::FireFormEvent(
         HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -375,7 +375,7 @@ int FormProviderProxy::AcquireState(const Want &wantArg, const Want &want, const
         HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }

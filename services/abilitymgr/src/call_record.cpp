@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -64,8 +64,18 @@ void CallRecord::SetCallStub(const sptr<IRemoteObject> & call)
     HILOG_DEBUG("SetCallStub complete.");
 
     if (callDeathRecipient_ == nullptr) {
+        std::weak_ptr<CallRecord> callRecord = shared_from_this();
+        auto callStubDied = [wptr = callRecord] (const wptr<IRemoteObject> & remote) {
+            auto call = wptr.lock();
+            if (call == nullptr) {
+                HILOG_ERROR("callRecord  is nullptr, can't call stub died.");
+                return;
+            }
+
+            call->OnCallStubDied(remote);
+        };
         callDeathRecipient_ =
-                new AbilityCallRecipient(std::bind(&CallRecord::OnCallStubDied, this, std::placeholders::_1));
+                new AbilityCallRecipient(callStubDied);
     }
 
     callRemoteObject_->AddDeathRecipient(callDeathRecipient_);
@@ -139,7 +149,7 @@ bool CallRecord::SchedulerDisConnectDone()
 
 void CallRecord::OnCallStubDied(const wptr<IRemoteObject> & remote)
 {
-    HILOG_WARN("callstub is died. id:%{public}d", recordId_);
+    HILOG_DEBUG("callstub is died. id:%{public}d begin", recordId_);
 
     auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
     CHECK_POINTER(abilityManagerService);
@@ -149,6 +159,7 @@ void CallRecord::OnCallStubDied(const wptr<IRemoteObject> & remote)
         abilityManagerService->OnCallConnectDied(callRecord);
     };
     handler->PostTask(task);
+    HILOG_DEBUG("callstub is died. id:%{public}d, end", recordId_);
 }
 
 void CallRecord::Dump(std::vector<std::string> &info) const
