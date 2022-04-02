@@ -514,23 +514,6 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_006, TestSize.Level1)
  * Feature: AMS
  * Function: AppLifeCycle
  * SubFunction: Schedule
- * FunctionPoints: LoadAbility
- * CaseDescription: Load ability when ability is not created but application is suspended.
- */
-HWTEST_F(AmsAppLifeCycleTest, Schedule_007, TestSize.Level1)
-{
-    TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_SUSPENDED);
-    testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
-    auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
-    EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
-    EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppRecord.appRecord_->GetState());
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: Schedule
  * FunctionPoints: Update ability state to foreground
  * CaseDescription: Update ability state to foreground when ability is not loaded.
  */
@@ -691,25 +674,6 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_018, TestSize.Level1)
 {
     auto testAppPreRecord =
         CreateTestApplicationRecord(AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_BACKGROUND);
-
-    EXPECT_CALL(*(testAppPreRecord.mockAppScheduler_), ScheduleForegroundApplication()).Times(1);
-    serviceInner_->UpdateAbilityState(GetMockToken(), AbilityState::ABILITY_STATE_FOREGROUND);
-    serviceInner_->ApplicationForegrounded(testAppPreRecord.appRecord_->GetRecordId());
-    EXPECT_EQ(AbilityState::ABILITY_STATE_FOREGROUND, testAppPreRecord.firstAbilityRecord_->GetState());
-    EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppPreRecord.appRecord_->GetState());
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: Schedule
- * FunctionPoints: Update ability state to foreground
- * CaseDescription: Update ability state to foreground when ability is background and app is foreground.
- */
-HWTEST_F(AmsAppLifeCycleTest, Schedule_019, TestSize.Level1)
-{
-    auto testAppPreRecord =
-        CreateTestApplicationRecord(AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_SUSPENDED);
 
     EXPECT_CALL(*(testAppPreRecord.mockAppScheduler_), ScheduleForegroundApplication()).Times(1);
     serviceInner_->UpdateAbilityState(GetMockToken(), AbilityState::ABILITY_STATE_FOREGROUND);
@@ -889,18 +853,6 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_030, TestSize.Level1)
 HWTEST_F(AmsAppLifeCycleTest, Schedule_031, TestSize.Level1)
 {
     TestUpdateAbilityStateToBackgroundWhenAbilityIsBackground(ApplicationState::APP_STATE_BACKGROUND);
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: Schedule
- * FunctionPoints: Update ability state to background
- * CaseDescription: Update ability state to background when ability is background and app is suspended.
- */
-HWTEST_F(AmsAppLifeCycleTest, Schedule_032, TestSize.Level1)
-{
-    TestUpdateAbilityStateToBackgroundWhenAbilityIsBackground(ApplicationState::APP_STATE_SUSPENDED);
 }
 
 /*
@@ -1088,60 +1040,6 @@ HWTEST_F(AmsAppLifeCycleTest, Schedule_044, TestSize.Level1)
     EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
     auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1", -1);
     newAbilityRecord->SetState(AbilityState::ABILITY_STATE_BACKGROUND);
-
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleCleanAbility(_)).Times(1);
-    serviceInner_->TerminateAbility(GetMockToken());
-    serviceInner_->AbilityTerminated(GetMockToken());
-    auto abilityRecord = testAppRecord.appRecord_->GetAbilityRunningRecordByToken(GetMockToken());
-    EXPECT_EQ(nullptr, abilityRecord);
-    EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppRecord.appRecord_->GetState());
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: Schedule
- * FunctionPoints: Terminate ability
- * CaseDescription: Terminate ability when ability is background and app is suspended.
- */
-HWTEST_F(AmsAppLifeCycleTest, Schedule_045, TestSize.Level1)
-{
-    auto testAppRecord =
-        CreateTestApplicationRecord(AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_SUSPENDED);
-    testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleCleanAbility(_)).Times(1);
-    serviceInner_->TerminateAbility(GetMockToken());
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleTerminateApplication()).Times(1);
-    serviceInner_->AbilityTerminated(GetMockToken());
-    auto abilityRecord = testAppRecord.appRecord_->GetAbilityRunningRecordByToken(GetMockToken());
-    EXPECT_EQ(nullptr, abilityRecord);
-
-    serviceInner_->ApplicationTerminated(testAppRecord.appRecord_->GetRecordId());
-
-    auto appInfo = GetApplication();
-    BundleInfo bundleInfo;
-    bundleInfo.appId = "com.ohos.test.helloworld_code123";
-    auto appRecord = serviceInner_->appRunningManager_->CheckAppRunningRecordIsExist(
-        appInfo->name, appInfo->name, appInfo->uid, bundleInfo);
-    EXPECT_EQ(nullptr, appRecord);
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: Schedule
- * FunctionPoints: Terminate ability
- * CaseDescription: Terminate ability when multiple abilities is background and app is suspended.
- */
-HWTEST_F(AmsAppLifeCycleTest, Schedule_046, TestSize.Level1)
-{
-    auto testAppRecord =
-        CreateTestApplicationRecord(AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_SUSPENDED);
-    testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
-    auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1", -1);
-    newAbilityRecord->SetState(AbilityState::ABILITY_STATE_BACKGROUND);
-    testAppRecord.appRecord_->SetState(ApplicationState::APP_STATE_SUSPENDED);
 
     EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleCleanAbility(_)).Times(1);
     serviceInner_->TerminateAbility(GetMockToken());
@@ -1704,32 +1602,9 @@ HWTEST_F(AmsAppLifeCycleTest, AppStateChanged001, TestSize.Level1)
     EXPECT_CALL(*mockCallback, OnAppStateChanged(_)).Times(1);
     serviceInner_->OnAppStateChanged(appRecord, ApplicationState::APP_STATE_BACKGROUND);
     EXPECT_CALL(*mockCallback, OnAppStateChanged(_)).Times(1);
-    serviceInner_->OnAppStateChanged(appRecord, ApplicationState::APP_STATE_SUSPENDED);
-    EXPECT_CALL(*mockCallback, OnAppStateChanged(_)).Times(1);
     serviceInner_->OnAppStateChanged(appRecord, ApplicationState::APP_STATE_TERMINATED);
     EXPECT_CALL(*mockCallback, OnAppStateChanged(_)).Times(1);
     serviceInner_->OnAppStateChanged(appRecord, ApplicationState::APP_STATE_END);
-}
-
-/*
- * Feature: AMS
- * Function: AppLifeCycle
- * SubFunction: suspendApplication
- * FunctionPoints: suspendApplication
- * CaseDescription: test application state is APP_STATE_SUSPENDED
- */
-HWTEST_F(AmsAppLifeCycleTest, Suspend_001, TestSize.Level1)
-{
-    TestApplicationPreRecord testAppRecord = PrepareLoadTestAbilityAndApp(ApplicationState::APP_STATE_FOREGROUND);
-    testAppRecord.appRecord_->LaunchPendingAbilities();
-    EXPECT_CALL(*(testAppRecord.mockAppScheduler_), ScheduleLaunchAbility(_, _, _)).Times(1);
-    auto newAbilityRecord = AddNewAbility(testAppRecord.appRecord_, "1");
-    EXPECT_EQ(AbilityState::ABILITY_STATE_READY, newAbilityRecord->GetState());
-    EXPECT_EQ(ApplicationState::APP_STATE_FOREGROUND, testAppRecord.appRecord_->GetState());
-    testAppRecord.appRecord_->SetState(ApplicationState::APP_STATE_BACKGROUND);
-    EXPECT_EQ(ApplicationState::APP_STATE_BACKGROUND, testAppRecord.appRecord_->GetState());
-    testAppRecord.appRecord_->SetState(ApplicationState::APP_STATE_SUSPENDED);
-    EXPECT_EQ(ApplicationState::APP_STATE_SUSPENDED, testAppRecord.appRecord_->GetState());
 }
 
 /*
