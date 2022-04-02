@@ -39,19 +39,14 @@ public:
     ErrCode GetTerminateAbility();
     ErrCode GetTerminateAbilityResult();
     ErrCode GetIsFirstInMission();
-    ErrCode GetRemoveMissions();
 
     void SetStartAbility(ErrCode tValue);
     void SetTerminateAbility(ErrCode tValue);
     void SetTerminateAbilityResult(ErrCode tValue);
     void SetIsFirstInMission(ErrCode tValue);
-    void SetRemoveMissions(ErrCode tValue);
 
     int GetTerminateAbilityValue();
     void SetTerminateAbilityValue(int nValue);
-
-    int GetRemoveMissionsValue();
-    void ChangeRemoveMissionsValue();
 
     static std::shared_ptr<MockAbilityManagerClient> mock_instance_;
     static bool mock_intanceIsNull_;
@@ -64,10 +59,8 @@ private:
     ErrCode terminateAbility_;
     ErrCode terminateAbilityResult_;
     ErrCode isFirstInMission_;
-    ErrCode removeMissionsE_;
 
     int terminateAbilityValue_;
-    int removeMissions_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

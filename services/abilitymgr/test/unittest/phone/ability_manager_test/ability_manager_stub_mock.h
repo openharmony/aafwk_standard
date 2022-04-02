@@ -58,10 +58,7 @@ public:
     MOCK_METHOD2(DumpState, void(const std::string &, std::vector<std::string> &));
     MOCK_METHOD2(TerminateAbilityResult, int(const sptr<IRemoteObject> &, int));
     MOCK_METHOD1(StopServiceAbility, int(const Want &));
-    MOCK_METHOD1(GetAllStackInfo, int(StackInfo &));
-    MOCK_METHOD3(GetRecentMissions, int(const int32_t, const int32_t, std::vector<AbilityMissionInfo> &));
     MOCK_METHOD2(GetMissionSnapshot, int(const int32_t, MissionSnapshotInfo &));
-    MOCK_METHOD1(RemoveMission, int(int));
     MOCK_METHOD1(MoveMissionToTop, int(int32_t));
     MOCK_METHOD1(KillProcess, int(const std::string &));
     MOCK_METHOD2(UninstallApp, int(const std::string &, int32_t));

@@ -293,28 +293,6 @@ public:
     std::shared_ptr<MissionStack> GetTargetMissionStackBySetting(const AbilityRequest &abilityRequest);
 
     /**
-     * Obtains information about ability stack that are running on the device.
-     *
-     * @param stackInfo Ability stack info.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    void GetAllStackInfo(StackInfo &stackInfo);
-
-    /**
-     * Get the list of the missions that the user has recently launched,
-     * with the most recent being first and older ones after in order.
-     *
-     * @param recentList recent mission info
-     * @param numMax The maximum number of entries to return in the list. The
-     * actual number returned may be smaller, depending on how many tasks the
-     * user has started and the maximum number the system can remember.
-     * @param falgs Information about what to return.  May be any combination
-     * of {@link #RECENT_WITH_EXCLUDED} and {@link #RECENT_IGNORE_UNAVAILABLE}.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int GetRecentMissions(const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList);
-
-    /**
      * Ask that the mission associated with a given mission ID be moved to the
      * front of the stack, so it is now visible to the user.
      *
@@ -546,20 +524,6 @@ private:
      * @return Returns true on success, false on failure.
      */
     bool IsLauncherMission(int id);
-
-    /**
-     * Get the list of the missions that the user has recently launched,
-     * with the most recent being first and older ones after in order.
-     *
-     * @param recentList recent mission info
-     * @param numMax The maximum number of entries to return in the list. The
-     * actual number returned may be smaller, depending on how many tasks the
-     * user has started and the maximum number the system can remember.
-     * @param falgs Information about what to return.  May be any combination
-     * of {@link #RECENT_WITH_EXCLUDED} and {@link #RECENT_IGNORE_UNAVAILABLE}.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int GetRecentMissionsLocked(const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList);
 
     void CreateRecentMissionInfo(const MissionRecordInfo &mission, AbilityMissionInfo &recentMissionInfo);
 

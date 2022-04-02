@@ -87,8 +87,6 @@ public:
     int TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId) override;
     int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE) override;
 
-    MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
-
     MOCK_METHOD1(MoveMissionToTop, int(int32_t missionId));
     MOCK_METHOD1(KillProcess, int(const std::string &bundleName));
     MOCK_METHOD2(UninstallApp, int(const std::string &bundleName, int32_t uid));
@@ -149,12 +147,7 @@ public:
     int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override;
     bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
 
-    int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList) override;
-
     int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) override;
-
-    int RemoveMission(int id) override;
 
     int PowerOff() override;
     int PowerOn() override;

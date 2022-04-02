@@ -174,18 +174,7 @@ int MockAbilityManagerService::StopServiceAbility(const Want &want, int32_t user
     return 0;
 }
 
-int MockAbilityManagerService::GetRecentMissions(
-    const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
-{
-    return 0;
-}
-
 int MockAbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
-{
-    return 0;
-}
-
-int MockAbilityManagerService::RemoveMission(int id)
 {
     return 0;
 }

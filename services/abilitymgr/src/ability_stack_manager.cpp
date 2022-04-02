@@ -1847,17 +1847,6 @@ void AbilityStackManager::DumpWindowMode(std::vector<std::string> &info)
     info.push_back(dumpInfo);
 }
 
-void AbilityStackManager::GetAllStackInfo(StackInfo &stackInfo)
-{
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    for (auto missionStack : missionStackList_) {
-        MissionStackInfo missionStackInfo;
-        missionStackInfo.id = missionStack->GetMissionStackId();
-        missionStack->GetAllMissionInfo(missionStackInfo.missionRecords);
-        stackInfo.missionStackInfos.emplace_back(missionStackInfo);
-    }
-}
-
 void AbilityStackManager::DumpMission(int missionId, std::vector<std::string> &info)
 {
     std::lock_guard<std::recursive_mutex> guard(stackLock_);
@@ -2103,23 +2092,6 @@ bool AbilityStackManager::IsLauncherMission(int id)
     return true;
 }
 
-int AbilityStackManager::GetRecentMissions(
-    const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
-{
-    HILOG_INFO("Get recent missions.");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    if (numMax < 0) {
-        HILOG_ERROR("numMax is invalid");
-        return ERR_INVALID_VALUE;
-    }
-    if (flags < RECENT_WITH_EXCLUDED || flags > RECENT_IGNORE_UNAVAILABLE) {
-        HILOG_ERROR("flags is invalid");
-        return ERR_INVALID_VALUE;
-    }
-
-    return GetRecentMissionsLocked(numMax, flags, recentList);
-}
-
 void AbilityStackManager::SortRecentMissions(std::vector<MissionRecordInfo> &missions)
 {
     std::sort(
@@ -2132,62 +2104,6 @@ void AbilityStackManager::SortRecentMissions(std::vector<MissionRecordInfo> &mis
 
             return firstMission->GetActiveTimestamp() > SecondMission->GetActiveTimestamp();
         });
-}
-
-int AbilityStackManager::GetRecentMissionsLocked(
-    const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
-{
-    HILOG_INFO("Get recent missions locked.");
-    CHECK_POINTER_AND_RETURN(defaultMissionStack_, ERR_NO_INIT);
-
-    bool withExcluded = (static_cast<uint32_t>(flags) & RECENT_WITH_EXCLUDED) != 0;
-    std::vector<MissionRecordInfo> missionInfos;
-    for (auto &stack : missionStackList_) {
-        CHECK_POINTER_CONTINUE(stack);
-        if (IsSplitScreenStack(stack->GetMissionStackId())) {
-            std::vector<MissionRecordInfo> missions;
-            stack->GetAllMissionInfo(missions);
-            missionInfos.insert(missionInfos.begin(), missions.front());
-        }
-
-        if (stack->GetMissionStackId() == DEFAULT_MISSION_STACK_ID) {
-            std::vector<MissionRecordInfo> missions;
-            stack->GetAllMissionInfo(missions);
-            missionInfos.insert(missionInfos.end(), missions.begin(), missions.end());
-        }
-    }
-
-    SortRecentMissions(missionInfos);
-
-    for (auto &mission : missionInfos) {
-        if (static_cast<int>(recentList.size()) >= numMax) {
-            break;
-        }
-        // flags is RECENT_IGNORE_UNAVAILABLE,
-        // You need to determine the mission optimized by the process
-        // Then continue
-        if (!withExcluded) {
-            auto missionRecord = defaultMissionStack_->GetMissionRecordById(mission.id);
-            if (!missionRecord) {
-                HILOG_ERROR("Mission is nullptr, continue.");
-                continue;
-            }
-            auto ability = missionRecord->GetTopAbilityRecord();
-            if (!ability) {
-                HILOG_ERROR("Ability is nullptr, continue.");
-                continue;
-            }
-            if (ability->IsAbilityState(AbilityState::INITIAL)) {
-                HILOG_INFO("Flag is RECENT_IGNORE_UNAVAILABLE, ability state: INITIAL, continue.");
-                continue;
-            }
-        }
-        AbilityMissionInfo recentMissionInfo;
-        CreateRecentMissionInfo(mission, recentMissionInfo);
-        recentList.emplace_back(recentMissionInfo);
-    }
-
-    return ERR_OK;
 }
 
 void AbilityStackManager::CreateRecentMissionInfo(

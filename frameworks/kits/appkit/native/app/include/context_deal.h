@@ -599,12 +599,6 @@ public:
     int GetMissionId() override;
 
     /**
-     * @brief Call this when your ability should be closed and the mission should be completely removed as a part of
-     * finishing the root ability of the mission.
-     */
-    void TerminateAndRemoveMission() override;
-
-    /**
      * @brief Starts multiple abilities.
      *
      * @param wants Indicates the Want containing information array about the target ability to start.

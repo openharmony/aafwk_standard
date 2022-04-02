@@ -567,60 +567,6 @@ HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_TerminateAbility_0100
     GTEST_LOG_(INFO) << "AaFwk_AbilityContext_TerminateAbility_0100 end";
 }
 
-/**
- * @tc.number: AaFwk_Ability_TerminateAndRemoveMission_0100
- * @tc.name: TerminateAndRemoveMission
- * @tc.desc: Test the attachbasecontext call to verify that the return value of TerminateAbility is correct.
- */
-HWTEST_F(AbilityContextInterfaceTest, AaFwk_Ability_TerminateAndRemoveMission_0100, Function | MediumTest | Level1)
-{
-    GTEST_LOG_(INFO) << "AaFwk_Ability_TerminateAndRemoveMission_0100 start";
-    const ErrCode mockValue = ERR_OK;
-    OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->SetRemoveMissions(mockValue);
-    std::shared_ptr<MockAbilityContextDeal> contextDeal = std::make_shared<MockAbilityContextDeal>();
-    std::shared_ptr<AAFwk::LifeCycleStateInfo> lifeCycleStateInfo = std::make_shared<AAFwk::LifeCycleStateInfo>();
-    std::shared_ptr<Ability> ability = std::make_shared<Ability>();
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->name = "TerminateAndRemoveMission";
-    std::shared_ptr<OHOSApplication> ohosApplication = std::make_shared<OHOSApplication>();
-    std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
-    sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
-    std::shared_ptr<AbilityHandler> abilityHandler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
-    sptr<IRemoteObject> token = nullptr;
-    int testValue = OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->GetRemoveMissionsValue();
-    lifeCycleStateInfo->missionId = 0;
-    contextDeal->SetLifeCycleStateInfo(*lifeCycleStateInfo);
-    ability->Init(abilityInfo, ohosApplication, abilityHandler, token);
-    ability->AttachBaseContext(contextDeal);
-    ability->OnActive();
-    ability->TerminateAndRemoveMission();
-    EXPECT_NE(testValue, AAFwk::MockAbilityManagerClient::GetInstance()->GetRemoveMissionsValue());
-    GTEST_LOG_(INFO) << "AaFwk_Ability_TerminateAndRemoveMission_0100 end";
-}
-
-/**
- * @tc.number: AaFwk_Ability_TerminateAndRemoveMission_0200
- * @tc.name: TerminateAndRemoveMission
- * @tc.desc: Test the attachbasecontext call to verify that the return value of TerminateAbility is correct.
- */
-HWTEST_F(AbilityContextInterfaceTest, AaFwk_Ability_TerminateAndRemoveMission_0200, Function | MediumTest | Level3)
-{
-    GTEST_LOG_(INFO) << "AaFwk_Ability_TerminateAndRemoveMission_0200 start";
-    const ErrCode mockValue = ERR_OK;
-    OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->SetRemoveMissions(mockValue);
-    std::shared_ptr<MockAbilityContextDeal> contextDeal = std::make_shared<MockAbilityContextDeal>();
-    std::shared_ptr<AAFwk::LifeCycleStateInfo> lifeCycleStateInfo = std::make_shared<AAFwk::LifeCycleStateInfo>();
-    std::shared_ptr<Ability> ability = std::make_shared<Ability>();
-    int testValue = OHOS::AAFwk::MockAbilityManagerClient::GetInstance()->GetRemoveMissionsValue();
-    lifeCycleStateInfo->missionId = 0;
-    contextDeal->SetLifeCycleStateInfo(*lifeCycleStateInfo);
-    ability->AttachBaseContext(contextDeal);
-    ability->OnActive();
-    ability->TerminateAndRemoveMission();
-    EXPECT_EQ(testValue, AAFwk::MockAbilityManagerClient::GetInstance()->GetRemoveMissionsValue());
-    GTEST_LOG_(INFO) << "AaFwk_Ability_TerminateAndRemoveMission_0200 end";
-}
-
 HWTEST_F(AbilityContextInterfaceTest, AaFwk_AbilityContext_MoveMissionToEnd_0100, Function | MediumTest | Level1)
 {
     GTEST_LOG_(INFO) << "AaFwk_AbilityContext_MoveMissionToEnd_0100 start";

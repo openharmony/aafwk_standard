@@ -181,16 +181,6 @@ ErrCode AbilityManagerClient::Connect()
     return ERR_OK;
 }
 
-ErrCode AbilityManagerClient::GetAllStackInfo(StackInfo &stackInfo)
-{
-    if (remoteObject_ == nullptr) {
-        return ABILITY_SERVICE_NOT_CONNECTED;
-    }
-
-    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
-    return abms->GetAllStackInfo(stackInfo);
-}
-
 ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
 {
     if (remoteObject_ == nullptr) {
