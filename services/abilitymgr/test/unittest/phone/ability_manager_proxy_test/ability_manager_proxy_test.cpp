@@ -476,65 +476,6 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_019, TestSize.Level1)
 
 /*
  * Feature: AbilityManagerService
- * Function: GetAllStackInfo
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService GetAllStackInfo
- * EnvConditions: NA
- * CaseDescription: Verify the normal conditions of getAllStackInfo
- */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0020, TestSize.Level1)
-{
-    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
-        .Times(1)
-        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
-    StackInfo stackInfo;
-    proxy_->GetAllStackInfo(stackInfo);
-
-    EXPECT_EQ(IAbilityManager::LIST_STACK_INFO, mock_->code_);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: GetRecentMissions
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService GetRecentMissions
- * EnvConditions: NA
- * CaseDescription: Verify the normal conditions of getRecentMissions
- */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0021, TestSize.Level1)
-{
-    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
-        .Times(1)
-        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
-    std::vector<AbilityMissionInfo> info;
-    auto res = proxy_->GetRecentMissions(INT_MAX, 1, info);
-
-    EXPECT_EQ(res, 1);
-    EXPECT_EQ(IAbilityManager::GET_RECENT_MISSION, mock_->code_);
-    EXPECT_EQ(info[0].baseAbility.GetAbilityName(), "baseAbility");
-    EXPECT_EQ(info[0].baseWant.GetElement().GetAbilityName(), "");
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: RemoveMission
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService RemoveMission
- * EnvConditions: NA
- * CaseDescription: Verify the normal conditions of RemoveMission
- */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0023, TestSize.Level1)
-{
-    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
-        .Times(1)
-        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
-    proxy_->RemoveMission(1);
-
-    EXPECT_EQ(IAbilityManager::REMOVE_MISSION, mock_->code_);
-}
-
-/*
- * Feature: AbilityManagerService
  * Function: MoveMissionToTop
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService MoveMissionToTop

@@ -709,40 +709,6 @@ int AbilityManagerProxy::StopServiceAbility(const Want &want, int32_t userId)
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::GetAllStackInfo(StackInfo &stackInfo)
-{
-    int error;
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
-
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    sptr<IRemoteObject> remote = Remote();
-    if (remote == nullptr) {
-        HILOG_ERROR("remote is nullptr.");
-        return ERR_UNKNOWN_OBJECT;
-    }
-    error = remote->SendRequest(IAbilityManager::LIST_STACK_INFO, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Send request error: %{public}d", error);
-        return error;
-    }
-    int32_t result = reply.ReadInt32();
-    if (result != ERR_OK) {
-        HILOG_ERROR("Read info failed, err %{public}d", result);
-        return result;
-    }
-    std::unique_ptr<StackInfo> info(reply.ReadParcelable<StackInfo>());
-    if (!info) {
-        HILOG_ERROR("Read info failed.");
-        return ERR_UNKNOWN_OBJECT;
-    }
-    stackInfo = *info;
-    return result;
-}
-
 template <typename T>
 int AbilityManagerProxy::GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos)
 {
@@ -756,37 +722,6 @@ int AbilityManagerProxy::GetParcelableInfos(MessageParcel &reply, std::vector<T>
         parcelableInfos.emplace_back(*info);
     }
     return NO_ERROR;
-}
-
-int AbilityManagerProxy::GetRecentMissions(
-    const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
-{
-    int error;
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteInt32(numMax)) {
-        HILOG_ERROR("numMax write failed.");
-        return ERR_INVALID_VALUE;
-    }
-    if (!data.WriteInt32(flags)) {
-        HILOG_ERROR("flags write failed.");
-        return ERR_INVALID_VALUE;
-    }
-    error = Remote()->SendRequest(IAbilityManager::GET_RECENT_MISSION, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Send request error: %{public}d", error);
-        return error;
-    }
-    error = GetParcelableInfos<AbilityMissionInfo>(reply, recentList);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Get info error: %{public}d", error);
-        return error;
-    }
-    return reply.ReadInt32();
 }
 
 int AbilityManagerProxy::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
@@ -886,28 +821,6 @@ int AbilityManagerProxy::MoveMissionToEnd(const sptr<IRemoteObject> &token, cons
         return ERR_INVALID_VALUE;
     }
     error = Remote()->SendRequest(IAbilityManager::MOVE_MISSION_TO_END, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Send request error: %{public}d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
-int AbilityManagerProxy::RemoveMission(int id)
-{
-    int error;
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteInt32(id)) {
-        HILOG_ERROR("id write failed.");
-        return ERR_INVALID_VALUE;
-    }
-    error = Remote()->SendRequest(IAbilityManager::REMOVE_MISSION, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("Send request error: %{public}d", error);
         return error;

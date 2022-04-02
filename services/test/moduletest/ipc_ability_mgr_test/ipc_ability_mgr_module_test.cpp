@@ -365,33 +365,6 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_010, TestSize.Level1)
  * Feature: AAFwk
  * Function: AbilityManagerService
  * SubFunction: IPC of client and server
- * FunctionPoints: GetAllStackInfo
- * EnvConditions: NA
- * CaseDescription: verify GetAllStackInfo IPC between client and server.
- */
-HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_011, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_011 start";
-
-    for (int i = 0; i < COUNT; i++) {
-        sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
-        sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
-
-        StackInfo stackInfo;
-        EXPECT_CALL(*mockAbilityMgr, GetAllStackInfo(_))
-            .Times(1)
-            .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
-        abilityMgrClient->GetAllStackInfo(stackInfo);
-        mockAbilityMgr->Wait();
-    }
-
-    GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_011 end";
-}
-
-/*
- * Feature: AAFwk
- * Function: AbilityManagerService
- * SubFunction: IPC of client and server
  * FunctionPoints: ScheduleCommandAbilityDone
  * EnvConditions: NA
  * CaseDescription: verify ScheduleCommandAbilityDone IPC between client and server.
@@ -443,33 +416,6 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_013, TestSize.Level1)
  * Feature: AAFwk
  * Function: AbilityManagerService
  * SubFunction: IPC of client and server
- * FunctionPoints: GetAllStackInfo
- * EnvConditions: NA
- * CaseDescription: verify GetRecentMissions IPC between client and server.
- */
-HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_014, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_014 start";
-
-    for (int i = 0; i < COUNT; i++) {
-        sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
-        sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
-
-        std::vector<AbilityMissionInfo> renCentList;
-        EXPECT_CALL(*mockAbilityMgr, GetRecentMissions(_, _, _))
-            .Times(1)
-            .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
-        abilityMgrClient->GetRecentMissions(10, 0, renCentList);
-        mockAbilityMgr->Wait();
-    }
-
-    GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_014 end";
-}
-
-/*
- * Feature: AAFwk
- * Function: AbilityManagerService
- * SubFunction: IPC of client and server
  * FunctionPoints: GetMissionSnapshot
  * EnvConditions: NA
  * CaseDescription: verify GetMissionSnapshot IPC between client and server.
@@ -491,32 +437,6 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_015, TestSize.Level1)
     }
 
     GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_015 end";
-}
-
-/*
- * Feature: AAFwk
- * Function: AbilityManagerService
- * SubFunction: IPC of client and server
- * FunctionPoints: RemoveMission
- * EnvConditions: NA
- * CaseDescription: verify RemoveMission IPC between client and server.
- */
-HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_016, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_016 start";
-
-    for (int i = 0; i < COUNT; i++) {
-        sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
-        sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
-
-        EXPECT_CALL(*mockAbilityMgr, RemoveMission(_))
-            .Times(1)
-            .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
-        abilityMgrClient->RemoveMission(1);
-        mockAbilityMgr->Wait();
-    }
-
-    GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_016 end";
 }
 
 /*

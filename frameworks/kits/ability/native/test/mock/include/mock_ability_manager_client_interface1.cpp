@@ -32,9 +32,7 @@ MockAbilityManagerClient::MockAbilityManagerClient()
     terminateAbility_ = ERR_INVALID_OPERATION;
     terminateAbilityResult_ = ERR_INVALID_OPERATION;
     isFirstInMission_ = ERR_INVALID_OPERATION;
-    removeMissionsE_ = ERR_INVALID_OPERATION;
     terminateAbilityValue_ = 0;
-    removeMissions_ = 0;
     missionId_ = -1;
     moveMissionToEnd_ = false;
 }
@@ -145,18 +143,7 @@ ErrCode AbilityManagerClient::Connect()
     return ERR_OK;
 }
 
-ErrCode AbilityManagerClient::GetAllStackInfo(StackInfo &stackInfo)
-{
-    return ERR_OK;
-}
-
 ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
-{
-    return ERR_OK;
-}
-
-ErrCode AbilityManagerClient::GetRecentMissions(
-    const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
 {
     return ERR_OK;
 }
@@ -169,15 +156,6 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, Missio
 ErrCode AbilityManagerClient::MoveMissionToTop(int32_t missionId)
 {
     return ERR_OK;
-}
-
-ErrCode AbilityManagerClient::RemoveMissions(std::vector<int> missionId)
-{
-    ErrCode ret = MockAbilityManagerClient::GetInstance()->GetRemoveMissions();
-    if (ret == ERR_OK) {
-        MockAbilityManagerClient::GetInstance()->ChangeRemoveMissionsValue();
-    }
-    return ret;
 }
 
 ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
@@ -252,10 +230,6 @@ ErrCode MockAbilityManagerClient::GetIsFirstInMission()
 {
     return isFirstInMission_;
 }
-ErrCode MockAbilityManagerClient::GetRemoveMissions()
-{
-    return removeMissionsE_;
-}
 
 void MockAbilityManagerClient::SetStartAbility(ErrCode tValue)
 {
@@ -273,11 +247,6 @@ void MockAbilityManagerClient::SetIsFirstInMission(ErrCode tValue)
 {
     isFirstInMission_ = tValue;
 }
-void MockAbilityManagerClient::SetRemoveMissions(ErrCode tValue)
-{
-    removeMissionsE_ = tValue;
-}
-
 int MockAbilityManagerClient::GetTerminateAbilityValue()
 {
     return terminateAbilityValue_;
@@ -285,14 +254,6 @@ int MockAbilityManagerClient::GetTerminateAbilityValue()
 void MockAbilityManagerClient::SetTerminateAbilityValue(int nValue)
 {
     terminateAbilityValue_ = nValue;
-}
-int MockAbilityManagerClient::GetRemoveMissionsValue()
-{
-    return removeMissions_;
-}
-void MockAbilityManagerClient::ChangeRemoveMissionsValue()
-{
-    ++removeMissions_;
 }
 
 int MockAbilityManagerClient::GetMockMissionId()

@@ -213,7 +213,6 @@ ErrCode STAbilityUtil::GetTopAbilityRecordId(int64_t &id, sptr<IAbilityManager> 
         return result;
     }
     StackInfo stackInfo;
-    abilityMs->GetAllStackInfo(stackInfo);
     MissionStackInfo defaultMissionStack;
     for (const auto &stackInfo : stackInfo.missionStackInfos) {
         if (stackInfo.id == 1) {  // DEFAULT_MISSION_STACK_ID = 1

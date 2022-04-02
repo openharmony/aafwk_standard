@@ -870,19 +870,6 @@ int ContextContainer::GetMissionId()
 }
 
 /**
- * @brief Call this when your ability should be closed and the mission should be completely removed as a part of
- * finishing the root ability of the mission.
- */
-void ContextContainer::TerminateAndRemoveMission()
-{
-    if (baseContext_ != nullptr) {
-        baseContext_->TerminateAndRemoveMission();
-    } else {
-        HILOG_ERROR("ContextContainer::TerminateAndRemoveMission baseContext_ is nullptr");
-    }
-}
-
-/**
  * @brief Obtains a task dispatcher that is bound to the UI thread.
  *
  * @return Returns the task dispatcher that is bound to the UI thread.

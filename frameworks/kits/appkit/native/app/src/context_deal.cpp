@@ -1185,27 +1185,6 @@ AAFwk::LifeCycleStateInfo ContextDeal::GetLifeCycleStateInfo() const
 }
 
 /**
- * @brief Call this when your ability should be closed and the mission should be completely removed as a part of
- * finishing the root ability of the mission.
- */
-void ContextDeal::TerminateAndRemoveMission()
-{
-    HILOG_INFO("ContextDeal::TerminateAndRemoveMission begin");
-    auto abilityManagerClient = AAFwk::AbilityManagerClient::GetInstance();
-    if (abilityManagerClient == nullptr) {
-        HILOG_ERROR("ContextDeal::TerminateAndRemoveMission abilityManagerClient is nullptr");
-        return;
-    }
-
-    std::vector<int32_t> removeIdList = {GetMissionId()};
-    ErrCode errval = abilityManagerClient->RemoveMissions(removeIdList);
-    if (errval != ERR_OK) {
-        HILOG_WARN("ContextDeal::TerminateAndRemoveMission RemoveMissions retval is ERROR(%d)", errval);
-    }
-    HILOG_INFO("ContextDeal::TerminateAndRemoveMission end");
-}
-
-/**
  * @brief Starts multiple abilities.
  *
  * @param wants Indicates the Want containing information array about the target ability to start.

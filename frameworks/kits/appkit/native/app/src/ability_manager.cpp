@@ -45,52 +45,6 @@ void AbilityManager::MoveMissionToTop(int missionId)
     }
 }
 
-StackInfo AbilityManager::GetAllStackInfo() const
-{
-    HILOG_DEBUG("%s, %d", __func__, __LINE__);
-    StackInfo info;
-    ErrCode error = AAFwk::AbilityManagerClient::GetInstance()->GetAllStackInfo(info);
-    if (error != ERR_OK) {
-        HILOG_ERROR("%s failed, error : %d", __func__, error);
-    }
-
-    return info;
-}
-
-std::vector<AbilityMissionInfo> AbilityManager::QueryRecentAbilityMissionInfo(int numMax, int flags) const
-{
-    HILOG_DEBUG("%s, %d", __func__, __LINE__);
-    std::vector<AbilityMissionInfo> info;
-    ErrCode error = AAFwk::AbilityManagerClient::GetInstance()->GetRecentMissions(numMax, flags, info);
-    if (error != ERR_OK) {
-        HILOG_ERROR("%s failed, error : %d", __func__, error);
-    }
-
-    return info;
-}
-
-std::vector<AbilityMissionInfo> AbilityManager::QueryRunningAbilityMissionInfo(int numMax) const
-{
-    HILOG_DEBUG("%s, %d", __func__, __LINE__);
-    std::vector<AbilityMissionInfo> info;
-    ErrCode error =
-        AAFwk::AbilityManagerClient::GetInstance()->GetRecentMissions(numMax, RECENT_IGNORE_UNAVAILABLE, info);
-    if (error != ERR_OK) {
-        HILOG_ERROR("%s failed, error : %d", __func__, error);
-    }
-
-    return info;
-}
-
-void AbilityManager::RemoveMissions(const std::vector<int> &missionId)
-{
-    HILOG_DEBUG("%s, %d", __func__, __LINE__);
-    ErrCode error = AAFwk::AbilityManagerClient::GetInstance()->RemoveMissions(missionId);
-    if (error != ERR_OK) {
-        HILOG_ERROR("%s failed, error : %d", __func__, error);
-    }
-}
-
 int32_t AbilityManager::ClearUpApplicationData(const std::string &bundleName)
 {
     HILOG_DEBUG("%s, %d", __func__, __LINE__);

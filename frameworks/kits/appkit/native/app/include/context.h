@@ -585,12 +585,6 @@ public:
     virtual int GetMissionId() = 0;
 
     /**
-     * @brief Call this when your ability should be closed and the mission should be completely removed as a part of
-     * finishing the root ability of the mission.
-     */
-    virtual void TerminateAndRemoveMission() = 0;
-
-    /**
      * @brief Starts multiple abilities.
      *
      * @param wants Indicates the Want containing information array about the target ability to start.

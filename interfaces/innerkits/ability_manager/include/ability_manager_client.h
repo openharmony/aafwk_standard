@@ -256,33 +256,12 @@ public:
     ErrCode Connect();
 
     /**
-     * Get all stack info from ability manager service.
-     *
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode GetAllStackInfo(StackInfo &stackInfo);
-
-    /**
      * Destroys this Service ability by Want.
      *
      * @param want, Special want for service type's ability.
      * @return Returns true if this Service ability will be destroyed; returns false otherwise.
      */
     ErrCode StopServiceAbility(const Want &want);
-
-    /**
-     * Get the list of the missions that the user has recently launched,
-     * with the most recent being first and older ones after in order.
-     *
-     * @param recentList recent mission info
-     * @param numMax The maximum number of entries to return in the list. The
-     * actual number returned may be smaller, depending on how many tasks the
-     * user has started and the maximum number the system can remember.
-     * @param flags Information about what to return.  May be any combination
-     * of {@link #RECENT_WITH_EXCLUDED} and {@link #RECENT_IGNORE_UNAVAILABLE}.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode GetRecentMissions(const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList);
 
     /**
      * Get mission snapshot by mission id
@@ -309,14 +288,6 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst);
-
-    /**
-     * Remove the specified mission from the stack by missionid
-     *
-     * @param id.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode RemoveMissions(std::vector<int> missionId);
 
     /**
      * Kill the process immediately.

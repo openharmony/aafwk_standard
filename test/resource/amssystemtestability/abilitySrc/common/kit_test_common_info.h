@@ -322,7 +322,6 @@ enum class AbilityLifecycleCallbacksApi {
 enum class AbilityManagerApi {
     ClearUpApplicationData = (int)AbilityLifecycleCallbacksApi::End,
     GetAllRunningProcesses,
-    GetAllStackInfo,
     QueryRecentAbilityMissionInfo,
     QueryRunningAbilityMissionInfo,
     MoveMissionToTop,

@@ -264,29 +264,6 @@ public:
     virtual int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE) override;
 
     /**
-     * Obtains information about ability stack that are running on the device.
-     *
-     * @param stackInfo Ability stack info.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int GetAllStackInfo(StackInfo &stackInfo) override;
-
-    /**
-     * Get the list of the missions that the user has recently launched,
-     * with the most recent being first and older ones after in order.
-     *
-     * @param recentList recent mission info
-     * @param numMax The maximum number of entries to return in the list. The
-     * actual number returned may be smaller, depending on how many tasks the
-     * user has started and the maximum number the system can remember.
-     * @param falgs Information about what to return.  May be any combination
-     * of {@link #RECENT_WITH_EXCLUDED} and {@link #RECENT_IGNORE_UNAVAILABLE}.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList) override;
-
-    /**
      * Get mission snapshot by mission id
      *
      * @param missionId the id of the mission to retrieve the sAutoapshots
@@ -311,14 +288,6 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, bool nonFirst) override;
-
-    /**
-     * Remove the specified mission from the stack by missionid
-     *
-     * @param id.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int RemoveMission(int id) override;
 
     /**
      * Kill the process immediately.

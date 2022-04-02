@@ -114,7 +114,6 @@ public:
         return 0;
     }
 
-    MOCK_METHOD1(GetAllStackInfo, int(StackInfo &stackInfo));
     MOCK_METHOD2(
         GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
     MOCK_METHOD2(SendWantSender, int(const sptr<IWantSender> &target, const SenderInfo &senderInfo));
@@ -172,8 +171,6 @@ public:
     MOCK_METHOD0(BlockAmsService, int());
     MOCK_METHOD1(BlockAbility, int(int32_t abilityRecordId));
 
-    int RemoveMission(int id) override;
-
     sptr<IAbilityScheduler> AcquireDataAbility(
         const Uri &uri, bool tryBind, const sptr<IRemoteObject> &callerToken) override
     {
@@ -182,12 +179,6 @@ public:
 
     int ReleaseDataAbility(
         sptr<IAbilityScheduler> dataAbilityScheduler, const sptr<IRemoteObject> &callerToken) override
-    {
-        return 0;
-    }
-
-    int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList) override
     {
         return 0;
     }
