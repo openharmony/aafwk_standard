@@ -231,9 +231,7 @@ sptr<IBundleMgr> ContextDeal::GetBundleManager() const
         HILOG_ERROR("failed to get bundle manager service");
         return nullptr;
     }
-    HILOG_INFO("ContextDeal::GetBundleManager before iface_cast<bundleObj>");
     sptr<IBundleMgr> bms = iface_cast<IBundleMgr>(bundleObj);
-    HILOG_INFO("ContextDeal::GetBundleManager after iface_cast<bundleObj>");
     HILOG_INFO("ContextDeal::GetBundleManager end");
     return bms;
 }
@@ -543,9 +541,7 @@ sptr<AAFwk::IAbilityManager> ContextDeal::GetAbilityManager()
         HILOG_ERROR("failed to get ability manager service");
         return nullptr;
     }
-    HILOG_INFO("ContextDeal::SetPattern before iface_cast<remoteObject>");
     sptr<AAFwk::IAbilityManager> ams = iface_cast<AAFwk::IAbilityManager>(remoteObject);
-    HILOG_INFO("ContextDeal::SetPattern after iface_cast<remoteObject>");
     HILOG_INFO("ContextDeal::GetAbilityManager end");
     return ams;
 }
@@ -657,9 +653,7 @@ void ContextDeal::SetPattern(int patternId)
         if (!pattern_.empty()) {
             pattern_.clear();
         }
-        HILOG_INFO("ContextDeal::SetPattern before resourceManager_->GetPatternById");
         OHOS::Global::Resource::RState errval = resourceManager_->GetPatternById(patternId, pattern_);
-        HILOG_INFO("ContextDeal::SetPattern after resourceManager_->GetPatternById");
         if (errval != OHOS::Global::Resource::RState::SUCCESS) {
             HILOG_ERROR("ContextDeal::SetPattern GetPatternById(patternId:%d) retval is %u", patternId, errval);
         }
@@ -856,9 +850,7 @@ std::string ContextDeal::GetString(int resId)
     }
 
     std::string ret;
-    HILOG_INFO("ContextDeal::GetString before resourceManager_->GetStringById");
     OHOS::Global::Resource::RState errval = resourceManager_->GetStringById(resId, ret);
-    HILOG_INFO("ContextDeal::GetString after resourceManager_->GetStringById");
     if (errval == OHOS::Global::Resource::RState::SUCCESS) {
         return ret;
     } else {
@@ -884,9 +876,7 @@ std::vector<std::string> ContextDeal::GetStringArray(int resId)
     }
 
     std::vector<std::string> retv;
-    HILOG_INFO("ContextDeal::GetString before resourceManager_->GetStringArrayById");
     OHOS::Global::Resource::RState errval = resourceManager_->GetStringArrayById(resId, retv);
-    HILOG_INFO("ContextDeal::GetString after resourceManager_->GetStringArrayById");
     if (errval == OHOS::Global::Resource::RState::SUCCESS) {
         return retv;
     } else {
@@ -912,9 +902,7 @@ std::vector<int> ContextDeal::GetIntArray(int resId)
     }
 
     std::vector<int> retv;
-    HILOG_INFO("ContextDeal::GetString before resourceManager_->GetIntArrayById");
     OHOS::Global::Resource::RState errval = resourceManager_->GetIntArrayById(resId, retv);
-    HILOG_INFO("ContextDeal::GetString after resourceManager_->GetIntArrayById");
     if (errval == OHOS::Global::Resource::RState::SUCCESS) {
         return retv;
     } else {
@@ -961,9 +949,7 @@ void ContextDeal::SetTheme(int themeId)
     if (!theme_.empty()) {
         theme_.clear();
     }
-    HILOG_INFO("ContextDeal::GetString before resourceManager_->GetThemeById");
     OHOS::Global::Resource::RState errval = resourceManager_->GetThemeById(themeId, theme_);
-    HILOG_INFO("ContextDeal::GetString after resourceManager_->GetThemeById");
     if (errval != OHOS::Global::Resource::RState::SUCCESS) {
         HILOG_ERROR("ContextDeal::SetTheme GetThemeById(themeId:%d) retval is %u", themeId, errval);
         return;
@@ -1006,9 +992,7 @@ int ContextDeal::GetColor(int resId)
     }
 
     uint32_t ret = INVALID_RESOURCE_VALUE;
-    HILOG_INFO("ContextDeal::GetString before resourceManager_->GetColorById");
     OHOS::Global::Resource::RState errval = resourceManager_->GetColorById(resId, ret);
-    HILOG_INFO("ContextDeal::GetString after resourceManager_->GetColorById");
     if (errval == OHOS::Global::Resource::RState::SUCCESS) {
         return ret;
     } else {
@@ -1214,9 +1198,7 @@ void ContextDeal::TerminateAndRemoveMission()
     }
 
     std::vector<int32_t> removeIdList = {GetMissionId()};
-    HILOG_INFO("ContextDeal::TerminateAndRemoveMission before abilityManagerClient->RemoveMissions");
     ErrCode errval = abilityManagerClient->RemoveMissions(removeIdList);
-    HILOG_INFO("ContextDeal::TerminateAndRemoveMission after abilityManagerClient->RemoveMissions");
     if (errval != ERR_OK) {
         HILOG_WARN("ContextDeal::TerminateAndRemoveMission RemoveMissions retval is ERROR(%d)", errval);
     }
@@ -1375,12 +1357,10 @@ bool ContextDeal::HapModuleInfoRequestInit()
     }
 
     hapModuleInfoLocal_ = std::make_shared<HapModuleInfo>();
-    HILOG_INFO("ContextDeal::HapModuleInfoRequestInit before IBundleMgr->GetBundleManager");
     if (!ptr->GetHapModuleInfo(*abilityInfo_.get(), *hapModuleInfoLocal_)) {
         HILOG_ERROR("IBundleMgr::GetHapModuleInfo failed, will retval false value");
         return false;
     }
-    HILOG_INFO("ContextDeal::HapModuleInfoRequestInit after IBundleMgr->GetBundleManager");
     HILOG_INFO("ContextDeal::HapModuleInfoRequestInit end");
     return true;
 }
@@ -1419,25 +1399,6 @@ void ContextDeal::UnlockMission()
 bool ContextDeal::SetMissionInformation(const MissionInformation &missionInformation)
 {
     return false;
-}
-
-/**
- * set lock screen
- *
- * @param isAllow Whether to allow lock screen.
- *
- */
-void ContextDeal::SetShowOnLockScreen(bool isAllow)
-{
-    auto abilityManagerClient = AAFwk::AbilityManagerClient::GetInstance();
-    if (abilityManagerClient == nullptr) {
-        HILOG_ERROR("ContextDeal::SetShowOnLockScreen abilityManagerClient is nullptr");
-        return;
-    }
-    ErrCode errval = abilityManagerClient->SetShowOnLockScreen(isAllow);
-    if (errval != ERR_OK) {
-        HILOG_ERROR("ContextDeal::SetShowOnLockScreen SetShowOnLockScreen retval is ERROR(%d)", errval);
-    }
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

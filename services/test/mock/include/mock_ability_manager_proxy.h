@@ -86,7 +86,6 @@ public:
     MOCK_METHOD0(PowerOff, int());
     MOCK_METHOD0(PowerOn, int());
     MOCK_METHOD1(GetPendingWantUserId, int(const sptr<IWantSender> &target));
-    MOCK_METHOD1(SetShowOnLockScreen, int(bool isAllow));
 
     virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
         bool imAStabilityTest) override

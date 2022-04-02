@@ -212,11 +212,6 @@ public:
 
     virtual bool IsFirstInMission(const sptr<IRemoteObject> &token);
 
-    virtual int SetShowOnLockScreen(bool isAllow) override
-    {
-        return 0;
-    }
-
     virtual int ClearUpApplicationData(const std::string &bundleName) override
     {
         return 0;

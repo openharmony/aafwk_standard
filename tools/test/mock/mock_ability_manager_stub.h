@@ -120,7 +120,6 @@ public:
     MOCK_METHOD1(CloseMultiWindow, int(int missionId));
     MOCK_METHOD1(SetMissionStackSetting, int(const StackSetting &stackSetting));
     MOCK_METHOD1(GetPendinTerminateAbilityTestgRequestWant, void(int id));
-    MOCK_METHOD1(SetShowOnLockScreen, int(bool isAllow));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
     MOCK_METHOD3(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status));
     MOCK_METHOD2(NotifyContinuationResult, int(int32_t missionId, int32_t result));

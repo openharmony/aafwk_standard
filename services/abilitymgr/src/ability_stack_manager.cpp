@@ -3861,18 +3861,6 @@ int AbilityStackManager::PowerOnLocked()
     return ERR_OK;
 }
 
-int AbilityStackManager::SetShowOnLockScreen(const std::string &bundleName, bool isAllow)
-{
-    HILOG_INFO("SetShowOnLockScreen");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    return SetShowOnLockScreenLocked(bundleName, isAllow);
-}
-
-int AbilityStackManager::SetShowOnLockScreenLocked(const std::string &bundleName, bool isAllow)
-{
-    return ERR_OK;
-}
-
 void AbilityStackManager::SetPowerOffRecordWhenLockScreen(std::shared_ptr<PowerStorage> &powerStorage)
 {
     HILOG_INFO("SetPowerOffRecordWhenLockScreen");

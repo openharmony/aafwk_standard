@@ -899,6 +899,11 @@ bool Ability::HasWindowFocus()
 
     return false;
 }
+
+void Ability::SetShowOnLockScreen(bool showOnLockScreen)
+{
+    showOnLockScreen_ = showOnLockScreen;
+}
 #endif
 
 /**

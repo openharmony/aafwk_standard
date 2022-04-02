@@ -33,7 +33,6 @@ class MockAbilityManagerClient : public AbilityManagerClient {
 public:
     MockAbilityManagerClient() = default;
     virtual ~MockAbilityManagerClient() = default;
-    MOCK_METHOD1(SetShowOnLockScreen, void(bool));
     static std::shared_ptr<MockAbilityManagerClient> mockinstance_;
     static std::shared_ptr<MockAbilityManagerClient> GetInstance();
 };
