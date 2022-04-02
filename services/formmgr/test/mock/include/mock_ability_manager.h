@@ -89,11 +89,7 @@ public:
     {
         return 0;
     }
-    virtual int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<AAFwk::AbilityMissionInfo> &recentList) override
-    {
-        return 0;
-    }
+
     virtual int PowerOff() override
     {
         return 0;
@@ -190,10 +186,7 @@ public:
     {
         return 0;
     }
-    virtual int GetAllStackInfo(AAFwk::StackInfo &stackInfo)
-    {
-        return 0;
-    }
+
     virtual int GetMissionSnapshot(const int32_t missionId, AAFwk::MissionPixelMap &missionPixelMap)
     {
         return 0;
@@ -219,10 +212,6 @@ public:
         return 0;
     }
 
-    virtual int RemoveMission(int id)
-    {
-        return 0;
-    }
     virtual int KillProcess(const std::string &bundleName)
     {
         return 0;
@@ -488,15 +477,7 @@ public:
     {
         return 0;
     }
-    virtual int GetAllStackInfo(AAFwk::StackInfo &stackInfo)
-    {
-        return 0;
-    }
-    virtual int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<AAFwk::AbilityMissionInfo> &recentList) override
-    {
-        return 0;
-    }
+
     virtual int PowerOff() override
     {
         return 0;
@@ -594,10 +575,6 @@ public:
         return 0;
     }
 
-    virtual int RemoveMission(int id)
-    {
-        return 0;
-    }
     virtual int KillProcess(const std::string &bundleName)
     {
         return 0;

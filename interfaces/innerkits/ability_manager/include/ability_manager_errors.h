@@ -394,10 +394,6 @@ enum {
 
 enum {
     /**
-     * Flag for use with {@link #GetRecentMissions}: return all missions
-     */
-    RECENT_WITH_EXCLUDED = 0x0001,
-    /**
      * Provides a list that does not contain any
      * recent missions that currently are not available to the user.
      */

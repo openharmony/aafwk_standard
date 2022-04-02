@@ -138,11 +138,6 @@ int MockServiceAbilityManagerService::StopServiceAbility(const Want &want, int32
     return 0;
 }
 
-int MockServiceAbilityManagerService::RemoveMission(int id)
-{
-    return 0;
-}
-
 int MockServiceAbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
 {
     return 0;

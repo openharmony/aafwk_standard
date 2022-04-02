@@ -590,11 +590,6 @@ int AbilityContext::GetMissionId()
     return ContextContainer::GetMissionId();
 }
 
-void AbilityContext::TerminateAndRemoveMission()
-{
-    ContextContainer::TerminateAndRemoveMission();
-}
-
 void AbilityContext::StartAbilities(const std::vector<AAFwk::Want> &wants)
 {
     HILOG_INFO("%{public}s begin.", __func__);

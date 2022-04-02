@@ -44,31 +44,6 @@ void AccessControlCheck::SetUp() {}
 void AccessControlCheck::TearDown() {}
 
 /**
- * @tc.number    : Access_Control_Check_0100
- * @tc.name      : check whether abilityManagerService is running
- * @tc.desc      : check whether abilityManagerService is running
- */
-HWTEST_F(AccessControlCheck, Access_Control_Check_0100, Function | MediumTest | Level0)
-{
-    sptr<IRemoteObject> abilityMgrRemoteObj =
-        OHOS::DelayedSingleton<SaMgrClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
-    EXPECT_TRUE(abilityMgrRemoteObj != nullptr);
-    if (abilityMgrRemoteObj == nullptr) {
-        GTEST_LOG_(INFO) << "SaMgrClient::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID) failed.";
-        return;
-    }
-    sptr<IAbilityManager> abilityManager = iface_cast<IAbilityManager>(abilityMgrRemoteObj);
-    EXPECT_TRUE(abilityManager != nullptr);
-    if (abilityManager == nullptr) {
-        GTEST_LOG_(INFO) << "iface_cast<IAbilityManager>(abilityMgrRemoteObj) failed.";
-        return;
-    }
-    StackInfo stackInfo;
-    EXPECT_TRUE(abilityManager->GetAllStackInfo(stackInfo) == ERR_OK);
-    EXPECT_TRUE(stackInfo.missionStackInfos.size() > 0);
-}
-
-/**
  * @tc.number    : Access_Control_Check_0200
  * @tc.name      : check whether appManagerService is running
  * @tc.desc      : check whether appManagerService is running

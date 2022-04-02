@@ -181,23 +181,7 @@ public:
         return 0;
     }
 
-    virtual int GetAllStackInfo(StackInfo &stackInfo)
-    {
-        return 0;
-    }
-
-    virtual int GetRecentMissions(
-        const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
-    {
-        return 0;
-    }
-
     int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
-    {
-        return 0;
-    }
-
-    virtual int RemoveMission(int id)
     {
         return 0;
     }

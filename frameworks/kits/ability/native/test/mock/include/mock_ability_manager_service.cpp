@@ -151,11 +151,6 @@ int MockAbilityManagerService::StopServiceAbility(const Want &want, int32_t user
     return ERR_OK;
 }
 
-int MockAbilityManagerService::RemoveMission(int id)
-{
-    return 0;
-}
-
 int MockAbilityManagerService::MoveMissionToTop(int32_t missionId)
 {
     return 0;

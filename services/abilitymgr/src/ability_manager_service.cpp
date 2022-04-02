@@ -790,22 +790,6 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, boo
     return missionListManager->MinimizeAbility(token, fromUser);
 }
 
-int AbilityManagerService::GetRecentMissions(
-    const int32_t numMax, const int32_t flags, std::vector<AbilityMissionInfo> &recentList)
-{
-    HILOG_INFO("flags: %{public}d", flags);
-    if (numMax < 0 || flags < 0) {
-        HILOG_ERROR("numMax or flags is invalid.");
-        return ERR_INVALID_VALUE;
-    }
-    if (!CheckCallerIsSystemAppByIpc()) {
-        HILOG_ERROR("caller is not systemApp");
-        return CALLER_ISNOT_SYSTEMAPP;
-    }
-
-    return currentStackManager_->GetRecentMissions(numMax, flags, recentList);
-}
-
 int AbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
 {
     if (missionId < 0) {
@@ -870,20 +854,6 @@ int AbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, co
         return ERR_INVALID_VALUE;
     }
     return stackManager->MoveMissionToEnd(token, nonFirst);
-}
-
-int AbilityManagerService::RemoveMission(int id)
-{
-    HILOG_INFO("Remove mission.");
-    if (id < 0) {
-        HILOG_ERROR("Mission id is invalid.");
-        return ERR_INVALID_VALUE;
-    }
-    if (!CheckCallerIsSystemAppByIpc()) {
-        HILOG_ERROR("caller is not systemApp");
-        return CALLER_ISNOT_SYSTEMAPP;
-    }
-    return currentStackManager_->RemoveMissionById(id);
 }
 
 int AbilityManagerService::ConnectAbility(
@@ -2478,14 +2448,6 @@ int AbilityManagerService::GenerateAbilityRequest(
     HILOG_DEBUG("End, app name: %{public}s, bundle name: %{public}s, uid: %{public}d",
         request.appInfo.name.c_str(), request.appInfo.bundleName.c_str(), request.uid);
 
-    return ERR_OK;
-}
-
-int AbilityManagerService::GetAllStackInfo(StackInfo &stackInfo)
-{
-    HILOG_DEBUG("Get all stack info.");
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
-    currentStackManager_->GetAllStackInfo(stackInfo);
     return ERR_OK;
 }
 

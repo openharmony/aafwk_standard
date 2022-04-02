@@ -67,24 +67,6 @@ struct AsyncMissionInfosCallbackInfo {
     std::vector<AbilityMissionInfo> recentMissionInfo;
 };
 
-struct AsyncRemoveMissionCallbackInfo {
-    napi_env env;
-    napi_async_work asyncWork;
-    napi_deferred deferred;
-    napi_ref callback[2] = {0};
-    int32_t index = -1;
-    int32_t result = -1;
-};
-
-struct AsyncRemoveMissionsCallbackInfo {
-    napi_env env;
-    napi_async_work asyncWork;
-    napi_deferred deferred;
-    napi_ref callback[2] = {0};
-    std::vector<std::int32_t> missionIds;
-    int32_t result = -1;
-};
-
 struct AsyncClearMissionsCallbackInfo {
     napi_env env;
     napi_async_work asyncWork;
@@ -155,12 +137,6 @@ struct CallbackInfo {
 
 napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info);
 napi_value NAPI_GetActiveProcessInfos(napi_env env, napi_callback_info info);
-napi_value NAPI_QueryRunningAbilityMissionInfos(napi_env env, napi_callback_info info);
-napi_value NAPI_GetActiveAbilityMissionInfos(napi_env env, napi_callback_info info);
-napi_value NAPI_QueryRecentAbilityMissionInfos(napi_env env, napi_callback_info info);
-napi_value NAPI_GetPreviousAbilityMissionInfos(napi_env env, napi_callback_info info);
-napi_value NAPI_RemoveMission(napi_env env, napi_callback_info info);
-napi_value NAPI_RemoveMissions(napi_env env, napi_callback_info info);
 napi_value NAPI_MoveMissionToTop(napi_env env, napi_callback_info info);
 napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info);
 napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info);
