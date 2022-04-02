@@ -248,10 +248,6 @@ public:
         return 0;
     }
 
-    virtual int SetShowOnLockScreen(bool isAllow) override
-    {
-        return 0;
-    }
     int StartContinuation(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status) override
     {
         return 0;
@@ -618,10 +614,7 @@ public:
     {
         return 0;
     }
-    virtual int SetShowOnLockScreen(bool isAllow) override
-    {
-        return 0;
-    }
+
     int MoveMissionToFloatingStack(const MissionOption &missionOption)
     {
         return 0;

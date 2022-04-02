@@ -118,7 +118,6 @@ private:
 
     int GetPendingRequestWantInner(MessageParcel &data, MessageParcel &reply);
     int GetWantSenderInfoInner(MessageParcel &data, MessageParcel &reply);
-    int SetShowOnLockScreenInner(MessageParcel &data, MessageParcel &reply);
 
     int GetSystemMemoryAttrInner(MessageParcel &data, MessageParcel &reply);
     int GetAppMemorySizeInner(MessageParcel &data, MessageParcel &reply);

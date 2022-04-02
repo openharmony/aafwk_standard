@@ -426,7 +426,6 @@ public:
 
     int GetMissionSnapshot(int32_t missionId, MissionPixelMap &missionPixelMap);
 
-    int SetShowOnLockScreen(const std::string &bundleName, bool isAllow);
     void UpdateLockScreenState(bool isLockScreen);
 
     bool IsStarted();
@@ -703,7 +702,6 @@ private:
         std::shared_ptr<AbilityRecord> lastTopAbility, std::shared_ptr<AbilityRecord> targetAbility,
         std::shared_ptr<AbilityRecord> &needBackgroundAbility);
 
-    int SetShowOnLockScreenLocked(const std::string &bundleName, bool isAllow);
     /**
      * minimize multiwindow by mission id.
      * @param missionId, the id of target mission

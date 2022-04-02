@@ -670,11 +670,6 @@ bool AbilityContext::SetMissionInformation(const MissionInformation &missionInfo
     return ContextContainer::SetMissionInformation(missionInformation);
 }
 
-void AbilityContext::SetShowOnLockScreen(bool isAllow)
-{
-    ContextContainer::SetShowOnLockScreen(isAllow);
-}
-
 bool AbilityContext::IsUpdatingConfigurations()
 {
     return ContextContainer::IsUpdatingConfigurations();

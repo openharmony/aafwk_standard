@@ -1610,6 +1610,22 @@ napi_value ContinueAbilityPromise(napi_env env, napi_value *args, AsyncCallbackI
     return promise;
 }
 
+#ifdef SUPPORT_GRAPHICS
+static Ability* GetJSAbilityObject(napi_env env)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    napi_value global = nullptr;
+    NAPI_CALL(env, napi_get_global(env, &global));
+
+    napi_value abilityObj = nullptr;
+    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
+
+    Ability *ability = nullptr;
+    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
+    HILOG_INFO("%{public}s,called end", __func__);
+    return ability;
+}
+
 static void SetShowOnLockScreenAsyncCompleteCB(napi_env env, napi_status status, void *data)
 {
     HILOG_INFO("%{public}s,called", __func__);
@@ -1684,24 +1700,9 @@ static napi_value SetShowOnLockScreenAsync(napi_env env, ShowOnLockScreenCB *sho
     return result;
 }
 
-static Ability* GetJSAbilityObject(napi_env env)
-{
-    HILOG_INFO("%{public}s,called", __func__);
-    napi_value global = nullptr;
-    NAPI_CALL(env, napi_get_global(env, &global));
-
-    napi_value abilityObj = nullptr;
-    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
-
-    Ability *ability = nullptr;
-    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
-    HILOG_INFO("%{public}s,called end", __func__);
-    return ability;
-}
-
 static napi_value SetShowOnLockScreenWrap(napi_env env, napi_callback_info info, ShowOnLockScreenCB *cbData)
 {
-    HILOG_INFO("%{public}s,called", __func__);
+    HILOG_INFO("%{public}s called", __func__);
     if (cbData == nullptr) {
         HILOG_ERROR("%{public}s, input param cbData is nullptr", __func__);
         return nullptr;
@@ -1713,7 +1714,7 @@ static napi_value SetShowOnLockScreenWrap(napi_env env, napi_callback_info info,
 
     NAPI_CALL(env, napi_get_cb_info(env, info, &argcAsync, args, nullptr, nullptr));
     if (argcAsync != argStdValue) {
-        HILOG_ERROR("%{public}s, Wrong argument count.", __func__);
+        HILOG_ERROR("%{public}s error, wrong argument count.", __func__);
         return nullptr;
     }
 
@@ -1722,12 +1723,12 @@ static napi_value SetShowOnLockScreenWrap(napi_env env, napi_callback_info info,
     NAPI_CALL(env, napi_typeof(env, args[PARAM0], &valuetypeParam0));
     NAPI_CALL(env, napi_typeof(env, args[PARAM1], &valuetypeParam1));
     if (valuetypeParam0 != napi_boolean || valuetypeParam1 != napi_function) {
-        HILOG_ERROR("%{public}s, Params is error type", __func__);
+        HILOG_ERROR("%{public}s error, params is error type", __func__);
         return nullptr;
     }
 
     if (!UnwrapBoolFromJS2(env, args[PARAM0], cbData->isShow)) {
-        HILOG_ERROR("%{public}s, UnwrapBoolFromJS2(isShow) run error", __func__);
+        HILOG_ERROR("%{public}s error, unwrapBoolFromJS2 error", __func__);
         return nullptr;
     }
     NAPI_CALL(env, napi_create_reference(env, args[PARAM1], 1, &cbData->cbBase.cbInfo.callback));
@@ -1739,6 +1740,7 @@ static napi_value SetShowOnLockScreenWrap(napi_env env, napi_callback_info info,
     HILOG_INFO("%{public}s,called end", __func__);
     return ret;
 }
+#endif
 
 /**
  * @brief SetShowOnLockScreen processing function.
@@ -1750,12 +1752,9 @@ static napi_value SetShowOnLockScreenWrap(napi_env env, napi_callback_info info,
  */
 napi_value NAPI_SetShowOnLockScreen(napi_env env, napi_callback_info info)
 {
-    HILOG_INFO("%{public}s,called", __func__);
-    ShowOnLockScreenCB *showOnLockScreenCB = new (std::nothrow) ShowOnLockScreenCB;
-    if (showOnLockScreenCB == nullptr) {
-        HILOG_ERROR("%{public}s, showOnLockScreenCB new failed", __func__);
-        return WrapVoidToJS(env);
-    }
+#ifdef SUPPORT_GRAPHICS
+    HILOG_INFO("%{public}s called", __func__);
+    ShowOnLockScreenCB *showOnLockScreenCB = new ShowOnLockScreenCB();
     showOnLockScreenCB->cbBase.cbInfo.env = env;
     showOnLockScreenCB->cbBase.abilityType = AbilityType::PAGE;
     napi_value ret = SetShowOnLockScreenWrap(env, info, showOnLockScreenCB);
@@ -1767,8 +1766,10 @@ napi_value NAPI_SetShowOnLockScreen(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, SetShowOnLockScreenWrap run failed, delete resource", __func__);
         ret = WrapVoidToJS(env);
     }
-    HILOG_INFO("%{public}s,called end", __func__);
     return ret;
+#else
+   return nullptr;
+#endif
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -24,7 +24,6 @@ class MockContextDeal : public ContextDeal {
 public:
     MockContextDeal() = default;
     virtual ~MockContextDeal() = default;
-    MOCK_METHOD1(SetShowOnLockScreen, void(bool));
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
