@@ -2355,7 +2355,7 @@ int AppMgrServiceInner::VerifyProcessPermission()
     auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
         AAFwk::PermissionConstants::PERMISSION_CLEAN_BACKGROUND_PROCESSES);
     if (isCallingPerm) {
-        HILOG_ERROR("%{public}s: Permission verification succeeded", __func__);
+        HILOG_INFO("%{public}s: Permission verification succeeded", __func__);
         return ERR_OK;
     }
     HILOG_ERROR("%{public}s: Permission verification failed", __func__);
