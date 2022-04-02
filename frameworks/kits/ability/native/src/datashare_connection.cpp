@@ -53,7 +53,7 @@ sptr<DataShareConnection> DataShareConnection::GetInstance()
 void DataShareConnection::OnAbilityConnectDone(
     const AppExecFwk::ElementName &element, const sptr<IRemoteObject> &remoteObject, int resultCode)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA,__PRETTY_FUNCTION__);
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s called begin", __func__);
     if (remoteObject == nullptr) {
         HILOG_ERROR("DataShareConnection::OnAbilityConnectDone failed, remote is nullptr");
@@ -79,7 +79,7 @@ void DataShareConnection::OnAbilityConnectDone(
  */
 void DataShareConnection::OnAbilityDisconnectDone(const AppExecFwk::ElementName &element, int resultCode)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA,__PRETTY_FUNCTION__);
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s called begin", __func__);
     dataShareProxy_ = nullptr;
     isConnected_.store(false);
