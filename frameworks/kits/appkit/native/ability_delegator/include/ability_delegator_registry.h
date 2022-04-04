@@ -24,8 +24,27 @@ namespace OHOS {
 namespace AppExecFwk {
 class AbilityDelegatorRegistry {
 public:
+    /**
+     * Obtains the AbilityDelegator object of the application.
+     *
+     * @return the AbilityDelegator object initialized when the application is started.
+     */
     static std::shared_ptr<AbilityDelegator> GetAbilityDelegator();
+
+    /**
+     * Obtains test parameters stored in the AbilityDelegatorArgs object.
+     *
+     * @return the previously registered AbilityDelegatorArgs object.
+     */
     static std::shared_ptr<AbilityDelegatorArgs> GetArguments();
+
+    /**
+     * Registers the instances of AbilityDelegator and AbilityDelegatorArgs as globally unique instances.
+     * This method is called during application startup to initialize the test environment.
+     *
+     * @param delegator, Indicates the AbilityDelegator object.
+     * @param args, Indicates the AbilityDelegatorArgs object.
+     */
     static void RegisterInstance(
         const std::shared_ptr<AbilityDelegator> &delegator, const std::shared_ptr<AbilityDelegatorArgs> &args);
 

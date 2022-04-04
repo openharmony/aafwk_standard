@@ -27,13 +27,34 @@ class Runtime;
 namespace AppExecFwk {
 class TestRunner {
 public:
+    /**
+     * Creates a TestRunner instance with the input parameter passed.
+     *
+     * @param runtime Indicates the ability runtime.
+     * @param args Indicates the AbilityDelegatorArgs object.
+     * @return the TestRunner object if TestRunner object is created successfully; returns null otherwise.
+     */
     static std::unique_ptr<TestRunner> Create(
         const std::unique_ptr<AbilityRuntime::Runtime> &runtime, const std::shared_ptr<AbilityDelegatorArgs> &args);
 
+    /**
+     * Default constructor used to create a TestRunner instance.
+     */
     TestRunner() = default;
+
+    /**
+     * Default deconstructor used to deconstruct.
+     */
     virtual ~TestRunner() = default;
 
+    /**
+     * Prepares the testing environment for running test code.
+     */
     virtual void Prepare();
+
+    /**
+     * Runs all test code.
+     */
     virtual void Run();
 };
 }  // namespace AppExecFwk

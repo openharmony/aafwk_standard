@@ -23,17 +23,64 @@ namespace OHOS {
 namespace AppExecFwk {
 class ShellCmdResult {
 public:
+    /**
+     * Default constructor used to create a ShellCmdResult instance.
+     */
     ShellCmdResult() = default;
+
+    /**
+     * A constructor used to create a ShellCmdResult instance with the input parameter passed.
+     *
+     * @param exitCode Indicates the shell cmd exec result.
+     * @param stdResult Indicates the cmd standard result.
+     */
     ShellCmdResult(const int32_t exitCode, const std::string &stdResult);
+
+    /**
+     * Copy constructor used to create a ShellCmdResult instance with the input parameter passed.
+     *
+     * @param result Indicates the ShellCommandResult object that already exists.
+     */
     ShellCmdResult(const AAFwk::ShellCommandResult &result);
+
+    /**
+     * Default deconstructor used to deconstruct.
+     */
     ~ShellCmdResult() = default;
 
+    /**
+     * Sets exit code.
+     *
+     * @param exitCode Indicates the exit code.
+     */
     void SetExitCode(const int32_t exitCode);
+
+    /**
+     * Obtains the exit code.
+     *
+     * @return the exit code.
+     */
     int32_t GetExitCode() const;
 
+    /**
+     * Sets standard result.
+     *
+     * @param stdResult Indicates the standard result.
+     */
     void SetStdResult(const std::string &stdResult);
+
+    /**
+     * Obtains the standard result.
+     *
+     * @return the standard result.
+     */
     std::string GetStdResult() const;
 
+    /**
+     * Returns a string representation of the object.
+     *
+     * @return a string representation of the object.
+     */
     std::string Dump();
 
 private:
