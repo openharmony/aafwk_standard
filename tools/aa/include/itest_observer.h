@@ -25,14 +25,37 @@ class ITestObserver : public IRemoteBroker {
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"ohos.aafwk.ITestObserver");
 
+    /**
+     * Outputs test status.
+     *
+     * @param msg, Indicates the status information.
+     * @param resultCode, Indicates the result code.
+     */
     virtual void TestStatus(const std::string &msg, const int &resultCode) = 0;
+
+    /**
+     * Outputs information and result code that the test has finished.
+     *
+     * @param msg, Indicates the status information.
+     * @param resultCode, Indicates the result code.
+     */
     virtual void TestFinished(const std::string &msg, const int &resultCode) = 0;
-    virtual ShellCommandResult ExecuteShellCommand(
-        const std::string &cmd, const int64_t timeoutSec) = 0;
+
+    /**
+     * Executes the specified shell command.
+     *
+     * @param cmd, Indicates the specified shell command.
+     * @param timeoutSec, Indicates the specified time out time, in seconds.
+     * @return the result of the specified shell command.
+     */
+    virtual ShellCommandResult ExecuteShellCommand(const std::string &cmd, const int64_t timeoutSec) = 0;
 
     enum class Message {
+        // ipc id for test status (1)
         AA_TEST_STATUS = 1,
+        // ipc id for test finished (2)
         AA_TEST_FINISHED = 2,
+        // ipc id for execute shell command (3)
         AA_EXECUTE_SHELL_COMMAND = 3,
     };
 };

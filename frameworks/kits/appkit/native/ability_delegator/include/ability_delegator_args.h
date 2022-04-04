@@ -25,28 +25,93 @@ namespace OHOS {
 namespace AppExecFwk {
 class AbilityDelegatorArgs {
 public:
+    /**
+     * Indicates the key of test bundle name.
+     */
     static const std::string KEY_TEST_BUNDLE_NAME;
+    /**
+     * Indicates the key of test package name.
+     */
     static const std::string KEY_TEST_PACKAGE_NAME;
+    /**
+     * Indicates the key of test module name.
+     */
     static const std::string KEY_TEST_MODULE_NAME;
+    /**
+     * Indicates the key of test runner class name.
+     */
     static const std::string KEY_TEST_RUNNER_CLASS;
+    /**
+     * Indicates the key of test case name.
+     */
     static const std::string KEY_TEST_CASE;
+    /**
+     * Indicates the key of test wait timeout.
+     */
     static const std::string KEY_TEST_WAIT_TIMEOUT;
 
 public:
+    /**
+     * Default constructor used to create a AbilityDelegatorArgs instance.
+     */
     AbilityDelegatorArgs();
+
+    /**
+     * A constructor used to create a AbilityDelegatorArgs instance with the input parameter passed.
+     *
+     * @param want Indicates the Want that contains parameters.
+     */
     explicit AbilityDelegatorArgs(const AAFwk::Want &want);
 
+    /**
+     * Default deconstructor used to deconstruct.
+     */
     ~AbilityDelegatorArgs();
 
     void SetTestBundleName(const std::string &bundleName);
+
+    /**
+     * Obtains the bundle name of the application being tested.
+     *
+     * @return the application bundle name.
+     */
     std::string GetTestBundleName() const;
 
+    /**
+     * Obtains the package name of the application being tested.
+     *
+     * @return the application package name.
+     */
     std::string GetTestPackageName() const;
+
+    /**
+     * Obtains the module name of the application being tested.
+     *
+     * @return the application module name.
+     */
     std::string GetTestModuleName() const;
+
+    /**
+     * Obtains the class name of the test runner used to execute test cases.
+     *
+     * @return the class name of the test runner.
+     */
     std::string GetTestRunnerClassName() const;
+
+    /**
+     * Obtains the test cases name.
+     *
+     * @return the test cases name.
+     */
     std::string GetTestCaseName() const;
 
     void SetTestParam(const std::map<std::string, std::string> &params);
+
+    /**
+     * Obtains the test parameters.
+     *
+     * @return the test parameters.
+     */
     std::map<std::string, std::string> GetTestParam() const;
 
 private:

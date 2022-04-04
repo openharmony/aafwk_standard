@@ -560,6 +560,7 @@ std::shared_ptr<AppExecFwk::ADelegatorAbilityProperty> JsAbility::CreateADelegat
     property->token_          = GetAbilityContext()->GetToken();
     property->name_           = GetAbilityName();
     property->lifecycleState_ = GetState();
+    property->object_         = jsAbilityObj_;
 
     return property;
 }

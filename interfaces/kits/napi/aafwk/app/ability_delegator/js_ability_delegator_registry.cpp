@@ -15,6 +15,7 @@
 
 #include "js_ability_delegator_registry.h"
 
+#include <memory>
 #include "ability_delegator.h"
 #include "ability_delegator_registry.h"
 #include "hilog_wrapper.h"
@@ -57,7 +58,14 @@ private:
             HILOG_ERROR("Failed to get delegator object");
             return engine.CreateNull();
         }
-        return CreateJsAbilityDelegator(engine);
+
+        static std::unique_ptr<NativeReference> reference;
+        if (!reference) {
+            auto value = CreateJsAbilityDelegator(engine);
+            reference.reset(engine.CreateReference(value, 1));
+        }
+
+        return reference->Get();
     }
 
     NativeValue *OnGetArguments(NativeEngine &engine, NativeCallbackInfo &info)
