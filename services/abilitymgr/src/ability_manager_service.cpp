@@ -549,9 +549,11 @@ void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUs
 
         Uri uri(str);
         if (want.GetFlags() & Want::FLAG_AUTH_WRITE_URI_PERMISSION) {
-            upmClient->GrantUriPermission(uri, Want::FLAG_AUTH_WRITE_URI_PERMISSION, fromTokenId, targetTokenId);
+            IN_PROCESS_CALL_WITHOUT_RET(
+                upmClient->GrantUriPermission(uri, Want::FLAG_AUTH_WRITE_URI_PERMISSION, fromTokenId, targetTokenId));
         } else {
-            upmClient->GrantUriPermission(uri, Want::FLAG_AUTH_READ_URI_PERMISSION, fromTokenId, targetTokenId);
+            IN_PROCESS_CALL_WITHOUT_RET(
+                upmClient->GrantUriPermission(uri, Want::FLAG_AUTH_READ_URI_PERMISSION, fromTokenId, targetTokenId));
         }
     }
 }
