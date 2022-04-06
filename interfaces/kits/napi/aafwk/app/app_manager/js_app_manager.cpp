@@ -461,20 +461,20 @@ void JSApplicationStateObserver::OnForegroundApplicationChanged(const AppStateDa
 {
     HILOG_DEBUG("onForegroundApplicationChanged bundleName:%{public}s, uid:%{public}d, state:%{public}d",
         appStateData.bundleName.c_str(), appStateData.uid, appStateData.state);
-    if (handler_ == nullptr) {
-        HILOG_INFO("handler_ nullptr");
-        return;
-    }
     wptr<JSApplicationStateObserver> jsObserver = this;
-    auto task = [jsObserver, appStateData]() {
-        sptr<JSApplicationStateObserver> jsObserverSptr = jsObserver.promote();
-        if (!jsObserverSptr) {
-            HILOG_INFO("jsObserverSptr nullptr");
-            return;
-        }
-        jsObserverSptr->HandleOnForegroundApplicationChanged(appStateData);
-    };
-    handler_->PostTask(task, "OnForegroundApplicationChanged");
+    std::unique_ptr<AsyncTask::CompleteCallback> complete = std::make_unique<AsyncTask::CompleteCallback>
+        ([jsObserver, appStateData](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            sptr<JSApplicationStateObserver> jsObserverSptr = jsObserver.promote();
+            if (!jsObserverSptr) {
+                HILOG_INFO("jsObserverSptr nullptr");
+                return;
+            }
+            jsObserverSptr->HandleOnForegroundApplicationChanged(appStateData);
+        });
+    NativeReference* callback = nullptr;
+    std::unique_ptr<AsyncTask::ExecuteCallback> execute = nullptr;
+    AsyncTask::Schedule(
+        engine_, std::make_unique<AsyncTask>(callback, std::move(execute), std::move(complete)));
 }
 
 void JSApplicationStateObserver::HandleOnForegroundApplicationChanged(const AppStateData &appStateData)
@@ -488,20 +488,20 @@ void JSApplicationStateObserver::HandleOnForegroundApplicationChanged(const AppS
 void JSApplicationStateObserver::OnAbilityStateChanged(const AbilityStateData &abilityStateData)
 {
     HILOG_INFO("OnAbilityStateChanged begin");
-    if (handler_ == nullptr) {
-        HILOG_INFO("handler_ nullptr");
-        return;
-    }
     wptr<JSApplicationStateObserver> jsObserver = this;
-    auto task = [jsObserver, abilityStateData]() {
-        sptr<JSApplicationStateObserver> jsObserverSptr = jsObserver.promote();
-        if (!jsObserverSptr) {
-            HILOG_INFO("jsObserverSptr nullptr");
-            return;
-        }
-        jsObserverSptr->HandleOnAbilityStateChanged(abilityStateData);
-    };
-    handler_->PostTask(task, "OnAbilityStateChanged");
+    std::unique_ptr<AsyncTask::CompleteCallback> complete = std::make_unique<AsyncTask::CompleteCallback>
+        ([jsObserver, abilityStateData](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            sptr<JSApplicationStateObserver> jsObserverSptr = jsObserver.promote();
+            if (!jsObserverSptr) {
+                HILOG_INFO("jsObserverSptr nullptr");
+                return;
+            }
+            jsObserverSptr->HandleOnAbilityStateChanged(abilityStateData);
+        });
+    NativeReference* callback = nullptr;
+    std::unique_ptr<AsyncTask::ExecuteCallback> execute = nullptr;
+    AsyncTask::Schedule(
+        engine_, std::make_unique<AsyncTask>(callback, std::move(execute), std::move(complete)));
 }
 
 void JSApplicationStateObserver::HandleOnAbilityStateChanged(const AbilityStateData &abilityStateData)
@@ -514,20 +514,20 @@ void JSApplicationStateObserver::HandleOnAbilityStateChanged(const AbilityStateD
 void JSApplicationStateObserver::OnExtensionStateChanged(const AbilityStateData &abilityStateData)
 {
     HILOG_INFO("OnExtensionStateChanged begin");
-    if (handler_ == nullptr) {
-        HILOG_INFO("handler_ nullptr");
-        return;
-    }
     wptr<JSApplicationStateObserver> jsObserver = this;
-    auto task = [jsObserver, abilityStateData]() {
-        sptr<JSApplicationStateObserver> jsObserverSptr = jsObserver.promote();
-        if (!jsObserverSptr) {
-            HILOG_INFO("jsObserverSptr nullptr");
-            return;
-        }
-        jsObserverSptr->HandleOnExtensionStateChanged(abilityStateData);
-    };
-    handler_->PostTask(task, "OnExtensionStateChanged");
+    std::unique_ptr<AsyncTask::CompleteCallback> complete = std::make_unique<AsyncTask::CompleteCallback>
+        ([jsObserver, abilityStateData](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            sptr<JSApplicationStateObserver> jsObserverSptr = jsObserver.promote();
+            if (!jsObserverSptr) {
+                HILOG_INFO("jsObserverSptr nullptr");
+                return;
+            }
+            jsObserverSptr->HandleOnExtensionStateChanged(abilityStateData);
+        });
+    NativeReference* callback = nullptr;
+    std::unique_ptr<AsyncTask::ExecuteCallback> execute = nullptr;
+    AsyncTask::Schedule(
+        engine_, std::make_unique<AsyncTask>(callback, std::move(execute), std::move(complete)));
 }
 
 void JSApplicationStateObserver::HandleOnExtensionStateChanged(const AbilityStateData &abilityStateData)
@@ -540,20 +540,20 @@ void JSApplicationStateObserver::HandleOnExtensionStateChanged(const AbilityStat
 void JSApplicationStateObserver::OnProcessCreated(const ProcessData &processData)
 {
     HILOG_INFO("OnProcessCreated begin");
-    if (handler_ == nullptr) {
-        HILOG_INFO("handler_ nullptr");
-        return;
-    }
     wptr<JSApplicationStateObserver> jsObserver = this;
-    auto task = [jsObserver, processData]() {
-        sptr<JSApplicationStateObserver> jsObserverSptr = jsObserver.promote();
-        if (!jsObserverSptr) {
-            HILOG_INFO("jsObserverSptr nullptr");
-            return;
-        }
-        jsObserverSptr->HandleOnProcessCreated(processData);
-    };
-    handler_->PostTask(task, "OnProcessCreated");
+    std::unique_ptr<AsyncTask::CompleteCallback> complete = std::make_unique<AsyncTask::CompleteCallback>
+        ([jsObserver, processData](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            sptr<JSApplicationStateObserver> jsObserverSptr = jsObserver.promote();
+            if (!jsObserverSptr) {
+                HILOG_INFO("jsObserverSptr nullptr");
+                return;
+            }
+            jsObserverSptr->HandleOnProcessCreated(processData);
+        });
+    NativeReference* callback = nullptr;
+    std::unique_ptr<AsyncTask::ExecuteCallback> execute = nullptr;
+    AsyncTask::Schedule(
+        engine_, std::make_unique<AsyncTask>(callback, std::move(execute), std::move(complete)));
 }
 
 void JSApplicationStateObserver::HandleOnProcessCreated(const ProcessData &processData)
@@ -566,20 +566,20 @@ void JSApplicationStateObserver::HandleOnProcessCreated(const ProcessData &proce
 void JSApplicationStateObserver::OnProcessDied(const ProcessData &processData)
 {
     HILOG_INFO("OnProcessDied begin");
-    if (handler_ == nullptr) {
-        HILOG_INFO("handler_ nullptr");
-        return;
-    }
     wptr<JSApplicationStateObserver> jsObserver = this;
-    auto task = [jsObserver, processData]() {
-        sptr<JSApplicationStateObserver> jsObserverSptr = jsObserver.promote();
-        if (!jsObserverSptr) {
-            HILOG_INFO("jsObserverSptr nullptr");
-            return;
-        }
-        jsObserverSptr->HandleOnProcessDied(processData);
-    };
-    handler_->PostTask(task, "OnProcessDied");
+    std::unique_ptr<AsyncTask::CompleteCallback> complete = std::make_unique<AsyncTask::CompleteCallback>
+        ([jsObserver, processData](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            sptr<JSApplicationStateObserver> jsObserverSptr = jsObserver.promote();
+            if (!jsObserverSptr) {
+                HILOG_INFO("jsObserverSptr nullptr");
+                return;
+            }
+            jsObserverSptr->HandleOnProcessDied(processData);
+        });
+    NativeReference* callback = nullptr;
+    std::unique_ptr<AsyncTask::ExecuteCallback> execute = nullptr;
+    AsyncTask::Schedule(
+        engine_, std::make_unique<AsyncTask>(callback, std::move(execute), std::move(complete)));
 }
 
 void JSApplicationStateObserver::HandleOnProcessDied(const ProcessData &processData)
