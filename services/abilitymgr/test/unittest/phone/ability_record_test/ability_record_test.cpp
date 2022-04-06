@@ -123,21 +123,6 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_UpdateLifeState, TestSize.Level1)
  * Feature: AbilityRecord
  * Function: create AbilityRecord
  * SubFunction: NA
- * FunctionPoints: SetMissionRecord GetMissionRecord
- * EnvConditions: NA
- * CaseDescription: SetMissionRecord GetMissionRecord UT.
- */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetGetMissionRecord, TestSize.Level1)
-{
-    std::shared_ptr<MissionRecord> missionRecord = std::make_shared<MissionRecord>();
-    abilityRecord_->SetMissionRecord(missionRecord);
-    EXPECT_EQ(abilityRecord_->GetMissionRecord().get(), missionRecord.get());
-}
-
-/*
- * Feature: AbilityRecord
- * Function: create AbilityRecord
- * SubFunction: NA
  * FunctionPoints: SetAbilityInfo GetAbilityInfo
  * EnvConditions: NA
  * CaseDescription: SetAbilityInfo GetAbilityInfo UT.

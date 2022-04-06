@@ -28,12 +28,7 @@
 #include "mission_record.h"
 #include "mission_snapshot.h"
 #include "mission_stack.h"
-#include "mission_index_info.h"
-#include "mission_option.h"
-#include "ability_mission_info.h"
-#include "lock_mission_container.h"
 #include "lock_screen_event_subscriber.h"
-#include "resume_mission_container.h"
 #include "want.h"
 #include "screenshot_handler.h"
 
@@ -251,8 +246,6 @@ public:
     int GetMaxHoldMissionsByStackId(int stackId) const;
     bool SupportSyncVisualByStackId(int stackId) const;
 
-    void SetMissionStackSetting(const StackSetting &stackSetting);
-
     /**
      * complete ability life cycle .
      *
@@ -291,26 +284,6 @@ public:
     std::shared_ptr<MissionStack> GetTargetMissionStackBySetting(const AbilityRequest &abilityRequest);
 
     /**
-     * Ask that the mission associated with a given mission ID be moved to the
-     * front of the stack, so it is now visible to the user.
-     *
-     * @param missionId.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int MoveMissionToTop(int32_t missionId);
-
-    /**
-     * Requires that tasks associated with a given capability token be moved to the background
-     *
-     * @param token ability token
-     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst);
-
-    int MoveMissionToEndLocked(int missionId);
-
-    /**
      * Ability detects death
      *
      * @param abilityRecord
@@ -325,24 +298,8 @@ public:
     void UninstallApp(const std::string &bundleName);
 
     void OnTimeOut(uint32_t msgId, int64_t eventId);
-    bool IsFirstInMission(const sptr<IRemoteObject> &token);
     bool IsFrontInAllStack(const std::shared_ptr<MissionStack> &stack) const;
     bool IsTopInMission(const std::shared_ptr<AbilityRecord> &abilityRecord) const;
-
-    /**
-     * Moving some missions to the specified stack by mission option(Enter splitscreen or floating window mode).
-     * @param missionOption, target mission option
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int MoveMissionToFloatingStack(const MissionOption &missionOption);
-
-    /**
-     * Moving mission to the specified stack by mission option(Enter floating window mode).
-     * @param primary, display primary mission option
-     * @param secondary, display secondary mission option
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary);
 
     /**
      * minimize multiwindow by mission id.
@@ -366,13 +323,6 @@ public:
     int ChangeFocusAbility(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken);
 
     /**
-     * get missions info of floating mission stack.
-     * @param list, mission info.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int GetFloatingMissions(std::vector<AbilityMissionInfo> &list);
-
-    /**
      * close multiwindow by mission id.
      * @param missionId, the id of target mission.
      * @return Returns ERR_OK on success, others on failure.
@@ -382,9 +332,6 @@ public:
     void JudgingIsRemoveMultiScreenStack(std::shared_ptr<MissionStack> &stack);
 
     int StartLockMission(int uid, int missionId, bool isSystemApp, int isLock);
-    int SetMissionDescriptionInfo(
-        const std::shared_ptr<AbilityRecord> &abilityRecord, const MissionDescriptionInfo &description);
-    int GetMissionLockModeState();
 
     void RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord);
 
@@ -512,24 +459,6 @@ private:
     bool IsLauncherMission(int id);
 
     /**
-     * Ask that the mission associated with a given mission ID be moved to the
-     * front of the stack, so it is now visible to the user.
-     *
-     * @param missionId.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int MoveMissionToTopLocked(int32_t missionId);
-
-    /**
-     * Requires that tasks associated with a given capability token be moved to the background
-     *
-     * @param token ability token
-     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int MoveMissionToEndLocked(const sptr<IRemoteObject> &token, const bool nonFirst);
-
-    /**
      * Remove the specified mission stack by stack id
      *
      * @param id.
@@ -591,25 +520,6 @@ private:
      * @return Returns target missionStack.
      */
     std::shared_ptr<MissionStack> GetOrCreateMissionStack(int stackId, bool isCreateFlag = false);
-
-    /**
-     * Moving some missions to the specified stack by mission option(Enter splitscreen or floating window mode).
-     * @param missionOption, target mission option
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int MoveMissionsToStackLocked(const std::list<MissionOption> &missionOptions);
-#ifdef SUPPORT_GRAPHICS
-    int CheckMultiWindowCondition(const std::list<MissionOption> &missionOptions) const;
-    int CheckMultiWindowCondition(const std::shared_ptr<AbilityRecord> &currentTopAbility,
-        const std::shared_ptr<AbilityRecord> &topFullAbility, const AbilityRequest &abilityRequest) const;
-#endif
-    bool CheckSplitSrceenCondition(
-        const AbilityRequest &abilityRequest, const std::shared_ptr<AbilityRecord> &topFullAbility) const;
-    bool CheckMissionStackWillOverflow(const std::list<MissionOption> &missionOptions) const;
-    int CompleteMoveMissionToStack(
-        const std::shared_ptr<MissionRecord> &missionRecord, const std::shared_ptr<MissionStack> &stack);
-    void EmplaceMissionToStack(
-        const std::shared_ptr<MissionRecord> &sourceMission, const std::shared_ptr<MissionStack> &targetStack);
     int CompleteMissionMoving(std::shared_ptr<MissionRecord> &missionRecord, int stackId);
     SystemWindowMode JudgingTargetSystemWindowMode(AbilityWindowConfiguration config) const;
     SystemWindowMode GetLatestSystemWindowMode();
@@ -617,7 +527,6 @@ private:
     int StartAbilityLifeCycle(std::shared_ptr<AbilityRecord> lastTopAbility,
         std::shared_ptr<AbilityRecord> currentTopAbility, std::shared_ptr<AbilityRecord> targetAbility);
 
-    void ActiveTopAbility(const std::shared_ptr<AbilityRecord> &abilityRecord);
     void MoveMissionAndAbility(const std::shared_ptr<AbilityRecord> &currentTopAbility,
         std::shared_ptr<AbilityRecord> &targetAbilityRecord, std::shared_ptr<MissionRecord> &targetMissionRecord);
 
@@ -639,10 +548,6 @@ private:
     bool IsLockScreenStack(int stackId) const;
     bool IsSplitScreenStack(int stackId) const;
     std::shared_ptr<AbilityRecord> GetTopAbilityOfFullScreen();
-    int GenerateMissinOptionsOfSplitScreen(
-        const MissionOption &primary, const MissionOption &secondary, std::list<MissionOption> &missionOptions);
-    int GenerateMissinOptionsOfSplitScreen(std::list<MissionOption> &missionOptions,
-        const std::shared_ptr<MissionStack> &targetStack, std::shared_ptr<MissionRecord> &targetMissionRecord);
     int GetTargetChangeType(bool isMissionChanged, bool isStackChanged, bool isCurrentFull, bool isTargetFull,
         std::shared_ptr<AbilityRecord> lastTopAbility, std::shared_ptr<AbilityRecord> targetAbility,
         std::shared_ptr<AbilityRecord> &needBackgroundAbility);
@@ -679,9 +584,6 @@ private:
     std::shared_ptr<MissionRecord> GetFriendMissionBySplitScreen(
         const std::shared_ptr<MissionStack> &stack, const int missionId);
 
-    void UpdateMissionOption(const std::shared_ptr<MissionRecord> &mission,
-        const std::shared_ptr<MissionStack> &moveToStack, const AbilityWindowConfiguration winModeKey);
-
     std::string ConvertWindowModeState(const SystemWindowMode &mode);
 
     void ProcessInactivateInMoving(const std::shared_ptr<AbilityRecord> &abilityRecord);
@@ -712,13 +614,10 @@ private:
     std::list<wptr<IRemoteObject>> focusWaitingList_;
     // find AbilityRecord by windowToken. one windowToken has one and only one AbilityRecord.
     std::unordered_map<int, std::shared_ptr<AbilityRecord>> windowTokenToAbilityMap_;
-    std::shared_ptr<LockMissionContainer> lockMissionContainer_ = nullptr;
     SystemWindowMode curSysWindowMode_ = SystemWindowMode::DEFAULT_WINDOW_MODE;
     bool isMultiWinMoving_ = false;
     std::vector<StackSetting> stackSettings_;
     std::map<int, std::weak_ptr<AbilityRecord>> focusAbilityRecordMap_;  // abilities has been focused ,
-                                                                         // key : display id, value: focused ability
-    std::shared_ptr<ResumeMissionContainer> resumeMissionContainer_;
 #ifdef SUPPORT_GRAPHICS
     std::shared_ptr<ScreenshotHandler> screenshotHandler_;
 #endif

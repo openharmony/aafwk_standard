@@ -50,8 +50,6 @@ void AbilityStackManager::Init()
     missionStackList_.push_back(defaultMissionStack_);
     currentMissionStack_ = launcherMissionStack_;
 
-    resumeMissionContainer_ = std::make_shared<ResumeMissionContainer>(
-        DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler());
 #ifdef SUPPORT_GRAPHICS
     screenshotHandler_ = std::make_shared<ScreenshotHandler>();
 #endif
@@ -65,7 +63,6 @@ void AbilityStackManager::Init()
     floatSetting.stackId = FLOATING_MISSION_STACK_ID;
     floatSetting.maxHoldMission = FLOATING_MAX_STACK_MISSION_NUM;
     floatSetting.isSyncVisual = true;
-    SetMissionStackSetting(floatSetting);
 }
 
 AbilityStackManager::~AbilityStackManager()
@@ -274,10 +271,6 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
     CHECK_POINTER_AND_RETURN(topFullStack, ERR_INVALID_DATA);
     auto topFullAbility = topFullStack->GetTopAbilityRecord();
     CHECK_POINTER_AND_RETURN(topFullAbility, ERR_INVALID_DATA);
-#ifdef SUPPORT_GRAPHICS
-    CHECK_RET_RETURN_RET(CheckMultiWindowCondition(currentTopAbility, topFullAbility, abilityRequest),
-        "Check multiwindow condition is failed.");
-#endif
     // 1. choose target mission stack
     auto targetStack = GetTargetMissionStack(abilityRequest);
     CHECK_POINTER_AND_RETURN(targetStack, CREATE_MISSION_STACK_FAILED);
@@ -297,19 +290,6 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
     }
     targetAbilityRecord->AddCallerRecord(abilityRequest.callerToken, abilityRequest.requestCode);
 
-    std::list<MissionOption> missionOptions;
-    MissionOption option;
-    option.userId = userId_;
-    option.missionId = targetMissionRecord->GetMissionRecordId();
-    option.winModeKey = static_cast<AbilityWindowConfiguration>(
-        std::atoi(abilityRequest.startSetting->GetProperty(AbilityStartSetting::WINDOW_MODE_KEY).c_str()));
-    targetMissionRecord->SetMissionOption(option);
-    missionOptions.push_front(option);
-
-    if (IsSplitScreenStack(targetStack->GetMissionStackId())) {
-        GenerateMissinOptionsOfSplitScreen(missionOptions, targetStack, targetMissionRecord);
-    }
-
     // 3. first create mission record or stack is not changed,
     // just load target ability and inactive the current top ability.
     if ((!IsSplitScreenStack(targetStack->GetMissionStackId()) &&
@@ -326,27 +306,6 @@ int AbilityStackManager::StartAbilityAsMultiWindowLocked(
         return ERR_OK;
     }
 
-    // 4. mission stack is changed, move mission to target stack.
-    isMultiWinMoving_ = true;
-    for (auto &it : missionOptions) {
-        if (it.missionId == targetMissionRecord->GetMissionRecordId()) {
-            CompleteMoveMissionToStack(targetMissionRecord, targetStack);
-            MoveMissionAndAbility(currentTopAbility, targetAbilityRecord, targetMissionRecord);
-            HILOG_DEBUG("Mission stack is changed, move mission to target stack ,missionId:%{public}d",
-                targetMissionRecord->GetMissionRecordId());
-            continue;
-        }
-        auto secondMission = GetMissionRecordFromAllStacks(it.missionId);
-        if (secondMission) {
-            CompleteMoveMissionToStack(secondMission, targetStack);
-            HILOG_DEBUG("Mission stack is changed, move mission to target stack ,missionId:%{public}d",
-                targetMissionRecord->GetMissionRecordId());
-        }
-    }
-
-    CHECK_RET_RETURN_RET(DispatchLifecycle(currentTopAbility, targetAbilityRecord, false), "Dispatch lifecycle error.");
-    // Judging target system window mode, and notify event.
-    NotifyWindowModeChanged(GetLatestSystemWindowMode());
     return ERR_OK;
 }
 
@@ -424,17 +383,7 @@ void AbilityStackManager::MoveMissionAndAbility(const std::shared_ptr<AbilityRec
             targetMissionRecord->SetIsLauncherCreate();
         }
     }
-    // check mission window mode.
-    if (targetAbilityRecord->GetMissionRecord() == nullptr) {
-        auto option = targetMissionRecord->GetMissionOption();
-        if (option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING ||
-            option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
-            option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY) {
-            auto setting = AbilityStartSetting::GetEmptySetting();
-            setting->AddProperty(AbilityStartSetting::WINDOW_MODE_KEY, std::to_string(option.winModeKey));
-            targetAbilityRecord->SetStartSetting(setting);
-        }
-    }
+
     // add caller record
     targetAbilityRecord->SetMissionRecord(targetMissionRecord);
     // reparent mission record, currentMissionStack is the target mission stack.
@@ -610,16 +559,7 @@ int AbilityStackManager::MinimizeAbilityLocked(const std::shared_ptr<AbilityReco
 
 int AbilityStackManager::RemoveMissionById(int missionId)
 {
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    if (missionId < 0) {
-        HILOG_ERROR("Mission id is invalid.");
-        return ERR_INVALID_VALUE;
-    }
-    if (lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        return ERR_INVALID_VALUE;
-    }
-    return RemoveMissionByIdLocked(missionId);
+    return 0;
 }
 
 int AbilityStackManager::RemoveMissionByIdLocked(int missionId)
@@ -677,155 +617,9 @@ int AbilityStackManager::RemoveStackLocked(int stackId)
     return 0;
 }
 
-void AbilityStackManager::SetMissionStackSetting(const StackSetting &stackSetting)
-{
-    HILOG_DEBUG("Set mission stack setting, stackId : %{public}d", stackSetting.stackId);
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    if (lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        return;
-    }
-    auto isExist = [stackId = stackSetting.stackId](const StackSetting &it) { return stackId == it.stackId; };
-    auto iter = std::find_if(stackSettings_.begin(), stackSettings_.end(), isExist);
-    if (iter != stackSettings_.end()) {
-        stackSettings_.erase(iter);
-    }
-    StackSetting settings = stackSetting;
-    stackSettings_.emplace_back(settings);
-}
-
 void AbilityStackManager::RemoveTerminatingAbility(
     const std::shared_ptr<AbilityRecord> &abilityRecord, const std::shared_ptr<AbilityRecord> &lastActiveAbility)
 {
-    HILOG_DEBUG("Remove terminating ability called.");
-    CHECK_POINTER(abilityRecord);
-    auto missionRecord = abilityRecord->GetMissionRecord();
-    CHECK_POINTER(missionRecord);
-    auto currentStack = missionRecord->GetMissionStack();
-    CHECK_POINTER(currentStack);
-
-    auto isActive = (abilityRecord->IsActiveState() ||
-                     abilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
-                     abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW));
-
-    missionRecord->RemoveAbilityRecord(abilityRecord);
-    DelayedSingleton<AppScheduler>::GetInstance()->PrepareTerminate(abilityRecord->GetToken());
-    terminateAbilityRecordList_.push_back(abilityRecord);
-
-    std::shared_ptr<AbilityRecord> needTopAbility;
-    // clear next ability record
-    abilityRecord->SetNextAbilityRecord(nullptr);
-
-    if (IsLockScreenState() && abilityRecord->GetLockScreenState()) {
-        abilityRecord->SetLockScreenState(false);
-        if (!missionRecord->IsEmpty()) {
-            missionRecord->GetBottomAbilityRecord()->SetLockScreenState(true);
-        }
-    }
-
-    if (!missionRecord->IsEmpty()) {
-        if (abilityRecord == lastActiveAbility) {
-            needTopAbility = missionRecord->GetTopAbilityRecord();
-            abilityRecord->SetNextAbilityRecord(needTopAbility);
-        }
-        return;
-    }
-
-    if (IsLockScreenState() && currentStack->GetMissionStackId() == LOCK_SCREEN_STACK_ID) {
-        RemoveMissionRecordById(missionRecord->GetMissionRecordId());
-        if (currentStack->IsEmpty()) {
-            missionStackList_.remove(lockScreenMissionStack_);
-            currentMissionStack_ = missionStackList_.front();
-            lockScreenMissionStack_.reset();
-        } else {
-            needTopAbility = currentStack->GetTopAbilityRecord();
-            CHECK_POINTER(needTopAbility);
-            abilityRecord->SetNextAbilityRecord(needTopAbility);
-        }
-        return;
-    }
-
-    // mission is empty, ability is background state, remove mission record
-    if (!isActive) {
-        RemoveMissionRecordById(missionRecord->GetMissionRecordId());
-        if (IsSplitScreenStack(abilityRecord->GetMissionStackId())) {
-            auto topMission = currentStack->GetTopMissionRecord();
-            CHECK_POINTER(topMission);
-
-            UpdateMissionOption(
-                topMission, defaultMissionStack_, AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN);
-
-            currentStack->RemoveMissionRecord(topMission->GetMissionRecordId());
-            defaultMissionStack_->AddMissionRecordToEnd(topMission);
-        }
-        JudgingIsRemoveMultiScreenStack(currentStack);
-        return;
-    }
-
-    // mission is empty and ability is active
-    // current stack is floating stack
-    if (currentStack->IsEqualStackId(FLOATING_MISSION_STACK_ID)) {
-        RemoveMissionRecordById(missionRecord->GetMissionRecordId());
-        JudgingIsRemoveMultiScreenStack(currentStack);
-        MoveMissionStackToTop(GetTopFullScreenStackIncludeSplitScreen());
-        if (abilityRecord == lastActiveAbility) {
-            needTopAbility = GetCurrentTopAbility();
-            abilityRecord->SetNextAbilityRecord(needTopAbility);
-        }
-        return;
-    }
-
-    // current stack is split screen stack
-    if (IsSplitScreenStack(abilityRecord->GetMissionStackId())) {
-        RemoveMissionRecordById(missionRecord->GetMissionRecordId());
-        JudgingIsRemoveMultiScreenStack(currentStack);
-        auto topMission = currentStack->GetTopMissionRecord();
-        if (!topMission) {
-            // split screen is empty, back to launcher
-            auto launcherAbility = GetLauncherRootAbility();
-            CHECK_POINTER(launcherAbility);
-            auto launcherMission = launcherAbility->GetMissionRecord();
-            CHECK_POINTER(launcherMission);
-            MoveMissionStackToTop(launcherMissionStack_);
-            launcherMissionStack_->MoveMissionRecordToTop(launcherMission);
-            if (abilityRecord == lastActiveAbility) {
-                abilityRecord->SetNextAbilityRecord(launcherAbility);
-            }
-        }
-
-        if (topMission && abilityRecord == lastActiveAbility) {
-            auto topAbility = topMission->GetTopAbilityRecord();
-            RemoveMissionRecordById(topMission->GetMissionRecordId());
-            JudgingIsRemoveMultiScreenStack(currentStack);
-            UpdateMissionOption(
-                topMission, defaultMissionStack_, AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN);
-
-            MoveMissionStackToTop(defaultMissionStack_);
-            abilityRecord->SetNextAbilityRecord(topAbility);
-        }
-        return;
-    }
-
-    // current stack is default stack or launcher stack
-    if (IsFullScreenStack(currentStack->GetMissionStackId())) {
-        auto isExist = (!missionRecord->IsLauncherCreate() && missionRecord->GetPreMissionRecord() != nullptr &&
-                        launcherMissionStack_->IsExistMissionRecord(
-                            missionRecord->GetPreMissionRecord()->GetMissionRecordId()));
-        if ((missionRecord->IsLauncherCreate()) || (missionRecord == missionStackList_.back()->GetTopMissionRecord()) ||
-            isExist || (missionRecord == missionStackList_.front()->GetBottomMissionRecord())) {
-            RemoveMissionRecordById(missionRecord->GetMissionRecordId());
-            MoveMissionStackToTop(launcherMissionStack_);
-        } else {
-            RemoveMissionRecordById(missionRecord->GetMissionRecordId());
-        }
-        auto fullScreenStack = GetTopFullScreenStack();
-        CHECK_POINTER(fullScreenStack);
-        needTopAbility = fullScreenStack->GetTopAbilityRecord();
-        CHECK_POINTER(needTopAbility);
-        if (abilityRecord == lastActiveAbility) {
-            abilityRecord->SetNextAbilityRecord(needTopAbility);
-        }
-    }
 }
 
 int AbilityStackManager::GetAbilityStackManagerUserId() const
@@ -1665,30 +1459,6 @@ bool AbilityStackManager::IsLauncherMission(int id)
     return true;
 }
 
-int AbilityStackManager::SetMissionDescriptionInfo(
-    const std::shared_ptr<AbilityRecord> &abilityRecord, const MissionDescriptionInfo &description)
-{
-    HILOG_DEBUG("%{public}s called", __FUNCTION__);
-    CHECK_POINTER_AND_RETURN(abilityRecord, SET_MISSION_INFO_FAILED);
-
-    auto mission = abilityRecord->GetMissionRecord();
-    CHECK_POINTER_AND_RETURN(mission, SET_MISSION_INFO_FAILED);
-    auto ptr = std::make_shared<MissionDescriptionInfo>(description);
-    mission->SetMissionDescriptionInfo(ptr);
-
-    return ERR_OK;
-}
-
-int AbilityStackManager::GetMissionLockModeState()
-{
-    HILOG_DEBUG("%{public}s called", __FUNCTION__);
-    if (!lockMissionContainer_) {
-        return LockMissionContainer::LockMissionState::LOCK_MISSION_STATE_NONE;
-    }
-
-    return lockMissionContainer_->GetLockedMissionState();
-}
-
 void AbilityStackManager::RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord)
 {
     HILOG_INFO("%{public}s called", __FUNCTION__);
@@ -1717,159 +1487,8 @@ void AbilityStackManager::RestartAbility(const std::shared_ptr<AbilityRecord> ab
     }
 }
 
-int AbilityStackManager::MoveMissionToTop(int32_t missionId)
-{
-    HILOG_INFO("Move mission to top.");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    if (missionId < 0) {
-        HILOG_ERROR("Mission id is invalid.");
-        return ERR_INVALID_VALUE;
-    }
-
-    if (lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        return ERR_INVALID_VALUE;
-    }
-
-    return MoveMissionToTopLocked(missionId);
-}
-
-int AbilityStackManager::MoveMissionToTopLocked(int32_t missionId)
-{
-    HILOG_INFO("Move mission to top locked.");
-
-    if (isMultiWinMoving_) {
-        HILOG_ERROR("System is moving multi window state, request deny.");
-        return MOVE_MISSION_TO_STACK_MOVING_DENIED;
-    }
-
-    CHECK_TRUE_RETURN_RET((!defaultMissionStack_ || !launcherMissionStack_), ERR_NO_INIT, "Mission stack is invalid.");
-    auto currentTopAbility = GetCurrentTopAbility();
-    CHECK_POINTER_AND_RETURN(currentTopAbility, MOVE_MISSION_FAILED);
-
-    auto currentStack = currentTopAbility->GetMissionRecord()->GetMissionStack();
-    CHECK_POINTER_AND_RETURN(currentStack, MOVE_MISSION_FAILED);
-
-    auto requestMissionRecord = GetMissionRecordFromAllStacks(missionId);
-    CHECK_POINTER_AND_RETURN(requestMissionRecord, MOVE_MISSION_FAILED);
-
-    CheckMissionRecordIsResume(requestMissionRecord);
-
-    auto requestAbilityRecord = requestMissionRecord->GetTopAbilityRecord();
-    CHECK_POINTER_AND_RETURN(requestAbilityRecord, MOVE_MISSION_FAILED);
-
-    auto requestStack = requestMissionRecord->GetMissionStack();
-    CHECK_POINTER_AND_RETURN(requestStack, MOVE_MISSION_FAILED);
-
-    // request ability active, current ability active, change focus
-    if (requestAbilityRecord->IsAbilityState(ACTIVE)) {
-        MoveMissionStackToTop(requestStack);
-        requestStack->MoveMissionRecordToTop(requestMissionRecord);
-        UpdateFocusAbilityRecord(requestAbilityRecord, true);
-        return ERR_OK;
-    }
-
-    // current stack is split screen stack or request stack is split screen stack.
-    // Multiple split stacks are not supported
-    if (IsSplitScreenStack(requestStack->GetMissionStackId()) ||
-        IsSplitScreenStack(currentStack->GetMissionStackId())) {
-        MoveMissionStackToTop(requestStack);
-        requestStack->MoveMissionRecordToTop(requestMissionRecord);
-        DispatchLifecycle(currentTopAbility, requestAbilityRecord, false);
-        return ERR_OK;
-    }
-
-    if (currentStack->IsEqualStackId(FLOATING_MISSION_STACK_ID) &&
-        IsFullScreenStack(requestStack->GetMissionStackId())) {
-        auto fullScreenStack = GetTopFullScreenStack();
-        CHECK_POINTER_AND_RETURN(fullScreenStack, MOVE_MISSION_FAILED);
-        currentTopAbility = fullScreenStack->GetTopAbilityRecord();
-    }
-
-    if (IsFullScreenStack(currentStack->GetMissionStackId()) &&
-        requestStack->IsEqualStackId(FLOATING_MISSION_STACK_ID)) {
-        auto floatingStack = GetOrCreateMissionStack(FLOATING_MISSION_STACK_ID, false);
-        auto topAbility = floatingStack->GetTopAbilityRecord();
-        if (SupportSyncVisualByStackId(FLOATING_MISSION_STACK_ID) ||
-            (!SupportSyncVisualByStackId(FLOATING_MISSION_STACK_ID) && requestAbilityRecord == topAbility)) {
-            MoveMissionStackToTop(requestStack);
-            requestAbilityRecord->ProcessActivate();
-            return ERR_OK;
-        }
-        currentTopAbility = topAbility;
-    }
-
-    MoveMissionStackToTop(requestStack);
-    MoveMissionAndAbility(currentTopAbility, requestAbilityRecord, requestMissionRecord);
-
-    currentTopAbility->Inactivate();
-    return ERR_OK;
-}
-
-int AbilityStackManager::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
-{
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-
-    if (lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        return ERR_INVALID_VALUE;
-    }
-
-    if (isMultiWinMoving_) {
-        HILOG_ERROR("System is moving multi window state, request deny.");
-        return MOVE_MISSION_TO_STACK_MOVING_DENIED;
-    }
-
-    return MoveMissionToEndLocked(token, nonFirst);
-}
-
-int AbilityStackManager::MoveMissionToEndLocked(const sptr<IRemoteObject> &token, const bool nonFirst)
-{
-    HILOG_INFO("Move mission to end locked.");
-
-    CHECK_POINTER_AND_RETURN(token, MOVE_MISSION_FAILED);
-
-    auto abilityRecord = GetAbilityRecordByToken(token);
-    CHECK_POINTER_AND_RETURN(abilityRecord, MOVE_MISSION_FAILED);
-
-    auto missionRecord = abilityRecord->GetMissionRecord();
-    CHECK_POINTER_AND_RETURN(missionRecord, MOVE_MISSION_FAILED);
-
-    if (!nonFirst) {
-        if (missionRecord->GetBottomAbilityRecord() != abilityRecord) {
-            HILOG_ERROR("nonFirst is false, it's not the bottom of the mission, can't move mission to end.");
-            return MOVE_MISSION_FAILED;
-        }
-    }
-
-    return MoveMissionToEndLocked(missionRecord->GetMissionRecordId());
-}
-
-int AbilityStackManager::MoveMissionToEndLocked(int missionId)
-{
-    return ERR_OK;
-}
-
 void AbilityStackManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord)
 {
-    HILOG_INFO("On ability died.");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    CHECK_POINTER(abilityRecord);
-    CHECK_POINTER(launcherMissionStack_);
-    CHECK_POINTER(defaultMissionStack_);
-
-    if (abilityRecord->GetAbilityInfo().type != AbilityType::PAGE) {
-        HILOG_ERROR("Ability type is not page.");
-        return;
-    }
-    // release mission when locked.
-    auto mission = abilityRecord->GetMissionRecord();
-    if (mission && lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
-        if (lockMissionContainer_->IsSameLockedMission(mission->GetName())) {
-            lockMissionContainer_->ReleaseLockedMission(mission, -1, true);
-        }
-    }
-    HandleAbilityDied(abilityRecord);
 }
 
 void AbilityStackManager::DelayedStartLauncher()
@@ -1889,18 +1508,6 @@ std::shared_ptr<MissionRecord> AbilityStackManager::GetFriendMissionBySplitScree
     const std::shared_ptr<MissionStack> &stack, const int missionId)
 {
     return nullptr;
-}
-
-void AbilityStackManager::UpdateMissionOption(const std::shared_ptr<MissionRecord> &mission,
-    const std::shared_ptr<MissionStack> &moveToStack, const AbilityWindowConfiguration winModeKey)
-{
-    MissionOption option;
-    option.missionId = mission->GetMissionRecordId();
-    option.winModeKey = winModeKey;
-    moveToStack->AddMissionRecordToTop(mission);
-    moveToStack->MoveMissionRecordToTop(mission);
-    mission->SetMissionStack(moveToStack, moveToStack->GetMissionStackId());
-    mission->SetMissionOption(option);
 }
 
 void AbilityStackManager::HandleAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord)
@@ -1971,49 +1578,6 @@ std::shared_ptr<AbilityRecord> AbilityStackManager::GetAbilityRecordByEventId(in
 
 void AbilityStackManager::OnTimeOut(uint32_t msgId, int64_t eventId)
 {
-    HILOG_DEBUG("On timeout.");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    auto abilityRecord = GetAbilityRecordByEventId(eventId);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("stack manager on time out event: ability record is nullptr.");
-        BackToLauncher();
-        return;
-    }
-
-    // release mission when locked.
-    auto mission = abilityRecord->GetMissionRecord();
-    if (mission && lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
-        if (lockMissionContainer_->IsSameLockedMission(mission->GetName())) {
-            lockMissionContainer_->ReleaseLockedMission(mission, -1, true);
-        }
-    }
-
-    // release mission when lock screen.
-    auto stack = mission->GetMissionStack();
-    CHECK_POINTER(stack);
-    if (stack->GetMissionStackId() == LOCK_SCREEN_STACK_ID && (msgId == AbilityManagerService::LOAD_TIMEOUT_MSG ||
-        msgId == AbilityManagerService::ACTIVE_TIMEOUT_MSG)) {
-        ActiveTopAbility(abilityRecord);
-        return;
-    }
-    CHECK_POINTER_LOG(abilityRecord, "stack manager on time out event: ability record is nullptr.");
-
-    HILOG_DEBUG("Ability timeout ,msg:%{public}d,name:%{public}s", msgId, abilityRecord->GetAbilityInfo().name.c_str());
-
-    switch (msgId) {
-        case AbilityManagerService::LOAD_TIMEOUT_MSG:
-            ActiveTopAbility(abilityRecord);
-            break;
-        case AbilityManagerService::ACTIVE_TIMEOUT_MSG:
-            HandleActiveTimeout(abilityRecord);
-            break;
-        case AbilityManagerService::INACTIVE_TIMEOUT_MSG:
-        case AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG:
-            CompleteInactive(abilityRecord);
-            break;
-        default:
-            break;
-    }
 }
 
 void AbilityStackManager::HandleActiveTimeout(const std::shared_ptr<AbilityRecord> &ability)
@@ -2041,207 +1605,9 @@ void AbilityStackManager::HandleActiveTimeout(const std::shared_ptr<AbilityRecor
     BackToLauncher();
 }
 
-int AbilityStackManager::MoveMissionToFloatingStack(const MissionOption &missionOption)
-{
-    HILOG_DEBUG("Move mission to floating stack, missionId: %{public}d", missionOption.missionId);
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-
-    CHECK_TRUE_RETURN_RET(lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState(),
-        ERR_INVALID_DATA,
-        "current is lock mission state, refusing to operate other mission.");
-    CHECK_TRUE_RETURN_RET(missionOption.missionId == DEFAULT_INVAL_VALUE, ERR_INVALID_DATA, "mission id is invalid.");
-    CHECK_TRUE_RETURN_RET(
-        JudgingTargetSystemWindowMode(missionOption.winModeKey) != SystemWindowMode::FLOATING_WINDOW_MODE,
-        ERR_INVALID_DATA,
-        "The requested mode is error.");
-
-    std::list<MissionOption> missionOptions;
-    MissionOption option = missionOption;
-    missionOptions.push_back(option);
-
-    return MoveMissionsToStackLocked(missionOptions);
-}
-
-int AbilityStackManager::MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary)
-{
-    HILOG_DEBUG("primary:%{public}d, winMode:%{public}d, secondary:%{public}d, "
-                "winMode:%{public}d",
-        primary.missionId,
-        primary.winModeKey,
-        secondary.missionId,
-        secondary.winModeKey);
-
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-
-    CHECK_TRUE_RETURN_RET(lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState(),
-        ERR_INVALID_DATA,
-        "current is lock mission state, refusing to operate other mission.");
-    CHECK_TRUE_RETURN_RET(primary.missionId == DEFAULT_INVAL_VALUE, ERR_INVALID_DATA, "mission id is invalid.");
-    CHECK_TRUE_RETURN_RET(
-        JudgingTargetSystemWindowMode(primary.winModeKey) != SystemWindowMode::SPLITSCREEN_WINDOW_MODE,
-        ERR_INVALID_DATA,
-        "The requested mode is error.");
-
-    std::list<MissionOption> missionOptions;
-    CHECK_RET_RETURN_RET(
-        GenerateMissinOptionsOfSplitScreen(primary, secondary, missionOptions), "generate mission option error.");
-
-    return MoveMissionsToStackLocked(missionOptions);
-}
-
-int AbilityStackManager::GenerateMissinOptionsOfSplitScreen(std::list<MissionOption> &missionOptions,
-    const std::shared_ptr<MissionStack> &targetStack, std::shared_ptr<MissionRecord> &targetMissionRecord)
-{
-    HILOG_DEBUG("generate missin options of split screen stack.");
-    // first create splitscreen stack
-    if (targetStack->IsEmpty()) {
-        auto topAbility = GetTopAbilityOfFullScreen();
-        CHECK_POINTER_AND_RETURN(topAbility, ERR_INVALID_DATA);
-        auto topMission = topAbility->GetMissionRecord();
-        CHECK_POINTER_AND_RETURN(topMission, ERR_INVALID_DATA);
-        MissionOption optionSecondary;
-        optionSecondary.winModeKey = (targetMissionRecord->GetMissionOption().winModeKey ==
-                                         AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY)
-                                         ? AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY
-                                         : AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY;
-        optionSecondary.missionId = topAbility->GetMissionRecordId();
-        optionSecondary.userId = userId_;
-        topMission->SetMissionOption(optionSecondary);
-        missionOptions.push_front(optionSecondary);
-        HILOG_DEBUG("splitscreen stack will add two missions together.");
-    } else {
-        auto missions = targetStack->GetMissionRecordByWinMode(targetMissionRecord->GetMissionOption().winModeKey);
-        for (auto &it : missions) {
-            if (it->GetMissionRecordId() != targetMissionRecord->GetMissionRecordId() && missions.size() > 1) {
-                MissionOption optionSecondary;
-                optionSecondary.winModeKey = (targetMissionRecord->GetMissionOption().winModeKey ==
-                                                 AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY)
-                                                 ? AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY
-                                                 : AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY;
-                optionSecondary.missionId = it->GetMissionRecordId();
-                optionSecondary.userId = userId_;
-                it->SetMissionOption(optionSecondary);
-                missionOptions.push_front(optionSecondary);
-                HILOG_DEBUG("splitscreen stack will swap.");
-                break;
-            }
-        }
-    }
-    return ERR_OK;
-}
-
-int AbilityStackManager::GenerateMissinOptionsOfSplitScreen(
-    const MissionOption &primary, const MissionOption &secondary, std::list<MissionOption> &missionOptions)
-{
-    MissionOption optionPrimary = primary;
-    missionOptions.push_front(optionPrimary);
-    if (secondary.missionId > DEFAULT_INVAL_VALUE) {
-        if (JudgingTargetSystemWindowMode(secondary.winModeKey) != SystemWindowMode::SPLITSCREEN_WINDOW_MODE ||
-            primary.winModeKey == secondary.winModeKey || primary.missionId == secondary.missionId) {
-            HILOG_ERROR("mission option  is invalid.");
-            return ERR_INVALID_DATA;
-        }
-        MissionOption optionSecondary = secondary;
-        missionOptions.push_front(optionSecondary);
-        HILOG_DEBUG("splitscreen stack will add two missions together.");
-    } else {
-        // select top mission of full screen as secondary when second parameter is not set.
-        if (!IsExistSplitScreenStack()) {
-            auto topAbility = GetTopAbilityOfFullScreen();
-            CHECK_TRUE_RETURN_RET(topAbility && primary.missionId == topAbility->GetMissionRecordId(),
-                ERR_INVALID_DATA,
-                "mission option  is invalid.");
-            MissionOption optionSecondary;
-            optionSecondary.winModeKey =
-                (primary.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY)
-                    ? AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY
-                    : AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY;
-            optionSecondary.missionId = topAbility->GetMissionRecordId();
-            optionSecondary.userId = userId_;
-            missionOptions.push_front(optionSecondary);
-            HILOG_DEBUG("splitscreen stack will add two missions together.");
-        } else {
-            HILOG_DEBUG("splitscreen stack will emplace mission, winmode: %{public}d", primary.winModeKey);
-        }
-    }
-    return ERR_OK;
-}
-
-int AbilityStackManager::MoveMissionsToStackLocked(const std::list<MissionOption> &missionOptions)
-{
-#if BINDER_IPC_32BIT
-    HILOG_DEBUG("Request mission option size :%{public}u", missionOptions.size());
-#else
-    HILOG_DEBUG("Request mission option size :%{public}lu", missionOptions.size());
-#endif
-#ifdef SUPPORT_GRAPHICS
-    // check condition whether can enter or exit multiwindow mode.
-    CHECK_RET_RETURN_RET(CheckMultiWindowCondition(missionOptions), "check multiwindow condition is failed.");
-#endif
-    // complete mission stack moving and notify ability window mode has changed.
-    auto lastTopAbility = GetCurrentTopAbility();
-    isMultiWinMoving_ = true;
-
-    auto targetStackId = JudgingTargetStackId(missionOptions.front().winModeKey);
-    // new mission stack
-    if (targetStackId == SPLIT_SCREEN_MISSION_STACK_ID) {
-        if (IsExistSplitScreenStack() && !InFrontOfFullScreenStack()) {
-            targetStackId = ++splitScreenStackId;
-        }
-    }
-    for (auto &it : missionOptions) {
-        auto sourceMission = GetMissionRecordFromAllStacks(it.missionId);
-        CheckMissionRecordIsResume(sourceMission);
-        CHECK_POINTER_AND_RETURN(sourceMission, MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION);
-        sourceMission->SetMissionOption(it);
-        CHECK_RET_RETURN_RET(CompleteMissionMoving(sourceMission, targetStackId), "complete mission moving failed.");
-    }
-
-    // schulde ability lifescycle (all stack)
-    auto currentTopAbility = GetCurrentTopAbility();
-    bool isFullScreen =
-        missionOptions.front().winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN;
-    // top ability active and display fullscreen, others background state.
-    CHECK_RET_RETURN_RET(
-        DispatchLifecycle(lastTopAbility, currentTopAbility, isFullScreen), "Dispatch lifecycle error.");
-
-    // Judging target system window mode, and notify event.
-    NotifyWindowModeChanged(GetLatestSystemWindowMode());
-
-    return ERR_OK;
-}
-
 int AbilityStackManager::MaximizeMultiWindow(int missionId)
 {
-    HILOG_DEBUG("Maximize multi window, missionId:%{public}d", missionId);
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    if (lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        return ERR_INVALID_VALUE;
-    }
-
-    auto missionRecord = GetMissionRecordFromAllStacks(missionId);
-    CHECK_POINTER_AND_RETURN(missionRecord, MAXIMIZE_MULTIWINDOW_NOT_EXIST);
-    auto parentStack = missionRecord->GetMissionStack();
-    CHECK_POINTER_AND_RETURN(parentStack, ERR_INVALID_DATA);
-    if (!parentStack->IsEqualStackId(FLOATING_MISSION_STACK_ID)) {
-        HILOG_ERROR("This mission is not exist in multiwindow stack.");
-        return MAXIMIZE_MULTIWINDOW_NOT_EXIST;
-    }
-    auto topAbility = missionRecord->GetTopAbilityRecord();
-    CHECK_POINTER_AND_RETURN(topAbility, ERR_INVALID_DATA);
-    if (!topAbility->IsAbilityState(AbilityState::INACTIVE) && !topAbility->IsAbilityState(AbilityState::ACTIVE)) {
-        HILOG_ERROR("This mission is not visible, maximize failed.");
-        return MAXIMIZE_MULTIWINDOW_FAILED;
-    }
-    // construct mission option, request to move mission to default stack.
-    MissionOption option;
-    option.missionId = missionId;
-    option.winModeKey = AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN;
-    std::list<MissionOption> missionOptions;
-    missionOptions.push_back(option);
-
-    return MoveMissionsToStackLocked(missionOptions);
+    return 0;
 }
 
 void AbilityStackManager::ContinueLifecycle()
@@ -2269,180 +1635,11 @@ SystemWindowMode AbilityStackManager::GetLatestSystemWindowMode()
     }
 }
 
-#ifdef SUPPORT_GRAPHICS
-int AbilityStackManager::CheckMultiWindowCondition(const std::list<MissionOption> &missionOptions) const
-{
-    HILOG_DEBUG("Check multi window condition.");
-    if (isMultiWinMoving_) {
-        HILOG_ERROR("System is moving multi window state, request deny.");
-        return MOVE_MISSION_TO_STACK_MOVING_DENIED;
-    }
-
-    auto currentTopAbilityRecord = GetCurrentTopAbility();
-    if (currentTopAbilityRecord &&
-        AbilityUtil::IsSystemDialogAbility(
-        currentTopAbilityRecord->GetAbilityInfo().bundleName, currentTopAbilityRecord->GetAbilityInfo().name)) {
-        HILOG_ERROR("Top page ability is dialog type, cannot return to launcher");
-        return MOVE_MISSION_TO_STACK_MOVING_DENIED;
-    }
-
-    if (missionOptions.empty() || missionOptions.size() > MAX_CAN_MOVE_MISSIONS) {
-        HILOG_ERROR("Moving missions has been out of size, Maximum:%{public}d.", MAX_CAN_MOVE_MISSIONS);
-        return MOVE_MISSION_TO_STACK_OUT_OF_SIZE;
-    }
-
-    // check request missions exist, and has same window mode.
-    auto lastOption = missionOptions.front();
-    bool isFirst = true;
-    for (auto &it : missionOptions) {
-        if (!isFirst && !it.IsSameWindowMode(lastOption.winModeKey)) {
-            HILOG_ERROR("Mission options are not in same win mode.");
-            return MOVE_MISSION_TO_STACK_NOT_SAME_WIN_MODE;
-        }
-        isFirst = false;
-        auto targetMission = GetMissionRecordFromAllStacks(it.missionId);
-        if (!targetMission) {
-            HILOG_ERROR("Moving mission record is not exist.");
-            return MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION;
-        }
-        auto parentStack = targetMission->GetMissionStack();
-        if (parentStack && parentStack->GetMissionStackId() == JudgingTargetStackId(it.winModeKey)) {
-            HILOG_ERROR("Refuse moving mission to its own stack.");
-            return MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION;
-        }
-        if (!targetMission->SupportMultWindow()) {
-            HILOG_ERROR("Moving mission record is not support multi window.");
-            return MOVE_MISSION_TO_STACK_NOT_SUPPORT_MULTI_WIN;
-        }
-        if (IsExistSplitScreenStack() && !InFrontOfFullScreenStack() &&
-            (it.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
-            it.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY)) {
-            HILOG_ERROR("split screen stack is exist, but not at the top, replacing misiion or creating a new split "
-                        "stack is not supported.");
-            return MOVE_MISSION_TO_STACK_MOVING_DENIED;
-        }
-    }
-
-    // check whether target mission stack will be overflow.
-    if (!CheckMissionStackWillOverflow(missionOptions)) {
-        HILOG_ERROR("Mission stack will overflow, refuse to move mission.");
-        return MOVE_MISSION_TO_STACK_TARGET_STACK_OVERFLOW;
-    }
-
-    return ERR_OK;
-}
-
-int AbilityStackManager::CheckMultiWindowCondition(const std::shared_ptr<AbilityRecord> &currentTopAbility,
-    const std::shared_ptr<AbilityRecord> &topFullAbility, const AbilityRequest &abilityRequest) const
-{
-    HILOG_DEBUG("Check multi window condition.");
-    CHECK_POINTER_AND_RETURN_LOG(abilityRequest.startSetting, START_ABILITY_SETTING_FAILED, "startsetting is nullptr.");
-
-    if (isMultiWinMoving_) {
-        HILOG_ERROR("System is moving multi window state, request deny.");
-        return START_ABILITY_SETTING_FAILED;
-    }
-
-    if (currentTopAbility &&
-        AbilityUtil::IsSystemDialogAbility(
-            currentTopAbility->GetAbilityInfo().bundleName, currentTopAbility->GetAbilityInfo().name)) {
-        HILOG_ERROR("Top page ability is dialog type, cannot return to launcher.");
-        return START_ABILITY_SETTING_FAILED;
-    }
-    // check whether target mission stack will be overflow.
-    MissionOption option;
-    option.winModeKey = static_cast<AbilityWindowConfiguration>(
-        std::atoi(abilityRequest.startSetting->GetProperty(AbilityStartSetting::WINDOW_MODE_KEY).c_str()));
-    std::list<MissionOption> list;
-    list.push_back(option);
-
-    // check splitscreen stack request.
-    if (option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
-        option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY) {
-        if (!CheckSplitSrceenCondition(abilityRequest, topFullAbility)) {
-            HILOG_ERROR("check splitscreen condition failed.");
-            return START_ABILITY_SETTING_FAILED;
-        }
-    }
-
-    if (!CheckMissionStackWillOverflow(list)) {
-        HILOG_ERROR("Mission stack will overflow.");
-        return START_ABILITY_SETTING_NOT_SUPPORT_MULTI_WIN;
-    }
-
-    return ERR_OK;
-}
-#endif
-
-bool AbilityStackManager::CheckSplitSrceenCondition(
-    const AbilityRequest &abilityRequest, const std::shared_ptr<AbilityRecord> &topFullAbility) const
-{
-    if (IsExistSplitScreenStack()) {
-        if (!InFrontOfFullScreenStack()) {
-            HILOG_ERROR("split screen stack is exist, but not at the top, replacing misiion or creating a new split "
-                        "stack is not supported.");
-            return false;
-        }
-    } else {
-        // will create a new splitscreen stack, check current condition.
-        if (topFullAbility->IsLauncherAbility()) {
-            HILOG_ERROR("can't move launcher to splitscreen stack.");
-            return false;
-        } else {
-            if (topFullAbility->GetAbilityInfo().launchMode == AppExecFwk::LaunchMode::SINGLETON) {
-                if (topFullAbility->GetAbilityInfo().bundleName == abilityRequest.abilityInfo.bundleName &&
-                    topFullAbility->GetAbilityInfo().name == abilityRequest.abilityInfo.name) {
-                    HILOG_ERROR("can't only move full screen ability to splitscreen stack.");
-                    return false;
-                }
-            } else {
-                if (abilityRequest.abilityInfo.launchMode != AppExecFwk::LaunchMode::SINGLETON &&
-                    topFullAbility->GetAbilityInfo().name == abilityRequest.abilityInfo.name) {
-                    HILOG_ERROR("can't only move full screen ability to splitscreen stack.");
-                    return false;
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
-bool AbilityStackManager::CheckMissionStackWillOverflow(const std::list<MissionOption> &missionOptions) const
-{
-    std::map<int, int> calcMap;
-    for (auto &it : missionStackList_) {
-        calcMap.emplace(it->GetMissionStackId(), it->GetMissionRecordCount());
-    }
-
-    auto isOverFlow = [&](int stackId, std::map<int, int> &calcMap) {
-        calcMap[stackId]++;
-        if (GetMaxHoldMissionsByStackId(stackId) > 0 && calcMap[stackId] > GetMaxHoldMissionsByStackId(stackId)) {
-            HILOG_ERROR(
-                "Over limit of holding mission, stackId:%{public}d , size:%{public}d", stackId, calcMap[stackId]);
-            return false;
-        }
-        return true;
-    };
-
-    // check whether splitscreen and floating stack will overflow.
-    for (auto &option : missionOptions) {
-        auto stackId = JudgingTargetStackId(option.winModeKey);
-        if (!isOverFlow(stackId, calcMap)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 int AbilityStackManager::CompleteMissionMoving(std::shared_ptr<MissionRecord> &sourceMission, int stackId)
 {
     CHECK_POINTER_AND_RETURN(sourceMission, MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION);
     auto targetStack = GetOrCreateMissionStack(stackId, true);
     CHECK_POINTER_AND_RETURN(targetStack, ERR_INVALID_DATA);
-
-    CHECK_RET_RETURN_RET(CompleteMoveMissionToStack(sourceMission, targetStack), "Moving mission record failed.");
 
     return ERR_OK;
 }
@@ -2480,151 +1677,6 @@ std::shared_ptr<MissionStack> AbilityStackManager::GetOrCreateMissionStack(int s
 
     HILOG_DEBUG("Target mission stack is not exist.");
     return nullptr;
-}
-
-int AbilityStackManager::CompleteMoveMissionToStack(
-    const std::shared_ptr<MissionRecord> &sourceMission, const std::shared_ptr<MissionStack> &targetStack)
-{
-    CHECK_POINTER_AND_RETURN(sourceMission, ERR_INVALID_DATA);
-    CHECK_POINTER_AND_RETURN(targetStack, ERR_INVALID_DATA);
-    auto sourceStack = sourceMission->GetMissionStack();
-    if (sourceStack == nullptr) {
-        // new create mission, directly move to target mission stack
-        EmplaceMissionToStack(sourceMission, targetStack);
-        sourceMission->SetMissionStack(targetStack, targetStack->GetMissionStackId());
-        MoveMissionStackToTop(targetStack);
-        return ERR_OK;
-    }
-
-    bool isTop = sourceMission->IsLauncherCreate() && sourceMission == GetTopMissionRecord();
-    HILOG_DEBUG("Mission reparent : src stack id:%{public}d, target stack id:%{public}d, isTop:%{public}d",
-        sourceStack->GetMissionStackId(),
-        targetStack->GetMissionStackId(),
-        isTop);
-
-    // remove mission record from source stack.
-    if (IsSplitScreenStack(sourceStack->GetMissionStackId())) {
-        auto oldMission = GetFriendMissionBySplitScreen(sourceStack, sourceMission->GetMissionRecordId());
-        if (oldMission != nullptr) {
-            // put the removed mission into the default stack.
-            sourceStack->RemoveMissionRecord(oldMission->GetMissionRecordId());
-            UpdateMissionOption(
-                oldMission, defaultMissionStack_, AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN);
-            MoveMissionStackToTop(defaultMissionStack_);
-        }
-    }
-
-    sourceStack->RemoveMissionRecord(sourceMission->GetMissionRecordId());
-    EmplaceMissionToStack(sourceMission, targetStack);
-
-    sourceMission->SetMissionStack(targetStack, targetStack->GetMissionStackId());
-    if ((sourceStack->IsEmpty() || isTop) && targetStack != defaultMissionStack_ &&
-        sourceStack == defaultMissionStack_) {
-        MoveMissionStackToTop(launcherMissionStack_);
-    }
-    if (sourceStack->IsEmpty() && (!IsFullScreenStack(sourceStack->GetMissionStackId()))) {
-        HILOG_DEBUG("Remove stack when mission count is zero. stack:%{public}d.", sourceStack->GetMissionStackId());
-        missionStackList_.remove(sourceStack);
-    }
-    // move target mission stack to top.
-    MoveMissionStackToTop(targetStack);
-
-    return ERR_OK;
-}
-
-void AbilityStackManager::EmplaceMissionToStack(
-    const std::shared_ptr<MissionRecord> &sourceMission, const std::shared_ptr<MissionStack> &targetStack)
-{
-    if (IsSplitScreenStack(targetStack->GetMissionStackId())) {
-        // emplace mission to splitscreen stack.
-        auto oldMission =
-            targetStack->EmplaceMissionRecord(sourceMission->GetMissionOption().winModeKey, sourceMission);
-        if (oldMission != nullptr) {
-            // put the removed mission into the default stack.
-            UpdateMissionOption(
-                oldMission, defaultMissionStack_, AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN);
-        }
-        targetStack->MoveMissionRecordToTop(sourceMission);
-    } else {
-        // add mission to target mission stack top.
-        targetStack->AddMissionRecordToTop(sourceMission);
-        targetStack->MoveMissionRecordToTop(sourceMission);
-    }
-}
-
-void AbilityStackManager::ActiveTopAbility(const std::shared_ptr<AbilityRecord> &abilityRecord)
-{
-    HILOG_INFO("Active top ability.");
-    CHECK_POINTER(abilityRecord);
-
-    DelayedSingleton<AppScheduler>::GetInstance()->AttachTimeOut(abilityRecord->GetToken());
-
-    if (abilityRecord->IsLauncherRoot()) {
-        HILOG_INFO("Launcher root load timeout, restart.");
-        BackToLauncher();
-        return;
-    }
-    if (abilityRecord->IsLockScreenRoot()) {
-        HILOG_INFO("lock screen root load timeout, restart.");
-        DelayedStartLockScreenApp();
-        return;
-    }
-
-    // Pre ability does not need to judge null
-    auto preAbility = abilityRecord->GetPreAbilityRecord();
-    auto missionRecord = abilityRecord->GetMissionRecord();
-    CHECK_POINTER(missionRecord);
-    auto stack = missionRecord->GetMissionStack();
-    CHECK_POINTER(stack);
-
-    // remove ability and mission and stack
-    missionRecord->RemoveAbilityRecord(abilityRecord);
-    if (missionRecord->IsEmpty()) {
-        RemoveMissionRecordById(missionRecord->GetMissionRecordId());
-        JudgingIsRemoveMultiScreenStack(stack);
-    }
-
-    if (preAbility) {
-        HILOG_INFO("Load timeout, restart pre ability.");
-        if (preAbility->IsAbilityState(ACTIVE)) {
-            auto preMission = preAbility->GetMissionRecord();
-            CHECK_POINTER(preMission);
-            auto preStack = preMission->GetMissionStack();
-            CHECK_POINTER(preStack);
-            if (IsSplitScreenStack(preStack->GetMissionStackId())) {
-                preStack->RemoveMissionRecord(preMission->GetMissionRecordId());
-                JudgingIsRemoveMultiScreenStack(preStack);
-                UpdateMissionOption(
-                    preMission, defaultMissionStack_, AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FULLSCREEN);
-
-                MoveMissionStackToTop(defaultMissionStack_);
-            } else {
-                MoveMissionStackToTop(preStack);
-            }
-            UpdateFocusAbilityRecord(preAbility, true);
-        }
-        if (preAbility->IsAbilityState(INACTIVE)) {
-            MoveMissionStackToTop(preAbility->GetMissionRecord()->GetMissionStack());
-            preAbility->ProcessActivate();
-        }
-    } else {
-        auto topFullScreenStack = GetTopFullScreenStackIncludeSplitScreen();
-        CHECK_POINTER(topFullScreenStack);
-        auto topFullScreenAbility = topFullScreenStack->GetTopAbilityRecord();
-        if (topFullScreenAbility) {
-            HILOG_INFO("Load timeout, top full screen ability restart.");
-            MoveMissionStackToTop(topFullScreenStack);
-            if (topFullScreenAbility->IsAbilityState(ACTIVE)) {
-                UpdateFocusAbilityRecord(preAbility, true);
-            }
-            if (topFullScreenAbility->IsAbilityState(INACTIVE)) {
-                topFullScreenAbility->ProcessActivate();
-            }
-        } else {
-            HILOG_INFO("Load timeout, back to launcher.");
-            BackToLauncher();
-        }
-    }
 }
 
 int AbilityStackManager::GetMaxHoldMissionsByStackId(int stackId) const
@@ -2678,144 +1730,26 @@ int AbilityStackManager::JudgingTargetStackId(AbilityWindowConfiguration config)
     }
 }
 
-bool AbilityStackManager::IsFirstInMission(const sptr<IRemoteObject> &token)
-{
-    HILOG_INFO("Is first in mission.");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-
-    CHECK_POINTER_RETURN_BOOL(token);
-    auto abilityRecord = GetAbilityRecordByToken(token);
-    CHECK_POINTER_RETURN_BOOL(abilityRecord);
-
-    auto missionRecord = abilityRecord->GetMissionRecord();
-    CHECK_POINTER_RETURN_BOOL(missionRecord);
-
-    return (missionRecord->GetBottomAbilityRecord() == abilityRecord);
-}
-
 int AbilityStackManager::StartLockMission(int uid, int missionId, bool isSystemApp, int isLock)
 {
-    HILOG_INFO("%{public}s", __func__);
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-
-    if (lockMissionContainer_ == nullptr) {
-        lockMissionContainer_ = std::make_shared<LockMissionContainer>();
-        CHECK_POINTER_AND_RETURN(lockMissionContainer_, INNER_ERR);
-    }
-
-    std::shared_ptr<MissionRecord> missionRecord;
-    int lockUid = -1;
-    if (!CheckLockMissionCondition(uid, missionId, isLock, isSystemApp, missionRecord, lockUid)) {
-        HILOG_ERROR("check lock mission condition failed.");
-        return LOCK_MISSION_DENY_FAILED;
-    }
-
-    // lock mission
-    if (isLock) {
-        if (!lockMissionContainer_->SetLockedMission(missionRecord, lockUid, isSystemApp)) {
-            HILOG_ERROR("lock mission error.");
-            return LOCK_MISSION_DENY_FAILED;
-        }
-        // notify wms mission locked state.
-
-        // move lock mission to top
-        return MoveMissionToTopLocked(missionRecord->GetMissionRecordId());
-    }
-
-    // unlock mission
-    if (!lockMissionContainer_->ReleaseLockedMission(missionRecord, uid, isSystemApp)) {
-        HILOG_ERROR("unlock mission error.");
-        return UNLOCK_MISSION_DENY_FAILED;
-    }
     return ERR_OK;
 }
 
 bool AbilityStackManager::CheckLockMissionCondition(
     int uid, int missionId, int isLock, bool isSystemApp, std::shared_ptr<MissionRecord> &mission, int &lockUid)
 {
-    CHECK_POINTER_RETURN_BOOL(lockMissionContainer_);
-    // lock or unlock mission by uid and missionId.
-    if ((isLock && lockMissionContainer_->IsLockedMissionState()) ||
-        (!isLock && !lockMissionContainer_->IsLockedMissionState())) {
-        return false;
-    }
-
-    mission = GetMissionRecordFromAllStacks(missionId);
-    if (missionId < 0 || mission == nullptr) {
-        HILOG_ERROR("target mission is not exist.");
-        return false;
-    }
-
-    auto fullScreenStack = IsFullScreenStack(mission->GetMissionStack()->GetMissionStackId());
-    if (!fullScreenStack) {
-        HILOG_ERROR("Multi-window active,lock mission failed.");
-        return false;
-    }
-
-    auto topability = mission->GetTopAbilityRecord();
-    auto bottomability = mission->GetBottomAbilityRecord();
-    auto abilityManagerService = DelayedSingleton<AbilityManagerService>::GetInstance();
-    CHECK_POINTER_RETURN_BOOL(topability);
-    CHECK_POINTER_RETURN_BOOL(bottomability);
-    CHECK_POINTER_RETURN_BOOL(abilityManagerService);
-    lockUid = abilityManagerService->GetUidByBundleName(bottomability->GetAbilityInfo().bundleName);
-    HILOG_INFO("target mission uid :%{public}d", lockUid);
-
-    if (isLock && !isSystemApp) {
-        // caller and locking ability must be same uid, and forground state.
-        return (lockUid == uid) &&
-               (topability->IsAbilityState(AbilityState::ACTIVE) || topability->IsAbilityState(AbilityState::INACTIVE));
-    }
-
     return true;
 }
 
 bool AbilityStackManager::CanStartInLockMissionState(
     const AbilityRequest &abilityRequest, const std::shared_ptr<AbilityRecord> &currentTopAbility) const
 {
-    if (currentTopAbility == nullptr || lockMissionContainer_ == nullptr) {
-        return true;
-    }
-
-    if (!lockMissionContainer_->IsLockedMissionState()) {
-        return true;
-    }
-
-    // current ability singeton mode
-    if (currentTopAbility->GetAbilityInfo().launchMode == AppExecFwk::LaunchMode::SINGLETON) {
-        if (abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SINGLETON) {
-            std::string bundleName = AbilityConfig::MISSION_NAME_MARK_HEAD + abilityRequest.abilityInfo.bundleName +
-                                     AbilityConfig::MISSION_NAME_SEPARATOR + abilityRequest.abilityInfo.name;
-            return lockMissionContainer_->IsSameLockedMission(bundleName);
-        }
-        return false;
-    }
-    // current ability standard mode
-    if (abilityRequest.abilityInfo.launchMode != AppExecFwk::LaunchMode::SINGLETON) {
-        bool isStackNotChanged = (currentTopAbility->IsLauncherAbility() && IsLauncherAbility(abilityRequest)) ||
-                                 (!currentTopAbility->IsLauncherAbility() && !IsLauncherAbility(abilityRequest));
-        // ability request will add to same mission.
-        return isStackNotChanged;
-    }
-
     return false;
 }
 
 bool AbilityStackManager::CanStopInLockMissionState(const std::shared_ptr<AbilityRecord> &terminateAbility) const
 {
-    if (lockMissionContainer_ == nullptr) {
-        return true;
-    }
-
-    if (!lockMissionContainer_->IsLockedMissionState()) {
-        return true;
-    }
-
-    auto mission = terminateAbility->GetMissionRecord();
-    auto bottom = mission->GetBottomAbilityRecord();
-    CHECK_POINTER_RETURN_BOOL(mission);
-    CHECK_POINTER_RETURN_BOOL(bottom);
-    return (lockMissionContainer_->IsSameLockedMission(mission->GetName()) && terminateAbility != bottom);
+    return true;
 }
 
 void AbilityStackManager::SendUnlockMissionMessage()
@@ -2921,29 +1855,7 @@ std::shared_ptr<AbilityRecord> AbilityStackManager::GetTopAbilityOfFullScreen()
 
 int AbilityStackManager::MinimizeMultiWindow(int missionId)
 {
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    if (lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        return ERR_INVALID_VALUE;
-    }
-    return MinimizeMultiWindowLocked(missionId);
-}
-
-int AbilityStackManager::MinimizeMultiWindowLocked(int missionId)
-{
-    HILOG_INFO("Minimize multi window locked.");
-    auto missionRecord = GetMissionRecordFromAllStacks(missionId);
-    CHECK_POINTER_AND_RETURN(missionRecord, MINIMIZE_MULTI_WINDOW_FAILED);
-
-    auto stack = missionRecord->GetMissionStack();
-    CHECK_POINTER_AND_RETURN(stack, MINIMIZE_MULTI_WINDOW_FAILED);
-
-    if (!stack->IsEqualStackId(FLOATING_MISSION_STACK_ID)) {
-        HILOG_ERROR("Mission is not in the float stack, can't be minimized.");
-        return MINIMIZE_MULTI_WINDOW_FAILED;
-    }
-
-    return MoveMissionToEndLocked(missionRecord->GetMissionRecordId());
+    return 0;
 }
 
 int AbilityStackManager::ChangeFocusAbility(
@@ -2987,35 +1899,12 @@ int AbilityStackManager::ChangeFocusAbilityLocked(const std::shared_ptr<AbilityR
     CHECK_POINTER_AND_RETURN_LOG(
         targetMission, CHANGE_FOCUS_ABILITY_FAILED, " TargetMission is  nullptr, change focus failed.");
 
-    return MoveMissionToTop(targetMission->GetMissionRecordId());
-}
-
-int AbilityStackManager::GetFloatingMissions(std::vector<AbilityMissionInfo> &list)
-{
-    return ERR_OK;
+    return 0;
 }
 
 int AbilityStackManager::CloseMultiWindow(int missionId)
 {
-    HILOG_INFO("Close multi window.");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    if (lockMissionContainer_ && lockMissionContainer_->IsLockedMissionState()) {
-        HILOG_ERROR("current is lock mission state, refusing to operate other mission.");
-        return ERR_INVALID_VALUE;
-    }
-
-    auto mission = GetMissionRecordFromAllStacks(missionId);
-    CHECK_POINTER_AND_RETURN(mission, CLOSE_MULTI_WINDOW_FAILED);
-
-    auto stack = mission->GetMissionStack();
-    CHECK_POINTER_AND_RETURN(stack, CLOSE_MULTI_WINDOW_FAILED);
-
-    if (IsFullScreenStack(stack->GetMissionStackId())) {
-        HILOG_ERROR("Full screen stack is not close.");
-        return CLOSE_MULTI_WINDOW_FAILED;
-    }
-
-    return RemoveMissionByIdLocked(missionId);
+    return 0;
 }
 
 void AbilityStackManager::JudgingIsRemoveMultiScreenStack(std::shared_ptr<MissionStack> &stack)
@@ -3069,15 +1958,6 @@ void AbilityStackManager::NotifyWindowModeChanged(const SystemWindowMode &window
 
 void AbilityStackManager::UpdateFocusAbilityRecord(const std::shared_ptr<AbilityRecord> &abilityRecord, bool isNotify)
 {
-    CHECK_POINTER(abilityRecord);
-    auto getMissionOptionDisplayId = [target = abilityRecord]() {
-        auto missionRecord = target->GetMissionRecord();
-        return missionRecord ? missionRecord->GetMissionOption().displayKey : DISPLAY_DEFAULT_ID;
-    };
-    auto setting = abilityRecord->GetStartSetting();
-    int displayId = setting ? std::atoi(setting->GetProperty(AbilityStartSetting::WINDOW_DISPLAY_ID_KEY).c_str())
-                            : getMissionOptionDisplayId();
-    UpdateFocusAbilityRecord(displayId, abilityRecord, isNotify);
 }
 
 void AbilityStackManager::UpdateFocusAbilityRecord(
@@ -3109,9 +1989,6 @@ void AbilityStackManager::UpdateFocusAbilityRecord(
 
 void AbilityStackManager::CheckMissionRecordIsResume(const std::shared_ptr<MissionRecord> &mission)
 {
-    if (resumeMissionContainer_ && resumeMissionContainer_->IsResume(mission->GetMissionRecordId())) {
-        resumeMissionContainer_->Resume(mission);
-    }
 }
 
 int AbilityStackManager::GetMissionSnapshot(int32_t missionId, MissionPixelMap &missionPixelMap)
@@ -3165,17 +2042,6 @@ bool AbilityStackManager::DeleteMissionRecordInStackOnLockScreen(const std::shar
 
 void AbilityStackManager::RestoreMissionRecordOnLockScreen(const std::shared_ptr<MissionRecord> &missionRecord)
 {
-    HILOG_INFO("RestoreMissionRecordOnLockScreen Start.");
-    CHECK_POINTER(missionRecord);
-    auto missionIndexInfo = missionRecord->GetMissionIndexInfo();
-    auto targetStack = GetStackById(missionIndexInfo.GetStackId());
-    CHECK_POINTER(targetStack);
-    auto sourceStack = missionRecord->GetMissionStack();
-    if (sourceStack) {
-        sourceStack->RemoveMissionRecord(missionRecord->GetMissionRecordId());
-    }
-    targetStack->AddMissionRecordByIndex(missionRecord, missionIndexInfo.GetMissionIndex());
-    missionRecord->SetMissionStack(targetStack, targetStack->GetMissionStackId());
 }
 
 std::string AbilityStackManager::ConvertWindowModeState(const SystemWindowMode &mode)

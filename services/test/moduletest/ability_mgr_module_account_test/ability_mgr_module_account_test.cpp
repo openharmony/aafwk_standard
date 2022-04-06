@@ -144,11 +144,6 @@ void AbilityMgrModuleAccountTest::CreateAbilityRequest(const std::string &abilit
 
     std::shared_ptr<AbilityRecord> abilityRecord2 = AbilityRecord::CreateAbilityRecord(abilityRequest2);
     abilityRecord2->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-    std::shared_ptr<MissionRecord> mission = std::make_shared<MissionRecord>(bundleName);
-    mission->AddAbilityRecordToTop(abilityRecord2);
-    auto stackManager_ = abilityMgrServ_->GetStackManager();
-    curMissionStack = stackManager_->GetCurrentMissionStack();
-    curMissionStack->AddMissionRecordToTop(mission);
     recordToken = abilityRecord2->GetToken();
 
     want = CreateWant(abilityName, bundleName);

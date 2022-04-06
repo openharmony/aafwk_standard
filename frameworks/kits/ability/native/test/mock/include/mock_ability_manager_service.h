@@ -87,26 +87,6 @@ public:
     int TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId) override;
     int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE) override;
 
-    int LockMission(int missionId) override
-    {
-        return 0;
-    };
-    int UnlockMission(int missionId) override
-    {
-        return 0;
-    };
-
-    int SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo) override
-    {
-        return 0;
-    };
-
-    int GetMissionLockModeState()
-    {
-        return 0;
-    }
-
     int UpdateConfiguration(const AppExecFwk::Configuration &config)
     {
         return 0;
@@ -127,15 +107,11 @@ public:
 
     MOCK_METHOD5(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
         const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode));
-    MOCK_METHOD1(MoveMissionToFloatingStack, int(const MissionOption &missionOption));
-    MOCK_METHOD2(MoveMissionToSplitScreenStack, int(const MissionOption &primary, const MissionOption &secondary));
     MOCK_METHOD2(
         ChangeFocusAbility, int(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken));
     MOCK_METHOD1(MinimizeMultiWindow, int(int missionId));
     MOCK_METHOD1(MaximizeMultiWindow, int(int missionId));
-    MOCK_METHOD1(GetFloatingMissions, int(std::vector<AbilityMissionInfo> &list));
     MOCK_METHOD1(CloseMultiWindow, int(int missionId));
-    MOCK_METHOD1(SetMissionStackSetting, int(const StackSetting &stackSetting));
     MOCK_METHOD1(GetPendinTerminateAbilityTestgRequestWant, void(int id));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
     MOCK_METHOD3(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status));
@@ -186,8 +162,6 @@ public:
         return 0;
     }
 
-    int MoveMissionToTop(int32_t missionId) override;
-
     int KillProcess(const std::string &bundleName) override;
 
     int UninstallApp(const std::string &bundleName, int32_t uid) override;
@@ -196,10 +170,6 @@ public:
     {
         return 0;
     }
-
-    virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst);
-
-    virtual bool IsFirstInMission(const sptr<IRemoteObject> &token);
 
     virtual int ClearUpApplicationData(const std::string &bundleName) override
     {

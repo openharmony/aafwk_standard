@@ -272,24 +272,6 @@ public:
     ErrCode GetMissionSnapshot(const int32_t missionId, MissionSnapshot &missionSnapshot);
 
     /**
-     * Ask that the mission associated with a given mission ID be moved to the
-     * front of the stack, so it is now visible to the user.
-     *
-     * @param missionId.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode MoveMissionToTop(int32_t missionId);
-
-    /**
-     * Requires that tasks associated with a given capability token be moved to the background
-     *
-     * @param token ability token
-     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst);
-
-    /**
      * Kill the process immediately.
      *
      * @param bundleName.
@@ -314,43 +296,6 @@ public:
      * @return
      */
     ErrCode ClearUpApplicationData(const std::string &bundleName);
-
-    /**
-     * @brief Checks whether this ability is the first ability in a mission.
-     *
-     * @return Returns true is first in Mission.
-     */
-    ErrCode IsFirstInMission(const sptr<IRemoteObject> &token);
-
-    /**
-     * Sets the application to start its ability in lock mission mode.
-     * @param missionId luck mission id
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode LockMission(int missionId);
-
-    /**
-     * Unlocks this ability by exiting the lock mission mode.
-     * @param missionId unluck mission id
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode UnlockMission(int missionId);
-
-    /**
-     * Sets description information about the mission containing this ability.
-     *
-     * @param description Indicates the object containing information about the
-     *                    mission. This parameter cannot be null.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode SetMissionDescriptionInfo(const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description);
-
-    /**
-     * get current system mission lock mode state.
-     *
-     * @return Returns 0: LOCK_MISSION_STATE_NONE, 1: LOCK_MISSION_STATE_LOCKED
-     */
-    int GetMissionLockModeState();
 
     int UpdateConfiguration(const AppExecFwk::Configuration &config);
 
@@ -379,21 +324,6 @@ public:
     ErrCode GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info);
 
     /**
-     * Moving mission to the specified stack by mission option(Enter floating window mode).
-     * @param missionOption, target mission option
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode MoveMissionToFloatingStack(const MissionOption &missionOption);
-
-    /**
-     * Moving mission to the specified stack by mission option(Enter floating window mode).
-     * @param primary, display primary mission option
-     * @param secondary, display secondary mission option
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary);
-
-    /**
      * minimize multiwindow by mission id.
      * @param missionId, the id of target mission
      * @return Returns ERR_OK on success, others on failure.
@@ -416,25 +346,11 @@ public:
     ErrCode ChangeFocusAbility(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken);
 
     /**
-     * get missions info of floating mission stack.
-     * @param list, mission info.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode GetFloatingMissions(std::vector<AbilityMissionInfo> &list);
-
-    /**
      * close multiwindow by mission id.
      * @param missionId, the id of target mission.
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode CloseMultiWindow(int missionId);
-
-    /**
-     * set special mission stack default settings.
-     * @param stackSetting, mission stack default settings.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode SetMissionStackSetting(const StackSetting &stackSetting);
 
     /**
      * Get system memory information.

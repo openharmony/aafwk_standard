@@ -37,31 +37,6 @@ public:
     {
         code_ = code;
 
-        if (GET_RECENT_MISSION == code) {
-            std::vector<AbilityMissionInfo> missionInfos;
-            AbilityMissionInfo info;
-            info.id = 1;
-            const Want want;
-            info.baseWant = want;
-            AppExecFwk::ElementName baseEle("baseDevice", "baseBundle", "baseAbility");
-            info.baseAbility = baseEle;
-            AppExecFwk::ElementName topEle("topDevice", "topBundle", "topAbility");
-            info.topAbility = topEle;
-            missionInfos.emplace_back(info);
-
-            reply.WriteInt32(missionInfos.size());
-            for (auto &it : missionInfos) {
-                if (!reply.WriteParcelable(&it)) {
-                    return ERR_INVALID_VALUE;
-                }
-            }
-
-            int res = 1;
-            if (!reply.WriteInt32(res)) {
-                return ERR_INVALID_VALUE;
-            }
-        }
-
         return 0;
     }
 
@@ -201,53 +176,8 @@ public:
         return 0;
     }
 
-    virtual int MoveMissionToTop(int32_t missionId)
-    {
-        return 0;
-    }
-
-    bool IsFirstInMission(const sptr<IRemoteObject> &token) override
-    {
-        return true;
-    }
-
-    int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override
-    {
-        return 0;
-    }
-
-    int LockMission(int missionId) override
-    {
-        return 0;
-    }
-    int UnlockMission(int missionId) override
-    {
-        return 0;
-    }
-
-    int SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo) override
-    {
-        return 0;
-    }
-
-    int GetMissionLockModeState()
-    {
-        return 0;
-    }
-
-    int MoveMissionToFloatingStack(const MissionOption &missionOption)
-    {
-        return 0;
-    }
-
     int UpdateConfiguration(const AppExecFwk::Configuration &config)
 
-    {
-        return 0;
-    }
-
-    int MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary)
     {
         return 0;
     }
@@ -267,17 +197,7 @@ public:
         return 0;
     }
 
-    int GetFloatingMissions(std::vector<AbilityMissionInfo> &list)
-    {
-        return 0;
-    }
-
     int CloseMultiWindow(int missionId)
-    {
-        return 0;
-    }
-
-    int SetMissionStackSetting(const StackSetting &stackSetting)
     {
         return 0;
     }

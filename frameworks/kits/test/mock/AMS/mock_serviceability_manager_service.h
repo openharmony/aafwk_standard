@@ -88,7 +88,6 @@ public:
 
     int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode) override;
 
-    MOCK_METHOD1(MoveMissionToTop, int(int32_t missionId));
     MOCK_METHOD1(KillProcess, int(const std::string &bundleName));
     MOCK_METHOD2(UninstallApp, int(const std::string &bundleName, int32_t uid));
     MOCK_METHOD2(
@@ -105,15 +104,11 @@ public:
     MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
     MOCK_METHOD5(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
         const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode));
-    MOCK_METHOD1(MoveMissionToFloatingStack, int(const MissionOption &missionOption));
-    MOCK_METHOD2(MoveMissionToSplitScreenStack, int(const MissionOption &primary, const MissionOption &secondary));
     MOCK_METHOD2(
         ChangeFocusAbility, int(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken));
     MOCK_METHOD1(MinimizeMultiWindow, int(int missionId));
     MOCK_METHOD1(MaximizeMultiWindow, int(int missionId));
-    MOCK_METHOD1(GetFloatingMissions, int(std::vector<AbilityMissionInfo> &list));
     MOCK_METHOD1(CloseMultiWindow, int(int missionId));
-    MOCK_METHOD1(SetMissionStackSetting, int(const StackSetting &stackSetting));
     MOCK_METHOD1(GetPendinTerminateAbilityTestgRequestWant, void(int id));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
     MOCK_METHOD3(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status));
@@ -145,26 +140,6 @@ public:
     MOCK_METHOD0(BlockAmsService, int());
     MOCK_METHOD1(BlockAbility, int(int32_t abilityRecordId));
 
-    int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override;
-    bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
-
-    int LockMission(int missionId) override
-    {
-        return 0;
-    }
-    int UnlockMission(int missionId) override
-    {
-        return 0;
-    }
-    int SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo) override
-    {
-        return 0;
-    }
-    int GetMissionLockModeState()
-    {
-        return 0;
-    }
     int UpdateConfiguration(const AppExecFwk::Configuration &config)
     {
         return 0;
