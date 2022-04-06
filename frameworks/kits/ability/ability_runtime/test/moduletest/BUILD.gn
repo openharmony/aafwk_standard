@@ -17,8 +17,6 @@ import("//foundation/aafwk/standard/feature.gni")
 module_output_path = "ability_runtime/ability_call_test"
 
 ###############################################################################
-#1. intent(c++) get/set test without transport
-
 config("module_private_config") {
   visibility = [ ":*" ]
   cflags = []
