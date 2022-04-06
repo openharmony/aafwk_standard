@@ -34,7 +34,8 @@ MockAbilityManagerService::~MockAbilityManagerService()
 int MockAbilityManagerService::StartAbility(const Want &want, int32_t userId, int requestCode)
 {
     AbilityLifeCycleState state = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
-    switch (requestCode) {
+    RequestCode request = static_cast<RequestCode>(requestCode);
+    switch (request) {
         // Test code, representing the life cycle: Ability_ STATE_ INITIAL
         case RequestCode::E_STATE_INITIAL:
             state = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
