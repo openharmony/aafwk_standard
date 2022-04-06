@@ -30,7 +30,6 @@
 #include "ability_running_info.h"
 #include "extension_running_info.h"
 #include "mission_option.h"
-#include "stack_info.h"
 #include "stack_setting.h"
 #include "uri.h"
 #include "want.h"
@@ -425,18 +424,6 @@ public:
      * @return Returns true is first in Mission.
      */
     virtual bool IsFirstInMission(const sptr<IRemoteObject> &token) = 0;
-
-    /**
-     * Save the top ability States and move them to the background
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int PowerOff() = 0;
-
-    /**
-     * Restore the state before top ability poweroff
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int PowerOn() = 0;
 
     /**
      * Sets the application to start its ability in lock mission mode.

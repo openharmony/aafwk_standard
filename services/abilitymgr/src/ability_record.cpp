@@ -1253,16 +1253,6 @@ std::shared_ptr<AbilityStartSetting> AbilityRecord::GetStartSetting() const
     return lifeCycleStateInfo_.setting;
 }
 
-void AbilityRecord::SetPowerState(const bool isPower)
-{
-    isPowerState_ = isPower;
-}
-
-bool AbilityRecord::GetPowerState() const
-{
-    return isPowerState_;
-}
-
 void AbilityRecord::SetRestarting(const bool isRestart)
 {
     isRestarting_ = isRestart;
@@ -1308,7 +1298,6 @@ AppState AbilityRecord::GetAppState() const
 void AbilityRecord::ClearFlag()
 {
     isRestarting_ = false;
-    isPowerState_ = false;
     isForceTerminate_ = false;
     isUninstall_ = false;
     isTerminating_ = false;
@@ -1348,16 +1337,6 @@ void AbilityRecord::SetLockScreenRoot()
 bool AbilityRecord::IsLockScreenRoot() const
 {
     return isLockScreenRoot_;
-}
-
-void AbilityRecord::SetPowerStateLockScreen(const bool isPower)
-{
-    isPowerStateLockScreen_ = isPower;
-}
-
-bool AbilityRecord::GetPowerStateLockScreen() const
-{
-    return isPowerStateLockScreen_;
 }
 
 bool AbilityRecord::IsNewVersion()

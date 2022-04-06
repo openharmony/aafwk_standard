@@ -12,8 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include "mission_record_info.h"
+#include "ability_record_info.h"
 
 #include "hilog_wrapper.h"
 #include "nlohmann/json.hpp"

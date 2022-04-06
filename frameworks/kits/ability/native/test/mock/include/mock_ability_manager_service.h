@@ -86,8 +86,6 @@ public:
 
     int TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId) override;
     int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE) override;
-    int PowerOff() override;
-    int PowerOn() override;
 
     int LockMission(int missionId) override
     {
@@ -298,7 +296,7 @@ public:
         return 0;
     }
 
-    enum RequestCode {
+    enum class RequestCode {
         E_STATE_INITIAL = 0,
         E_STATE_INACTIVE,
         E_STATE_ACTIVE,

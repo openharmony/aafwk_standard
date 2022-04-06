@@ -92,8 +92,6 @@ private:
     int CloseMultiWindowInner(MessageParcel &data, MessageParcel &reply);
     int SetMissionStackSettingInner(MessageParcel &data, MessageParcel &reply);
     int IsFirstInMissionInner(MessageParcel &data, MessageParcel &reply);
-    int PowerOffInner(MessageParcel &data, MessageParcel &reply);
-    int PowerOnInner(MessageParcel &data, MessageParcel &reply);
     int LockMissionInner(MessageParcel &data, MessageParcel &reply);
     int UnlockMissionInner(MessageParcel &data, MessageParcel &reply);
     int SetMissionDescriptionInfoInner(MessageParcel &data, MessageParcel &reply);
