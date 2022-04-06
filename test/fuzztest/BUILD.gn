@@ -21,7 +21,6 @@ group("fuzztest") {
     "CompelVerifyPermission_fuzzer:fuzztest",
     "FinishUserTest_fuzzer:fuzztest",
     "GetWantSender_fuzzer:fuzztest",
-    "IntentParseUri_fuzzer:fuzztest",
     "SetMissionLabel_fuzzer:fuzztest",
     "StartAbility_fuzzer:fuzztest",
     "StartContinuation_fuzzer:fuzztest",
