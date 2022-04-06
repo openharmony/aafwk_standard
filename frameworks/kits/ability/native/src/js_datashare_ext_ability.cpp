@@ -648,7 +648,7 @@ bool JsDataShareExtAbility::NotifyChange(const Uri &uri)
 
 Uri JsDataShareExtAbility::NormalizeUri(const Uri &uri)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA,__PRETTY_FUNCTION__);
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     auto ret = DataShareExtAbility::NormalizeUri(uri);
     HandleScope handleScope(jsRuntime_);
