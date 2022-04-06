@@ -127,7 +127,7 @@ featureAbility.startAbility(
                 authReadUriPermission: true,
                 // indicates the grant to perform write operations on the URI
                 authWriteUriPermission: true,
-                // support forward intent result to origin ability
+                // support forward want result to origin ability
                 abilityForwardResult: true,
                 // used for marking the ability start-up is triggered by continuation
                 abilityContinuation: true,
@@ -208,7 +208,7 @@ featureAbility.startAbility(
                 authReadUriPermission: true,
                 // indicates the grant to perform write operations on the URI
                 authWriteUriPermission: true,
-                // support forward intent result to origin ability
+                // support forward want result to origin ability
                 abilityForwardResult: true,
                 // used for marking the ability start-up is triggered by continuation
                 abilityContinuation: true,

@@ -35,7 +35,7 @@ std::shared_ptr<MTDumpUtil> MTDumpUtil::GetInstance()
 
 MTDumpUtil::MTDumpUtil()
 {
-    findRgx_["Intent"] = regex(".*intent\\[(.+)\\].*");
+    findRgx_["Want"] = regex(".*Want\\[(.+)\\].*");
     findRgx_["AbilityName"] = regex(".*main name \\[(.+)\\].*");
     findRgx_["AppName"] = regex(".*app name \\[(.+)\\].*");
     findRgx_["BundleName"] = regex(".*bundle name \\[(.+)\\].*");

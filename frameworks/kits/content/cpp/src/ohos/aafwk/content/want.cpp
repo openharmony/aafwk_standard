@@ -455,7 +455,7 @@ Want &Want::SetParams(const WantParams &wantParams)
 
 /**
  * @description: Obtains a bool-type value matching the given key.
- * @param key   Indicates the key of IntentParams.
+ * @param key   Indicates the key of WantParams.
  * @param defaultValue  Indicates the default bool-type value.
  * @return Returns the bool-type value of the parameter matching the given key;
  * returns the default value if the key does not exist.
@@ -472,7 +472,7 @@ bool Want::GetBoolParam(const std::string &key, bool defaultValue) const
 
 /**
  * @description:Obtains a bool-type array matching the given key.
- * @param key   Indicates the key of IntentParams.
+ * @param key   Indicates the key of WantParams.
  * @return Returns the bool-type array of the parameter matching the given key;
  * returns null if the key does not exist.
  */
@@ -530,7 +530,7 @@ Want &Want::SetParam(const std::string &key, const std::vector<bool> &value)
 
 /**
  * @description: Obtains a byte-type value matching the given key.
- * @param key   Indicates the key of IntentParams.
+ * @param key   Indicates the key of WantParams.
  * @param defaultValue  Indicates the default byte-type value.
  * @return Returns the byte-type value of the parameter matching the given key;
  * returns the default value if the key does not exist.
@@ -547,7 +547,7 @@ byte Want::GetByteParam(const std::string &key, const byte defaultValue) const
 
 /**
  * @description: Obtains a byte-type array matching the given key.
- * @param key   Indicates the key of IntentParams.
+ * @param key   Indicates the key of WantParams.
  * @return Returns the byte-type array of the parameter matching the given key;
  * returns null if the key does not exist.
  */
@@ -574,7 +574,7 @@ std::vector<byte> Want::GetByteArrayParam(const std::string &key) const
  * @description: Sets a parameter value of the byte type.
  * @param key   Indicates the key matching the parameter.
  * @param value Indicates the byte-type value of the parameter.
- * @return Returns this Intent object containing the parameter value.
+ * @return Returns this Want object containing the parameter value.
  */
 Want &Want::SetParam(const std::string &key, byte value)
 {
@@ -586,7 +586,7 @@ Want &Want::SetParam(const std::string &key, byte value)
  * @description: Sets a parameter value of the byte array type.
  * @param key   Indicates the key matching the parameter.
  * @param value Indicates the byte array of the parameter.
- * @return Returns this Intent object containing the parameter value.
+ * @return Returns this Want object containing the parameter value.
  */
 Want &Want::SetParam(const std::string &key, const std::vector<byte> &value)
 {
@@ -722,7 +722,7 @@ std::vector<int> Want::GetIntArrayParam(const std::string &key) const
  * @description: Sets a parameter value of the int type.
  * @param key   Indicates the key matching the parameter.
  * @param value Indicates the int value of the parameter.
- * @return Returns this Intent object containing the parameter value.
+ * @return Returns this Want object containing the parameter value.
  */
 Want &Want::SetParam(const std::string &key, int value)
 {
@@ -734,7 +734,7 @@ Want &Want::SetParam(const std::string &key, int value)
  * @description: Sets a parameter value of the int array type.
  * @param key   Indicates the key matching the parameter.
  * @param value Indicates the int array of the parameter.
- * @return Returns this Intent object containing the parameter value.
+ * @return Returns this Want object containing the parameter value.
  */
 Want &Want::SetParam(const std::string &key, const std::vector<int> &value)
 {
@@ -769,7 +769,7 @@ double Want::GetDoubleParam(const std::string &key, double defaultValue) const
 
 /**
  * @description: Obtains a double array matching the given key.
- * @param key   Indicates the key of IntentParams.
+ * @param key   Indicates the key of WantParams.
  * @return Returns the double array of the parameter matching the given key;
  * returns null if the key does not exist.
  */
@@ -796,7 +796,7 @@ std::vector<double> Want::GetDoubleArrayParam(const std::string &key) const
  * @description: Sets a parameter value of the double type.
  * @param key   Indicates the key matching the parameter.
  * @param value Indicates the int value of the parameter.
- * @return Returns this Intent object containing the parameter value.
+ * @return Returns this Want object containing the parameter value.
  */
 Want &Want::SetParam(const std::string &key, double value)
 {
@@ -843,7 +843,7 @@ float Want::GetFloatParam(const std::string &key, float defaultValue) const
 
 /**
  * @description: Obtains a float array matching the given key.
- * @param key Indicates the key of IntentParams.
+ * @param key Indicates the key of WantParams.
  * @return Obtains a float array matching the given key.
  */
 std::vector<float> Want::GetFloatArrayParam(const std::string &key) const

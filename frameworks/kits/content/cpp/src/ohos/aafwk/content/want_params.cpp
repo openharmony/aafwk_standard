@@ -136,9 +136,9 @@ std::string WantParams::GetStringByType(const sptr<IInterface> iIt, int typeId)
 template<typename T1, typename T2, typename T3>
 static void SetNewArray(const AAFwk::InterfaceID &id, AAFwk::IArray *orgIArray, sptr<AAFwk::IArray> &ao);
 /**
- * @description: A constructor used to create an IntentParams instance by using the parameters of an existing
- * IntentParams object.
- * @param intentParams  Indicates the existing IntentParams object.
+ * @description: A constructor used to create an WantParams instance by using the parameters of an existing
+ * WantParams object.
+ * @param wantParams  Indicates the existing WantParams object.
  */
 WantParams::WantParams(const WantParams &wantParams)
 {
@@ -216,7 +216,7 @@ bool WantParams::NewArrayData(IArray *source, sptr<IArray> &dest)
 /**
  * @description: A WantParams used to
  *
- * @param intentParams  Indicates the existing IntentParams object.
+ * @param other  Indicates the existing WantParams object.
  */
 WantParams &WantParams::operator=(const WantParams &other)
 {
@@ -406,9 +406,9 @@ void WantParams::Remove(const std::string &key)
 }
 
 /**
- * @description: Checks whether the Intent contains the given key.
+ * @description: Checks whether the Want contains the given key.
  * @param key Indicates the key to check.
- * @return Returns true if the Intent contains the key; returns false otherwise.
+ * @return Returns true if the Want contains the key; returns false otherwise.
  */
 bool WantParams::HasParam(const std::string &key) const
 {
@@ -416,7 +416,7 @@ bool WantParams::HasParam(const std::string &key) const
 }
 
 /**
- * @description: Obtains the number of parameters contained in this IntentParams object.
+ * @description: Obtains the number of parameters contained in this WantParams object.
  * @return Returns the number of parameters.
  */
 int WantParams::Size() const
@@ -425,7 +425,7 @@ int WantParams::Size() const
 }
 
 /**
- * @description: Checks whether this IntentParams object contains no parameters.
+ * @description: Checks whether this WantParams object contains no parameters.
  * @return Returns true if this object does not contain any parameters; returns false otherwise.
  */
 bool WantParams::IsEmpty() const
@@ -603,8 +603,8 @@ bool WantParams::DoMarshalling(Parcel &parcel) const
 }
 
 /**
- * @description: Marshals an IntentParams object into a Parcel.
- * @param Key-value pairs in the IntentParams are marshalled separately.
+ * @description: Marshals an WantParams object into a Parcel.
+ * @param Key-value pairs in the WantParams are marshalled separately.
  * @return If any key-value pair fails to be marshalled, false is returned.
  */
 bool WantParams::Marshalling(Parcel &parcel) const
@@ -1273,8 +1273,8 @@ bool WantParams::ReadFromParcel(Parcel &parcel)
 }
 
 /**
- * @description: Unmarshals an IntentParams object from a Parcel.
- * @param Key-value pairs in the IntentParams are unmarshalled separately.
+ * @description: Unmarshals an WantParams object from a Parcel.
+ * @param Key-value pairs in the WantParams are unmarshalled separately.
  * @return If any key-value pair fails to be unmarshalled, false is returned.
  */
 WantParams *WantParams::Unmarshalling(Parcel &parcel)

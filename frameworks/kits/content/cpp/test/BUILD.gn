@@ -13,7 +13,7 @@
 
 import("//build/test.gni")
 
-module_output_path = "ability_runtime/intent_test"
+module_output_path = "ability_runtime/want_test"
 
 ###############################################################################
 config("module_private_config") {
@@ -23,7 +23,6 @@ config("module_private_config") {
     "//sdk/appexecfwk/appexecfwk_base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/intent/include",
     "//foundation/appexecfwk/standard/common/log/include",
   ]
 
@@ -46,138 +45,6 @@ config("module_private_want_param_wrapper_config") {
     "ABILITYBASE_LOG_TAG = \"WantUnitTest\"",
     "ABILITYBASE_LOG_DOMAIN = 0xD002210",
   ]
-}
-
-ohos_unittest("intent_parcelable_test") {
-  module_out_path = module_output_path
-  sources = []
-
-  configs = [
-    ":module_private_config",
-    #"//foundation/aafwk/standard/interfaces/innerkits/intent:intent_public_config",
-  ]
-
-  deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "ipc:ipc_core",
-  ]
-}
-
-ohos_unittest("intent_base_test") {
-  module_out_path = module_output_path
-  sources = []
-
-  configs = [
-    ":module_private_config",
-    #"//foundation/aafwk/standard/interfaces/innerkits/intent:intent_public_config",
-  ]
-
-  deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "ipc:ipc_core",
-  ]
-}
-
-ohos_unittest("intent_parse_to_uri_test") {
-  module_out_path = module_output_path
-  sources = []
-
-  configs = [
-    ":module_private_config",
-    #"//foundation/aafwk/standard/interfaces/innerkits/intent:intent_public_config",
-  ]
-
-  deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "ipc:ipc_core",
-  ]
-}
-
-ohos_unittest("intent_parameters_test") {
-  module_out_path = module_output_path
-  sources = [
-    "../src/ohos/aafwk/content/intent.cpp",
-    "../src/ohos/aafwk/content/intent_params.cpp",
-    "unittest/common/intent_parameters_test.cpp",
-  ]
-
-  configs = [
-    ":module_private_config",
-    #"//foundation/aafwk/standard/interfaces/innerkits/intent:intent_public_config",
-  ]
-
-  deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [
-    "ability_base:want",
-    "ipc:ipc_core",
-  ]
-}
-
-ohos_unittest("intent_params_test") {
-  module_out_path = module_output_path
-  sources = []
-
-  configs = [
-    ":module_private_config",
-    #"//foundation/aafwk/standard/interfaces/innerkits/intent:intent_public_config",
-  ]
-
-  deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [
-    "bundle_framework:appexecfwk_base",
-    "ipc:ipc_core",
-  ]
-}
-
-ohos_unittest("intent_filter_test") {
-  module_out_path = module_output_path
-  sources = [
-    "../src/ohos/aafwk/content/intent.cpp",
-    "../src/ohos/aafwk/content/intent_filter.cpp",
-    "../src/ohos/aafwk/content/intent_params.cpp",
-    "unittest/common/intent_filter_test.cpp",
-  ]
-
-  configs = [
-    ":module_private_config",
-    #"//foundation/aafwk/standard/interfaces/innerkits/intent:intent_public_config",
-  ]
-
-  deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [ "ability_base:want" ]
 }
 
 ohos_unittest("operation_test") {
@@ -337,11 +204,6 @@ group("unittest") {
   deps = []
 
   deps += [
-    ":intent_base_test",
-    ":intent_filter_test",
-    ":intent_parameters_test",
-    ":intent_params_test",
-    ":intent_parse_to_uri_test",
     ":operation_test",
     ":patterns_matcher_test",
     ":skills_test",
