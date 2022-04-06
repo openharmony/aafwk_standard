@@ -323,18 +323,6 @@ public:
     ErrCode IsFirstInMission(const sptr<IRemoteObject> &token);
 
     /**
-     * Save the top ability States and move them to the background
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode PowerOff();
-
-    /**
-     * Restore the state before top ability poweroff
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode PowerOn();
-
-    /**
      * Sets the application to start its ability in lock mission mode.
      * @param missionId luck mission id
      * @return Returns ERR_OK on success, others on failure.

@@ -18,14 +18,12 @@
 
 #include "ability_manager_client.h"
 #include "app_mgr_interface.h"
-#include "stack_info.h"
 
 namespace OHOS {
 namespace AppExecFwk {
 using OHOS::AAFwk::AbilityManagerClient;
 using OHOS::AAFwk::AbilityMissionInfo;
 using OHOS::AAFwk::RECENT_IGNORE_UNAVAILABLE;
-using OHOS::AAFwk::StackInfo;
 using OHOS::AAFwk::Want;
 using OHOS::AppExecFwk::RunningProcessInfo;
 using RuningMissionInfo = AbilityMissionInfo;

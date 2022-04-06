@@ -391,18 +391,6 @@ public:
     virtual bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
 
     /**
-     * Save the top ability States and move them to the background
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int PowerOff() override;
-
-    /**
-     * Restore the state before top ability poweroff
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int PowerOn() override;
-
-    /**
      * Sets the application to start its ability in lock mission mode.
      * @param missionId luck mission id
      * @return Returns ERR_OK on success, others on failure.

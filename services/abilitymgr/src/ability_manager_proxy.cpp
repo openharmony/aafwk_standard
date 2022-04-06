@@ -1110,38 +1110,6 @@ bool AbilityManagerProxy::IsFirstInMission(const sptr<IRemoteObject> &token)
     return reply.ReadBool();
 }
 
-int AbilityManagerProxy::PowerOff()
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    auto error = Remote()->SendRequest(IAbilityManager::POWER_OFF, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Send request error: %{public}d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
-int AbilityManagerProxy::PowerOn()
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    auto error = Remote()->SendRequest(IAbilityManager::POWER_ON, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Send request error: %{public}d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
 int AbilityManagerProxy::LockMission(int missionId)
 {
     int error;

@@ -148,8 +148,6 @@ public:
     int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override;
     bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
 
-    int PowerOff() override;
-    int PowerOn() override;
     int LockMission(int missionId) override
     {
         return 0;
