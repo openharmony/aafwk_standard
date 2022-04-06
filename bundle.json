@@ -90,17 +90,6 @@
             },
             {
               "header": {
-                "header_base": "//foundation/aafwk/standard/interfaces/innerkits/intent/include/",
-                "header_files": [
-                  "ohos/aafwk/content/intent.h",
-                  "ohos/aafwk/content/intent_filter.h",
-                  "ohos/aafwk/content/intent_params.h"
-                ]
-              },
-              "name": "//foundation/aafwk/standard/interfaces/innerkits/intent:intent"
-            },
-            {
-              "header": {
                 "header_base": "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
                 "header_files": [
                   "ability_connect_callback_interface.h",

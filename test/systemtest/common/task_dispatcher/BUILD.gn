@@ -21,7 +21,6 @@ config("system_test_task_dispatcher_config") {
     "//foundation/aafwk/standard/common/task_dispatcher/include/threading",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include/task",
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
-    "${aafwk_path}/interfaces/innerkits/intent/include",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "${aafwk_path}/interfaces/innerkits/want/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
