@@ -19,7 +19,7 @@
 
 #include "nlohmann/json.hpp"
 #include "string_ex.h"
-#include "parcel_macro.h"
+#include "parcel_macro_ability.h"
 
 namespace OHOS {
 namespace AppExecFwk {
