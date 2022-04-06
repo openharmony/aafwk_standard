@@ -443,32 +443,6 @@ HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_015, TestSize.Level1)
  * Feature: AAFwk
  * Function: AbilityManagerService
  * SubFunction: IPC of client and server
- * FunctionPoints: MoveMissionToTop
- * EnvConditions: NA
- * CaseDescription: verify MoveMissionToTop IPC between client and server.
- */
-HWTEST_F(IpcAbilityMgrModuleTest, AbilityMgrService_IPC_018, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_018 start";
-
-    for (int i = 0; i < COUNT; i++) {
-        sptr<MockAbilityMgrService> mockAbilityMgr(new MockAbilityMgrService());
-        sptr<IAbilityManager> abilityMgrClient = iface_cast<IAbilityManager>(mockAbilityMgr);
-
-        EXPECT_CALL(*mockAbilityMgr, MoveMissionToTop(_))
-            .Times(1)
-            .WillOnce(InvokeWithoutArgs(mockAbilityMgr.GetRefPtr(), &MockAbilityMgrService::Post));
-        abilityMgrClient->MoveMissionToTop(1);
-        mockAbilityMgr->Wait();
-    }
-
-    GTEST_LOG_(INFO) << "IpcAbilityMgrModuleTest AbilityMgrService_IPC_018 end";
-}
-
-/*
- * Feature: AAFwk
- * Function: AbilityManagerService
- * SubFunction: IPC of client and server
  * FunctionPoints: AcquireDataAbility
  * EnvConditions: NA
  * CaseDescription: verify data ability acquire IPC between client and server.

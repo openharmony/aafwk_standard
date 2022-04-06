@@ -183,16 +183,6 @@ void ApplicationContext::StartAbilities(const std::vector<AAFwk::Want> &wants)
 {}
 
 /**
- * @brief Checks whether this ability is the first ability in a mission.
- *
- * @return Returns true is first in Mission.
- */
-bool ApplicationContext::IsFirstInMission()
-{
-    return false;
-}
-
-/**
  * @brief Obtains the unique ID of the mission containing this ability.
  *
  * @return Returns the unique mission ID.

@@ -152,11 +152,6 @@ int MockAbilityManagerService::StopServiceAbility(const Want &want, int32_t user
     return ERR_OK;
 }
 
-int MockAbilityManagerService::MoveMissionToTop(int32_t missionId)
-{
-    return 0;
-}
-
 int MockAbilityManagerService::KillProcess(const std::string &bundleName)
 {
     return 0;
@@ -165,16 +160,6 @@ int MockAbilityManagerService::KillProcess(const std::string &bundleName)
 int MockAbilityManagerService::UninstallApp(const std::string &bundleName, int32_t uid)
 {
     return 0;
-}
-
-int MockAbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
-{
-    return 0;
-}
-
-bool MockAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
-{
-    return true;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

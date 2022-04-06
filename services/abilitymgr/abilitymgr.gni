@@ -55,14 +55,8 @@ abilityms_files = [
   "src/image_info.cpp",
   "src/mission_record.cpp",
   "src/mission_stack.cpp",
-  "src/ability_mission_info.cpp",
-  "src/mission_description_info.cpp",
   "src/mission_snapshot.cpp",
-  "src/lock_mission_container.cpp",
-  "src/mission_option.cpp",
   "src/stack_setting.cpp",
-  "src/resume_mission_container.cpp",
-  "src/mission_index_info.cpp",
   "src/lock_screen_event_subscriber.cpp",
 
   # new ability manager service here

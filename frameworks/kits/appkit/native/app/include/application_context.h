@@ -149,13 +149,6 @@ public:
     void StartAbilities(const std::vector<AAFwk::Want> &wants) override;
 
     /**
-     * @brief Checks whether this ability is the first ability in a mission.
-     *
-     * @return Returns true is first in Mission.
-     */
-    bool IsFirstInMission() override;
-
-    /**
      * @brief Obtains the unique ID of the mission containing this ability.
      *
      * @return Returns the unique mission ID.

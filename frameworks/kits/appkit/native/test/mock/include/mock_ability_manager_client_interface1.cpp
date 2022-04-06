@@ -25,7 +25,6 @@ MockAbilityManagerClient::MockAbilityManagerClient()
     startAbility_ = ERR_INVALID_OPERATION;
     terminateAbility_ = ERR_INVALID_OPERATION;
     terminateAbilityResult_ = ERR_INVALID_OPERATION;
-    isFirstInMission_ = ERR_INVALID_OPERATION;
     terminateAbilityValue_ = 0;
 }
 MockAbilityManagerClient::~MockAbilityManagerClient()
@@ -148,11 +147,6 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, Missio
     return ERR_OK;
 }
 
-ErrCode AbilityManagerClient::MoveMissionToTop(int32_t missionId)
-{
-    return ERR_OK;
-}
-
 ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
 {
     return ERR_OK;
@@ -191,10 +185,6 @@ ErrCode MockAbilityManagerClient::GetTerminateAbilityResult()
 {
     return terminateAbilityResult_;
 }
-ErrCode MockAbilityManagerClient::GetIsFirstInMission()
-{
-    return isFirstInMission_;
-}
 
 void MockAbilityManagerClient::SetStartAbility(ErrCode tValue)
 {
@@ -207,10 +197,6 @@ void MockAbilityManagerClient::SetTerminateAbility(ErrCode tValue)
 void MockAbilityManagerClient::SetTerminateAbilityResult(ErrCode tValue)
 {
     terminateAbilityResult_ = tValue;
-}
-void MockAbilityManagerClient::SetIsFirstInMission(ErrCode tValue)
-{
-    isFirstInMission_ = tValue;
 }
 
 int MockAbilityManagerClient::GetTerminateAbilityValue()

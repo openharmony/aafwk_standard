@@ -50,19 +50,12 @@ public:
     MOCK_METHOD2(TerminateAbilityResult, int(const sptr<IRemoteObject> &, int startId));
     MOCK_METHOD1(StopServiceAbility, int(const Want &));
     MOCK_METHOD2(GetMissionSnapshot, int(const int32_t, MissionPixelMap &));
-    MOCK_METHOD1(MoveMissionToTop, int(int32_t));
     MOCK_METHOD1(GetMissionIdByToken, int32_t(const sptr<IRemoteObject> &token));
     MOCK_METHOD1(KillProcess, int(const std::string &));
     MOCK_METHOD2(UninstallApp, int(const std::string &, int32_t));
     MOCK_METHOD4(OnRemoteRequest, int(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option));
     MOCK_METHOD2(TerminateAbilityByCaller, int(const sptr<IRemoteObject> &callerToken, int requestCode));
     MOCK_METHOD3(StartAbility, int(const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode));
-    MOCK_METHOD2(MoveMissionToEnd, int(const sptr<IRemoteObject> &token, const bool nonFirst));
-    MOCK_METHOD1(IsFirstInMission, bool(const sptr<IRemoteObject> &token));
-    MOCK_METHOD1(LockMission, int(int));
-    MOCK_METHOD1(UnlockMission, int(int));
-    MOCK_METHOD2(SetMissionDescriptionInfo, int(const sptr<IRemoteObject> &token, const MissionDescriptionInfo &info));
-    MOCK_METHOD0(GetMissionLockModeState, int());
     MOCK_METHOD1(UpdateConfiguration, int(const AppExecFwk::Configuration &));
     MOCK_METHOD2(
         GetWantSender, sptr<IWantSender>(const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken));
@@ -76,8 +69,6 @@ public:
     MOCK_METHOD2(UnregisterCancelListener, void(const sptr<IWantSender> &sender, const sptr<IWantReceiver> &receiver));
     MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
 
-    MOCK_METHOD2(MoveMissionToEnd, int(const sptr<IRemoteObject> &token, const bool nonFirst));
-    MOCK_METHOD1(IsFirstInMission, bool(const sptr<IRemoteObject> &token));
     MOCK_METHOD1(GetPendingWantUserId, int(const sptr<IWantSender> &target));
 
     virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,

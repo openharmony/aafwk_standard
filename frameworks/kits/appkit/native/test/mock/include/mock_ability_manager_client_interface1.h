@@ -38,12 +38,10 @@ public:
     ErrCode GetStartAbility();
     ErrCode GetTerminateAbility();
     ErrCode GetTerminateAbilityResult();
-    ErrCode GetIsFirstInMission();
 
     void SetStartAbility(ErrCode tValue);
     void SetTerminateAbility(ErrCode tValue);
     void SetTerminateAbilityResult(ErrCode tValue);
-    void SetIsFirstInMission(ErrCode tValue);
 
     int GetTerminateAbilityValue();
     void SetTerminateAbilityValue(int nValue);
@@ -58,7 +56,6 @@ private:
     ErrCode startAbility_;
     ErrCode terminateAbility_;
     ErrCode terminateAbilityResult_;
-    ErrCode isFirstInMission_;
 
     int terminateAbilityValue_;
 };

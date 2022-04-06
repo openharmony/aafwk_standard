@@ -197,15 +197,5 @@ ErrCode MockAbilityManagerService::ReleaseDataAbility(
     }
     return -1;
 }
-
-int MockAbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
-{
-    return 0;
-}
-
-bool MockAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
-{
-    return true;
-}
 }  // namespace AAFwk
 }  // namespace OHOS

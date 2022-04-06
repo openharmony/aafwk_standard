@@ -31,10 +31,8 @@ MockAbilityManagerClient::MockAbilityManagerClient()
     startAbility_ = ERR_INVALID_OPERATION;
     terminateAbility_ = ERR_INVALID_OPERATION;
     terminateAbilityResult_ = ERR_INVALID_OPERATION;
-    isFirstInMission_ = ERR_INVALID_OPERATION;
     terminateAbilityValue_ = 0;
     missionId_ = -1;
-    moveMissionToEnd_ = false;
 }
 MockAbilityManagerClient::~MockAbilityManagerClient()
 {}
@@ -153,11 +151,6 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, Missio
     return ERR_OK;
 }
 
-ErrCode AbilityManagerClient::MoveMissionToTop(int32_t missionId)
-{
-    return ERR_OK;
-}
-
 ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
 {
     return ERR_OK;
@@ -184,36 +177,6 @@ ErrCode AbilityManagerClient::TerminateAbilityResult(const sptr<IRemoteObject> &
     return MockAbilityManagerClient::GetInstance()->GetTerminateAbilityResult();
 }
 
-ErrCode AbilityManagerClient::IsFirstInMission(const sptr<IRemoteObject> &token)
-{
-    return MockAbilityManagerClient::GetInstance()->GetIsFirstInMission();
-}
-
-ErrCode AbilityManagerClient::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
-{
-    MockAbilityManagerClient::GetInstance()->SetMockMoveMissionToEnd(
-        !MockAbilityManagerClient::GetInstance()->GetMockMoveMissionToEnd());
-    return ERR_OK;
-}
-
-ErrCode AbilityManagerClient::LockMission(int missionId)
-{
-    MockAbilityManagerClient::GetInstance()->SetMockMissionId(missionId);
-    return ERR_OK;
-}
-
-ErrCode AbilityManagerClient::UnlockMission(int missionId)
-{
-    MockAbilityManagerClient::GetInstance()->SetMockMissionId(missionId);
-    return ERR_OK;
-}
-
-ErrCode AbilityManagerClient::SetMissionDescriptionInfo(
-    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo)
-{
-    return ERR_OK;
-}
-
 ErrCode MockAbilityManagerClient::GetStartAbility()
 {
     return startAbility_;
@@ -225,10 +188,6 @@ ErrCode MockAbilityManagerClient::GetTerminateAbility()
 ErrCode MockAbilityManagerClient::GetTerminateAbilityResult()
 {
     return terminateAbilityResult_;
-}
-ErrCode MockAbilityManagerClient::GetIsFirstInMission()
-{
-    return isFirstInMission_;
 }
 
 void MockAbilityManagerClient::SetStartAbility(ErrCode tValue)
@@ -243,10 +202,7 @@ void MockAbilityManagerClient::SetTerminateAbilityResult(ErrCode tValue)
 {
     terminateAbilityResult_ = tValue;
 }
-void MockAbilityManagerClient::SetIsFirstInMission(ErrCode tValue)
-{
-    isFirstInMission_ = tValue;
-}
+
 int MockAbilityManagerClient::GetTerminateAbilityValue()
 {
     return terminateAbilityValue_;
@@ -263,15 +219,6 @@ int MockAbilityManagerClient::GetMockMissionId()
 void MockAbilityManagerClient::SetMockMissionId(int missionId)
 {
     missionId_ = missionId;
-}
-
-bool MockAbilityManagerClient::GetMockMoveMissionToEnd()
-{
-    return moveMissionToEnd_;
-}
-void MockAbilityManagerClient::SetMockMoveMissionToEnd(bool flag)
-{
-    moveMissionToEnd_ = flag;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

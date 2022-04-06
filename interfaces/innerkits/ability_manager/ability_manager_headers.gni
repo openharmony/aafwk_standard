@@ -30,7 +30,6 @@ ability_manager_headers = {
     "want_receiver_interface.h",
     "ability_window_configuration.h",
     "ability_start_setting.h",
-    "mission_option.h",
     "stack_setting.h",
     "start_options.h",
     "global_configuration.h",

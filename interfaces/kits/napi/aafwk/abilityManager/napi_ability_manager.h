@@ -18,7 +18,6 @@
 
 #include <vector>
 
-#include "ability_mission_info.h"
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
@@ -28,11 +27,9 @@
 #include "ability_manager_client.h"
 #include "running_process_info.h"
 #include "system_memory_attr.h"
-#include "ability_mission_info.h"
 #include "mission_snapshot.h"
 
 using RunningProcessInfo = OHOS::AppExecFwk::RunningProcessInfo;
-using AbilityMissionInfo = OHOS::AAFwk::AbilityMissionInfo;
 using MissionSnapshot = OHOS::AAFwk::MissionSnapshot;
 
 namespace OHOS {
@@ -57,30 +54,11 @@ struct AsyncCallbackInfo {
     std::vector<RunningProcessInfo> info;
 };
 
-struct AsyncMissionInfosCallbackInfo {
-    napi_env env;
-    napi_async_work asyncWork;
-    napi_deferred deferred;
-    napi_ref callback[2] = {0};
-    int32_t maxMissionNum = 0;
-    int32_t queryType = 0;
-    std::vector<AbilityMissionInfo> recentMissionInfo;
-};
-
 struct AsyncClearMissionsCallbackInfo {
     napi_env env;
     napi_async_work asyncWork;
     napi_deferred deferred;
     napi_ref callback[2] = {0};
-    int32_t result = -1;
-};
-
-struct AsyncMoveMissionToTopCallbackInfo {
-    napi_env env;
-    napi_async_work asyncWork;
-    napi_deferred deferred;
-    napi_ref callback[2] = {0};
-    int32_t index = -1;
     int32_t result = -1;
 };
 
@@ -100,15 +78,6 @@ struct AsyncClearUpApplicationDataCallbackInfo {
     napi_ref callback[2] = {0};
     std::string bundleName;
     int32_t result = -1;
-};
-
-struct AsyncPreviousMissionInfosCallbackInfo {
-    napi_env env;
-    napi_async_work asyncWork;
-    napi_deferred deferred;
-    napi_ref callback[2] = {0};
-    int32_t maxMissionNum = 0;
-    std::vector<AbilityMissionInfo> previousMissionInfo;
 };
 
 struct AsyncGetMissionSnapshot {
@@ -137,7 +106,6 @@ struct CallbackInfo {
 
 napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info);
 napi_value NAPI_GetActiveProcessInfos(napi_env env, napi_callback_info info);
-napi_value NAPI_MoveMissionToTop(napi_env env, napi_callback_info info);
 napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info);
 napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info);
 napi_value NAPI_GetAbilityMissionSnapshot(napi_env env, napi_callback_info info);

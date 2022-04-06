@@ -90,23 +90,6 @@ public:
         return 0;
     }
 
-    virtual int lockMission(int missionId)
-    {
-        return 0;
-    }
-    virtual int UnlockMission(int missionId) override
-    {
-        return 0;
-    }
-    virtual int SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const AAFwk::MissionDescriptionInfo &missionDescriptionInfo) override
-    {
-        return 0;
-    }
-    virtual int GetMissionLockModeState() override
-    {
-        return 0;
-    }
     virtual sptr<AAFwk::IWantSender> GetWantSender(
         const AAFwk::WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken) override
     {
@@ -183,21 +166,6 @@ public:
     {
         return 0;
     }
-    virtual int MoveMissionToTop(int32_t missionId)
-    {
-        return 0;
-    }
-    /**
-     * Requires that tasks associated with a given capability token be moved to the background
-     *
-     * @param token ability token
-     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
-    {
-        return 0;
-    }
 
     virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override
     {
@@ -217,14 +185,6 @@ public:
         return 0;
     }
     virtual int TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode)
-    {
-        return 0;
-    }
-    /** Checks whether this ability is the first ability in a mission.
-     * @param lostToken, the token of ability
-     * @return Returns true is first in Mission.
-     */
-    virtual bool IsFirstInMission(const sptr<IRemoteObject> &token)
     {
         return 0;
     }
@@ -470,23 +430,6 @@ public:
         return 0;
     }
 
-    virtual int LockMission(int missionId) override
-    {
-        return 0;
-    }
-    virtual int UnlockMission(int missionId) override
-    {
-        return 0;
-    }
-    virtual int SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const AAFwk::MissionDescriptionInfo &missionDescriptionInfo) override
-    {
-        return 0;
-    }
-    virtual int GetMissionLockModeState() override
-    {
-        return 0;
-    }
     virtual sptr<AAFwk::IWantSender> GetWantSender(
         const AAFwk::WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken) override
     {
@@ -538,21 +481,6 @@ public:
     {
         return 0;
     }
-    virtual int MoveMissionToTop(int32_t missionId)
-    {
-        return 0;
-    }
-    /**
-     * Requires that tasks associated with a given capability token be moved to the background
-     *
-     * @param token ability token
-     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
-    {
-        return 0;
-    }
 
     virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override
     {
@@ -576,14 +504,6 @@ public:
         return 0;
     }
 
-    int MoveMissionToFloatingStack(const MissionOption &missionOption)
-    {
-        return 0;
-    }
-    int MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary)
-    {
-        return 0;
-    }
     int MinimizeMultiWindow(int missionId)
     {
         return 0;
@@ -592,18 +512,11 @@ public:
     {
         return 0;
     }
-    int GetFloatingMissions(std::vector<AbilityMissionInfo> &list)
-    {
-        return 0;
-    }
     int CloseMultiWindow(int missionId)
     {
         return 0;
     }
-    int SetMissionStackSetting(const StackSetting &stackSetting)
-    {
-        return 0;
-    }
+
     int StartAbility(
         const Want &want,
         const AbilityStartSetting &abilityStartSetting,
@@ -614,15 +527,6 @@ public:
         return 0;
     }
     int ChangeFocusAbility(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
-    {
-        return 0;
-    }
-
-    /** Checks whether this ability is the first ability in a mission.
-     * @param lostToken, the token of ability
-     * @return Returns true is first in Mission.
-     */
-    virtual bool IsFirstInMission(const sptr<IRemoteObject> &token)
     {
         return 0;
     }

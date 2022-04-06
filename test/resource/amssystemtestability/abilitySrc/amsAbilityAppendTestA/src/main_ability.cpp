@@ -194,12 +194,6 @@ void MainAbility::SetColorModeCase1(int code)
     TestUtils::PublishEvent(g_EVENT_RESP_FIRST, code, std::to_string(result));
 }
 
-void MainAbility::IsFirstInMissionCase1(int code)
-{
-    bool result = IsFirstInMission();
-    TestUtils::PublishEvent(g_EVENT_RESP_FIRST, code, std::to_string(result));
-}
-
 REGISTER_AA(MainAbility)
 }  // namespace AppExecFwk
 }  // namespace OHOS

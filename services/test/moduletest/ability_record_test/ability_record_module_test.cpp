@@ -355,27 +355,6 @@ HWTEST_F(AbilityRecordModuleTest, AbilityScheduler_001, TestSize.Level3)
 
 /*
  * Feature: AbilityRecord
- * Function: MissionRecord
- * SubFunction: SetMissionRecord/GetMissionRecord
- * FunctionPoints: Mission record getter and setter
- * CaseDescription: Check the mission record getter and setter.
- */
-HWTEST_F(AbilityRecordModuleTest, MissionRecord_001, TestSize.Level1)
-{
-    auto &abilityRequest = MakeDefaultAbilityRequest();
-
-    auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    EXPECT_TRUE(abilityRecord);
-
-    auto missionRecord = std::make_shared<MissionRecord>("test");
-    EXPECT_TRUE(missionRecord);
-
-    abilityRecord->SetMissionRecord(missionRecord);
-    EXPECT_EQ(missionRecord, abilityRecord->GetMissionRecord());
-}
-
-/*
- * Feature: AbilityRecord
  * Function: Pre and Next Abilities
  * SubFunction: SetPreAbilityRecord/GetPreAbility/SetNextAbilityRecord/GetNextAbilityRecord
  * FunctionPoints: Pre and Next ability record getter and setter
