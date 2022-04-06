@@ -16,7 +16,9 @@
 #ifndef FOUNDATION_APPEXECFWK_OHOS_ABILITY_DELEGATOR_H
 #define FOUNDATION_APPEXECFWK_OHOS_ABILITY_DELEGATOR_H
 
+#include <functional>
 #include <list>
+#include <map>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -40,58 +42,243 @@ namespace AppExecFwk {
 class AbilityDelegator : public std::enable_shared_from_this<AbilityDelegator> {
 public:
     enum class AbilityState : uint8_t {
+        /**
+         * Indicates that the ability has not been initialized.
+         */
         UNINITIALIZED = 0,
+        /**
+         * Indicates that the ability is in the started state.
+         */
         STARTED,
+        /**
+         * Indicates that the ability is in the foreground state.
+         */
         FOREGROUND,
+        /**
+         * Indicates that the ability is in the background state.
+         */
         BACKGROUND,
+        /**
+         * Indicates that the ability is in the stopped state.
+         */
         STOPPED
     };
 
+    /**
+     * Definition of cleanup function.
+     */
+    using ClearFunc = std::function<void(const std::shared_ptr<ADelegatorAbilityProperty> &)>;
+
 public:
+    /**
+     * A constructor used to create a AbilityDelegator instance with the input parameter passed.
+     *
+     * @param context Indicates the ability runtime context.
+     * @param runner Indicates the TestRunner object.
+     * @param observer Indicates the TestObserver object.
+     */
     AbilityDelegator(const std::shared_ptr<AbilityRuntime::Context> &context, std::unique_ptr<TestRunner> runner,
         const sptr<IRemoteObject> &observer);
+
+    /**
+     * Default deconstructor used to deconstruct.
+     */
     ~AbilityDelegator();
 
+    /**
+     * Adds monitor for monitoring the lifecycle state changes of the ability.
+     *
+     * @param monitor, Indicates the monitor object.
+     */
     void AddAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor);
+
+    /**
+     * Removes ability monitor.
+     *
+     * @param monitor, Indicates the specified monitor object.
+     */
     void RemoveAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor);
+
+    /**
+     * Clears all monitors.
+     */
     void ClearAllMonitors();
+
+    /**
+     * Obtains the number of monitors.
+     *
+     * @return the number of monitors.
+     */
     size_t GetMonitorsNum();
 
-    sptr<IRemoteObject> WaitAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor);
-    sptr<IRemoteObject> WaitAbilityMonitor(
+    /**
+     * Waits for the specified monitor and return the obtained ability.
+     *
+     * @param monitor, Indicates the specified monitor object.
+     * @return the obtained ability.
+     */
+    std::shared_ptr<ADelegatorAbilityProperty> WaitAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor);
+
+    /**
+     * Waits for the specified monitor within the timeout time and return the obtained ability.
+     *
+     * @param monitor, Indicates the specified monitor object.
+     * @param timeoutMs, Indicates the specified time out time, in milliseconds.
+     * @return the obtained ability.
+     */
+    std::shared_ptr<ADelegatorAbilityProperty> WaitAbilityMonitor(
         const std::shared_ptr<IAbilityMonitor> &monitor, const int64_t timeoutMs);
 
+    /**
+     * Obtains the application context.
+     *
+     * @return the application context.
+     */
     std::shared_ptr<AbilityRuntime::Context> GetAppContext() const;
+
+    /**
+     * Obtains the lifecycle state of the specified ability.
+     *
+     * @param token, Indicates the specified ability.
+     * @return the lifecycle state of the specified ability.
+     */
     AbilityDelegator::AbilityState GetAbilityState(const sptr<IRemoteObject> &token);
-    sptr<IRemoteObject> GetCurrentTopAbility();
+
+    /**
+     * Obtains the ability that is currently being displayed.
+     *
+     * @return the ability that is currently being displayed.
+     */
+    std::shared_ptr<ADelegatorAbilityProperty> GetCurrentTopAbility();
+
+    /**
+     * Obtains the name of the thread.
+     *
+     * @return the name of the thread.
+     */
     std::string GetThreadName() const;
 
+    /**
+     * Notifies TestRunner to prepare.
+     */
     void Prepare();
+
+    /**
+     * Notifies TestRunner to run.
+     */
     void OnRun();
 
+    /**
+     * Starts an ability based on the given Want.
+     *
+     * @param want, Indicates the Want for starting the ability.
+     * @return the result code.
+     */
     ErrCode StartAbility(const AAFwk::Want &want);
 
+    /**
+     * Transits the specified ability to foreground.
+     *
+     * @param token, Indicates the specified ability.
+     * @return true if succeed; returns false otherwise.
+     */
     bool DoAbilityForeground(const sptr<IRemoteObject> &token);
+
+    /**
+     * Transits the specified ability to background.
+     *
+     * @param token, Indicates the specified ability.
+     * @return true if succeed; returns false otherwise.
+     */
     bool DoAbilityBackground(const sptr<IRemoteObject> &token);
 
+    /**
+     * Executes the specified shell command.
+     *
+     * @param cmd, Indicates the specified shell command.
+     * @param timeoutSec, Indicates the specified time out time, in seconds.
+     * @return the result of the specified shell command.
+     */
     std::unique_ptr<ShellCmdResult> ExecuteShellCommand(const std::string &cmd, const int64_t timeoutSec);
 
+    /**
+     * Prints log information to the console.
+     *
+     * @param msg, Indicates the log information to print.
+     */
     void Print(const std::string &msg);
 
+    /**
+     * Saves ability properties when ability is started and notify monitors of state changes.
+     *
+     * @param ability, Indicates the ability properties.
+     */
     void PostPerformStart(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+
+    /**
+     * Saves ability properties when scence is created and notify monitors of state changes.
+     *
+     * @param ability, Indicates the ability properties.
+     */
     void PostPerformScenceCreated(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+
+    /**
+     * Saves ability properties when scence is restored and notify monitors of state changes.
+     *
+     * @param ability, Indicates the ability properties.
+     */
     void PostPerformScenceRestored(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+
+    /**
+     * Saves ability properties when scence is destroyed and notify monitors of state changes.
+     *
+     * @param ability, Indicates the ability properties.
+     */
     void PostPerformScenceDestroyed(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+
+    /**
+     * Saves ability properties when ability is in the foreground and notify monitors of state changes.
+     *
+     * @param ability, Indicates the ability properties.
+     */
     void PostPerformForeground(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+
+    /**
+     * Saves ability properties when ability is in the background and notify monitors of state changes.
+     *
+     * @param ability, Indicates the ability properties.
+     */
     void PostPerformBackground(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+
+    /**
+     * Saves ability properties when ability is stopped and notify monitors of state changes.
+     *
+     * @param ability, Indicates the ability properties.
+     */
     void PostPerformStop(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
 
+    /**
+     * Finishes user test.
+     *
+     * @param msg, Indicates the status information.
+     * @param resultCode, Indicates the result code.
+     */
     void FinishUserTest(const std::string &msg, const int32_t resultCode);
+
+    /**
+     * Registers a function for cleanup.
+     *
+     * @param func, Indicates the cleanup function, called when the ability is stopped.
+     */
+    void RegisterClearFunc(ClearFunc func);
 
 private:
     AbilityDelegator::AbilityState ConvertAbilityState(const AbilityLifecycleExecutor::LifecycleState lifecycleState);
     void ProcessAbilityProperties(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
-    std::shared_ptr<ADelegatorAbilityProperty> DoesPropertyExist(const sptr<IRemoteObject> &token);
+    void RemoveAbilityProperty(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+    std::shared_ptr<ADelegatorAbilityProperty> FindPropertyByToken(const sptr<IRemoteObject> &token);
+
+    inline void CallClearFunc(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
 
 private:
     std::shared_ptr<AbilityRuntime::Context> appContext_;
@@ -101,6 +288,8 @@ private:
     std::unique_ptr<DelegatorThread> delegatorThread_;
     std::list<std::shared_ptr<ADelegatorAbilityProperty>> abilityProperties_;
     std::vector<std::shared_ptr<IAbilityMonitor>> abilityMonitors_;
+
+    ClearFunc clearFunc_;
 
     std::mutex mutexMonitor_;
     std::mutex mutexAbilityProperties_;

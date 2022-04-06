@@ -15,6 +15,7 @@
 
 #include "js_ability_delegator.h"
 
+#include <mutex>
 #include "ability_delegator_registry.h"
 #include "ability_runtime/js_ability.h"
 #include "hilog_wrapper.h"
@@ -27,8 +28,8 @@
 
 namespace OHOS {
 namespace AbilityDelegatorJs {
-struct AbilityTokenBox {
-    sptr<IRemoteObject> token_;
+struct AbilityObjectBox {
+    std::weak_ptr<NativeReference> object_;
 };
 
 struct ShellCmdResultBox {
@@ -44,7 +45,33 @@ constexpr int ERROR = -1;
 
 using namespace OHOS::AbilityRuntime;
 std::map<std::shared_ptr<NativeReference>, std::shared_ptr<AbilityMonitor>> monitorRecord_;
-std::map<std::shared_ptr<NativeReference>, sptr<IRemoteObject>> ablityRecord_;
+std::map<std::weak_ptr<NativeReference>, sptr<IRemoteObject>, std::owner_less<>> ablityRecord_;
+std::mutex mutexAblityRecord_;
+
+JSAbilityDelegator::JSAbilityDelegator()
+{
+    auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
+    if (delegator) {
+        auto clearFunc = [](const std::shared_ptr<ADelegatorAbilityProperty> &property) {
+            HILOG_INFO("Clear function is called");
+            if (!property) {
+                HILOG_ERROR("Invalid property");
+                return;
+            }
+
+            std::unique_lock<std::mutex> lck(mutexAblityRecord_);
+            for (auto it = ablityRecord_.begin(); it != ablityRecord_.end();) {
+                if (it->second == property->token_) {
+                    it = ablityRecord_.erase(it);
+                    continue;
+                }
+                ++it;
+            }
+        };
+
+        delegator->RegisterClearFunc(clearFunc);
+    }
+}
 
 void JSAbilityDelegator::Finalizer(NativeEngine *engine, void *data, void *hint)
 {
@@ -203,38 +230,50 @@ NativeValue *JSAbilityDelegator::OnWaitAbilityMonitor(NativeEngine &engine, Nati
         return engine.CreateUndefined();
     }
 
-    auto abilityTokenBox = std::make_shared<AbilityTokenBox>();
-    AsyncTask::ExecuteCallback execute = [monitor, timeout, opt, abilityTokenBox]() {
+    auto abilityObjectBox = std::make_shared<AbilityObjectBox>();
+    AsyncTask::ExecuteCallback execute = [monitor, timeout, opt, abilityObjectBox]() {
         HILOG_INFO("OnWaitAbilityMonitor AsyncTask ExecuteCallback is called");
+        if (!abilityObjectBox) {
+            HILOG_ERROR("OnWaitAbilityMonitor AsyncTask ExecuteCallback, Invalid abilityObjectBox");
+            return;
+        }
+
         auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
         if (!delegator) {
             HILOG_ERROR("OnWaitAbilityMonitor AsyncTask ExecuteCallback, Invalid delegator");
             return;
         }
 
+        std::shared_ptr<ADelegatorAbilityProperty> property;
         if (opt.hasTimeoutPara) {
-            abilityTokenBox->token_ = delegator->WaitAbilityMonitor(monitor, timeout);
+            property = delegator->WaitAbilityMonitor(monitor, timeout);
         } else {
-            abilityTokenBox->token_ = delegator->WaitAbilityMonitor(monitor);
+            property = delegator->WaitAbilityMonitor(monitor);
         }
+
+        if (!property || property->object_.expired()) {
+            HILOG_ERROR("Invalid property");
+            return;
+        }
+
+        abilityObjectBox->object_ = property->object_;
+
+        std::unique_lock<std::mutex> lck(mutexAblityRecord_);
+        ablityRecord_.emplace(property->object_, property->token_);
     };
 
-    AsyncTask::CompleteCallback complete =
-        [abilityTokenBox, this](NativeEngine &engine, AsyncTask &task, int32_t status) {
-            HILOG_INFO("OnWaitAbilityMonitor AsyncTask CompleteCallback is called");
-            NativeValue *ability = CreateAbilityObject(engine, abilityTokenBox->token_);
-            if (ability) {
-                task.Resolve(engine, ability);
-            } else {
-                task.Reject(engine, CreateJsError(engine, ERROR, "waitAbilityMonitor failed."));
-            }
-        };
+    AsyncTask::CompleteCallback complete = [abilityObjectBox](NativeEngine &engine, AsyncTask &task, int32_t status) {
+        HILOG_INFO("OnWaitAbilityMonitor AsyncTask CompleteCallback is called");
+        if (abilityObjectBox && !abilityObjectBox->object_.expired()) {
+            task.Resolve(engine, abilityObjectBox->object_.lock()->Get());
+        } else {
+            task.Reject(engine, CreateJsError(engine, ERROR, "waitAbilityMonitor failed."));
+        }
+    };
 
     NativeValue *lastParam = nullptr;
     if (opt.hasCallbackPara) {
         lastParam = opt.hasTimeoutPara ? info.argv[INDEX_TWO] : info.argv[INDEX_ONE];
-    } else {
-        lastParam = nullptr;
     }
 
     NativeValue *result = nullptr;
@@ -286,6 +325,11 @@ NativeValue *JSAbilityDelegator::OnExecuteShellCommand(NativeEngine &engine, Nat
     auto shellCmdResultBox = std::make_shared<ShellCmdResultBox>();
     AsyncTask::ExecuteCallback execute = [cmd, timeoutSecs, shellCmdResultBox]() {
         HILOG_INFO("OnExecuteShellCommand AsyncTask ExecuteCallback is called");
+        if (!shellCmdResultBox) {
+            HILOG_ERROR("OnExecuteShellCommand AsyncTask ExecuteCallback, Invalid shellCmdResultBox");
+            return;
+        }
+
         auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
         if (!delegator) {
             HILOG_ERROR("OnExecuteShellCommand AsyncTask ExecuteCallback, Invalid delegator");
@@ -297,6 +341,12 @@ NativeValue *JSAbilityDelegator::OnExecuteShellCommand(NativeEngine &engine, Nat
 
     AsyncTask::CompleteCallback complete = [shellCmdResultBox](NativeEngine &engine, AsyncTask &task, int32_t status) {
         HILOG_INFO("OnExecuteShellCommand AsyncTask CompleteCallback is called");
+        if (!shellCmdResultBox) {
+            HILOG_ERROR("OnExecuteShellCommand AsyncTask CompleteCallback, Invalid shellCmdResultBox");
+            task.Reject(engine, CreateJsError(engine, ERROR, "executeShellCommand failed."));
+            return;
+        }
+
         NativeValue *result = CreateJsShellCmdResult(engine, shellCmdResultBox->shellCmdResult_);
         if (result) {
             task.Resolve(engine, result);
@@ -308,8 +358,6 @@ NativeValue *JSAbilityDelegator::OnExecuteShellCommand(NativeEngine &engine, Nat
     NativeValue *lastParam = nullptr;
     if (opt.hasCallbackPara) {
         lastParam = opt.hasTimeoutPara ? info.argv[INDEX_TWO] : info.argv[INDEX_ONE];
-    } else {
-        lastParam = nullptr;
     }
 
     NativeValue *result = nullptr;
@@ -376,15 +424,21 @@ NativeValue *JSAbilityDelegator::OnGetCurrentTopAbility(NativeEngine &engine, Na
         HILOG_INFO("OnGetCurrentTopAbility AsyncTask is called");
         auto delegator = AbilityDelegatorRegistry::GetAbilityDelegator();
         if (!delegator) {
+            HILOG_ERROR("Invalid delegator");
             task.Reject(engine, CreateJsError(engine, ERROR, "getCurrentTopAbility failed."));
             return;
         }
-        sptr<IRemoteObject> remoteObject = delegator->GetCurrentTopAbility();
-        NativeValue *ability = CreateAbilityObject(engine, remoteObject);
-        if (ability) {
-            task.Resolve(engine, ability);
-        } else {
+
+        auto property = delegator->GetCurrentTopAbility();
+        if (!property || property->object_.expired()) {
+            HILOG_ERROR("Invalid property");
             task.Reject(engine, CreateJsError(engine, ERROR, "getCurrentTopAbility failed."));
+        } else {
+            {
+                std::unique_lock<std::mutex> lck(mutexAblityRecord_);
+                ablityRecord_.emplace(property->object_, property->token_);
+            }
+            task.Resolve(engine, property->object_.lock()->Get());
         }
     };
 
@@ -562,12 +616,20 @@ NativeValue *JSAbilityDelegator::ParseAbilityPara(
 {
     HILOG_INFO("enter");
 
-    for (auto iter = ablityRecord_.begin(); iter != ablityRecord_.end(); ++iter) {
-        if (value->StrictEquals(iter->first->Get())) {
+    std::unique_lock<std::mutex> lck(mutexAblityRecord_);
+    for (auto iter = ablityRecord_.begin(); iter != ablityRecord_.end();) {
+        if (iter->first.expired()) {
+            iter = ablityRecord_.erase(iter);
+            continue;
+        }
+
+        if (value->StrictEquals(iter->first.lock()->Get())) {
             remoteObject = iter->second;
             HILOG_INFO("Ablity exist");
             return remoteObject ? engine.CreateNull() : nullptr;
         }
+
+        ++iter;
     }
 
     HILOG_ERROR("Ablity doesn't exist");
@@ -592,6 +654,8 @@ NativeValue *JSAbilityDelegator::CreateAbilityObject(NativeEngine &engine, const
 
     std::shared_ptr<NativeReference> refence = nullptr;
     refence.reset(engine.CreateReference(objValue, 1));
+
+    std::unique_lock<std::mutex> lck(mutexAblityRecord_);
     ablityRecord_[refence] = remoteObject;
     return objValue;
 }

@@ -52,11 +52,12 @@ ohos_shared_library("task_dispatcher") {
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
-  deps = [ "${appexecfwk_path}/common:libappexecfwk_common" ]
+  deps = []
   external_deps = [
     "bundle_framework:appexecfwk_base",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
+    "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"

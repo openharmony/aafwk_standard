@@ -224,7 +224,6 @@ ohos_shared_library("abilitykit_native") {
 
   deps = [
     ":static_subscriber_ipc",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${innerkits_path}/dataobs_manager:dataobs_manager",
     "${kits_path}/appkit:app_context",
     "${kits_path}/appkit:appkit_delegator",
@@ -323,7 +322,7 @@ ohos_shared_library("dummy_classes") {
   configs = [ ":ability_config" ]
   public_configs = [ ":ability_public_config" ]
 
-  deps = [ "${appexecfwk_path}/common:libappexecfwk_common" ]
+  deps = []
 
   external_deps = [
     "ability_base:want",
@@ -344,10 +343,7 @@ ohos_shared_library("service_extension_module") {
   configs = [ ":ability_config" ]
   public_configs = [ ":ability_public_config" ]
 
-  deps = [
-    ":abilitykit_native",
-    "${appexecfwk_path}/common:libappexecfwk_common",
-  ]
+  deps = [ ":abilitykit_native" ]
 
   external_deps = [
     "ability_base:want",
@@ -369,10 +365,7 @@ ohos_shared_library("datashare_ext_ability_module") {
   configs = [ ":ability_config" ]
   public_configs = [ ":ability_public_config" ]
 
-  deps = [
-    ":abilitykit_native",
-    "${appexecfwk_path}/common:libappexecfwk_common",
-  ]
+  deps = [ ":abilitykit_native" ]
 
   external_deps = [
     "ability_base:want",

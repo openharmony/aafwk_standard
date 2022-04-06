@@ -30,12 +30,30 @@ using namespace AbilityRuntime;
 
 class JsTestRunner : public TestRunner {
 public:
+    /**
+     * Creates a TestRunner instance with the input parameter passed.
+     *
+     * @param runtime Indicates the ability runtime.
+     * @param args Indicates the AbilityDelegatorArgs object.
+     * @param bundleInfo Indicates the bundle info.
+     * @return the TestRunner object if JsTestRunner object is created successfully; returns null otherwise.
+     */
     static std::unique_ptr<TestRunner> Create(const std::unique_ptr<Runtime> &runtime,
         const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo);
 
+    /**
+     * Default deconstructor used to deconstruct.
+     */
     ~JsTestRunner() override;
 
+    /**
+     * Prepares the testing environment for running test code.
+     */
     void Prepare() override;
+
+    /**
+     * Runs all test code.
+     */
     void Run() override;
 
 private:
