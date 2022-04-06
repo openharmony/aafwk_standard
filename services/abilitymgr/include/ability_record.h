@@ -746,9 +746,6 @@ public:
     void SetStartSetting(const std::shared_ptr<AbilityStartSetting> &setting);
     std::shared_ptr<AbilityStartSetting> GetStartSetting() const;
 
-    void SetPowerState(const bool isPower);
-    bool GetPowerState() const;
-
     void SetRestarting(const bool isRestart);
     void SetRestarting(const bool isRestart, int32_t canReStartCount);
     int32_t GetRestartCount() const;
@@ -765,8 +762,6 @@ public:
 
     void SetLockScreenRoot();
     bool IsLockScreenRoot() const;
-    void SetPowerStateLockScreen(const bool isPower);
-    bool GetPowerStateLockScreen() const;
 
     bool IsNewVersion();
     void SetLaunchReason(const LaunchReason &reason);
@@ -874,7 +869,6 @@ private:
 
     bool isKernalSystemAbility_ = false;
     bool isLauncherRoot_ = false;
-    bool isPowerState_ = false;  // ability to change state when poweroff and poweron.
     bool isLockScreenState_ = false; // ability to change state when lockscreen.
 
     PacMap stateDatas_;             // ability saved ability state data
@@ -882,7 +876,6 @@ private:
     bool isInMovingState_ = false;  // whether complete multi window moving state.
     bool isMovingBackground_ = false;
     bool isLockScreenRoot_ = false;
-    bool isPowerStateLockScreen_ = false;
     AppState appState_ = AppState::BEGIN;
 
     int32_t compatibleVersion_ = 0; // > 7 new version, <= 7 old version.

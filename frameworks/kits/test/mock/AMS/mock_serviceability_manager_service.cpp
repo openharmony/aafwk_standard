@@ -185,15 +185,5 @@ bool MockServiceAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject
 {
     return true;
 }
-
-int MockServiceAbilityManagerService::PowerOff()
-{
-    return 0;
-}
-int MockServiceAbilityManagerService::PowerOn()
-{
-    return 0;
-}
-
 }  // namespace AAFwk
 }  // namespace OHOS

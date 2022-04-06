@@ -2993,20 +2993,6 @@ bool AbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
     return stackManager->IsFirstInMission(token);
 }
 
-int AbilityManagerService::PowerOff()
-{
-    HILOG_INFO("Power off.");
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
-    return currentStackManager_->PowerOff();
-}
-
-int AbilityManagerService::PowerOn()
-{
-    HILOG_INFO("Power on.");
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
-    return currentStackManager_->PowerOn();
-}
-
 int AbilityManagerService::LockMission(int missionId)
 {
     HILOG_INFO("request lock mission id :%{public}d", missionId);

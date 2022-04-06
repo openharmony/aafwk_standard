@@ -44,8 +44,4 @@ group("systemtest") {
     "ams_service_ability_test:systemtest",
     "tool:system_test_ability_util",
   ]
-
-  if (ability_runtime_power) {
-    deps += [ "ams_power_test:systemtest" ]
-  }
 }

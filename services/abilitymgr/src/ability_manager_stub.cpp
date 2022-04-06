@@ -90,8 +90,6 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[CLOSE_MULTI_WINDOW] = &AbilityManagerStub::CloseMultiWindowInner;
     requestFuncMap_[SET_STACK_SETTING] = &AbilityManagerStub::SetMissionStackSettingInner;
     requestFuncMap_[IS_FIRST_IN_MISSION] = &AbilityManagerStub::IsFirstInMissionInner;
-    requestFuncMap_[POWER_OFF] = &AbilityManagerStub::PowerOffInner;
-    requestFuncMap_[POWER_ON] = &AbilityManagerStub::PowerOnInner;
     requestFuncMap_[LUCK_MISSION] = &AbilityManagerStub::LockMissionInner;
     requestFuncMap_[UNLUCK_MISSION] = &AbilityManagerStub::UnlockMissionInner;
     requestFuncMap_[GET_PENDING_WANT_SENDER] = &AbilityManagerStub::GetWantSenderInner;
@@ -661,20 +659,6 @@ int AbilityManagerStub::IsFirstInMissionInner(MessageParcel &data, MessageParcel
         HILOG_ERROR("reply write failed.");
         return ERR_INVALID_VALUE;
     }
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::PowerOffInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto result = PowerOff();
-    reply.WriteInt32(result);
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::PowerOnInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto result = PowerOn();
-    reply.WriteInt32(result);
     return NO_ERROR;
 }
 

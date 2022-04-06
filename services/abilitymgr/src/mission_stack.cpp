@@ -313,16 +313,6 @@ void MissionStack::DumpStackList(std::vector<std::string> &info)
     info.push_back(dumpInfo);
 }
 
-void MissionStack::GetAllMissionInfo(std::vector<MissionRecordInfo> &missionInfos)
-{
-    for (auto mission : missions_) {
-        MissionRecordInfo missionRecordInfo;
-        missionRecordInfo.id = mission->GetMissionRecordId();
-        mission->GetAllAbilityInfo(missionRecordInfo.abilityRecordInfos);
-        missionInfos.emplace_back(missionRecordInfo);
-    }
-}
-
 bool MissionStack::IsExistMissionRecord(int missionId)
 {
     for (auto &iter : missions_) {

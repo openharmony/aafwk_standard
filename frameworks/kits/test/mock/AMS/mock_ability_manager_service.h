@@ -149,8 +149,6 @@ public:
 
     int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) override;
 
-    int PowerOff() override;
-    int PowerOn() override;
     int LockMission(int missionId) override
     {
         return 0;
