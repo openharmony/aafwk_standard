@@ -17,6 +17,7 @@
 
 #include "ability_info.h"
 #include "accesstoken_kit.h"
+#include "bytrace.h"
 #include "dataobs_mgr_client.h"
 #include "datashare_stub_impl.h"
 #include "hilog_wrapper.h"
@@ -182,6 +183,7 @@ void JsDataShareExtAbility::OnStart(const AAFwk::Want &want)
 
 sptr<IRemoteObject> JsDataShareExtAbility::OnConnect(const AAFwk::Want &want)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     Extension::OnConnect(want);
     sptr<DataShareStubImpl> remoteObject = new (std::nothrow) DataShareStubImpl(
@@ -246,6 +248,7 @@ void JsDataShareExtAbility::GetSrcPath(std::string &srcPath)
 
 std::vector<std::string> JsDataShareExtAbility::GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     auto ret = DataShareExtAbility::GetFileTypes(uri, mimeTypeFilter);
     HandleScope handleScope(jsRuntime_);
@@ -328,6 +331,7 @@ int JsDataShareExtAbility::OpenRawFile(const Uri &uri, const std::string &mode)
 
 int JsDataShareExtAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket &value)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     int ret = INVALID_VALUE;
     if (!CheckCallingPermission(abilityInfo_->writePermission)) {
@@ -367,6 +371,7 @@ int JsDataShareExtAbility::Insert(const Uri &uri, const NativeRdb::ValuesBucket 
 int JsDataShareExtAbility::Update(const Uri &uri, const NativeRdb::ValuesBucket &value,
     const NativeRdb::DataAbilityPredicates &predicates)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     int ret = INVALID_VALUE;
     if (!CheckCallingPermission(abilityInfo_->writePermission)) {
@@ -413,6 +418,7 @@ int JsDataShareExtAbility::Update(const Uri &uri, const NativeRdb::ValuesBucket 
 
 int JsDataShareExtAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     int ret = INVALID_VALUE;
     if (!CheckCallingPermission(abilityInfo_->writePermission)) {
@@ -449,6 +455,7 @@ int JsDataShareExtAbility::Delete(const Uri &uri, const NativeRdb::DataAbilityPr
 std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(const Uri &uri,
     std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     std::shared_ptr<NativeRdb::AbsSharedResultSet> ret;
     if (!CheckCallingPermission(abilityInfo_->readPermission)) {
@@ -508,6 +515,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> JsDataShareExtAbility::Query(cons
 
 std::string JsDataShareExtAbility::GetType(const Uri &uri)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     auto ret = DataShareExtAbility::GetType(uri);
     HandleScope handleScope(jsRuntime_);
@@ -531,6 +539,7 @@ std::string JsDataShareExtAbility::GetType(const Uri &uri)
 
 int JsDataShareExtAbility::BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     int ret = INVALID_VALUE;
     if (!CheckCallingPermission(abilityInfo_->writePermission)) {
@@ -619,6 +628,7 @@ bool JsDataShareExtAbility::UnregisterObserver(const Uri &uri, const sptr<AAFwk:
 
 bool JsDataShareExtAbility::NotifyChange(const Uri &uri)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     DataShareExtAbility::NotifyChange(uri);
     auto obsMgrClient = DataObsMgrClient::GetInstance();
@@ -638,6 +648,7 @@ bool JsDataShareExtAbility::NotifyChange(const Uri &uri)
 
 Uri JsDataShareExtAbility::NormalizeUri(const Uri &uri)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     auto ret = DataShareExtAbility::NormalizeUri(uri);
     HandleScope handleScope(jsRuntime_);
@@ -660,6 +671,7 @@ Uri JsDataShareExtAbility::NormalizeUri(const Uri &uri)
 
 Uri JsDataShareExtAbility::DenormalizeUri(const Uri &uri)
 {
+    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     auto ret = DataShareExtAbility::DenormalizeUri(uri);
     HandleScope handleScope(jsRuntime_);
