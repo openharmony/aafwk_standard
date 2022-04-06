@@ -434,8 +434,16 @@ HWTEST_F(PendingWantTest, PendingWant_1800, Function | MediumTest | Level1)
  */
 HWTEST_F(PendingWantTest, PendingWant_1900, Function | MediumTest | Level1)
 {
-    sptr<AAFwk::IWantSender> target(new (std::nothrow) WantSender());
-    std::shared_ptr<PendingWant> pendingWant = std::make_shared<PendingWant>(target);
+    int requestCode = 10;
+    std::shared_ptr<Want> want = std::make_shared<Want>();
+    ElementName element("device", "bundleName", "abilityName");
+    want->SetElement(element);
+    unsigned int flags = 1;
+    flags |= FLAG_NO_CREATE;
+    WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_FOREGROUND_SERVICE;
+    std::shared_ptr<PendingWant> pendingWant =
+        PendingWant::BuildServicePendingWant(nullptr, requestCode, want, flags, type);
+
     sptr<AAFwk::IWantSender> target2(nullptr);
     std::shared_ptr<PendingWant> pendingWant2 = std::make_shared<PendingWant>(target2);
     EXPECT_EQ(pendingWant->Equals(pendingWant, pendingWant2), false);
@@ -475,19 +483,6 @@ HWTEST_F(PendingWantTest, PendingWant_2100, Function | MediumTest | Level1)
     AbilityManagerClient::GetInstance()->Connect();
     EXPECT_EQ(INNER_ERR,
         pendingWant.SendAndReturnResult(requestCode, want, nullptr, "Permission", nullptr, nullptr));
-}
-
-/*
- * @tc.number    : PendingWant_2300
- * @tc.name      : PendingWant Equals
- * @tc.desc      : Equals
- */
-HWTEST_F(PendingWantTest, PendingWant_2300, Function | MediumTest | Level1)
-{
-    sptr<AAFwk::IWantSender> target(new (std::nothrow) WantSender());
-    std::shared_ptr<PendingWant> pendingWant = std::make_shared<PendingWant>(target);
-    std::shared_ptr<PendingWant> pendingWant2 = std::make_shared<PendingWant>(target);
-    EXPECT_EQ(pendingWant->Equals(pendingWant, pendingWant2), true);
 }
 
 /*
