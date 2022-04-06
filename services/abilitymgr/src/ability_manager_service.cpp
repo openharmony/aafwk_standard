@@ -3174,6 +3174,29 @@ int AbilityManagerService::SetMissionLabel(const sptr<IRemoteObject> &token, con
     return 0;
 }
 
+int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    auto abilityRecord = GetAbilityRecordByToken(token);
+    if (!abilityRecord) {
+        HILOG_ERROR("no such ability record");
+        return -1;
+    }
+
+    auto callingUid = IPCSkeleton::GetCallingUid();
+    auto recordUid = abilityRecord->GetUid();
+    if (callingUid != recordUid) {
+        HILOG_ERROR("not self, callingUid:%{pubic}d, target ability uid:{public}d", callingUid, recordUid);
+        return -1;
+    }
+
+    auto missionListManager = currentMissionListManager_;
+    if (missionListManager) {
+        missionListManager->SetMissionIcon(token, icon);
+    }
+    return 0;
+}
+
 int AbilityManagerService::StartUser(int userId)
 {
     HILOG_DEBUG("%{public}s, userId:%{public}d", __func__, userId);

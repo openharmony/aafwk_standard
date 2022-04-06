@@ -28,6 +28,7 @@ MissionListenerStub::MissionListenerStub()
     vecMemberFunc_[ON_MISSION_DESTROYED] = &MissionListenerStub::OnMissionDestroyedInner;
     vecMemberFunc_[ON_MISSION_SNAPSHOT_CHANGED] = &MissionListenerStub::OnMissionSnapshotChangedInner;
     vecMemberFunc_[ON_MISSION_MOVED_TO_FRONT] = &MissionListenerStub::OnMissionMovedToFrontInner;
+    vecMemberFunc_[ON_MISSION_ICON_UPDATED] = &MissionListenerStub::OnMissionIconUpdatedInner;
 }
 
 int MissionListenerStub::OnMissionCreatedInner(MessageParcel &data, MessageParcel &reply)
@@ -57,6 +58,15 @@ int MissionListenerStub::OnMissionMovedToFrontInner(MessageParcel &data, Message
     OnMissionMovedToFront(missionId);
     return NO_ERROR;
 }
+
+int MissionListenerStub::OnMissionIconUpdatedInner(MessageParcel &data, MessageParcel &reply)
+{
+    auto missionId = data.ReadInt32();
+    std::shared_ptr<Media::PixelMap> icon(data.ReadParcelable<Media::PixelMap>());
+    OnMissionIconUpdated(missionId, icon);
+    return NO_ERROR;
+}
+
 
 int MissionListenerStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)

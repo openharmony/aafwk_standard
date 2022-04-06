@@ -56,6 +56,14 @@ public:
      */
     virtual void OnMissionMovedToFront(int32_t missionId) = 0;
 
+    /**
+     * @brief Called when a mission has changed it's icon.
+     *
+     * @param missionId, mission Id.
+     * @param icon, mission icon.
+     */
+    virtual void OnMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon) = 0;
+
     enum MissionListenerCmd {
         // ipc id for OnMissionCreated
         ON_MISSION_CREATED = 0,
@@ -68,6 +76,9 @@ public:
 
         // ipc id for OnMissionMovedToFront
         ON_MISSION_MOVED_TO_FRONT,
+
+        // ipc id for OnMissionIconUpdated
+        ON_MISSION_ICON_UPDATED,
 
         // maximum of enum
         MISSION_LINSTENER_CMD_MAX

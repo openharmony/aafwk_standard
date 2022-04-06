@@ -58,6 +58,14 @@ public:
      */
     virtual void OnMissionMovedToFront(int32_t missionId) override;
 
+    /**
+     * @brief Called when a mission has changed it's icon.
+     *
+     * @param missionId, mission Id.
+     * @param icon, mission icon.
+     */
+    virtual void OnMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon);
+
 private:
     void SendRequestCommon(int32_t missionId, IMissionListener::MissionListenerCmd cmd);
 
