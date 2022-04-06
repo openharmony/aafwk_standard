@@ -216,16 +216,6 @@ public:
         return 0;
     }
 
-    int PowerOff() override
-    {
-        return 0;
-    }
-
-    int PowerOn() override
-    {
-        return 0;
-    }
-
     int LockMission(int missionId) override
     {
         return 0;

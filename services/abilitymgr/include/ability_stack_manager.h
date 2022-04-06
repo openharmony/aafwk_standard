@@ -34,8 +34,6 @@
 #include "lock_mission_container.h"
 #include "lock_screen_event_subscriber.h"
 #include "resume_mission_container.h"
-#include "stack_info.h"
-#include "power_storage.h"
 #include "want.h"
 #include "screenshot_handler.h"
 
@@ -383,18 +381,6 @@ public:
 
     void JudgingIsRemoveMultiScreenStack(std::shared_ptr<MissionStack> &stack);
 
-    /**
-     * Save the top ability States and move them to the background
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int PowerOff();
-
-    /**
-     * Restore the state before top ability poweroff
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int PowerOn();
-
     int StartLockMission(int uid, int missionId, bool isSystemApp, int isLock);
     int SetMissionDescriptionInfo(
         const std::shared_ptr<AbilityRecord> &abilityRecord, const MissionDescriptionInfo &description);
@@ -525,8 +511,6 @@ private:
      */
     bool IsLauncherMission(int id);
 
-    void CreateRecentMissionInfo(const MissionRecordInfo &mission, AbilityMissionInfo &recentMissionInfo);
-
     /**
      * Ask that the mission associated with a given mission ID be moved to the
      * front of the stack, so it is now visible to the user.
@@ -640,9 +624,6 @@ private:
     void SortPreMission(
         const std::shared_ptr<MissionRecord> &mission, const std::shared_ptr<MissionRecord> &nextMission);
 
-    int PowerOffLocked();
-    int PowerOnLocked();
-
     bool CheckLockMissionCondition(
         int uid, int missionId, int isLock, bool isSystemApp, std::shared_ptr<MissionRecord> &mission, int &lockUid);
     bool CanStartInLockMissionState(
@@ -680,18 +661,13 @@ private:
         int displayId, const std::shared_ptr<AbilityRecord> &focusAbility, bool isNotify = false);
     void UpdateFocusAbilityRecord(const std::shared_ptr<AbilityRecord> &abilityRecord, bool isNotify = false);
     void CheckMissionRecordIsResume(const std::shared_ptr<MissionRecord> &mission);
-    int ChangedPowerStorageAbilityToActive(std::shared_ptr<PowerStorage> &powerStorage,
-        bool isPowerStateLockScreen = false);
     void HandleActiveTimeout(const std::shared_ptr<AbilityRecord> &ability);
     bool IsLockScreenState();
     bool DeleteMissionRecordInStackOnLockScreen(const std::shared_ptr<MissionRecord> &missionRecord);
     void RestoreMissionRecordOnLockScreen(const std::shared_ptr<MissionRecord> &missionRecord);
-    void UpdatePowerOffRecord(int32_t missionId, const std::shared_ptr<AbilityRecord> &ability);
-    void SetPowerOffRecordWhenLockScreen(std::shared_ptr<PowerStorage> &powerStorage);
     void DelayedStartLockScreenApp();
     void BackToLockScreen();
     std::shared_ptr<AbilityRecord> GetLockScreenRootAbility() const;
-    void lockScreenStackAbilityDied(std::shared_ptr<MissionRecord> &mission);
     bool SubscribeEvent();
 
     void MakeTerminatingAbility(TerminatingAbility &unit, const std::shared_ptr<AbilityRecord> &abilityRecord,
@@ -702,8 +678,6 @@ private:
 
     std::shared_ptr<MissionRecord> GetFriendMissionBySplitScreen(
         const std::shared_ptr<MissionStack> &stack, const int missionId);
-
-    void SortRecentMissions(std::vector<MissionRecordInfo> &missions);
 
     void UpdateMissionOption(const std::shared_ptr<MissionRecord> &mission,
         const std::shared_ptr<MissionStack> &moveToStack, const AbilityWindowConfiguration winModeKey);
@@ -725,7 +699,6 @@ private:
     static constexpr int FLOATING_MAX_STACK_MISSION_NUM = 5;
 
     int userId_;
-    bool powerOffing_ = false;
     std::recursive_mutex stackLock_;
     std::shared_ptr<MissionStack> launcherMissionStack_;
     std::shared_ptr<MissionStack> defaultMissionStack_;
@@ -737,7 +710,6 @@ private:
                                                                             // list.
     std::queue<AbilityRequest> waittingAbilityQueue_;
     std::list<wptr<IRemoteObject>> focusWaitingList_;
-    std::shared_ptr<PowerStorage> powerStorage_;
     // find AbilityRecord by windowToken. one windowToken has one and only one AbilityRecord.
     std::unordered_map<int, std::shared_ptr<AbilityRecord>> windowTokenToAbilityMap_;
     std::shared_ptr<LockMissionContainer> lockMissionContainer_ = nullptr;

@@ -22,7 +22,6 @@
 #include "ability_info.h"
 #include "application_info.h"
 #include "mission_record.h"
-#include "mission_record_info.h"
 #include "want.h"
 #include "stack_setting.h"
 
@@ -161,11 +160,6 @@ public:
      */
     void Dump(std::vector<std::string> &info);
     void DumpStackList(std::vector<std::string> &info);
-
-    /**
-     * get all mission info about this stack
-     */
-    void GetAllMissionInfo(std::vector<MissionRecordInfo> &missionInfos);
 
     /**
      * Check whether there is a mission record in the mission stack

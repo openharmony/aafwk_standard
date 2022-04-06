@@ -417,20 +417,6 @@ ErrCode AbilityManagerClient::SetMissionStackSetting(const StackSetting &stackSe
     return abms->SetMissionStackSetting(stackSetting);
 }
 
-ErrCode AbilityManagerClient::PowerOff()
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->PowerOff();
-}
-
-ErrCode AbilityManagerClient::PowerOn()
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->PowerOn();
-}
-
 ErrCode AbilityManagerClient::LockMission(int missionId)
 {
     auto abms = GetAbilityManager();

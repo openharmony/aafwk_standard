@@ -212,18 +212,6 @@ ErrCode STAbilityUtil::GetTopAbilityRecordId(int64_t &id, sptr<IAbilityManager> 
         HILOG_ERROR("failed to get ability manager service");
         return result;
     }
-    StackInfo stackInfo;
-    MissionStackInfo defaultMissionStack;
-    for (const auto &stackInfo : stackInfo.missionStackInfos) {
-        if (stackInfo.id == 1) {  // DEFAULT_MISSION_STACK_ID = 1
-            defaultMissionStack = stackInfo;
-            break;
-        }
-    }
-    if (!defaultMissionStack.missionRecords.empty() &&
-        !defaultMissionStack.missionRecords.begin()->abilityRecordInfos.empty()) {
-        id = defaultMissionStack.missionRecords.begin()->abilityRecordInfos.begin()->id;
-    }
     return result;
 }
 

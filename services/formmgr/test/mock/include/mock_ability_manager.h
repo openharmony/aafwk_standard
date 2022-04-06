@@ -90,14 +90,6 @@ public:
         return 0;
     }
 
-    virtual int PowerOff() override
-    {
-        return 0;
-    }
-    virtual int PowerOn() override
-    {
-        return 0;
-    }
     virtual int lockMission(int missionId)
     {
         return 0;
@@ -478,14 +470,6 @@ public:
         return 0;
     }
 
-    virtual int PowerOff() override
-    {
-        return 0;
-    }
-    virtual int PowerOn() override
-    {
-        return 0;
-    }
     virtual int LockMission(int missionId) override
     {
         return 0;
