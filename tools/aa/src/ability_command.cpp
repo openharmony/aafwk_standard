@@ -465,33 +465,7 @@ ErrCode AbilityManagerShellCommand::RunAsScreenCommand()
         }
     }
 
-    if (result == OHOS::ERR_OK) {
-        HILOG_INFO("powerState: %{public}s", powerState.c_str());
-
-        if (powerState == STRING_SCREEN_POWER_ON) {
-            result = AbilityManagerClient::GetInstance()->PowerOn();
-            if (result == OHOS::ERR_OK) {
-                HILOG_INFO("%{public}s", STRING_SCREEN_POWER_ON_OK.c_str());
-                resultReceiver_ = STRING_SCREEN_POWER_ON_OK + "\n";
-            } else {
-                HILOG_INFO("%{public}s result = %{public}d", STRING_SCREEN_POWER_ON_NG.c_str(), result);
-                resultReceiver_ = STRING_SCREEN_POWER_ON_NG + "\n";
-
-                resultReceiver_.append(GetMessageFromCode(result));
-            }
-        } else {
-            result = AbilityManagerClient::GetInstance()->PowerOff();
-            if (result == OHOS::ERR_OK) {
-                HILOG_INFO("%{public}s", STRING_SCREEN_POWER_OFF_OK.c_str());
-                resultReceiver_ = STRING_SCREEN_POWER_OFF_OK + "\n";
-            } else {
-                HILOG_INFO("%{public}s result = %{public}d", STRING_SCREEN_POWER_OFF_NG.c_str(), result);
-                resultReceiver_ = STRING_SCREEN_POWER_OFF_NG + "\n";
-
-                resultReceiver_.append(GetMessageFromCode(result));
-            }
-        }
-    } else {
+    if (result != OHOS::ERR_OK) {
         resultReceiver_.append(HELP_MSG_SCREEN);
         result = OHOS::ERR_INVALID_VALUE;
     }
