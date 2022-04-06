@@ -735,8 +735,8 @@ HWTEST_P(SkillsMatchTest, AaFwk_Skills_match_0100, Function | MediumTest | Level
     std::string filterEntity = "entity.system.entity1";
     std::string filterAction1 = "action.system.action1";
     std::string filterAction2 = "action.system.action2";
-    std::string intentEntity = std::get<0>(GetParam());
-    std::string intentAction = std::get<1>(GetParam());
+    std::string wantEntity = std::get<0>(GetParam());
+    std::string wantAction = std::get<1>(GetParam());
     bool result = std::get<2>(GetParam());
 
     skills_->AddEntity(filterEntity);
@@ -744,8 +744,8 @@ HWTEST_P(SkillsMatchTest, AaFwk_Skills_match_0100, Function | MediumTest | Level
     skills_->AddAction(filterAction2);
 
     Want want;
-    want.AddEntity(intentEntity);
-    want.SetAction(intentAction);
+    want.AddEntity(wantEntity);
+    want.SetAction(wantAction);
 
     EXPECT_EQ(result, skills_->Match(want));
 }

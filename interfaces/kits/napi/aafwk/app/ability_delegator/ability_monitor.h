@@ -29,15 +29,52 @@ namespace AbilityDelegatorJs {
 using namespace OHOS::AppExecFwk;
 class AbilityMonitor : public IAbilityMonitor {
 public:
+    /**
+     * A constructor used to create a AbilityMonitor instance with the input parameter passed.
+     *
+     * @param name Indicates the specified ability name.
+     * @param jsAbilityMonitor Indicates the JSAbilityMonitor object.
+     */
     AbilityMonitor(const std::string &name, const std::shared_ptr<JSAbilityMonitor> &jsAbilityMonitor);
+
+    /**
+     * Default deconstructor used to deconstruct.
+     */
     ~AbilityMonitor() = default;
 
+    /**
+     * Called when ability is started.
+     */
     void OnAbilityStart() override;
+
+    /**
+     * Called when ability is in foreground.
+     */
     void OnAbilityForeground() override;
+
+    /**
+     * Called when ability is in background.
+     */
     void OnAbilityBackground() override;
+
+    /**
+     * Called when ability is stopped.
+     */
     void OnAbilityStop() override;
+
+    /**
+     * Called when window stage is created.
+     */
     void OnWindowStageCreate() override;
+
+    /**
+     * Called when window stage is restored.
+     */
     void OnWindowStageRestore() override;
+
+    /**
+     * Called when window stage is destroyed.
+     */
     void OnWindowStageDestroy() override;
 
 private:

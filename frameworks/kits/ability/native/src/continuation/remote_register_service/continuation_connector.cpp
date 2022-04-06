@@ -52,7 +52,7 @@ sptr<ContinuationConnector> ContinuationConnector::GetInstance(const std::weak_p
 
 /**
  * @brief This method is called back to receive the connection result after an ability calls the
- * Ability#connectAbility(Intent, IAbilityConnection) method to connect it to a Service ability.
+ * Ability#connectAbility(Want, IAbilityConnection) method to connect it to a Service ability.
  *
  * @param element: Indicates information about the connected Service ability.
  * @param remote: Indicates the remote proxy object of the Service ability.

@@ -20,12 +20,19 @@
 #include "ability_lifecycle_executor.h"
 #include "iremote_object.h"
 
+class NativeReference;
+
 namespace OHOS {
 namespace AppExecFwk {
 struct ADelegatorAbilityProperty {
+    // token of ability
     sptr<IRemoteObject> token_;
+    // name of ability
     std::string name_;
+    // lifecycle state of ability
     AbilityLifecycleExecutor::LifecycleState lifecycleState_ {AbilityLifecycleExecutor::LifecycleState::UNINITIALIZED};
+    // ability object in jsruntime
+    std::weak_ptr<NativeReference> object_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -17,7 +17,6 @@ group("innerkits_target") {
     "ability_manager:ability_manager",
     "app_manager:app_manager",
     "dataobs_manager:dataobs_manager",
-    "intent:intent",
     "uri_permission:uri_permission_mgr",
     "want:want",
   ]
