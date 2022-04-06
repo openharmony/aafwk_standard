@@ -90,6 +90,14 @@ public:
      */
     ErrCode SetMissionLabel(const std::string &label) override;
 
+    /**
+     * @brief Set mission icon of this ability.
+     *
+     * @param icon the icon of this ability.
+     * @return Returns ERR_OK if success.
+     */
+    ErrCode SetMissionIcon(const std::shared_ptr<Media::PixelMap> &icon) override;
+
     void SetStageContext(const std::shared_ptr<AbilityRuntime::Context> &stageContext);
 
     /**

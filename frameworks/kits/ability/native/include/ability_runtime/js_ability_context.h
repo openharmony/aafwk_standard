@@ -51,6 +51,7 @@ public:
     static NativeValue* RequestPermissionsFromUser(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* RestoreWindowStage(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* SetMissionLabel(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* SetMissionIcon(NativeEngine* engine, NativeCallbackInfo* info);
 
     static void ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,
         const std::shared_ptr<AppExecFwk::Configuration> &config);
@@ -74,6 +75,7 @@ private:
     NativeValue* OnRequestPermissionsFromUser(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnRestoreWindowStage(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnSetMissionLabel(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnSetMissionIcon(NativeEngine& engine, NativeCallbackInfo& info);
 
     static bool UnWrapWant(NativeEngine& engine, NativeValue* argv, AAFwk::Want& want);
     static NativeValue* WrapWant(NativeEngine& engine, const AAFwk::Want& want);

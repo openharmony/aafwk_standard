@@ -41,6 +41,40 @@ void MissionListenerProxy::OnMissionMovedToFront(int32_t missionId)
     SendRequestCommon(missionId, IMissionListener::ON_MISSION_MOVED_TO_FRONT);
 }
 
+void MissionListenerProxy::OnMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon)
+{
+    if (!icon) {
+        HILOG_ERROR("invalid mission icon.");
+        return;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    HILOG_INFO("mission_listener_proxy, OnMissionIconUpdated,missionId:%{public}d", missionId);
+    if (!data.WriteInterfaceToken(IMissionListener::GetDescriptor())) {
+        HILOG_ERROR("Write interface token failed when proxy call OnMissionIconUpdated.");
+        return;
+    }
+
+    if (!data.WriteInt32(missionId)) {
+        HILOG_ERROR("Write missionId failed.");
+        return;
+    }
+
+    if (!data.WriteParcelable(icon.get())) {
+        HILOG_ERROR("write icon failed.");
+        return;
+    }
+
+    int error = Remote()->SendRequest(IMissionListener::ON_MISSION_ICON_UPDATED, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("SendRequest icon updated fail, error: %{public}d", error);
+        return;
+    }
+}
+
 void MissionListenerProxy::SendRequestCommon(int32_t missionId, IMissionListener::MissionListenerCmd cmd)
 {
     MessageParcel data;

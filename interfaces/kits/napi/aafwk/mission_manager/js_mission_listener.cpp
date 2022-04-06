@@ -40,6 +40,31 @@ void JsMissionListener::OnMissionMovedToFront(int32_t missionId)
     CallJsMethod("onMissionMovedToFront", missionId);
 }
 
+void JsMissionListener::OnMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon)
+{
+    HILOG_INFO("OnMissionIconUpdated, missionId = %{public}d", missionId);
+    if (engine_ == nullptr) {
+        HILOG_ERROR("engine_ is nullptr");
+        return;
+    }
+
+    if (missionId <= 0 || !icon) {
+        HILOG_ERROR("missionId or icon is invalid, missionId:%{public}d", missionId);
+        return;
+    }
+
+    // js callback must run in js thread
+    std::unique_ptr<AsyncTask::CompleteCallback> complete = std::make_unique<AsyncTask::CompleteCallback>
+        ([jsMissionListener = this, missionId, icon](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            if (jsMissionListener) {
+                jsMissionListener->CallJsMissionIconUpdated(missionId, icon);
+            }
+        });
+    NativeReference* callback = nullptr;
+    std::unique_ptr<AsyncTask::ExecuteCallback> execute = nullptr;
+    AsyncTask::Schedule(*engine_, std::make_unique<AsyncTask>(callback, std::move(execute), std::move(complete)));
+}
+
 void JsMissionListener::AddJsListenerObject(int32_t listenerId, NativeValue* jsListenerObject)
 {
     jsListenerObjectMap_.emplace(
@@ -98,6 +123,36 @@ void JsMissionListener::CallJsMethodInner(const std::string &methodName, int32_t
             continue;
         }
         NativeValue* argv[] = { CreateJsValue(*engine_, missionId) };
+        engine_->CallFunction(value, method, argv, ArraySize(argv));
+    }
+}
+
+void JsMissionListener::CallJsMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon)
+{
+    if (engine_ == nullptr) {
+        HILOG_ERROR("engine_ is nullptr, not call js mission updated.");
+        return;
+    }
+
+    NativeValue* nativeMissionId = CreateJsValue(*engine_, missionId);
+    auto nativeIcon = reinterpret_cast<NativeValue*>(
+        Media::PixelMapNapi::CreatePixelMap(reinterpret_cast<napi_env>(engine_), icon));
+
+    auto tmpMap = jsListenerObjectMap_;
+    for (auto &item : tmpMap) {
+        NativeValue* value = (item.second)->Get();
+        NativeObject* listenerObj = ConvertNativeValueTo<NativeObject>(value);
+        if (listenerObj == nullptr) {
+            HILOG_ERROR("Failed to get js object");
+            continue;
+        }
+        NativeValue* method = listenerObj->GetProperty("onMissionIconUpdated");
+        if (method == nullptr || method->TypeOf() == NATIVE_UNDEFINED) {
+            HILOG_ERROR("Failed to get onMissionIconUpdated method from object");
+            continue;
+        }
+
+        NativeValue* argv[] = { nativeMissionId, nativeIcon };
         engine_->CallFunction(value, method, argv, ArraySize(argv));
     }
 }

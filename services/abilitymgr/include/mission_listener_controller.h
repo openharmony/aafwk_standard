@@ -82,6 +82,14 @@ public:
      */
     void NotifyMissionMovedToFront(int32_t missionId);
 
+    /**
+     * notify listeners that mission icon has changed.
+     *
+     * @param missionId target mission id.
+     * @param icon mission icon.
+     */
+    void NotifyMissionIconChanged(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon);
+
     void HandleUnInstallApp(const std::list<int32_t> &missions);
 
 private:

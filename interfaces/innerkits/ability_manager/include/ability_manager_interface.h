@@ -420,6 +420,8 @@ public:
 
     virtual int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label) = 0;
 
+    virtual int SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon) = 0;
+
     virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) = 0;
 
     virtual int GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info) = 0;
@@ -720,6 +722,9 @@ public:
 
         // ipc for get mission id by ability token (57)
         GET_MISSION_ID_BY_ABILITY_TOKEN,
+
+        // ipc id for set mission icon (58)
+        SET_MISSION_ICON,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)
