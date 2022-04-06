@@ -708,8 +708,8 @@ ErrCode Ability::StartAbilityForResult(const Want &want, int requestCode, Abilit
  * Starts a new ability with specific start settings.
  * A Page or Service ability uses this method to start a specific ability.
  * The system locates the target ability from installed abilities based on
- * the value of the intent parameter and then starts it. You can specify the
- * ability to start using the intent parameter.
+ * the value of the want parameter and then starts it. You can specify the
+ * ability to start using the want parameter.
  *
  * @param want Indicates the ability to start.
  * @param abilityStartSetting Indicates the setting ability used to start.
@@ -1633,10 +1633,10 @@ AbilityLifecycleExecutor::LifecycleState Ability::GetState()
 
 /**
  * @brief A Page or Service ability uses this method to start a specific ability. The system locates the target
- * ability from installed abilities based on the value of the intent parameter and then starts it. You can specify
- * the ability to start using the intent parameter.
+ * ability from installed abilities based on the value of the want parameter and then starts it. You can specify
+ * the ability to start using the want parameter.
  *
- * @param intent Indicates the ability to start.
+ * @param want Indicates the ability to start.
  *
  * @return errCode ERR_OK on success, others on failure.
  */
@@ -1686,7 +1686,7 @@ void Ability::SetMainRoute(const std::string &entry)
 {}
 
 /**
- * @brief By binding an action, you can set different action parameters in Intent to present different initial
+ * @brief By binding an action, you can set different action parameters in Want to present different initial
  * pages. You must register actions in the profile file.
  *
  * @param action Indicates the action to bind.

@@ -19,7 +19,6 @@ module_output_path = "appexecfwk_standard/ams/"
 config("system_test_ams_ability_state_test_config") {
   include_dirs = [
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
-    "${aafwk_path}/interfaces/innerkits/intent/include",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "${aafwk_path}/interfaces/innerkits/want/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
