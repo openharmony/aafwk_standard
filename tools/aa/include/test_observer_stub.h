@@ -23,8 +23,25 @@ namespace OHOS {
 namespace AAFwk {
 class TestObserverStub : public IRemoteStub<ITestObserver> {
 public:
+    /**
+     * Default constructor.
+     */
     TestObserverStub();
+
+    /**
+     * Deconstructor used to deconstruct.
+     */
     virtual ~TestObserverStub() override;
+
+    /**
+     * Handles ipc request.
+     *
+     * @param code, Indicates the ipc id.
+     * @param data, Indicates the input data.
+     * @param reply, Indicates the reply data.
+     * @param option, Indicates the option.
+     * @return the result of execution.
+     */
     virtual int OnRemoteRequest(
         uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 };
