@@ -31,22 +31,132 @@ public:
         bool hasTimeoutPara;
         bool hasCallbackPara;
     };
-    JSAbilityDelegator() = default;
+
+    /**
+     * Default constructor used to create a JSAbilityDelegator instance.
+     */
+    JSAbilityDelegator();
+
+    /**
+     * Default deconstructor used to deconstruct.
+     */
     ~JSAbilityDelegator() = default;
 
+    /**
+     * Destory object.
+     *
+     * @param engine Indicates the native engine.
+     * @param data Indicates the object to be destroyed.
+     * @param hint Indicates the hint.
+     */
     static void Finalizer(NativeEngine *engine, void *data, void *hint);
 
+    /**
+     * Adds ability monitor.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *AddAbilityMonitor(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Removes ability monitor.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *RemoveAbilityMonitor(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Waits for the specified monitor.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *WaitAbilityMonitor(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Prints log information to the console.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *Print(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Execute the specified shell command.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *ExecuteShellCommand(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Obtains the application context.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *GetAppContext(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Obtains the lifecycle state of the specified ability.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *GetAbilityState(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Obtains the ability that is currently being displayed.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *GetCurrentTopAbility(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Starts an ability based on the given parameters.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *StartAbility(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Transits the specified ability to foreground.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *DoAbilityForeground(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Transits the specified ability to background.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *DoAbilityBackground(NativeEngine *engine, NativeCallbackInfo *info);
+
+    /**
+     * Finishes user test.
+     *
+     * @param engine Indicates the native engine.
+     * @param info Indicates the parameters from js.
+     * @return exec result.
+     */
     static NativeValue *FinishTest(NativeEngine *engine, NativeCallbackInfo *info);
 
 private:

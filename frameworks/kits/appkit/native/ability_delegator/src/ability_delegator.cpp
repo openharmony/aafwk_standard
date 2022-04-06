@@ -74,7 +74,8 @@ size_t AbilityDelegator::GetMonitorsNum()
     return abilityMonitors_.size();
 }
 
-sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(const std::shared_ptr<IAbilityMonitor> &monitor)
+std::shared_ptr<ADelegatorAbilityProperty> AbilityDelegator::WaitAbilityMonitor(
+    const std::shared_ptr<IAbilityMonitor> &monitor)
 {
     if (!monitor) {
         HILOG_WARN("Invalid input parameter");
@@ -89,10 +90,10 @@ sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(const std::shared_ptr<I
         return {};
     }
 
-    return obtainedAbility->token_;
+    return obtainedAbility;
 }
 
-sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(
+std::shared_ptr<ADelegatorAbilityProperty> AbilityDelegator::WaitAbilityMonitor(
     const std::shared_ptr<IAbilityMonitor> &monitor, const int64_t timeoutMs)
 {
     if (!monitor) {
@@ -108,7 +109,7 @@ sptr<IRemoteObject> AbilityDelegator::WaitAbilityMonitor(
         return {};
     }
 
-    return obtainedAbility->token_;
+    return obtainedAbility;
 }
 
 std::shared_ptr<AbilityRuntime::Context> AbilityDelegator::GetAppContext() const
@@ -124,7 +125,7 @@ AbilityDelegator::AbilityState AbilityDelegator::GetAbilityState(const sptr<IRem
     }
 
     std::unique_lock<std::mutex> lck(mutexAbilityProperties_);
-    auto existedProperty = DoesPropertyExist(token);
+    auto existedProperty = FindPropertyByToken(token);
     if (!existedProperty) {
         HILOG_WARN("Unknown ability token");
         return AbilityDelegator::AbilityState::UNINITIALIZED;
@@ -133,7 +134,7 @@ AbilityDelegator::AbilityState AbilityDelegator::GetAbilityState(const sptr<IRem
     return ConvertAbilityState(existedProperty->lifecycleState_);
 }
 
-sptr<IRemoteObject> AbilityDelegator::GetCurrentTopAbility()
+std::shared_ptr<ADelegatorAbilityProperty> AbilityDelegator::GetCurrentTopAbility()
 {
     sptr<IRemoteObject> topAbilityToken;
     if (AAFwk::AbilityManagerClient::GetInstance()->GetCurrentTopAbility(topAbilityToken)) {
@@ -141,7 +142,14 @@ sptr<IRemoteObject> AbilityDelegator::GetCurrentTopAbility()
         return {};
     }
 
-    return topAbilityToken;
+    std::unique_lock<std::mutex> lck(mutexAbilityProperties_);
+    auto existedProperty = FindPropertyByToken(topAbilityToken);
+    if (!existedProperty) {
+        HILOG_WARN("Unknown ability token");
+        return {};
+    }
+
+    return existedProperty;
 }
 
 std::string AbilityDelegator::GetThreadName() const
@@ -455,6 +463,9 @@ void AbilityDelegator::PostPerformStop(const std::shared_ptr<ADelegatorAbilityPr
             monitor->OnAbilityStop();
         }
     }
+
+    RemoveAbilityProperty(ability);
+    CallClearFunc(ability);
 }
 
 AbilityDelegator::AbilityState AbilityDelegator::ConvertAbilityState(
@@ -495,7 +506,7 @@ void AbilityDelegator::ProcessAbilityProperties(const std::shared_ptr<ADelegator
         ability->name_.data(), ability->lifecycleState_);
 
     std::unique_lock<std::mutex> lck(mutexAbilityProperties_);
-    auto existedProperty = DoesPropertyExist(ability->token_);
+    auto existedProperty = FindPropertyByToken(ability->token_);
     if (existedProperty) {
         // update
         existedProperty->lifecycleState_ = ability->lifecycleState_;
@@ -505,7 +516,23 @@ void AbilityDelegator::ProcessAbilityProperties(const std::shared_ptr<ADelegator
     abilityProperties_.emplace_back(ability);
 }
 
-std::shared_ptr<ADelegatorAbilityProperty> AbilityDelegator::DoesPropertyExist(const sptr<IRemoteObject> &token)
+void AbilityDelegator::RemoveAbilityProperty(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
+{
+    HILOG_INFO("Enter");
+
+    if (!ability) {
+        HILOG_WARN("Invalid ability property");
+        return;
+    }
+
+    HILOG_INFO("ability property { name : %{public}s, state : %{public}d }",
+        ability->name_.data(), ability->lifecycleState_);
+
+    std::unique_lock<std::mutex> lck(mutexAbilityProperties_);
+    abilityProperties_.remove(ability);
+}
+
+std::shared_ptr<ADelegatorAbilityProperty> AbilityDelegator::FindPropertyByToken(const sptr<IRemoteObject> &token)
 {
     HILOG_INFO("Enter");
 
@@ -547,7 +574,26 @@ void AbilityDelegator::FinishUserTest(const std::string &msg, const int32_t resu
     const auto &bundleName = delegatorArgs->GetTestBundleName();
     auto err = AAFwk::AbilityManagerClient::GetInstance()->FinishUserTest(msg, resultCode, bundleName);
     if (err) {
-        HILOG_ERROR("MainThread::FinishUserTest is failed %{public}d", err);
+        HILOG_ERROR("FinishUserTest is failed %{public}d", err);
+    }
+}
+
+void AbilityDelegator::RegisterClearFunc(ClearFunc func)
+{
+    HILOG_INFO("Enter");
+    if (!func) {
+        HILOG_ERROR("Invalid func");
+        return;
+    }
+
+    clearFunc_ = func;
+}
+
+inline void AbilityDelegator::CallClearFunc(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
+{
+    HILOG_INFO("Enter");
+    if (clearFunc_) {
+        clearFunc_(ability);
     }
 }
 }  // namespace AppExecFwk

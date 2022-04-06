@@ -21,10 +21,25 @@
 namespace OHOS {
 namespace AbilityDelegatorJs {
 enum class AbilityLifecycleState {
+    /**
+     * Indicates that the ability has not been initialized.
+     */
     UNINITIALIZED,
+    /**
+     * Indicates that the ability is in the created state.
+     */
     CREATE,
+    /**
+     * Indicates that the ability is in the foreground state.
+     */
     FOREGROUND,
+    /**
+     * Indicates that the ability is in the background state.
+     */
     BACKGROUND,
+    /**
+     * Indicates that the ability is in the destroyed state.
+     */
     DESTROY,
 };
 

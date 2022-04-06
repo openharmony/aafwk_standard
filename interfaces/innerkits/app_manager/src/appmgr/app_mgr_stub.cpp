@@ -289,23 +289,20 @@ int32_t AppMgrStub::HandleGetForegroundApplications(MessageParcel &data, Message
 
 int32_t AppMgrStub::HandleStartUserTestProcess(MessageParcel &data, MessageParcel &reply)
 {
-    AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
+    std::unique_ptr<AAFwk::Want> want(data.ReadParcelable<AAFwk::Want>());
     if (want == nullptr) {
         HILOG_ERROR("want is nullptr");
         return ERR_INVALID_VALUE;
     }
-    BundleInfo *bundleInfo = data.ReadParcelable<BundleInfo>();
+    std::unique_ptr<BundleInfo> bundleInfo(data.ReadParcelable<BundleInfo>());
     if (bundleInfo == nullptr) {
         HILOG_ERROR("want is nullptr");
-        delete want;
         return ERR_INVALID_VALUE;
     }
     auto observer = data.ReadRemoteObject();
     int32_t userId = data.ReadInt32();
     int32_t result = StartUserTestProcess(*want, observer, *bundleInfo, userId);
     reply.WriteInt32(result);
-    delete want;
-    delete bundleInfo;
     return result;
 }
 

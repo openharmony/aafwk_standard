@@ -22,15 +22,47 @@ namespace OHOS {
 namespace AAFwk {
 class TestObserver : public TestObserverStub {
 public:
-
+    /**
+     * Default constructor used to create a TestObserver instance.
+     */
     TestObserver();
 
+    /**
+     * Deconstructor used to deconstruct.
+     */
     virtual ~TestObserver() override;
 
+    /**
+     * Outputs test status.
+     *
+     * @param msg, Indicates the status information.
+     * @param resultCode, Indicates the result code.
+     */
     virtual void TestStatus(const std::string &msg, const int &resultCode) override;
+
+    /**
+     * Outputs information and result code that the test has finished.
+     *
+     * @param msg, Indicates the status information.
+     * @param resultCode, Indicates the result code.
+     */
     virtual void TestFinished(const std::string &msg, const int &resultCode) override;
-    virtual ShellCommandResult ExecuteShellCommand(
-        const std::string &cmd, const int64_t timeoutSec) override;
+
+    /**
+     * Executes the specified shell command.
+     *
+     * @param cmd, Indicates the specified shell command.
+     * @param timeoutSec, Indicates the specified time out time, in seconds.
+     * @return the result of the specified shell command.
+     */
+    virtual ShellCommandResult ExecuteShellCommand(const std::string &cmd, const int64_t timeoutSec) override;
+
+    /**
+     * Waits for the test to finish.
+     *
+     * @param timeoutMs, Indicates the specified time out time, in milliseconds.
+     * @return true if the test finish within the specified time; returns false otherwise.
+     */
     bool WaitForFinish(const int64_t &timeoutMs);
 
 private:

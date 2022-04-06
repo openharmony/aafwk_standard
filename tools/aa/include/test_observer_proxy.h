@@ -23,12 +23,41 @@ namespace OHOS {
 namespace AAFwk {
 class TestObserverProxy : public IRemoteProxy<ITestObserver> {
 public:
+    /**
+     * A constructor used to create a TestObserverProxy instance with the input parameter object passed.
+     * @param object Indicates remote object.
+     */
     explicit TestObserverProxy(const sptr<IRemoteObject> &object);
+
+    /**
+     * Deconstructor used to deconstruct.
+     */
     virtual ~TestObserverProxy() override;
+
+    /**
+     * Outputs test status.
+     *
+     * @param msg, Indicates the status information.
+     * @param resultCode, Indicates the result code.
+     */
     virtual void TestStatus(const std::string &msg, const int &resultCode) override;
+
+    /**
+     * Outputs information and result code that the test has finished.
+     *
+     * @param msg, Indicates the status information.
+     * @param resultCode, Indicates the result code.
+     */
     virtual void TestFinished(const std::string &msg, const int &resultCode) override;
-    virtual ShellCommandResult ExecuteShellCommand(
-        const std::string &cmd, const int64_t timeoutSec) override;
+
+    /**
+     * Executes the specified shell command.
+     *
+     * @param cmd, Indicates the specified shell command.
+     * @param timeoutSec, Indicates the specified time out time, in seconds.
+     * @return the result of the specified shell command.
+     */
+    virtual ShellCommandResult ExecuteShellCommand(const std::string &cmd, const int64_t timeoutSec) override;
 
 private:
     static inline BrokerDelegator<TestObserverProxy> delegator_;

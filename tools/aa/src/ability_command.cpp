@@ -1231,10 +1231,10 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
     for (int i = USER_TEST_COMMAND_START_INDEX; i < argc_; i++) {
         HILOG_INFO("argv_[%{public}d]: %{public}s", i, argv_[i]);
         std::string opt = argv_[i];
-        if (opt == "-h" || opt == "--help") {
+        if ((opt == "-h") || (opt == "--help")) {
             resultReceiver_.append(HELP_MSG_TEST);
             return OHOS::ERR_OK;
-        } else if (opt == "-b" || opt == "-w" || opt == "-p" || opt == "-m") {
+        } else if ((opt == "-b") || (opt == "-w") || (opt == "-p") || (opt == "-m")) {
             if (i >= argc_ - 1) {
                 return TestCommandError("error: option [" + opt + "] requires a value.\n");
             }

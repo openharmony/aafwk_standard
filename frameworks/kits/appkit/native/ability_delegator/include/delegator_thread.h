@@ -26,13 +26,37 @@ namespace OHOS {
 namespace AppExecFwk {
 class DelegatorThread {
 public:
+    /**
+     * Definition of thread task.
+     */
     using DTask = std::function<void()>;
 
 public:
+    /**
+     * A constructor used to create a DelegatorThread instance with the input parameter passed.
+     *
+     * @param isMain Indicates whether to use main thread.
+     */
     explicit DelegatorThread(bool isMain = false);
+
+    /**
+     * Default deconstructor used to deconstruct.
+     */
     ~DelegatorThread() = default;
 
+    /**
+     * Runs specified task.
+     *
+     * @param task, Indicates the specified task.
+     * @return true if succeed, false otherwise.
+     */
     bool Run(const DTask &task);
+
+    /**
+     * Obtains the name of the thread.
+     *
+     * @return the name of the thread.
+     */
     std::string GetThreadName() const;
 
 private:
