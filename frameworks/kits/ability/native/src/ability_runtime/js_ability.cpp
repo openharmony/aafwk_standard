@@ -336,6 +336,12 @@ void JsAbility::OnNewWant(const Want &want)
     HILOG_INFO("%{public}s begin.", __func__);
     Ability::OnNewWant(want);
 
+#ifdef SUPPORT_GRAPHICS
+    if (scene_) {
+        scene_->OnNewWant(want);
+    }
+#endif
+
     HandleScope handleScope(jsRuntime_);
     auto &nativeEngine = jsRuntime_.GetNativeEngine();
 
