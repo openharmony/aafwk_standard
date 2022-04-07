@@ -84,14 +84,6 @@ public:
     ErrCode ScheduleCommandAbilityDone(const sptr<IRemoteObject> &token);
 
     /**
-     * AddWindowInfo, add windowToken to AbilityRecord.
-     *
-     * @param token, the token of the ability.
-     * @param windowToken, window id of the ability.
-     */
-    void AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken);
-
-    /**
      * StartAbility with want, send want to ability manager service.
      *
      * @param want Ability want.
@@ -322,35 +314,6 @@ public:
     ErrCode GetPendingRequestWant(const sptr<IWantSender> &target, std::shared_ptr<Want> &want);
 
     ErrCode GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info);
-
-    /**
-     * minimize multiwindow by mission id.
-     * @param missionId, the id of target mission
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode MinimizeMultiWindow(int missionId);
-
-    /**
-     * maximize multiwindow by mission id.
-     * @param missionId, the id of target mission
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode MaximizeMultiWindow(int missionId);
-
-    /**
-     * Change the focus of ability in the mission stack.
-     * @param lostToken, the token of lost focus ability
-     * @param getToken, the token of get focus ability
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode ChangeFocusAbility(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken);
-
-    /**
-     * close multiwindow by mission id.
-     * @param missionId, the id of target mission.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    ErrCode CloseMultiWindow(int missionId);
 
     /**
      * Get system memory information.

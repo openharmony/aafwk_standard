@@ -96,13 +96,6 @@ ErrCode AbilityManagerClient::ScheduleCommandAbilityDone(const sptr<IRemoteObjec
     return abms->ScheduleCommandAbilityDone(token);
 }
 
-void AbilityManagerClient::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN(abms);
-    abms->AddWindowInfo(token, windowToken);
-}
-
 ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode, int32_t userId)
 {
     auto abms = GetAbilityManager();
@@ -267,47 +260,6 @@ ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
     return abms->StopServiceAbility(want);
 }
 
-ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, MissionSnapshot &missionSnapshot)
-{
-#ifdef SUPPORT_GRAPHICS
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    MissionPixelMap missionPixelMap;
-    int ret = abms->GetMissionSnapshot(missionId, missionPixelMap);
-    if (ret == ERR_OK) {
-        HILOG_INFO("missionPixelMap.imageInfo.shmKey: %{public}d", missionPixelMap.imageInfo.shmKey);
-        if (missionPixelMap.imageInfo.size == 0) {
-            HILOG_INFO("size is 0.");
-            return -1;
-        }
-        void *data = SharedMemory::PopSharedMemory(missionPixelMap.imageInfo.shmKey, missionPixelMap.imageInfo.size);
-        if (!data) {
-            HILOG_INFO("SharedMemory::PopSharedMemory return value is nullptr.");
-            return -1;
-        }
-        Media::InitializationOptions mediaOption;
-        mediaOption.size.width = (int)missionPixelMap.imageInfo.width;
-        mediaOption.size.height = (int)missionPixelMap.imageInfo.height;
-        mediaOption.pixelFormat = Media::PixelFormat::BGRA_8888;
-        mediaOption.editable = true;
-        auto pixel = Media::PixelMap::Create((const uint32_t *)data,
-            missionPixelMap.imageInfo.size / sizeof(uint32_t), mediaOption);
-        if (!pixel) {
-            HILOG_INFO(" Media::PixelMap::Create return value is nullptr.");
-            return -1;
-        }
-        HILOG_INFO("width = [%{public}d]", pixel->GetWidth());
-        HILOG_INFO("height = [%{public}d]", pixel->GetHeight());
-        HILOG_INFO("size = [%{public}d]", missionPixelMap.imageInfo.size);
-        missionSnapshot.topAbility = missionPixelMap.topAbility;
-        missionSnapshot.snapshot = std::move(pixel);
-    }
-    return ret;
-#else
-    return -1;
-#endif
-}
-
 ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
@@ -329,35 +281,6 @@ ErrCode AbilityManagerClient::ClearUpApplicationData(const std::string &bundleNa
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->ClearUpApplicationData(bundleName);
-}
-
-ErrCode AbilityManagerClient::MinimizeMultiWindow(int missionId)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->MinimizeMultiWindow(missionId);
-}
-
-ErrCode AbilityManagerClient::MaximizeMultiWindow(int missionId)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->MaximizeMultiWindow(missionId);
-}
-
-ErrCode AbilityManagerClient::ChangeFocusAbility(
-    const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->ChangeFocusAbility(lostFocusToken, getFocusToken);
-}
-
-ErrCode AbilityManagerClient::CloseMultiWindow(int missionId)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->CloseMultiWindow(missionId);
 }
 
 ErrCode AbilityManagerClient::UpdateConfiguration(const AppExecFwk::Configuration &config)

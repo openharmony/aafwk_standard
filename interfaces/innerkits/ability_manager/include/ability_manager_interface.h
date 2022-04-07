@@ -215,14 +215,6 @@ public:
         sptr<IAbilityScheduler> dataAbilityScheduler, const sptr<IRemoteObject> &callerToken) = 0;
 
     /**
-     * AddWindowInfo, add windowToken to AbilityRecord.
-     *
-     * @param token, the token of the ability.
-     * @param windowToken, window id of the ability.
-     */
-    virtual void AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken) = 0;
-
-    /**
      * AttachAbilityThread, ability call this interface after loaded.
      *
      * @param scheduler,.the interface handler of kit ability.
@@ -298,14 +290,6 @@ public:
     virtual int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE) = 0;
 
     /**
-     * Get mission snapshot by mission id
-     *
-     * @param missionId the id of the mission to retrieve the sAutoapshots
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) = 0;
-
-    /**
      * Kill the process immediately.
      *
      * @param bundleName.
@@ -339,36 +323,6 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int UninstallApp(const std::string &bundleName, int32_t uid) = 0;
-
-    /**
-     * Change the focus of ability in the mission stack.
-     * @param lostToken, the token of lost focus ability
-     * @param getToken, the token of get focus ability
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int ChangeFocusAbility(
-        const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken) = 0;
-
-    /**
-     * minimize multiwindow by mission id.
-     * @param missionId, the id of target mission
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int MinimizeMultiWindow(int missionId) = 0;
-
-    /**
-     * maximize multiwindow by mission id.
-     * @param missionId, the id of target mission
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int MaximizeMultiWindow(int missionId) = 0;
-
-    /**
-     * close multiwindow by mission id.
-     * @param missionId, the id of target mission.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int CloseMultiWindow(int missionId) = 0;
 
     /**
      * Updates the configuration by modifying the configuration.

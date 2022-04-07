@@ -64,7 +64,6 @@ private:
     int AbilityTransitionDoneInner(MessageParcel &data, MessageParcel &reply);
     int ScheduleConnectAbilityDoneInner(MessageParcel &data, MessageParcel &reply);
     int ScheduleDisconnectAbilityDoneInner(MessageParcel &data, MessageParcel &reply);
-    int AddWindowInfoInner(MessageParcel &data, MessageParcel &reply);
     int TerminateAbilityResultInner(MessageParcel &data, MessageParcel &reply);
     int ScheduleCommandAbilityDoneInner(MessageParcel &data, MessageParcel &reply);
     int GetMissionSnapshotInner(MessageParcel &data, MessageParcel &reply);
@@ -81,10 +80,6 @@ private:
     int DumpSysStateInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityForSettingsInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityForOptionsInner(MessageParcel &data, MessageParcel &reply);
-    int ChangeFocusAbilityInner(MessageParcel &data, MessageParcel &reply);
-    int MinimizeMultiWindowInner(MessageParcel &data, MessageParcel &reply);
-    int MaximizeMultiWindowInner(MessageParcel &data, MessageParcel &reply);
-    int CloseMultiWindowInner(MessageParcel &data, MessageParcel &reply);
     int UpdateConfigurationInner(MessageParcel &data, MessageParcel &reply);
 
     int GetWantSenderInner(MessageParcel &data, MessageParcel &reply);

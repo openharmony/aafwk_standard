@@ -397,25 +397,6 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0015, TestSize.Level1)
 
 /*
  * Feature: AbilityManagerService
- * Function: AddWindowInfo
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService AddWindowInfo
- * EnvConditions: NA
- * CaseDescription: Verify the normal conditions of addWindowInfo
- */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0016, TestSize.Level1)
-{
-    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
-        .Times(1)
-        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
-    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
-    proxy_->AddWindowInfo(token, 1);
-
-    EXPECT_EQ(IAbilityManager::ADD_WINDOW_INFO, mock_->code_);
-}
-
-/*
- * Feature: AbilityManagerService
  * Function: DumpState
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService DumpState

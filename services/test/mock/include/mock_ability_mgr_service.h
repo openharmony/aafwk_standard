@@ -44,7 +44,6 @@ public:
     MOCK_METHOD1(DisconnectAbility, int(const sptr<IAbilityConnection> &connect));
     MOCK_METHOD3(AcquireDataAbility, sptr<IAbilityScheduler>(const Uri &, bool, const sptr<IRemoteObject> &));
     MOCK_METHOD2(ReleaseDataAbility, int(sptr<IAbilityScheduler>, const sptr<IRemoteObject> &));
-    MOCK_METHOD2(AddWindowInfo, void(const sptr<IRemoteObject> &token, int32_t windowToken));
     MOCK_METHOD2(AttachAbilityThread, int(const sptr<IAbilityScheduler> &scheduler, const sptr<IRemoteObject> &token));
     MOCK_METHOD3(AbilityTransitionDone, int(const sptr<IRemoteObject> &token, int state, const PacMap &));
     MOCK_METHOD2(
@@ -57,7 +56,6 @@ public:
         void(const std::string &args, std::vector<std::string>& info, bool isClient, bool isUserID, int UserID));
     MOCK_METHOD2(TerminateAbilityResult, int(const sptr<IRemoteObject> &, int startId));
     MOCK_METHOD2(StopServiceAbility, int(const Want &, int32_t userId));
-    MOCK_METHOD2(GetMissionSnapshot, int(const int32_t, MissionPixelMap &));
     MOCK_METHOD1(GetMissionIdByToken, int32_t(const sptr<IRemoteObject> &token));
     MOCK_METHOD1(KillProcess, int(const std::string &));
     MOCK_METHOD2(UninstallApp, int(const std::string &, int32_t));
@@ -77,11 +75,6 @@ public:
     MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
     MOCK_METHOD5(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
         const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode));
-    MOCK_METHOD2(
-        ChangeFocusAbility, int(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken));
-    MOCK_METHOD1(MinimizeMultiWindow, int(int missionId));
-    MOCK_METHOD1(MaximizeMultiWindow, int(int missionId));
-    MOCK_METHOD1(CloseMultiWindow, int(int missionId));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
     MOCK_METHOD3(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status));
     MOCK_METHOD2(NotifyContinuationResult, int(int32_t missionId, int32_t result));

@@ -156,9 +156,6 @@ int MockAbilityManagerService::ScheduleCommandAbilityDone(const sptr<IRemoteObje
     return 0;
 }
 
-void MockAbilityManagerService::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
-{}
-
 int MockAbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &callerToken, int requestCode)
 {
     return 0;
@@ -170,11 +167,6 @@ int MockAbilityManagerService::TerminateAbilityResult(const sptr<IRemoteObject> 
 }
 
 int MockAbilityManagerService::StopServiceAbility(const Want &want, int32_t userId)
-{
-    return 0;
-}
-
-int MockAbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
 {
     return 0;
 }
