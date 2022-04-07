@@ -1003,36 +1003,6 @@ int AbilityStackManager::DispatchTerminate(const std::shared_ptr<AbilityRecord> 
     return ERR_OK;
 }
 
-void AbilityStackManager::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
-{
-#ifdef SUPPORT_GRAPHICS
-    HILOG_DEBUG("Add window id.");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    // create WindowInfo and add to its AbilityRecord
-    auto abilityRecord = GetAbilityRecordByToken(token);
-    CHECK_POINTER(abilityRecord);
-    if (abilityRecord->GetWindowInfo()) {
-        HILOG_DEBUG("WindowInfo is already added. Can't add again.");
-        return;
-    }
-
-    if (!abilityRecord->IsAbilityState(ACTIVATING)) {
-        HILOG_INFO("Add windowInfo at state: %{public}d.", abilityRecord->GetAbilityState());
-    }
-    if (windowTokenToAbilityMap_[windowToken] != nullptr) {
-        // It shouldn't happen. Possible reasons for this case:
-        // 1. windowmanager generates same window token.
-        // 2. abilityms doesn't destroy ability in terminate process.
-        HILOG_ERROR("Window token has been added to other AbilityRecord. ability name: %{private}s",
-            abilityRecord->GetAbilityInfo().name.c_str());
-    } else {
-        abilityRecord->AddWindowInfo(windowToken);
-        windowTokenToAbilityMap_[windowToken] = abilityRecord;
-        HILOG_INFO("Add windowInfo complete, ability:%{public}s", abilityRecord->GetAbilityInfo().name.c_str());
-    }
-#endif
-}
-
 void AbilityStackManager::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state)
 {
     HILOG_DEBUG("Ability request app state %{public}d done.", state);
@@ -1241,33 +1211,6 @@ void AbilityStackManager::DumpTopAbility(std::vector<std::string> &info)
     return;
 }
 
-void AbilityStackManager::DumpWaittingAbilityQueue(std::string &result)
-{
-    std::queue<AbilityRequest> copyQueue;
-    {
-        std::lock_guard<std::recursive_mutex> guard(stackLock_);
-        if (waittingAbilityQueue_.empty()) {
-            result = "The waitting ability queue is empty.";
-            return;
-        }
-        copyQueue = waittingAbilityQueue_;
-    }
-
-    result = "User ID #" + std::to_string(userId_) + LINE_SEPARATOR;
-    while (!copyQueue.empty()) {
-        auto ability = copyQueue.front();
-        std::vector<std::string> state;
-        ability.Dump(state);
-
-        for (auto it : state) {
-            result += it;
-            result += LINE_SEPARATOR;
-        }
-        copyQueue.pop();
-    }
-    return;
-}
-
 void AbilityStackManager::EnqueueWaittingAbility(const AbilityRequest &abilityRequest)
 {
     waittingAbilityQueue_.push(abilityRequest);
@@ -1459,34 +1402,6 @@ bool AbilityStackManager::IsLauncherMission(int id)
     return true;
 }
 
-void AbilityStackManager::RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord)
-{
-    HILOG_INFO("%{public}s called", __FUNCTION__);
-    CHECK_POINTER(abilityRecord);
-    abilityRecord->SetRestarting(true);
-    if (abilityRecord->IsAbilityState(AbilityState::ACTIVE) ||
-        abilityRecord->IsAbilityState(AbilityState::ACTIVATING) ||
-        abilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW) ||
-        abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
-        abilityRecord->Inactivate();
-    } else if (abilityRecord->IsAbilityState(AbilityState::INACTIVE) ||
-               abilityRecord->IsAbilityState(AbilityState::INACTIVATING)) {
-        MoveToBackgroundTask(abilityRecord);
-    } else if (abilityRecord->IsAbilityState(AbilityState::BACKGROUND) ||
-               abilityRecord->IsAbilityState(AbilityState::MOVING_BACKGROUND) ||
-               abilityRecord->IsAbilityState(AbilityState::BACKGROUND_NEW) ||
-               abilityRecord->IsAbilityState(AbilityState::BACKGROUNDING_NEW)) {
-        auto self(shared_from_this());
-        auto timeoutTask = [abilityRecord, self]() {
-            HILOG_WARN("disconnect ability terminate timeout.");
-            self->CompleteTerminate(abilityRecord);
-        };
-        abilityRecord->Terminate(timeoutTask);
-    } else {
-        HILOG_WARN("target ability can't be restarted.");
-    }
-}
-
 void AbilityStackManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRecord)
 {
 }
@@ -1603,11 +1518,6 @@ void AbilityStackManager::HandleActiveTimeout(const std::shared_ptr<AbilityRecor
     }
 
     BackToLauncher();
-}
-
-int AbilityStackManager::MaximizeMultiWindow(int missionId)
-{
-    return 0;
 }
 
 void AbilityStackManager::ContinueLifecycle()
@@ -1853,60 +1763,6 @@ std::shared_ptr<AbilityRecord> AbilityStackManager::GetTopAbilityOfFullScreen()
     return topFullStack->GetTopAbilityRecord();
 }
 
-int AbilityStackManager::MinimizeMultiWindow(int missionId)
-{
-    return 0;
-}
-
-int AbilityStackManager::ChangeFocusAbility(
-    const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
-{
-    HILOG_INFO("Change focus ability.");
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    CHECK_POINTER_AND_RETURN(lostFocusToken, ERR_INVALID_VALUE);
-    CHECK_POINTER_AND_RETURN(getFocusToken, ERR_INVALID_VALUE);
-    if (getFocusToken == lostFocusToken) {
-        HILOG_WARN("get token is equal to lost token.");
-        return CHANGE_FOCUS_ABILITY_FAILED;
-    }
-
-    auto currentAbility = GetCurrentTopAbility();
-    CHECK_POINTER_AND_RETURN(currentAbility, CHANGE_FOCUS_ABILITY_FAILED);
-    if (!currentAbility->IsAbilityState(AbilityState::ACTIVE) || !waittingAbilityQueue_.empty()) {
-        HILOG_WARN("Top ability is not active or waiting queue is not empty, change focus failed");
-        return CHANGE_FOCUS_ABILITY_FAILED;
-    }
-
-    auto targetAbility = Token::GetAbilityRecordByToken(getFocusToken);
-    CHECK_POINTER_AND_RETURN(targetAbility, CHANGE_FOCUS_ABILITY_FAILED);
-    return ChangeFocusAbilityLocked(targetAbility);
-}
-
-int AbilityStackManager::ChangeFocusAbilityLocked(const std::shared_ptr<AbilityRecord> &targetAbility)
-{
-    HILOG_INFO("Change focus ability locked.");
-    CHECK_POINTER_AND_RETURN(targetAbility, ERR_INVALID_VALUE);
-
-    auto currentAbility = GetCurrentTopAbility();
-    CHECK_POINTER_AND_RETURN(currentAbility, CHANGE_FOCUS_ABILITY_FAILED);
-
-    if (targetAbility == currentAbility || !targetAbility->IsAbilityState(ACTIVE)) {
-        HILOG_ERROR("Target ability is current ability, or target ability is not active, can't change focus.");
-        return CHANGE_FOCUS_ABILITY_FAILED;
-    }
-
-    auto targetMission = targetAbility->GetMissionRecord();
-    CHECK_POINTER_AND_RETURN_LOG(
-        targetMission, CHANGE_FOCUS_ABILITY_FAILED, " TargetMission is  nullptr, change focus failed.");
-
-    return 0;
-}
-
-int AbilityStackManager::CloseMultiWindow(int missionId)
-{
-    return 0;
-}
-
 void AbilityStackManager::JudgingIsRemoveMultiScreenStack(std::shared_ptr<MissionStack> &stack)
 {
     HILOG_INFO("Judging is remove multi screen stack.");
@@ -1991,44 +1847,6 @@ void AbilityStackManager::CheckMissionRecordIsResume(const std::shared_ptr<Missi
 {
 }
 
-int AbilityStackManager::GetMissionSnapshot(int32_t missionId, MissionPixelMap &missionPixelMap)
-{
-#ifdef SUPPORT_GRAPHICS
-    HILOG_INFO("Get mission snapshot.");
-
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-
-    auto missionRecord = GetMissionRecordFromAllStacks(missionId);
-    CHECK_POINTER_AND_RETURN_LOG(missionRecord, REMOVE_MISSION_ID_NOT_EXIST, "mission is invalid.");
-    auto topAbilityRecord = missionRecord->GetTopAbilityRecord();
-    CHECK_POINTER_AND_RETURN_LOG(topAbilityRecord, REMOVE_MISSION_ID_NOT_EXIST, "top ability is invalid.");
-    auto windowInfo = topAbilityRecord->GetWindowInfo();
-    int windowID = 0;
-    if (windowInfo) {
-        windowID = windowInfo->windowToken_;
-        HILOG_INFO("windowID is %{public}d", windowID);
-    }
-    screenshotHandler_->StartScreenshot(missionId, windowID);
-    auto topAbility = missionRecord->GetTopAbilityRecord();
-    if (topAbility) {
-        OHOS::AppExecFwk::ElementName topElement(topAbility->GetAbilityInfo().deviceId,
-            topAbility->GetAbilityInfo().bundleName,
-            topAbility->GetAbilityInfo().name);
-        missionPixelMap.topAbility = topElement;
-    }
-
-    auto imageInfo = screenshotHandler_->GetImageInfo(missionId);
-    screenshotHandler_->RemoveImageInfo(missionId);
-    HILOG_INFO("width : %{public}d, height: %{public}d", imageInfo.width, imageInfo.height);
-    missionPixelMap.imageInfo.width = imageInfo.width;
-    missionPixelMap.imageInfo.height = imageInfo.height;
-    missionPixelMap.imageInfo.format = imageInfo.format;
-    missionPixelMap.imageInfo.size = imageInfo.size;
-    missionPixelMap.imageInfo.shmKey = SharedMemory::PushSharedMemory(imageInfo.data, imageInfo.size);
-#endif
-    return ERR_OK;
-}
-
 bool AbilityStackManager::IsLockScreenState()
 {
     HILOG_INFO("Is Lock Screen State.");
@@ -2110,15 +1928,7 @@ bool AbilityStackManager::SubscribeEvent()
     }
     EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    subscriber_ = std::make_shared<LockScreenEventSubscriber>(subscribeInfo, handler);
-    return EventFwk::CommonEventManager::SubscribeCommonEvent(subscriber_);
-}
-
-void AbilityStackManager::UpdateLockScreenState(bool isLockScreen)
-{
-    HILOG_DEBUG("%{public}s begin", __func__);
-    std::lock_guard<std::recursive_mutex> guard(stackLock_);
-    isLockScreen_ = isLockScreen;
+    return true;
 }
 
 void AbilityStackManager::ProcessInactivateInMoving(const std::shared_ptr<AbilityRecord> &abilityRecord)

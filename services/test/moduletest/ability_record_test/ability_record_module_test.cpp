@@ -492,31 +492,6 @@ HWTEST_F(AbilityRecordModuleTest, ConnectionRecord_001, TestSize.Level2)
 
 /*
  * Feature: AbilityRecord
- * Function: ConnectionRecord
- * SubFunction: AddWindowInfo/RemoveWindowInfo/GetWindowInfo
- * FunctionPoints: Ability window info getter and setter
- * CaseDescription: Check ability window info getter and setter.
- */
-HWTEST_F(AbilityRecordModuleTest, WindowInfo_001, TestSize.Level1)
-{
-#ifdef SUPPORT_GRAPHICS
-    auto &abilityRequest = MakeDefaultAbilityRequest();
-
-    auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    EXPECT_TRUE(abilityRecord);
-    EXPECT_FALSE(abilityRecord->GetWindowInfo());
-
-    for (int i = 0; i < COUNT; ++i) {
-        abilityRecord->AddWindowInfo(123);
-        EXPECT_TRUE(abilityRecord->GetWindowInfo());
-        abilityRecord->RemoveWindowInfo();
-        EXPECT_FALSE(abilityRecord->GetWindowInfo());
-    }
-#endif
-}
-
-/*
- * Feature: AbilityRecord
  * Function: Terminating
  * SubFunction: IsTerminating/SetTerminatingState
  * FunctionPoints: Ability terminating state

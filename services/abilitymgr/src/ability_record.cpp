@@ -810,17 +810,6 @@ std::shared_ptr<AbilityRecord> AbilityRecord::GetCallerRecord() const
     return callerList_.back()->GetCaller();
 }
 
-void AbilityRecord::AddWindowInfo(int windowToken)
-{
-    windowInfo_ = std::make_shared<WindowInfo>(windowToken);
-    isWindowAttached_ = true;
-}
-
-void AbilityRecord::RemoveWindowInfo()
-{
-    windowInfo_.reset();
-}
-
 bool AbilityRecord::IsConnectListEmpty()
 {
     return connRecordList_.empty();

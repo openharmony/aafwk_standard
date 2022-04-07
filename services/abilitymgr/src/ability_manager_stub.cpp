@@ -48,10 +48,8 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[ABILITY_TRANSITION_DONE] = &AbilityManagerStub::AbilityTransitionDoneInner;
     requestFuncMap_[CONNECT_ABILITY_DONE] = &AbilityManagerStub::ScheduleConnectAbilityDoneInner;
     requestFuncMap_[DISCONNECT_ABILITY_DONE] = &AbilityManagerStub::ScheduleDisconnectAbilityDoneInner;
-    requestFuncMap_[ADD_WINDOW_INFO] = &AbilityManagerStub::AddWindowInfoInner;
     requestFuncMap_[TERMINATE_ABILITY_RESULT] = &AbilityManagerStub::TerminateAbilityResultInner;
     requestFuncMap_[COMMAND_ABILITY_DONE] = &AbilityManagerStub::ScheduleCommandAbilityDoneInner;
-    requestFuncMap_[GET_MISSION_SNAPSHOT] = &AbilityManagerStub::GetMissionSnapshotInner;
     requestFuncMap_[ACQUIRE_DATA_ABILITY] = &AbilityManagerStub::AcquireDataAbilityInner;
     requestFuncMap_[RELEASE_DATA_ABILITY] = &AbilityManagerStub::ReleaseDataAbilityInner;
     requestFuncMap_[KILL_PROCESS] = &AbilityManagerStub::KillProcessInner;
@@ -71,8 +69,6 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[NOTIFY_CONTINUATION_RESULT] = &AbilityManagerStub::NotifyContinuationResultInner;
     requestFuncMap_[REGISTER_REMOTE_MISSION_LISTENER] = &AbilityManagerStub::RegisterRemoteMissionListenerInner;
     requestFuncMap_[UNREGISTER_REMOTE_MISSION_LISTENER] = &AbilityManagerStub::UnRegisterRemoteMissionListenerInner;
-    requestFuncMap_[CHANGE_FOCUS_ABILITY] = &AbilityManagerStub::ChangeFocusAbilityInner;
-    requestFuncMap_[MINIMIZE_MULTI_WINDOW] = &AbilityManagerStub::MinimizeMultiWindowInner;
     requestFuncMap_[START_ABILITY_FOR_OPTIONS] = &AbilityManagerStub::StartAbilityForOptionsInner;
     requestFuncMap_[START_SYNC_MISSIONS] = &AbilityManagerStub::StartSyncRemoteMissionsInner;
     requestFuncMap_[STOP_SYNC_MISSIONS] = &AbilityManagerStub::StopSyncRemoteMissionsInner;
@@ -81,8 +77,6 @@ void AbilityManagerStub::FirstStepInit()
 
 void AbilityManagerStub::SecondStepInit()
 {
-    requestFuncMap_[MAXIMIZE_MULTI_WINDOW] = &AbilityManagerStub::MaximizeMultiWindowInner;
-    requestFuncMap_[CLOSE_MULTI_WINDOW] = &AbilityManagerStub::CloseMultiWindowInner;
     requestFuncMap_[GET_PENDING_WANT_SENDER] = &AbilityManagerStub::GetWantSenderInner;
     requestFuncMap_[SEND_PENDING_WANT_SENDER] = &AbilityManagerStub::SendWantSenderInner;
     requestFuncMap_[CANCEL_PENDING_WANT_SENDER] = &AbilityManagerStub::CancelWantSenderInner;
@@ -249,14 +243,6 @@ int AbilityManagerStub::ScheduleDisconnectAbilityDoneInner(MessageParcel &data, 
     return NO_ERROR;
 }
 
-int AbilityManagerStub::AddWindowInfoInner(MessageParcel &data, MessageParcel &reply)
-{
-    sptr<IRemoteObject> token = data.ReadRemoteObject();
-    int windowToken = data.ReadInt32();
-    AddWindowInfo(token, windowToken);
-    return NO_ERROR;
-}
-
 int AbilityManagerStub::TerminateAbilityResultInner(MessageParcel &data, MessageParcel &reply)
 {
     sptr<IRemoteObject> token = data.ReadRemoteObject();
@@ -271,23 +257,6 @@ int AbilityManagerStub::ScheduleCommandAbilityDoneInner(MessageParcel &data, Mes
     auto token = data.ReadRemoteObject();
     int32_t result = ScheduleCommandAbilityDone(token);
     reply.WriteInt32(result);
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::GetMissionSnapshotInner(MessageParcel &data, MessageParcel &reply)
-{
-    MissionPixelMap missionPixelMap;
-    int32_t missionId = data.ReadInt32();
-    int32_t result = GetMissionSnapshot(missionId, missionPixelMap);
-    if (!reply.WriteParcelable(&missionPixelMap)) {
-        HILOG_ERROR("GetMissionSnapshot error");
-        return ERR_INVALID_VALUE;
-    }
-
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("GetMissionSnapshot result error");
-        return ERR_INVALID_VALUE;
-    }
     return NO_ERROR;
 }
 
@@ -518,39 +487,6 @@ int AbilityManagerStub::StartAbilityForOptionsInner(MessageParcel &data, Message
     reply.WriteInt32(result);
     delete want;
     delete startOptions;
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::ChangeFocusAbilityInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto loseToken = data.ReadRemoteObject();
-    auto getToken = data.ReadRemoteObject();
-    auto result = ChangeFocusAbility(loseToken, getToken);
-    reply.WriteInt32(result);
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::MinimizeMultiWindowInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto missionId = data.ReadInt32();
-    auto result = MinimizeMultiWindow(missionId);
-    reply.WriteInt32(result);
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::MaximizeMultiWindowInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto missionId = data.ReadInt32();
-    auto result = MaximizeMultiWindow(missionId);
-    reply.WriteInt32(result);
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::CloseMultiWindowInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto missionId = data.ReadInt32();
-    auto result = CloseMultiWindow(missionId);
-    reply.WriteInt32(result);
     return NO_ERROR;
 }
 
