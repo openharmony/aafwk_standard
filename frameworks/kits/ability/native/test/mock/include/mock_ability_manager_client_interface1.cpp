@@ -98,11 +98,6 @@ ErrCode AbilityManagerClient::ScheduleCommandAbilityDone(const sptr<IRemoteObjec
     return ERR_OK;
 }
 
-void AbilityManagerClient::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
-{
-    return;
-}
-
 ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
 {
     return ERR_OK;
@@ -142,11 +137,6 @@ ErrCode AbilityManagerClient::Connect()
 }
 
 ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
-{
-    return ERR_OK;
-}
-
-ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
 {
     return ERR_OK;
 }

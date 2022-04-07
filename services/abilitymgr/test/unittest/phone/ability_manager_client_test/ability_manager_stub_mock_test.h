@@ -111,9 +111,6 @@ public:
         return 0;
     }
 
-    virtual void AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
-    {}
-
     virtual int AttachAbilityThread(const sptr<IAbilityScheduler> &scheduler, const sptr<IRemoteObject> &token)
     {
         return 0;
@@ -156,11 +153,6 @@ public:
         return 0;
     }
 
-    int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
-    {
-        return 0;
-    }
-
     virtual int KillProcess(const std::string &bundleName)
     {
         return 0;
@@ -178,26 +170,6 @@ public:
 
     int UpdateConfiguration(const AppExecFwk::Configuration &config)
 
-    {
-        return 0;
-    }
-
-    int ChangeFocusAbility(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
-    {
-        return 0;
-    }
-
-    int MinimizeMultiWindow(int missionId)
-    {
-        return 0;
-    }
-
-    int MaximizeMultiWindow(int missionId)
-    {
-        return 0;
-    }
-
-    int CloseMultiWindow(int missionId)
     {
         return 0;
     }

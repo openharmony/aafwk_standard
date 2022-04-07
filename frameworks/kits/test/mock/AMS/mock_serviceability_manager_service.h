@@ -70,8 +70,6 @@ public:
         int32_t userId = DEFAULT_INVAL_VALUE) override;
     int DisconnectAbility(const sptr<IAbilityConnection> &connect) override;
 
-    void AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken) override;
-
     int AttachAbilityThread(const sptr<IAbilityScheduler> &scheduler, const sptr<IRemoteObject> &token) override;
 
     int AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData) override;
@@ -104,11 +102,6 @@ public:
     MOCK_METHOD2(GetPendingRequestWant, int(const sptr<IWantSender> &target, std::shared_ptr<Want> &want));
     MOCK_METHOD5(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
         const sptr<IRemoteObject> &callerToken, int32_t userId, int requestCode));
-    MOCK_METHOD2(
-        ChangeFocusAbility, int(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken));
-    MOCK_METHOD1(MinimizeMultiWindow, int(int missionId));
-    MOCK_METHOD1(MaximizeMultiWindow, int(int missionId));
-    MOCK_METHOD1(CloseMultiWindow, int(int missionId));
     MOCK_METHOD1(GetPendinTerminateAbilityTestgRequestWant, void(int id));
     MOCK_METHOD1(GetSystemMemoryAttr, void(AppExecFwk::SystemMemoryAttr &memoryInfo));
     MOCK_METHOD3(StartContinuation, int(const Want &want, const sptr<IRemoteObject> &abilityToken, int32_t status));
@@ -153,11 +146,6 @@ public:
 
     int ReleaseDataAbility(
         sptr<IAbilityScheduler> dataAbilityScheduler, const sptr<IRemoteObject> &callerToken) override
-    {
-        return 0;
-    }
-
-    int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
     {
         return 0;
     }

@@ -519,47 +519,5 @@ HWTEST_F(DumpModuleTest, dump_module_test_09, TestSize.Level2)
     g_abilityMs->DumpState(args, dumpInfo);
     EXPECT_EQ(2UL, dumpInfo.size());
 }
-
-/*
- * Feature: Aafwk
- * Function: DumpWaittingAbilityQueue
- * SubFunction: NA
- * FunctionPoints: test AbilityStackManager DumpWaittingAbilityQueue
- * EnvConditions: System running normally
- * CaseDescription: Dump info of abilities in waiting queue
- */
-HWTEST_F(DumpModuleTest, dump_module_test_011, TestSize.Level2)
-{
-    Want want1;
-    Want want2;
-    std::string expectResult("The waitting ability queue is empty.");
-
-    std::string args("--waitting-queue");
-    std::vector<std::string> result;
-    std::string waitingQueueResult;
-
-    g_abilityMs->DumpState(args, result);
-    auto stackMgr = g_abilityMs->GetStackManager();
-    EXPECT_TRUE(stackMgr);
-    g_abilityMs->DumpWaittingAbilityQueue(waitingQueueResult);
-    EXPECT_EQ(waitingQueueResult, expectResult);
-
-    result.clear();
-    waitingQueueResult.clear();
-
-    want1.SetElement(G_TESTABILITY1);
-    want2.SetElement(G_TESTABILITY5);
-
-    int ref = g_abilityMs->StartAbility(want1);
-    EXPECT_EQ(ref, 0);
-    int refwant2 = g_abilityMs->StartAbility(want2);
-    EXPECT_EQ(refwant2, START_ABILITY_WAITING);
-
-    g_abilityMs->DumpState(args, result);
-    EXPECT_TRUE(stackMgr);
-    stackMgr->DumpWaittingAbilityQueue(waitingQueueResult);
-    EXPECT_NE(std::string::npos, waitingQueueResult.find("com.ix.hiRadio"));
-}
-
 }  // namespace AAFwk
 }  // namespace OHOS

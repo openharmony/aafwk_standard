@@ -229,10 +229,7 @@ bool LifecycleTest::StartNextAbility()
 int LifecycleTest::AttachAbility(
     const OHOS::sptr<OHOS::AAFwk::AbilityScheduler> &scheduler, const OHOS::sptr<OHOS::IRemoteObject> &token)
 {
-    int ret = abilityMs_->AttachAbilityThread(scheduler, token);
-    static int32_t windowToken = 0;
-    abilityMs_->AddWindowInfo(token, ++windowToken);
-    return ret;
+    return abilityMs_->AttachAbilityThread(scheduler, token);
 }
 
 /*

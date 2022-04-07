@@ -57,7 +57,6 @@ abilityms_files = [
   "src/mission_stack.cpp",
   "src/mission_snapshot.cpp",
   "src/stack_setting.cpp",
-  "src/lock_screen_event_subscriber.cpp",
 
   # new ability manager service here
   "src/task_data_persistence_mgr.cpp",

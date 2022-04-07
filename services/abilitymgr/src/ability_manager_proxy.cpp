@@ -555,26 +555,6 @@ int AbilityManagerProxy::ScheduleCommandAbilityDone(const sptr<IRemoteObject> &t
     return reply.ReadInt32();
 }
 
-void AbilityManagerProxy::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
-{
-    int error;
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    if (!WriteInterfaceToken(data)) {
-        return;
-    }
-    if (!data.WriteRemoteObject(token) || !data.WriteInt32(windowToken)) {
-        HILOG_ERROR("data write failed.");
-        return;
-    }
-    error = Remote()->SendRequest(ADD_WINDOW_INFO, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Send request error: %{public}d", error);
-    }
-}
-
 void AbilityManagerProxy::DumpSysState(
     const std::string& args, std::vector<std::string>& state, bool isClient, bool isUserId, int UserId)
 {
@@ -724,34 +704,6 @@ int AbilityManagerProxy::GetParcelableInfos(MessageParcel &reply, std::vector<T>
     return NO_ERROR;
 }
 
-int AbilityManagerProxy::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
-{
-    int error;
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteInt32(missionId)) {
-        HILOG_ERROR("missionId write failed.");
-        return ERR_INVALID_VALUE;
-    }
-    error = Remote()->SendRequest(IAbilityManager::GET_MISSION_SNAPSHOT, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("Send request error: %{public}d", error);
-        return error;
-    }
-    std::unique_ptr<MissionPixelMap> info(reply.ReadParcelable<MissionPixelMap>());
-    if (!info) {
-        HILOG_ERROR("readParcelableInfo failed.");
-        return ERR_UNKNOWN_OBJECT;
-    }
-    missionPixelMap = *info;
-    return reply.ReadInt32();
-}
-
 int AbilityManagerProxy::GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot)
 {
     int error;
@@ -871,91 +823,6 @@ int AbilityManagerProxy::UninstallApp(const std::string &bundleName, int32_t uid
     int error = Remote()->SendRequest(IAbilityManager::UNINSTALL_APP, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("Send request error: %{public}d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
-int AbilityManagerProxy::ChangeFocusAbility(
-    const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteRemoteObject(lostFocusToken) || !data.WriteRemoteObject(getFocusToken)) {
-        HILOG_ERROR("change focus ability failed");
-        return ERR_INVALID_VALUE;
-    }
-    auto error = Remote()->SendRequest(IAbilityManager::CHANGE_FOCUS_ABILITY, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("change focus ability error: %d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
-int AbilityManagerProxy::MinimizeMultiWindow(int missionId)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteInt32(missionId)) {
-        HILOG_ERROR("WriteInt32 fail.");
-        return ERR_INVALID_VALUE;
-    }
-    auto error = Remote()->SendRequest(IAbilityManager::MINIMIZE_MULTI_WINDOW, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("minimize multi window error: %d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
-int AbilityManagerProxy::MaximizeMultiWindow(int missionId)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteInt32(missionId)) {
-        HILOG_ERROR("WriteInt32 fail.");
-        return ERR_INVALID_VALUE;
-    }
-    auto error = Remote()->SendRequest(IAbilityManager::MAXIMIZE_MULTI_WINDOW, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("maximize multi window error: %d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
-int AbilityManagerProxy::CloseMultiWindow(int missionId)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteInt32(missionId)) {
-        HILOG_ERROR("WriteInt32 fail.");
-        return ERR_INVALID_VALUE;
-    }
-    auto error = Remote()->SendRequest(IAbilityManager::CLOSE_MULTI_WINDOW, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("close multi window error: %d", error);
         return error;
     }
     return reply.ReadInt32();

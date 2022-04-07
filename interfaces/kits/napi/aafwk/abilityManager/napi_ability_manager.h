@@ -80,15 +80,6 @@ struct AsyncClearUpApplicationDataCallbackInfo {
     int32_t result = -1;
 };
 
-struct AsyncGetMissionSnapshot {
-    napi_env env;
-    napi_async_work asyncWork;
-    napi_deferred deferred;
-    napi_ref callback[2] = {0};
-    int32_t missionId = -1;
-    MissionSnapshot missionSnapshot;
-};
-
 struct SystemMemroyInfoCB {
     std::shared_ptr<SystemMemoryAttr> info = nullptr;
     napi_async_work asyncWork = nullptr;
@@ -108,7 +99,6 @@ napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info);
 napi_value NAPI_GetActiveProcessInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info);
 napi_value NAPI_ClearUpApplicationData(napi_env env, napi_callback_info info);
-napi_value NAPI_GetAbilityMissionSnapshot(napi_env env, napi_callback_info info);
 void CreateWeightReasonCodeObject(napi_env env, napi_value value);
 napi_value GetCallbackErrorValue(napi_env env, int errCode);
 napi_value NapiGetNull(napi_env env);

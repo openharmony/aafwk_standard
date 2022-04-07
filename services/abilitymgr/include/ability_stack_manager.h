@@ -28,7 +28,6 @@
 #include "mission_record.h"
 #include "mission_snapshot.h"
 #include "mission_stack.h"
-#include "lock_screen_event_subscriber.h"
 #include "want.h"
 #include "screenshot_handler.h"
 
@@ -211,14 +210,6 @@ public:
     int AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData);
 
     /**
-     * AddWindowInfo, add windowToken to AbilityRecord.
-     *
-     * @param token, the token of the ability.
-     * @param windowToken, window id of the ability.
-     */
-    void AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken);
-
-    /**
      * OnAbilityRequestDone, app manager service call this interface after ability request done.
      *
      * @param token,ability's token.
@@ -266,7 +257,6 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     void Dump(std::vector<std::string> &info);
-    void DumpWaittingAbilityQueue(std::string &result);
     void DumpTopAbility(std::vector<std::string> &info);
     void DumpMission(int missionId, std::vector<std::string> &info);
     void DumpStack(int missionStackId, std::vector<std::string> &info);
@@ -301,43 +291,9 @@ public:
     bool IsFrontInAllStack(const std::shared_ptr<MissionStack> &stack) const;
     bool IsTopInMission(const std::shared_ptr<AbilityRecord> &abilityRecord) const;
 
-    /**
-     * minimize multiwindow by mission id.
-     * @param missionId, the id of target mission
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int MinimizeMultiWindow(int missionId);
-    /**
-     * maximize multiwindow by mission id.
-     * @param missionId, the id of target mission
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int MaximizeMultiWindow(int missionId);
-
-    /**
-     * Change the focus of ability in the mission stack.
-     * @param lostToken, the token of lost focus ability
-     * @param getToken, the token of get focus ability
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int ChangeFocusAbility(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken);
-
-    /**
-     * close multiwindow by mission id.
-     * @param missionId, the id of target mission.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int CloseMultiWindow(int missionId);
-
     void JudgingIsRemoveMultiScreenStack(std::shared_ptr<MissionStack> &stack);
 
     int StartLockMission(int uid, int missionId, bool isSystemApp, int isLock);
-
-    void RestartAbility(const std::shared_ptr<AbilityRecord> abilityRecord);
-
-    int GetMissionSnapshot(int32_t missionId, MissionPixelMap &missionPixelMap);
-
-    void UpdateLockScreenState(bool isLockScreen);
 
     bool IsStarted();
     void PauseManager();
@@ -552,14 +508,6 @@ private:
         std::shared_ptr<AbilityRecord> lastTopAbility, std::shared_ptr<AbilityRecord> targetAbility,
         std::shared_ptr<AbilityRecord> &needBackgroundAbility);
 
-    /**
-     * minimize multiwindow by mission id.
-     * @param missionId, the id of target mission
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    int MinimizeMultiWindowLocked(int missionId);
-    int ChangeFocusAbilityLocked(const std::shared_ptr<AbilityRecord> &targetAbility);
-
     void NotifyWindowModeChanged(const SystemWindowMode &windowMode);
 
     void UpdateFocusAbilityRecord(
@@ -615,7 +563,6 @@ private:
     // find AbilityRecord by windowToken. one windowToken has one and only one AbilityRecord.
     std::unordered_map<int, std::shared_ptr<AbilityRecord>> windowTokenToAbilityMap_;
     SystemWindowMode curSysWindowMode_ = SystemWindowMode::DEFAULT_WINDOW_MODE;
-    bool isMultiWinMoving_ = false;
     std::vector<StackSetting> stackSettings_;
     std::map<int, std::weak_ptr<AbilityRecord>> focusAbilityRecordMap_;  // abilities has been focused ,
 #ifdef SUPPORT_GRAPHICS
@@ -623,7 +570,6 @@ private:
 #endif
     static int64_t splitScreenStackId;
     const static std::map<SystemWindowMode, std::string> windowModeToStrMap_;
-    std::shared_ptr<LockScreenEventSubscriber> subscriber_ = nullptr;
     bool isLockScreen_ = false;
 };
 }  // namespace AAFwk

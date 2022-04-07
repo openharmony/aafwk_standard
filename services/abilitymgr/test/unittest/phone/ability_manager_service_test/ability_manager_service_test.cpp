@@ -595,21 +595,6 @@ HWTEST_F(AbilityManagerServiceTest, Interface_012, TestSize.Level1)
 
 /*
  * Feature: AbilityManagerService
- * Function: DumpWaittingAbilityQueue
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService DumpWaittingAbilityQueue
- * EnvConditions: NA
- * CaseDescription: Verify dumpwaittingabilityqueue result
- */
-HWTEST_F(AbilityManagerServiceTest, Interface_014, TestSize.Level1)
-{
-    std::string dump;
-    abilityMs_->DumpWaittingAbilityQueue(dump);
-    EXPECT_EQ(false, (dump.find("User ID #0") != string::npos));
-}
-
-/*
- * Feature: AbilityManagerService
  * Function: OnAbilityRequestDone
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService OnAbilityRequestDone

@@ -83,8 +83,6 @@ void AppMgrEventHandler::ProcessLoadAbility(const AppExecFwk::InnerEvent::Pointe
         sptr<IAbilityScheduler> abilitySched = new AbilityScheduler();
         tokenMap_[abilitySched] = token;
         server_->AttachAbilityThread(abilitySched, token);
-        static int32_t windowToken = 0;
-        server_->AddWindowInfo(token, ++windowToken);
     }
 }
 
