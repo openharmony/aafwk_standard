@@ -51,12 +51,10 @@ abilityms_files = [
   "src/ability_start_setting.cpp",
   "src/shared_memory.cpp",
   "src/ams_configuration_parameter.cpp",
-  "src/ability_stack_manager.cpp",
   "src/image_info.cpp",
   "src/mission_record.cpp",
   "src/mission_stack.cpp",
   "src/mission_snapshot.cpp",
-  "src/stack_setting.cpp",
 
   # new ability manager service here
   "src/task_data_persistence_mgr.cpp",

@@ -26,6 +26,7 @@
 #include "bytrace.h"
 #include "errors.h"
 #include "hilog_wrapper.h"
+#include "mission_record.h"
 #include "os_account_manager.h"
 #include "uri_permission_manager_client.h"
 
@@ -814,13 +815,6 @@ bool AbilityRecord::IsConnectListEmpty()
 {
     return connRecordList_.empty();
 }
-
-#ifdef SUPPORT_GRAPHICS
-std::shared_ptr<WindowInfo> AbilityRecord::GetWindowInfo() const
-{
-    return windowInfo_;
-}
-#endif
 
 std::shared_ptr<ConnectionRecord> AbilityRecord::GetConnectingRecord() const
 {

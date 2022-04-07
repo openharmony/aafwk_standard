@@ -109,7 +109,6 @@ ohos_source_set("abilityms_test_source") {
 
   if (ability_runtime_graphics) {
     sources += [
-      "${services_path}/abilitymgr/src/ability_stack_manager.cpp",
       "${services_path}/abilitymgr/src/image_info.cpp",
       "${services_path}/abilitymgr/src/inner_mission_info.cpp",
       "${services_path}/abilitymgr/src/mission.cpp",
@@ -128,7 +127,6 @@ ohos_source_set("abilityms_test_source") {
       "${services_path}/abilitymgr/src/remote_mission_listener_stub.cpp",
       "${services_path}/abilitymgr/src/screenshot_handler.cpp",
       "${services_path}/abilitymgr/src/screenshot_response.cpp",
-      "${services_path}/abilitymgr/src/stack_setting.cpp",
     ]
     deps += [
       "//base/global/i18n_standard/frameworks/intl:intl_util",
@@ -168,11 +166,9 @@ group("unittest") {
     "unittest/phone/ability_connect_callback_proxy_test:unittest",
     "unittest/phone/ability_connect_callback_stub_test:unittest",
     "unittest/phone/ability_connect_manage_test:unittest",
-    "unittest/phone/ability_dump_test:unittest",
     "unittest/phone/ability_manager_client_test:unittest",
     "unittest/phone/ability_manager_proxy_test:unittest",
     "unittest/phone/ability_manager_service_account_test:unittest",
-    "unittest/phone/ability_manager_service_test:unittest",
     "unittest/phone/ability_manager_stub_test:unittest",
     "unittest/phone/ability_record_dump_test:unittest",
     "unittest/phone/ability_record_test:unittest",
@@ -182,10 +178,7 @@ group("unittest") {
     "unittest/phone/ability_timeout_test",
     "unittest/phone/ability_token_proxy_test:unittest",
     "unittest/phone/ability_token_stub_test:unittest",
-    "unittest/phone/ability_with_applications_test:unittest",
-    "unittest/phone/abilityms_appms_test:unittest",
     "unittest/phone/app_scheduler_test:unittest",
-    "unittest/phone/check_query_abilityinfo_test:unittest",
     "unittest/phone/configuration_test:unittest",
     "unittest/phone/connection_record_test:unittest",
     "unittest/phone/data_ability_manager_test:unittest",

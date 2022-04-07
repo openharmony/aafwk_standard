@@ -89,12 +89,6 @@ public:
 int AbilityManagerServiceTest::StartAbility(const Want &want)
 {
     int ref = -1;
-    auto topAbility = abilityMs_->GetStackManager()->GetCurrentTopAbility();
-    if (topAbility) {
-        topAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-    }
-    ref = abilityMs_->StartAbility(want);
-    WaitUntilTaskFinished();
     return ref;
 }
 
