@@ -37,7 +37,9 @@ config("runtime_public_config") {
 
 ohos_shared_library("runtime") {
   sources = [
+    "${kits_path}/runtime/native/js_asset_manager.cpp",
     "${kits_path}/runtime/native/js_data_struct_converter.cpp",
+    "${kits_path}/runtime/native/js_file_asset_provider.cpp",
     "${kits_path}/runtime/native/js_runtime.cpp",
     "${kits_path}/runtime/native/js_runtime_utils.cpp",
     "${kits_path}/runtime/native/runtime.cpp",
