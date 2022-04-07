@@ -99,18 +99,19 @@ int FormSupplyCallback::OnEventHandle(const Want &want)
 /**
  * @brief Accept form state from form provider.
  * @param state Form state.
+ * @param provider provider info.
  * @param want input data.
  * @return Returns ERR_OK on success, others on failure.
  */
-int FormSupplyCallback::OnAcquireStateResult(FormState state, const Want &want)
+int FormSupplyCallback::OnAcquireStateResult(FormState state, const std::string &provider, const Want &want)
 {
     HILOG_INFO("%{public}s called.", __func__);
     long connectId = want.GetLongParam(Constants::FORM_CONNECT_ID, 0);
-    std::string supplyInfo = want.GetStringParam(Constants::FORM_SUPPLY_INFO);
-    HILOG_DEBUG("%{public}s come: %{public}ld, %{public}s", __func__, connectId, supplyInfo.c_str());
     RemoveConnection(connectId);
+
+    ErrCode errCode = FormProviderMgr::GetInstance().AcquireFormStateBack(state, provider);
     HILOG_INFO("%{public}s end.", __func__);
-    return ERR_OK;
+    return errCode;
 }
 
 /**

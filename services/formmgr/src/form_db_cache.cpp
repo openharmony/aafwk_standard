@@ -17,8 +17,10 @@
 
 #include "appexecfwk_errors.h"
 #include "form_bms_helper.h"
+#include "form_data_mgr.h"
 #include "form_db_cache.h"
 #include "form_db_info.h"
+#include "form_provider_mgr.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
@@ -304,6 +306,136 @@ void FormDbCache::DeleteDBFormsByUserId(const int32_t userId)
 std::shared_ptr<FormStorageMgr> FormDbCache::GetDataStorage() const
 {
     return dataStorage_;
+}
+
+/**
+ * @brief handle get no host invalid DB forms.
+ * @param userId User ID.
+ * @param callingUid The UID of the proxy.
+ * @param matchedFormIds The set of the valid forms.
+ * @param noHostDBFormsMap The map of the no host forms.
+ * @param foundFormsMap The map of the found forms.
+ */
+void FormDbCache::GetNoHostInvalidDBForms(int32_t userId, int32_t callingUid, std::set<int64_t> &matchedFormIds,
+                                          std::map<FormIdKey, std::set<int64_t>> &noHostDBFormsMap,
+                                          std::map<int64_t, bool> &foundFormsMap)
+{
+    std::lock_guard<std::mutex> lock(formDBInfosMutex_);
+    for (auto &formRecord: formDBInfos_) {
+        int64_t formId = formRecord.formId;
+
+        // check userID
+        if (userId != formRecord.userId) {
+            continue;
+        }
+        // check UID
+        auto iter = std::find(formRecord.formUserUids.begin(), formRecord.formUserUids.end(), callingUid);
+        if (iter == formRecord.formUserUids.end()) {
+            continue;
+        }
+        // check valid form set
+        if (matchedFormIds.find(formId) != matchedFormIds.end()) {
+            continue;
+        }
+
+        HILOG_DEBUG("found invalid form: %{public}" PRId64 "", formId);
+        formRecord.formUserUids.erase(iter);
+        if (formRecord.formUserUids.empty()) {
+            FormIdKey formIdKey;
+            formIdKey.bundleName = formRecord.bundleName;
+            formIdKey.abilityName = formRecord.abilityName;
+            formIdKey.moduleName = "";
+            formIdKey.formName = "";
+            formIdKey.specificationId = 0;
+            formIdKey.orientation = 0;
+            auto itIdsSet = noHostDBFormsMap.find(formIdKey);
+            if (itIdsSet == noHostDBFormsMap.end()) {
+                std::set<int64_t> formIdsSet;
+                formIdsSet.emplace(formId);
+                noHostDBFormsMap.emplace(formIdKey, formIdsSet);
+            } else {
+                itIdsSet->second.emplace(formId);
+            }
+        } else {
+            foundFormsMap.emplace(formId, false);
+            SaveFormInfoNolock(formRecord);
+            FormBmsHelper::GetInstance().NotifyModuleNotRemovable(formRecord.bundleName, formRecord.moduleName);
+        }
+    }
+}
+
+/**
+ * @brief handle delete no host DB forms.
+ * @param callingUid The UID of the proxy.
+ * @param noHostFormDbMap The map of the no host forms.
+ * @param foundFormsMap The map of the found forms.
+ */
+void FormDbCache::BatchDeleteNoHostDBForms(int32_t callingUid, std::map<FormIdKey, std::set<int64_t>> &noHostDBFormsMap,
+                                           std::map<int64_t, bool> &foundFormsMap)
+{
+    std::set<FormIdKey> removableModuleSet;
+    for (auto &element: noHostDBFormsMap) {
+        std::set<int64_t> &formIds = element.second;
+        FormIdKey formIdKey = element.first;
+        std::string bundleName = formIdKey.bundleName;
+        std::string abilityName = formIdKey.abilityName;
+        FormProviderMgr::GetInstance().NotifyProviderFormsBatchDelete(bundleName, abilityName, formIds);
+        for (const int64_t formId: formIds) {
+            foundFormsMap.emplace(formId, true);
+            FormDBInfo dbInfo;
+            int errCode = GetDBRecord(formId, dbInfo);
+            if (errCode == ERR_OK) {
+                FormIdKey removableModuleFormIdKey;
+                removableModuleFormIdKey.bundleName = dbInfo.bundleName;
+                removableModuleFormIdKey.moduleName = dbInfo.moduleName;
+                removableModuleSet.emplace(removableModuleFormIdKey);
+                DeleteFormInfo(formId);
+            }
+            FormDataMgr::GetInstance().DeleteFormRecord(formId);
+        }
+    }
+
+    for (const FormIdKey &item: removableModuleSet) {
+        int32_t matchCount = GetMatchCount(item.bundleName, item.moduleName);
+        if (matchCount == 0) {
+            FormBmsHelper::GetInstance().NotifyModuleRemovable(item.bundleName, item.moduleName);
+        }
+    }
+}
+
+/**
+ * @brief handle delete invalid DB forms.
+ * @param userId User ID.
+ * @param callingUid The UID of the proxy.
+ * @param matchedFormIds The set of the valid forms.
+ * @param removedFormsMap The map of the removed invalid forms.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormDbCache::DeleteInvalidDBForms(int32_t userId, int32_t callingUid, std::set<int64_t> &matchedFormIds,
+                                          std::map<int64_t, bool> &removedFormsMap)
+{
+    HILOG_INFO("DeleteInvalidDBForms start, userId = %{public}d, callingUid = %{public}d", userId, callingUid);
+    std::map<int64_t, bool> foundFormsMap {};
+    std::map<FormIdKey, std::set<int64_t>> noHostDBFormsMap {};
+
+    GetNoHostInvalidDBForms(userId, callingUid, matchedFormIds, noHostDBFormsMap, foundFormsMap);
+
+    if (!foundFormsMap.empty()) {
+        for (const auto &element: foundFormsMap) {
+            FormDataMgr::GetInstance().DeleteFormUserUid(element.first, callingUid);
+        }
+    }
+
+    BatchDeleteNoHostDBForms(callingUid, noHostDBFormsMap, foundFormsMap);
+    HILOG_DEBUG("foundFormsMap size: %{public}d", foundFormsMap.size());
+    HILOG_DEBUG("noHostDBFormsMap size: %{public}d", noHostDBFormsMap.size());
+
+    if (!foundFormsMap.empty()) {
+        removedFormsMap.insert(foundFormsMap.begin(), foundFormsMap.end());
+    }
+
+    HILOG_INFO("DeleteInvalidDBForms done");
+    return ERR_OK;
 }
 } // namespace AppExecFwk
 } // namespace OHOS

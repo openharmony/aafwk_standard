@@ -49,10 +49,11 @@ public:
     /**
      * @brief Accept form state from form provider.
      * @param state Form state.
+     * @param provider provider info.
      * @param want input data.
      * @return Returns ERR_OK on success, others on failure.
      */
-    int OnAcquireStateResult(FormState state, const Want &want) override;
+    int OnAcquireStateResult(FormState state, const std::string &provider, const Want &want) override;
 
     /**
      * @brief Save ability Connection for the callback.

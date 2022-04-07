@@ -138,7 +138,8 @@ int FormSupplyStub::HandleOnAcquireStateResult(MessageParcel &data, MessageParce
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     auto state = (FormState) data.ReadInt32();
-    int32_t result = OnAcquireStateResult(state, *want);
+    std::string provider = data.ReadString();
+    int32_t result = OnAcquireStateResult(state, provider, *want);
     reply.WriteInt32(result);
     return result;
 }
