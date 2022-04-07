@@ -459,6 +459,13 @@ public:
     bool HasWindowFocus();
 
     void SetShowOnLockScreen(bool showOnLockScreen);
+
+    /**
+     * @brief When the ability starts, set whether to wake up the screen.
+     *
+     * @param wakeUp Set true to wake up, false to not wake up.
+     */
+    void SetWakeUpScreen(bool wakeUp);
 #endif
 
     /**
