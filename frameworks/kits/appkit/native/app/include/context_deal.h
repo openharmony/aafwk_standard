@@ -606,13 +606,6 @@ public:
     void StartAbilities(const std::vector<AAFwk::Want> &wants) override;
 
     /**
-     * @brief Checks whether this ability is the first ability in a mission.
-     *
-     * @return Returns true is first in Mission.
-     */
-    bool IsFirstInMission() override;
-
-    /**
      * @brief Obtains a task dispatcher that is bound to the UI thread.
      *
      * @return Returns the task dispatcher that is bound to the UI thread.
@@ -656,33 +649,6 @@ public:
      * @return Returns a global task dispatcher.
      */
     std::shared_ptr<TaskDispatcher> GetGlobalTaskDispatcher(const TaskPriority &priority) override;
-    /**
-     * @brief Requires that tasks associated with a given capability token be moved to the background
-     *
-     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
-     *
-     * @return Returns true on success, others on failure.
-     */
-    bool MoveMissionToEnd(bool nonFirst) override;
-
-    /**
-     * @brief Sets the application to start its ability in lock mission mode.
-     */
-    void LockMission() override;
-
-    /**
-     * @brief Unlocks this ability by exiting the lock mission mode.
-     */
-    void UnlockMission() override;
-
-    /**
-     * @brief Sets description information about the mission containing this ability.
-     *
-     * @param MissionInformation Indicates the object containing information about the
-     *                               mission. This parameter cannot be null.
-     * @return Returns true on success, others on failure.
-     */
-    bool SetMissionInformation(const MissionInformation &missionInformation) override;
 
     /**
      * @brief Set EventRunner for main thread.

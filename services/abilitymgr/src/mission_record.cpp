@@ -25,7 +25,6 @@ int MissionRecord::nextMissionId_ = 0;
 MissionRecord::MissionRecord(const std::string &bundleName) : bundleName_(bundleName)
 {
     missionId_ = GetNextMissionId();
-    option_.missionId = missionId_;
 }
 
 MissionRecord::MissionRecord(const std::shared_ptr<MissionRecord> &mission)
@@ -36,7 +35,6 @@ MissionRecord::MissionRecord(const std::shared_ptr<MissionRecord> &mission)
     isLauncherCreate_ = mission->isLauncherCreate_;
     preMissionRecord_ = mission->preMissionRecord_;
     parentMissionStack_ = mission->parentMissionStack_;
-    missionDescriptionInfo_ = mission->missionDescriptionInfo_;
 }
 
 MissionRecord::~MissionRecord()
@@ -174,16 +172,6 @@ void MissionRecord::RemoveAll()
 
 void MissionRecord::Dump(std::vector<std::string> &info)
 {
-    std::string dumpInfo = "    MissionRecord ID #" + std::to_string(missionId_);
-    std::shared_ptr<AbilityRecord> bottomAbility = GetBottomAbilityRecord();
-    if (bottomAbility) {
-        dumpInfo += "  bottom app [" + bottomAbility->GetAbilityInfo().name + "]" + "  winMode #" +
-                    std::to_string(option_.winModeKey);
-        info.push_back(dumpInfo);
-        for (auto abilityRecord : abilities_) {
-            abilityRecord->Dump(info);
-        }
-    }
 }
 
 bool MissionRecord::IsSameMissionRecord(const std::string &bundleName) const
@@ -268,34 +256,6 @@ std::shared_ptr<MissionStack> MissionRecord::GetMissionStack() const
     return parentMissionStack_.lock();
 }
 
-void MissionRecord::SetMissionOption(const MissionOption &option)
-{
-#ifdef SUPPORT_GRAPHICS
-    if (option.winModeKey != option_.winModeKey) {
-        HILOG_ERROR("Batch processing notify multi window mode changed.");
-        for (auto &it : abilities_) {
-            CHECK_POINTER(it);
-            bool flag = option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_PRIMARY ||
-                        option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_SECONDARY ||
-                        option.winModeKey == AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_FLOATING;
-            // true : old is multi win, target is fullscreen.
-            // false : old is fullscreen, target is multi win.
-            auto key = flag ? option.winModeKey : option_.winModeKey;
-            if (it->IsReady()) {
-                it->NotifyMultiWinModeChanged(key, flag);
-            }
-        }
-    }
-
-    option_ = option;
-#endif
-}
-
-const MissionOption &MissionRecord::GetMissionOption() const
-{
-    return option_;
-}
-
 bool MissionRecord::IsEmpty()
 {
     return abilities_.empty();
@@ -328,16 +288,6 @@ void MissionRecord::Resume(const std::shared_ptr<MissionRecord> &backup)
             ability->SetRestarting(true);
         }
     }
-}
-
-void MissionRecord::SetMissionIndexInfo(int32_t stackId, int32_t missionIndex)
-{
-    indexInfo_.SetMissionIndexInfo(stackId, missionIndex);
-}
-
-MissionIndexInfo MissionRecord::GetMissionIndexInfo()
-{
-    return indexInfo_;
 }
 
 void MissionRecord::UpdateActiveTimestamp()

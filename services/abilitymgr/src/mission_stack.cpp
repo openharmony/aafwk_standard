@@ -130,11 +130,6 @@ std::shared_ptr<MissionRecord> MissionStack::GetMissionRecordById(int id)
 std::list<std::shared_ptr<MissionRecord>> MissionStack::GetMissionRecordByWinMode(int key)
 {
     std::list<std::shared_ptr<MissionRecord>> missions;
-    for (auto iter = missions_.begin(); iter != missions_.end(); iter++) {
-        if ((*iter) != nullptr && (*iter)->GetMissionOption().winModeKey == key) {
-            missions.push_back(*iter);
-        }
-    }
     return missions;
 }
 
@@ -226,38 +221,11 @@ void MissionStack::AddMissionRecordToEnd(std::shared_ptr<MissionRecord> mission)
 std::shared_ptr<MissionRecord> MissionStack::EmplaceMissionRecord(
     int winModeKey, std::shared_ptr<MissionRecord> mission)
 {
-    if (!mission) {
-        HILOG_ERROR("pointer is nullptr.");
-        return nullptr;
-    }
-    std::shared_ptr<MissionRecord> oldMission;
-    for (auto iter = missions_.begin(); iter != missions_.end(); iter++) {
-        if ((*iter)->GetMissionOption().winModeKey == winModeKey) {
-            oldMission = (*iter);
-            missions_.erase(iter++);
-            missions_.emplace(iter, mission);
-            break;
-        }
-    }
-    if (oldMission == nullptr) {
-        missions_.push_front(mission);
-    }
-
-    return oldMission;
+    return nullptr;
 }
 
 void MissionStack::AddMissionRecordByIndex(std::shared_ptr<MissionRecord> mission, int32_t index)
 {
-    CHECK_POINTER(mission);
-    auto isExist = [targetIndex = index](const std::shared_ptr<MissionRecord> &missionRecord) {
-        if (missionRecord == nullptr) {
-            return false;
-        }
-        auto missionIndexInfo = missionRecord->GetMissionIndexInfo();
-        return targetIndex < missionIndexInfo.GetMissionIndex();
-    };
-    auto iter = std::find_if(missions_.begin(), missions_.end(), isExist);
-    missions_.insert(iter, mission);
 }
 
 void MissionStack::MoveMissionRecordToTop(std::shared_ptr<MissionRecord> mission)

@@ -415,32 +415,4 @@ HWTEST_F(AmsAbilityAppendTest, AMS_Ability_Append_00800, Function | MediumTest |
     EXPECT_EQ(appInfo, "1");
     GTEST_LOG_(INFO) << "AmsAbilityAppendTest AMS_Ability_Append_00800 end";
 }
-
-/**
- * @tc.number    : AMS_Ability_Append_00900
- * @tc.name      : test IsFirstInMission in ability.h
- * @tc.desc      : Verify that the result of IsFirstInMission function is correct.
- */
-HWTEST_F(AmsAbilityAppendTest, AMS_Ability_Append_00900, Function | MediumTest | Level1)
-{
-    GTEST_LOG_(INFO) << "AmsAbilityAppendTest AMS_Ability_Append_00900 start";
-    MAP_STR_STR params;
-    Want want = STAbilityUtil::MakeWant("device", FIRST_ABILITY_NAME, KIT_BUNDLE_NAME + "A", params);
-    // start first ability
-    ErrCode eCode = STAbilityUtil::StartAbility(want, abilityMgrService, WAIT_TIME);
-    GTEST_LOG_(INFO) << eCode;
-
-    EXPECT_EQ(TestWaitCompleted(event, "onStart", MAIN_ABILITY_A_CODE), 0);
-    EXPECT_EQ(TestWaitCompleted(event, "OnActive", MAIN_ABILITY_A_CODE), 0);
-
-    STAbilityUtil::CleanMsg(event);
-    STAbilityUtil::PublishEvent(
-        g_EVENT_REQU_FIRST, CODE_, "Ability_" + std::to_string((int)AppendApi::IsFirstInMission) + "_0");
-    EXPECT_EQ(TestWaitCompleted(event, g_EVENT_RESP_FIRST, CODE_), 0);
-    string appInfo = g_eventMessage;
-
-    GTEST_LOG_(INFO) << appInfo;
-    EXPECT_EQ(appInfo, "1");
-    GTEST_LOG_(INFO) << "AmsAbilityAppendTest AMS_Ability_Append_00900 end";
-}
 }  // namespace

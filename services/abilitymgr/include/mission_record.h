@@ -20,9 +20,6 @@
 
 #include "ability_record.h"
 #include "mission_stack.h"
-#include "mission_description_info.h"
-#include "mission_index_info.h"
-#include "mission_option.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -205,41 +202,13 @@ public:
         return bundleName_;
     };
 
-    void SetMissionDescriptionInfo(std::shared_ptr<MissionDescriptionInfo> &description)
-    {
-        missionDescriptionInfo_ = description;
-    };
-
-    std::shared_ptr<MissionDescriptionInfo> GetMissionDescriptionInfo() const
-    {
-        return missionDescriptionInfo_;
-    };
-
 #ifdef SUPPORT_GRAPHICS
     bool SupportMultWindow() const;
 #endif
 
-    void SetMissionOption(const MissionOption &option);
-    const MissionOption &GetMissionOption() const;
-
     bool IsEmpty();
     void Resume(const std::shared_ptr<MissionRecord> &backup);
 
-    /**
-     * save the mission index after locking the screen.
-     *
-     * @param stackId: the parent mission stack id
-     * @param missionIndex: index of mission in the parent mission stack
-     */
-    void SetMissionIndexInfo(int32_t stackId, int32_t missionIndex);
-
-    /**
-     * get the mission index after locking the screen.
-     *
-     * @param stackId: the parent mission stack id
-     * @param missionIndex: index of mission in the parent mission stack
-     */
-    MissionIndexInfo GetMissionIndexInfo();
     void UpdateActiveTimestamp();
     int64_t GetActiveTimestamp() const;
 
@@ -252,9 +221,6 @@ private:
     std::weak_ptr<MissionRecord> preMissionRecord_;
     std::weak_ptr<MissionStack> parentMissionStack_;
 
-    std::shared_ptr<MissionDescriptionInfo> missionDescriptionInfo_ = nullptr;
-    MissionOption option_;
-    MissionIndexInfo indexInfo_;
     int64_t activeTimestamp_ {0};
 };
 }  // namespace AAFwk

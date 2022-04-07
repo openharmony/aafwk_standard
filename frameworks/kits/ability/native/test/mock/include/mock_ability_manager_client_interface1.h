@@ -87,21 +87,16 @@ public:
     ErrCode GetStartAbility();
     ErrCode GetTerminateAbility();
     ErrCode GetTerminateAbilityResult();
-    ErrCode GetIsFirstInMission();
 
     void SetStartAbility(ErrCode tValue);
     void SetTerminateAbility(ErrCode tValue);
     void SetTerminateAbilityResult(ErrCode tValue);
-    void SetIsFirstInMission(ErrCode tValue);
 
     int GetTerminateAbilityValue();
     void SetTerminateAbilityValue(int nValue);
 
     int GetMockMissionId();
     void SetMockMissionId(int missionId);
-
-    bool GetMockMoveMissionToEnd();
-    void SetMockMoveMissionToEnd(bool flag);
 
     static std::shared_ptr<MockAbilityManagerClient> mock_instance_;
     static bool mock_intanceIsNull_;
@@ -113,11 +108,9 @@ private:
     ErrCode startAbility_;
     ErrCode terminateAbility_;
     ErrCode terminateAbilityResult_;
-    ErrCode isFirstInMission_;
 
     int terminateAbilityValue_;
     int missionId_;
-    bool moveMissionToEnd_;
 };
 
 };  // namespace AAFwk

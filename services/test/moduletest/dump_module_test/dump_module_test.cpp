@@ -474,37 +474,6 @@ HWTEST_F(DumpModuleTest, dump_module_test_007, TestSize.Level2)
  * SubFunction: NA
  * FunctionPoints: test AbilityManagerService DumpState
  * EnvConditions: System running normally
- * CaseDescription: DumpState to show info of missionRecords respectively
- */
-HWTEST_F(DumpModuleTest, dump_module_test_008, TestSize.Level2)
-{
-
-    std::string args("--mission");
-    std::vector<std::string> dumpInfo;
-    std::vector<std::string> abilityNames;
-
-    EXPECT_TRUE(g_abilityMs);
-    auto stackMgr = g_abilityMs->GetStackManager();
-    EXPECT_TRUE(stackMgr);
-    auto missionRecord = stackMgr->GetTopMissionRecord();
-    EXPECT_TRUE(missionRecord);
-    int id = missionRecord->GetMissionRecordId();
-    args += " ";
-    args += std::to_string(id);
-    GTEST_LOG_(INFO) << "args = " << args;
-
-    g_abilityMs->DumpState(args, dumpInfo);
-    MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    EXPECT_EQ(6, abilityNames.size());
-}
-
-/*
- * Feature: Aafwk
- * Function: DumpState
- * SubFunction: NA
- * FunctionPoints: test AbilityManagerService DumpState
- * EnvConditions: System running normally
- * CaseDescription: Handle wrong args about missionRecord
  */
 HWTEST_F(DumpModuleTest, dump_module_test_09, TestSize.Level2)
 {

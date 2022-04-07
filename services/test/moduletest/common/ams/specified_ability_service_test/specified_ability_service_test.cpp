@@ -206,46 +206,5 @@ HWTEST_F(SpecifiedAbilityServiceTest, OnAcceptWantResponse_001, TestSize.Level1)
 
     EXPECT_EQ(false, abilityRecord->IsNewWant());
 }
-
-/**
- * @tc.name: OnAcceptWantResponse_002
- * @tc.desc: test OnAcceptWantResponse
- * @tc.type: FUNC
- * @tc.require: AR000GJUND
- */
-HWTEST_F(SpecifiedAbilityServiceTest, OnAcceptWantResponse_002, TestSize.Level1)
-{
-    std::string abilityName = "MusicAbility";
-    std::string appName = "test_app";
-    std::string bundleName = "com.ix.hiMusic";
-
-    AbilityRequest abilityRequest;
-    abilityRequest.want = CreateWant("");
-    abilityRequest.abilityInfo = CreateAbilityInfo(abilityName + "1", appName, bundleName);
-    abilityRequest.appInfo = CreateAppInfo(appName, bundleName);
-
-    std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND_NEW);
-    abilityRecord->SetSpecifiedFlag("flag");
-
-    std::shared_ptr<MissionRecord> missionRecord = std::make_shared<MissionRecord>(bundleName);
-    missionRecord->AddAbilityRecordToTop(abilityRecord);
-    abilityRecord->SetMissionRecord(missionRecord);
-
-    abilityRequest.callerToken = abilityRecord->GetToken();
-    auto manager = abilityMgrServ_->currentMissionListManager_;
-    manager->Init();
-    auto mission = std::make_shared<Mission>(11, abilityRecord, "missionName");
-    manager->defaultStandardList_->AddMissionToTop(mission);
-
-    abilityMgrServ_->InitMissionListManager(11, true);
-    Want want;
-    want.SetElementName("DemoDeviceId", "DemoBundleName", "DemoAbilityName");
-    EXPECT_TRUE(abilityMgrServ_->currentMissionListManager_);
-    abilityMgrServ_->currentMissionListManager_->EnqueueWaittingAbility(abilityRequest);
-    abilityMgrServ_->OnAcceptWantResponse(want, "flag");
-
-    EXPECT_EQ(true, abilityRecord->IsNewWant());
-}
 }  // namespace AAFwk
 }  // namespace OHOS

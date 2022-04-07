@@ -36,15 +36,6 @@ void AbilityManager::StartAbility(const Want &want, int requestCode = -1)
     }
 }
 
-void AbilityManager::MoveMissionToTop(int missionId)
-{
-    HILOG_DEBUG("%s, %d", __func__, __LINE__);
-    ErrCode error = AAFwk::AbilityManagerClient::GetInstance()->MoveMissionToTop(missionId);
-    if (error != ERR_OK) {
-        HILOG_ERROR("%s failed, error : %d", __func__, error);
-    }
-}
-
 int32_t AbilityManager::ClearUpApplicationData(const std::string &bundleName)
 {
     HILOG_DEBUG("%s, %d", __func__, __LINE__);
