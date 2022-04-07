@@ -77,6 +77,7 @@ public:
         GetBundleArchiveInfo, bool(const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo));
     MOCK_METHOD2(GetHapModuleInfo, bool(const std::string &hapFilePath, HapModuleInfo &hapModuleInfo));
     MOCK_METHOD2(GetHapModuleInfo, bool(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo));
+    MOCK_METHOD3(GetHapModuleInfo, bool(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo));
     MOCK_METHOD2(GetLaunchWantForBundle, bool(const std::string &bundleName, Want &want));
     MOCK_METHOD2(CheckPublicKeys, int(const std::string &firstBundleName, const std::string &secondBundleName));
     MOCK_METHOD2(CheckPermission, int(const std::string &bundleName, const std::string &permission));

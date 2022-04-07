@@ -113,7 +113,19 @@ bool BundleMgrService::GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModul
     return true;
 }
 
+bool BundleMgrService::GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo)
+{
+    hapModuleInfo.name = "Captain";
+    return true;
+}
+
 bool BundleMgrProxy::GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo)
+{
+    hapModuleInfo.name = "Captain";
+    return true;
+}
+
+bool BundleMgrProxy::GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo)
 {
     hapModuleInfo.name = "Captain";
     return true;
