@@ -94,10 +94,11 @@ int FormSupplyProxy::OnEventHandle(const Want& want)
 /**
  * @brief Accept form state from form provider.
  * @param state Form state.
+ * @param provider provider info.
  * @param want input data.
  * @return Returns ERR_OK on success, others on failure.
  */
-int FormSupplyProxy::OnAcquireStateResult(FormState state, const Want &want)
+int FormSupplyProxy::OnAcquireStateResult(FormState state, const std::string &provider, const Want &want)
 {
     MessageParcel data;
     if (!WriteInterfaceToken(data)) {
@@ -110,6 +111,10 @@ int FormSupplyProxy::OnAcquireStateResult(FormState state, const Want &want)
     }
     if (!data.WriteInt32((int32_t) state)) {
         HILOG_ERROR("%{public}s, failed to write form state", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteString(provider)) {
+        HILOG_ERROR("%{public}s, failed to provider", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 

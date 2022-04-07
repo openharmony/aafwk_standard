@@ -19,6 +19,7 @@
 #include <singleton.h>
 #include "form_provider_info.h"
 #include "form_record.h"
+#include "form_state_info.h"
 #include "want.h"
 
 namespace OHOS {
@@ -93,10 +94,11 @@ public:
     const std::set<int64_t> &formIds);
     /**
      * @brief Acquire form state.
-     * @param want Want.
+     * @param state form state.
+     * @param provider provider info.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode AcquireFormState(const Want &want);
+    ErrCode AcquireFormStateBack(FormState state, const std::string& provider);
     /**
      * @brief Process js message event.
      * @param formId Indicates the unique id of form.

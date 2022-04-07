@@ -380,6 +380,28 @@ void FormProviderMgr::IncreaseTimerRefreshCount(const int64_t formId)
         FormTimerMgr::GetInstance().IncreaseRefreshCount(formId);
     }
 }
+
+/**
+ * @brief Acquire form state.
+ * @param state form state.
+ * @param provider provider info.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormProviderMgr::AcquireFormStateBack(FormState state, const std::string& provider)
+{
+    HILOG_DEBUG("AcquireFormState start: %{public}d, provider: %{public}s", state, provider.c_str());
+
+    FormHostRecord clientHost;
+    bool isGetFormHostRecord = FormDataMgr::GetInstance().AcquireFormStateBack(state, provider);
+    if (!isGetFormHostRecord) {
+        HILOG_ERROR("%{public}s fail, clientHost is null", __func__);
+        return ERR_APPEXECFWK_FORM_COMMON_CODE;
+    }
+
+    HILOG_DEBUG("AcquireFormState done");
+    return ERR_OK;
+}
+
 FormRecord FormProviderMgr::GetFormAbilityInfo(const FormRecord &record) const
 {
     FormRecord newRecord;

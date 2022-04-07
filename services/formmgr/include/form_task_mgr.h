@@ -147,10 +147,12 @@ public:
     /**
     * @brief Post acquire state to form provider.
     * @param wantArg The want of onAcquireFormState.
+    * @param provider The provider info.
     * @param want The want of the request.
     * @param remoteObject Form provider proxy object.
     */
-    void PostAcquireStateTask(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &remoteObject);
+    void PostAcquireStateTask(const Want &wantArg, const std::string &provider, const Want &want,
+                              const sptr <IRemoteObject> &remoteObject);
 
      /**
      * @brief Post uninstall message to form host(task).
@@ -252,10 +254,12 @@ private:
     /**
      * @brief Acquire form state to form provider.
      * @param wantArg The want of onAcquireFormState.
+     * @param provider The provider info.
      * @param want The want of the request.
      * @param remoteObject Form provider proxy object.
      */
-    void AcquireState(const Want &wantArg, const Want &want, const sptr <IRemoteObject> &remoteObject);
+    void AcquireState(const Want &wantArg, const std::string &provider, const Want &want,
+                      const sptr <IRemoteObject> &remoteObject);
 
     /**
      * @brief Handle uninstall message.

@@ -1735,38 +1735,34 @@ int FormMgrAdapter::DeleteInvalidForms(const std::vector<int64_t> &formIds, cons
         HILOG_ERROR("%{public}s, deleteForm invalid param", __func__);
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
-    numFormsDeleted = 0;
 
+    std::set<int64_t> matchedFormIds {};
     for (int64_t formId: formIds) {
-        HILOG_DEBUG("check formId: %{public}" PRId64 "", formId);
-        if (formId <= 0) {
-            continue;
-        }
         int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
-        if (FormDataMgr::GetInstance().ExistTempForm(matchedFormId)) {
-            HILOG_INFO("delete temp form, formId: %{public}" PRId64 "", formId);
-            int ret = HandleDeleteTempForm(matchedFormId, callerToken);
-            if (ret == ERR_OK) {
-                numFormsDeleted++;
-            } else {
-                HILOG_ERROR("failed to delete the temp form, formId: %{public}" PRId64 "", formId);
+        matchedFormIds.emplace(matchedFormId);
+        HILOG_DEBUG("valid formId, matchedFormIds: %{public}" PRId64 "", formId);
+    }
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+
+    std::map<int64_t, bool> removedFormsMap {};
+    int32_t userId = GetCurrentUserId(callingUid);
+
+    // delete invalid DB form record
+    FormDbCache::GetInstance().DeleteInvalidDBForms(userId, callingUid, matchedFormIds, removedFormsMap);
+    // delete invalid temp form record
+    FormDataMgr::GetInstance().DeleteInvalidTempForms(userId, callingUid, matchedFormIds, removedFormsMap);
+
+    if (!removedFormsMap.empty()) {
+        FormDataMgr::GetInstance().ClearHostDataByInvalidForms(callingUid, removedFormsMap);
+        // delete forms timer
+        for (const auto &removedForm: removedFormsMap) {
+            if (removedForm.second) {
+                FormTimerMgr::GetInstance().RemoveFormTimer(removedForm.first);
             }
-            continue;
-        }
-
-        if (!FormDataMgr::GetInstance().ExistFormRecord(matchedFormId)) {
-            HILOG_ERROR("%{public}s, not exist such form:%{public}" PRId64 "", __func__, matchedFormId);
-            continue;
-        }
-
-        HILOG_INFO("delete form, formId: %{public}" PRId64 "", formId);
-        int ret = HandleDeleteForm(matchedFormId, callerToken);
-        if (ret == ERR_OK) {
-            numFormsDeleted++;
-        } else {
-            HILOG_ERROR("failed to delete the form, formId: %{public}" PRId64 "", formId);
         }
     }
+
+    numFormsDeleted = removedFormsMap.size();
     HILOG_INFO("%{public}s done, %{public}d forms deleted.", __func__, numFormsDeleted);
     return ERR_OK;
 }
@@ -1797,8 +1793,20 @@ int FormMgrAdapter::AcquireFormState(const Want &want, const sptr<IRemoteObject>
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
 
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    std::string provider;
+    const std::string doubleColon = "::";
+    provider.append(bundleName).append(doubleColon).append(abilityName).append(doubleColon)
+        .append(want.GetStringParam(AppExecFwk::Constants::PARAM_MODULE_NAME_KEY)).append(doubleColon)
+        .append(want.GetStringParam(AppExecFwk::Constants::PARAM_FORM_NAME_KEY)).append(doubleColon)
+        .append(std::to_string(want.GetIntParam(AppExecFwk::Constants::PARAM_FORM_DIMENSION_KEY, 1)))
+        .append(doubleColon).append(std::to_string(callingUid));
+    FormItemInfo info;
+    FormDataMgr::GetInstance().CreateFormStateRecord(provider, info, callerToken, callingUid);
+
     HILOG_DEBUG("bundleName:%{public}s, abilityName:%{public}s", bundleName.c_str(), abilityName.c_str());
-    sptr<IAbilityConnection> acquireFormStateConnection = new FormAcquireStateConnection(bundleName, abilityName, want);
+    sptr<IAbilityConnection> acquireFormStateConnection = new FormAcquireStateConnection(bundleName, abilityName, want,
+        provider);
 
     Want targetWant;
     targetWant.AddFlags(Want::FLAG_ABILITY_FORM_ENABLED);

@@ -540,6 +540,20 @@ void FormDataMgr::HandleHostDied(const sptr<IRemoteObject> &remoteHost)
             }
         }
     }
+    {
+        std::lock_guard<std::mutex> lock(formStateRecordMutex_);
+        std::map<std::string , FormHostRecord>::iterator itFormStateRecord;
+        for (itFormStateRecord = formStateRecord_.begin(); itFormStateRecord != formStateRecord_.end();) {
+            if (remoteHost == itFormStateRecord->second.GetClientStub()) {
+                HILOG_INFO("find died client, remove it from formStateRecord_");
+                itFormStateRecord->second.CleanResource();
+                itFormStateRecord = formStateRecord_.erase(itFormStateRecord);
+                break;
+            } else {
+                itFormStateRecord++;
+            }
+        }
+    }
 }
 
 /**
@@ -1154,6 +1168,56 @@ bool FormDataMgr::IsFormCached(const FormRecord record)
     }
     return FormCacheMgr::GetInstance().IsExist(record.formId);
 }
+
+/**
+ * @brief Create form state host record.
+ * @param provider The provider of the form state
+ * @param info The form item info.
+ * @param callerToken The UID of the proxy.
+ * @param callingUid The UID of the proxy.
+ * @return Returns true if this function is successfully called; returns false otherwise.
+ */
+bool FormDataMgr::CreateFormStateRecord(std::string &provider, const FormItemInfo &info,
+                                        const sptr<IRemoteObject> &callerToken, int callingUid)
+{
+    std::lock_guard<std::mutex> lock(formStateRecordMutex_);
+    auto iter = formStateRecord_.find(provider);
+    if (iter != formStateRecord_.end()) {
+        if (iter->second.GetClientStub() != callerToken) {
+            iter->second.SetClientStub(callerToken);
+        }
+        return true;
+    }
+
+    FormHostRecord hostRecord;
+    bool isCreated = CreateHostRecord(info, callerToken, callingUid, hostRecord);
+    if (isCreated) {
+        formStateRecord_.emplace(provider, hostRecord);
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @brief Create form state host record.
+ * @param FormState form state.
+ * @param provider provider indo.
+ * @return Returns true if this function is successfully called; returns false otherwise.
+ */
+ErrCode FormDataMgr::AcquireFormStateBack(AppExecFwk::FormState state, const std::string &provider)
+{
+
+    // std::lock_guard<std::mutex> lock(formStateRecordMutex_);
+    // auto iter = formStateRecord_.find(provider);
+    // if (iter == formStateRecord_.end()) {
+    //     HILOG_ERROR("filed to get form state host record");
+    //     return ERR_APPEXECFWK_FORM_GET_HOST_FAILED;
+    // }
+    // iter->second.onAcquireState()
+    return ERR_OK;
+}
+
 /**
  * @brief delete forms by userId.
  *
@@ -1208,6 +1272,148 @@ void FormDataMgr::ClearFormRecords()
         std::lock_guard<std::mutex> lock(formTempMutex_);
         tempForms_.clear();
     }
+}
+
+/**
+ * @brief handle get no host invalid temp forms.
+ * @param userId User ID.
+ * @param callingUid The UID of the proxy.
+ * @param matchedFormIds The set of the valid forms.
+ * @param noHostTempFormsMap The map of the no host forms.
+ * @param foundFormsMap The map of the found forms.
+ */
+void FormDataMgr::GetNoHostInvalidTempForms(int32_t userId, int32_t callingUid, std::set<int64_t> &matchedFormIds,
+                                            std::map<FormIdKey, std::set<int64_t>> &noHostTempFormsMap,
+                                            std::map<int64_t, bool> &foundFormsMap)
+{
+    std::lock_guard<std::mutex> lock(formRecordMutex_);
+    for (auto &formRecordInfo: formRecords_) {
+        int64_t formId = formRecordInfo.first;
+        FormRecord &formRecord = formRecordInfo.second;
+
+        // check userID and temp flag
+        if (userId != formRecord.userId || !formRecord.formTempFlg) {
+            continue;
+        }
+        // check UID
+        auto iter = std::find(formRecord.formUserUids.begin(), formRecord.formUserUids.end(), callingUid);
+        if (iter == formRecord.formUserUids.end()) {
+            continue;
+        }
+        // check valid form set
+        if (matchedFormIds.find(formId) != matchedFormIds.end()) {
+            continue;
+        }
+
+        HILOG_DEBUG("found invalid form: %{public}" PRId64 "", formId);
+        formRecord.formUserUids.erase(iter);
+        if (formRecord.formUserUids.empty()) {
+            FormIdKey formIdKey;
+            formIdKey.bundleName = formRecord.bundleName;
+            formIdKey.abilityName = formRecord.abilityName;
+            formIdKey.moduleName = "";
+            formIdKey.formName = "";
+            formIdKey.specificationId = 0;
+            formIdKey.orientation = 0;
+            auto itIdsSet = noHostTempFormsMap.find(formIdKey);
+            if (itIdsSet == noHostTempFormsMap.end()) {
+                std::set<int64_t> formIdsSet;
+                formIdsSet.emplace(formId);
+                noHostTempFormsMap.emplace(formIdKey, formIdsSet);
+            } else {
+                itIdsSet->second.emplace(formId);
+            }
+        } else {
+            foundFormsMap.emplace(formId, false);
+        }
+    }
+}
+
+/**
+ * @brief handle delete no host temp forms.
+ * @param callingUid The UID of the proxy.
+ * @param noHostTempFormsMap The map of the no host forms.
+ * @param foundFormsMap The map of the found forms.
+ */
+void
+FormDataMgr::BatchDeleteNoHostTempForms(int32_t callingUid, std::map<FormIdKey, std::set<int64_t>> &noHostTempFormsMap,
+                                        std::map<int64_t, bool> &foundFormsMap)
+{
+    std::set<FormIdKey> removableModuleSet;
+    for (auto &noHostTempForm: noHostTempFormsMap) {
+        FormIdKey formIdKey = noHostTempForm.first;
+        std::set<int64_t> &formIdsSet = noHostTempForm.second;
+        std::string bundleName = formIdKey.bundleName;
+        std::string abilityName = formIdKey.abilityName;
+        FormProviderMgr::GetInstance().NotifyProviderFormsBatchDelete(bundleName, abilityName, formIdsSet);
+        for (int64_t formId: formIdsSet) {
+            foundFormsMap.emplace(formId, true);
+            DeleteFormRecord(formId);
+            DeleteTempForm(formId);
+        }
+
+    }
+}
+
+/**
+ * @brief delete invalid temp forms.
+ * @param userId User ID.
+ * @param callingUid The UID of the proxy.
+ * @param matchedFormIds The set of the valid forms.
+ * @param removedFormsMap The map of the removed invalid forms.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormDataMgr::DeleteInvalidTempForms(int32_t userId, int32_t callingUid, std::set<int64_t> &matchedFormIds,
+                                            std::map<int64_t, bool> &removedFormsMap)
+{
+    HILOG_INFO("DeleteInvalidTempForms start, userId = %{public}d, callingUid = %{public}d", userId, callingUid);
+    std::map<int64_t, bool> foundFormsMap {};
+    std::map<FormIdKey, std::set<int64_t>> noHostTempFormsMap {};
+
+    GetNoHostInvalidTempForms(userId, callingUid, matchedFormIds, noHostTempFormsMap, foundFormsMap);
+
+    BatchDeleteNoHostTempForms(callingUid, noHostTempFormsMap, foundFormsMap);
+    HILOG_DEBUG("foundFormsMap size: %{public}d", foundFormsMap.size());
+    HILOG_DEBUG("noHostTempFormsMap size: %{public}d", noHostTempFormsMap.size());
+
+    if (!foundFormsMap.empty()) {
+        removedFormsMap.insert(foundFormsMap.begin(), foundFormsMap.end());
+    }
+
+    HILOG_INFO("DeleteInvalidTempForms done");
+    return ERR_OK;
+}
+
+/**
+ * @brief clear host data by invalid forms.
+ * @param callingUid The UID of the proxy.
+ * @param removedFormsMap The map of the removed invalid forms.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormDataMgr::ClearHostDataByInvalidForms(int32_t callingUid, std::map<int64_t, bool> &removedFormsMap)
+{
+    HILOG_INFO("DeleteInvalidForms host start");
+    std::lock_guard<std::mutex> lock(formHostRecordMutex_);
+    std::vector<FormHostRecord>::iterator itHostRecord;
+    for (itHostRecord = clientRecords_.begin(); itHostRecord != clientRecords_.end();) {
+        if (itHostRecord->GetCallerUid() != callingUid) {
+            itHostRecord++;
+            continue;
+        }
+        for (auto &removedForm: removedFormsMap) {
+            if (itHostRecord->Contains(removedForm.first)) {
+                itHostRecord->DelForm(removedForm.first);
+            }
+        }
+        if (itHostRecord->IsEmpty()) {
+            itHostRecord->CleanResource();
+            itHostRecord = clientRecords_.erase(itHostRecord);
+        } else {
+            itHostRecord++;
+        }
+    }
+    HILOG_INFO("DeleteInvalidForms host done");
+    return ERR_OK;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
