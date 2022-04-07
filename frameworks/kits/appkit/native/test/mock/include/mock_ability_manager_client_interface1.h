@@ -149,6 +149,10 @@ public:
     {
         return true;
     };
+    virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override
+    {
+        return true;
+    }
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want)
     {
         return true;
