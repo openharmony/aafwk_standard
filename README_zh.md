@@ -11,7 +11,6 @@
 - **Ability Kit**为Ability的运行提供基础的运行环境支撑。Ability是系统调度应用的最小单元，是能够完成一个独立功能的组件，一个应用可以包含一个或多个Ability。Ability分为FA（Feature Ability）和PA（Particle Ability）两种类，其中FA支持Page Ability，PA支持Service Ability和Data Ability。
 
 - **Ability管理服务（AbilityManagerService）**：用于协调各Ability运行关系、及对生命周期进行调度的系统服务。
-  - Ability栈管理模块（AbilityStackManager）负责维护各个Ability之间跳转的先后关系。
   - 连接管理模块（AbilityConnectManager）是Ability管理服务对Service类型Ability连接管理的模块。
   - 数据管理模块（DataAbilityManager）是Ability管理服务对Data类型Ability管理的模块。
   - App管理服务调度模块（AppScheduler）提供Ability管理服务对用户程序管理服务进行调度管理的能力。

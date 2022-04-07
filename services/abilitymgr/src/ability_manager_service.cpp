@@ -709,7 +709,7 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
 
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     auto type = abilityRecord->GetAbilityInfo().type;
-    auto stackManager = currentStackManager_;
+    auto missionListManager = GetListManagerByUserId(userId);
     auto connectManager = GetConnectManagerByUserId(userId);
     switch (type) {
         case AppExecFwk::AbilityType::SERVICE:
@@ -724,11 +724,11 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
                     return ERR_WOULD_BLOCK;
                 }
 
-                if (!stackManager) {
-                    HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
+                if (!missionListManager) {
+                    HILOG_ERROR("missionListManager is nullptr. userId=%{public}d", userId);
                     return ERR_INVALID_VALUE;
                 }
-                return stackManager->TerminateAbility(abilityRecord, requestCode);
+                return missionListManager->TerminateAbility(abilityRecord, requestCode);
             }
             return result;
         }
@@ -737,11 +737,11 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
             if (!IsAbilityControllerForeground(abilityRecord->GetAbilityInfo().bundleName)) {
                 return ERR_WOULD_BLOCK;
             }
-            if (!stackManager) {
-                HILOG_ERROR("stackManager is nullptr.");
+            if (!missionListManager) {
+                HILOG_ERROR("missionListManager is nullptr.");
                 return ERR_INVALID_VALUE;
             }
-            auto result = stackManager->TerminateAbility(abilityRecord, requestCode);
+            auto result = missionListManager->TerminateAbility(abilityRecord, requestCode);
             if (result == NO_FOUND_ABILITY_BY_CALLER) {
                 if (!connectManager) {
                     HILOG_ERROR("connectManager is nullptr.");
@@ -2181,11 +2181,6 @@ void AbilityManagerService::InitMissionListManager(int userId, bool switchUser)
             currentMissionListManager_ = manager;
         }
     }
-}
-
-std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManager()
-{
-    return currentStackManager_;
 }
 
 // multi user scene

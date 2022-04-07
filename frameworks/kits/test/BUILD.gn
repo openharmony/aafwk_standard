@@ -69,7 +69,6 @@ ohos_moduletest("ability_moduletest") {
     "//foundation/aafwk/standard/services/abilitymgr/src/remote_mission_listener_stub.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/sender_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/shared_memory.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/src/stack_setting.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/want_sender_info.cpp",
     "//foundation/aafwk/standard/services/abilitymgr/src/wants_info.cpp",
     "moduletest/cpp/abilitytest/ability_test.cpp",

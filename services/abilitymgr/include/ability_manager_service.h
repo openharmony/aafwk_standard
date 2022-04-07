@@ -26,7 +26,6 @@
 #include "ability_connect_manager.h"
 #include "ability_event_handler.h"
 #include "ability_manager_stub.h"
-#include "ability_stack_manager.h"
 #include "app_scheduler.h"
 #include "bundlemgr/bundle_mgr_interface.h"
 #include "bundle_constants.h"
@@ -329,13 +328,6 @@ public:
      * @return Returns AbilityEventHandler ptr.
      */
     std::shared_ptr<AbilityEventHandler> GetEventHandler();
-
-    /**
-     * GetStackManager, get the current stack manager.
-     *
-     * @return Returns AbilityStackManager ptr.
-     */
-    std::shared_ptr<AbilityStackManager> GetStackManager();
 
     /**
      * @brief Ability hidump.
@@ -745,7 +737,6 @@ public:
         KEY_DUMPSYS_DATA,
     };
 
-    friend class AbilityStackManager;
     friend class UserController;
 
 protected:
@@ -966,7 +957,6 @@ private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::shared_ptr<AbilityEventHandler> handler_;
     ServiceRunningState state_;
-    std::shared_ptr<AbilityStackManager> currentStackManager_;
     std::unordered_map<int, std::shared_ptr<AbilityConnectManager>> connectManagers_;
     std::shared_ptr<AbilityConnectManager> connectManager_;
     sptr<AppExecFwk::IBundleMgr> iBundleManager_;

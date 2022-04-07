@@ -23,7 +23,6 @@
 #include "application_info.h"
 #include "mission_record.h"
 #include "want.h"
-#include "stack_setting.h"
 
 namespace OHOS {
 namespace AAFwk {
