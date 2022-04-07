@@ -450,25 +450,6 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Terminate, TestSize.Level1)
 
 /*
  * Feature: AbilityRecord
- * Function: GetWindowInfo
- * SubFunction: GetWindowInfo RemoveWindowInfo AddWindowInfo
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: Verify windowInfo set get remove success
- */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetWindowInfo, TestSize.Level1)
-{
-#ifdef SUPPORT_GRAPHICS
-    int windowToken = 1;
-    abilityRecord_->AddWindowInfo(windowToken);
-    EXPECT_NE(abilityRecord_->GetWindowInfo(), nullptr);
-    abilityRecord_->RemoveWindowInfo();
-    EXPECT_EQ(abilityRecord_->GetWindowInfo(), nullptr);
-#endif
-}
-
-/*
- * Feature: AbilityRecord
  * Function: SetScheduler
  * SubFunction: SetScheduler
  * FunctionPoints: NA

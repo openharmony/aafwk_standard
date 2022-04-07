@@ -49,7 +49,6 @@ public:
     MOCK_METHOD1(DisconnectAbility, int(const sptr<IAbilityConnection> &));
     MOCK_METHOD3(AcquireDataAbility, sptr<IAbilityScheduler>(const Uri &, bool, const sptr<IRemoteObject> &));
     MOCK_METHOD2(ReleaseDataAbility, int(sptr<IAbilityScheduler>, const sptr<IRemoteObject> &));
-    MOCK_METHOD2(AddWindowInfo, void(const sptr<IRemoteObject> &, int32_t));
     MOCK_METHOD2(AttachAbilityThread, int(const sptr<IAbilityScheduler> &, const sptr<IRemoteObject> &));
     MOCK_METHOD3(AbilityTransitionDone, int(const sptr<IRemoteObject> &, int, const PacMap &));
     MOCK_METHOD2(ScheduleConnectAbilityDone, int(const sptr<IRemoteObject> &, const sptr<IRemoteObject> &));
@@ -58,7 +57,6 @@ public:
     MOCK_METHOD2(DumpState, void(const std::string &, std::vector<std::string> &));
     MOCK_METHOD2(TerminateAbilityResult, int(const sptr<IRemoteObject> &, int));
     MOCK_METHOD1(StopServiceAbility, int(const Want &));
-    MOCK_METHOD2(GetMissionSnapshot, int(const int32_t, MissionSnapshotInfo &));
     MOCK_METHOD1(KillProcess, int(const std::string &));
     MOCK_METHOD2(UninstallApp, int(const std::string &, int32_t));
     MOCK_METHOD1(GetMissionIdByToken, int32_t(const sptr<IRemoteObject> &token));
@@ -80,11 +78,6 @@ public:
 
     MOCK_METHOD4(StartAbility, int(const Want &want, const AbilityStartSetting &abilityStartSetting,
                                    const sptr<IRemoteObject> &callerToken, int requestCode));
-    MOCK_METHOD2(
-        ChangeFocusAbility, int(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken));
-    MOCK_METHOD1(MinimizeMultiWindow, int(int missionId));
-    MOCK_METHOD1(CloseMultiWindow, int(int missionId));
-    MOCK_METHOD1(MaximizeMultiWindow, int(int missionId));
     MOCK_METHOD1(ChangeFocusTest, void(const std::vector<int> missionId));
     MOCK_METHOD1(TerminateAbilityTest, void(int id));
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));

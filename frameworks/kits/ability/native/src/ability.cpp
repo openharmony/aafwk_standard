@@ -259,9 +259,6 @@ void Ability::OnStart(const Want &want)
             auto window = abilityWindow_->GetWindow();
             if (window) {
                 auto windowId = window->GetWindowId();
-                HILOG_INFO("Ability::OnStart: add windowId = %{public}d", windowId);
-                OHOS::AAFwk::AbilityManagerClient::GetInstance()->AddWindowInfo(AbilityContext::GetToken(), windowId);
-
                 if (winType == Rosen::WindowType::WINDOW_TYPE_APP_MAIN_WINDOW) {
                     HILOG_INFO("Call RegisterDisplayMoveListener, windowId: %{public}d", windowId);
                     OHOS::sptr<OHOS::Rosen::IDisplayMoveListener> displayMoveListener(this);

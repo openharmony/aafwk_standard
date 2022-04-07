@@ -602,12 +602,6 @@ public:
     bool IsConnectListEmpty();
 
     /**
-     * add ability's window info to record.
-     *
-     */
-    void AddWindowInfo(int windowToken);
-
-    /**
      * remove ability's window info from record.
      *
      */

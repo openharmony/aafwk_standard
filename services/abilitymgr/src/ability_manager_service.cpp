@@ -790,15 +790,6 @@ int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, boo
     return missionListManager->MinimizeAbility(token, fromUser);
 }
 
-int AbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap)
-{
-    if (missionId < 0) {
-        HILOG_ERROR("GetMissionSnapshot failed.");
-        return ERR_INVALID_VALUE;
-    }
-    return currentStackManager_->GetMissionSnapshot(missionId, missionPixelMap);
-}
-
 int AbilityManagerService::UpdateConfiguration(const AppExecFwk::Configuration &config)
 {
     HILOG_INFO("%{public}s called", __func__);
@@ -1615,9 +1606,7 @@ int AbilityManagerService::AttachAbilityThread(
 void AbilityManagerService::DumpFuncInit()
 {
     dumpFuncMap_[KEY_DUMP_ALL] = &AbilityManagerService::DumpInner;
-    dumpFuncMap_[KEY_DUMP_STACK] = &AbilityManagerService::DumpStackInner;
     dumpFuncMap_[KEY_DUMP_MISSION] = &AbilityManagerService::DumpMissionInner;
-    dumpFuncMap_[KEY_DUMP_WAIT_QUEUE] = &AbilityManagerService::DumpWaittingAbilityQueueInner;
     dumpFuncMap_[KEY_DUMP_SERVICE] = &AbilityManagerService::DumpStateInner;
     dumpFuncMap_[KEY_DUMP_DATA] = &AbilityManagerService::DataDumpStateInner;
     dumpFuncMap_[KEY_DUMP_MISSION_LIST] = &AbilityManagerService::DumpMissionListInner;
@@ -1878,22 +1867,6 @@ void AbilityManagerService::DumpMissionInfosInner(const std::string &args, std::
     }
 }
 
-void AbilityManagerService::DumpStackInner(const std::string &args, std::vector<std::string> &info)
-{
-    std::vector<std::string> argList;
-    SplitStr(args, " ", argList);
-    if (argList.empty()) {
-        return;
-    }
-    if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {
-        info.push_back("error: invalid argument, please see 'ability dump -h'.");
-        return;
-    }
-    int stackId = DEFAULT_INVAL_VALUE;
-    (void)StrToInt(argList[1], stackId);
-    currentStackManager_->DumpStack(stackId, info);
-}
-
 void AbilityManagerService::DumpMissionInner(const std::string &args, std::vector<std::string> &info)
 {
     std::vector<std::string> argList;
@@ -1908,13 +1881,6 @@ void AbilityManagerService::DumpMissionInner(const std::string &args, std::vecto
     int missionId = DEFAULT_INVAL_VALUE;
     (void)StrToInt(argList[1], missionId);
     currentMissionListManager_->DumpMission(missionId, info);
-}
-
-void AbilityManagerService::DumpWaittingAbilityQueueInner(const std::string &args, std::vector<std::string> &info)
-{
-    std::string result;
-    DumpWaittingAbilityQueue(result);
-    info.push_back(result);
 }
 
 void AbilityManagerService::DumpStateInner(const std::string &args, std::vector<std::string> &info)
@@ -2137,23 +2103,6 @@ int AbilityManagerService::ScheduleCommandAbilityDone(const sptr<IRemoteObject> 
     return connectManager->ScheduleCommandAbilityDoneLocked(token);
 }
 
-void AbilityManagerService::AddWindowInfo(const sptr<IRemoteObject> &token, int32_t windowToken)
-{
-    HILOG_DEBUG("Add window id.");
-    if (!VerificationAllToken(token)) {
-        return;
-    }
-    auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    CHECK_POINTER(abilityRecord);
-    auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
-    auto stackManager = currentStackManager_;
-    if (!stackManager) {
-        HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
-        return ;
-    }
-    stackManager->AddWindowInfo(token, windowToken);
-}
-
 void AbilityManagerService::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
@@ -2237,12 +2186,6 @@ void AbilityManagerService::InitMissionListManager(int userId, bool switchUser)
 std::shared_ptr<AbilityStackManager> AbilityManagerService::GetStackManager()
 {
     return currentStackManager_;
-}
-
-void AbilityManagerService::DumpWaittingAbilityQueue(std::string &result)
-{
-    currentStackManager_->DumpWaittingAbilityQueue(result);
-    return;
 }
 
 // multi user scene
@@ -2858,69 +2801,11 @@ std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManager
     return nullptr;
 }
 
-int AbilityManagerService::ChangeFocusAbility(
-    const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
-{
-    HILOG_INFO("Change focus ability.");
-    CHECK_POINTER_AND_RETURN(lostFocusToken, ERR_INVALID_VALUE);
-    CHECK_POINTER_AND_RETURN(getFocusToken, ERR_INVALID_VALUE);
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_INVALID_VALUE);
-
-    if (!VerificationAllToken(lostFocusToken)) {
-        return ERR_INVALID_VALUE;
-    }
-
-    if (!VerificationAllToken(getFocusToken)) {
-        return ERR_INVALID_VALUE;
-    }
-
-    return currentStackManager_->ChangeFocusAbility(lostFocusToken, getFocusToken);
-}
-
-int AbilityManagerService::MinimizeMultiWindow(int missionId)
-{
-    HILOG_INFO("Minimize multi window.");
-    return currentStackManager_->MinimizeMultiWindow(missionId);
-}
-
-int AbilityManagerService::MaximizeMultiWindow(int missionId)
-{
-    HILOG_INFO("Maximize multi window.");
-    return currentStackManager_->MaximizeMultiWindow(missionId);
-}
-
-int AbilityManagerService::CloseMultiWindow(int missionId)
-{
-    HILOG_INFO("Close multi window.");
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_INVALID_VALUE);
-    return currentStackManager_->CloseMultiWindow(missionId);
-}
-
 int AbilityManagerService::GetUidByBundleName(std::string bundleName)
 {
     auto bms = GetBundleManager();
     CHECK_POINTER_AND_RETURN(bms, ERR_NO_INIT);
     return IN_PROCESS_CALL(bms->GetUidByBundleName(bundleName, GetUserId()));
-}
-
-void AbilityManagerService::RestartAbility(const sptr<IRemoteObject> &token)
-{
-    HILOG_INFO("%{public}s called", __func__);
-    CHECK_POINTER(currentStackManager_);
-    if (!VerificationAllToken(token)) {
-        return;
-    }
-
-    auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    CHECK_POINTER(abilityRecord);
-    auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
-
-    auto stackManager = currentStackManager_;
-    if (!stackManager) {
-        HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
-        return;
-    }
-    stackManager->RestartAbility(abilityRecord);
 }
 
 void AbilityManagerService::NotifyBmsAbilityLifeStatus(
@@ -3015,13 +2900,6 @@ int AbilityManagerService::GetWantSenderInfo(const sptr<IWantSender> &target, st
     CHECK_POINTER_AND_RETURN(target, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(info, ERR_INVALID_VALUE);
     return pendingWantManager_->GetWantSenderInfo(target, info);
-}
-
-void AbilityManagerService::UpdateLockScreenState(bool isLockScreen)
-{
-    HILOG_DEBUG("%{public}s begin", __func__);
-    CHECK_POINTER(currentStackManager_);
-    currentStackManager_->UpdateLockScreenState(isLockScreen);
 }
 
 /**
