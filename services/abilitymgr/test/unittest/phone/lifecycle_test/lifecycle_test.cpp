@@ -157,72 +157,11 @@ void LifecycleTest::TearDown(void)
 
 bool LifecycleTest::StartLauncherAbility()
 {
-    auto stackManager = abilityMs_->GetStackManager();
-    EXPECT_TRUE(stackManager);
-    auto topAbility = stackManager->GetCurrentTopAbility();
-    if (topAbility) {
-        topAbility->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-    }
-
-    ElementName element("device", "com.ix.hiWord", "LauncherAbility");
-    Want want;
-    want.AddEntity(Want::FLAG_HOME_INTENT_FROM_SYSTEM);
-    want.SetElement(element);
-    int ref = abilityMs_->StartAbility(want, -1);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(ref, 0);
-    if (ref != 0) {
-        GTEST_LOG_(ERROR) << "fail to start Launcher ability";
-        return false;
-    }
-
-    launcherAbilityRecord_ = (stackManager->GetCurrentTopAbility());
-    EXPECT_TRUE(launcherAbilityRecord_);
-    if (launcherAbilityRecord_) {
-        GTEST_LOG_(ERROR) << "launcherAbilityRecord_ is not null";
-        launcherAbilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-        launcherToken_ = launcherAbilityRecord_->GetToken();
-        launcherScheduler_ = new AbilityScheduler();
-        startLancherFlag_ = true;
-        return true;
-    }
     return false;
 }
 
 bool LifecycleTest::StartNextAbility()
 {
-    Want want;
-    ElementName element("device", "com.ix.hiMusic", "MusicAbility");
-    want.SetElement(element);
-
-    auto stackManager = abilityMs_->GetStackManager();
-    EXPECT_TRUE(stackManager);
-    if (stackManager) {
-        GTEST_LOG_(ERROR) << "top BundleName :"
-                          << stackManager->GetCurrentTopAbility()->GetWant().GetElement().GetBundleName();
-        GTEST_LOG_(ERROR) << "top AbilityName :"
-                          << stackManager->GetCurrentTopAbility()->GetWant().GetElement().GetAbilityName();
-        stackManager->GetCurrentTopAbility()->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
-    }
-    int ref = abilityMs_->StartAbility(want, -1);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(ref, 0);
-    if (ref != 0) {
-        GTEST_LOG_(ERROR) << "fail to start next ability";
-        return false;
-    }
-
-    nextAbilityRecord_ = stackManager->GetCurrentTopAbility();
-    if (nextAbilityRecord_ != nullptr) {
-        nextToken_ = nextAbilityRecord_->GetToken();
-        nextScheduler_ = new AbilityScheduler();
-        nextAbilityRecord_->SetScheduler(nextScheduler_);
-        GTEST_LOG_(INFO) << "nextAbilityRecord_ is not null";
-    } else {
-        GTEST_LOG_(ERROR) << "next ability is nullptr";
-        return false;
-    }
-    nextScheduler_ = new AbilityScheduler();
     return true;
 }
 

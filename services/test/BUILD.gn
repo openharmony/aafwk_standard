@@ -47,7 +47,6 @@ group("moduletest") {
     "moduletest/ability_manager_client_test:moduletest",
     "moduletest/ability_manager_service_dump_test:moduletest",
     "moduletest/ability_mgr_module_account_test:moduletest",
-    "moduletest/ability_mgr_service_test:moduletest",
     "moduletest/ability_record_test:moduletest",
     "moduletest/ability_timeout_module_test:moduletest",
     "moduletest/app_mgr_client_test:moduletest",
@@ -63,7 +62,6 @@ group("moduletest") {
     "moduletest/panding_want_manager_test:moduletest",
     "moduletest/running_infos_module_test:moduletest",
     "moduletest/start_option_display_id_test:moduletest",
-    "moduletest/static_start_ability_test:moduletest",
     "//third_party/jsoncpp:jsoncpp",
   ]
 }

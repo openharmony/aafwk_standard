@@ -37,7 +37,6 @@
 #include "lifecycle_deal.h"
 #include "lifecycle_state_info.h"
 #include "want.h"
-#include "window_info.h"
 #include "uri.h"
 
 namespace OHOS {
@@ -607,14 +606,6 @@ public:
      */
     void RemoveWindowInfo();
 
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * get ability's window info from record.
-     *
-     */
-    std::shared_ptr<WindowInfo> GetWindowInfo() const;
-#endif
-
     /**
      * add caller record
      *
@@ -831,7 +822,6 @@ private:
 
     sptr<IAbilityScheduler> scheduler_ = {};       // kit scheduler
     bool isTerminating_ = false;              // is terminating ?
-    std::shared_ptr<WindowInfo> windowInfo_;  // add window info
     bool isCreateByConnect_ = false;          // is created by connect ability mode?
     bool isToEnd_ = false;                    // is to end ?
 

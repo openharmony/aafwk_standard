@@ -28,7 +28,6 @@
 #include "mission_snapshot.h"
 #include "ability_running_info.h"
 #include "extension_running_info.h"
-#include "stack_setting.h"
 #include "uri.h"
 #include "want.h"
 #include "want_sender_info.h"
@@ -634,9 +633,6 @@ public:
 
         // ipc id for get floating missions (26)
         CLOSE_MULTI_WINDOW,
-
-        // ipc id for set mission stack setting (27)
-        SET_STACK_SETTING,
 
         // ipc id for move mission to end (29)
         MOVE_MISSION_TO_END,
