@@ -70,8 +70,6 @@ private:
     int GetMissionSnapshotInner(MessageParcel &data, MessageParcel &reply);
     int AcquireDataAbilityInner(MessageParcel &data, MessageParcel &reply);
     int ReleaseDataAbilityInner(MessageParcel &data, MessageParcel &reply);
-    int MoveMissionToTopInner(MessageParcel &data, MessageParcel &reply);
-    int MoveMissionToEndInner(MessageParcel &data, MessageParcel &reply);
     int KillProcessInner(MessageParcel &data, MessageParcel &reply);
     int UninstallAppInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityInner(MessageParcel &data, MessageParcel &reply);
@@ -83,19 +81,10 @@ private:
     int DumpSysStateInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityForSettingsInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityForOptionsInner(MessageParcel &data, MessageParcel &reply);
-    int MoveMissionToFloatingStackInner(MessageParcel &data, MessageParcel &reply);
-    int MoveMissionToSplitScreenStackInner(MessageParcel &data, MessageParcel &reply);
     int ChangeFocusAbilityInner(MessageParcel &data, MessageParcel &reply);
     int MinimizeMultiWindowInner(MessageParcel &data, MessageParcel &reply);
     int MaximizeMultiWindowInner(MessageParcel &data, MessageParcel &reply);
-    int GetFloatingMissionsInner(MessageParcel &data, MessageParcel &reply);
     int CloseMultiWindowInner(MessageParcel &data, MessageParcel &reply);
-    int SetMissionStackSettingInner(MessageParcel &data, MessageParcel &reply);
-    int IsFirstInMissionInner(MessageParcel &data, MessageParcel &reply);
-    int LockMissionInner(MessageParcel &data, MessageParcel &reply);
-    int UnlockMissionInner(MessageParcel &data, MessageParcel &reply);
-    int SetMissionDescriptionInfoInner(MessageParcel &data, MessageParcel &reply);
-    int GetMissionLockModeStateInner(MessageParcel &data, MessageParcel &reply);
     int UpdateConfigurationInner(MessageParcel &data, MessageParcel &reply);
 
     int GetWantSenderInner(MessageParcel &data, MessageParcel &reply);

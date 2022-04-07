@@ -88,18 +88,6 @@ enum class AppendApi {
     StartAbilities,
     GetColorMode,
     SetColorMode,
-    IsFirstInMission,
-    End
-};
-
-enum class MissionStackApi {
-    LockMission = (int)AppendApi::End,
-    End
-};
-
-enum class TestAbilityState {
-    OnSaveAbilityState = (int)MissionStackApi::End,
-    OnRestoreAbilityState,
     End
 };
 }  // namespace AppExecFwk

@@ -449,50 +449,6 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_016, TestSize.Level1)
  * Function: OnRemoteRequest
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService OnRemoteRequest
- * EnvConditions: code is GET_RECENT_MISSION
- * CaseDescription: Verify that on remote request is normal
- */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_017, TestSize.Level1)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    WriteInterfaceToken(data);
-    data.WriteInt32(INT_MAX);
-    data.WriteInt32(1);
-    int res = stub_->OnRemoteRequest(IAbilityManager::GET_RECENT_MISSION, data, reply, option);
-
-    std::vector<AbilityMissionInfo> recentList;
-    int size = reply.ReadInt32();
-    for (int32_t i = 0; i < size; i++) {
-        std::unique_ptr<AbilityMissionInfo> info(reply.ReadParcelable<AbilityMissionInfo>());
-        recentList.emplace_back(*info);
-    }
-
-    EXPECT_EQ(static_cast<int>(recentList.size()), 1);
-    EXPECT_EQ(recentList[0].runingState, -1);
-    EXPECT_EQ(recentList[0].missionDescription.label, "label");
-    EXPECT_EQ(recentList[0].missionDescription.iconPath, "icon path");
-    EXPECT_EQ(recentList[0].baseWant.GetElement().GetAbilityName(), "baseAbility");
-    EXPECT_EQ(recentList[0].baseWant.GetElement().GetBundleName(), "baseBundle");
-    EXPECT_EQ(recentList[0].baseWant.GetElement().GetDeviceID(), "baseDevice");
-
-    EXPECT_EQ(recentList[0].baseAbility.GetAbilityName(), "baseAbility");
-    EXPECT_EQ(recentList[0].baseAbility.GetBundleName(), "baseBundle");
-    EXPECT_EQ(recentList[0].baseAbility.GetDeviceID(), "baseDevice");
-
-    EXPECT_EQ(recentList[0].topAbility.GetAbilityName(), "topAbility");
-    EXPECT_EQ(recentList[0].topAbility.GetBundleName(), "topBundle");
-    EXPECT_EQ(recentList[0].topAbility.GetDeviceID(), "topDevice");
-
-    EXPECT_EQ(res, NO_ERROR);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: OnRemoteRequest
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService OnRemoteRequest
  * EnvConditions: code is START_CALL_ABILITY
  * CaseDescription: Verify that on remote request is normal
  */

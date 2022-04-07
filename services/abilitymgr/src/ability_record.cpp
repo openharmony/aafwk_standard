@@ -34,6 +34,7 @@ namespace AAFwk {
 const std::string DEBUG_APP = "debugApp";
 int64_t AbilityRecord::abilityRecordId = 0;
 int64_t AbilityRecord::g_abilityRecordEventId_ = 0;
+const int32_t DEFAULT_USER_ID = 0;
 const std::map<AbilityState, std::string> AbilityRecord::stateToStrMap = {
     std::map<AbilityState, std::string>::value_type(INITIAL, "INITIAL"),
     std::map<AbilityState, std::string>::value_type(INACTIVE, "INACTIVE"),

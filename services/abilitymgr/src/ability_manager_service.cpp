@@ -799,61 +799,10 @@ int AbilityManagerService::GetMissionSnapshot(const int32_t missionId, MissionPi
     return currentStackManager_->GetMissionSnapshot(missionId, missionPixelMap);
 }
 
-int AbilityManagerService::SetMissionDescriptionInfo(
-    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description)
-{
-    HILOG_INFO("%{public}s called", __func__);
-    CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
-    CHECK_POINTER_AND_RETURN(currentStackManager_, INNER_ERR);
-
-    auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
-
-    auto stackManager = currentStackManager_;
-    if (!stackManager) {
-        return ERR_INVALID_VALUE;
-    }
-    return stackManager->SetMissionDescriptionInfo(abilityRecord, description);
-}
-
-int AbilityManagerService::GetMissionLockModeState()
-{
-    HILOG_INFO("%{public}s called", __func__);
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_INVALID_VALUE);
-    return currentStackManager_->GetMissionLockModeState();
-}
-
 int AbilityManagerService::UpdateConfiguration(const AppExecFwk::Configuration &config)
 {
     HILOG_INFO("%{public}s called", __func__);
     return DelayedSingleton<AppScheduler>::GetInstance()->UpdateConfiguration(config);
-}
-
-int AbilityManagerService::MoveMissionToTop(int32_t missionId)
-{
-    HILOG_INFO("Move mission to top.");
-    if (missionId < 0) {
-        HILOG_ERROR("Mission id is invalid.");
-        return ERR_INVALID_VALUE;
-    }
-
-    return currentStackManager_->MoveMissionToTop(missionId);
-}
-
-int AbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
-{
-    HILOG_INFO("Move mission to end.");
-    CHECK_POINTER_AND_RETURN(token, ERR_INVALID_VALUE);
-    if (!VerificationAllToken(token)) {
-        return ERR_INVALID_VALUE;
-    }
-    auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
-    auto stackManager = currentStackManager_;
-    if (!stackManager) {
-        return ERR_INVALID_VALUE;
-    }
-    return stackManager->MoveMissionToEnd(token, nonFirst);
 }
 
 int AbilityManagerService::ConnectAbility(
@@ -2763,7 +2712,6 @@ bool AbilityManagerService::VerificationToken(const sptr<IRemoteObject> &token)
     HILOG_INFO("Verification token.");
     CHECK_POINTER_RETURN_BOOL(dataAbilityManager_);
     CHECK_POINTER_RETURN_BOOL(connectManager_);
-    CHECK_POINTER_RETURN_BOOL(currentStackManager_);
     CHECK_POINTER_RETURN_BOOL(currentMissionListManager_);
 
     if (currentMissionListManager_->GetAbilityRecordByToken(token)) {
@@ -2910,18 +2858,6 @@ std::shared_ptr<DataAbilityManager> AbilityManagerService::GetDataAbilityManager
     return nullptr;
 }
 
-int AbilityManagerService::MoveMissionToFloatingStack(const MissionOption &missionOption)
-{
-    HILOG_INFO("Move mission to floating stack.");
-    return currentStackManager_->MoveMissionToFloatingStack(missionOption);
-}
-
-int AbilityManagerService::MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary)
-{
-    HILOG_INFO("Move mission to split screen stack.");
-    return currentStackManager_->MoveMissionToSplitScreenStack(primary, secondary);
-}
-
 int AbilityManagerService::ChangeFocusAbility(
     const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
 {
@@ -2953,72 +2889,11 @@ int AbilityManagerService::MaximizeMultiWindow(int missionId)
     return currentStackManager_->MaximizeMultiWindow(missionId);
 }
 
-int AbilityManagerService::GetFloatingMissions(std::vector<AbilityMissionInfo> &list)
-{
-    HILOG_INFO("Get floating missions.");
-    return currentStackManager_->GetFloatingMissions(list);
-}
-
 int AbilityManagerService::CloseMultiWindow(int missionId)
 {
     HILOG_INFO("Close multi window.");
     CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_INVALID_VALUE);
     return currentStackManager_->CloseMultiWindow(missionId);
-}
-
-int AbilityManagerService::SetMissionStackSetting(const StackSetting &stackSetting)
-{
-    HILOG_INFO("Set mission stack setting.");
-    currentStackManager_->SetMissionStackSetting(stackSetting);
-    return ERR_OK;
-}
-
-bool AbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
-{
-    HILOG_INFO("Is first in mission.");
-    CHECK_POINTER_RETURN_BOOL(token);
-    CHECK_POINTER_RETURN_BOOL(currentStackManager_);
-
-    if (!VerificationAllToken(token)) {
-        return false;
-    }
-    auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    CHECK_POINTER_RETURN_BOOL(abilityRecord);
-    auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
-    auto stackManager = currentStackManager_;
-    if (!stackManager) {
-        HILOG_ERROR("stackManager is nullptr. userId=%{public}d", userId);
-        return ERR_INVALID_VALUE;
-    }
-    return stackManager->IsFirstInMission(token);
-}
-
-int AbilityManagerService::LockMission(int missionId)
-{
-    HILOG_INFO("request lock mission id :%{public}d", missionId);
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
-    auto bms = GetBundleManager();
-    CHECK_POINTER_AND_RETURN(bms, ERR_NO_INIT);
-
-    int callerUid = IPCSkeleton::GetCallingUid();
-    int callerPid = IPCSkeleton::GetCallingPid();
-    bool isSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid));
-    HILOG_DEBUG("locker uid :%{public}d, pid :%{public}d. isSystemApp: %{public}d", callerUid, callerPid, isSystemApp);
-    return currentStackManager_->StartLockMission(callerUid, missionId, isSystemApp, true);
-}
-
-int AbilityManagerService::UnlockMission(int missionId)
-{
-    HILOG_INFO("request unlock mission id :%{public}d", missionId);
-    CHECK_POINTER_AND_RETURN(currentStackManager_, ERR_NO_INIT);
-    auto bms = GetBundleManager();
-    CHECK_POINTER_AND_RETURN(bms, ERR_NO_INIT);
-
-    int callerUid = IPCSkeleton::GetCallingUid();
-    int callerPid = IPCSkeleton::GetCallingPid();
-    bool isSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid));
-    HILOG_DEBUG("locker uid :%{public}d, pid :%{public}d. isSystemApp: %{public}d", callerUid, callerPid, isSystemApp);
-    return currentStackManager_->StartLockMission(callerUid, missionId, isSystemApp, false);
 }
 
 int AbilityManagerService::GetUidByBundleName(std::string bundleName)

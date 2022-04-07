@@ -26,8 +26,6 @@ group("ams_system_test_app") {
     "amsKitSystemTestDataA:amsKitSystemTestDataA",
     "amsKitSystemTestDataB:amsKitSystemTestDataB",
     "amsKitSystemTestService:amsKitSystemTestService",
-    "amsMissionStackTest:amsMissionStackTest",
-    "amsMissionStackTestSubsidiary:amsMissionStackTestSubsidiary",
     "amsStDataAbility:amsStDataAbility",
     "amsSystemTestA:amsSystemTestA",
     "amsSystemTestB:amsSystemTestB",

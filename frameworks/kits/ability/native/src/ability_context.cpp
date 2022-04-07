@@ -599,25 +599,6 @@ void AbilityContext::StartAbilities(const std::vector<AAFwk::Want> &wants)
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-bool AbilityContext::IsFirstInMission()
-{
-    HILOG_INFO("%{public}s begin.", __func__);
-    auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
-    if (abilityClient == nullptr) {
-        HILOG_ERROR("AbilityContext::IsFirstInMission abilityClient is nullptr");
-        return false;
-    }
-    HILOG_INFO("%{public}s begin ams->IsFirstInMission.", __func__);
-    ErrCode errval = abilityClient->IsFirstInMission(token_);
-    HILOG_INFO("%{public}s end ams->IsFirstInMission, ret=%{public}d", __func__, errval);
-    if (errval != ERR_OK) {
-        HILOG_ERROR("AbilityContext::IsFirstInMission IsFirstInMission retval is %d", errval);
-    }
-    HILOG_INFO("%{public}s end.", __func__);
-
-    return (errval == ERR_OK) ? true : false;
-}
-
 std::shared_ptr<TaskDispatcher> AbilityContext::GetUITaskDispatcher()
 {
     return ContextContainer::GetUITaskDispatcher();
@@ -643,26 +624,6 @@ std::shared_ptr<TaskDispatcher> AbilityContext::CreateSerialTaskDispatcher(
 std::shared_ptr<TaskDispatcher> AbilityContext::GetGlobalTaskDispatcher(const TaskPriority &priority)
 {
     return ContextContainer::GetGlobalTaskDispatcher(priority);
-}
-
-bool AbilityContext::MoveMissionToEnd(bool nonFirst)
-{
-    return ContextContainer::MoveMissionToEnd(nonFirst);
-}
-
-void AbilityContext::LockMission()
-{
-    ContextContainer::LockMission();
-}
-
-void AbilityContext::UnlockMission()
-{
-    ContextContainer::UnlockMission();
-}
-
-bool AbilityContext::SetMissionInformation(const MissionInformation &missionInformation)
-{
-    return ContextContainer::SetMissionInformation(missionInformation);
 }
 
 bool AbilityContext::IsUpdatingConfigurations()

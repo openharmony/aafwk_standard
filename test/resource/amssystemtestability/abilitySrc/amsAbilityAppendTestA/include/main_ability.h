@@ -38,7 +38,6 @@ public:
     void StartAbilitiesCase1(int code);
     void GetColorModeCase1(int code);
     void SetColorModeCase1(int code);
-    void IsFirstInMissionCase1(int code);
 
     MainAbility()
     {
@@ -74,10 +73,6 @@ public:
                 {(int)AppendApi::SetColorMode,
                 {
                     [this](int code) { SetColorModeCase1(code); },
-                }},
-                {(int)AppendApi::IsFirstInMission,
-                {
-                    [this](int code) { IsFirstInMissionCase1(code); },
                 }},
         };
     }

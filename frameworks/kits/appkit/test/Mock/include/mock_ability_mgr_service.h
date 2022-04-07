@@ -54,7 +54,6 @@ public:
     MOCK_METHOD2(GetMissionSnapshot, int(const int32_t, MissionPixelMap &));
     MOCK_METHOD4(OnRemoteRequest, int(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option));
 
-    MOCK_METHOD1(MoveMissionToTop, int(int32_t));
     MOCK_METHOD1(KillProcess, int(const std::string &bundleName));
     MOCK_METHOD2(UninstallApp, int(const std::string &bundleName, int32_t uid));
     MOCK_METHOD1(TerminateAbilityByRecordId, int(const int64_t recordId));

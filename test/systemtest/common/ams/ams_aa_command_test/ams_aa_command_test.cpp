@@ -38,8 +38,6 @@ constexpr int WAIT_LAUNCHER_OK = 5 * 1000;
 static std::string launcherBundleName = "com.ohos.launcher";
 std::string systemUiBundle = "com.ohos.systemui";
 std::string terminatePageAbility = "requ_page_ability_terminate";
-static const string mexpectResult = "User ID #0\n  MissionStack ID #0\n    MissionRecord ID #0  bottom app "
-                                    "[com.ohos.launcher.MainAbility]  winMode #0\n      AbilityRecord";
 }  // namespace
 
 class AmsAACommandTest : public testing::Test {
@@ -167,25 +165,6 @@ HWTEST_F(AmsAACommandTest, ams_aa_command_test_0400, TestSize.Level1)
     EXPECT_EQ(result.substr(0, expectResult.size()), expectResult);
 
     GTEST_LOG_(INFO) << "AmsAACommandTest ams_aa_command_test_0400 end";
-}
-
-/**
- * @tc.number    : ams_aa_command_test_0500
- * @tc.name      : aa dump -m
- * @tc.desc      : dump the ability info of a specificed mission when aa -m command.
- */
-HWTEST_F(AmsAACommandTest, ams_aa_command_test_0500, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AmsAACommandTest ams_aa_command_test_0500 start";
-
-    string result;
-    const string cmd{"dump -m 0"};
-    const string &expectResult = "User ID #0\n    MissionRecord ID #0  bottom app "
-                "[com.ohos.launcher.MainAbility]  winMode #0\n      AbilityRecord ID #0\n        app ";
-    ExecuteSystemForResult(cmd, result);
-    EXPECT_EQ(result.substr(0, expectResult.size()), expectResult);
-
-    GTEST_LOG_(INFO) << "AmsAACommandTest ams_aa_command_test_0500 end";
 }
 
 /**

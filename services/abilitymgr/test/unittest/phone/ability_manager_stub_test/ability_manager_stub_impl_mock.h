@@ -199,50 +199,6 @@ public:
         return 0;
     }
 
-    virtual int MoveMissionToTop(int32_t missionId)
-    {
-        return 0;
-    }
-
-    bool IsFirstInMission(const sptr<IRemoteObject> &token) override
-    {
-        return true;
-    }
-
-    int MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst) override
-    {
-        return 0;
-    }
-
-    int LockMission(int missionId) override
-    {
-        return 0;
-    }
-    int UnlockMission(int missionId) override
-    {
-        return 0;
-    }
-    int SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &missionDescriptionInfo) override
-    {
-        return 0;
-    }
-
-    int GetMissionLockModeState()
-    {
-        return 0;
-    }
-
-    int MoveMissionToFloatingStack(const MissionOption &missionOption)
-    {
-        return 0;
-    }
-
-    int MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary)
-    {
-        return 0;
-    }
-
     int ChangeFocusAbility(const sptr<IRemoteObject> &lostFocusToken, const sptr<IRemoteObject> &getFocusToken)
     {
         return 0;
@@ -258,17 +214,7 @@ public:
         return 0;
     }
 
-    int GetFloatingMissions(std::vector<AbilityMissionInfo> &list)
-    {
-        return 0;
-    }
-
     int CloseMultiWindow(int missionId)
-    {
-        return 0;
-    }
-
-    int SetMissionStackSetting(const StackSetting &stackSetting)
     {
         return 0;
     }

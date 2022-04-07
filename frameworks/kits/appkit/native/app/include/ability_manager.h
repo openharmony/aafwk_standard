@@ -22,11 +22,9 @@
 namespace OHOS {
 namespace AppExecFwk {
 using OHOS::AAFwk::AbilityManagerClient;
-using OHOS::AAFwk::AbilityMissionInfo;
 using OHOS::AAFwk::RECENT_IGNORE_UNAVAILABLE;
 using OHOS::AAFwk::Want;
 using OHOS::AppExecFwk::RunningProcessInfo;
-using RuningMissionInfo = AbilityMissionInfo;
 
 class AbilityManager {
 public:
@@ -43,36 +41,6 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     void StartAbility(const Want &want, int requestCode);
-
-    /**
-     * Ask that the mission associated with a given mission ID be moved to the
-     * front of the stack, so it is now visible to the user.
-     *
-     * @param missionId mission record id
-     */
-    void MoveMissionToTop(int missionId);
-
-    /**
-     * Query recent Ability Mission info.
-     * @param numMax The maximum number of entries to return in the list. The
-     * actual number returned may be smaller, depending on how many tasks the
-     * user has started and the maximum number the system can remember.
-     * @param flags Information about what to return.  May be any combination
-     * of {@link #RECENT_WITH_EXCLUDED} and {@link #RECENT_IGNORE_UNAVAILABLE}.
-     *
-     * @returns Returns the AbilityMissionInfo.
-     */
-    std::vector<AbilityMissionInfo> QueryRecentAbilityMissionInfo(int numMax, int flags) const;
-
-    /**
-     * Query running Ability Mission info.
-     * @param numMax The maximum number of entries to return in the list. The
-     * actual number returned may be smaller, depending on how many tasks the
-     * user has started and the maximum number the system can remember.
-     *
-     * @returns Returns the AbilityMissionInfo.
-     */
-    std::vector<RuningMissionInfo> QueryRunningAbilityMissionInfo(int numMax) const;
 
     /**
      * Clears user data of the application, which is equivalent to initializing the application.

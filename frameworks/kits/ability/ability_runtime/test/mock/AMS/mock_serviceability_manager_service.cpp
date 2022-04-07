@@ -137,15 +137,5 @@ int MockServiceAbilityManagerService::StopServiceAbility(const Want &want, int32
 {
     return 0;
 }
-
-int MockServiceAbilityManagerService::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
-{
-    return 0;
-}
-
-bool MockServiceAbilityManagerService::IsFirstInMission(const sptr<IRemoteObject> &token)
-{
-    return true;
-}
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -476,24 +476,6 @@ HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_019, TestSize.Level1)
 
 /*
  * Feature: AbilityManagerService
- * Function: MoveMissionToTop
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService MoveMissionToTop
- * EnvConditions: NA
- * CaseDescription: Verify the normal conditions of MoveMissionToTop
- */
-HWTEST_F(AbilityManagerProxyTest, AbilityManagerProxy_0025, TestSize.Level1)
-{
-    EXPECT_CALL(*mock_, SendRequest(_, _, _, _))
-        .Times(1)
-        .WillOnce(Invoke(mock_.GetRefPtr(), &AbilityManagerStubMock::InvokeSendRequest));
-    proxy_->MoveMissionToTop(1);
-
-    EXPECT_EQ(IAbilityManager::MOVE_MISSION_TO_TOP, mock_->code_);
-}
-
-/*
- * Feature: AbilityManagerService
  * Function: ScheduleCommandAbilityDone
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService ScheduleCommandAbilityDone

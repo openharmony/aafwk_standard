@@ -54,8 +54,6 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[GET_MISSION_SNAPSHOT] = &AbilityManagerStub::GetMissionSnapshotInner;
     requestFuncMap_[ACQUIRE_DATA_ABILITY] = &AbilityManagerStub::AcquireDataAbilityInner;
     requestFuncMap_[RELEASE_DATA_ABILITY] = &AbilityManagerStub::ReleaseDataAbilityInner;
-    requestFuncMap_[MOVE_MISSION_TO_TOP] = &AbilityManagerStub::MoveMissionToTopInner;
-    requestFuncMap_[MOVE_MISSION_TO_END] = &AbilityManagerStub::MoveMissionToEndInner;
     requestFuncMap_[KILL_PROCESS] = &AbilityManagerStub::KillProcessInner;
     requestFuncMap_[UNINSTALL_APP] = &AbilityManagerStub::UninstallAppInner;
     requestFuncMap_[START_ABILITY] = &AbilityManagerStub::StartAbilityInner;
@@ -73,8 +71,6 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[NOTIFY_CONTINUATION_RESULT] = &AbilityManagerStub::NotifyContinuationResultInner;
     requestFuncMap_[REGISTER_REMOTE_MISSION_LISTENER] = &AbilityManagerStub::RegisterRemoteMissionListenerInner;
     requestFuncMap_[UNREGISTER_REMOTE_MISSION_LISTENER] = &AbilityManagerStub::UnRegisterRemoteMissionListenerInner;
-    requestFuncMap_[MOVE_MISSION_TO_FLOATING_STACK] = &AbilityManagerStub::MoveMissionToFloatingStackInner;
-    requestFuncMap_[MOVE_MISSION_TO_SPLITSCREEN_STACK] = &AbilityManagerStub::MoveMissionToSplitScreenStackInner;
     requestFuncMap_[CHANGE_FOCUS_ABILITY] = &AbilityManagerStub::ChangeFocusAbilityInner;
     requestFuncMap_[MINIMIZE_MULTI_WINDOW] = &AbilityManagerStub::MinimizeMultiWindowInner;
     requestFuncMap_[START_ABILITY_FOR_OPTIONS] = &AbilityManagerStub::StartAbilityForOptionsInner;
@@ -86,12 +82,7 @@ void AbilityManagerStub::FirstStepInit()
 void AbilityManagerStub::SecondStepInit()
 {
     requestFuncMap_[MAXIMIZE_MULTI_WINDOW] = &AbilityManagerStub::MaximizeMultiWindowInner;
-    requestFuncMap_[GET_FLOATING_MISSIONS] = &AbilityManagerStub::GetFloatingMissionsInner;
     requestFuncMap_[CLOSE_MULTI_WINDOW] = &AbilityManagerStub::CloseMultiWindowInner;
-    requestFuncMap_[SET_STACK_SETTING] = &AbilityManagerStub::SetMissionStackSettingInner;
-    requestFuncMap_[IS_FIRST_IN_MISSION] = &AbilityManagerStub::IsFirstInMissionInner;
-    requestFuncMap_[LUCK_MISSION] = &AbilityManagerStub::LockMissionInner;
-    requestFuncMap_[UNLUCK_MISSION] = &AbilityManagerStub::UnlockMissionInner;
     requestFuncMap_[GET_PENDING_WANT_SENDER] = &AbilityManagerStub::GetWantSenderInner;
     requestFuncMap_[SEND_PENDING_WANT_SENDER] = &AbilityManagerStub::SendWantSenderInner;
     requestFuncMap_[CANCEL_PENDING_WANT_SENDER] = &AbilityManagerStub::CancelWantSenderInner;
@@ -104,8 +95,6 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[UNREGISTER_CANCEL_LISTENER] = &AbilityManagerStub::UnregisterCancelListenerInner;
     requestFuncMap_[GET_PENDING_REQUEST_WANT] = &AbilityManagerStub::GetPendingRequestWantInner;
     requestFuncMap_[GET_PENDING_WANT_SENDER_INFO] = &AbilityManagerStub::GetPendingRequestWantInner;
-    requestFuncMap_[SET_MISSION_INFO] = &AbilityManagerStub::SetMissionDescriptionInfoInner;
-    requestFuncMap_[GET_MISSION_LOCK_MODE_STATE] = &AbilityManagerStub::GetMissionLockModeStateInner;
     requestFuncMap_[UPDATE_CONFIGURATION] = &AbilityManagerStub::UpdateConfigurationInner;
     requestFuncMap_[GET_SYSTEM_MEMORY_ATTR] = &AbilityManagerStub::GetSystemMemoryAttrInner;
     requestFuncMap_[GET_APP_MEMORY_SIZE] = &AbilityManagerStub::GetAppMemorySizeInner;
@@ -327,29 +316,6 @@ int AbilityManagerStub::ReleaseDataAbilityInner(MessageParcel &data, MessageParc
     return NO_ERROR;
 }
 
-int AbilityManagerStub::MoveMissionToTopInner(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t id = data.ReadInt32();
-    int result = MoveMissionToTop(id);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("move mission to top error");
-        return ERR_INVALID_VALUE;
-    }
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::MoveMissionToEndInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto token = data.ReadRemoteObject();
-    auto nonFirst = data.ReadBool();
-    int result = MoveMissionToEnd(token, nonFirst);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("move mission to top error");
-        return ERR_INVALID_VALUE;
-    }
-    return NO_ERROR;
-}
-
 int AbilityManagerStub::KillProcessInner(MessageParcel &data, MessageParcel &reply)
 {
     std::string bundleName = Str16ToStr8(data.ReadString16());
@@ -555,40 +521,6 @@ int AbilityManagerStub::StartAbilityForOptionsInner(MessageParcel &data, Message
     return NO_ERROR;
 }
 
-int AbilityManagerStub::MoveMissionToFloatingStackInner(MessageParcel &data, MessageParcel &reply)
-{
-    MissionOption *missionOption = data.ReadParcelable<MissionOption>();
-    if (missionOption == nullptr) {
-        HILOG_ERROR("missionOption is nullptr");
-        return ERR_INVALID_VALUE;
-    }
-
-    auto result = MoveMissionToFloatingStack(*missionOption);
-    reply.WriteInt32(result);
-    delete missionOption;
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::MoveMissionToSplitScreenStackInner(MessageParcel &data, MessageParcel &reply)
-{
-    MissionOption *primary = data.ReadParcelable<MissionOption>();
-    if (primary == nullptr) {
-        HILOG_ERROR("missionOption is nullptr");
-        return ERR_INVALID_VALUE;
-    }
-    MissionOption *secondary = data.ReadParcelable<MissionOption>();
-    if (secondary == nullptr) {
-        HILOG_ERROR("missionOption is nullptr");
-        delete primary;
-        return ERR_INVALID_VALUE;
-    }
-    auto result = MoveMissionToSplitScreenStack(*primary, *secondary);
-    reply.WriteInt32(result);
-    delete primary;
-    delete secondary;
-    return NO_ERROR;
-}
-
 int AbilityManagerStub::ChangeFocusAbilityInner(MessageParcel &data, MessageParcel &reply)
 {
     auto loseToken = data.ReadRemoteObject();
@@ -614,95 +546,11 @@ int AbilityManagerStub::MaximizeMultiWindowInner(MessageParcel &data, MessagePar
     return NO_ERROR;
 }
 
-int AbilityManagerStub::GetFloatingMissionsInner(MessageParcel &data, MessageParcel &reply)
-{
-    std::vector<AbilityMissionInfo> missionInfos;
-    auto result = GetFloatingMissions(missionInfos);
-    reply.WriteInt32(missionInfos.size());
-    for (auto &it : missionInfos) {
-        if (!reply.WriteParcelable(&it)) {
-            return ERR_INVALID_VALUE;
-        }
-    }
-    if (!reply.WriteInt32(result)) {
-        return ERR_INVALID_VALUE;
-    }
-    return NO_ERROR;
-}
-
 int AbilityManagerStub::CloseMultiWindowInner(MessageParcel &data, MessageParcel &reply)
 {
     auto missionId = data.ReadInt32();
     auto result = CloseMultiWindow(missionId);
     reply.WriteInt32(result);
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::SetMissionStackSettingInner(MessageParcel &data, MessageParcel &reply)
-{
-    StackSetting *stackSetting = data.ReadParcelable<StackSetting>();
-    if (stackSetting == nullptr) {
-        HILOG_ERROR("stackSetting is nullptr");
-        return ERR_INVALID_VALUE;
-    }
-    auto result = SetMissionStackSetting(*stackSetting);
-    reply.WriteInt32(result);
-    delete stackSetting;
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::IsFirstInMissionInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto token = data.ReadRemoteObject();
-    auto result = IsFirstInMission(token);
-    if (!reply.WriteBool(result)) {
-        HILOG_ERROR("reply write failed.");
-        return ERR_INVALID_VALUE;
-    }
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::LockMissionInner(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t id = data.ReadInt32();
-    int result = LockMission(id);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("AbilityManagerStub: lock mission failed.");
-        return ERR_INVALID_VALUE;
-    }
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::UnlockMissionInner(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t id = data.ReadInt32();
-    int result = UnlockMission(id);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("AbilityManagerStub: lock mission failed.");
-        return ERR_INVALID_VALUE;
-    }
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::SetMissionDescriptionInfoInner(MessageParcel &data, MessageParcel &reply)
-{
-    auto token = data.ReadRemoteObject();
-    std::unique_ptr<MissionDescriptionInfo> missionInfo(data.ReadParcelable<MissionDescriptionInfo>());
-    int result = SetMissionDescriptionInfo(token, *missionInfo);
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("AbilityManagerStub: set mission info failed.");
-        return ERR_INVALID_VALUE;
-    }
-    return NO_ERROR;
-}
-
-int AbilityManagerStub::GetMissionLockModeStateInner(MessageParcel &data, MessageParcel &reply)
-{
-    int result = GetMissionLockModeState();
-    if (!reply.WriteInt32(result)) {
-        HILOG_ERROR("AbilityManagerStub: get mission lock mode state failed.");
-        return ERR_INVALID_VALUE;
-    }
     return NO_ERROR;
 }
 

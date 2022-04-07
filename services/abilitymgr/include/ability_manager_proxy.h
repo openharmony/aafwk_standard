@@ -272,24 +272,6 @@ public:
     virtual int GetMissionSnapshot(const int32_t missionId, MissionPixelMap &missionPixelMap) override;
 
     /**
-     * Ask that the mission associated with a given mission ID be moved to the
-     * front of the stack, so it is now visible to the user.
-     *
-     * @param missionId.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int MoveMissionToTop(int32_t missionId) override;
-
-    /**
-     * Requires that tasks associated with a given capability token be moved to the background
-     *
-     * @param token ability token
-     * @param nonFirst If nonfirst is false and not the lowest ability of the mission, you cannot move mission to end
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int MoveMissionToEnd(const sptr<IRemoteObject> &token, bool nonFirst) override;
-
-    /**
      * Kill the process immediately.
      *
      * @param bundleName.
@@ -325,21 +307,6 @@ public:
     virtual int UninstallApp(const std::string &bundleName, int32_t uid) override;
 
     /**
-     * Moving mission to the specified stack by mission option(Enter floating window mode).
-     * @param missionOption, target mission option
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int MoveMissionToFloatingStack(const MissionOption &missionOption) override;
-
-    /**
-     * Moving mission to the specified stack by mission option(Enter floating window mode).
-     * @param primary, display primary mission option
-     * @param secondary, display secondary mission option
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int MoveMissionToSplitScreenStack(const MissionOption &primary, const MissionOption &secondary) override;
-
-    /**
      * Change the focus of ability in the mission stack.
      * @param lostToken, the token of lost focus ability
      * @param getToken, the token of get focus ability
@@ -363,63 +330,11 @@ public:
     virtual int MaximizeMultiWindow(int missionId) override;
 
     /**
-     * get missions info of floating mission stack.
-     * @param list, mission info.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int GetFloatingMissions(std::vector<AbilityMissionInfo> &list) override;
-
-    /**
      * close multiwindow by mission id.
      * @param missionId, the id of target mission.
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int CloseMultiWindow(int missionId) override;
-
-    /**
-     * set special mission stack default settings.
-     * @param stackSetting, mission stack default settings.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int SetMissionStackSetting(const StackSetting &stackSetting) override;
-
-    /**
-     * @brief Checks whether this ability is the first ability in a mission.
-     *
-     * @return Returns true is first in Mission.
-     */
-    virtual bool IsFirstInMission(const sptr<IRemoteObject> &token) override;
-
-    /**
-     * Sets the application to start its ability in lock mission mode.
-     * @param missionId luck mission id
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int LockMission(int missionId) override;
-
-    /**
-     * Unlocks this ability by exiting the lock mission mode.
-     * @param missionId unluck mission id
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int UnlockMission(int missionId) override;
-
-    /**
-     * Sets description information about the mission containing this ability.
-     *
-     * @param description Indicates the object containing information about the
-     *                    mission. This parameter cannot be null.
-     * @return Returns ERR_OK on success, others on failure.
-     */
-    virtual int SetMissionDescriptionInfo(
-        const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description) override;
-
-    /**
-     * get current system mission lock mode state.
-     *
-     * @return Returns 0: LOCK_MISSION_STATE_NONE, 1: LOCK_MISSION_STATE_LOCKED
-     */
-    virtual int GetMissionLockModeState() override;
 
     /**
      * Updates the configuration by modifying the configuration.

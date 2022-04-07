@@ -46,7 +46,6 @@ MTDumpUtil::MTDumpUtil()
     findRgx_["NextAppName"] = regex(".*next ability file name \\[(.+)\\].*");
     findRgx_["State"] = regex(".*state #(.+)  .*");
     findRgx_["StartTime"] = regex(".*start time \\[(.+)\\].*");
-    findRgx_["MissionRecordID"] = regex(".*MissionRecord ID #(.+)  bottom app.*");
     findRgx_["MissionBottomApp"] = regex(".*bottom app \\[(.+)\\].*");
     findRgx_["UserID"] = regex(".*User ID #(.+)\\].*");
     findRgx_["MissionStackID"] = regex(".*MissionStack ID #(.+) \\[.*");

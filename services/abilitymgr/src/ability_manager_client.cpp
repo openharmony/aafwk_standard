@@ -308,20 +308,6 @@ ErrCode AbilityManagerClient::GetMissionSnapshot(const int32_t missionId, Missio
 #endif
 }
 
-ErrCode AbilityManagerClient::MoveMissionToTop(int32_t missionId)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->MoveMissionToTop(missionId);
-}
-
-ErrCode AbilityManagerClient::MoveMissionToEnd(const sptr<IRemoteObject> &token, const bool nonFirst)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->MoveMissionToEnd(token, nonFirst);
-}
-
 ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
@@ -343,35 +329,6 @@ ErrCode AbilityManagerClient::ClearUpApplicationData(const std::string &bundleNa
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->ClearUpApplicationData(bundleName);
-}
-
-ErrCode AbilityManagerClient::IsFirstInMission(const sptr<IRemoteObject> &token)
-{
-    if (token == nullptr) {
-        HILOG_ERROR("token is nullptr");
-        return ERR_NULL_OBJECT;
-    }
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    if (!(abms->IsFirstInMission(token))) {
-        return NO_FIRST_IN_MISSION;
-    }
-    return ERR_OK;
-}
-
-ErrCode AbilityManagerClient::MoveMissionToFloatingStack(const MissionOption &missionOption)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->MoveMissionToFloatingStack(missionOption);
-}
-
-ErrCode AbilityManagerClient::MoveMissionToSplitScreenStack(
-    const MissionOption &primary, const MissionOption &secondary)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->MoveMissionToSplitScreenStack(primary, secondary);
 }
 
 ErrCode AbilityManagerClient::MinimizeMultiWindow(int missionId)
@@ -396,54 +353,11 @@ ErrCode AbilityManagerClient::ChangeFocusAbility(
     return abms->ChangeFocusAbility(lostFocusToken, getFocusToken);
 }
 
-ErrCode AbilityManagerClient::GetFloatingMissions(std::vector<AbilityMissionInfo> &list)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->GetFloatingMissions(list);
-}
-
 ErrCode AbilityManagerClient::CloseMultiWindow(int missionId)
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->CloseMultiWindow(missionId);
-}
-
-ErrCode AbilityManagerClient::SetMissionStackSetting(const StackSetting &stackSetting)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->SetMissionStackSetting(stackSetting);
-}
-
-ErrCode AbilityManagerClient::LockMission(int missionId)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->LockMission(missionId);
-}
-
-ErrCode AbilityManagerClient::UnlockMission(int missionId)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->UnlockMission(missionId);
-}
-
-ErrCode AbilityManagerClient::SetMissionDescriptionInfo(
-    const sptr<IRemoteObject> &token, const MissionDescriptionInfo &description)
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->SetMissionDescriptionInfo(token, description);
-}
-
-ErrCode AbilityManagerClient::GetMissionLockModeState()
-{
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->GetMissionLockModeState();
 }
 
 ErrCode AbilityManagerClient::UpdateConfiguration(const AppExecFwk::Configuration &config)
