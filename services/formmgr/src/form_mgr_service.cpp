@@ -309,6 +309,22 @@ int FormMgrService::MessageEvent(const int64_t formId, const Want &want, const s
 }
 
 /**
+ * @brief Process js router event.
+ * @param formId Indicates the unique id of form.
+ * @return Returns true if execute success, false otherwise.
+ */
+int FormMgrService::RouterEvent(const int64_t formId)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
+        HILOG_ERROR("%{public}s fail, request form permission denied", __func__);
+        return ret;
+    }
+    return FormMgrAdapter::GetInstance().RouterEvent(formId);
+}
+
+/**
  * @brief Batch add forms to form records for st limit value test.
  * @param want The want of the form to add.
  * @return Returns forms count to add.

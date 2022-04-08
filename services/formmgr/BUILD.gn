@@ -102,6 +102,7 @@ ohos_shared_library("libfms") {
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_core",
     "ces_standard:cesfwk_innerkits",
+    "device_usage_statistics:usagestatsinner",
     "distributeddatamgr:distributeddata_inner",
     "eventhandler:libeventhandler",
     "form_runtime:form_manager",

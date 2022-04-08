@@ -144,6 +144,14 @@ private:
     int32_t HandleMessageEvent(MessageParcel &data, MessageParcel &reply);
 
     /**
+     * @brief Handle HandleRouterEvent message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t HandleRouterEvent(MessageParcel &data, MessageParcel &reply);
+
+    /**
      * @brief Handle BatchAddFormRecords message.
      * @param data input param.
      * @param reply output param.
