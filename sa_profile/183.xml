@@ -14,7 +14,7 @@
  * limitations under the License.
  -->
 <info>
-    <process>upms</process>
+    <process>foundation</process>
     <systemability>
         <name>183</name>
         <libpath>/system/lib64/libupms.z.so</libpath>

@@ -23,20 +23,6 @@ config("upms_config") {
   }
 }
 
-group("upms_target") {
-  deps = [
-    ":libupms",
-    ":upms.rc",
-  ]
-}
-
-ohos_prebuilt_etc("upms.rc") {
-  relative_install_dir = "init"
-  source = "upms.cfg"
-  part_name = "ability_runtime"
-  subsystem_name = "aafwk"
-}
-
 #build so
 ohos_shared_library("libupms") {
   configs = [ "${services_path}/common:common_config" ]
