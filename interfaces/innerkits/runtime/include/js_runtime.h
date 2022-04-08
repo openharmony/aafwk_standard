@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "asset_manager.h"
 #include "native_engine/native_engine.h"
 
 #include "runtime.h"
@@ -76,6 +77,7 @@ protected:
     uint32_t callbackId_ = 0;
 
     std::unordered_map<std::string, NativeReference*> modules_;
+    std::shared_ptr<AssetManager> assetManager_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS
