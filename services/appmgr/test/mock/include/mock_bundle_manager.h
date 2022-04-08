@@ -136,6 +136,7 @@ public:
         return true;
     };
     virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo) override;
+    virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override;
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want) override
     {
         return true;
@@ -304,6 +305,7 @@ public:
         return true;
     };
     virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo);
+    virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override;
     // obtains the Want for starting the main ability of an application based on the given bundle name.
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want) override
     {

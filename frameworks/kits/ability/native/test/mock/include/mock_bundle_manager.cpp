@@ -116,6 +116,12 @@ bool BundleMgrProxy::GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleI
     hapModuleInfo.name = abilityInfo.package;
     return true;
 }
+bool BundleMgrProxy::GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo)
+{
+    GTEST_LOG_(INFO) << " BundleMgrProxy::GetHapModuleInfo";
+    hapModuleInfo.name = abilityInfo.package;
+    return true;
+}
 bool BundleMgrProxy::GetLaunchWantForBundle(const std::string &bundleName, Want &want)
 {
     return true;
@@ -344,6 +350,12 @@ bool BundleMgrService::GetBundleArchiveInfo(
     return true;
 }
 bool BundleMgrService::GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo)
+{
+    GTEST_LOG_(INFO) << " BundleMgrService::GetHapModuleInfo";
+    hapModuleInfo.name = abilityInfo.package;
+    return true;
+}
+bool BundleMgrService::GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo)
 {
     GTEST_LOG_(INFO) << " BundleMgrService::GetHapModuleInfo";
     hapModuleInfo.name = abilityInfo.package;

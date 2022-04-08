@@ -198,6 +198,11 @@ public:
         return true;
     }
 
+    virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override
+    {
+        return true;
+    }
+
     virtual bool CheckIsSystemAppByUid(const int uid) override
     {
         if (uid == 600) {
@@ -290,6 +295,10 @@ public:
         return true;
     };
     virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo) override
+    {
+        return true;
+    }
+    virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override
     {
         return true;
     }
