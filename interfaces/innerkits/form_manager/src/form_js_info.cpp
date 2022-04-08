@@ -195,7 +195,7 @@ void FormJsInfo::ReadImageData(Parcel &parcel)
                 auto picName = Str16ToStr8(parcel.ReadString16());
                 HILOG_INFO("picName: %{public}s, fd: %{public}d, size: %{public}d", picName.c_str(), fd, len);
                 std::pair<int, int32_t> imageDataPair = std::make_pair(fd, len);
-                imageDataMap.emplace(picName, imageDataPair);
+                imageDataMap[picName] = imageDataPair;
             }
             break;
         }
