@@ -170,13 +170,6 @@
         <option name="push" value="ams_page_ability_bundle/amsSystemTestDFX.hap -> /system/vendor/" src="res" />
       </preparer>
   </target>
-  <target name="ams_missionstack_test">
-    <depend resource="ams_page_ability_bundle/." pushpath="/system/vendor/" findpath="res" presetcmd=""/>
-    <preparer>
-        <option name="push" value="ams_page_ability_bundle/amsMissionStackTest.hap -> /system/vendor/" src="res" />
-        <option name="push" value="ams_page_ability_bundle/amsMissionStackTestSubsidiary.hap -> /system/vendor/" src="res" />
-      </preparer>
-  </target>
   <target name="ams_power_test">
     <depend resource="ams_page_ability_bundle/." pushpath="/system/vendor/" findpath="res" presetcmd=""/>
     <preparer>

@@ -48,7 +48,6 @@ MTDumpUtil::MTDumpUtil()
     findRgx_["StartTime"] = regex(".*start time \\[(.+)\\].*");
     findRgx_["MissionBottomApp"] = regex(".*bottom app \\[(.+)\\].*");
     findRgx_["UserID"] = regex(".*User ID #(.+)\\].*");
-    findRgx_["MissionStackID"] = regex(".*MissionStack ID #(.+) \\[.*");
     findRgx_["Uri"] = regex(".*uri \\[(.+)\\].*");
     findRgx_["AbilityRecordID"] = regex(".*AbilityRecord ID #(.+)   state.*");
     findRgx_["Bindings"] = regex(".+s: (\\d+).*");

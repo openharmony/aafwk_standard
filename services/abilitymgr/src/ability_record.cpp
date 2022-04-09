@@ -26,7 +26,6 @@
 #include "bytrace.h"
 #include "errors.h"
 #include "hilog_wrapper.h"
-#include "mission_record.h"
 #include "os_account_manager.h"
 #include "uri_permission_manager_client.h"
 
@@ -285,37 +284,6 @@ int AbilityRecord::TerminateAbility()
     return DelayedSingleton<AppScheduler>::GetInstance()->TerminateAbility(token_);
 }
 
-void AbilityRecord::SetMissionRecord(const std::shared_ptr<MissionRecord> &missionRecord)
-{
-    missionRecord_ = missionRecord;
-    if (missionRecord) {
-        lifeCycleStateInfo_.missionId = missionRecord->GetMissionRecordId();
-    }
-}
-
-void AbilityRecord::SetMissionStackId(const int stackId)
-{
-    lifeCycleStateInfo_.stackId = stackId;
-}
-
-int AbilityRecord::GetMissionStackId() const
-{
-    return lifeCycleStateInfo_.stackId;
-}
-
-std::shared_ptr<MissionRecord> AbilityRecord::GetMissionRecord() const
-{
-    return missionRecord_.lock();
-}
-
-int AbilityRecord::GetMissionRecordId() const
-{
-    if (missionRecord_.lock()) {
-        return missionRecord_.lock()->GetMissionRecordId();
-    }
-    return DEFAULT_INVAL_VALUE;
-}
-
 const AppExecFwk::AbilityInfo &AbilityRecord::GetAbilityInfo() const
 {
     return abilityInfo_;
@@ -339,13 +307,6 @@ bool AbilityRecord::IsForeground() const
 void AbilityRecord::SetAbilityState(AbilityState state)
 {
     currentState_ = state;
-    if (state == AbilityState::ACTIVE) {
-        auto mission = GetMissionRecord();
-        if (mission) {
-            mission->UpdateActiveTimestamp();
-        }
-    }
-
     if (state == AbilityState::FOREGROUND_NEW || state == AbilityState::ACTIVE) {
         SetRestarting(false);
     }

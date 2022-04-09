@@ -52,8 +52,6 @@ abilityms_files = [
   "src/shared_memory.cpp",
   "src/ams_configuration_parameter.cpp",
   "src/image_info.cpp",
-  "src/mission_record.cpp",
-  "src/mission_stack.cpp",
   "src/mission_snapshot.cpp",
 
   # new ability manager service here

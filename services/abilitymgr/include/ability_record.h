@@ -44,7 +44,6 @@ namespace AAFwk {
 using Closure = std::function<void()>;
 
 class AbilityRecord;
-class MissionRecord;
 class ConnectionRecord;
 class Mission;
 class MissionList;
@@ -237,34 +236,6 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int TerminateAbility();
-
-    /**
-     * set ability's mission record.
-     *
-     * @param missionRecord, mission record.
-     */
-    void SetMissionRecord(const std::shared_ptr<MissionRecord> &missionRecord);
-
-    /**
-     * set ability's mission stack.
-     *
-     * @param missionStack, mission stack.
-     */
-    void SetMissionStackId(const int stackId);
-
-    /**
-     * Get ability's mission stack id.
-     */
-    int GetMissionStackId() const;
-
-    /**
-     * get ability's mission record.
-     *
-     * @return missionRecord, mission record.
-     */
-    std::shared_ptr<MissionRecord> GetMissionRecord() const;
-
-    int GetMissionRecordId() const;
 
     /**
      * get ability's info.
@@ -811,7 +782,6 @@ private:
     int recordId_ = 0;                                // record id
     AppExecFwk::AbilityInfo abilityInfo_ = {};             // the ability info get from BMS
     AppExecFwk::ApplicationInfo applicationInfo_ = {};     // the ability info get from BMS
-    std::weak_ptr<MissionRecord> missionRecord_ = {};      // mission of this ability
     std::weak_ptr<AbilityRecord> preAbilityRecord_ = {};   // who starts this ability record
     std::weak_ptr<AbilityRecord> nextAbilityRecord_ = {};  // ability that started by this ability
     std::weak_ptr<AbilityRecord> backAbilityRecord_ = {};  // who back to this ability record
