@@ -13,18 +13,21 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_APP_DISPATCHER_TASK_TaskExecuteInterceptor_H
-#define OHOS_APP_DISPATCHER_TASK_TaskExecuteInterceptor_H
-#include "task.h"
-#include "task_errors.h"
+#ifndef OHOS_TASK_ERRORS_H
+#define OHOS_TASK_ERRORS_H
+
+#include "errors.h"
 
 namespace OHOS {
-namespace AppExecFwk {
-class TaskExecuteInterceptor {
-public:
-    virtual ~TaskExecuteInterceptor(){};
-    virtual ErrCode Intercept(std::shared_ptr<Task> &task) = 0;
+enum {
+    ABILITY_MODULE_TASK = 0x08,
 };
-}  // namespace AppExecFwk
+
+constexpr ErrCode AAFWK_TASK_ERR_OFFSET = ErrCodeOffset(SUBSYS_APPEXECFWK, ABILITY_MODULE_TASK);
+enum {
+    ERR_APPEXECFWK_CHECK_FAILED = AAFWK_TASK_ERR_OFFSET + 1,
+    ERR_APPEXECFWK_INTERCEPT_TASK_EXECUTE_SUCCESS
+};
 }  // namespace OHOS
-#endif
+
+#endif  // OHOS_TASK_ERRORS_H

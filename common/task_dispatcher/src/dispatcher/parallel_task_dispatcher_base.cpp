@@ -15,7 +15,7 @@
 #include "parallel_task_dispatcher_base.h"
 
 #include "hilog_wrapper.h"
-#include "appexecfwk_errors.h"
+#include "task_errors.h"
 
 namespace OHOS {
 namespace AppExecFwk {

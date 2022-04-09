@@ -54,12 +54,11 @@ ohos_shared_library("task_dispatcher") {
   }
   deps = []
   external_deps = [
-    "bundle_framework:appexecfwk_base",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "utils_base:utils",
   ]
 
   subsystem_name = "aafwk"
-  part_name = "ability_runtime"
+  part_name = "ability_base"
 }
