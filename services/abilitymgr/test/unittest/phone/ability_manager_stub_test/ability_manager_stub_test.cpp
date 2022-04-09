@@ -346,29 +346,6 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_011, TestSize.Level1)
  * Function: OnRemoteRequest
  * SubFunction: NA
  * FunctionPoints: AbilityManagerService OnRemoteRequest
- * EnvConditions: code is ADD_WINDOW_INFO
- * CaseDescription: Verify that on remote request is normal
- */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_012, TestSize.Level1)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-
-    sptr<IRemoteObject> token = nullptr;
-    WriteInterfaceToken(data);
-    data.WriteParcelable(token);
-    data.WriteInt32(1);
-    int res = stub_->OnRemoteRequest(IAbilityManager::ADD_WINDOW_INFO, data, reply, option);
-
-    EXPECT_EQ(res, NO_ERROR);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: OnRemoteRequest
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService OnRemoteRequest
  * EnvConditions: code is DUMP_STATE
  * CaseDescription: Verify that on remote request is normal
  */
@@ -383,25 +360,6 @@ HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_013, TestSize.Level1)
     WriteInterfaceToken(data);
     data.WriteString16(Str8ToStr16(args));
     int res = stub_->OnRemoteRequest(IAbilityManager::DUMP_STATE, data, reply, option);
-
-    EXPECT_EQ(res, NO_ERROR);
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: OnRemoteRequest
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService OnRemoteRequest
- * EnvConditions: code is LIST_STACK_INFO
- * CaseDescription: Verify that on remote request is normal
- */
-HWTEST_F(AbilityManagerStubTest, AbilityManagerStub_014, TestSize.Level1)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    WriteInterfaceToken(data);
-    int res = stub_->OnRemoteRequest(IAbilityManager::LIST_STACK_INFO, data, reply, option);
 
     EXPECT_EQ(res, NO_ERROR);
 }
