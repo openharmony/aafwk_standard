@@ -21,9 +21,6 @@
 #include "hilog_wrapper.h"
 #include "native_engine/native_reference.h"
 
-class NativeReference;
-class NativeValue;
-
 namespace OHOS {
 namespace AbilityDelegatorJs {
 class JSAbilityMonitor {
