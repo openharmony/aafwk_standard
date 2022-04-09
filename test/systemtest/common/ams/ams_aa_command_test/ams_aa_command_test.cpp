@@ -168,23 +168,6 @@ HWTEST_F(AmsAACommandTest, ams_aa_command_test_0400, TestSize.Level1)
 }
 
 /**
- * @tc.number    : ams_aa_command_test_0600
- * @tc.name      : aa dump -l
- * @tc.desc      : dump the mission list of every stack when aa -l command.
- */
-HWTEST_F(AmsAACommandTest, ams_aa_command_test_0600, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AmsAACommandTest ams_aa_command_test_0600 start";
-    string result;
-    const string cmd{"dump -l"};
-    const string &expectResult = "User ID #0\n  MissionStack ID #0 [ #0 ]\n  MissionStack ID #1 [ ]\n";
-    ExecuteSystemForResult(cmd, result);
-    EXPECT_EQ(result, expectResult);
-
-    GTEST_LOG_(INFO) << "AmsAACommandTest ams_aa_command_test_0600 end";
-}
-
-/**
  * @tc.number    : ams_aa_command_test_0700
  * @tc.name      : aa -d <deviceName> -a <abilityName> -b <bundleName>
  * @tc.desc      : start/stop page ability when aa -d -a -b command.

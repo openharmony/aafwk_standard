@@ -126,20 +126,12 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
             "error: resolve app err.",
         },
         {
-            STACK_MANAGER_NOT_EXIST,
-            "error: stack manager not exist.",
-        },
-        {
             ABILITY_EXISTED,
             "error: ability existed.",
         },
         {
             CREATE_MISSION_STACK_FAILED,
             "error: create mission stack failed.",
-        },
-        {
-            CREATE_MISSION_RECORD_FAILED,
-            "error: create mission record failed.",
         },
         {
             CREATE_ABILITY_RECORD_FAILED,
@@ -174,14 +166,6 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
             "error: get bundle manager service failed.",
         },
         {
-            REMOVE_MISSION_ID_NOT_EXIST,
-            "error: remove mission id not exist.",
-        },
-        {
-            REMOVE_MISSION_LAUNCHER_DENIED,
-            "error: remove mission launcher denied.",
-        },
-        {
             REMOVE_MISSION_ACTIVE_DENIED,
             "error: remove mission active denied.",
         },
@@ -202,18 +186,6 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
             "error: remove stack launcher denied.",
         },
         {
-            REMOVE_STACK_FAILED,
-            "error: remove stack failed.",
-        },
-        {
-            MISSION_STACK_LIST_IS_EMPTY,
-            "error: mission stack list is empty.",
-        },
-        {
-            REMOVE_STACK_ID_NOT_EXIST,
-            "error: remove stack id not exist.",
-        },
-        {
             TARGET_ABILITY_NOT_SERVICE,
             "error: target ability not service.",
         },
@@ -224,10 +196,6 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
         {
             START_SERVICE_ABILITY_ACTIVING,
             "error: start service ability activing.",
-        },
-        {
-            MOVE_MISSION_FAILED,
-            "error: move mission failed.",
         },
         {
             KILL_PROCESS_FAILED,
@@ -244,94 +212,6 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
         {
             CHECK_PERMISSION_FAILED,
             "error: check permission failed.",
-        },
-        {
-            POWER_OFF_WAITING,
-            "error: power off waiting.",
-        },
-        {
-            POWER_OFF_FAILED,
-            "error: power off failed.",
-        },
-        {
-            POWER_ON_FAILED,
-            "error: power on failed.",
-        },
-        {
-            NO_FIRST_IN_MISSION,
-            "error: no first in mission.",
-        },
-        {
-            LOCK_MISSION_DENY_FAILED,
-            "error: lock mission deny failed.",
-        },
-        {
-            UNLOCK_MISSION_DENY_FAILED,
-            "error: unlock mission deny failed.",
-        },
-        {
-            SET_MISSION_INFO_FAILED,
-            "error: set mission info failed.",
-        },
-        {
-            LOCK_MISSION_STATE_DENY_REQUEST,
-            "error: lock mission state deny request.",
-        },
-        {
-            MOVE_MISSION_TO_STACK_OUT_OF_SIZE,
-            "error: move mission to stack out of size.",
-        },
-        {
-            MOVE_MISSION_TO_STACK_NOT_SAME_WIN_MODE,
-            "error: move mission to stack not same win mode.",
-        },
-        {
-            MOVE_MISSION_TO_STACK_NOT_EXIST_MISSION,
-            "error: move mission to stack not exist mission.",
-        },
-        {
-            MOVE_MISSION_TO_STACK_NOT_SUPPORT_MULTI_WIN,
-            "error: move mission to stack not support multi win.",
-        },
-        {
-            MOVE_MISSION_TO_STACK_TARGET_STACK_OVERFLOW,
-            "error: move mission to stack target stack overflow.",
-        },
-        {
-            MOVE_MISSION_TO_STACK_MOVING_DENIED,
-            "error: move mission to stack moving denied.",
-        },
-        {
-            MINIMIZE_MULTI_WINDOW_FAILED,
-            "error: minimize multi window failed.",
-        },
-        {
-            MAXIMIZE_MULTIWINDOW_NOT_EXIST,
-            "error: maximize multiwindow not exist.",
-        },
-        {
-            MAXIMIZE_MULTIWINDOW_FAILED,
-            "error: maximize multiwindow failed.",
-        },
-        {
-            CHANGE_FOCUS_ABILITY_FAILED,
-            "error: change focus ability failed.",
-        },
-        {
-            GET_FLOATING_STACK_FAILED,
-            "error: get floating stack failed.",
-        },
-        {
-            CLOSE_MULTI_WINDOW_FAILED,
-            "error: close multi window failed.",
-        },
-        {
-            START_ABILITY_SETTING_FAILED,
-            "error: start ability setting failed.",
-        },
-        {
-            START_ABILITY_SETTING_NOT_SUPPORT_MULTI_WIN,
-            "error: start ability setting not support multi win.",
         },
         {
             NO_FOUND_ABILITY_BY_CALLER,

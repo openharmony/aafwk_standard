@@ -49,7 +49,6 @@ struct LifeCycleStateInfo : public Parcelable {
     AbilityLifeCycleState state = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
     bool isNewWant = false;
     int missionId = -1;
-    int stackId = -1;
     CallerInfo caller;
     std::shared_ptr<AbilityStartSetting> setting = nullptr;
     LaunchParam launchParam;
