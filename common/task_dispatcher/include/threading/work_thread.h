@@ -18,10 +18,10 @@
 
 #include <atomic>
 
-#include "thread_factory.h"
-#include "task.h"
 #include "hilog_wrapper.h"
-#include "appexecfwk_errors.h"
+#include "task.h"
+#include "task_errors.h"
+#include "thread_factory.h"
 
 namespace OHOS {
 namespace AppExecFwk {
