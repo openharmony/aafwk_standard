@@ -292,7 +292,7 @@ void AbilityDelegator::PostPerformStart(const std::shared_ptr<ADelegatorAbilityP
         }
 
         if (monitor->Match(ability, true)) {
-            monitor->OnAbilityStart();
+            monitor->OnAbilityStart(ability->object_);
         }
     }
 }
@@ -320,7 +320,7 @@ void AbilityDelegator::PostPerformScenceCreated(const std::shared_ptr<ADelegator
         }
 
         if (monitor->Match(ability)) {
-            monitor->OnWindowStageCreate();
+            monitor->OnWindowStageCreate(ability->object_);
         }
     }
 }
@@ -348,7 +348,7 @@ void AbilityDelegator::PostPerformScenceRestored(const std::shared_ptr<ADelegato
         }
 
         if (monitor->Match(ability)) {
-            monitor->OnWindowStageRestore();
+            monitor->OnWindowStageRestore(ability->object_);
         }
     }
 }
@@ -376,7 +376,7 @@ void AbilityDelegator::PostPerformScenceDestroyed(const std::shared_ptr<ADelegat
         }
 
         if (monitor->Match(ability)) {
-            monitor->OnWindowStageDestroy();
+            monitor->OnWindowStageDestroy(ability->object_);
         }
     }
 }
@@ -404,7 +404,7 @@ void AbilityDelegator::PostPerformForeground(const std::shared_ptr<ADelegatorAbi
         }
 
         if (monitor->Match(ability)) {
-            monitor->OnAbilityForeground();
+            monitor->OnAbilityForeground(ability->object_);
         }
     }
 }
@@ -432,7 +432,7 @@ void AbilityDelegator::PostPerformBackground(const std::shared_ptr<ADelegatorAbi
         }
 
         if (monitor->Match(ability)) {
-            monitor->OnAbilityBackground();
+            monitor->OnAbilityBackground(ability->object_);
         }
     }
 }
@@ -460,7 +460,7 @@ void AbilityDelegator::PostPerformStop(const std::shared_ptr<ADelegatorAbilityPr
         }
 
         if (monitor->Match(ability)) {
-            monitor->OnAbilityStop();
+            monitor->OnAbilityStop(ability->object_);
         }
     }
 
