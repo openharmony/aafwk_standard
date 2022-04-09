@@ -17,7 +17,7 @@
 #define OHOS_ABILITY_DELEGATOR_JS_ABILITY_MONITOR_H
 
 #include <memory>
-#include "iability_monitor.h"
+#include <string>
 #include "hilog_wrapper.h"
 #include "native_engine/native_reference.h"
 
@@ -26,7 +26,6 @@ class NativeValue;
 
 namespace OHOS {
 namespace AbilityDelegatorJs {
-using namespace OHOS::AppExecFwk;
 class JSAbilityMonitor {
 public:
     /**
@@ -45,44 +44,58 @@ public:
     /**
      * Called when ability is started.
      * Then call the corresponding method on the js side through the saved js object.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void onAbilityCreate();
+    void OnAbilityCreate(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when ability is in foreground.
      * Then call the corresponding method on the js side through the saved js object.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void onAbilityForeground();
+    void OnAbilityForeground(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when ability is in background.
      * Then call the corresponding method on the js side through the saved js object.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void onAbilityBackground();
+    void OnAbilityBackground(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when ability is stopped.
      * Then call the corresponding method on the js side through the saved js object.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void onAbilityDestroy();
+    void OnAbilityDestroy(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when window stage is created.
      * Then call the corresponding method on the js side through the saved js object.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void onWindowStageCreate();
+    void OnWindowStageCreate(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when window stage is restored.
      * Then call the corresponding method on the js side through the saved js object.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void onWindowStageRestore();
+    void OnWindowStageRestore(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when window stage is destroyed.
      * Then call the corresponding method on the js side through the saved js object.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void onWindowStageDestroy();
+    void OnWindowStageDestroy(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Sets the js object.
@@ -110,6 +123,10 @@ public:
     {
         return jsAbilityMonitor_;
     }
+
+private:
+    NativeValue *CallLifecycleCBFunction(const std::string &functionName,
+        const std::weak_ptr<NativeReference> &abilityObj);
 
 private:
     std::string abilityName_;

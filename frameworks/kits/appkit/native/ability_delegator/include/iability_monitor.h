@@ -79,38 +79,52 @@ public:
 
     /**
      * Called when ability is started.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    virtual void OnAbilityStart();
+    virtual void OnAbilityStart(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when ability is in foreground.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    virtual void OnAbilityForeground();
+    virtual void OnAbilityForeground(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when ability is in background.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    virtual void OnAbilityBackground();
+    virtual void OnAbilityBackground(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when ability is stopped.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    virtual void OnAbilityStop();
+    virtual void OnAbilityStop(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when window stage is created.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    virtual void OnWindowStageCreate();
+    virtual void OnWindowStageCreate(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when window stage is restored.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    virtual void OnWindowStageRestore();
+    virtual void OnWindowStageRestore(const std::weak_ptr<NativeReference> &abilityObj);
 
     /**
      * Called when window stage is destroyed.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    virtual void OnWindowStageDestroy();
+    virtual void OnWindowStageDestroy(const std::weak_ptr<NativeReference> &abilityObj);
 
 private:
     std::string abilityName_;
