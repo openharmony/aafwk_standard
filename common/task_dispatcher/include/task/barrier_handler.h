@@ -16,11 +16,11 @@
 #define OHOS_APP_DISPATCHER_BARRIER_HANDLER_H
 
 #include <set>
-#include "appexecfwk_errors.h"
 #include "task.h"
-#include "task_listener.h"
+#include "task_errors.h"
 #include "task_executor.h"
 #include "task_execute_interceptor.h"
+#include "task_listener.h"
 #include "task_stage.h"
 
 namespace OHOS {

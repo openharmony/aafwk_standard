@@ -17,10 +17,10 @@
 #define private public
 #include "serial_task_dispatcher.h"
 #undef private
-#include "hilog_wrapper.h"
-#include "appexecfwk_errors.h"
 #include "default_worker_pool_config.h"
+#include "hilog_wrapper.h"
 #include "task.h"
+#include "task_errors.h"
 #include "task_executor.h"
 #include "task_priority.h"
 

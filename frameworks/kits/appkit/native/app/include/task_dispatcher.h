@@ -17,11 +17,11 @@
 #define OHOS_APP_DISPATCHER_TASK_DISPATCHER_H
 
 #include <memory>
-#include "task_priority.h"
+#include "group.h"
 #include "revocable.h"
 #include "runnable.h"
-#include "group.h"
-#include "appexecfwk_errors.h"
+#include "task_errors.h"
+#include "task_priority.h"
 namespace OHOS {
 namespace AppExecFwk {
 template<typename T>

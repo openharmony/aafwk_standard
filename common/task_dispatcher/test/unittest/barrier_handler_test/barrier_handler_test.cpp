@@ -17,8 +17,8 @@
 #define private public
 #include "barrier_handler.h"
 #undef private
-#include "appexecfwk_errors.h"
 #include "default_worker_pool_config.h"
+#include "task_errors.h"
 
 using namespace testing;
 using namespace testing::ext;
