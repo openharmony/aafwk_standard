@@ -28,7 +28,6 @@
 #define private public
 #include "app_scheduler.h"
 #include "ability_record.h"
-#include "mission_record.h"
 #include "connection_record.h"
 #include "mock_app_mgr_client.h"
 #include "mock_ability_scheduler_stub.h"
