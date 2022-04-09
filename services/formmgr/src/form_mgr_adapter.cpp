@@ -1893,5 +1893,52 @@ int FormMgrAdapter::GetFormsInfoByModule(std::string &bundleName, std::string &m
 {
     return FormInfoMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
 }
+
+/**
+ * @brief Update action string for router event.
+ * @param formId Indicates the unique id of form.
+ * @param action Indicates the origin action string.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::UpdateRouterAction(const int64_t formId, std::string &action)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    if (formId <= 0) {
+        HILOG_ERROR("%{public}s form formId or bundleName is invalid", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
+    FormRecord record;
+    bool bGetRecord = FormDataMgr::GetInstance().GetFormRecord(matchedFormId, record);
+    if (!bGetRecord) {
+        HILOG_ERROR("%{public}s fail, not exist such form:%{public}" PRId64 "", __func__, matchedFormId);
+        return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
+    }
+
+    sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+    if (iBundleMgr == nullptr) {
+        HILOG_ERROR("%{public}s fail, failed to get IBundleMgr.", __func__);
+        return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
+    }
+
+    if (CheckIsSystemAppByBundleName(iBundleMgr, record.bundleName)) {
+        return ERR_OK;
+    }
+
+    if (action.empty()) {
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    nlohmann::json actionObject = nlohmann::json::parse(action, nullptr, false);
+    if (actionObject.is_discarded()) {
+        HILOG_ERROR("failed to parse jsonDataString: %{public}s.", action.c_str());
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    actionObject["bundleName"] = record.bundleName;
+    action = actionObject.dump();
+    return ERR_OK;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS
