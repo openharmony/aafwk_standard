@@ -232,6 +232,7 @@ ohos_shared_library("abilitykit_native") {
   external_deps = [
     "ability_base:base",
     "ability_base:configuration",
+    "ability_base:task_dispatcher",
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:ability_context_native",
@@ -239,7 +240,6 @@ ohos_shared_library("abilitykit_native") {
     "ability_runtime:app_manager",
     "ability_runtime:napi_base_context",
     "ability_runtime:runtime",
-    "ability_runtime:task_dispatcher",
     "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
     "bundle_framework:appexecfwk_base",

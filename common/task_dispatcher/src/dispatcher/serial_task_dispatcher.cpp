@@ -15,7 +15,7 @@
 
 #include "serial_task_dispatcher.h"
 #include "hilog_wrapper.h"
-#include "appexecfwk_errors.h"
+#include "task_errors.h"
 namespace OHOS {
 namespace AppExecFwk {
 std::string SerialTaskDispatcher::DISPATCHER_TAG = "SerialTaskDispatcher";

@@ -17,11 +17,11 @@
 #define private public
 #include "parallel_task_dispatcher.h"
 #undef private
+#include "default_worker_pool_config.h"
+#include "task.h"
+#include "task_errors.h"
 #include "task_priority.h"
 #include "task_executor.h"
-#include "task.h"
-#include "default_worker_pool_config.h"
-#include "appexecfwk_errors.h"
 
 using namespace testing;
 using namespace testing::ext;
