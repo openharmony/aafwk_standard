@@ -203,6 +203,7 @@ public:
 
     /**
      * Prints log information to the console.
+     * The total length of the log information to be printed cannot exceed 1000 characters.
      *
      * @param msg, Indicates the log information to print.
      */
@@ -260,7 +261,8 @@ public:
     /**
      * Finishes user test.
      *
-     * @param msg, Indicates the status information.
+     * @param msg, Indicates the status information.The total length of the status information cannot
+     * exceed 1000 characters.
      * @param resultCode, Indicates the result code.
      */
     void FinishUserTest(const std::string &msg, const int32_t resultCode);
@@ -279,6 +281,9 @@ private:
     std::shared_ptr<ADelegatorAbilityProperty> FindPropertyByToken(const sptr<IRemoteObject> &token);
 
     inline void CallClearFunc(const std::shared_ptr<ADelegatorAbilityProperty> &ability);
+
+private:
+    static constexpr size_t INFORMATION_MAX_LENGTH {1000};
 
 private:
     std::shared_ptr<AbilityRuntime::Context> appContext_;
