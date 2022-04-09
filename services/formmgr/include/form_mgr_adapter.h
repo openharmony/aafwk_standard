@@ -262,6 +262,14 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos);
+
+    /**
+     * @brief Update action string for router event.
+     * @param formId Indicates the unique id of form.
+     * @param action Indicates the origin action string.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int UpdateRouterAction(const int64_t formId, std::string &action);
 private:
     /**
      * @brief Get form configure info.

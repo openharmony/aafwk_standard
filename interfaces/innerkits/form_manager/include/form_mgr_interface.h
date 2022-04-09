@@ -233,6 +233,14 @@ public:
     virtual int GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
                                      std::vector<FormInfo> &formInfos) = 0;
 
+    /**
+     * @brief Update action string for router event.
+     * @param formId Indicates the unique id of form.
+     * @param action Indicates the origin action string.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int UpdateRouterAction(const int64_t formId, std::string &action) = 0;
+
     enum class Message {
         // ipc id 1-1000 for kit
         // ipc id 1001-2000 for DMS
@@ -266,6 +274,7 @@ public:
         FORM_MGR_GET_FORMS_INFO_BY_APP,
         FORM_MGR_GET_FORMS_INFO_BY_MODULE,
         FORM_MGR_ROUTER_EVENT,
+        FORM_MGR_UPDATE_ROUTER_ACTION
     };
 };
 }  // namespace AppExecFwk
