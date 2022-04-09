@@ -940,6 +940,18 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         AbilityLoader::GetInstance().RegisterExtension("StaticSubscriberExtension", [application = application_]() {
             return AbilityRuntime::StaticSubscriberExtension::Create(application->GetRuntime());
         });
+#ifdef __aarch64__
+        LoadAndRegisterExtension("system/lib64/libservice_extension_module.z.so", "ServiceExtension",
+            application_->GetRuntime());
+        LoadAndRegisterExtension("system/lib64/libdatashare_ext_ability_module.z.so", "DataShareExtAbility",
+            application_->GetRuntime());
+        LoadAndRegisterExtension("system/lib64/libworkschedextension.z.so", "WorkSchedulerExtension",
+            application_->GetRuntime());
+        LoadAndRegisterExtension("system/lib64/libaccessibility_extension_module.z.so", "AccessibilityExtension",
+            application_->GetRuntime());
+        LoadAndRegisterExtension("system/lib64/libwallpaper_extension_module.z.so", "WallpaperExtension",
+            application_->GetRuntime());
+#else
         LoadAndRegisterExtension("system/lib/libservice_extension_module.z.so", "ServiceExtension",
             application_->GetRuntime());
         LoadAndRegisterExtension("system/lib/libdatashare_ext_ability_module.z.so", "DataShareExtAbility",
@@ -950,6 +962,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             application_->GetRuntime());
         LoadAndRegisterExtension("system/lib/libwallpaper_extension_module.z.so", "WallpaperExtension",
             application_->GetRuntime());
+#endif
     }
 
     auto usertestInfo = appLaunchData.GetUserTestInfo();
