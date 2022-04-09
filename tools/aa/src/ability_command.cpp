@@ -166,10 +166,6 @@ ErrCode AbilityManagerShellCommand::CreateMessageMap()
             "error: get bundle manager service failed.",
         },
         {
-            REMOVE_MISSION_ACTIVE_DENIED,
-            "error: remove mission active denied.",
-        },
-        {
             REMOVE_MISSION_FAILED,
             "error: remove mission failed.",
         },
