@@ -401,7 +401,7 @@ int FormProviderClient::AcquireState(const Want &wantArg, const std::string &pro
         state = ownerAbility->OnAcquireFormState(wantArg);
     } while (false);
 
-    HandleAcquireStateResult(state, provider, want, callerToken);
+    HandleAcquireStateResult(state, provider, wantArg, want, callerToken);
     return errorCode;
 }
 
@@ -503,8 +503,9 @@ int  FormProviderClient::HandleDisconnect(const Want &want, const sptr<IRemoteOb
     formSupplyClient->OnEventHandle(want);
     return ERR_OK;
 }
-int FormProviderClient::HandleAcquireStateResult(FormState state, const std::string &provider, const Want &want,
-                                                 const sptr<IRemoteObject> &callerToken)
+
+int FormProviderClient::HandleAcquireStateResult(FormState state, const std::string &provider, const Want &wantArg,
+                                                 const Want &want, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s start, form state is %{public}d", __func__, state);
 
@@ -513,7 +514,7 @@ int FormProviderClient::HandleAcquireStateResult(FormState state, const std::str
         HILOG_ERROR("%{public}s warn, IFormSupply is nullptr", __func__);
         return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
     }
-    formSupplyClient->OnAcquireStateResult(state, provider, want);
+    formSupplyClient->OnAcquireStateResult(state, provider, wantArg, want);
     HILOG_INFO("%{public}s end", __func__);
     return ERR_OK;
 }

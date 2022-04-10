@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "form_js_info.h"
+#include "form_state_info.h"
 #include "ipc_types.h"
 #include "iremote_broker.h"
 
@@ -50,6 +51,13 @@ public:
      */
     virtual void OnUninstall(const std::vector<int64_t> &formIds) = 0;
 
+    /**
+     * @brief Form provider is acquire state
+     * @param state The form state.
+     * @param want The form want.
+     */
+    virtual void OnAcquireState(AppExecFwk::FormState state, const AAFwk::Want &want) = 0;
+
     enum class Message {
         // ipc id 1-1000 for kit
         // ipc id 1001-2000 for DMS
@@ -62,6 +70,9 @@ public:
 
         // ipc id for uninstall (3683)
         FORM_HOST_ON_UNINSTALL,
+
+        // ipc id for uninstall (3684)
+        FORM_HOST_ON_ACQUIRE_FORM_STATE,
     };
 };
 }  // namespace AppExecFwk

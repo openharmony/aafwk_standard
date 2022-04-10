@@ -75,6 +75,13 @@ public:
      */
     virtual void OnUninstall(const std::vector<int64_t> &formIds) override;
 
+    /**
+     * @brief Form provider is acquire state
+     * @param state The form state.
+     * @param want The form want.
+     */
+    virtual void OnAcquireState(AppExecFwk::FormState state, const AAFwk::Want &want) override;
+
 private:
 
 private:

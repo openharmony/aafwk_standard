@@ -262,6 +262,26 @@ void FormTaskMgr::PostUninstallTaskToHost(const std::vector<int64_t> &formIds, c
 }
 
 /**
+* @brief Post acquire form state message to form host(task).
+* @param state The form state.
+* @param want The want of onAcquireFormState.
+* @param remoteObject Form provider proxy object.
+*/
+void FormTaskMgr::PostAcquireStateTaskToHost(AppExecFwk::FormState state, const AAFwk::Want &want,
+                                             const sptr<IRemoteObject> &remoteObject)
+{
+    HILOG_INFO("%{public}s start", __func__);
+    if (eventHandler_ == nullptr) {
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
+        return;
+    }
+    std::function<void()> acquireStateFunc = std::bind(&FormTaskMgr::AcquireStateBack,
+        this, state, want, remoteObject);
+    eventHandler_->PostTask(acquireStateFunc, FORM_TASK_DELAY_TIME);
+    HILOG_INFO("%{public}s end", __func__);
+}
+
+/**
  * @brief Acquire form data from form provider.
  * @param formId The Id of the from.
  * @param want The want of the request.
@@ -524,6 +544,27 @@ void FormTaskMgr::FormUninstall(const std::vector<int64_t> &formIds,
     }
 
     remoteFormHost->OnUninstall(formIds);
+
+    HILOG_INFO("%{public}s end", __func__);
+}
+
+/**
+ * @brief Handle acquire state.
+ * @param state the form state.
+ * @param want The want of onAcquireFormState.
+ * @param remoteObject Form provider proxy object.
+ */
+void FormTaskMgr::AcquireStateBack(AppExecFwk::FormState state, const AAFwk::Want &want,
+                                   const sptr<IRemoteObject> &remoteObject)
+{
+    HILOG_INFO("%{public}s start", __func__);
+    sptr<IFormHost> remoteFormHost = iface_cast<IFormHost>(remoteObject);
+    if (remoteFormHost == nullptr) {
+        HILOG_ERROR("%{public}s fail, Failed to get form host proxy.", __func__);
+        return;
+    }
+
+    remoteFormHost->OnAcquireState(state, want);
 
     HILOG_INFO("%{public}s end", __func__);
 }

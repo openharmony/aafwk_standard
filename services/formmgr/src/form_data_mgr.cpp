@@ -542,7 +542,7 @@ void FormDataMgr::HandleHostDied(const sptr<IRemoteObject> &remoteHost)
     }
     {
         std::lock_guard<std::mutex> lock(formStateRecordMutex_);
-        std::map<std::string , FormHostRecord>::iterator itFormStateRecord;
+        std::map<std::string, FormHostRecord>::iterator itFormStateRecord;
         for (itFormStateRecord = formStateRecord_.begin(); itFormStateRecord != formStateRecord_.end();) {
             if (remoteHost == itFormStateRecord->second.GetClientStub()) {
                 HILOG_INFO("find died client, remove it from formStateRecord_");
@@ -1203,18 +1203,21 @@ bool FormDataMgr::CreateFormStateRecord(std::string &provider, const FormItemInf
  * @brief Create form state host record.
  * @param FormState form state.
  * @param provider provider indo.
+ * @param want The want of onAcquireFormState.
  * @return Returns true if this function is successfully called; returns false otherwise.
  */
-ErrCode FormDataMgr::AcquireFormStateBack(AppExecFwk::FormState state, const std::string &provider)
+ErrCode FormDataMgr::AcquireFormStateBack(AppExecFwk::FormState state, const std::string &provider,
+                                          const AAFwk::Want &want)
 {
-
-    // std::lock_guard<std::mutex> lock(formStateRecordMutex_);
-    // auto iter = formStateRecord_.find(provider);
-    // if (iter == formStateRecord_.end()) {
-    //     HILOG_ERROR("filed to get form state host record");
-    //     return ERR_APPEXECFWK_FORM_GET_HOST_FAILED;
-    // }
-    // iter->second.onAcquireState()
+    std::lock_guard<std::mutex> lock(formStateRecordMutex_);
+    auto iter = formStateRecord_.find(provider);
+    if (iter == formStateRecord_.end()) {
+        HILOG_ERROR("filed to get form state host record");
+        return ERR_APPEXECFWK_FORM_GET_HOST_FAILED;
+    }
+    iter->second.OnAcquireState(state, want);
+    iter->second.CleanResource();
+    formStateRecord_.erase(iter);
     return ERR_OK;
 }
 
@@ -1287,7 +1290,7 @@ void FormDataMgr::GetNoHostInvalidTempForms(int32_t userId, int32_t callingUid, 
                                             std::map<int64_t, bool> &foundFormsMap)
 {
     std::lock_guard<std::mutex> lock(formRecordMutex_);
-    for (auto &formRecordInfo: formRecords_) {
+    for (auto &formRecordInfo : formRecords_) {
         int64_t formId = formRecordInfo.first;
         FormRecord &formRecord = formRecordInfo.second;
 
@@ -1335,12 +1338,12 @@ void FormDataMgr::GetNoHostInvalidTempForms(int32_t userId, int32_t callingUid, 
  * @param noHostTempFormsMap The map of the no host forms.
  * @param foundFormsMap The map of the found forms.
  */
-void
-FormDataMgr::BatchDeleteNoHostTempForms(int32_t callingUid, std::map<FormIdKey, std::set<int64_t>> &noHostTempFormsMap,
-                                        std::map<int64_t, bool> &foundFormsMap)
+void FormDataMgr::BatchDeleteNoHostTempForms(int32_t callingUid, std::map<FormIdKey,
+                                             std::set<int64_t>> &noHostTempFormsMap,
+                                             std::map<int64_t, bool> &foundFormsMap)
 {
     std::set<FormIdKey> removableModuleSet;
-    for (auto &noHostTempForm: noHostTempFormsMap) {
+    for (auto &noHostTempForm : noHostTempFormsMap) {
         FormIdKey formIdKey = noHostTempForm.first;
         std::set<int64_t> &formIdsSet = noHostTempForm.second;
         std::string bundleName = formIdKey.bundleName;
@@ -1351,7 +1354,6 @@ FormDataMgr::BatchDeleteNoHostTempForms(int32_t callingUid, std::map<FormIdKey, 
             DeleteFormRecord(formId);
             DeleteTempForm(formId);
         }
-
     }
 }
 
@@ -1369,17 +1371,14 @@ int32_t FormDataMgr::DeleteInvalidTempForms(int32_t userId, int32_t callingUid, 
     HILOG_INFO("DeleteInvalidTempForms start, userId = %{public}d, callingUid = %{public}d", userId, callingUid);
     std::map<int64_t, bool> foundFormsMap {};
     std::map<FormIdKey, std::set<int64_t>> noHostTempFormsMap {};
-
     GetNoHostInvalidTempForms(userId, callingUid, matchedFormIds, noHostTempFormsMap, foundFormsMap);
-
     BatchDeleteNoHostTempForms(callingUid, noHostTempFormsMap, foundFormsMap);
-    HILOG_DEBUG("foundFormsMap size: %{public}d", foundFormsMap.size());
-    HILOG_DEBUG("noHostTempFormsMap size: %{public}d", noHostTempFormsMap.size());
+    HILOG_DEBUG("foundFormsMap size: %{public}zu", foundFormsMap.size());
+    HILOG_DEBUG("noHostTempFormsMap size: %{public}zu", noHostTempFormsMap.size());
 
     if (!foundFormsMap.empty()) {
         removedFormsMap.insert(foundFormsMap.begin(), foundFormsMap.end());
     }
-
     HILOG_INFO("DeleteInvalidTempForms done");
     return ERR_OK;
 }
@@ -1400,7 +1399,7 @@ int32_t FormDataMgr::ClearHostDataByInvalidForms(int32_t callingUid, std::map<in
             itHostRecord++;
             continue;
         }
-        for (auto &removedForm: removedFormsMap) {
+        for (auto &removedForm : removedFormsMap) {
             if (itHostRecord->Contains(removedForm.first)) {
                 itHostRecord->DelForm(removedForm.first);
             }

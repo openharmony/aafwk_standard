@@ -96,9 +96,10 @@ public:
      * @brief Acquire form state.
      * @param state form state.
      * @param provider provider info.
+     * @param wantArg The want of onAcquireFormState.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode AcquireFormStateBack(FormState state, const std::string& provider);
+    ErrCode AcquireFormStateBack(FormState state, const std::string& provider, const Want &wantArg);
     /**
      * @brief Process js message event.
      * @param formId Indicates the unique id of form.

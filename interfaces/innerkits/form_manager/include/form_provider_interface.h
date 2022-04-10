@@ -112,7 +112,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int AcquireState(const Want &wantArg, const std::string &provider, const Want &want,
-                             const sptr <IRemoteObject> &callerToken) = 0;
+                             const sptr<IRemoteObject> &callerToken) = 0;
 
     enum class Message {
         // ipc id 1-1000 for kit

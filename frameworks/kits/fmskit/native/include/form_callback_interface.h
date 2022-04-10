@@ -16,6 +16,7 @@
 #define FOUNDATION_APPEXECFWK_OHOS_FORM_ABILITY_INTERFACE_H
 
 #include "form_js_info.h"
+#include "form_state_info.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -40,6 +41,16 @@ public:
      *
      */
     virtual void OnDeathReceived() = 0;
+};
+
+class FormStateCallbackInterface {
+public:
+/**
+ * @brief acquire form state.
+ *
+ * @param state Indicates the form state.
+ */
+virtual void ProcessAcquireState(FormState state) = 0;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

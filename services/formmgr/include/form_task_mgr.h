@@ -160,6 +160,15 @@ public:
      * @param remoteObject Form provider proxy object.
      */
     void PostUninstallTaskToHost(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &remoteObject);
+
+    /**
+    * @brief Post acquire form state message to form host(task).
+    * @param state The form state.
+    * @param want The want of onAcquireFormState.
+    * @param remoteObject Form provider proxy object.
+    */
+    void PostAcquireStateTaskToHost(AppExecFwk::FormState state, const AAFwk::Want &want,
+                                    const sptr<IRemoteObject> &remoteObject);
 private:
     /**
      * @brief Acquire form data from form provider.
@@ -267,6 +276,15 @@ private:
      * @param remoteObject Form provider proxy object.
      */
     void FormUninstall(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &remoteObject);
+
+    /**
+     * @brief Handle acquire state.
+     * @param state the form state.
+     * @param want The want of onAcquireFormState.
+     * @param remoteObject Form provider proxy object.
+     */
+    void AcquireStateBack(AppExecFwk::FormState state, const AAFwk::Want &want,
+                          const sptr <IRemoteObject> &remoteObject);
 
     /**
      * @brief Create form data for form host.

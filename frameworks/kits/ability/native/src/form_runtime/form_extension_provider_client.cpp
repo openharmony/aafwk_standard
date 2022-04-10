@@ -419,7 +419,7 @@ void FormExtensionProviderClient::NotifyFormExtensionAcquireState(const Want &wa
     } else {
         state = ownerFormExtension->OnAcquireFormState(wantArg);
     }
-    HandleAcquireStateResult(state, provider, want, callerToken);
+    HandleAcquireStateResult(state, provider, wantArg, want, callerToken);
     HILOG_INFO("%{public}s called end.", __func__);
 }
 
