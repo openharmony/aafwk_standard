@@ -42,6 +42,7 @@ ohos_shared_library("runtime") {
     "${kits_path}/runtime/native/js_file_asset_provider.cpp",
     "${kits_path}/runtime/native/js_runtime.cpp",
     "${kits_path}/runtime/native/js_runtime_utils.cpp",
+    "${kits_path}/runtime/native/js_timer_module.cpp",
     "${kits_path}/runtime/native/runtime.cpp",
   ]
 
@@ -56,6 +57,7 @@ ohos_shared_library("runtime") {
   deps = [
     "//ark/js_runtime:libark_jsruntime",
     "//foundation/ace/napi:ace_napi_ark",
+    "//third_party/libuv:uv",
   ]
 
   external_deps = [
