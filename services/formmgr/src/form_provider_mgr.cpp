@@ -385,20 +385,13 @@ void FormProviderMgr::IncreaseTimerRefreshCount(const int64_t formId)
  * @brief Acquire form state.
  * @param state form state.
  * @param provider provider info.
+ * @param wantArg The want of onAcquireFormState.
  * @return Returns ERR_OK on success, others on failure.
  */
-ErrCode FormProviderMgr::AcquireFormStateBack(FormState state, const std::string& provider)
+ErrCode FormProviderMgr::AcquireFormStateBack(FormState state, const std::string& provider, const Want &wantArg)
 {
     HILOG_DEBUG("AcquireFormState start: %{public}d, provider: %{public}s", state, provider.c_str());
-
-    FormHostRecord clientHost;
-    bool isGetFormHostRecord = FormDataMgr::GetInstance().AcquireFormStateBack(state, provider);
-    if (!isGetFormHostRecord) {
-        HILOG_ERROR("%{public}s fail, clientHost is null", __func__);
-        return ERR_APPEXECFWK_FORM_COMMON_CODE;
-    }
-
-    HILOG_DEBUG("AcquireFormState done");
+    FormDataMgr::GetInstance().AcquireFormStateBack(state, provider, wantArg);
     return ERR_OK;
 }
 

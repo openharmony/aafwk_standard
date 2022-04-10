@@ -115,12 +115,12 @@ struct AsyncCheckFMSReadyCallbackInfo {
 struct AsyncDeleteInvalidFormsCallbackInfo {
     napi_env env;
     OHOS::AppExecFwk::Ability *ability;
-    napi_async_work asyncWork;
-    napi_deferred deferred;
-    napi_ref callback;
+    napi_async_work asyncWork = nullptr;
+    napi_deferred deferred = nullptr;
+    napi_ref callback = nullptr;
     std::vector<int64_t> formIds;
-    int numFormsDeleted;
-    int result;
+    int numFormsDeleted = 0;
+    int result = OHOS::ERR_OK;
 };
 
 struct AsyncAcquireFormStateCallbackInfo {
@@ -131,6 +131,7 @@ struct AsyncAcquireFormStateCallbackInfo {
     napi_ref callback;
     OHOS::AAFwk::Want want;
     OHOS::AppExecFwk::FormStateInfo stateInfo;
+    int32_t callbackType;
     int result;
 };
 

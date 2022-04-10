@@ -374,13 +374,13 @@ void FormDbCache::BatchDeleteNoHostDBForms(int32_t callingUid, std::map<FormIdKe
                                            std::map<int64_t, bool> &foundFormsMap)
 {
     std::set<FormIdKey> removableModuleSet;
-    for (auto &element: noHostDBFormsMap) {
+    for (auto &element : noHostDBFormsMap) {
         std::set<int64_t> &formIds = element.second;
         FormIdKey formIdKey = element.first;
         std::string bundleName = formIdKey.bundleName;
         std::string abilityName = formIdKey.abilityName;
         FormProviderMgr::GetInstance().NotifyProviderFormsBatchDelete(bundleName, abilityName, formIds);
-        for (const int64_t formId: formIds) {
+        for (const int64_t formId : formIds) {
             foundFormsMap.emplace(formId, true);
             FormDBInfo dbInfo;
             int errCode = GetDBRecord(formId, dbInfo);
@@ -395,7 +395,7 @@ void FormDbCache::BatchDeleteNoHostDBForms(int32_t callingUid, std::map<FormIdKe
         }
     }
 
-    for (const FormIdKey &item: removableModuleSet) {
+    for (const FormIdKey &item : removableModuleSet) {
         int32_t matchCount = GetMatchCount(item.bundleName, item.moduleName);
         if (matchCount == 0) {
             FormBmsHelper::GetInstance().NotifyModuleRemovable(item.bundleName, item.moduleName);
@@ -421,14 +421,14 @@ ErrCode FormDbCache::DeleteInvalidDBForms(int32_t userId, int32_t callingUid, st
     GetNoHostInvalidDBForms(userId, callingUid, matchedFormIds, noHostDBFormsMap, foundFormsMap);
 
     if (!foundFormsMap.empty()) {
-        for (const auto &element: foundFormsMap) {
+        for (const auto &element : foundFormsMap) {
             FormDataMgr::GetInstance().DeleteFormUserUid(element.first, callingUid);
         }
     }
 
     BatchDeleteNoHostDBForms(callingUid, noHostDBFormsMap, foundFormsMap);
-    HILOG_DEBUG("foundFormsMap size: %{public}d", foundFormsMap.size());
-    HILOG_DEBUG("noHostDBFormsMap size: %{public}d", noHostDBFormsMap.size());
+    HILOG_DEBUG("foundFormsMap size: %{public}zu", foundFormsMap.size());
+    HILOG_DEBUG("noHostDBFormsMap size: %{public}zu", noHostDBFormsMap.size());
 
     if (!foundFormsMap.empty()) {
         removedFormsMap.insert(foundFormsMap.begin(), foundFormsMap.end());

@@ -16,6 +16,7 @@
 #include <cinttypes>
 
 #include "hilog_wrapper.h"
+#include "form_constants.h"
 #include "form_host_client.h"
 
 namespace OHOS {
@@ -113,6 +114,38 @@ bool FormHostClient::ContainsForm(int64_t formId)
 }
 
 /**
+ * @brief Add form state.
+ *
+ * @param formStateCallback the host's form state callback.
+ * @param want the want of acquiring form state.
+ * @return Returns true if contains form; returns false otherwise.
+ */
+bool FormHostClient::AddFormState(std::shared_ptr<FormStateCallbackInterface> &formStateCallback,
+                                  const AAFwk::Want &want)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    std::string bundleName = want.GetElement().GetBundleName();
+    std::string abilityName = want.GetElement().GetAbilityName();
+    const std::string doubleColon = "::";
+    std::string key;
+    key.append(bundleName).append(doubleColon).append(abilityName).append(doubleColon)
+        .append(want.GetStringParam(AppExecFwk::Constants::PARAM_MODULE_NAME_KEY)).append(doubleColon)
+        .append(want.GetStringParam(AppExecFwk::Constants::PARAM_FORM_NAME_KEY)).append(doubleColon)
+        .append(std::to_string(want.GetIntParam(AppExecFwk::Constants::PARAM_FORM_DIMENSION_KEY, 1)));
+    std::lock_guard<std::mutex> lock(formStateCallbackMutex_);
+    auto iter = formStateCallbackMap_.find(key);
+    if (iter == formStateCallbackMap_.end()) {
+        std::set<std::shared_ptr<FormStateCallbackInterface>> callbacks;
+        callbacks.emplace(formStateCallback);
+        formStateCallbackMap_.emplace(key, callbacks);
+    } else {
+        iter->second.insert(formStateCallback);
+    }
+    HILOG_INFO("%{public}s done.", __func__);
+    return true;
+}
+
+/**
  * @brief Request to give back a form.
  *
  * @param formJsInfo Form js info.
@@ -197,6 +230,37 @@ void FormHostClient::OnUninstall(const std::vector<int64_t> &formIds)
             callback->ProcessFormUninstall(formId);
         }
     }
+}
+
+/**
+ * @brief Form provider is acquire state
+ * @param state The form state.
+ * @param want The form want.
+ */
+void FormHostClient::OnAcquireState(FormState state, const AAFwk::Want &want)
+{
+    HILOG_INFO("%{public}s state:%{public}d.", __func__, state);
+    std::string bundleName = want.GetElement().GetBundleName();
+    std::string abilityName = want.GetElement().GetAbilityName();
+    const std::string doubleColon = "::";
+    std::string key;
+    key.append(bundleName).append(doubleColon).append(abilityName).append(doubleColon)
+        .append(want.GetStringParam(AppExecFwk::Constants::PARAM_MODULE_NAME_KEY)).append(doubleColon)
+        .append(want.GetStringParam(AppExecFwk::Constants::PARAM_FORM_NAME_KEY)).append(doubleColon)
+        .append(std::to_string(want.GetIntParam(AppExecFwk::Constants::PARAM_FORM_DIMENSION_KEY, 1)));
+
+    std::lock_guard<std::mutex> lock(formStateCallbackMutex_);
+    auto iter = formStateCallbackMap_.find(key);
+    if (iter == formStateCallbackMap_.end()) {
+        HILOG_INFO("form state callback not found");
+    } else {
+        std::set<std::shared_ptr<FormStateCallbackInterface>> &callbackSet = iter->second;
+        for (auto &callback: callbackSet) {
+            callback->ProcessAcquireState(state);
+        }
+        formStateCallbackMap_.erase(iter);
+    }
+    HILOG_INFO("%{public}s done", __func__);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

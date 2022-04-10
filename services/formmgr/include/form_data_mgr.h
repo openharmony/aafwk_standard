@@ -403,9 +403,10 @@ public:
      * @brief Create form state host record.
      * @param FormState form state.
      * @param provider provider indo.
+     * @param want The want of onAcquireFormState.
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
-    ErrCode AcquireFormStateBack(AppExecFwk::FormState state, const std::string &provider);
+    ErrCode AcquireFormStateBack(AppExecFwk::FormState state, const std::string &provider, const AAFwk::Want &want);
 private:
     /**
      * @brief Create form record.

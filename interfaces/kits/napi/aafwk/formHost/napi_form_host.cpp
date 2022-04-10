@@ -21,6 +21,8 @@
 #include <vector>
 
 #include "form_info.h"
+#include "form_callback_interface.h"
+#include "form_host_client.h"
 #include "hilog_wrapper.h"
 #include "napi_form_util.h"
 #include "napi/native_api.h"
@@ -2298,7 +2300,6 @@ napi_value NAPI_DeleteInvalidForms(napi_env env, napi_callback_info info)
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
-    HILOG_INFO("%{public}s, argc = [%{public}zu]", __func__, argc);
 
     int32_t callbackType = (argc == ARGS_SIZE_TWO) ? CALLBACK_FLG : PROMISE_FLG;
     bool isArray;
@@ -2338,33 +2339,19 @@ napi_value NAPI_DeleteInvalidForms(napi_env env, napi_callback_info info)
     auto *asyncCallbackInfo = new AsyncDeleteInvalidFormsCallbackInfo {
         .env = env,
         .ability = GetGlobalAbility(env),
-        .asyncWork = nullptr,
-        .deferred = nullptr,
-        .callback = nullptr,
         .formIds = formIds,
-        .numFormsDeleted = 0,
     };
 
     if (argc == ARGS_SIZE_TWO) {
         // Check the value type of the arguments
         napi_valuetype valueType = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
-        NAPI_ASSERT(env, valueType == napi_function,
-            "The arguments[1] type of deleteInvalidForms is incorrect, expected type is function.");
+        NAPI_ASSERT(env, valueType == napi_function, "The type of args[1] is incorrect, expected type is function.");
         napi_create_reference(env, argv[1], REF_COUNT, &asyncCallbackInfo->callback);
         return DeleteInvalidFormsCallback(env, asyncCallbackInfo);
     } else {
         return DeleteInvalidFormsPromise(env, asyncCallbackInfo);
     }
-}
-
-static void InnerAcquireFormState(napi_env env, AsyncAcquireFormStateCallbackInfo *const asyncCallbackInfo)
-{
-    HILOG_DEBUG("%{public}s called.", __func__);
-    OHOS::AppExecFwk::Ability *ability = asyncCallbackInfo->ability;
-    ErrCode ret = ability->AcquireFormState(asyncCallbackInfo->want, asyncCallbackInfo->stateInfo);
-    asyncCallbackInfo->result = ret;
-    HILOG_DEBUG("%{public}s, end", __func__);
 }
 
 napi_value ParseFormStateInfo(napi_env env, FormStateInfo &stateInfo)
@@ -2378,6 +2365,88 @@ napi_value ParseFormStateInfo(napi_env env, FormStateInfo &stateInfo)
     SetPropertyValueByPropertyName(env, formStateInfoObject, "formState", formState);
 
     return formStateInfoObject;
+}
+
+void AcquireFormStateCallbackComplete(napi_env env, AsyncAcquireFormStateCallbackInfo *const asyncCallbackInfo)
+{
+    HILOG_INFO("%{public}s, onAcquireFormState back", __func__);
+    if (asyncCallbackInfo->callback != nullptr) {
+        napi_value callback;
+        napi_value callbackValues[ARGS_SIZE_TWO] = {nullptr, nullptr};
+        if (asyncCallbackInfo->result == ERR_OK) {
+            napi_create_int32(env, asyncCallbackInfo->result, &callbackValues[0]);
+            callbackValues[1] = ParseFormStateInfo(env, asyncCallbackInfo->stateInfo);
+        } else {
+            InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, &callbackValues[0]);
+            callbackValues[1] = ParseFormStateInfo(env, asyncCallbackInfo->stateInfo);
+        }
+
+        napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
+        napi_value callResult;
+        napi_call_function(env, nullptr, callback, ARGS_SIZE_TWO, callbackValues, &callResult);
+        napi_delete_reference(env, asyncCallbackInfo->callback);
+    }
+    HILOG_INFO("%{public}s, onAcquireFormState back done", __func__);
+}
+
+void AcquireFormStatePromiseComplete(napi_env env, AsyncAcquireFormStateCallbackInfo *const asyncCallbackInfo)
+{
+    HILOG_INFO("%{public}s, onAcquireFormState back", __func__);
+    if (asyncCallbackInfo->result != ERR_OK) {
+        napi_value result;
+        InnerCreatePromiseRetMsg(env, asyncCallbackInfo->result, &result);
+        napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+    } else {
+        napi_value result = ParseFormStateInfo(env, asyncCallbackInfo->stateInfo);
+        napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+    }
+    HILOG_INFO("%{public}s, onAcquireFormState back done", __func__);
+}
+
+namespace {
+class FormStateCallbackClient : public FormStateCallbackInterface {
+public:
+    explicit FormStateCallbackClient(AsyncAcquireFormStateCallbackInfo *const asyncCallbackInfo)
+    {
+        asyncCallbackInfo_ = asyncCallbackInfo;
+    }
+
+    virtual ~FormStateCallbackClient()
+    {
+        delete asyncCallbackInfo_;
+    }
+
+    void ProcessAcquireState(FormState state) override
+    {
+        if (asyncCallbackInfo_ == nullptr) {
+            return;
+        }
+        asyncCallbackInfo_->stateInfo.state = state;
+        if (asyncCallbackInfo_->callbackType == CALLBACK_FLG) {
+            AcquireFormStateCallbackComplete(asyncCallbackInfo_->env, asyncCallbackInfo_);
+        } else {
+            AcquireFormStatePromiseComplete(asyncCallbackInfo_->env, asyncCallbackInfo_);
+        }
+        delete asyncCallbackInfo_;
+        asyncCallbackInfo_ = nullptr;
+    }
+
+private:
+    AsyncAcquireFormStateCallbackInfo *asyncCallbackInfo_ = nullptr;
+};
+}
+
+static void InnerAcquireFormState(napi_env env, AsyncAcquireFormStateCallbackInfo *const asyncCallbackInfo)
+{
+    HILOG_DEBUG("%{public}s called.", __func__);
+    std::shared_ptr<FormStateCallbackInterface> formStateCallback = std::make_shared<FormStateCallbackClient>(
+        asyncCallbackInfo);
+    FormHostClient::GetInstance()->AddFormState(formStateCallback, asyncCallbackInfo->want);
+    OHOS::AppExecFwk::Ability *ability = asyncCallbackInfo->ability;
+
+    ErrCode ret = ability->AcquireFormState(asyncCallbackInfo->want, asyncCallbackInfo->stateInfo);
+    asyncCallbackInfo->result = ret;
+    HILOG_DEBUG("%{public}s, end", __func__);
 }
 
 napi_value AcquireFormStateCallback(napi_env env, AsyncAcquireFormStateCallbackInfo *const asyncCallbackInfo)
@@ -2397,24 +2466,10 @@ napi_value AcquireFormStateCallback(napi_env env, AsyncAcquireFormStateCallbackI
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
             auto *asyncCallbackInfo = (AsyncAcquireFormStateCallbackInfo *) data;
-            if (asyncCallbackInfo->callback != nullptr) {
-                napi_value callback;
-                napi_value callbackValues[ARGS_SIZE_TWO] = {nullptr, nullptr};
-                if (asyncCallbackInfo->result == ERR_OK) {
-                    napi_create_int32(env, asyncCallbackInfo->result, &callbackValues[0]);
-                    callbackValues[1] = ParseFormStateInfo(env, asyncCallbackInfo->stateInfo);
-                } else {
-                    InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, &callbackValues[0]);
-                    callbackValues[1] = ParseFormStateInfo(env, asyncCallbackInfo->stateInfo);
-                }
-
-                napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
-                napi_value callResult;
-                napi_call_function(env, nullptr, callback, ARGS_SIZE_TWO, callbackValues, &callResult);
-                napi_delete_reference(env, asyncCallbackInfo->callback);
-            }
             napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-            delete asyncCallbackInfo;
+            if (asyncCallbackInfo->result != ERR_OK) {
+                FormHostClient::GetInstance()->OnAcquireState(FormState::UNKNOWN, asyncCallbackInfo->want);
+            }
         },
         (void *) asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork);
@@ -2444,16 +2499,10 @@ napi_value AcquireFormStatePromise(napi_env env, AsyncAcquireFormStateCallbackIn
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("%{public}s, promise complete", __func__);
             auto *asyncCallbackInfo = (AsyncAcquireFormStateCallbackInfo *) data;
-            if (asyncCallbackInfo->result != ERR_OK) {
-                napi_value result;
-                InnerCreatePromiseRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
-            } else {
-                napi_value result = ParseFormStateInfo(env, asyncCallbackInfo->stateInfo);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
-            }
             napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-            delete asyncCallbackInfo;
+            if (asyncCallbackInfo->result != ERR_OK) {
+                FormHostClient::GetInstance()->OnAcquireState(FormState::UNKNOWN, asyncCallbackInfo->want);
+            }
         },
         (void *) asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork);
@@ -2498,6 +2547,8 @@ napi_value NAPI_AcquireFormState(napi_env env, napi_callback_info info)
         .callback = nullptr,
         .want = {},
         .stateInfo = {},
+        .callbackType = callbackType,
+        .result = ERR_OK,
     };
 
     bool parseResult = UnwrapWant(env, argv[0], asyncCallbackInfo->want);

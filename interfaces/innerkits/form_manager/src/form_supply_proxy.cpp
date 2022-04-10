@@ -95,18 +95,16 @@ int FormSupplyProxy::OnEventHandle(const Want& want)
  * @brief Accept form state from form provider.
  * @param state Form state.
  * @param provider provider info.
+ * @param wantArg The want of onAcquireFormState.
  * @param want input data.
  * @return Returns ERR_OK on success, others on failure.
  */
-int FormSupplyProxy::OnAcquireStateResult(FormState state, const std::string &provider, const Want &want)
+int FormSupplyProxy::OnAcquireStateResult(FormState state, const std::string &provider, const Want &wantArg,
+                                          const Want &want)
 {
     MessageParcel data;
     if (!WriteInterfaceToken(data)) {
         HILOG_ERROR("%{public}s, failed to WriteInterfaceToken", __func__);
-        return ERR_APPEXECFWK_PARCEL_ERROR;
-    }
-    if (!data.WriteParcelable(&want)) {
-        HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     if (!data.WriteInt32((int32_t) state)) {
@@ -115,6 +113,14 @@ int FormSupplyProxy::OnAcquireStateResult(FormState state, const std::string &pr
     }
     if (!data.WriteString(provider)) {
         HILOG_ERROR("%{public}s, failed to provider", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteParcelable(&wantArg)) {
+        HILOG_ERROR("%{public}s, failed to write want", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 

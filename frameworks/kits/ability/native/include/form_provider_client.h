@@ -156,7 +156,7 @@ protected:
     int HandleDisconnect(const Want &want, const sptr<IRemoteObject> &callerToken);
     int HandleAcquire(const FormProviderInfo &formProviderInfo, const Want &newWant,
         const sptr<IRemoteObject> &callerToken);
-    int HandleAcquireStateResult(FormState state, const std::string &provider, const Want &want,
+    int HandleAcquireStateResult(FormState state, const std::string &provider, const Want &wantArg, const Want &want,
                                  const sptr<IRemoteObject> &callerToken);
 
 private:
