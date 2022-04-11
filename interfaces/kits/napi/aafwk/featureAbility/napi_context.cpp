@@ -132,11 +132,11 @@ napi_value NAPI_SetShowOnLockScreen(napi_env env, napi_callback_info info)
 #ifdef SUPPORT_GRAPHICS
     HILOG_INFO("%{public}s called", __func__);
 
-    size_t argc = 2;
+    size_t argc = 2, argcNum = 2;
     napi_value args[ARGS_MAX_COUNT] = {nullptr};
 
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
-    if (argc != 2) {
+    if (argc != argcNum) {
         HILOG_ERROR("%{public}s error, wrong argument count.", __func__);
         return nullptr;
     }
