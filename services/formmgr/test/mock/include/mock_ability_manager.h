@@ -262,7 +262,6 @@ public:
         return 0;
     }
 
-
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override
     {
         return 0;
