@@ -17,6 +17,7 @@
 #define OHOS_AAFWK_MISSION_LISTENER_INTERFACE_H
 
 #include "iremote_broker.h"
+#include "pixel_map.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -62,7 +63,7 @@ public:
      * @param missionId, mission Id.
      * @param icon, mission icon.
      */
-    virtual void OnMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon) = 0;
+    virtual void OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<OHOS::Media::PixelMap> &icon) = 0;
 
     enum MissionListenerCmd {
         // ipc id for OnMissionCreated

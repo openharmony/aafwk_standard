@@ -30,6 +30,7 @@
 #include "start_options.h"
 #include "want.h"
 #include "event_handler.h"
+#include "pixel_map_napi.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -812,7 +813,7 @@ NativeValue* JsAbilityContext::OnSetMissionIcon(NativeEngine& engine, NativeCall
         return engine.CreateUndefined();
     }
 
-    auto icon = Media::PixelMapNapi::GetPixelMap(reinterpret_cast<napi_env>(&engine),
+    auto icon = OHOS::Media::PixelMapNapi::GetPixelMap(reinterpret_cast<napi_env>(&engine),
         reinterpret_cast<napi_value>(info.argv[0]));
     if (!icon) {
         HILOG_ERROR("OnSetMissionIcon, parse icon failed.");

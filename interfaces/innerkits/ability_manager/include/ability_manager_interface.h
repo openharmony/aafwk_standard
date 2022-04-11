@@ -420,7 +420,8 @@ public:
 
     virtual int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label) = 0;
 
-    virtual int SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon) = 0;
+    virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
+        const std::shared_ptr<OHOS::Media::PixelMap> &icon) = 0;
 
     virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) = 0;
 
@@ -779,7 +780,7 @@ public:
         GET_APP_MEMORY_SIZE,
 
         IS_RAM_CONSTRAINED_DEVICE,
-        
+
         GET_ABILITY_RUNNING_INFO,
 
         GET_EXTENSION_RUNNING_INFO,

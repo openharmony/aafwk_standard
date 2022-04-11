@@ -41,7 +41,7 @@ void MissionListenerProxy::OnMissionMovedToFront(int32_t missionId)
     SendRequestCommon(missionId, IMissionListener::ON_MISSION_MOVED_TO_FRONT);
 }
 
-void MissionListenerProxy::OnMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon)
+void MissionListenerProxy::OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon)
 {
     if (!icon) {
         HILOG_ERROR("invalid mission icon.");

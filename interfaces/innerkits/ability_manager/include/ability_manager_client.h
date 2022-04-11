@@ -545,7 +545,8 @@ public:
      * @param icon Indidate the icon showed of the ability in recent missions.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode SetMissionIcon(const sptr<IRemoteObject> &abilityToken, const std::shared_ptr<Media::PixelMap> &icon);
+    ErrCode SetMissionIcon(const sptr<IRemoteObject> &abilityToken,
+        const std::shared_ptr<OHOS::Media::PixelMap> &icon);
 
     /**
      * @brief start user test.

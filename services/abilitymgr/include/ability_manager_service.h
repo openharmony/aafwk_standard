@@ -571,7 +571,8 @@ public:
 
     virtual int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label) override;
 
-    virtual int SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon) override;
+    virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
+        const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
 
     void ClearUserData(int32_t userId);
 

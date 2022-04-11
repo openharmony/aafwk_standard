@@ -417,7 +417,7 @@ ErrCode AbilityContextImpl::SetMissionLabel(const std::string &label)
     return err;
 }
 
-ErrCode AbilityContextImpl::SetMissionIcon(const std::shared_ptr<Media::PixelMap> &icon)
+ErrCode AbilityContextImpl::SetMissionIcon(const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->SetMissionIcon(token_, icon);

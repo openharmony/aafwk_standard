@@ -1696,7 +1696,8 @@ int AbilityManagerProxy::SetMissionLabel(const sptr<IRemoteObject> &token, const
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon)
+int AbilityManagerProxy::SetMissionIcon(const sptr<IRemoteObject> &token,
+    const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {
     if (!token || !icon) {
         HILOG_ERROR("SetMissionIcon abilitytoken or icon is invalid.");

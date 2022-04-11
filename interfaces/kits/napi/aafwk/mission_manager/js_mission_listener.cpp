@@ -17,6 +17,7 @@
 
 #include "hilog_wrapper.h"
 #include "js_runtime_utils.h"
+#include "pixel_map_napi.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -40,7 +41,7 @@ void JsMissionListener::OnMissionMovedToFront(int32_t missionId)
     CallJsMethod("onMissionMovedToFront", missionId);
 }
 
-void JsMissionListener::OnMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon)
+void JsMissionListener::OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon)
 {
     HILOG_INFO("OnMissionIconUpdated, missionId = %{public}d", missionId);
     if (engine_ == nullptr) {
@@ -127,7 +128,7 @@ void JsMissionListener::CallJsMethodInner(const std::string &methodName, int32_t
     }
 }
 
-void JsMissionListener::CallJsMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon)
+void JsMissionListener::CallJsMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon)
 {
     if (engine_ == nullptr) {
         HILOG_ERROR("engine_ is nullptr, not call js mission updated.");
