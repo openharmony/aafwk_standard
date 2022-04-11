@@ -196,6 +196,12 @@ public:
         return 0;
     }
 
+    int SetMissionIcon(const sptr<IRemoteObject> &abilityToken,
+        const std::shared_ptr<OHOS::Media::PixelMap> &icon)
+    {
+        return 0;
+    }
+
     int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label)
     {
         return 0;
