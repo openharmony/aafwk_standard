@@ -899,6 +899,8 @@ bool Ability::HasWindowFocus()
 
 void Ability::SetShowOnLockScreen(bool showOnLockScreen)
 {
+    HILOG_INFO("Ability::SetShowOnLockScreen come, ability is %{public}s, showOnLockScreen is %{public}d",
+        abilityInfo_->name.c_str(), showOnLockScreen);
     showOnLockScreen_ = showOnLockScreen;
 }
 #endif
