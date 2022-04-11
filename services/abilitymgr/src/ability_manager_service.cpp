@@ -3174,6 +3174,7 @@ int AbilityManagerService::SetMissionLabel(const sptr<IRemoteObject> &token, con
     return 0;
 }
 
+#ifdef SUPPORT_GRAPHICS
 int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token,
     const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {
@@ -3200,6 +3201,7 @@ int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token,
 
     return missionListManager->SetMissionIcon(token, icon);
 }
+#endif
 
 int AbilityManagerService::StartUser(int userId)
 {

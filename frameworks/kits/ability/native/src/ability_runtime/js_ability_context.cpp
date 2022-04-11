@@ -30,7 +30,10 @@
 #include "start_options.h"
 #include "want.h"
 #include "event_handler.h"
+
+#ifdef SUPPORT_GRAPHICS
 #include "pixel_map_napi.h"
+#endif
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -136,11 +139,13 @@ NativeValue* JsAbilityContext::SetMissionLabel(NativeEngine* engine, NativeCallb
     return (me != nullptr) ? me->OnSetMissionLabel(*engine, *info) : nullptr;
 }
 
+#ifdef SUPPORT_GRAPHICS
 NativeValue* JsAbilityContext::SetMissionIcon(NativeEngine* engine, NativeCallbackInfo* info)
 {
     JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
     return (me != nullptr) ? me->OnSetMissionIcon(*engine, *info) : nullptr;
 }
+#endif
 
 NativeValue* JsAbilityContext::OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info)
 {
@@ -805,6 +810,7 @@ NativeValue* JsAbilityContext::OnSetMissionLabel(NativeEngine& engine, NativeCal
     return result;
 }
 
+#ifdef SUPPORT_GRAPHICS
 NativeValue* JsAbilityContext::OnSetMissionIcon(NativeEngine& engine, NativeCallbackInfo& info)
 {
     HILOG_INFO("OnSetMissionIcon is called, argc = %{public}d", static_cast<int>(info.argc));
@@ -843,6 +849,7 @@ NativeValue* JsAbilityContext::OnSetMissionIcon(NativeEngine& engine, NativeCall
         engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
     return result;
 }
+#endif
 
 bool JsAbilityContext::UnWrapWant(NativeEngine& engine, NativeValue* argv, AAFwk::Want& want)
 {
@@ -991,6 +998,10 @@ NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<Abilit
     BindNativeFunction(engine, *object, "requestPermissionsFromUser", JsAbilityContext::RequestPermissionsFromUser);
     BindNativeFunction(engine, *object, "restoreWindowStage", JsAbilityContext::RestoreWindowStage);
     BindNativeFunction(engine, *object, "setMissionLabel", JsAbilityContext::SetMissionLabel);
+
+#ifdef SUPPORT_GRAPHICS
+    BindNativeFunction(engine, *object, "setMissionIcon", JsAbilityContext::SetMissionIcon);
+#endif
     return objValue;
 }
 

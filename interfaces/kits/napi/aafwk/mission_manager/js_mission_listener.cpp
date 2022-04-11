@@ -17,7 +17,10 @@
 
 #include "hilog_wrapper.h"
 #include "js_runtime_utils.h"
+
+#ifdef SUPPORT_GRAPHICS
 #include "pixel_map_napi.h"
+#endif
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -41,6 +44,7 @@ void JsMissionListener::OnMissionMovedToFront(int32_t missionId)
     CallJsMethod("onMissionMovedToFront", missionId);
 }
 
+#ifdef SUPPORT_GRAPHICS
 void JsMissionListener::OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon)
 {
     HILOG_INFO("OnMissionIconUpdated, missionId = %{public}d", missionId);
@@ -65,6 +69,7 @@ void JsMissionListener::OnMissionIconUpdated(int32_t missionId, const std::share
     std::unique_ptr<AsyncTask::ExecuteCallback> execute = nullptr;
     AsyncTask::Schedule(*engine_, std::make_unique<AsyncTask>(callback, std::move(execute), std::move(complete)));
 }
+#endif
 
 void JsMissionListener::AddJsListenerObject(int32_t listenerId, NativeValue* jsListenerObject)
 {
@@ -128,6 +133,7 @@ void JsMissionListener::CallJsMethodInner(const std::string &methodName, int32_t
     }
 }
 
+#ifdef SUPPORT_GRAPHICS
 void JsMissionListener::CallJsMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon)
 {
     if (engine_ == nullptr) {
@@ -157,5 +163,6 @@ void JsMissionListener::CallJsMissionIconUpdated(int32_t missionId, const std::s
         engine_->CallFunction(value, method, argv, ArraySize(argv));
     }
 }
+#endif
 }  // namespace AbilityRuntime
 }  // namespace OHOS

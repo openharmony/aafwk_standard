@@ -1696,6 +1696,7 @@ int AbilityManagerProxy::SetMissionLabel(const sptr<IRemoteObject> &token, const
     return reply.ReadInt32();
 }
 
+#ifdef SUPPORT_GRAPHICS
 int AbilityManagerProxy::SetMissionIcon(const sptr<IRemoteObject> &token,
     const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {
@@ -1727,6 +1728,7 @@ int AbilityManagerProxy::SetMissionIcon(const sptr<IRemoteObject> &token,
     }
     return reply.ReadInt32();
 }
+#endif
 
 int AbilityManagerProxy::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
 {

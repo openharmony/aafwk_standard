@@ -61,12 +61,16 @@ int MissionListenerStub::OnMissionMovedToFrontInner(MessageParcel &data, Message
 
 int MissionListenerStub::OnMissionIconUpdatedInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_GRAPHICS
     auto missionId = data.ReadInt32();
     std::shared_ptr<Media::PixelMap> icon(data.ReadParcelable<Media::PixelMap>());
     OnMissionIconUpdated(missionId, icon);
     return NO_ERROR;
+#else
+    HILOG_ERROR("do not support OnMissionIconUpdated");
+    return ERR_INVALID_STATE;
+#endif
 }
-
 
 int MissionListenerStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)

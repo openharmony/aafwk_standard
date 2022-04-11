@@ -18,7 +18,9 @@
 
 #include <iremote_broker.h>
 
+#ifdef SUPPORT_GRAPHICS
 #include "pixel_map.h"
+#endif
 
 namespace OHOS {
 namespace AAFwk {

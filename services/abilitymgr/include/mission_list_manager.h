@@ -261,6 +261,7 @@ public:
      */
     int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * Set mission icon of this ability.
      *
@@ -269,6 +270,7 @@ public:
      * @return Retun 0 if success.
      */
     int SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon);
+#endif
 
     /**
      * @brief dump all abilities

@@ -41,6 +41,7 @@ void MissionListenerProxy::OnMissionMovedToFront(int32_t missionId)
     SendRequestCommon(missionId, IMissionListener::ON_MISSION_MOVED_TO_FRONT);
 }
 
+#ifdef SUPPORT_GRAPHICS
 void MissionListenerProxy::OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon)
 {
     if (!icon) {
@@ -74,6 +75,7 @@ void MissionListenerProxy::OnMissionIconUpdated(int32_t missionId, const std::sh
         return;
     }
 }
+#endif
 
 void MissionListenerProxy::SendRequestCommon(int32_t missionId, IMissionListener::MissionListenerCmd cmd)
 {

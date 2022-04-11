@@ -1355,7 +1355,7 @@ void MissionListManager::PrintTimeOutLog(const std::shared_ptr<AbilityRecord> &a
         EVENT_KEY_PACKAGE_NAME, processInfo.bundleNames,
         EVENT_KEY_PROCESS_NAME, processInfo.processName_,
         EVENT_KEY_MESSAGE, msgContent);
-    
+
     HILOG_WARN("LIFECYCLE_TIMEOUT: uid：%{public}d, pid：%{public}d, abilityName: %{public}s, msg: %{public}s",
         processInfo.uid_,
         processInfo.pid_,
@@ -1879,6 +1879,7 @@ int MissionListManager::SetMissionLabel(const sptr<IRemoteObject> &token, const 
     return DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionLabel(missionId, label);
 }
 
+#ifdef SUPPORT_GRAPHICS
 int MissionListManager::SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon)
 {
     if (!token) {
@@ -1895,10 +1896,11 @@ int MissionListManager::SetMissionIcon(const sptr<IRemoteObject> &token, const s
 
     if (listenerController_) {
         listenerController_->NotifyMissionIconChanged(missionId, icon);
-    } 
+    }
 
     return 0;
 }
+#endif
 
 void MissionListManager::Dump(std::vector<std::string> &info)
 {
