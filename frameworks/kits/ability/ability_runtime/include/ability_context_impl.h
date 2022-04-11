@@ -29,6 +29,7 @@ public:
     AbilityContextImpl() = default;
     virtual ~AbilityContextImpl() = default;
 
+    std::string GetBaseDir() const override;
     std::string GetBundleCodeDir() override;
     std::string GetCacheDir() override;
     std::string GetTempDir() override;
