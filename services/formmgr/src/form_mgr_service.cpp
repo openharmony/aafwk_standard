@@ -548,5 +548,17 @@ int FormMgrService::GetFormsInfoByModule(std::string &bundleName, std::string &m
     HILOG_INFO("%{public}s called.", __func__);
     return FormMgrAdapter::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
 }
+
+/**
+ * @brief Update action string for router event.
+ * @param formId Indicates the unique id of form.
+ * @param action Indicates the origin action string.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrService::UpdateRouterAction(const int64_t formId, std::string &action)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    return FormMgrAdapter::GetInstance().UpdateRouterAction(formId, action);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS
