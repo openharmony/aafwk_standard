@@ -33,7 +33,6 @@ ability_manager_headers = {
     "start_options.h",
     "global_configuration.h",
     "pixel_map.h",
-    "shared_memory.h",
   ]
   header_base = "interfaces/innerkits/ability_manager/include"
 }

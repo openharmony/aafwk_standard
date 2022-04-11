@@ -23,7 +23,6 @@
 #include "iservice_registry.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
-#include "shared_memory.h"
 
 namespace OHOS {
 namespace AAFwk {
