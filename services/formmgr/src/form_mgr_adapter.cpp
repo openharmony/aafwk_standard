@@ -242,8 +242,10 @@ ErrCode FormMgrAdapter::HandleDeleteForm(const int64_t formId, const sptr<IRemot
         return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
     }
 
-    DeviceUsageStats::BundleActiveEvent event(dbRecord.bundleName, dbRecord.moduleName, dbRecord.formName,
-        dbRecord.specification, dbRecord.formId, DeviceUsageStats::BundleActiveEvent::FORM_IS_REMOVED);
+    FormRecord record;
+    FormDataMgr::GetInstance().GetFormRecord(formId, record);
+    DeviceUsageStats::BundleActiveEvent event(record.bundleName, record.moduleName, record.formName,
+        record.specification, record.formId, DeviceUsageStats::BundleActiveEvent::FORM_IS_REMOVED);
 
     int callingUid = IPCSkeleton::GetCallingUid();
     int32_t userId = GetCurrentUserId(callingUid);
