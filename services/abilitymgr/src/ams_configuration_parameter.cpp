@@ -27,11 +27,6 @@ void AmsConfigurationParameter::Parse()
     HILOG_INFO("load config ref : %{public}d", ref);
 }
 
-bool AmsConfigurationParameter::GetStartLauncherState() const
-{
-    return canStartLauncher_;
-}
-
 bool AmsConfigurationParameter::GetStartSettingsDataState() const
 {
     return canStartSettingsData_;
@@ -142,7 +137,6 @@ int AmsConfigurationParameter::LoadAppConfigurationForStartUpService(nlohmann::j
 {
     int ret = -1;
     if (Object.contains(AmsConfig::SERVICE_ITEM_AMS)) {
-        canStartLauncher_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_LAUNCHER).get<bool>();
         canStartSettingsData_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_SETTINGS_DATA).get<bool>();
         canStartScreenLock_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_SCREEN_LOCK).get<bool>();
         canStartUiStatusBar_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
