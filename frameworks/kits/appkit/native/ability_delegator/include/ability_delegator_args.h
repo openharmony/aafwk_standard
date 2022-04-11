@@ -49,6 +49,14 @@ public:
      * Indicates the key of test wait timeout.
      */
     static const std::string KEY_TEST_WAIT_TIMEOUT;
+    /**
+     * Indicates the key of debug flag.
+     */
+    static const std::string KEY_TEST_DEBUG;
+    /**
+     * Indicates the value of debug flag.
+     */
+    static const std::string VALUE_TEST_DEBUG;
 
 public:
     /**
@@ -67,8 +75,6 @@ public:
      * Default deconstructor used to deconstruct.
      */
     ~AbilityDelegatorArgs();
-
-    void SetTestBundleName(const std::string &bundleName);
 
     /**
      * Obtains the bundle name of the application being tested.
@@ -105,14 +111,19 @@ public:
      */
     std::string GetTestCaseName() const;
 
-    void SetTestParam(const std::map<std::string, std::string> &params);
-
     /**
      * Obtains the test parameters.
      *
      * @return the test parameters.
      */
     std::map<std::string, std::string> GetTestParam() const;
+
+    /**
+     * Find debug flag.
+     *
+     * @return true if found, false otherwise.
+     */
+    bool FindDebugFlag();
 
 private:
     std::string GetParamValue(const std::string &key) const;
