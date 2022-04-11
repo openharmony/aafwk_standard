@@ -29,6 +29,12 @@ const std::string GRANT_ABILITY_BUNDLE_NAME = "com.ohos.permissionmanager";
 const std::string GRANT_ABILITY_ABILITY_NAME = "com.ohos.permissionmanager.GrantAbility";
 const std::string PERMISSION_KEY = "ohos.user.grant.permission";
 
+
+std::string AbilityContextImpl::GetBaseDir() const
+{
+    return stageContext_ ? stageContext_->GetBaseDir() : "";
+}
+
 std::string AbilityContextImpl::GetBundleCodeDir()
 {
     return stageContext_ ? stageContext_->GetBundleCodeDir() : "";
