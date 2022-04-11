@@ -2136,31 +2136,14 @@ void GetOrCreateLocalDirExecuteCB(napi_env env, void *data)
     }
 
     getOrCreateLocalDirCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-    if (getOrCreateLocalDirCB->cbBase.ability == nullptr) {
-        HILOG_ERROR("NAPI_GetOrCreateLocalDir, ability == nullptr");
+    if (getOrCreateLocalDirCB->cbBase.ability == nullptr ||
+        getOrCreateLocalDirCB->cbBase.ability->GetAbilityContext() == nullptr) {
+        HILOG_ERROR("NAPI_GetOrCreateLocalDir, ability or abilityContext is nullptr");
         getOrCreateLocalDirCB->cbBase.errCode = NAPI_ERR_ACE_ABILITY;
         return;
     }
 
-    std::string abilityName = getOrCreateLocalDirCB->cbBase.ability->GetAbilityInfo()->name;
-    std::string dataDir = getOrCreateLocalDirCB->cbBase.ability->GetAbilityInfo()->applicationInfo.dataDir;
-    std::shared_ptr<HapModuleInfo> hap = getOrCreateLocalDirCB->cbBase.ability->GetHapModuleInfo();
-    std::string moduleName = (hap != nullptr) ? hap->name : std::string();
-    std::string dataDirWithModuleName = dataDir + NAPI_CONTEXT_FILE_SEPARATOR + moduleName;
-    HILOG_INFO("NAPI_GetOrCreateLocalDir, dataDir:%{public}s moduleName:%{public}s abilityName:%{public}s",
-        dataDir.c_str(),
-        moduleName.c_str(),
-        abilityName.c_str());
-
-    // if dataDirWithModuleName is not exits, do nothing and return.
-    if (!OHOS::FileExists(dataDirWithModuleName)) {
-        getOrCreateLocalDirCB->rootDir = "";
-        HILOG_INFO("NAPI_GetOrCreateLocalDir, dirWithModuleName is not exits:%{public}s, do nothing and return null.",
-            dataDirWithModuleName.c_str());
-        return;
-    }
-
-    getOrCreateLocalDirCB->rootDir = dataDirWithModuleName + NAPI_CONTEXT_FILE_SEPARATOR + abilityName;
+    getOrCreateLocalDirCB->rootDir = getOrCreateLocalDirCB->cbBase.ability->GetAbilityContext()->GetBaseDir();
     HILOG_INFO("NAPI_GetOrCreateLocalDir, GetDir rootDir:%{public}s", getOrCreateLocalDirCB->rootDir.c_str());
     if (!OHOS::FileExists(getOrCreateLocalDirCB->rootDir)) {
         HILOG_INFO("NAPI_GetOrCreateLocalDir dir is not exits, create dir.");

@@ -184,6 +184,13 @@ public:
     virtual std::shared_ptr<AppExecFwk::Configuration> GetConfiguration() const = 0;
 
     /**
+     * @brief Obtains the application base directory on the device's internal storage.
+     *
+     * @return Returns the application base directory.
+     */
+    virtual std::string GetBaseDir() const = 0;
+
+    /**
      * @brief Getting derived class
      *
      * @tparam T template
