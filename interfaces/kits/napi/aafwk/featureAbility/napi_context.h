@@ -64,6 +64,16 @@ EXTERN_C_END
 napi_value ContextConstructor(napi_env env, napi_callback_info info);
 
 /**
+ * @brief Set lock screen Permit list.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_SetShowOnLockScreen(napi_env env, napi_callback_info info);
+
+/**
  * @brief Obtains information about the current application.
  *
  * @param env The environment that the Node-API call is invoked under.

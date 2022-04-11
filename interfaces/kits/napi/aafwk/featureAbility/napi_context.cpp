@@ -51,6 +51,161 @@ napi_value ContextConstructor(napi_env env, napi_callback_info info)
     return jsthis;
 }
 
+#ifdef SUPPORT_GRAPHICS
+static Ability* GetJSAbilityObject(napi_env env)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    napi_value global = nullptr;
+    NAPI_CALL(env, napi_get_global(env, &global));
+
+    napi_value abilityObj = nullptr;
+    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
+
+    Ability *ability = nullptr;
+    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
+    HILOG_INFO("%{public}s,called end", __func__);
+    return ability;
+}
+
+static void SetShowOnLockScreenAsyncCompleteCB(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    ShowOnLockScreenCB *showOnLockScreenCB = static_cast<ShowOnLockScreenCB *>(data);
+    if (showOnLockScreenCB == nullptr) {
+        HILOG_ERROR("%{public}s, input param is nullptr", __func__);
+        return;
+    }
+
+    do {
+        showOnLockScreenCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
+        if (showOnLockScreenCB->cbBase.ability == nullptr) {
+            HILOG_ERROR("%{public}s, input param is nullptr", __func__);
+            showOnLockScreenCB->cbBase.errCode = NAPI_ERR_ACE_ABILITY;
+            break;
+        }
+
+        if (!CheckAbilityType(&showOnLockScreenCB->cbBase)) {
+            HILOG_ERROR("%{public}s, wrong ability type", __func__);
+            showOnLockScreenCB->cbBase.errCode = NAPI_ERR_ABILITY_TYPE_INVALID;
+            break;
+        }
+
+        showOnLockScreenCB->cbBase.ability->SetShowOnLockScreen(showOnLockScreenCB->isShow);
+    } while (false);
+
+    napi_value callback = nullptr;
+    napi_value undefined = nullptr;
+    napi_value callResult = nullptr;
+    napi_value result[ARGS_TWO] = {nullptr};
+    napi_get_undefined(env, &undefined);
+    result[PARAM0] = GetCallbackErrorValue(env, showOnLockScreenCB->cbBase.errCode);
+    napi_get_null(env, &result[PARAM1]);
+    napi_get_reference_value(env, showOnLockScreenCB->cbBase.cbInfo.callback, &callback);
+    napi_call_function(env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
+
+    if (showOnLockScreenCB->cbBase.cbInfo.callback != nullptr) {
+        napi_delete_reference(env, showOnLockScreenCB->cbBase.cbInfo.callback);
+    }
+    napi_delete_async_work(env, showOnLockScreenCB->cbBase.asyncWork);
+    delete showOnLockScreenCB;
+    showOnLockScreenCB = nullptr;
+
+    HILOG_INFO("%{public}s,called end", __func__);
+}
+
+static napi_value SetShowOnLockScreenAsync(napi_env env, ShowOnLockScreenCB *showOnLockScreenCB)
+{
+    HILOG_INFO("%{public}s,called", __func__);
+    if (showOnLockScreenCB == nullptr) {
+        HILOG_ERROR("%{public}s, input param is nullptr", __func__);
+        return nullptr;
+    }
+
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+
+    NAPI_CALL(env,
+        napi_create_async_work(
+            env,
+            nullptr,
+            resourceName,
+            [](napi_env env, void *data) { HILOG_INFO("NAPI_SetShowOnLockScreen, worker pool thread execute."); },
+            SetShowOnLockScreenAsyncCompleteCB,
+            (void *)showOnLockScreenCB,
+            &showOnLockScreenCB->cbBase.asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, showOnLockScreenCB->cbBase.asyncWork));
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_null(env, &result));
+
+    HILOG_INFO("%{public}s,called end", __func__);
+    return result;
+}
+
+static napi_value SetShowOnLockScreenWrap(napi_env env, napi_callback_info info, ShowOnLockScreenCB *cbData)
+{
+    HILOG_INFO("%{public}s called", __func__);
+    if (cbData == nullptr) {
+        HILOG_ERROR("%{public}s, input param cbData is nullptr", __func__);
+        return nullptr;
+    }
+
+    size_t argcAsync = 2;
+    const size_t argStdValue = 2;
+    napi_value args[ARGS_MAX_COUNT] = {nullptr};
+
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argcAsync, args, nullptr, nullptr));
+    if (argcAsync != argStdValue) {
+        HILOG_ERROR("%{public}s error, wrong argument count.", __func__);
+        return nullptr;
+    }
+
+    napi_valuetype valuetypeParam0 = napi_undefined;
+    napi_valuetype valuetypeParam1 = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, args[PARAM0], &valuetypeParam0));
+    NAPI_CALL(env, napi_typeof(env, args[PARAM1], &valuetypeParam1));
+    if (valuetypeParam0 != napi_boolean || valuetypeParam1 != napi_function) {
+        HILOG_ERROR("%{public}s error, params is error type", __func__);
+        return nullptr;
+    }
+
+    if (!UnwrapBoolFromJS2(env, args[PARAM0], cbData->isShow)) {
+        HILOG_ERROR("%{public}s error, unwrapBoolFromJS2 error", __func__);
+        return nullptr;
+    }
+    NAPI_CALL(env, napi_create_reference(env, args[PARAM1], 1, &cbData->cbBase.cbInfo.callback));
+
+    cbData->cbBase.ability = GetJSAbilityObject(env);
+    napi_value ret = nullptr;
+    ret = SetShowOnLockScreenAsync(env, cbData);
+
+    HILOG_INFO("%{public}s,called end", __func__);
+    return ret;
+}
+#endif
+
+
+napi_value NAPI_SetShowOnLockScreen(napi_env env, napi_callback_info info)
+{
+#ifdef SUPPORT_GRAPHICS
+    HILOG_INFO("%{public}s called", __func__);
+    ShowOnLockScreenCB *showOnLockScreenCB = new ShowOnLockScreenCB();
+    showOnLockScreenCB->cbBase.cbInfo.env = env;
+    showOnLockScreenCB->cbBase.abilityType = AbilityType::PAGE;
+    napi_value ret = SetShowOnLockScreenWrap(env, info, showOnLockScreenCB);
+    if (ret == nullptr) {
+        if (showOnLockScreenCB != nullptr) {
+            delete showOnLockScreenCB;
+            showOnLockScreenCB = nullptr;
+        }
+        HILOG_ERROR("%{public}s, SetShowOnLockScreenWrap run failed, delete resource", __func__);
+        ret = WrapVoidToJS(env);
+    }
+    return ret;
+#else
+   return nullptr;
+#endif
+}
+
 bool UnwrapParamVerifySelfPermission(
     napi_env env, size_t argc, napi_value *argv, AsyncJSCallbackInfo *asyncCallbackInfo)
 {
@@ -2319,6 +2474,7 @@ napi_value ContextPermissionInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getAppVersionInfo", NAPI_GetAppVersionInfo),
         DECLARE_NAPI_FUNCTION("getApplicationContext", NAPI_GetApplicationContext),
         DECLARE_NAPI_FUNCTION("getAbilityInfo", NAPI_GetCtxAbilityInfo),
+        DECLARE_NAPI_FUNCTION("setShowOnLockScreen", NAPI_SetShowOnLockScreen),
         DECLARE_NAPI_FUNCTION("getOrCreateDistributedDir", NAPI_GetOrCreateDistributedDir),
     };
 
