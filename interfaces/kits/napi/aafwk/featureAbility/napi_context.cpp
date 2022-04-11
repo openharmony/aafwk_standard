@@ -54,7 +54,6 @@ napi_value ContextConstructor(napi_env env, napi_callback_info info)
 #ifdef SUPPORT_GRAPHICS
 static Ability* GetJSAbilityObject(napi_env env)
 {
-    HILOG_INFO("%{public}s,called", __func__);
     napi_value global = nullptr;
     NAPI_CALL(env, napi_get_global(env, &global));
 
@@ -63,7 +62,6 @@ static Ability* GetJSAbilityObject(napi_env env)
 
     Ability *ability = nullptr;
     NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
-    HILOG_INFO("%{public}s,called end", __func__);
     return ability;
 }
 
@@ -85,7 +83,7 @@ static void SetShowOnLockScreenAsyncCompleteCB(napi_env env, napi_status status,
 
     showOnLockScreenCB->cbBase.ability->SetShowOnLockScreen(showOnLockScreenCB->isShow);
 
-    napi_value callback, undefined, callResult = nullptr;
+    napi_value callback = nullptr, undefined = nullptr, callResult = nullptr;
     napi_value result[ARGS_TWO] = {nullptr};
     napi_get_undefined(env, &undefined);
     result[PARAM0] = GetCallbackErrorValue(env, showOnLockScreenCB->cbBase.errCode);
@@ -114,11 +112,7 @@ static napi_value SetShowOnLockScreenAsync(napi_env env, ShowOnLockScreenCB *sho
     napi_value resourceName = nullptr;
     NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
-    NAPI_CALL(env,
-        napi_create_async_work(
-            env,
-            nullptr,
-            resourceName,
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName,
             [](napi_env env, void *data) { HILOG_INFO("NAPI_SetShowOnLockScreen, worker pool thread execute."); },
             SetShowOnLockScreenAsyncCompleteCB,
             (void *)showOnLockScreenCB,
@@ -138,11 +132,11 @@ napi_value NAPI_SetShowOnLockScreen(napi_env env, napi_callback_info info)
 #ifdef SUPPORT_GRAPHICS
     HILOG_INFO("%{public}s called", __func__);
 
-    size_t argcAsync, argcNum = 2;
+    size_t argc = 2;
     napi_value args[ARGS_MAX_COUNT] = {nullptr};
 
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argcAsync, args, nullptr, nullptr));
-    if (argcAsync != argcNum) {
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
+    if (argc != 2) {
         HILOG_ERROR("%{public}s error, wrong argument count.", __func__);
         return nullptr;
     }
