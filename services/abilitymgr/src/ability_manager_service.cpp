@@ -3174,10 +3174,11 @@ int AbilityManagerService::SetMissionLabel(const sptr<IRemoteObject> &token, con
     return 0;
 }
 
-int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon)
+int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token,
+    const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {
     HILOG_DEBUG("%{public}s", __func__);
-    auto abilityRecord = GetAbilityRecordByToken(token);
+    auto abilityRecord = Token::GetAbilityRecordByToken(token);
     if (!abilityRecord) {
         HILOG_ERROR("no such ability record");
         return -1;
@@ -3186,15 +3187,18 @@ int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token, cons
     auto callingUid = IPCSkeleton::GetCallingUid();
     auto recordUid = abilityRecord->GetUid();
     if (callingUid != recordUid) {
-        HILOG_ERROR("not self, callingUid:%{pubic}d, target ability uid:{public}d", callingUid, recordUid);
+        HILOG_ERROR("not self, callingUid:%{public}d, recordUid:%{public}d", callingUid, recordUid);
         return -1;
     }
 
-    auto missionListManager = currentMissionListManager_;
-    if (missionListManager) {
-        missionListManager->SetMissionIcon(token, icon);
+    auto userId = callingUid / BASE_USER_RANGE;
+    auto missionListManager = GetListManagerByUserId(userId);
+    if (!missionListManager) {
+        HILOG_ERROR("failed to find mission list manager.");
+        return -1;
     }
-    return 0;
+
+    return missionListManager->SetMissionIcon(token, icon);
 }
 
 int AbilityManagerService::StartUser(int userId)

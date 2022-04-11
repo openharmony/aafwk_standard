@@ -64,7 +64,7 @@ public:
      * @param missionId, mission Id.
      * @param icon, mission icon.
      */
-    virtual void OnMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon);
+    virtual void OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
 
 private:
     void SendRequestCommon(int32_t missionId, IMissionListener::MissionListenerCmd cmd);

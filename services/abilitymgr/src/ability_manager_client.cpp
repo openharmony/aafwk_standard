@@ -709,11 +709,11 @@ ErrCode AbilityManagerClient::SetMissionLabel(const sptr<IRemoteObject> &token, 
 }
 
 ErrCode AbilityManagerClient::SetMissionIcon(
-    const sptr<IRemoteObject> &abilityToken, const std::shared_ptr<Media::PixelMap> &icon)
+    const sptr<IRemoteObject> &abilityToken, const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->SetMissionLabel(abilityToken, icon); 
+    return abms->SetMissionIcon(abilityToken, icon);
 }
 
 ErrCode AbilityManagerClient::DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag)

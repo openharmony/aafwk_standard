@@ -27,6 +27,7 @@
 #include "start_options.h"
 #include "want.h"
 #include "caller_callback.h"
+#include "pixel_map.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -236,7 +237,7 @@ public:
      * @param icon the icon of this ability.
      * @return Returns ERR_OK if success.
      */
-    virtual ErrCode SetMissionIcon(const std::shared_ptr<Media::PixelMap> &icon) = 0;
+    virtual ErrCode SetMissionIcon(const std::shared_ptr<OHOS::Media::PixelMap> &icon) = 0;
 
     /**
      * @brief Get LocalCallContainer.

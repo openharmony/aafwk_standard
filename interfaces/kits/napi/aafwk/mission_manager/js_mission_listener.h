@@ -34,7 +34,7 @@ public:
     void OnMissionDestroyed(int32_t missionId) override;
     void OnMissionSnapshotChanged(int32_t missionId) override;
     void OnMissionMovedToFront(int32_t missionId) override;
-    void OnMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon) override;
+    void OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon) override;
     void AddJsListenerObject(int32_t listenerId, NativeValue* jsListenerObject);
     bool RemoveJsListenerObject(int32_t listenerId);
     bool IsEmpty();
@@ -42,7 +42,7 @@ public:
 private:
     void CallJsMethod(const std::string &methodName, int32_t missionId);
     void CallJsMethodInner(const std::string &methodName, int32_t missionId);
-    void CallJsMissionIconUpdated(int32_t missionId, std::shared_ptr<Media::PixelMap> &icon);
+    void CallJsMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon);
 
     NativeEngine* engine_ = nullptr;
     std::map<int32_t, std::shared_ptr<NativeReference>> jsListenerObjectMap_;

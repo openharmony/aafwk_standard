@@ -96,7 +96,7 @@ public:
      * @param icon the icon of this ability.
      * @return Returns ERR_OK if success.
      */
-    ErrCode SetMissionIcon(const std::shared_ptr<Media::PixelMap> &icon) override;
+    ErrCode SetMissionIcon(const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
 
     void SetStageContext(const std::shared_ptr<AbilityRuntime::Context> &stageContext);
 
