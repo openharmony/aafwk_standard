@@ -657,5 +657,22 @@ int FormMgr::GetFormsInfoByModule(std::string &bundleName, std::string &moduleNa
     }
     return remoteProxy_->GetFormsInfoByModule(bundleName, moduleName, formInfos);
 }
+
+/**
+ * @brief Update action string for router event.
+ * @param formId Indicates the unique id of form.
+ * @param action Indicates the origin action string.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgr::UpdateRouterAction(const int64_t formId, std::string &action)
+{
+    HILOG_INFO("%{public}s start.", __func__);
+    int errCode = Connect();
+    if (errCode != ERR_OK) {
+        HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
+        return errCode;
+    }
+    return remoteProxy_->UpdateRouterAction(formId, action);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS
