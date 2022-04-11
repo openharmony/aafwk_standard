@@ -17,7 +17,9 @@
 #define OHOS_AAFWK_MISSION_LISTENER_INTERFACE_H
 
 #include "iremote_broker.h"
+#ifdef SUPPORT_GRAPHICS
 #include "pixel_map.h"
+#endif
 
 namespace OHOS {
 namespace AAFwk {
@@ -57,6 +59,7 @@ public:
      */
     virtual void OnMissionMovedToFront(int32_t missionId) = 0;
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Called when a mission has changed it's icon.
      *
@@ -64,6 +67,7 @@ public:
      * @param icon, mission icon.
      */
     virtual void OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<OHOS::Media::PixelMap> &icon) = 0;
+#endif
 
     enum MissionListenerCmd {
         // ipc id for OnMissionCreated

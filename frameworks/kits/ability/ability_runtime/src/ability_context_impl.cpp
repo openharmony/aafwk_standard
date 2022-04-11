@@ -417,6 +417,7 @@ ErrCode AbilityContextImpl::SetMissionLabel(const std::string &label)
     return err;
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityContextImpl::SetMissionIcon(const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {
     HILOG_INFO("%{public}s begin.", __func__);
@@ -426,6 +427,7 @@ ErrCode AbilityContextImpl::SetMissionIcon(const std::shared_ptr<OHOS::Media::Pi
     }
     return err;
 }
+#endif
 
 void AbilityContextImpl::RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback)
 {

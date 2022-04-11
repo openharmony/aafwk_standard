@@ -1022,6 +1022,7 @@ int AbilityManagerStub::SetMissionLabelInner(MessageParcel &data, MessageParcel 
 
 int AbilityManagerStub::SetMissionIconInner(MessageParcel &data, MessageParcel &reply)
 {
+#ifdef SUPPORT_GRAPHICS
     sptr<IRemoteObject> token = data.ReadRemoteObject();
     if (!token) {
         HILOG_ERROR("SetMissionIconInner read ability token failed.");
@@ -1040,6 +1041,10 @@ int AbilityManagerStub::SetMissionIconInner(MessageParcel &data, MessageParcel &
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;
+#else
+    HILOG_ERROR("do not support SetMissionIcon.");
+    return ERR_INVALID_VALUE;
+#endif
 }
 
 int AbilityManagerStub::GetAbilityRunningInfosInner(MessageParcel &data, MessageParcel &reply)

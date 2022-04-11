@@ -194,8 +194,9 @@ void MissionListenerController::NotifyMissionMovedToFront(int32_t missionId)
     handler_->PostTask(task);
 }
 
+#ifdef SUPPORT_GRAPHICS
 void MissionListenerController::NotifyMissionIconChanged(int32_t missionId,
-    const std::shared_ptr<Media::PixelMap> &icon)
+    const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {
     if (!handler_) {
         HILOG_ERROR("handler not init when notify mission icon changed");
@@ -213,6 +214,7 @@ void MissionListenerController::NotifyMissionIconChanged(int32_t missionId,
     };
     handler_->PostTask(task);
 }
+#endif
 
 void MissionListenerController::OnListenerDied(const wptr<IRemoteObject> &remote)
 {
