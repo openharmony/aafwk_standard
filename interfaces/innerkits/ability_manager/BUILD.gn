@@ -78,7 +78,6 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/remote_mission_listener_proxy.cpp",
     "${services_path}/abilitymgr/src/remote_mission_listener_stub.cpp",
     "${services_path}/abilitymgr/src/sender_info.cpp",
-    "${services_path}/abilitymgr/src/shared_memory.cpp",
     "${services_path}/abilitymgr/src/start_options.cpp",
     "${services_path}/abilitymgr/src/stop_user_callback_proxy.cpp",
     "${services_path}/abilitymgr/src/stop_user_callback_stub.cpp",
