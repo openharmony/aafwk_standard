@@ -49,7 +49,6 @@ abilityms_files = [
   "src/pending_want_manager.cpp",
   "src/pending_want_common_event.cpp",
   "src/ability_start_setting.cpp",
-  "src/shared_memory.cpp",
   "src/ams_configuration_parameter.cpp",
   "src/image_info.cpp",
   "src/mission_snapshot.cpp",

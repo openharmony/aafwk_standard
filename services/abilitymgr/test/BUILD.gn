@@ -48,7 +48,6 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/src/pending_want_manager.cpp",
     "${services_path}/abilitymgr/src/pending_want_record.cpp",
     "${services_path}/abilitymgr/src/sender_info.cpp",
-    "${services_path}/abilitymgr/src/shared_memory.cpp",
     "${services_path}/abilitymgr/src/task_data_persistence_mgr.cpp",
     "${services_path}/abilitymgr/src/user_controller.cpp",
     "${services_path}/abilitymgr/src/user_event_handler.cpp",
