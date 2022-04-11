@@ -3511,6 +3511,10 @@ sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
         AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
     HILOG_INFO("Ability::GetWindowOption window mode is %{public}d.", windowMode);
     option->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
+    if (showOnLockScreen_) {
+        HILOG_DEBUG("Ability::GetWindowOption come, add window flag WINDOW_FLAG_SHOW_WHEN_LOCKED.");
+        option->AddWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
+    }
 
     if (want.GetElement().GetBundleName() == LAUNCHER_BUNDLE_NAME &&
         want.GetElement().GetAbilityName() == LAUNCHER_ABILITY_NAME) {
