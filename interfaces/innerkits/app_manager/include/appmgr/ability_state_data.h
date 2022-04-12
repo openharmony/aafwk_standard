@@ -48,6 +48,7 @@ struct AbilityStateData : public Parcelable {
      */
     static AbilityStateData *Unmarshalling(Parcel &parcel);
 
+    std::string moduleName;
     std::string bundleName;
     std::string abilityName;
     int32_t abilityState = 0;
