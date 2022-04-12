@@ -479,7 +479,7 @@ int FormMgrAdapter::RequestForm(const int64_t formId, const sptr<IRemoteObject> 
     int callingUid = IPCSkeleton::GetCallingUid();
     int32_t userId = GetCurrentUserId(callingUid);
     reqWant.SetParam(Constants::PARAM_FORM_USER_ID, userId);
-    return FormProviderMgr::GetInstance().RefreshForm(matchedFormId, reqWant);
+    return FormProviderMgr::GetInstance().RefreshForm(matchedFormId, reqWant, true);
 }
 
 /**
@@ -1371,7 +1371,7 @@ bool FormMgrAdapter::IsUpdateValid(const int64_t formId, const std::string &bund
 int FormMgrAdapter::EnableUpdateForm(const std::vector<int64_t> formIDs, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("enableUpdateForm");
-    return HandleUpdateFormFlag(formIDs, callerToken, true);
+    return HandleUpdateFormFlag(formIDs, callerToken, true, false);
 }
 
 /**
@@ -1383,7 +1383,7 @@ int FormMgrAdapter::EnableUpdateForm(const std::vector<int64_t> formIDs, const s
 int FormMgrAdapter::DisableUpdateForm(const std::vector<int64_t> formIDs, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("disableUpdateForm");
-    return HandleUpdateFormFlag(formIDs, callerToken, false);
+    return HandleUpdateFormFlag(formIDs, callerToken, false, false);
 }
 
 /**
@@ -1479,7 +1479,7 @@ int FormMgrAdapter::RouterEvent(const int64_t formId)
 }
 
 int FormMgrAdapter::HandleUpdateFormFlag(std::vector<int64_t> formIds,
-    const sptr<IRemoteObject> &callerToken, bool flag)
+    const sptr<IRemoteObject> &callerToken, bool flag, bool isOnlyEnableUpdate)
 {
     HILOG_INFO("%{public}s called.", __func__);
     if (formIds.empty() || callerToken == nullptr) {
@@ -1487,7 +1487,8 @@ int FormMgrAdapter::HandleUpdateFormFlag(std::vector<int64_t> formIds,
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
     std::vector<int64_t> refreshForms;
-    int errCode =  FormDataMgr::GetInstance().UpdateHostFormFlag(formIds, callerToken, flag, refreshForms);
+    int errCode = FormDataMgr::GetInstance().UpdateHostFormFlag(formIds, callerToken, flag, isOnlyEnableUpdate,
+        refreshForms);
     if (errCode == ERR_OK && refreshForms.size() > 0) {
         for (const int64_t id : refreshForms) {
             HILOG_INFO("%{public}s, formRecord need refresh: %{public}" PRId64 "", __func__, id);
@@ -1495,7 +1496,7 @@ int FormMgrAdapter::HandleUpdateFormFlag(std::vector<int64_t> formIds,
             int callingUid = IPCSkeleton::GetCallingUid();
             int32_t userId = GetCurrentUserId(callingUid);
             want.SetParam(Constants::PARAM_FORM_USER_ID, userId);
-            FormProviderMgr::GetInstance().RefreshForm(id, want);
+            FormProviderMgr::GetInstance().RefreshForm(id, want, false);
         }
     }
     return errCode;
@@ -1867,6 +1868,50 @@ int FormMgrAdapter::AcquireFormState(const Want &want, const sptr<IRemoteObject>
         return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
     }
     stateInfo.state = FormState::DEFAULT;
+    return ERR_OK;
+}
+
+/**
+ * @brief Delete the given invalid forms.
+ * @param formIds Indicates the ID of the forms.
+ * @param isVisible Visible or not.
+ * @param callerToken Host client.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
+                                       const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s, isVisible: %{public}d.", __func__, isVisible);
+    FormHostRecord hostRecord;
+    bool hasHostRec = FormDataMgr::GetInstance().GetMatchedHostClient(callerToken, hostRecord);
+    if (!hasHostRec) {
+        HILOG_ERROR("%{public}s failed, cannot find target client.", __func__);
+        return ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF;
+    }
+
+    for (int64_t formId : formIds) {
+        int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
+        if (!hostRecord.Contains(matchedFormId)) {
+            HILOG_ERROR("%{public}s fail, form is not self-owned, form:%{public}" PRId64 ".", __func__, matchedFormId);
+            continue;
+        }
+        FormDataMgr::GetInstance().SetRecordVisible(matchedFormId, isVisible);
+    }
+    return ERR_OK;
+}
+
+/**
+ * @brief Delete the given invalid forms.
+ * @param formIds Indicates the ID of the forms.
+ * @param isEnableUpdate enable update or not.
+ * @param callerToken Host client.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate,
+                                            const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s, isEnableUpdate: %{public}d.", __func__, isEnableUpdate);
+    HandleUpdateFormFlag(formIds, callerToken, isEnableUpdate, true);
     return ERR_OK;
 }
 

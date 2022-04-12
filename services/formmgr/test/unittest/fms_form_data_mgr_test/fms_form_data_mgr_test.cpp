@@ -1872,7 +1872,8 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_UpdateHostFormFlag_001, TestSize
 
     std::vector<int64_t> refreshForms;
 
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_INVALID_PARAM, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, refreshForms));
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_INVALID_PARAM, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, false,
+        refreshForms));
 
     GTEST_LOG_(INFO) << "FmsFormDataMgrTest_UpdateHostFormFlag_001 end";
 }
@@ -1913,7 +1914,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_UpdateHostFormFlag_002, TestSize
     // versionUpgrade : false
     formDataMgr_.SetVersionUpgrade(formId, false);
 
-    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, refreshForms));
+    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, false, refreshForms));
 
     GTEST_LOG_(INFO) << "FmsFormDataMgrTest_UpdateHostFormFlag_002 end";
 }
@@ -1954,7 +1955,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_UpdateHostFormFlag_003, TestSize
     // versionUpgrade : true
     formDataMgr_.SetVersionUpgrade(formId, true);
 
-    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, refreshForms));
+    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, false, refreshForms));
 
     GTEST_LOG_(INFO) << "FmsFormDataMgrTest_UpdateHostFormFlag_003 end";
 }
@@ -1993,7 +1994,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_UpdateHostFormFlag_004, TestSize
     FormRecord record = formDataMgr_.CreateFormRecord(formItemInfo, callingUid);
     formDataMgr_.formRecords_.emplace(formId, record);
 
-    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, refreshForms));
+    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, false, refreshForms));
 
     GTEST_LOG_(INFO) << "FmsFormDataMgrTest_UpdateHostFormFlag_004 end";
 }
@@ -2031,7 +2032,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_UpdateHostFormFlag_005, TestSize
     FormRecord record = formDataMgr_.CreateFormRecord(formItemInfo, callingUid);
     formDataMgr_.formRecords_.emplace(formId, record);
 
-    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, refreshForms));
+    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, false, refreshForms));
 
     GTEST_LOG_(INFO) << "FmsFormDataMgrTest_UpdateHostFormFlag_005 end";
 }
@@ -2068,7 +2069,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_UpdateHostFormFlag_006, TestSize
     FormRecord record = formDataMgr_.CreateFormRecord(formItemInfo, callingUid);
     formDataMgr_.formRecords_.emplace(formId, record);
 
-    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, refreshForms));
+    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, false, refreshForms));
 
     GTEST_LOG_(INFO) << "FmsFormDataMgrTest_UpdateHostFormFlag_006 end";
 }
@@ -2107,7 +2108,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_UpdateHostFormFlag_007, TestSize
     record.needRefresh = true;
     formDataMgr_.formRecords_.emplace(formId, record);
 
-    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, refreshForms));
+    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, false, refreshForms));
 
     GTEST_LOG_(INFO) << "FmsFormDataMgrTest_UpdateHostFormFlag_007 end";
 }
@@ -2145,7 +2146,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_UpdateHostFormFlag_008, TestSize
     FormRecord record = formDataMgr_.CreateFormRecord(formItemInfo, callingUid);
     formDataMgr_.formRecords_.emplace(otherFormId, record);
 
-    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, refreshForms));
+    EXPECT_EQ(ERR_OK, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, false, refreshForms));
 
     GTEST_LOG_(INFO) << "FmsFormDataMgrTest_UpdateHostFormFlag_008 end";
 }

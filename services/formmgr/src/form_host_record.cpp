@@ -12,7 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "form_host_record.h"
+
+#include <cinttypes>
 #include "form_task_mgr.h"
 
 namespace OHOS {
@@ -78,6 +81,33 @@ bool FormHostRecord::IsEnableRefresh(int64_t formId) const
         return result->second;
     }
     return false;
+}
+/**
+ * @brief Set Update enable flag.
+ * @param formId The Id of the form.
+ * @param flag True for enbale, false for disable.
+ */
+void FormHostRecord::SetEnableUpdate(int64_t formId, bool flag)
+{
+    auto result = forms_.find(formId);
+    if (result == forms_.end()) {
+        HILOG_ERROR("%{public}s: formId: %{public}" PRId64 "not found", __func__, formId);
+        return;
+    }
+    enableUpdateMap_[formId] = flag;
+}
+/**
+ * @brief update enable or not.
+ * @param formId The Id of the form.
+ * @return true on enbale, false on disable..
+ */
+bool FormHostRecord::IsEnableUpdate(int64_t formId) const
+{
+    auto result = enableUpdateMap_.find(formId);
+    if (result == forms_.end()) {
+        return false;
+    }
+    return result->second;
 }
 /**
  * @brief Set need refresh enable flag.

@@ -608,6 +608,44 @@ int FormMgr::AcquireFormState(const Want &want, const sptr<IRemoteObject> &calle
 }
 
 /**
+ * @brief Delete the given invalid forms.
+ * @param formIds Indicates the ID of the forms.
+ * @param isVisible Visible or not.
+ * @param callerToken Host client.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgr::NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
+                                const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s start.", __func__);
+    int errCode = Connect();
+    if (errCode != ERR_OK) {
+        HILOG_ERROR("%{public}s failed, errCode: %{public}d.", __func__, errCode);
+        return errCode;
+    }
+    return remoteProxy_->NotifyFormsVisible(formIds, isVisible, callerToken);
+}
+
+/**
+ * @brief Delete the given invalid forms.
+ * @param formIds Indicates the ID of the forms.
+ * @param isEnableUpdate enable update or not.
+ * @param callerToken Host client.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgr::NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate,
+                                     const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s start.", __func__);
+    int errCode = Connect();
+    if (errCode != ERR_OK) {
+        HILOG_ERROR("%{public}s failed, errCode: %{public}d.", __func__, errCode);
+        return errCode;
+    }
+    return remoteProxy_->NotifyFormsEnableUpdate(formIds, isEnableUpdate, callerToken);
+}
+
+/**
  * @brief Get All FormsInfo.
  * @param formInfos Return the forms' information of all forms provided.
  * @return Returns ERR_OK on success, others on failure.

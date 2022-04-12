@@ -229,6 +229,26 @@ public:
                                  FormStateInfo &stateInfo) override;
 
     /**
+     * @brief Delete the given invalid forms.
+     * @param formIds Indicates the ID of the forms.
+     * @param isVisible Visible or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
+                                   const sptr<IRemoteObject> &callerToken) override;
+
+    /**
+     * @brief Delete the given invalid forms.
+     * @param formIds Indicates the ID of the forms.
+     * @param isEnableUpdate enable update or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate,
+                                        const sptr<IRemoteObject> &callerToken) override;
+
+    /**
      * @brief Get All FormsInfo.
      * @param formInfos Return the forms' information of all forms provided.
      * @return Returns ERR_OK on success, others on failure.
