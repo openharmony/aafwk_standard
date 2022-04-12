@@ -290,21 +290,6 @@ public:
     int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
 
     /**
-     * @brief notify multi window mode changed.
-     *
-     * @param winModeKey Indicates ability Window display mode.
-     * @param flag Indicates this ability has been enter this mode.
-     */
-    void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag);
-
-    /**
-     * @brief notify this ability is top active ability.
-     *
-     * @param flag true: Indicates this ability is top active ability
-     */
-    void NotifyTopActiveAbilityChanged(bool flag);
-
-    /**
      * @brief continue ability to target device.
      *
      * @param deviceId: target deviceId

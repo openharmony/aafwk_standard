@@ -1153,48 +1153,6 @@ int AbilityThread::BatchInsert(const Uri &uri, const std::vector<NativeRdb::Valu
     return ret;
 }
 
-void AbilityThread::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
-{
-#ifdef SUPPORT_GRAPHICS
-    HILOG_INFO("NotifyMultiWinModeChanged.key:%{public}d,flag:%{public}d", winModeKey, flag);
-    auto window = currentAbility_->GetWindow();
-    if (window == nullptr) {
-        HILOG_ERROR("NotifyMultiWinModeChanged window == nullptr");
-        return;
-    }
-
-    if (flag) {
-        // true: normal windowMode -> free windowMode
-        if (winModeKey == MULTI_WINDOW_DISPLAY_FLOATING) {
-            HILOG_INFO("NotifyMultiWinModeChanged.SetWindowMode:WINDOW_MODE_FREE.");
-            window->SetWindowType(Rosen::WindowType::WINDOW_TYPE_FLOAT);
-        }
-    } else {
-        // false: free windowMode -> normal windowMode
-        HILOG_INFO("NotifyMultiWinModeChanged.SetWindowMode:WINDOW_MODE_TOP.");
-        window->SetWindowType(Rosen::WindowType::WINDOW_TYPE_APP_MAIN_WINDOW);
-    }
-
-    return;
-#endif
-}
-
-void AbilityThread::NotifyTopActiveAbilityChanged(bool flag)
-{
-#ifdef SUPPORT_GRAPHICS
-    HILOG_INFO("NotifyTopActiveAbilityChanged,flag:%{public}d", flag);
-    auto window = currentAbility_->GetWindow();
-    if (window == nullptr) {
-        HILOG_ERROR("NotifyMultiWinModeChanged window == nullptr");
-        return;
-    }
-    if (flag) {
-        window->RequestFocus();
-    }
-    return;
-#endif
-}
-
 void AbilityThread::ContinueAbility(const std::string& deviceId)
 {
     HILOG_INFO("ContinueAbility, deviceId:%{public}s", deviceId.c_str());

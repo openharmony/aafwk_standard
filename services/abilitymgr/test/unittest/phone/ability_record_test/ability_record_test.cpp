@@ -662,21 +662,6 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_CreateByConnect, TestSize.Level1)
 
 /*
  * Feature: AbilityRecord
- * Function: SetMovingBackgroundFlag, IsMovingBackground
- * SubFunction: NA
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: NA
- */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetMovingBackgroundFlag_001, TestSize.Level1)
-{
-    EXPECT_EQ(false, abilityRecord_->IsMovingBackground());
-    abilityRecord_->SetMovingBackgroundFlag(true);
-    EXPECT_EQ(true, abilityRecord_->IsMovingBackground());
-}
-
-/*
- * Feature: AbilityRecord
  * Function: IsActiveState
  * SubFunction: NA
  * FunctionPoints: NA
