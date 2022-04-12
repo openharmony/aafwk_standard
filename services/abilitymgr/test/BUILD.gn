@@ -199,7 +199,6 @@ group("unittest") {
   if (ability_runtime_graphics) {
     deps += [
       "unittest/phone/call_container_test:unittest",
-      "unittest/phone/call_record_test:unittest",
       "unittest/phone/mission_list_dump_test:unittest",
       "unittest/phone/mission_list_manager_dump_test:unittest",
       "unittest/phone/mission_list_manager_test:unittest",
