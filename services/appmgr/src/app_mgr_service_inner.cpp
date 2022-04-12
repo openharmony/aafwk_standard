@@ -1166,7 +1166,7 @@ void AppMgrServiceInner::StateChangedNotifyObserver(const AbilityStateData abili
     std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
     HILOG_DEBUG("module:%{public}s, bundle:%{public}s, ability:%{public}s, state:%{public}d,"
         "pid:%{public}d ,uid:%{public}d, abilityType:%{public}d",
-        abilityStateData.moduleName.c_str(), abilityStateData.bundleName.c_str(), 
+        abilityStateData.moduleName.c_str(), abilityStateData.bundleName.c_str(),
         abilityStateData.abilityName.c_str(), abilityStateData.abilityState,
         abilityStateData.pid, abilityStateData.uid, abilityStateData.abilityType);
     for (const auto &observer : appStateObservers_) {
