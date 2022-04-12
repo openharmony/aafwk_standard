@@ -78,6 +78,15 @@ public:
      */
     bool AddFormState(std::shared_ptr<FormStateCallbackInterface> &formStateCallback, const AAFwk::Want &want);
 
+    using UninstallCallback = void (*)(const std::vector<int64_t> &formIds);
+    /**
+     * @brief register form uninstall function.
+     *
+     * @param callback the form uninstall callback.
+     * @return Returns true if contains form; returns false otherwise.
+     */
+    bool RegisterUninstallCallback(UninstallCallback callback);
+
     /**
      * @brief Request to give back a form.
      *
@@ -113,8 +122,10 @@ private:
     static sptr<FormHostClient> instance_;
     mutable std::mutex callbackMutex_;
     mutable std::mutex formStateCallbackMutex_;
+    mutable std::mutex uninstallCallbackMutex_;
     std::map<int64_t, std::set<std::shared_ptr<FormCallbackInterface>>> formCallbackMap_;
     std::map<std::string, std::set<std::shared_ptr<FormStateCallbackInterface>>> formStateCallbackMap_;
+    UninstallCallback uninstallCallback_ = nullptr;
 
     DISALLOW_COPY_AND_MOVE(FormHostClient);
 };
