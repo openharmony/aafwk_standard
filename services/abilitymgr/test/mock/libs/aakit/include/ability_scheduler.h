@@ -76,12 +76,6 @@ public:
 
     int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values) override;
 
-    void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override;
-
-    void NotifyTopActiveAbilityChanged(bool flag) override
-    {
-    };
-
     Uri NormalizeUri(const Uri &uri) override;
     Uri DenormalizeUri(const Uri &uri) override;
     virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override

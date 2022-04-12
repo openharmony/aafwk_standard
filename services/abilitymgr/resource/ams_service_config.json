@@ -2,8 +2,6 @@
     "service_startup_config":{
         "startup_settings_data": true,
         "startup_screen_lock" : true,
-        "startup_system_ui_status_bar" : true,
-        "startup_system_ui_navigation_bar" : true,
         "startup_phone_service" : true,
         "startup_mms":true,
         "mission_save_time" : 43200000,

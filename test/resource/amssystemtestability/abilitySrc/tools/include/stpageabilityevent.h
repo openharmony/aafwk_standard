@@ -67,7 +67,6 @@ static constexpr uint32_t TERMINATE_TIMEOUT = 10000;      // ms
 static constexpr uint32_t CONNECT_TIMEOUT = 500;          // ms
 static constexpr uint32_t DISCONNECT_TIMEOUT = 500;       // ms
 static constexpr uint32_t COMMAND_TIMEOUT = 5000;         // ms
-static constexpr uint32_t SYSTEM_UI_TIMEOUT = 5000;       // ms
 static constexpr uint32_t RESTART_TIMEOUT = 5000;         // ms
 static constexpr uint32_t RESTART_ABILITY_TIMEOUT = 500;  // ms
 }  // namespace STEventName

@@ -700,36 +700,6 @@ int AbilitySchedulerProxy::BatchInsert(const Uri &uri, const std::vector<NativeR
 }
 
 /**
- * @brief notify multi window mode changed.
- *
- * @param winModeKey Indicates ability Window display mode.
- * @param flag Indicates this ability has been enter this mode.
- */
-void AbilitySchedulerProxy::NotifyMultiWinModeChanged(int32_t winModeKey, bool flag)
-{
-#ifdef SUPPORT_GRAPHICS
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option(MessageOption::TF_ASYNC);
-    if (!WriteInterfaceToken(data)) {
-        return;
-    }
-    if (!data.WriteInt32(winModeKey)) {
-        HILOG_ERROR("fail to WriteParcelable");
-        return;
-    }
-    if (!data.WriteBool(flag)) {
-        HILOG_ERROR("fail to WriteBool");
-        return;
-    }
-    int32_t err = Remote()->SendRequest(IAbilityScheduler::MULTI_WIN_CHANGED, data, reply, option);
-    if (err != NO_ERROR) {
-        HILOG_ERROR("NotifyMultiWinModeChanged fail to SendRequest. err: %{public}d", err);
-    }
-#endif
-}
-
-/**
  * @brief Registers an observer to DataObsMgr specified by the given Uri.
  *
  * @param uri, Indicates the path of the data to operate.
@@ -832,31 +802,6 @@ bool AbilitySchedulerProxy::ScheduleNotifyChange(const Uri &uri)
         HILOG_ERROR("%{public}s SendRequest error, result=%{public}d", __func__, result);
         return false;
     }
-}
-
-/**
- * @brief notify this ability is top active ability.
- *
- * @param flag true: Indicates this ability is top active ability
- */
-void AbilitySchedulerProxy::NotifyTopActiveAbilityChanged(bool flag)
-{
-#ifdef SUPPORT_GRAPHICS
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option(MessageOption::TF_ASYNC);
-    if (!WriteInterfaceToken(data)) {
-        return;
-    }
-    if (!data.WriteBool(flag)) {
-        HILOG_ERROR("fail to WriteBool");
-        return;
-    }
-    int32_t err = Remote()->SendRequest(IAbilityScheduler::TOP_ACTIVE_ABILITY_CHANGED, data, reply, option);
-    if (err != NO_ERROR) {
-        HILOG_ERROR("NotifyTopActiveAbilityChanged fail to SendRequest. err: %{public}d", err);
-    }
-#endif
 }
 
 /**

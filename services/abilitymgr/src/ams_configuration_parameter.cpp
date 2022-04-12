@@ -37,16 +37,6 @@ bool AmsConfigurationParameter::GetStartScreenLockState() const
     return canStartScreenLock_;
 }
 
-bool AmsConfigurationParameter::GetStatusBarState() const
-{
-    return canStartUiStatusBar_;
-}
-
-bool AmsConfigurationParameter::GetNavigationBarState() const
-{
-    return canStartUiNavigationBar_;
-}
-
 bool AmsConfigurationParameter::GetPhoneServiceState() const
 {
     return canStartPhoneService_;
@@ -139,9 +129,6 @@ int AmsConfigurationParameter::LoadAppConfigurationForStartUpService(nlohmann::j
     if (Object.contains(AmsConfig::SERVICE_ITEM_AMS)) {
         canStartSettingsData_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_SETTINGS_DATA).get<bool>();
         canStartScreenLock_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_SCREEN_LOCK).get<bool>();
-        canStartUiStatusBar_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_STATUS_BAR).get<bool>();
-        canStartUiNavigationBar_ =
-            Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_NAVIGATION_BAR).get<bool>();
         canStartPhoneService_ =
             Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_PHONE_SERVICE).get<bool>();
         canStartMms = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_MMS).get<bool>();
