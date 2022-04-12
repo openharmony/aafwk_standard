@@ -551,6 +551,7 @@ void AppRunningRecord::StateChangedNotifyObserver(
     }
     AbilityStateData abilityStateData;
     abilityStateData.bundleName = ability->GetAbilityInfo()->applicationInfo.bundleName;
+    abilityStateData.moduleName = ability->GetAbilityInfo()->moduleName;
     abilityStateData.abilityName = ability->GetName();
     abilityStateData.pid = GetPriorityObject()->GetPid();
     abilityStateData.abilityState = state;
