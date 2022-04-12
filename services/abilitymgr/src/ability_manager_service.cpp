@@ -4070,13 +4070,14 @@ void AbilityManagerService::StartMainElement(int userId, std::vector<AppExecFwk:
                 if (mainElement.empty()) {
                     continue;
                 }
-                needEraseIndexSet.insert(i);
+
                 std::string uriStr;
                 bool getDataAbilityUri = GetDataAbilityUri(hapModuleInfo.abilityInfos, mainElement, uriStr);
                 if (getDataAbilityUri) {
                     // dataability, need use AcquireDataAbility
                     Uri uri(uriStr);
                     (void)AcquireDataAbility(uri, true, nullptr);
+                    needEraseIndexSet.insert(i);
                     continue;
                 }
             } else {
@@ -4085,11 +4086,23 @@ void AbilityManagerService::StartMainElement(int userId, std::vector<AppExecFwk:
                 if (mainElement.empty()) {
                     continue;
                 }
-                needEraseIndexSet.insert(i);
             }
 
+            // ability need to start, but need to filt page ability
+            bool mainElementIsPageAbility = false;
+            for (auto abilityInfo : hapModuleInfo.abilityInfos) {
+                if (abilityInfo.name == mainElement && abilityInfo.type == AppExecFwk::AbilityType::PAGE) {
+                    mainElementIsPageAbility = true;
+                    break;
+                }
+            }
+            if (mainElementIsPageAbility) {
+                HILOG_INFO("%{public}s, %{public}s is page ability", __func__, mainElement.c_str());
+                continue;
+            }
+
+            needEraseIndexSet.insert(i);
             // startAbility
-            AppExecFwk::AbilityInfo abilityInfo;
             Want want;
             want.SetElementName(hapModuleInfo.bundleName, mainElement);
             (void)StartAbility(want, userId, DEFAULT_INVAL_VALUE);
