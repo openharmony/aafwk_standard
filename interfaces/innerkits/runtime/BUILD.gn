@@ -74,6 +74,12 @@ ohos_shared_library("runtime") {
     "utils_base:utils",
   ]
 
+  if (is_standard_system) {
+    external_deps += [ "startup_l2:syspara" ]
+  } else {
+    external_deps += [ "startup:syspara" ]
+  }
+
   if (ability_runtime_graphics) {
     deps +=
         [ "//foundation/ace/ace_engine/frameworks/core:ace_container_scope" ]
