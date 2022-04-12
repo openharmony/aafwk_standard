@@ -178,11 +178,7 @@ int AbilityRecord::LoadAbility()
     }
 
     if (abilityInfo_.type != AppExecFwk::AbilityType::DATA) {
-        if (isKernalSystemAbility_) {
-            SendEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, AbilityManagerService::SYSTEM_UI_TIMEOUT);
-        } else {
-            SendEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, AbilityManagerService::LOAD_TIMEOUT);
-        }
+        SendEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, AbilityManagerService::LOAD_TIMEOUT);
     }
     sptr<Token> callerToken_ = nullptr;
     if (!callerList_.empty() && callerList_.back()) {
@@ -374,16 +370,6 @@ std::shared_ptr<AbilityRecord> AbilityRecord::GetNextAbilityRecord() const
     return nextAbilityRecord_.lock();
 }
 
-void AbilityRecord::SetBackAbilityRecord(const std::shared_ptr<AbilityRecord> &abilityRecord)
-{
-    backAbilityRecord_ = abilityRecord;
-}
-
-std::shared_ptr<AbilityRecord> AbilityRecord::GetBackAbilityRecord() const
-{
-    return backAbilityRecord_.lock();
-}
-
 void AbilityRecord::SetEventId(int64_t eventId)
 {
     eventId_ = eventId;
@@ -414,16 +400,6 @@ bool AbilityRecord::IsLauncherAbility() const
 bool AbilityRecord::IsTerminating() const
 {
     return isTerminating_;
-}
-
-bool AbilityRecord::IsForceTerminate() const
-{
-    return isForceTerminate_;
-}
-
-void AbilityRecord::SetForceTerminate(bool flag)
-{
-    isForceTerminate_ = flag;
 }
 
 void AbilityRecord::SetTerminatingState()
@@ -470,62 +446,6 @@ void AbilityRecord::Activate()
             preToken = GetPreAbilityRecord()->GetToken();
         }
         DelayedSingleton<AppScheduler>::GetInstance()->AbilityBehaviorAnalysis(token_, preToken, 1, 1, 1);
-    }
-}
-
-void AbilityRecord::ProcessActivateInMoving()
-{
-    HILOG_DEBUG("ProcessActivateInMovingState.");
-    if (!IsAbilityState(AbilityState::ACTIVE) && !IsAbilityState(AbilityState::ACTIVATING)) {
-        SetInMovingState(true);
-        ProcessActivate();
-    }
-}
-
-void AbilityRecord::ProcessInactivateInMoving()
-{
-    HILOG_DEBUG("ProcessInactivateInMoving.");
-    if (IsAbilityState(AbilityState::ACTIVE) || IsAbilityState(AbilityState::ACTIVATING)) {
-        SetInMovingState(true);
-        ProcessInactivate();
-    }
-}
-
-void AbilityRecord::ProcessActivate()
-{
-    std::string element = GetWant().GetElement().GetURI();
-    HILOG_DEBUG("ability record: %{public}s", element.c_str());
-
-    if (isReady_) {
-        if (IsAbilityState(AbilityState::BACKGROUND) || IsAbilityState(AbilityState::BACKGROUND_NEW)) {
-            // background to activte state
-            HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
-            DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
-        } else {
-            HILOG_DEBUG("Activate %{public}s", element.c_str());
-            Activate();
-        }
-    } else {
-        LoadAbility();
-    }
-}
-
-void AbilityRecord::ProcessInactivate()
-{
-    std::string element = GetWant().GetElement().GetURI();
-    HILOG_DEBUG("ability record: %{public}s", element.c_str());
-
-    if (isReady_) {
-        if (IsAbilityState(AbilityState::BACKGROUND)) {
-            // background to activte state
-            HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
-            DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token_);
-        } else if (!IsAbilityState(AbilityState::INACTIVE) && !IsAbilityState(AbilityState::INACTIVATING)) {
-            HILOG_DEBUG("Inactivate %{public}s", element.c_str());
-            Inactivate();
-        }
-    } else {
-        LoadAbility();
     }
 }
 
@@ -631,13 +551,6 @@ void AbilityRecord::RestoreAbilityState()
     lifecycleDeal_->RestoreAbilityState(stateDatas_);
     stateDatas_.Clear();
     isRestarting_ = false;
-}
-
-void AbilityRecord::TopActiveAbilityChanged(bool flag)
-{
-    HILOG_INFO("%{public}s called, isTop: %{public}d", __func__, flag);
-    CHECK_POINTER(scheduler_);
-    scheduler_->NotifyTopActiveAbilityChanged(flag);
 }
 
 void AbilityRecord::SetWant(const Want &want)
@@ -1104,16 +1017,6 @@ bool AbilityRecord::IsUninstallAbility() const
     return isUninstall_;
 }
 
-void AbilityRecord::SetKernalSystemAbility()
-{
-    isKernalSystemAbility_ = true;
-}
-
-bool AbilityRecord::IsKernalSystemAbility() const
-{
-    return isKernalSystemAbility_;
-}
-
 void AbilityRecord::SetLauncherRoot()
 {
     isLauncherRoot_ = true;
@@ -1148,44 +1051,6 @@ void AbilityRecord::SendEvent(uint32_t msg, uint32_t timeOut)
     g_abilityRecordEventId_++;
     eventId_ = g_abilityRecordEventId_;
     handler->SendEvent(msg, eventId_, timeOut);
-}
-
-#ifdef SUPPORT_GRAPHICS
-bool AbilityRecord::SupportMultWindow() const
-{
-    // LauncherAbility don't support multi window display.
-    if (isLauncherAbility_) {
-        return false;
-    }
-
-    return true;
-}
-
-void AbilityRecord::NotifyMultiWinModeChanged(const AbilityWindowConfiguration &winModeKey, bool flag)
-{
-    HILOG_INFO("Notify multi window mode changed.");
-    CHECK_POINTER(scheduler_);
-    scheduler_->NotifyMultiWinModeChanged(static_cast<int32_t>(winModeKey), flag);
-}
-#endif
-
-void AbilityRecord::SetInMovingState(bool isMoving)
-{
-    isInMovingState_ = isMoving;
-}
-
-bool AbilityRecord::GetInMovingState() const
-{
-    return isInMovingState_;
-}
-
-bool AbilityRecord::IsToEnd() const
-{
-    return isToEnd_;
-}
-void AbilityRecord::SetToEnd(bool isToEnd)
-{
-    isToEnd_ = isToEnd;
 }
 
 void AbilityRecord::SetStartSetting(const std::shared_ptr<AbilityStartSetting> &setting)
@@ -1243,45 +1108,12 @@ AppState AbilityRecord::GetAppState() const
 void AbilityRecord::ClearFlag()
 {
     isRestarting_ = false;
-    isForceTerminate_ = false;
     isUninstall_ = false;
     isTerminating_ = false;
-    isInMovingState_ = false;
     preAbilityRecord_.reset();
     nextAbilityRecord_.reset();
-    backAbilityRecord_.reset();
     startTime_ = 0;
     appState_ = AppState::END;
-}
-
-void AbilityRecord::SetLockScreenState(const bool isLock)
-{
-    isLockScreenState_ = isLock;
-}
-
-bool AbilityRecord::GetLockScreenState() const
-{
-    return isLockScreenState_;
-}
-
-void AbilityRecord::SetMovingBackgroundFlag(bool isMoving)
-{
-    isMovingBackground_ = isMoving;
-}
-
-bool AbilityRecord::IsMovingBackground() const
-{
-    return isMovingBackground_;
-}
-
-void AbilityRecord::SetLockScreenRoot()
-{
-    isLockScreenRoot_ = true;
-}
-
-bool AbilityRecord::IsLockScreenRoot() const
-{
-    return isLockScreenRoot_;
 }
 
 bool AbilityRecord::IsNewVersion()

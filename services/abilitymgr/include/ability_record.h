@@ -310,20 +310,6 @@ public:
     std::shared_ptr<AbilityRecord> GetNextAbilityRecord() const;
 
     /**
-     * set ability's back ability record.
-     *
-     * @param abilityRecord , back ability record
-     */
-    void SetBackAbilityRecord(const std::shared_ptr<AbilityRecord> &abilityRecord);
-
-    /**
-     * get ability's back ability record.
-     *
-     * @return back ability record
-     */
-    std::shared_ptr<AbilityRecord> GetBackAbilityRecord() const;
-
-    /**
      * set event id.
      *
      * @param eventId
@@ -368,14 +354,6 @@ public:
     bool IsTerminating() const;
 
     /**
-     * check whether the ability force to terminate.
-     *
-     * @return true : yes ,false: not
-     */
-    bool IsForceTerminate() const;
-    void SetForceTerminate(bool flag);
-
-    /**
      * set the ability is terminating.
      *
      */
@@ -413,30 +391,6 @@ public:
      *
      */
     virtual void Activate();
-
-    /**
-     * process request of activing the ability.
-     *
-     */
-    void ProcessActivate();
-
-    /**
-     * process request of activing the ability in moving.
-     *
-     */
-    void ProcessActivateInMoving();
-
-    /**
-     * process request of inactiving the ability.
-     *
-     */
-    void ProcessInactivate();
-
-    /**
-     * process request of inactiving the ability in moving.
-     *
-     */
-    void ProcessInactivateInMoving();
 
     /**
      * inactive the ability.
@@ -674,24 +628,11 @@ public:
      */
     bool IsUninstallAbility() const;
 
-    void SetKernalSystemAbility();
-    bool IsKernalSystemAbility() const;
-
     void SetLauncherRoot();
     bool IsLauncherRoot() const;
 
     bool IsAbilityState(const AbilityState &state) const;
     bool IsActiveState() const;
-
-#ifdef SUPPORT_GRAPHICS
-    bool SupportMultWindow() const;
-    void NotifyMultiWinModeChanged(const AbilityWindowConfiguration &winModeKey, bool flag);
-#endif
-    void SetInMovingState(bool isMoving);
-    bool GetInMovingState() const;
-
-    bool IsToEnd() const;
-    void SetToEnd(bool isToEnd);
 
     void SetStartSetting(const std::shared_ptr<AbilityStartSetting> &setting);
     std::shared_ptr<AbilityStartSetting> GetStartSetting() const;
@@ -704,14 +645,6 @@ public:
     AppState GetAppState() const;
 
     void ClearFlag();
-
-    void SetLockScreenState(const bool isLock);
-    bool GetLockScreenState() const;
-    void SetMovingBackgroundFlag(bool isMoving);
-    bool IsMovingBackground() const;
-
-    void SetLockScreenRoot();
-    bool IsLockScreenRoot() const;
 
     bool IsNewVersion();
     void SetLaunchReason(const LaunchReason &reason);
@@ -778,7 +711,6 @@ private:
     AppExecFwk::ApplicationInfo applicationInfo_ = {};     // the ability info get from BMS
     std::weak_ptr<AbilityRecord> preAbilityRecord_ = {};   // who starts this ability record
     std::weak_ptr<AbilityRecord> nextAbilityRecord_ = {};  // ability that started by this ability
-    std::weak_ptr<AbilityRecord> backAbilityRecord_ = {};  // who back to this ability record
     int64_t startTime_ = 0;                           // records first time of ability start
     bool isReady_ = false;                            // is ability thread attached?
     bool isWindowAttached_ = false;                   // Is window of this ability attached?
@@ -787,7 +719,6 @@ private:
     sptr<IAbilityScheduler> scheduler_ = {};       // kit scheduler
     bool isTerminating_ = false;              // is terminating ?
     bool isCreateByConnect_ = false;          // is created by connect ability mode?
-    bool isToEnd_ = false;                    // is to end ?
 
     int requestCode_ = -1;  // requestCode_: >= 0 for-result start mode; <0 for normal start mode in default.
     sptr<IRemoteObject::DeathRecipient> schedulerDeathRecipient_ = {};  // scheduler binderDied Recipient
@@ -810,20 +741,14 @@ private:
     std::list<std::shared_ptr<CallerRecord>> callerList_ = {};
 
     bool isUninstall_ = false;
-    bool isForceTerminate_ = false;
     const static std::map<AbilityState, std::string> stateToStrMap;
     const static std::map<AbilityLifeCycleState, AbilityState> convertStateMap;
     const static std::map<AppState, std::string> appStateToStrMap_;
 
-    bool isKernalSystemAbility_ = false;
     bool isLauncherRoot_ = false;
-    bool isLockScreenState_ = false; // ability to change state when lockscreen.
 
     PacMap stateDatas_;             // ability saved ability state data
     bool isRestarting_ = false;     // is restarting ?
-    bool isInMovingState_ = false;  // whether complete multi window moving state.
-    bool isMovingBackground_ = false;
-    bool isLockScreenRoot_ = false;
     AppState appState_ = AppState::BEGIN;
 
     int32_t compatibleVersion_ = 0; // > 7 new version, <= 7 old version.

@@ -113,12 +113,6 @@ public:
         return urivalue;
     }
 
-    void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) override
-    {}
-
-    void NotifyTopActiveAbilityChanged(bool flag) override
-    {}
-
     virtual bool ScheduleRegisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) override
     {
         return true;
