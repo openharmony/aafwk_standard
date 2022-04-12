@@ -899,9 +899,22 @@ bool Ability::HasWindowFocus()
 
 void Ability::SetShowOnLockScreen(bool showOnLockScreen)
 {
-    HILOG_INFO("Ability::SetShowOnLockScreen come, ability is %{public}s, showOnLockScreen is %{public}d",
+    HILOG_INFO("SetShowOnLockScreen come, ability is %{public}s, showOnLockScreen is %{public}d",
         abilityInfo_->name.c_str(), showOnLockScreen);
     showOnLockScreen_ = showOnLockScreen;
+    sptr<Rosen::Window> window = nullptr;
+    if (abilityWindow_ == nullptr || (window = abilityWindow_->GetWindow()) == nullptr) {
+        HILOG_INFO("SetShowOnLockScreen come, window is null, ability is %{public}s",
+            abilityInfo_->name.c_str());
+        return;
+    }
+    HILOG_INFO("SetShowOnLockScreen come, addWindowFlag, ability is %{public}s, showOnLockScreen is %{public}d",
+        abilityInfo_->name.c_str(), showOnLockScreen);
+    if (showOnLockScreen) {
+        window->AddWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
+    } else {
+        window->RemoveWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
+    }
 }
 #endif
 
