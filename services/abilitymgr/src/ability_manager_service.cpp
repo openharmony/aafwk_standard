@@ -116,6 +116,7 @@ const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.arkheaplimit";
 const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
 const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
 const std::string ACTION_CHOOSE = "ohos.want.action.select";
+const std::string HIGHEST_PRIORITY_ABILITY_ENTITY = "flag.home.intent.from.system";
 const std::map<std::string, AbilityManagerService::DumpKey> AbilityManagerService::dumpMap = {
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("--all", KEY_DUMP_ALL),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("-a", KEY_DUMP_ALL),
@@ -2194,34 +2195,52 @@ int AbilityManagerService::GetUserId()
     return U0_USER_ID;
 }
 
-bool AbilityManagerService::StartingLauncherAbility(bool isBoot)
+void AbilityManagerService::StartHighestPriorityAbility(bool isBoot)
 {
     HILOG_DEBUG("%{public}s", __func__);
     auto bms = GetBundleManager();
-    CHECK_POINTER_AND_RETURN(bms, false);
+    CHECK_POINTER(bms);
 
-    /* query if launcher ability has installed */
-    AppExecFwk::AbilityInfo abilityInfo;
-    /* First stage, hardcoding for the first launcher App */
     auto userId = GetUserId();
-    Want want;
-    want.SetElementName(AbilityConfig::LAUNCHER_BUNDLE_NAME, AbilityConfig::LAUNCHER_ABILITY_NAME);
     HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
+
+    /* Query the highest priority abiltiy or extension ability, and start it. usually, it is OOBE or launcher */
+    Want want;
+    want.AddEntity(HIGHEST_PRIORITY_ABILITY_ENTITY);
+    AppExecFwk::AbilityInfo abilityInfo;
+    AppExecFwk::ExtensionAbilityInfo extensionAbilityInfo;
     int attemptNums = 0;
-    while (!IN_PROCESS_CALL(bms->QueryAbilityInfo(want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION,
-        userId, abilityInfo))) {
-        HILOG_INFO("Waiting query launcher ability info completed.");
+    while (!IN_PROCESS_CALL(bms->ImplicitQueryInfoByPriority(want,
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId,
+        abilityInfo, extensionAbilityInfo))) {
+        HILOG_INFO("Waiting query highest priority ability info completed.");
         if (!isBoot && ++attemptNums > SWITCH_ACCOUNT_TRY) {
-            HILOG_ERROR("Start launcher failed.");
-            return false;
+            HILOG_ERROR("Query highest priority ability failed.");
+            return;
         }
         usleep(REPOLL_TIME_MICRO_SECONDS);
     }
 
-    HILOG_INFO("Start Home Launcher Ability.");
-    /* start launch ability */
-    (void)StartAbility(want, userId, DEFAULT_INVAL_VALUE);
-    return true;
+    if (abilityInfo.name.empty() && extensionAbilityInfo.name.empty()) {
+        HILOG_ERROR("Query highest priority ability failed");
+        return;
+    }
+
+    Want abilityWant; // donot use 'want' here, because the entity of 'want' is not empty
+    if (!abilityInfo.name.empty()) {
+        /* highest priority abiltiy */
+        HILOG_INFO("Start the highest priority ability. bundleName: %{public}s, ability:%{public}s",
+            abilityInfo.bundleName.c_str(), abilityInfo.name.c_str());
+        abilityWant.SetElementName(abilityInfo.bundleName, abilityInfo.name);
+    } else {
+        /* highest priority extension abiltiy */
+        HILOG_INFO("Start the highest priority entension ability. bundleName: %{public}s, ability:%{public}s",
+            extensionAbilityInfo.bundleName.c_str(), extensionAbilityInfo.name.c_str());
+        abilityWant.SetElementName(extensionAbilityInfo.bundleName, extensionAbilityInfo.name);
+    }
+
+    /* note: OOBE APP need disable itself, otherwise, it will be started when restart system everytime */
+    (void)StartAbility(abilityWant, userId, DEFAULT_INVAL_VALUE);
 }
 
 void AbilityManagerService::StartingPhoneServiceAbility()
@@ -3443,15 +3462,13 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot
 
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
-        StartingLauncherAbility(isBoot);
+        StartHighestPriorityAbility(isBoot);
         StartingScreenLockAbility();
         return;
     }
 
-    if (amsConfigResolver_->GetStartLauncherState()) {
-        HILOG_INFO("start launcher");
-        StartingLauncherAbility(isBoot);
-    }
+    HILOG_INFO("start oobe or launcher");
+    StartHighestPriorityAbility(isBoot);
 
     if (amsConfigResolver_->GetStartScreenLockState()) {
         StartingScreenLockAbility();
