@@ -62,6 +62,7 @@ group("form_napi_packages") {
       "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_binding_data:formbindingdata_napi",
       "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_extension:formextension_napi",
       "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_extension_context:formextensioncontext_napi",
+      "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/form_info:forminfo_napi",
     ]
   }
 }
