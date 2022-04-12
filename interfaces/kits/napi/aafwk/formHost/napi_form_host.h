@@ -135,15 +135,6 @@ struct AsyncAcquireFormStateCallbackInfo {
     int result;
 };
 
-struct AsyncFormUninstallObserverCallbackInfo {
-    napi_env env;
-    OHOS::AppExecFwk::Ability *ability;
-    napi_async_work asyncWork;
-    napi_deferred deferred;
-    napi_ref callback;
-    int result;
-};
-
 struct AsyncNotifyFormsVisibleCallbackInfo {
     napi_env env;
     OHOS::AppExecFwk::Ability *ability;

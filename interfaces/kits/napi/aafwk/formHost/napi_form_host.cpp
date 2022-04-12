@@ -2434,6 +2434,102 @@ public:
 private:
     AsyncAcquireFormStateCallbackInfo *asyncCallbackInfo_ = nullptr;
 };
+
+class FormUninstallCallbackClient {
+public:
+    explicit FormUninstallCallbackClient(napi_env env, napi_ref callbackRef)
+    {
+        env_ = env;
+        callbackRef_ = callbackRef;
+    }
+
+    virtual ~FormUninstallCallbackClient()
+    {
+        napi_delete_reference(env_, callbackRef_);
+    }
+
+    void ProcessFormUninstall(const int64_t formId)
+    {
+        std::string formIdString = std::to_string(formId);
+        napi_value callbackValues;
+        napi_create_string_utf8(env_, formIdString.c_str(), NAPI_AUTO_LENGTH, &callbackValues);
+        napi_value callResult;
+        napi_value myCallback = nullptr;
+        napi_get_reference_value(env_, callbackRef_, &myCallback);
+        if (myCallback != nullptr) {
+            napi_call_function(env_, nullptr, myCallback, ARGS_SIZE_ONE, &callbackValues, &callResult);
+        }
+    }
+
+    bool IsStrictEqual(napi_value callback) {
+        bool isEqual = false;
+        napi_value myCallback = nullptr;
+        napi_get_reference_value(env_, callbackRef_, &myCallback);
+        napi_strict_equals(env_, myCallback, callback, &isEqual);
+        HILOG_INFO("isStrictEqual: %{public}d", isEqual);
+        return isEqual;
+    }
+
+private:
+    napi_ref callbackRef_ {};
+    napi_env env_;
+};
+
+std::map<napi_ref, std::shared_ptr<FormUninstallCallbackClient>> g_formUninstallCallbackMap {};
+std::mutex formUninstallCallbackMapMutex_;
+
+void FormUninstallCallback(const std::vector<int64_t> &formIds) {
+    std::lock_guard<std::mutex> lock(formUninstallCallbackMapMutex_);
+    for (auto &iter : g_formUninstallCallbackMap) {
+        for (int64_t formId : formIds) {
+            iter.second->ProcessFormUninstall(formId);
+        }
+    }
+}
+
+bool AddFormUninstallCallback(napi_env env, napi_value callback) {
+    std::lock_guard<std::mutex> lock(formUninstallCallbackMapMutex_);
+    for (auto &iter : g_formUninstallCallbackMap) {
+        if (iter.second->IsStrictEqual(callback)) {
+            HILOG_ERROR("found equal callback");
+            return false;
+        }
+    }
+
+    napi_ref callbackRef;
+    napi_create_reference(env, callback, REF_COUNT, &callbackRef);
+    std::shared_ptr<FormUninstallCallbackClient> callbackClient = std::make_shared<FormUninstallCallbackClient>(env,
+        callbackRef);
+
+    auto ret = g_formUninstallCallbackMap.emplace(callbackRef, callbackClient);
+    if (!ret.second) {
+        HILOG_ERROR("failed to emplace callback");
+        return false;
+    }
+    return true;
+}
+
+bool DelFormUninstallCallback(napi_value callback) {
+    int32_t count = 0;
+    std::lock_guard<std::mutex> lock(formUninstallCallbackMapMutex_);
+    for (auto iter = g_formUninstallCallbackMap.begin(); iter != g_formUninstallCallbackMap.end();) {
+        if (iter->second->IsStrictEqual(callback)) {
+            HILOG_INFO("found equal callback");
+            iter = g_formUninstallCallbackMap.erase(iter);
+            count++;
+        } else {
+            iter++;
+        }
+    }
+    HILOG_INFO("%{public}d form uninstall callback deleted.", count);
+    return true;
+}
+
+bool ClearFormUninstallCallback() {
+    std::lock_guard<std::mutex> lock(formUninstallCallbackMapMutex_);
+    g_formUninstallCallbackMap.clear();
+    return true;
+}
 }
 
 static void InnerAcquireFormState(napi_env env, AsyncAcquireFormStateCallbackInfo *const asyncCallbackInfo)
@@ -2571,78 +2667,6 @@ napi_value NAPI_AcquireFormState(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value RegisterFormUninstallObserverCallback(napi_env env,
-                                                 AsyncFormUninstallObserverCallbackInfo *const asyncCallbackInfo)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    napi_value resourceName;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
-    napi_create_async_work(
-        env,
-        nullptr,
-        resourceName,
-        [](napi_env env, void *data) {
-            HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
-            auto *asyncCallbackInfo = (AsyncFormUninstallObserverCallbackInfo *) data;
-            asyncCallbackInfo->result = 0;
-        },
-        [](napi_env env, napi_status status, void *data) {
-            HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
-            auto *asyncCallbackInfo = (AsyncFormUninstallObserverCallbackInfo *) data;
-
-            if (asyncCallbackInfo->callback != nullptr) {
-                napi_value result;
-                napi_create_int32(env, asyncCallbackInfo->result, &result);
-                napi_value callback;
-                napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
-                napi_value callResult;
-                napi_call_function(env, nullptr, callback, ARGS_SIZE_ONE, &result, &callResult);
-                napi_delete_reference(env, asyncCallbackInfo->callback);
-            }
-            napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-            delete asyncCallbackInfo;
-        },
-        (void *) asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-    return NapiGetResut(env, 1);
-}
-
-napi_value RegisterFormUninstallObserverPromise(napi_env env,
-                                                AsyncFormUninstallObserverCallbackInfo *const asyncCallbackInfo)
-{
-    HILOG_INFO("%{public}s, promise.", __func__);
-    napi_deferred deferred;
-    napi_value promise;
-    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
-    asyncCallbackInfo->deferred = deferred;
-
-    napi_value resourceName;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
-    napi_create_async_work(
-        env,
-        nullptr,
-        resourceName,
-        [](napi_env env, void *data) {
-            HILOG_INFO("%{public}s, promise runnning", __func__);
-            auto *asyncCallbackInfo = (AsyncFormUninstallObserverCallbackInfo *) data;
-            asyncCallbackInfo->result = 0;
-        },
-        [](napi_env env, napi_status status, void *data) {
-            HILOG_INFO("%{public}s, promise complete", __func__);
-            auto *asyncCallbackInfo = (AsyncFormUninstallObserverCallbackInfo *) data;
-            napi_value result;
-            napi_create_int32(env, asyncCallbackInfo->result, &result);
-            napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
-            napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-            delete asyncCallbackInfo;
-        },
-        (void *) asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
-    return promise;
-}
-
 /**
  * @brief  The implementation of Node-API interface: on
  *
@@ -2657,9 +2681,9 @@ napi_value NAPI_RegisterFormUninstallObserver(napi_env env, napi_callback_info i
 
     // Check the number of the arguments
     size_t argc = ARGS_SIZE_TWO;
-    napi_value argv[ARGS_SIZE_TWO] = {nullptr};
+    napi_value argv[ARGS_SIZE_TWO] = {nullptr, nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr));
-    if (argc > ARGS_SIZE_TWO) {
+    if (argc != ARGS_SIZE_TWO) {
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
@@ -2667,102 +2691,31 @@ napi_value NAPI_RegisterFormUninstallObserver(napi_env env, napi_callback_info i
 
     napi_valuetype valueType = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valueType));
-    NAPI_ASSERT(env, valueType == napi_string,
-        "The arguments[0] type of on is incorrect, expected type is string.");
-
-    auto *asyncCallbackInfo = new AsyncFormUninstallObserverCallbackInfo {
-        .env = env,
-        .ability = GetGlobalAbility(env),
-        .asyncWork = nullptr,
-        .deferred = nullptr,
-        .callback = nullptr,
-        .result = 0,
-    };
-
-    if (argc == ARGS_SIZE_TWO) {
-        // Check the value type of the arguments
-        valueType = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
-        NAPI_ASSERT(env, valueType == napi_function, "The arguments[1] type of on \
-        is incorrect, expected type is function.");
-        napi_create_reference(env, argv[1], REF_COUNT, &asyncCallbackInfo->callback);
-        return RegisterFormUninstallObserverCallback(env, asyncCallbackInfo);
-    } else {
-        return RegisterFormUninstallObserverPromise(env, asyncCallbackInfo);
+    if (valueType != napi_string) {
+        HILOG_ERROR("The type of args[0] is incorrect, expected type is string.");
+        return nullptr;
     }
-}
+    std::string type;
+    if (!UnwrapStringFromJS2(env, argv[0], type)) {
+        HILOG_ERROR("failed to get args[0].");
+        return nullptr;
+    }
 
+    if (type != "formUninstall") {
+        HILOG_ERROR("args[0] should be formUninstall.");
+        return nullptr;
+    }
 
-napi_value UnregisterFormUninstallObserverCallback(napi_env env,
-                                                   AsyncFormUninstallObserverCallbackInfo *const asyncCallbackInfo)
-{
-    HILOG_INFO("%{public}s, asyncCallback.", __func__);
-    napi_value resourceName;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
-    napi_create_async_work(
-        env,
-        nullptr,
-        resourceName,
-        [](napi_env env, void *data) {
-            HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
-            auto *asyncCallbackInfo = (AsyncFormUninstallObserverCallbackInfo *) data;
-            asyncCallbackInfo->result = 0;
-        },
-        [](napi_env env, napi_status status, void *data) {
-            HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
-            auto *asyncCallbackInfo = (AsyncFormUninstallObserverCallbackInfo *) data;
+    valueType = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
+    if (valueType != napi_function) {
+        HILOG_ERROR("The type of args[1] is incorrect, expected type is function.");
+        return nullptr;
+    }
 
-            if (asyncCallbackInfo->callback != nullptr) {
-                napi_value result;
-                napi_create_int32(env, asyncCallbackInfo->result, &result);
-                napi_value callback;
-                napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
-                napi_value callResult;
-                napi_call_function(env, nullptr, callback, ARGS_SIZE_ONE, &result, &callResult);
-                napi_delete_reference(env, asyncCallbackInfo->callback);
-            }
-            napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-            delete asyncCallbackInfo;
-        },
-        (void *) asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-    return NapiGetResut(env, 1);
-}
-
-napi_value UnregisterFormUninstallObserverPromise(napi_env env,
-                                                  AsyncFormUninstallObserverCallbackInfo *const asyncCallbackInfo)
-{
-    HILOG_INFO("%{public}s, promise.", __func__);
-    napi_deferred deferred;
-    napi_value promise;
-    NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
-    asyncCallbackInfo->deferred = deferred;
-
-    napi_value resourceName;
-    napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName);
-    napi_create_async_work(
-        env,
-        nullptr,
-        resourceName,
-        [](napi_env env, void *data) {
-            HILOG_INFO("%{public}s, promise runnning", __func__);
-            auto *asyncCallbackInfo = (AsyncFormUninstallObserverCallbackInfo *) data;
-            asyncCallbackInfo->result = 0;
-        },
-        [](napi_env env, napi_status status, void *data) {
-            HILOG_INFO("%{public}s, promise complete", __func__);
-            auto *asyncCallbackInfo = (AsyncFormUninstallObserverCallbackInfo *) data;
-            napi_value result;
-            napi_create_int32(env, asyncCallbackInfo->result, &result);
-            napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
-            napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-            delete asyncCallbackInfo;
-        },
-        (void *) asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    napi_queue_async_work(env, asyncCallbackInfo->asyncWork);
-    return promise;
+    FormHostClient::GetInstance()->RegisterUninstallCallback(FormUninstallCallback);
+    AddFormUninstallCallback(env, argv[1]);
+    return nullptr;
 }
 
 /**
@@ -2779,7 +2732,7 @@ napi_value NAPI_UnregisterFormUninstallObserver(napi_env env, napi_callback_info
 
     // Check the number of the arguments
     size_t argc = ARGS_SIZE_TWO;
-    napi_value argv[ARGS_SIZE_TWO] = {nullptr};
+    napi_value argv[ARGS_SIZE_TWO] = {nullptr, nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr));
     if (argc > ARGS_SIZE_TWO) {
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
@@ -2789,28 +2742,33 @@ napi_value NAPI_UnregisterFormUninstallObserver(napi_env env, napi_callback_info
 
     napi_valuetype valueType = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valueType));
-    NAPI_ASSERT(env, valueType == napi_string,
-        "The arguments[0] type of off is incorrect, expected type is string.");
+    if (valueType != napi_string) {
+        HILOG_ERROR("The type of args[0] is incorrect, expected type is string.");
+        return nullptr;
+    }
+    std::string type;
+    if (!UnwrapStringFromJS2(env, argv[0], type)) {
+        HILOG_ERROR("failed to get args[0].");
+        return nullptr;
+    }
 
-    auto *asyncCallbackInfo = new AsyncFormUninstallObserverCallbackInfo {
-        .env = env,
-        .ability = GetGlobalAbility(env),
-        .asyncWork = nullptr,
-        .deferred = nullptr,
-        .callback = nullptr,
-        .result = 0,
-    };
+    if (type != "formUninstall") {
+        HILOG_ERROR("args[0] should be formUninstall.");
+        return nullptr;
+    }
 
     if (argc == ARGS_SIZE_TWO) {
-        // Check the value type of the arguments
         valueType = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
-        NAPI_ASSERT(env, valueType == napi_function, "The arguments[1] type of off \
-        is incorrect, expected type is function.");
-        napi_create_reference(env, argv[1], REF_COUNT, &asyncCallbackInfo->callback);
-        return UnregisterFormUninstallObserverCallback(env, asyncCallbackInfo);
+        if (valueType != napi_function) {
+            HILOG_ERROR("The type of args[1] is incorrect, expected type is function.");
+            return nullptr;
+        }
+        DelFormUninstallCallback(argv[1]);
+        return nullptr;
     } else {
-        return UnregisterFormUninstallObserverPromise(env, asyncCallbackInfo);
+        ClearFormUninstallCallback();
+        return nullptr;
     }
 }
 

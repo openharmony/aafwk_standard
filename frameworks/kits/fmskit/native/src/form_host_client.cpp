@@ -145,6 +145,13 @@ bool FormHostClient::AddFormState(std::shared_ptr<FormStateCallbackInterface> &f
     return true;
 }
 
+bool FormHostClient::RegisterUninstallCallback(UninstallCallback callback)
+{
+    std::lock_guard<std::mutex> lock(uninstallCallbackMutex_);
+    uninstallCallback_ = callback;
+    return true;
+}
+
 /**
  * @brief Request to give back a form.
  *
@@ -213,6 +220,12 @@ void FormHostClient::OnUninstall(const std::vector<int64_t> &formIds)
     if (formIds.empty()) {
         HILOG_ERROR("%{public}s error, formIds is empty.", __func__);
         return;
+    }
+    {
+        std::lock_guard<std::mutex> lock(uninstallCallbackMutex_);
+        if (uninstallCallback_ != nullptr) {
+            uninstallCallback_(formIds);
+        }
     }
     for (auto &formId : formIds) {
         if (formId < 0) {
