@@ -20,6 +20,7 @@
 
 #include "form_js_info.h"
 #include "form_record.h"
+#include "form_state_info.h"
 #include "ipc_types.h"
 #include "iremote_object.h"
 
@@ -58,6 +59,15 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     void OnUninstall(std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken);
+
+    /**
+     * @brief Form provider is uninstalled.
+     * @param state The form state.
+     * @param want The want of onAcquireFormState.
+     * @param callerToken Caller ability token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    void OnAcquireState(AppExecFwk::FormState state, const AAFwk::Want &want, const sptr<IRemoteObject> &callerToken);
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

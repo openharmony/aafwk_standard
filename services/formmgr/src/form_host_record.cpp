@@ -158,6 +158,24 @@ void FormHostRecord::OnFormUninstalled(std::vector<int64_t> &formIds)
     }
     clientImpl_->OnUninstall(formIds, clientStub_);
 }
+
+/**
+ * Send form state message to form host.
+ *
+ * @param state The form state.
+ * @param want The want of onAcquireFormState.
+ */
+void FormHostRecord::OnAcquireState(AppExecFwk::FormState state, const AAFwk::Want &want)
+{
+    HILOG_INFO("%{public}s start.", __func__);
+
+    if (clientImpl_ == nullptr) {
+        HILOG_ERROR("%{public}s: clientImpl_ can not be null.", __func__);
+        return;
+    }
+    clientImpl_->OnAcquireState(state, want, clientStub_);
+}
+
 /**
  * @brief Release resource.
  * @param id The Id of the form.

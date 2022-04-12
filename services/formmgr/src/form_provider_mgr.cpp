@@ -380,6 +380,21 @@ void FormProviderMgr::IncreaseTimerRefreshCount(const int64_t formId)
         FormTimerMgr::GetInstance().IncreaseRefreshCount(formId);
     }
 }
+
+/**
+ * @brief Acquire form state.
+ * @param state form state.
+ * @param provider provider info.
+ * @param wantArg The want of onAcquireFormState.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormProviderMgr::AcquireFormStateBack(FormState state, const std::string& provider, const Want &wantArg)
+{
+    HILOG_DEBUG("AcquireFormState start: %{public}d, provider: %{public}s", state, provider.c_str());
+    FormDataMgr::GetInstance().AcquireFormStateBack(state, provider, wantArg);
+    return ERR_OK;
+}
+
 FormRecord FormProviderMgr::GetFormAbilityInfo(const FormRecord &record) const
 {
     FormRecord newRecord;

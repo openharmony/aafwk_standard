@@ -32,6 +32,8 @@ FormHostStub::FormHostStub()
         &FormHostStub::HandleOnUpdate;
     memberFuncMap_[static_cast<uint32_t>(IFormHost::Message::FORM_HOST_ON_UNINSTALL)] =
         &FormHostStub::HandleOnUninstall;
+    memberFuncMap_[static_cast<uint32_t>(IFormHost::Message::FORM_HOST_ON_ACQUIRE_FORM_STATE)] =
+        &FormHostStub::HandleOnAcquireState;
 }
 
 FormHostStub::~FormHostStub()
@@ -116,6 +118,28 @@ int FormHostStub::HandleOnUninstall(MessageParcel &data, MessageParcel &reply)
         return ERR_OK;
     }
     return ERR_APPEXECFWK_PARCEL_ERROR;
+}
+
+/**
+ * @brief handle OnAcquireState message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormHostStub::HandleOnAcquireState(MessageParcel &data, MessageParcel &reply)
+{
+    auto state = (FormState) data.ReadInt32();
+
+    std::unique_ptr<AAFwk::Want> want(data.ReadParcelable<AAFwk::Want>());
+    if (!want) {
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
+        reply.WriteInt32(ERR_APPEXECFWK_PARCEL_ERROR);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    OnAcquireState(state, *want);
+    reply.WriteInt32(ERR_OK);
+    return ERR_OK;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

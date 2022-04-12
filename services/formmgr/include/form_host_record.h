@@ -22,6 +22,7 @@
 #include "form_host_callback.h"
 #include "form_item_info.h"
 #include "form_record.h"
+#include "form_state_info.h"
 #include "hilog_wrapper.h"
 #include "iremote_object.h"
 
@@ -108,6 +109,13 @@ public:
      * @param record Form record.
      */
     void OnFormUninstalled(std::vector<int64_t> &formIds);
+    /**
+     * Send form state message to form host.
+     *
+     * @param state The form state.
+     * @param want The want of onAcquireFormState.
+     */
+    void OnAcquireState(AppExecFwk::FormState state, const AAFwk::Want &want);
 
     /**
      * @brief Release resource.

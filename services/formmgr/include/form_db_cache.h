@@ -128,6 +128,38 @@ public:
      * @param userId user ID.
      */
     void DeleteDBFormsByUserId(const int32_t userId);
+
+    /**
+     * @brief handle get no host invalid DB forms.
+     * @param userId User ID.
+     * @param callingUid The UID of the proxy.
+     * @param matchedFormIds The set of the valid forms.
+     * @param noHostDBFormsMap The map of the no host forms.
+     * @param foundFormsMap The map of the found forms.
+     */
+    void GetNoHostInvalidDBForms(int32_t userId, int32_t callingUid, std::set<int64_t> &matchedFormIds,
+                                 std::map<FormIdKey, std::set<int64_t>> &noHostDBFormsMap,
+                                 std::map<int64_t, bool> &foundFormsMap);
+
+    /**
+     * @brief handle delete no host DB forms.
+     * @param callingUid The UID of the proxy.
+     * @param noHostDBFormsMap The map of the no host forms.
+     * @param foundFormsMap The map of the found forms.
+     */
+    void BatchDeleteNoHostDBForms(int32_t callingUid, std::map<FormIdKey, std::set<int64_t>> &noHostDBFormsMap,
+                                  std::map<int64_t, bool> &foundFormsMap);
+
+    /**
+     * @brief handle delete invalid DB forms.
+     * @param userId User ID.
+     * @param callingUid The UID of the proxy.
+     * @param matchedFormIds The set of the valid forms.
+     * @param removedFormsMap The map of the removed invalid forms.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode DeleteInvalidDBForms(int32_t userId, int32_t callingUid, std::set<int64_t> &matchedFormIds,
+                                 std::map<int64_t, bool> &removedFormsMap);
 private:
     std::shared_ptr<FormStorageMgr> dataStorage_;
     mutable std::mutex formDBInfosMutex_;
