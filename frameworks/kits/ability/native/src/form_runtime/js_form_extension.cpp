@@ -320,5 +320,35 @@ void JsFormExtension::OnConfigurationUpdated(const AppExecFwk::Configuration& co
     NativeValue* jsConfiguration = reinterpret_cast<NativeValue*>(napiConfiguration);
     CallObjectMethod("onConfigurationUpdated", &jsConfiguration, 1);
 }
+
+FormState JsFormExtension::OnAcquireFormState(const Want &want)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    auto state = (int32_t)FormState::DEFAULT;
+    HandleScope handleScope(jsRuntime_);
+    NativeEngine* nativeEngine = &jsRuntime_.GetNativeEngine();
+    napi_value napiWant = OHOS::AppExecFwk::WrapWant(reinterpret_cast<napi_env>(nativeEngine), want);
+    HILOG_INFO("%{public}s OnAcquireFormState WrapWant end.", __func__);
+
+    NativeValue* nativeWant = reinterpret_cast<NativeValue*>(napiWant);
+    NativeValue* argv[] = { nativeWant };
+    NativeValue* nativeResult = CallObjectMethod("onAcquireFormState", argv, 1);
+    if (nativeResult == nullptr) {
+        HILOG_INFO("%{public}s, function onAcquireFormState not found", __func__);
+        return FormState::DEFAULT;
+    }
+
+    if (!ConvertFromJsValue(*nativeEngine, nativeResult, state)) {
+        HILOG_ERROR("%{public}s, convert formDataStr failed", __func__);
+        return FormState::DEFAULT;
+    }
+
+    HILOG_INFO("%{public}s, state: %{public}d", __func__, state);
+    if (state <= (int32_t) AppExecFwk::FormState::UNKNOWN || state > (int32_t) AppExecFwk::FormState::READY) {
+        return AppExecFwk::FormState::UNKNOWN;
+    } else {
+        return (AppExecFwk::FormState) state;
+    }
+}
 } // namespace AbilityRuntime
 } // namespace OHOS

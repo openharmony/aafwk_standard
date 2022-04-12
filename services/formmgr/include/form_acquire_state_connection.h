@@ -33,7 +33,8 @@ using Want = OHOS::AAFwk::Want;
  */
 class FormAcquireStateConnection : public FormAbilityConnection {
 public:
-    FormAcquireStateConnection(const std::string &bundleName, const std::string &abilityName, const Want &want);
+    FormAcquireStateConnection(const std::string &bundleName, const std::string &abilityName, const Want &want,
+                               std::string &provider);
 
     virtual ~FormAcquireStateConnection() = default;
 
@@ -48,6 +49,7 @@ public:
 
 private:
     Want want_;
+    std::string provider_;
     DISALLOW_COPY_AND_MOVE(FormAcquireStateConnection);
 };
 }  // namespace AppExecFwk

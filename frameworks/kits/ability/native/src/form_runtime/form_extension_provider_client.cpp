@@ -379,11 +379,12 @@ void FormExtensionProviderClient::FireFormExtensionEvent(const int64_t formId, c
 /**
  * @brief Acquire form state to form provider.
  * @param wantArg The want of onAcquireFormState.
+ * @param provider The provider info.
  * @param want The want of the request.
  * @param callerToken Form provider proxy object.
  * @return Returns ERR_OK on success, others on failure.
  */
-int FormExtensionProviderClient::AcquireState(const Want &wantArg, const Want &want,
+int FormExtensionProviderClient::AcquireState(const Want &wantArg, const std::string &provider, const Want &want,
                                               const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -395,14 +396,15 @@ int FormExtensionProviderClient::AcquireState(const Want &wantArg, const Want &w
 
     std::shared_ptr<EventHandler> mainHandler = std::make_shared<EventHandler>(EventRunner::GetMainEventRunner());
     std::function<void()> notifyFormExtensionAcquireStateFunc = [client = sptr<FormExtensionProviderClient>(this),
-        wantArg, want, callerToken]() {
-        client->NotifyFormExtensionAcquireState(wantArg, want, callerToken);
+        wantArg, provider, want, callerToken]() {
+        client->NotifyFormExtensionAcquireState(wantArg, provider, want, callerToken);
     };
     mainHandler->PostSyncTask(notifyFormExtensionAcquireStateFunc);
     return ERR_OK;
 }
 
-void FormExtensionProviderClient::NotifyFormExtensionAcquireState(const Want &wantArg, const Want &want,
+void FormExtensionProviderClient::NotifyFormExtensionAcquireState(const Want &wantArg, const std::string &provider,
+                                                                  const Want &want,
                                                                   const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s called.", __func__);
@@ -415,7 +417,7 @@ void FormExtensionProviderClient::NotifyFormExtensionAcquireState(const Want &wa
     } else {
         state = ownerFormExtension->OnAcquireFormState(wantArg);
     }
-    HandleAcquireStateResult(state, errorCode, want, callerToken);
+    HandleAcquireStateResult(state, provider, wantArg, want, callerToken);
     HILOG_INFO("%{public}s called end.", __func__);
 }
 

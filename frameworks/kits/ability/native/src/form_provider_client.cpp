@@ -367,11 +367,13 @@ int FormProviderClient::FireFormEvent(
 /**
  * @brief Acquire form state to form provider.
  * @param wantArg The want of onAcquireFormState.
+ * @param provider The provider info.
  * @param want The want of the request.
  * @param callerToken Form provider proxy object.
  * @return Returns ERR_OK on success, others on failure.
  */
-int FormProviderClient::AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken)
+int FormProviderClient::AcquireState(const Want &wantArg, const std::string &provider, const Want &want,
+                                     const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s called.", __func__);
     // The error code for business operation.
@@ -394,7 +396,7 @@ int FormProviderClient::AcquireState(const Want &wantArg, const Want &want, cons
         state = ownerAbility->OnAcquireFormState(wantArg);
     } while (false);
 
-    HandleAcquireStateResult(state, errorCode, want, callerToken);
+    HandleAcquireStateResult(state, provider, wantArg, want, callerToken);
     return errorCode;
 }
 
@@ -497,8 +499,8 @@ int  FormProviderClient::HandleDisconnect(const Want &want, const sptr<IRemoteOb
     return ERR_OK;
 }
 
-int FormProviderClient::HandleAcquireStateResult(FormState state, int errorCode, const Want &want,
-                                                 const sptr<IRemoteObject> &callerToken)
+int FormProviderClient::HandleAcquireStateResult(FormState state, const std::string &provider, const Want &wantArg,
+                                                 const Want &want, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s start, form state is %{public}d", __func__, state);
 
@@ -507,9 +509,9 @@ int FormProviderClient::HandleAcquireStateResult(FormState state, int errorCode,
         HILOG_ERROR("%{public}s warn, IFormSupply is nullptr", __func__);
         return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
     }
-    formSupplyClient->OnAcquireStateResult(state, want);
+    formSupplyClient->OnAcquireStateResult(state, provider, wantArg, want);
     HILOG_INFO("%{public}s end", __func__);
-    return errorCode;
+    return ERR_OK;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

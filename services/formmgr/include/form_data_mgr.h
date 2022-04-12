@@ -30,6 +30,7 @@
 #include "form_item_info.h"
 #include "form_js_info.h"
 #include "form_record.h"
+#include "form_state_info.h"
 #include "iremote_object.h"
 
 namespace OHOS {
@@ -346,6 +347,66 @@ public:
     * @brief Clear form records for st limit value test.
     */
     void ClearFormRecords();
+
+    /**
+     * @brief handle get no host invalid temp forms.
+     * @param userId User ID.
+     * @param callingUid The UID of the proxy.
+     * @param matchedFormIds The set of the valid forms.
+     * @param noHostTempFormsMap The map of the no host forms.
+     * @param foundFormsMap The map of the found forms.
+     */
+    void GetNoHostInvalidTempForms(int32_t userId, int32_t callingUid, std::set<int64_t> &matchedFormIds,
+                                   std::map<FormIdKey, std::set<int64_t>> &noHostTempFormsMap,
+                                   std::map<int64_t, bool> &foundFormsMap);
+
+    /**
+     * @brief handle delete no host temp forms.
+     * @param callingUid The UID of the proxy.
+     * @param noHostTempFormsMap The map of the no host forms.
+     * @param foundFormsMap The map of the found forms.
+     */
+    void BatchDeleteNoHostTempForms(int32_t callingUid, std::map<FormIdKey, std::set<int64_t>> &noHostTempFormsMap,
+                                    std::map<int64_t, bool> &foundFormsMap);
+
+    /**
+     * @brief delete invalid temp forms.
+     * @param userId User ID.
+     * @param callingUid The UID of the proxy.
+     * @param matchedFormIds The set of the valid forms.
+     * @param removedFormsMap The map of the removed invalid forms.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t DeleteInvalidTempForms(int32_t userId, int32_t callingUid, std::set<int64_t> &matchedFormIds,
+                                   std::map<int64_t, bool> &removedFormsMap);
+
+    /**
+     * @brief clear host data by invalid forms.
+     * @param callingUid The UID of the proxy.
+     * @param removedFormsMap The map of the removed invalid forms.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t ClearHostDataByInvalidForms(int32_t callingUid, std::map<int64_t, bool> &removedFormsMap);
+
+    /**
+     * @brief Create form state host record.
+     * @param provider The provider of the form state
+     * @param info The form item info.
+     * @param callerToken The UID of the proxy.
+     * @param callingUid The UID of the proxy.
+     * @return Returns true if this function is successfully called; returns false otherwise.
+     */
+    bool CreateFormStateRecord(std::string &provider, const FormItemInfo &info, const sptr<IRemoteObject> &callerToken,
+                               int callingUid);
+
+    /**
+     * @brief Create form state host record.
+     * @param FormState form state.
+     * @param provider provider indo.
+     * @param want The want of onAcquireFormState.
+     * @return Returns true if this function is successfully called; returns false otherwise.
+     */
+    ErrCode AcquireFormStateBack(AppExecFwk::FormState state, const std::string &provider, const AAFwk::Want &want);
 private:
     /**
      * @brief Create form record.
@@ -410,9 +471,11 @@ private:
     mutable std::mutex formRecordMutex_;
     mutable std::mutex formHostRecordMutex_;
     mutable std::mutex formTempMutex_;
+    mutable std::mutex formStateRecordMutex_;
     std::map<int64_t, FormRecord> formRecords_;
     std::vector<FormHostRecord> clientRecords_;
     std::vector<int64_t> tempForms_;
+    std::map<std::string, FormHostRecord> formStateRecord_;
     int64_t udidHash_;
 };
 }  // namespace AppExecFwk

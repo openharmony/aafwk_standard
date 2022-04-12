@@ -279,6 +279,7 @@ int FormProviderStub::HandleAcquireState(MessageParcel &data, MessageParcel &rep
         HILOG_ERROR("%{public}s fail, ReadParcelable<Want> failed", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
+    std::string provider = data.ReadString();
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (!want) {
         HILOG_ERROR("%{public}s fail, ReadParcelable<Want> failed", __func__);
@@ -289,7 +290,7 @@ int FormProviderStub::HandleAcquireState(MessageParcel &data, MessageParcel &rep
         HILOG_ERROR("%{public}s, failed to get remote object.", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    int32_t result = AcquireState(*wantArg, *want, client);
+    int32_t result = AcquireState(*wantArg, provider, *want, client);
     reply.WriteInt32(result);
     return result;
 }
