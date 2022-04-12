@@ -48,7 +48,6 @@ namespace OHOS {
 namespace AAFwk {
 namespace {
 #define SLEEP(milli) std::this_thread::sleep_for(std::chrono::seconds(milli))
-const int INVALID_CALLER_UID_ERR = 29360128;
 }  // namespace
 class PendingWantRecordTest : public testing::Test {
 public:
@@ -328,7 +327,7 @@ HWTEST_F(PendingWantRecordTest, PendingWantRecordTest_0800, TestSize.Level1)
         std::make_shared<PendingWantRecord>(pendingManager_, 1, nullptr, key);
     EXPECT_NE(pendingWantRecord, nullptr);
     SenderInfo info;
-    EXPECT_EQ(pendingWantRecord->SenderInner(info), INVALID_CALLER_UID_ERR);
+    EXPECT_NE(pendingWantRecord->SenderInner(info), 0); // Assert SenderInner failed.
     EXPECT_TRUE(info.resolvedType == key->GetRequestResolvedType());
 }
 
