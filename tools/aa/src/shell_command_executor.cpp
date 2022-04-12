@@ -45,7 +45,9 @@ ShellCommandResult ShellCommandExecutor::WaitWorkDone()
     syncLock.unlock();
 
     if (timeoutSec_ <= 0) {
-        cvWork_.wait(workLock);
+        while (timeoutSec_ <= 0) {
+            cvWork_.wait(workLock);
+        }
     } else if (cvWork_.wait_for(workLock, timeoutSec_ * 1s) == std::cv_status::timeout) {
         HILOG_WARN("Command execution timed out! cmd : \"%{public}s\", timeoutSec : %{public}" PRId64,
             cmd_.data(), timeoutSec_);

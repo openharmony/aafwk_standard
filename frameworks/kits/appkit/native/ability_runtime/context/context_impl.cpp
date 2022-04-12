@@ -236,8 +236,8 @@ std::shared_ptr<Context> ContextImpl::CreateBundleContext(const std::string &bun
     if (accountId == 0) {
         accountId = GetCurrentActiveAccountId();
     }
-    HILOG_DEBUG("ContextImpl::CreateBundleContext length: %{public}zu, bundleName: %{public}s, accountId: %{public}d",
-        (size_t)bundleName.length(), bundleName.c_str(), accountId);
+    HILOG_DEBUG("ContextImpl::CreateBundleContext length: %{public}zu, bundleName: %{public}s",
+        (size_t)bundleName.length(), bundleName.c_str());
     bundleMgr->GetBundleInfo(bundleName, AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, accountId);
 
     if (bundleInfo.name.empty() || bundleInfo.applicationInfo.name.empty()) {

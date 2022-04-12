@@ -3916,8 +3916,8 @@ void DeleteDAHelperOnOffCB(DAHelperOnOffCB *onCB)
         onCB->dataAbilityHelper = nullptr;
     }
 
-    (void)registerInstances_.erase(remove(registerInstances_.begin(), registerInstances_.end(), onCB),
-        registerInstances_.end());
+    auto end = remove(registerInstances_.begin(), registerInstances_.end(), onCB);
+    (void)registerInstances_.erase(end);
     delete onCB;
     onCB = nullptr;
 }
