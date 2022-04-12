@@ -21,9 +21,10 @@ namespace OHOS {
 namespace AppExecFwk {
 bool AbilityStateData::Marshalling(Parcel &parcel) const
 {
-    return (parcel.WriteString(moduleName) && parcel.WriteString(bundleName) && parcel.WriteString(abilityName) &&
-        parcel.WriteInt32(abilityState) && parcel.WriteInt32(pid) &&
-        parcel.WriteInt32(uid) && parcel.WriteParcelable(token) && parcel.WriteInt32(abilityType));
+    return (parcel.WriteString(moduleName) && parcel.WriteString(bundleName) &&
+        parcel.WriteString(abilityName) && parcel.WriteInt32(abilityState) &&
+        parcel.WriteInt32(pid) && parcel.WriteInt32(uid) &&
+        parcel.WriteParcelable(token) && parcel.WriteInt32(abilityType));
 }
 
 bool AbilityStateData::ReadFromParcel(Parcel &parcel)
