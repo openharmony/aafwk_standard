@@ -241,15 +241,6 @@ public:
      */
     virtual bool ScheduleUnregisterObserver(const Uri &uri, const sptr<IDataAbilityObserver> &dataObserver) = 0;
 
-    virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) = 0;
-
-    /**
-     * @brief notify this ability is top active ability.
-     *
-     * @param flag true: Indicates this ability is top active ability
-     */
-    virtual void NotifyTopActiveAbilityChanged(bool flag) = 0;
-
     /**
      * @brief Notifies the registered observers of a change to the data resource specified by Uri.
      *
@@ -356,14 +347,9 @@ public:
         // ipc id for dataAbilityObServer change
         SCHEDULE_NOTIFYCHANGE,
 
-        // ipc id for scheduling multi window changed
-        MULTI_WIN_CHANGED,
-
         // ipc id for scheduling update configuration
         SCHEDULE_UPDATE_CONFIGURATION,
 
-        // ipc id for notify this ability is top active
-        TOP_ACTIVE_ABILITY_CHANGED,
         // ipc id for scheduling NormalizeUri
         SCHEDULE_NORMALIZEURI,
 

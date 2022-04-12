@@ -111,8 +111,6 @@ public:
     {
         return true;
     };
-    virtual void NotifyMultiWinModeChanged(int32_t winModeKey, bool flag) {};
-    virtual void NotifyTopActiveAbilityChanged(bool flag) {};
     virtual bool ScheduleNotifyChange(const Uri &uri)
     {
         return true;

@@ -29,8 +29,6 @@ const std::string AMS_CONFIG_FILE_PATH {"/system/etc/ams_service_config.json"};
 const std::string SERVICE_ITEM_AMS {"service_startup_config"};
 const std::string STARTUP_SETTINGS_DATA {"startup_settings_data"};
 const std::string STARTUP_SCREEN_LOCK {"startup_screen_lock"};
-const std::string STARTUP_STATUS_BAR {"startup_system_ui_status_bar"};
-const std::string STARTUP_NAVIGATION_BAR {"startup_system_ui_navigation_bar"};
 const std::string STARTUP_PHONE_SERVICE {"startup_phone_service"};
 const std::string MISSION_SAVE_TIME {"mission_save_time"};
 const std::string APP_NOT_RESPONSE_PROCESS_TIMEOUT_TIME {"app_not_response_process_timeout_time"};
@@ -62,16 +60,6 @@ public:
      * return false : ams do not start screen lock
      */
     bool GetStartScreenLockState() const;
-    /**
-     * return true : ams can start system ui status bar
-     * return false : ams do not start system ui status bar
-     */
-    bool GetStatusBarState() const;
-    /**
-     * return true : ams can start system ui navigation bar
-     * return false : ams do not start system ui navigation bar
-     */
-    bool GetNavigationBarState() const;
     /**
      * return true : ams can start phone service
      * return false : ams do not start phone service
@@ -133,8 +121,6 @@ private:
     bool nonConfigFile_ {false};
     bool canStartSettingsData_ {false};
     bool canStartScreenLock_ {false};
-    bool canStartUiStatusBar_ {false};
-    bool canStartUiNavigationBar_ {false};
     bool canStartPhoneService_ {false};
     bool canStartMms {false};
     int maxRestartNum_ = 0;

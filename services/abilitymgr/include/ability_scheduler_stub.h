@@ -62,8 +62,6 @@ private:
     int DenormalizeUriInner(MessageParcel &data, MessageParcel &reply);
     int UpdateConfigurationInner(MessageParcel &data, MessageParcel &reply);
     int ExecuteBatchInner(MessageParcel &data, MessageParcel &reply);
-    int MutiWinModeChangedInner(MessageParcel &data, MessageParcel &reply);
-    int TopActiveAbilityChangedInner(MessageParcel &data, MessageParcel &reply);
     int NotifyContinuationResultInner(MessageParcel &data, MessageParcel &reply);
     int DumpAbilityInfoInner(MessageParcel& data, MessageParcel& reply);
     int CallRequestInner(MessageParcel &data, MessageParcel &reply);
