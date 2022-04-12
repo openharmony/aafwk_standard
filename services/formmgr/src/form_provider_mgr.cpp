@@ -71,7 +71,7 @@ ErrCode FormProviderMgr::AcquireForm(const int64_t formId, const FormProviderInf
             }
         } else {
             Want want;
-            RefreshForm(formId, want);
+            RefreshForm(formId, want, true);
         }
         return ERR_OK;
     }
@@ -99,9 +99,10 @@ ErrCode FormProviderMgr::AcquireForm(const int64_t formId, const FormProviderInf
  *
  * @param formId The form id.
  * @param want The want of the form to request.
+ * @param isVisibleToFresh The form is visible to fresh.
  * @return Returns ERR_OK on success, others on failure.
  */
-ErrCode FormProviderMgr::RefreshForm(const int64_t formId, const Want &want)
+ErrCode FormProviderMgr::RefreshForm(const int64_t formId, const Want &want, bool isVisibleToFresh)
 {
     HILOG_INFO("%{public}s called, formId:%{public}" PRId64 ".", __func__, formId);
     FormRecord record;
@@ -135,7 +136,7 @@ ErrCode FormProviderMgr::RefreshForm(const int64_t formId, const Want &want)
         return ERR_OK;
     }
 
-    bool needRefresh = FormDataMgr::GetInstance().IsEnableRefresh(formId);
+    bool needRefresh = IsNeedToFresh(record, formId, isVisibleToFresh);
     if (!needRefresh) {
         FormDataMgr::GetInstance().SetNeedRefresh(formId, true);
         HILOG_ERROR("%{public}s fail, no one needReresh, set refresh flag, do not refresh now", __func__);
@@ -393,6 +394,24 @@ ErrCode FormProviderMgr::AcquireFormStateBack(FormState state, const std::string
     HILOG_DEBUG("AcquireFormState start: %{public}d, provider: %{public}s", state, provider.c_str());
     FormDataMgr::GetInstance().AcquireFormStateBack(state, provider, wantArg);
     return ERR_OK;
+}
+
+bool FormProviderMgr::IsNeedToFresh(FormRecord &record, int64_t formId, bool isVisibleToFresh)
+{
+    bool isEnableRefresh = FormDataMgr::GetInstance().IsEnableRefresh(formId);
+    HILOG_DEBUG("isEnableRefresh is %{public}d", isEnableRefresh);
+    if (isEnableRefresh) {
+        return true;
+    }
+
+    HILOG_DEBUG("isVisibleToFresh is %{public}d, record.isVisible is %{public}d", isVisibleToFresh, record.isVisible);
+    if (isVisibleToFresh) {
+        return record.isVisible;
+    }
+
+    bool isEnableUpdate = FormDataMgr::GetInstance().IsEnableUpdate(formId);
+    HILOG_DEBUG("isEnableUpdate is %{public}d", isEnableUpdate);
+    return isEnableUpdate;
 }
 
 FormRecord FormProviderMgr::GetFormAbilityInfo(const FormRecord &record) const

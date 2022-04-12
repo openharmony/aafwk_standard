@@ -62,9 +62,10 @@ public:
      * 
      * @param formId The form id.
      * @param want The want of the form to request.
+     * @param isVisibleToFresh The form is visible to fresh.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode RefreshForm(const int64_t formId, const Want &want);
+    ErrCode RefreshForm(const int64_t formId, const Want &want, bool isVisibleToFresh);
     /**
      * @brief Connect ams for refresh form
      * 
@@ -109,6 +110,8 @@ public:
      */
     int MessageEvent(const int64_t formId, const FormRecord &record, const Want &want);
 private:
+    bool IsNeedToFresh(FormRecord &record, int64_t formId, bool isVisibleToFresh);
+
     FormRecord GetFormAbilityInfo(const FormRecord &record) const;
     /**
      * @brief Increase the timer refresh count.

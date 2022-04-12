@@ -267,6 +267,25 @@ public:
     int AcquireFormState(const Want &want, const sptr<IRemoteObject> &callerToken, FormStateInfo &stateInfo);
 
     /**
+     * @brief Delete the given invalid forms.
+     * @param formIds Indicates the ID of the forms.
+     * @param isVisible Visible or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible, const sptr<IRemoteObject> &callerToken);
+
+    /**
+     * @brief Delete the given invalid forms.
+     * @param formIds Indicates the ID of the forms.
+     * @param isEnableUpdate enable update or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate,
+                                const sptr<IRemoteObject> &callerToken);
+
+    /**
      * @brief Get All FormsInfo.
      * @param formInfos Return the forms' information of all forms provided.
      * @return Returns ERR_OK on success, others on failure.

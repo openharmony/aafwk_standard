@@ -104,6 +104,50 @@ static std::string GetStringFromNAPI(napi_env env, napi_value value)
     return result;
 }
 
+static napi_value GetFormIds(napi_env env, napi_value value, ErrCode &errCode, std::vector<int64_t> &formIds)
+{
+    errCode = ERR_INVALID_VALUE;
+
+    bool isArray;
+    NAPI_CALL(env, napi_is_array(env, value, &isArray));
+    if (!isArray) {
+        errCode = ERR_APPEXECFWK_FORM_FORM_ARRAY_ERR;
+        return nullptr;
+    }
+
+    uint32_t arrayLength = 0;
+    NAPI_CALL(env, napi_get_array_length(env, value, &arrayLength));
+    if (arrayLength < 0) {
+        errCode = ERR_APPEXECFWK_FORM_FORM_ID_ARRAY_ERR;
+        return nullptr;
+    }
+
+    for (size_t i = 0; i < arrayLength; i++) {
+        napi_value napiFormId;
+        napi_get_element(env, value, i, &napiFormId);
+
+        // Check the value type of the arguments
+        napi_valuetype valueType = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, napiFormId, &valueType));
+        if (valueType != napi_string) {
+            errCode = ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
+            return nullptr;
+        }
+
+        std::string strFormId = GetStringFromNAPI(env, napiFormId);
+        int64_t formIdValue;
+        if (!ConvertStringToInt64(strFormId, formIdValue)) {
+            errCode = ERR_APPEXECFWK_FORM_FORM_ID_NUM_ERR;
+            return nullptr;
+        }
+
+        formIds.push_back(formIdValue);
+    }
+
+    errCode = ERR_OK;
+    return nullptr;
+}
+
 /**
  * @brief Parse form info into Node-API
  *
@@ -2461,7 +2505,8 @@ public:
         }
     }
 
-    bool IsStrictEqual(napi_value callback) {
+    bool IsStrictEqual(napi_value callback)
+    {
         bool isEqual = false;
         napi_value myCallback = nullptr;
         napi_get_reference_value(env_, callbackRef_, &myCallback);
@@ -2478,7 +2523,8 @@ private:
 std::map<napi_ref, std::shared_ptr<FormUninstallCallbackClient>> g_formUninstallCallbackMap {};
 std::mutex formUninstallCallbackMapMutex_;
 
-void FormUninstallCallback(const std::vector<int64_t> &formIds) {
+void FormUninstallCallback(const std::vector<int64_t> &formIds)
+{
     std::lock_guard<std::mutex> lock(formUninstallCallbackMapMutex_);
     for (auto &iter : g_formUninstallCallbackMap) {
         for (int64_t formId : formIds) {
@@ -2487,7 +2533,8 @@ void FormUninstallCallback(const std::vector<int64_t> &formIds) {
     }
 }
 
-bool AddFormUninstallCallback(napi_env env, napi_value callback) {
+bool AddFormUninstallCallback(napi_env env, napi_value callback)
+{
     std::lock_guard<std::mutex> lock(formUninstallCallbackMapMutex_);
     for (auto &iter : g_formUninstallCallbackMap) {
         if (iter.second->IsStrictEqual(callback)) {
@@ -2509,7 +2556,8 @@ bool AddFormUninstallCallback(napi_env env, napi_value callback) {
     return true;
 }
 
-bool DelFormUninstallCallback(napi_value callback) {
+bool DelFormUninstallCallback(napi_value callback)
+{
     int32_t count = 0;
     std::lock_guard<std::mutex> lock(formUninstallCallbackMapMutex_);
     for (auto iter = g_formUninstallCallbackMap.begin(); iter != g_formUninstallCallbackMap.end();) {
@@ -2525,7 +2573,8 @@ bool DelFormUninstallCallback(napi_value callback) {
     return true;
 }
 
-bool ClearFormUninstallCallback() {
+bool ClearFormUninstallCallback()
+{
     std::lock_guard<std::mutex> lock(formUninstallCallbackMapMutex_);
     g_formUninstallCallbackMap.clear();
     return true;
@@ -2772,6 +2821,15 @@ napi_value NAPI_UnregisterFormUninstallObserver(napi_env env, napi_callback_info
     }
 }
 
+static void InnerNotifyFormsVisible(napi_env env, AsyncNotifyFormsVisibleCallbackInfo *const asyncCallbackInfo)
+{
+    HILOG_DEBUG("%{public}s called.", __func__);
+    OHOS::AppExecFwk::Ability *ability = asyncCallbackInfo->ability;
+    ErrCode ret = ability->NotifyFormsVisible(asyncCallbackInfo->formIds, asyncCallbackInfo->isVisible);
+    asyncCallbackInfo->result = ret;
+    HILOG_DEBUG("%{public}s, end", __func__);
+}
+
 napi_value NotifyFormsVisibleCallback(napi_env env, AsyncNotifyFormsVisibleCallbackInfo *const asyncCallbackInfo)
 {
     HILOG_INFO("%{public}s, asyncCallback.", __func__);
@@ -2784,19 +2842,24 @@ napi_value NotifyFormsVisibleCallback(napi_env env, AsyncNotifyFormsVisibleCallb
         [](napi_env env, void *data) {
             HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
             auto *asyncCallbackInfo = (AsyncNotifyFormsVisibleCallbackInfo *) data;
-            asyncCallbackInfo->result = 0;
+            InnerNotifyFormsVisible(env, asyncCallbackInfo);
         },
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
             auto *asyncCallbackInfo = (AsyncNotifyFormsVisibleCallbackInfo *) data;
 
             if (asyncCallbackInfo->callback != nullptr) {
-                napi_value result;
-                napi_create_int32(env, asyncCallbackInfo->result, &result);
                 napi_value callback;
+                napi_value callbackValues[ARGS_SIZE_TWO] = {nullptr, nullptr};
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_create_int32(env, asyncCallbackInfo->result, &callbackValues[0]);
+                } else {
+                    InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, &callbackValues[0]);
+                }
+
                 napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
                 napi_value callResult;
-                napi_call_function(env, nullptr, callback, ARGS_SIZE_ONE, &result, &callResult);
+                napi_call_function(env, nullptr, callback, ARGS_SIZE_TWO, callbackValues, &callResult);
                 napi_delete_reference(env, asyncCallbackInfo->callback);
             }
             napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
@@ -2825,14 +2888,20 @@ napi_value NotifyFormsVisiblePromise(napi_env env, AsyncNotifyFormsVisibleCallba
         [](napi_env env, void *data) {
             HILOG_INFO("%{public}s, promise runnning", __func__);
             auto *asyncCallbackInfo = (AsyncNotifyFormsVisibleCallbackInfo *) data;
-            asyncCallbackInfo->result = 0;
+            InnerNotifyFormsVisible(env, asyncCallbackInfo);
         },
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("%{public}s, promise complete", __func__);
             auto *asyncCallbackInfo = (AsyncNotifyFormsVisibleCallbackInfo *) data;
-            napi_value result;
-            napi_create_int32(env, asyncCallbackInfo->result, &result);
-            napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+            if (asyncCallbackInfo->result != ERR_OK) {
+                napi_value result;
+                InnerCreatePromiseRetMsg(env, asyncCallbackInfo->result, &result);
+                napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+            } else {
+                napi_value result;
+                napi_create_int32(env, asyncCallbackInfo->result, &result);
+                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+            }
             napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
             delete asyncCallbackInfo;
         },
@@ -2856,39 +2925,28 @@ napi_value NAPI_NotifyFormsVisible(napi_env env, napi_callback_info info)
 
     // Check the number of the arguments
     size_t argc = ARGS_SIZE_THREE;
-    napi_value argv[ARGS_SIZE_THREE] = {nullptr};
+    napi_value argv[ARGS_SIZE_THREE] = {nullptr, nullptr, nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr));
-    if (argc > ARGS_SIZE_THREE) {
+    if (argc > ARGS_SIZE_THREE || argc < ARGS_SIZE_TWO) {
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
 
-    uint32_t numForms = 0;
-    NAPI_CALL(env, napi_get_array_length(env, argv[0], &numForms));
-    NAPI_ASSERT(env, numForms > 0, "The type of arg 0 is incorrect, this array is empty.");
+    int32_t callbackType = (argc == ARGS_SIZE_THREE) ? CALLBACK_FLG : PROMISE_FLG;
 
+    ErrCode errCode;
     std::vector<int64_t> formIds {};
-    napi_valuetype valueType;
-    for (size_t i = 0; i < numForms; i++) {
-        napi_value napiFormId;
-        napi_get_element(env, argv[0], i, &napiFormId);
-
-        // Check the value type of the arguments
-        valueType = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, napiFormId, &valueType));
-        NAPI_ASSERT(env, valueType == napi_string, "The type of arg 0 is incorrect, expected type is string.");
-
-        std::string strFormId = GetStringFromNAPI(env, napiFormId);
-        int64_t formIdValue;
-        bool isConversionSucceeded = ConvertStringToInt64(strFormId, formIdValue);
-        NAPI_ASSERT(env, isConversionSucceeded, "The arguments[0] type of notifyFormsVisible is incorrect, expected "
-        "type is string and the content must be numeric,value range is: 0x8000000000000000~0x7FFFFFFFFFFFFFFF.");
-        formIds.push_back(formIdValue);
+    GetFormIds(env, argv[0], errCode, formIds);
+    if (errCode != ERR_OK) {
+        return RetErrMsg(InitErrMsg(env, errCode, callbackType, argv[ARGS_SIZE_TWO]));
     }
 
-    valueType = napi_undefined;
+    napi_valuetype valueType = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
-    NAPI_ASSERT(env, valueType == napi_boolean, "The type of arg 1 is incorrect, expected type is boolean.");
+    if (valueType != napi_boolean) {
+        return RetErrMsg(InitErrMsg(env, ERR_APPEXECFWK_FORM_INVALID_PARAM, callbackType, argv[ARGS_SIZE_TWO]));
+    }
+
     auto *asyncCallbackInfo = new AsyncNotifyFormsVisibleCallbackInfo {
         .env = env,
         .ability = GetGlobalAbility(env),
@@ -2912,6 +2970,16 @@ napi_value NAPI_NotifyFormsVisible(napi_env env, napi_callback_info info)
     }
 }
 
+static void InnerNotifyFormsEnableUpdate(napi_env env,
+                                         AsyncNotifyFormsEnableUpdateCallbackInfo *const asyncCallbackInfo)
+{
+    HILOG_DEBUG("%{public}s called.", __func__);
+    OHOS::AppExecFwk::Ability *ability = asyncCallbackInfo->ability;
+    ErrCode ret = ability->NotifyFormsEnableUpdate(asyncCallbackInfo->formIds, asyncCallbackInfo->isEnableUpdate);
+    asyncCallbackInfo->result = ret;
+    HILOG_DEBUG("%{public}s, end", __func__);
+}
+
 napi_value NotifyFormsEnableUpdateCallback(napi_env env,
                                            AsyncNotifyFormsEnableUpdateCallbackInfo *const asyncCallbackInfo)
 {
@@ -2925,19 +2993,24 @@ napi_value NotifyFormsEnableUpdateCallback(napi_env env,
         [](napi_env env, void *data) {
             HILOG_INFO("%{public}s, napi_create_async_work running", __func__);
             auto *asyncCallbackInfo = (AsyncNotifyFormsEnableUpdateCallbackInfo *) data;
-            asyncCallbackInfo->result = 0;
+            InnerNotifyFormsEnableUpdate(env, asyncCallbackInfo);
         },
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
             auto *asyncCallbackInfo = (AsyncNotifyFormsEnableUpdateCallbackInfo *) data;
 
             if (asyncCallbackInfo->callback != nullptr) {
-                napi_value result;
-                napi_create_int32(env, asyncCallbackInfo->result, &result);
                 napi_value callback;
+                napi_value callbackValues[ARGS_SIZE_TWO] = {nullptr, nullptr};
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_create_int32(env, asyncCallbackInfo->result, &callbackValues[0]);
+                } else {
+                    InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, &callbackValues[0]);
+                }
+
                 napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
                 napi_value callResult;
-                napi_call_function(env, nullptr, callback, ARGS_SIZE_ONE, &result, &callResult);
+                napi_call_function(env, nullptr, callback, ARGS_SIZE_TWO, callbackValues, &callResult);
                 napi_delete_reference(env, asyncCallbackInfo->callback);
             }
             napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
@@ -2967,14 +3040,20 @@ napi_value NotifyFormsEnableUpdatePromise(napi_env env,
         [](napi_env env, void *data) {
             HILOG_INFO("%{public}s, promise runnning", __func__);
             auto *asyncCallbackInfo = (AsyncNotifyFormsEnableUpdateCallbackInfo *) data;
-            asyncCallbackInfo->result = 0;
+            InnerNotifyFormsEnableUpdate(env, asyncCallbackInfo);
         },
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("%{public}s, promise complete", __func__);
             auto *asyncCallbackInfo = (AsyncNotifyFormsEnableUpdateCallbackInfo *) data;
-            napi_value result;
-            napi_create_int32(env, asyncCallbackInfo->result, &result);
-            napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+            if (asyncCallbackInfo->result != ERR_OK) {
+                napi_value result;
+                InnerCreatePromiseRetMsg(env, asyncCallbackInfo->result, &result);
+                napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+            } else {
+                napi_value result;
+                napi_create_int32(env, asyncCallbackInfo->result, &result);
+                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+            }
             napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
             delete asyncCallbackInfo;
         },
@@ -2998,39 +3077,28 @@ napi_value NAPI_NotifyFormsEnableUpdate(napi_env env, napi_callback_info info)
 
     // Check the number of the arguments
     size_t argc = ARGS_SIZE_THREE;
-    napi_value argv[ARGS_SIZE_THREE] = {nullptr};
+    napi_value argv[ARGS_SIZE_THREE] = {nullptr, nullptr, nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr));
-    if (argc > ARGS_SIZE_THREE) {
+    if (argc > ARGS_SIZE_THREE || argc < ARGS_SIZE_TWO) {
         HILOG_ERROR("%{public}s, wrong number of arguments.", __func__);
         return nullptr;
     }
 
-    uint32_t numForms = 0;
-    NAPI_CALL(env, napi_get_array_length(env, argv[0], &numForms));
-    NAPI_ASSERT(env, numForms > 0, "The type of arg 0 is incorrect, this array is empty.");
+    int32_t callbackType = (argc == ARGS_SIZE_THREE) ? CALLBACK_FLG : PROMISE_FLG;
 
+    ErrCode errCode;
     std::vector<int64_t> formIds {};
-    napi_valuetype valueType;
-    for (size_t i = 0; i < numForms; i++) {
-        napi_value napiFormId;
-        napi_get_element(env, argv[0], i, &napiFormId);
-
-        // Check the value type of the arguments
-        valueType = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, napiFormId, &valueType));
-        NAPI_ASSERT(env, valueType == napi_string, "The type of arg 0 is incorrect, expected type is string.");
-
-        std::string strFormId = GetStringFromNAPI(env, napiFormId);
-        int64_t formIdValue;
-        bool isConversionSucceeded = ConvertStringToInt64(strFormId, formIdValue);
-        NAPI_ASSERT(env, isConversionSucceeded, "The type of arg 0 is incorrect, expected type is string and "
-        "the content must be numeric, value range is: 0x8000000000000000~0x7FFFFFFFFFFFFFFF.");
-        formIds.push_back(formIdValue);
+    GetFormIds(env, argv[0], errCode, formIds);
+    if (errCode != ERR_OK) {
+        return RetErrMsg(InitErrMsg(env, errCode, callbackType, argv[ARGS_SIZE_TWO]));
     }
 
-    valueType = napi_undefined;
+    napi_valuetype valueType = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[1], &valueType));
-    NAPI_ASSERT(env, valueType == napi_boolean, "The type of arg 1 is incorrect, expected type is boolean.");
+    if (valueType != napi_boolean) {
+        return RetErrMsg(InitErrMsg(env, ERR_APPEXECFWK_FORM_INVALID_PARAM, callbackType, argv[ARGS_SIZE_TWO]));
+    }
+
     auto *asyncCallbackInfo = new AsyncNotifyFormsEnableUpdateCallbackInfo {
         .env = env,
         .ability = GetGlobalAbility(env),
