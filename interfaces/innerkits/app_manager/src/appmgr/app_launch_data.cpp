@@ -143,7 +143,7 @@ bool UserTestRecord::Marshalling(Parcel &parcel) const
     }
 
     if (valid) {
-        if (!parcel.WriteParcelable(observer)) {
+        if (!parcel.WriteObject<IRemoteObject>(observer)) {
             HILOG_ERROR("Failed to write observer");
             return false;
         }
@@ -184,7 +184,7 @@ bool UserTestRecord::ReadFromParcel(Parcel &parcel)
 
     auto valid = parcel.ReadBool();
     if (valid) {
-        observer = parcel.ReadParcelable<IRemoteObject>();
+        observer = parcel.ReadObject<IRemoteObject>();
         if (!observer) {
             HILOG_ERROR("observer is nullptr");
             return false;
