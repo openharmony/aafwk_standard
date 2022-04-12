@@ -125,16 +125,6 @@ napi_value NAPI_GetWant(napi_env env, napi_callback_info info);
 napi_value NAPI_GetWantSync(napi_env env, napi_callback_info info);
 
 /**
- * @brief Set wake up screen screen Permit list.
- *
- * @param env The environment that the Node-API call is invoked under.
- * @param info The callback info passed into the callback function.
- *
- * @return The return value from NAPI C++ to JS for the module.
- */
-napi_value NAPI_SetWakeUpScreen(napi_env env, napi_callback_info info);
-
-/**
  * @brief Obtains the type of this application.
  *
  * @param env The environment that the Node-API call is invoked under.
