@@ -90,7 +90,7 @@ std::shared_ptr<PendingWant> PendingWant::GetAbilities(const std::shared_ptr<OHO
         WANT_AGENT_LOGE("PendingWant::GetAbilities invalid input param.");
         return nullptr;
     }
-    
+
     WantSenderInfo wantSenderInfo;
     wantSenderInfo.type = (int32_t)WantAgentConstant::OperationType::START_ABILITIES;
     wantSenderInfo.bundleName = context->GetBundleName();
@@ -389,7 +389,7 @@ std::shared_ptr<Want> PendingWant::GetWant(const sptr<AAFwk::IWantSender> &targe
 
 bool PendingWant::Marshalling(Parcel &parcel) const
 {
-    if (target_ == nullptr || !parcel.WriteParcelable(target_->AsObject())) {
+    if (target_ == nullptr || !parcel.WriteObject<IRemoteObject>(target_->AsObject())) {
         WANT_AGENT_LOGE("parcel WriteString failed");
         return false;
     }
@@ -404,7 +404,7 @@ PendingWant *PendingWant::Unmarshalling(Parcel &parcel)
         WANT_AGENT_LOGE("read from parcel failed");
         return nullptr;
     }
-    sptr<AAFwk::IWantSender> target = iface_cast<AAFwk::IWantSender>(parcel.ReadParcelable<IRemoteObject>());
+    sptr<AAFwk::IWantSender> target = iface_cast<AAFwk::IWantSender>(parcel.ReadObject<IRemoteObject>());
     if (target == nullptr) {
         return nullptr;
     }

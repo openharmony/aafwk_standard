@@ -106,7 +106,6 @@ int32_t ApplicationStateObserverStub::HandleOnAbilityStateChanged(MessageParcel 
 {
     AbilityStateData* abilityStateData = nullptr;
     {
-        // Protect Multi Thread ReadParcelable<IRemoteObject>()
         std::unique_lock<std::mutex> lock(callbackMutex_);
         abilityStateData = data.ReadParcelable<AbilityStateData>();
         if (!abilityStateData) {
@@ -127,7 +126,6 @@ int32_t ApplicationStateObserverStub::HandleOnExtensionStateChanged(MessageParce
 {
     AbilityStateData* abilityStateData = nullptr;
     {
-        // Protect Multi Thread ReadParcelable<IRemoteObject>()
         std::unique_lock<std::mutex> lock(callbackMutex_);
         abilityStateData = data.ReadParcelable<AbilityStateData>();
         if (!abilityStateData) {
