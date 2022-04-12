@@ -100,7 +100,7 @@ static void SetShowOnLockScreenAsyncCompleteCB(napi_env env, napi_status status,
     HILOG_INFO("%{public}s,called end", __func__);
 }
 
-static napi_value SetShowOnLockScreenAsync(napi_env env, napi_value args, ShowOnLockScreenCB *showOnLockScreenCB)
+static napi_value SetShowOnLockScreenAsync(napi_env env, napi_value *args, ShowOnLockScreenCB *showOnLockScreenCB)
 {
     HILOG_INFO("%{public}s,called", __func__);
     if (showOnLockScreenCB == nullptr) {
@@ -194,7 +194,7 @@ napi_value NAPI_SetShowOnLockScreen(napi_env env, napi_callback_info info)
     napi_value args[ARGS_MAX_COUNT] = {nullptr};
 
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, nullptr, nullptr));
-    if (argc != argcNum && argc != argcPromise) {
+    if (argc != argcAsync && argc != argcPromise) {
         HILOG_ERROR("%{public}s error, wrong argument count.", __func__);
         return nullptr;
     }
