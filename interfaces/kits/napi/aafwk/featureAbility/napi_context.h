@@ -162,6 +162,16 @@ napi_value NAPI_GetApplicationContext(napi_env env, napi_callback_info info);
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_GetCtxAbilityInfo(napi_env env, napi_callback_info info);
+
+/**
+ * @brief Set wake up screen screen Permit list.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_SetWakeUpScreen(napi_env env, napi_callback_info info);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_NAPI_CONTEXT_H */

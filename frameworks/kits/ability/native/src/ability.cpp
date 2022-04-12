@@ -3703,7 +3703,7 @@ void Ability::SetWakeUpScreen(bool wakeUp)
 {
     HILOG_INFO("SetWakeUpScreen wakeUp:%{public}d.", wakeUp);
     if (abilityWindow_ == nullptr) {
-        HILOG_ERROR("Ability::OnBackground error. abilityWindow_ == nullptr.");
+        HILOG_ERROR("SetWakeUpScreen error. abilityWindow_ == nullptr.");
         return;
     }
     HILOG_DEBUG("FA mode");
