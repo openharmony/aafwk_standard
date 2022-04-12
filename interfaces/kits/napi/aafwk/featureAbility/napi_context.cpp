@@ -75,7 +75,7 @@ static void SetShowOnLockScreenAsyncCompleteCB(napi_env env, napi_status status,
     }
 
     showOnLockScreenCB->cbBase.errCode = NAPI_ERR_NO_ERROR;
-    if (showOnLockScreenCB == nullptr || showOnLockScreenCB->cbBase.ability == nullptr) {
+    if (showOnLockScreenCB->cbBase.ability == nullptr) {
         HILOG_ERROR("%{public}s, input param is nullptr", __func__);
         showOnLockScreenCB->cbBase.errCode = NAPI_ERR_ACE_ABILITY;
     } else {
