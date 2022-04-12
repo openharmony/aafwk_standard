@@ -429,8 +429,7 @@ public:
     {
         return true;
     }
-    virtual bool GetDistributedBundleInfo(
-        const std::string &networkId, int32_t userId, const std::string &bundleName,
+    virtual bool GetDistributedBundleInfo(const std::string &networkId, const std::string &bundleName,
         DistributedBundleInfo &distributedBundleInfo) override
     {
         return true;

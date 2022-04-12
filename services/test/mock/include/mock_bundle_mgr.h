@@ -359,7 +359,7 @@ public:
     MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
     MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(QueryAbilityInfosForClone, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
-    MOCK_METHOD4(GetDistributedBundleInfo, bool(const std::string &networkId, int32_t userId,
+    MOCK_METHOD3(GetDistributedBundleInfo, bool(const std::string &networkId,
         const std::string &bundleName, DistributedBundleInfo &distributedBundleInfo));
 };
 
@@ -471,8 +471,7 @@ public:
     {
         return true;
     }
-    virtual bool GetDistributedBundleInfo(
-        const std::string &networkId, int32_t userId, const std::string &bundleName,
+    virtual bool GetDistributedBundleInfo(const std::string &networkId, const std::string &bundleName,
         DistributedBundleInfo &distributedBundleInfo) override
     {
         return true;
