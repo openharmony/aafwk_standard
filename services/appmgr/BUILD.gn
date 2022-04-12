@@ -93,7 +93,7 @@ ohos_shared_library("libams") {
   if (ability_runtime_graphics) {
     defines += [ "SUPPORT_GRAPHICS" ]
     deps += []
-    external_deps += [ "i18n_standard:intl_util" ]
+    external_deps += [ "i18n:intl_util" ]
   }
 
   subsystem_name = "aafwk"
