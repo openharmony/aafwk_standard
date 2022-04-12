@@ -62,6 +62,7 @@ NativeValue* CreateJsAbilityStateData(NativeEngine &engine, const AbilityStateDa
     }
     HILOG_INFO("%{public}s SetProperty begin.", __func__);
     object->SetProperty("bundleName", CreateJsValue(engine, abilityStateData.bundleName));
+    object->SetProperty("moduleName", CreateJsValue(engine, abilityStateData.moduleName));
     object->SetProperty("abilityName", CreateJsValue(engine, abilityStateData.abilityName));
     object->SetProperty("pid", CreateJsValue(engine, abilityStateData.pid));
     object->SetProperty("uid", CreateJsValue(engine, abilityStateData.uid));
