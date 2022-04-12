@@ -572,12 +572,6 @@ public:
     bool IsConnectListEmpty();
 
     /**
-     * remove ability's window info from record.
-     *
-     */
-    void RemoveWindowInfo();
-
-    /**
      * add caller record
      *
      */
