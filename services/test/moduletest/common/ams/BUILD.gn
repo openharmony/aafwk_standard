@@ -19,7 +19,7 @@ config("appmgr_test_config") {
     "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
     "//base/notification/ces_standard/frameworks/core/include",
     "//base/notification/ces_standard/interfaces/innerkits/native/include",
-    "//base/global/i18n_standard/frameworks/intl/include",
+    "//base/global/i18n/frameworks/intl/include",
     "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include",
   ]
 }

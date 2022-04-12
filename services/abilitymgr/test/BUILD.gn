@@ -126,7 +126,7 @@ ohos_source_set("abilityms_test_source") {
       "${services_path}/abilitymgr/src/screenshot_response.cpp",
     ]
     deps += [
-      "//base/global/i18n_standard/frameworks/intl:intl_util",
+      "//base/global/i18n/frameworks/intl:intl_util",
       "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
       "//foundation/graphic/standard:libwmservice",
       "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
