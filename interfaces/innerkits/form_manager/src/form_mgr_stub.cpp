@@ -510,7 +510,7 @@ int32_t FormMgrStub::HandleDistributedDataDeleteForm(MessageParcel &data, Messag
 
     std::string formId = data.ReadString();
     if (formId.empty()) {
-        HILOG_ERROR("%{public}s, failed to ReadParcelable<int64_t>", __func__);
+        HILOG_ERROR("%{public}s, failed to get formId", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 

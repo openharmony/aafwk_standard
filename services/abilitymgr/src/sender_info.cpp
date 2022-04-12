@@ -36,7 +36,7 @@ bool SenderInfo::ReadFromParcel(Parcel &parcel)
     }
     want = *wantResquest;
     resolvedType = Str16ToStr8(parcel.ReadString16());
-    sptr<IRemoteObject> finishedReceiverResquest = parcel.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> finishedReceiverResquest = parcel.ReadObject<IRemoteObject>();
     if (finishedReceiverResquest != nullptr) {
         finishedReceiver = iface_cast<IWantReceiver>(finishedReceiverResquest);
         if (!finishedReceiver) {
@@ -76,7 +76,7 @@ bool SenderInfo::Marshalling(Parcel &parcel) const
     parcel.WriteParcelable(&want);
     parcel.WriteString16(Str8ToStr16(resolvedType));
     if (finishedReceiver != nullptr) {
-        parcel.WriteParcelable(finishedReceiver->AsObject());
+        parcel.WriteObject<IRemoteObject>(finishedReceiver->AsObject());
     } else {
         parcel.WriteParcelable(nullptr);
     }
