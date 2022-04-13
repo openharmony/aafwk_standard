@@ -136,7 +136,6 @@ void AbilityManagerStub::ThirdStepInit()
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    HILOG_DEBUG("cmd = %{public}d, flags= %{public}d", code, option.GetFlags());
     std::u16string descriptor = AbilityManagerStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
