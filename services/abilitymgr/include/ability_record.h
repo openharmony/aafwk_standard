@@ -600,6 +600,12 @@ public:
     void DumpService(std::vector<std::string> &info, bool isClient = false) const;
 
     /**
+     * dump service info.
+     *
+     */
+    void DumpService(std::vector<std::string> &info, std::vector<std::string> &params, bool isClient = false) const;
+
+    /**
      * get ability record info.
      *
      */

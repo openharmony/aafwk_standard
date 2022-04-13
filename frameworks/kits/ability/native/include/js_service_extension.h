@@ -113,6 +113,14 @@ public:
      */
     void OnConfigurationUpdated(const AppExecFwk::Configuration& configuration) override;
 
+    /**
+     * @brief Called when extension need dump info.
+     *
+     * @param params The params from service.
+     * @param info The dump info to show.
+     */
+    virtual void Dump(const std::vector<std::string> &params, std::vector<std::string> &info) override;
+
 private:
     NativeValue* CallObjectMethod(const char* name, NativeValue* const* argv = nullptr, size_t argc = 0);
 

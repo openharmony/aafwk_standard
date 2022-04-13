@@ -888,6 +888,7 @@ private:
     ErrCode ProcessTwoParam(const std::string& firstParam, const std::string& secondParam, std::string &result);
     ErrCode ProcessThreeParam(const std::string& firstParam, const std::string& secondParam,
         const std::string& thirdParam, std::string &result);
+    ErrCode ProcessMultiParam(std::vector<std::string> &argsStr, std::string &result);
     void ShowHelp(std::string &result);
     void ShowIllealInfomation(std::string &result);
 
