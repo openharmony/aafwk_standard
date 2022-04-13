@@ -124,6 +124,8 @@ public:
     MOCK_METHOD1(CleanMission, int(int32_t missionId));
     MOCK_METHOD0(CleanAllMissions, int());
     MOCK_METHOD2(SetMissionLabel, int(const sptr<IRemoteObject> &token, const std::string &label));
+    MOCK_METHOD2(SetMissionIcon, int(const sptr<IRemoteObject> &token,
+        const std::shared_ptr<OHOS::Media::PixelMap> &icon));
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
     MOCK_METHOD2(MoveMissionToFront, int(int32_t missionId, const StartOptions &startOptions));
     MOCK_METHOD1(GetMissionIdByToken, int32_t(const sptr<IRemoteObject> &token));

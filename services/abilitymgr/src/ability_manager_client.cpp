@@ -707,6 +707,16 @@ ErrCode AbilityManagerClient::SetMissionLabel(const sptr<IRemoteObject> &token, 
     return abms->SetMissionLabel(token, label);
 }
 
+#ifdef SUPPORT_GRAPHICS
+ErrCode AbilityManagerClient::SetMissionIcon(
+    const sptr<IRemoteObject> &abilityToken, const std::shared_ptr<OHOS::Media::PixelMap> &icon)
+{
+    auto abms = GetAbilityManager();
+    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    return abms->SetMissionIcon(abilityToken, icon);
+}
+#endif
+
 ErrCode AbilityManagerClient::DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag)
 {
     auto abms = GetAbilityManager();

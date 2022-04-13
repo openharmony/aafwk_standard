@@ -423,6 +423,18 @@ ErrCode AbilityContextImpl::SetMissionLabel(const std::string &label)
     return err;
 }
 
+#ifdef SUPPORT_GRAPHICS
+ErrCode AbilityContextImpl::SetMissionIcon(const std::shared_ptr<OHOS::Media::PixelMap> &icon)
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->SetMissionIcon(token_, icon);
+    if (err != ERR_OK) {
+        HILOG_ERROR("AbilityContextImpl::SetMissionIcon is failed %{public}d", err);
+    }
+    return err;
+}
+#endif
+
 void AbilityContextImpl::RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback)
 {
     HILOG_INFO("%{public}s called.", __func__);

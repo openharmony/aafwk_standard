@@ -1696,6 +1696,40 @@ int AbilityManagerProxy::SetMissionLabel(const sptr<IRemoteObject> &token, const
     return reply.ReadInt32();
 }
 
+#ifdef SUPPORT_GRAPHICS
+int AbilityManagerProxy::SetMissionIcon(const sptr<IRemoteObject> &token,
+    const std::shared_ptr<OHOS::Media::PixelMap> &icon)
+{
+    if (!token || !icon) {
+        HILOG_ERROR("SetMissionIcon abilitytoken or icon is invalid.");
+        return ERR_INVALID_VALUE;
+    }
+
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteRemoteObject(token)) {
+        HILOG_ERROR("SetMissionIcon write token failed.");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (!data.WriteParcelable(icon.get())) {
+        HILOG_ERROR("SetMissionIcon write icon failed.");
+        return ERR_INVALID_VALUE;
+    }
+
+    auto error = Remote()->SendRequest(IAbilityManager::SET_MISSION_ICON, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("SetMissionIcon Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+#endif
+
 int AbilityManagerProxy::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
 {
     MessageParcel data;

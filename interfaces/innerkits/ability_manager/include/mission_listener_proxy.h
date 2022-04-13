@@ -58,6 +58,16 @@ public:
      */
     virtual void OnMissionMovedToFront(int32_t missionId) override;
 
+#ifdef SUPPORT_GRAPHICS
+    /**
+     * @brief Called when a mission has changed it's icon.
+     *
+     * @param missionId, mission Id.
+     * @param icon, mission icon.
+     */
+    virtual void OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
+#endif
+
 private:
     void SendRequestCommon(int32_t missionId, IMissionListener::MissionListenerCmd cmd);
 
