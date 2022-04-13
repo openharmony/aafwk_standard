@@ -3727,6 +3727,46 @@ void Ability::SetWakeUpScreen(bool wakeUp)
     }
     window->SetTurnScreenOn(wakeUp);
 }
+
+void Ability::SetDisplayOrientation(int orientation)
+{
+    HILOG_DEBUG("%{public}s called, orientation: %{public}d", __func__, orientation);
+    if (abilityWindow_ == nullptr) {
+        HILOG_ERROR("Ability::SetDisplayOrientation error. abilityWindow_ == nullptr.");
+        return;
+    }
+    HILOG_DEBUG("FA mode");
+    auto window = abilityWindow_->GetWindow();
+    if (window == nullptr) {
+        HILOG_ERROR("window is nullptr.");
+        return;
+    }
+    if (orientation == static_cast<int>(DisplayOrientation::FOLLOWRECENT)) {
+        int defualtOrientation = 0;
+        if (setWant_) {
+            orientation = setWant_->GetIntParam("ohos.aafwk.Orientation", defualtOrientation);
+        } else {
+            orientation = defualtOrientation;
+        }
+    }
+    window->SetRequestedOrientation(static_cast<Rosen::Orientation>(orientation));
+}
+
+int Ability::GetDisplayOrientation()
+{
+    HILOG_DEBUG("%{public}s called.", __func__);
+    if (abilityWindow_ == nullptr) {
+        HILOG_ERROR("Ability::GetDisplayOrientation error. abilityWindow_ == nullptr.");
+        return 0;
+    }
+    HILOG_DEBUG("FA mode");
+    auto window = abilityWindow_->GetWindow();
+    if (window == nullptr) {
+        HILOG_ERROR("window is nullptr.");
+        return 0;
+    }
+    return static_cast<int>(window->GetRequestedOrientation());
+}
 #endif
 }  // namespace AppExecFwk
 }  // namespace OHOS
