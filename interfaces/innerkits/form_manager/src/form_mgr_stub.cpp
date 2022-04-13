@@ -80,6 +80,10 @@ FormMgrStub::FormMgrStub()
         &FormMgrStub::HandleDeleteInvalidForms;
     memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_ACQUIRE_FORM_STATE)] =
         &FormMgrStub::HandleAcquireFormState;
+    memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_NOTIFY_FORMS_VISIBLE)] =
+        &FormMgrStub::HandleNotifyFormsVisible;
+    memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_NOTIFY_FORMS_ENABLE_UPDATE)] =
+        &FormMgrStub::HandleNotifyFormsEnableUpdate;
     memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_GET_ALL_FORMS_INFO)] =
         &FormMgrStub::HandleGetAllFormsInfo;
     memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_GET_FORMS_INFO_BY_APP)] =
@@ -578,6 +582,72 @@ int32_t FormMgrStub::HandleAcquireFormState(MessageParcel &data, MessageParcel &
     }
     if (!reply.WriteInt32((int32_t)stateInfo.state)) {
         HILOG_ERROR("%{public}s, failed to write state", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    return result;
+}
+
+/**
+ * @brief Handle NotifyFormsVisible message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormMgrStub::HandleNotifyFormsVisible(MessageParcel &data, MessageParcel &reply)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    std::vector<int64_t> formIds;
+    if (!data.ReadInt64Vector(&formIds)) {
+        HILOG_ERROR("%{public}s, failed to ReadInt64Vector", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    bool isVisible = false;
+    if (!data.ReadBool(isVisible)) {
+        HILOG_ERROR("%{public}s, failed to ReadBool", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    sptr<IRemoteObject> callerToken = data.ReadRemoteObject();
+    if (callerToken == nullptr) {
+        HILOG_ERROR("%{public}s, failed to get remote object.", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    int32_t result = NotifyFormsVisible(formIds, isVisible, callerToken);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("%{public}s, failed to write result", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    return result;
+}
+
+/**
+ * @brief Handle NotifyFormsEnableUpdate message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormMgrStub::HandleNotifyFormsEnableUpdate(MessageParcel &data, MessageParcel &reply)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    std::vector<int64_t> formIds;
+    if (!data.ReadInt64Vector(&formIds)) {
+        HILOG_ERROR("%{public}s, failed to ReadInt64Vector", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    bool isEnableUpdate = false;
+    if (!data.ReadBool(isEnableUpdate)) {
+        HILOG_ERROR("%{public}s, failed to ReadBool", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    sptr<IRemoteObject> callerToken = data.ReadRemoteObject();
+    if (callerToken == nullptr) {
+        HILOG_ERROR("%{public}s, failed to get remote object.", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    int32_t result = NotifyFormsEnableUpdate(formIds, isEnableUpdate, callerToken);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("%{public}s, failed to write result", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     return result;

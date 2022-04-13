@@ -339,8 +339,8 @@ FormState JsFormExtension::OnAcquireFormState(const Want &want)
     }
 
     if (!ConvertFromJsValue(*nativeEngine, nativeResult, state)) {
-        HILOG_ERROR("%{public}s, convert formDataStr failed", __func__);
-        return FormState::DEFAULT;
+        HILOG_ERROR("%{public}s, convert form state failed", __func__);
+        return FormState::UNKNOWN;
     }
 
     HILOG_INFO("%{public}s, state: %{public}d", __func__, state);

@@ -1231,7 +1231,8 @@ void FormTimerMgr::ExecTimerTask(const FormTimer &timerTask)
         }
         HILOG_INFO("%{public}s, userId:%{public}d", __func__, timerTask.userId);
 
-        auto task = std::bind(&FormProviderMgr::RefreshForm, &FormProviderMgr::GetInstance(), timerTask.formId, want);
+        auto task = std::bind(&FormProviderMgr::RefreshForm, &FormProviderMgr::GetInstance(), timerTask.formId, want,
+            false);
         taskExecutor_->AddTask(task);
     }
     HILOG_INFO("%{public}s end", __func__);

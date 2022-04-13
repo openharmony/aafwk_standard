@@ -604,6 +604,23 @@ bool FormDataMgr::IsEnableRefresh(int64_t formId)
 
     return false;
 }
+
+/**
+ * @brief update enable or not.
+ * @param formId The Id of the form.
+ * @return true on enbale, false on disable.
+ */
+bool FormDataMgr::IsEnableUpdate(int64_t formId)
+{
+    std::lock_guard<std::mutex> lock(formHostRecordMutex_);
+    for (auto &record : clientRecords_) {
+        if (record.IsEnableUpdate(formId)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /**
  * @brief Generate form id.
  * @return form id.
@@ -934,7 +951,13 @@ bool FormDataMgr::UpdateHostForm(const int64_t formId, const FormRecord &formRec
     std::lock_guard<std::mutex> lock(formHostRecordMutex_);
     std::vector<FormHostRecord>::iterator itHostRecord;
     for (itHostRecord = clientRecords_.begin(); itHostRecord != clientRecords_.end(); itHostRecord++) {
-        bool enableRefresh = itHostRecord->IsEnableRefresh(formId);
+        bool enableRefresh = formRecord.isVisible;
+        if (!enableRefresh) {
+            enableRefresh = itHostRecord->IsEnableUpdate(formId);
+        }
+        if (!enableRefresh) {
+            enableRefresh = itHostRecord->IsEnableRefresh(formId);
+        }
         HILOG_INFO("formId:%{public}" PRId64 " enableRefresh:%{public}d", formId, enableRefresh);
         if (enableRefresh) {
             // update form
@@ -951,6 +974,7 @@ bool FormDataMgr::UpdateHostForm(const int64_t formId, const FormRecord &formRec
  * @param formIDs The id of the forms.
  * @param callerToken Caller ability token.
  * @param flag form flag.
+ * @param isOnlyEnableUpdate form enable update form flag.
  * @param refreshForms Refresh forms
  * @return Returns ERR_OK on success, others on failure.
  */
@@ -958,6 +982,7 @@ int32_t FormDataMgr::UpdateHostFormFlag(
     std::vector<int64_t> formIds,
     const sptr<IRemoteObject> &callerToken,
     const bool flag,
+    const bool isOnlyEnableUpdate,
     std::vector<int64_t> &refreshForms)
 {
     HILOG_INFO("%{public}s start, flag: %{public}d", __func__, flag);
@@ -978,7 +1003,15 @@ int32_t FormDataMgr::UpdateHostFormFlag(
                     continue;
                 }
 
-                itHostRecord->SetEnableRefresh(matchedFormId, flag);
+                if (isOnlyEnableUpdate) {
+                    // new API: this flag is used only to control enable update
+                    itHostRecord->SetEnableUpdate(matchedFormId, flag);
+                    itHostRecord->SetEnableRefresh(matchedFormId, false);
+                } else {
+                    // old API: this flag is used to control enable update and visible update
+                    itHostRecord->SetEnableRefresh(matchedFormId, flag);
+                }
+
                 // set disable
                 if (!flag) {
                     HILOG_INFO("%{public}s, flag is disable", __func__);
@@ -1231,6 +1264,26 @@ ErrCode FormDataMgr::AcquireFormStateBack(AppExecFwk::FormState state, const std
     iter->second.OnAcquireState(state, want);
     iter->second.CleanResource();
     formStateRecord_.erase(iter);
+    return ERR_OK;
+}
+
+/**
+ * @brief set form record visible.
+ * @param matchedFormId form id.
+ * @param isVisible is visible.
+ * @return Returns true if this function is successfully called; returns false otherwise.
+ */
+ErrCode FormDataMgr::SetRecordVisible(int64_t matchedFormId, bool isVisible)
+{
+    HILOG_INFO("%{public}s, set form record visible", __func__);
+    std::lock_guard<std::mutex> lock(formRecordMutex_);
+    auto info = formRecords_.find(matchedFormId);
+    if (info == formRecords_.end()) {
+        HILOG_ERROR("%{public}s, form info not find", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_FORM_ID;
+    }
+    info->second.isVisible = isVisible;
+    HILOG_DEBUG("set isVisible to %{public}d, formId: %{public}" PRId64 " ", isVisible, matchedFormId);
     return ERR_OK;
 }
 
