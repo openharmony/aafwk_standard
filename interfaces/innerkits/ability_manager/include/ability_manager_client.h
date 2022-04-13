@@ -538,6 +538,18 @@ public:
      */
     ErrCode SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label);
 
+#ifdef SUPPORT_GRAPHICS
+    /**
+     * Set mission icon of this ability.
+     *
+     * @param abilityToken Indidate token of ability.
+     * @param icon Indidate the icon showed of the ability in recent missions.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode SetMissionIcon(const sptr<IRemoteObject> &abilityToken,
+        const std::shared_ptr<OHOS::Media::PixelMap> &icon);
+#endif
+
     /**
      * @brief start user test.
      * @param want the want of the ability user test to start.

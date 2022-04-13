@@ -21,7 +21,7 @@
 #include "parcel.h"
 #include "element_name.h"
 #ifdef SUPPORT_GRAPHICS
-#include "foundation/multimedia/image_standard/interfaces/innerkits/include/pixel_map.h"
+#include "pixel_map.h"
 #endif
 
 namespace OHOS {
@@ -42,7 +42,7 @@ struct MissionPixelMap : public Parcelable {
 struct MissionSnapshot : public Parcelable {
     AppExecFwk::ElementName topAbility;
 #ifdef SUPPORT_GRAPHICS
-    std::shared_ptr<Media::PixelMap> snapshot;
+    std::shared_ptr<OHOS::Media::PixelMap> snapshot;
 #endif
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;

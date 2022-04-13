@@ -31,6 +31,10 @@
 #include "want.h"
 #include "event_handler.h"
 
+#ifdef SUPPORT_GRAPHICS
+#include "pixel_map_napi.h"
+#endif
+
 namespace OHOS {
 namespace AbilityRuntime {
 constexpr int32_t INDEX_TWO = 2;
@@ -134,6 +138,14 @@ NativeValue* JsAbilityContext::SetMissionLabel(NativeEngine* engine, NativeCallb
     JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
     return (me != nullptr) ? me->OnSetMissionLabel(*engine, *info) : nullptr;
 }
+
+#ifdef SUPPORT_GRAPHICS
+NativeValue* JsAbilityContext::SetMissionIcon(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
+    return (me != nullptr) ? me->OnSetMissionIcon(*engine, *info) : nullptr;
+}
+#endif
 
 NativeValue* JsAbilityContext::OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info)
 {
@@ -798,6 +810,47 @@ NativeValue* JsAbilityContext::OnSetMissionLabel(NativeEngine& engine, NativeCal
     return result;
 }
 
+#ifdef SUPPORT_GRAPHICS
+NativeValue* JsAbilityContext::OnSetMissionIcon(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    HILOG_INFO("OnSetMissionIcon is called, argc = %{public}d", static_cast<int>(info.argc));
+    if (info.argc < ARGC_ONE) {
+        HILOG_ERROR("OnSetMissionIcon, Not enough params");
+        return engine.CreateUndefined();
+    }
+
+    auto icon = OHOS::Media::PixelMapNapi::GetPixelMap(reinterpret_cast<napi_env>(&engine),
+        reinterpret_cast<napi_value>(info.argv[0]));
+    if (!icon) {
+        HILOG_ERROR("OnSetMissionIcon, parse icon failed.");
+        return engine.CreateUndefined();
+    }
+
+    AsyncTask::CompleteCallback complete =
+        [weak = context_, icon](NativeEngine& engine, AsyncTask& task, int32_t status) {
+            auto context = weak.lock();
+            if (!context) {
+                HILOG_WARN("context is released when set mission icon");
+                task.Reject(engine, CreateJsError(engine, -1, "Context is released"));
+                return;
+            }
+
+            auto errcode = context->SetMissionIcon(icon);
+            if (errcode == 0) {
+                task.Resolve(engine, engine.CreateUndefined());
+            } else {
+                task.Reject(engine, CreateJsError(engine, errcode, "SetMissionIcon failed."));
+            }
+        };
+
+    NativeValue* lastParam = (info.argc == ARGC_ONE) ? nullptr : info.argv[1];
+    NativeValue* result = nullptr;
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    return result;
+}
+#endif
+
 bool JsAbilityContext::UnWrapWant(NativeEngine& engine, NativeValue* argv, AAFwk::Want& want)
 {
     if (argv == nullptr) {
@@ -945,6 +998,10 @@ NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<Abilit
     BindNativeFunction(engine, *object, "requestPermissionsFromUser", JsAbilityContext::RequestPermissionsFromUser);
     BindNativeFunction(engine, *object, "restoreWindowStage", JsAbilityContext::RestoreWindowStage);
     BindNativeFunction(engine, *object, "setMissionLabel", JsAbilityContext::SetMissionLabel);
+
+#ifdef SUPPORT_GRAPHICS
+    BindNativeFunction(engine, *object, "setMissionIcon", JsAbilityContext::SetMissionIcon);
+#endif
     return objValue;
 }
 

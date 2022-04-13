@@ -194,6 +194,28 @@ void MissionListenerController::NotifyMissionMovedToFront(int32_t missionId)
     handler_->PostTask(task);
 }
 
+#ifdef SUPPORT_GRAPHICS
+void MissionListenerController::NotifyMissionIconChanged(int32_t missionId,
+    const std::shared_ptr<OHOS::Media::PixelMap> &icon)
+{
+    if (!handler_) {
+        HILOG_ERROR("handler not init when notify mission icon changed");
+        return;
+    }
+
+    auto task = [weak = weak_from_this(), missionId, icon]() {
+        auto self = weak.lock();
+        if (self == nullptr) {
+            HILOG_ERROR("self is nullptr, NotifyMissionIconChanged failed.");
+            return;
+        }
+        HILOG_INFO("notify listeners mission icon has changed, missionId:%{public}d.", missionId);
+        self->CallListeners(&IMissionListener::OnMissionIconUpdated, missionId, icon);
+    };
+    handler_->PostTask(task);
+}
+#endif
+
 void MissionListenerController::OnListenerDied(const wptr<IRemoteObject> &remote)
 {
     HILOG_DEBUG("On mission listener died.");

@@ -395,6 +395,11 @@ public:
 
     virtual int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label) override;
 
+#ifdef SUPPORT_GRAPHICS
+    virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
+        const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
+#endif
+
     virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) override;
 
     virtual int GetExtensionRunningInfos(int upperLimit, std::vector<ExtensionRunningInfo> &info) override;

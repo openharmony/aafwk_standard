@@ -256,6 +256,12 @@ public:
         return 0;
     }
 
+    virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
+        const std::shared_ptr<OHOS::Media::PixelMap> &icon) override
+    {
+        return 0;
+    }
+
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override
     {
         return 0;
@@ -572,6 +578,12 @@ public:
 
     virtual int SetMissionLabel(const sptr<IRemoteObject> &token,
         const std::string &lable) override
+    {
+        return 0;
+    }
+
+    virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
+        const std::shared_ptr<OHOS::Media::PixelMap> &icon) override
     {
         return 0;
     }
