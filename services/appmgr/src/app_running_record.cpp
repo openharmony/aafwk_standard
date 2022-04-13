@@ -776,7 +776,6 @@ std::list<std::shared_ptr<ModuleRunningRecord>> AppRunningRecord::GetAllModuleRe
             moduleRecordList.push_back(list);
         }
     }
-    HILOG_INFO("GetAllModuleRecord size:%{public}zu", moduleRecordList.size());
     return moduleRecordList;
 }
 

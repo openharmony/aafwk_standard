@@ -175,7 +175,7 @@ void ModuleRunningRecord::LaunchAbility(const std::shared_ptr<AbilityRunningReco
     }
     const auto &iter = abilities_.find(ability->GetToken());
     if (iter != abilities_.end() && appLifeCycleDeal_->GetApplicationClient()) {
-        HILOG_INFO("ScheduleLaunchAbility ability:%{public}s", ability->GetName().c_str());
+        HILOG_INFO("Schedule launchAbility ability:%{public}s", ability->GetName().c_str());
         appLifeCycleDeal_->LaunchAbility(ability);
         ability->SetState(AbilityState::ABILITY_STATE_READY);
     }

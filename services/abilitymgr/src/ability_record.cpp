@@ -163,7 +163,7 @@ int32_t AbilityRecord::GetUid()
 int AbilityRecord::LoadAbility()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("start load ability, name is %{public}s", abilityInfo_.name.c_str());
     startTime_ = AbilityUtil::SystemTimeMillis();
     CHECK_POINTER_AND_RETURN(token_, ERR_INVALID_VALUE);
     std::string appName = applicationInfo_.name;
