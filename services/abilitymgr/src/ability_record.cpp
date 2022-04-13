@@ -885,6 +885,12 @@ int64_t AbilityRecord::GetStartTime() const
 
 void AbilityRecord::DumpService(std::vector<std::string> &info, bool isClient) const
 {
+    std::vector<std::string> params;
+    DumpService(info, params, isClient);
+}
+
+void AbilityRecord::DumpService(std::vector<std::string> &info, std::vector<std::string> &params, bool isClient) const
+{
     info.emplace_back("      AbilityRecord ID #" + std::to_string(GetRecordId()) + "   state #" +
                       AbilityRecord::ConvertAbilityState(GetAbilityState()) + "   start time [" +
                       std::to_string(GetStartTime()) + "]");
@@ -905,7 +911,6 @@ void AbilityRecord::DumpService(std::vector<std::string> &info, bool isClient) c
     }
     // add dump client info
     if (isClient && scheduler_ && isReady_) {
-        std::vector<std::string> params;
         scheduler_->DumpAbilityInfo(params, info);
         AppExecFwk::Configuration config;
         if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
