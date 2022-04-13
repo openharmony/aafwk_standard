@@ -186,6 +186,12 @@ public:
      */
     bool IsEnableRefresh(int64_t formId);
     /**
+     * @brief update enable or not.
+     * @param formId The Id of the form.
+     * @return true on enbale, false on disable.
+     */
+    bool IsEnableUpdate(int64_t formId);
+    /**
      * @brief Check calling uid is valid.
      * @param formUserUids The form user uids.
      * @return Returns true if this user uid is valid; returns false otherwise.
@@ -304,11 +310,12 @@ public:
      * @param formIDs The id of the forms.
      * @param callerToken Caller ability token.
      * @param flag form flag.
+     * @param isOnlyEnableUpdate form enable update form flag.
      * @param refreshForms Refresh forms
      * @return Returns ERR_OK on success, others on failure.
      */
     int32_t UpdateHostFormFlag(std::vector<int64_t> formIds, const sptr<IRemoteObject> &callerToken,
-    const bool flag, std::vector<int64_t> &refreshForms);
+    const bool flag, const bool isOnlyEnableUpdate, std::vector<int64_t> &refreshForms);
     /**
      * @brief Find matched form id.
      * @param formId The form id.
@@ -402,11 +409,19 @@ public:
     /**
      * @brief Create form state host record.
      * @param FormState form state.
-     * @param provider provider indo.
+     * @param provider provider info.
      * @param want The want of onAcquireFormState.
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
     ErrCode AcquireFormStateBack(AppExecFwk::FormState state, const std::string &provider, const AAFwk::Want &want);
+
+    /**
+     * @brief set form record visible.
+     * @param matchedFormId form id.
+     * @param isVisible is visible.
+     * @return Returns true if this function is successfully called; returns false otherwise.
+     */
+    ErrCode SetRecordVisible(int64_t matchedFormId, bool isVisible);
 private:
     /**
      * @brief Create form record.

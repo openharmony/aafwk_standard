@@ -156,7 +156,7 @@ void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, 
     Want want;
     want.SetParam(Constants::PARAM_FORM_USER_ID, userId);
     for (const int64_t id : updatedForms) {
-        FormProviderMgr::GetInstance().RefreshForm(id, want);
+        FormProviderMgr::GetInstance().RefreshForm(id, want, true);
     }
 }
 

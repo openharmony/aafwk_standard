@@ -209,6 +209,26 @@ public:
                                  FormStateInfo &stateInfo) = 0;
 
     /**
+       * @brief Delete the given invalid forms.
+       * @param formIds Indicates the ID of the forms.
+       * @param isVisible Visible or not.
+       * @param callerToken Host client.
+       * @return Returns ERR_OK on success, others on failure.
+       */
+    virtual int NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
+                                   const sptr<IRemoteObject> &callerToken) = 0;
+
+    /**
+     * @brief Delete the given invalid forms.
+     * @param formIds Indicates the ID of the forms.
+     * @param isEnableUpdate enable update or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate,
+                                        const sptr<IRemoteObject> &callerToken) = 0;
+
+    /**
      * @brief Get All FormsInfo.
      * @param formInfos Return the forms' information of all forms provided.
      * @return Returns ERR_OK on success, others on failure.
@@ -270,6 +290,8 @@ public:
         FORM_MGR_DISTRIBUTED_DATA_DELETE_FORM__ST,
         FORM_MGR_DELETE_INVALID_FORMS,
         FORM_MGR_ACQUIRE_FORM_STATE,
+        FORM_MGR_NOTIFY_FORMS_VISIBLE,
+        FORM_MGR_NOTIFY_FORMS_ENABLE_UPDATE,
         FORM_MGR_GET_ALL_FORMS_INFO,
         FORM_MGR_GET_FORMS_INFO_BY_APP,
         FORM_MGR_GET_FORMS_INFO_BY_MODULE,
