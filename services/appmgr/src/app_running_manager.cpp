@@ -54,8 +54,7 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::CreateAppRunningRecord(
     std::string signCode;
     ClipStringContent(rule, bundleInfo.appId, signCode);
 
-    HILOG_INFO("Create processName : %{public}s | recordId : %{public}d | signCode : %{public}s",
-        processName.c_str(), recordId, signCode.c_str());
+    HILOG_INFO("Create AppRunningRecord, processName: %{public}s, recordId: %{public}d", processName.c_str(), recordId);
     appRecord->SetSignCode(signCode);
     appRecord->SetJointUserId(bundleInfo.jointUserId);
     appRunningRecordMap_.emplace(recordId, appRecord);
@@ -65,7 +64,7 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::CreateAppRunningRecord(
 std::shared_ptr<AppRunningRecord> AppRunningManager::CheckAppRunningRecordIsExist(const std::string &appName,
     const std::string &processName, const int uid, const BundleInfo &bundleInfo)
 {
-    HILOG_INFO("CheckAppRunningRecordIsExist appName : %{public}s | processName : %{public}s | uid : %{public}d",
+    HILOG_INFO("appName: %{public}s, processName: %{public}s, uid : %{public}d",
         appName.c_str(), processName.c_str(), uid);
     std::lock_guard<std::recursive_mutex> guard(lock_);
 
@@ -392,8 +391,6 @@ void AppRunningManager::ClipStringContent(const std::regex &re, const std::strin
 {
     std::smatch basket;
     if (std::regex_search(sorce, basket, re)) {
-        HILOG_INFO("prefix str: [%{public}s]", basket.prefix().str().c_str());
-        HILOG_INFO("suffix str: [%{public}s]", basket.suffix().str().c_str());
         afferCutStr = basket.prefix().str() + basket.suffix().str();
     }
 }

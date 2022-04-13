@@ -267,7 +267,8 @@ int AbilityManagerService::StartAbility(const Want &want, const sptr<IRemoteObje
         HILOG_ERROR("StartAbility with continuation flags is not allowed!");
         return ERR_INVALID_VALUE;
     }
-    HILOG_INFO("%{public}s", __func__);
+    HILOG_INFO("%{public}s come, ability is %{public}s, userId is %{public}d",
+        __func__, want.GetElement().GetAbilityName().c_str(), userId);
     if (CheckIfOperateRemote(want)) {
         HILOG_INFO("AbilityManagerService::StartAbility. try to StartRemoteAbility");
         return StartRemoteAbility(want, requestCode);
@@ -285,7 +286,6 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         return CHECK_PERMISSION_FAILED;
     }
 
-    HILOG_DEBUG("%{public}s begin.", __func__);
     if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
         HILOG_ERROR("%{public}s VerificationAllToken failed.", __func__);
         return ERR_INVALID_VALUE;
@@ -305,27 +305,27 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
 
     auto abilityInfo = abilityRequest.abilityInfo;
     validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
-    HILOG_DEBUG("userId : %{public}d, singleton is : %{public}d",
+    HILOG_DEBUG("userId is : %{public}d, singleton is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
     result = CheckStaticCfgPermission(abilityInfo);
     if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        HILOG_ERROR("CheckStaticCfgPermission error, result is %{public}d", result);
         return result;
     }
     GrantUriPermission(want, validUserId);
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo, callerUid);
     if (result != ERR_OK) {
-        HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
+        HILOG_ERROR("JudgeAbilityVisibleControl error, result is %{public}d", result);
         return result;
     }
     auto type = abilityInfo.type;
-    HILOG_DEBUG("%{public}s Current ability type:%{public}d", __func__, type);
     if (type == AppExecFwk::AbilityType::DATA) {
         HILOG_ERROR("Cannot start data ability, use 'AcquireDataAbility()' instead.");
         return ERR_INVALID_VALUE;
     }
     if (!AbilityUtil::IsSystemDialogAbility(abilityInfo.bundleName, abilityInfo.name)) {
-        HILOG_DEBUG("%{public}s PreLoadAppDataAbilities:%{public}s", __func__, abilityInfo.bundleName.c_str());
+        HILOG_DEBUG("PreLoadAppDataAbilities:%{public}s", abilityInfo.bundleName.c_str());
         result = PreLoadAppDataAbilities(abilityInfo.bundleName, validUserId);
         if (result != ERR_OK) {
             HILOG_ERROR("StartAbility: App data ability preloading failed, '%{public}s', %{public}d",
@@ -340,7 +340,7 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
             HILOG_ERROR("connectManager is nullptr. userId=%{public}d", validUserId);
             return ERR_INVALID_VALUE;
         }
-        HILOG_DEBUG("%{public}s Start SERVICE or EXTENSION", __func__);
+        HILOG_DEBUG("Start service or extension, name is %{public}s", abilityInfo.name.c_str());
         return connectManager->StartAbility(abilityRequest);
     }
 
@@ -353,7 +353,7 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         HILOG_ERROR("missionListManager is nullptr. userId=%{public}d", validUserId);
         return ERR_INVALID_VALUE;
     }
-    HILOG_DEBUG("%{public}s StartAbility by MissionList", __func__);
+    HILOG_DEBUG("Start ability, name is %{public}s", abilityInfo.name.c_str());
     return missionListManager->StartAbility(abilityRequest);
 }
 
@@ -2318,14 +2318,14 @@ int AbilityManagerService::GenerateAbilityRequest(
     auto abilityInfoFlag = (AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION |
         AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_PERMISSION |
         AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_METADATA);
-    HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
+    HILOG_DEBUG("QueryAbilityInfo from bms, userId is %{public}d", userId);
     IN_PROCESS_CALL_WITHOUT_RET(bms->QueryAbilityInfo(want, abilityInfoFlag, userId, request.abilityInfo));
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
         // try to find extension
         std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
         IN_PROCESS_CALL_WITHOUT_RET(bms->QueryExtensionAbilityInfos(want, abilityInfoFlag, userId, extensionInfos));
         if (extensionInfos.size() <= 0) {
-            HILOG_ERROR("Get extension info failed.");
+            HILOG_ERROR("GenerateAbilityRequest error. Get extension info failed.");
             return RESOLVE_ABILITY_ERR;
         }
 
@@ -2334,12 +2334,12 @@ int AbilityManagerService::GenerateAbilityRequest(
             HILOG_ERROR("extensionInfo empty.");
             return RESOLVE_ABILITY_ERR;
         }
-        HILOG_DEBUG("QueryExtensionAbilityInfo, extension ability info found, name=%{public}s",
+        HILOG_DEBUG("Extension ability info found, name=%{public}s",
             extensionInfo.name.c_str());
         // For compatibility translates to AbilityInfo
         InitAbilityInfoFromExtension(extensionInfo, request.abilityInfo);
     }
-    HILOG_DEBUG("Query ability name: %{public}s, is stage mode: %{public}d",
+    HILOG_DEBUG("QueryAbilityInfo success, ability name: %{public}s, is stage mode: %{public}d",
         request.abilityInfo.name.c_str(), request.abilityInfo.isStageBasedModel);
     if (request.abilityInfo.type == AppExecFwk::AbilityType::SERVICE && request.abilityInfo.isStageBasedModel) {
         HILOG_INFO("stage mode, abilityInfo SERVICE type reset EXTENSION.");
@@ -2353,7 +2353,7 @@ int AbilityManagerService::GenerateAbilityRequest(
     request.appInfo = request.abilityInfo.applicationInfo;
     request.compatibleVersion = (int32_t)request.appInfo.apiCompatibleVersion;
     request.uid = request.appInfo.uid;
-    HILOG_DEBUG("End, app name: %{public}s, bundle name: %{public}s, uid: %{public}d",
+    HILOG_DEBUG("GenerateAbilityRequest end, app name: %{public}s, bundle name: %{public}s, uid: %{public}d",
         request.appInfo.name.c_str(), request.appInfo.bundleName.c_str(), request.uid);
 
     return ERR_OK;
@@ -3557,12 +3557,12 @@ void AbilityManagerService::InitPendWantManager(int32_t userId, bool switchUser)
 
 int32_t AbilityManagerService::GetValidUserId(const int32_t userId)
 {
-    HILOG_DEBUG("%{public}s  userId = %{public}d", __func__, userId);
+    HILOG_DEBUG("%{public}s, userId = %{public}d", __func__, userId);
     int32_t validUserId = userId;
 
     if (DEFAULT_INVAL_VALUE == userId) {
         validUserId = IPCSkeleton::GetCallingUid() / BASE_USER_RANGE;
-        HILOG_DEBUG("%{public}s validUserId = %{public}d, CallingUid = %{public}d", __func__, validUserId,
+        HILOG_DEBUG("%{public}s, validUserId = %{public}d, CallingUid = %{public}d", __func__, validUserId,
             IPCSkeleton::GetCallingUid());
         if (validUserId == U0_USER_ID) {
             validUserId = GetUserId();

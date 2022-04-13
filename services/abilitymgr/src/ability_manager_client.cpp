@@ -107,8 +107,8 @@ ErrCode AbilityManagerClient::StartAbility(
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    HILOG_INFO("%{public}s called, bundleName=%{public}s, abilityName=%{public}s, userId=%{public}d",
-        __func__, want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), userId);
+    HILOG_INFO("%{public}s come, abilityName=%{public}s, userId=%{public}d",
+        __func__, want.GetElement().GetAbilityName().c_str(), userId);
     return abms->StartAbility(want, callerToken, userId, requestCode);
 }
 
@@ -125,10 +125,8 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, const StartOptions 
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    HILOG_INFO("%{public}s called, bundleName=%{public}s, abilityName=%{public}s",
-        __func__, want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str());
-    HILOG_INFO("%{public}s called, userId=%{public}d, windowMode_=%{public}d, displayId_=%{public}d",
-        __func__, userId, startOptions.GetWindowMode(), startOptions.GetDisplayID());
+    HILOG_INFO("%{public}s come, abilityName=%{public}s, userId=%{public}d",
+        __func__, want.GetElement().GetAbilityName().c_str(), userId);
     return abms->StartAbility(want, startOptions, callerToken, userId, requestCode);
 }
 

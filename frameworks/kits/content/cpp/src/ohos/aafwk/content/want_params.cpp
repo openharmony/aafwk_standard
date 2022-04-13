@@ -1284,7 +1284,6 @@ WantParams *WantParams::Unmarshalling(Parcel &parcel)
         ABILITYBASE_LOGI("%{public}s read bufferSize fail.", __func__);
         return nullptr;
     }
-    ABILITYBASE_LOGI("%{public}s bufferSize=%{public}d.", __func__, bufferSize);
 
     // Corresponding to Parcel#writeByteArray() in Java.
     int32_t length;
