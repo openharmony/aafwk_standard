@@ -90,7 +90,7 @@ ohos_moduletest("PandingWantMgrTest") {
 
   if (ability_runtime_graphics) {
     deps += [
-      "//base/global/i18n_standard/frameworks/intl:intl_util",
+      "//base/global/i18n/frameworks/intl:intl_util",
       "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
       "//foundation/graphic/standard:libwmservice",
       "//third_party/libpng:libpng",
