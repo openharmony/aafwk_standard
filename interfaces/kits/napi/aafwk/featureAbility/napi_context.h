@@ -172,6 +172,32 @@ napi_value NAPI_GetCtxAbilityInfo(napi_env env, napi_callback_info info);
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_SetWakeUpScreen(napi_env env, napi_callback_info info);
+
+/**
+ * @brief Set the display orientation of the main window.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_SetDisplayOrientation(napi_env env, napi_callback_info info);
+#ifdef SUPPORT_GRAPHICS
+napi_value NAPI_SetDisplayOrientationWrap(napi_env env, napi_callback_info info,
+    AsyncJSCallbackInfo *asyncCallbackInfo);
+bool UnwrapSetDisplayOrientation(napi_env env, size_t argc, napi_value *argv, AsyncJSCallbackInfo *asyncCallbackInfo);
+void SetDisplayOrientationExecuteCallbackWork(napi_env env, void *data);
+#endif
+
+/**
+ * @brief Get the display orientation of the main window.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+napi_value NAPI_GetDisplayOrientation(napi_env env, napi_callback_info info);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_NAPI_CONTEXT_H */
