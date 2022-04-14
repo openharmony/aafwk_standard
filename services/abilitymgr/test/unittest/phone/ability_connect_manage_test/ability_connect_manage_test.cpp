@@ -116,7 +116,7 @@ void AbilityConnectManageTest::TearDownTestCase(void)
 
 void AbilityConnectManageTest::SetUp(void)
 {
-    connectManager_ = std::make_unique<AbilityConnectManager>();
+    connectManager_ = std::make_unique<AbilityConnectManager>(0);
     // generate ability request
     std::string deviceName = "device";
     std::string abilityName = "ServiceAbility";
@@ -1207,7 +1207,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_024, TestSize.Level1)
     auto abilityRecord = serviceMap.at(elementNameUri);
     auto token = abilityRecord->GetToken();
 
-    ConnectManager()->OnAbilityDied(abilityRecord);
+    ConnectManager()->OnAbilityDied(abilityRecord, 0);
     WaitUntilTaskDone(handler);
     auto list = abilityRecord->GetConnectRecordList();
     EXPECT_EQ(static_cast<int>(list.size()), 0);
@@ -1218,7 +1218,7 @@ HWTEST_F(AbilityConnectManageTest, AAFWK_Connect_Service_024, TestSize.Level1)
     auto abilityRecord1 = serviceMap.at(elementNameUri1);
     auto token1 = abilityRecord1->GetToken();
 
-    ConnectManager()->OnAbilityDied(abilityRecord1);
+    ConnectManager()->OnAbilityDied(abilityRecord1, 0);
     WaitUntilTaskDone(handler);
     auto list1 = abilityRecord1->GetConnectRecordList();
     EXPECT_EQ(static_cast<int>(list1.size()), 0);
