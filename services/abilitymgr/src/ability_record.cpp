@@ -163,7 +163,7 @@ int32_t AbilityRecord::GetUid()
 int AbilityRecord::LoadAbility()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("start load ability, name is %{public}s", abilityInfo_.name.c_str());
+    HILOG_INFO("Start load ability, name is %{public}s.", abilityInfo_.name.c_str());
     startTime_ = AbilityUtil::SystemTimeMillis();
     CHECK_POINTER_AND_RETURN(token_, ERR_INVALID_VALUE);
     std::string appName = applicationInfo_.name;
@@ -203,7 +203,7 @@ bool AbilityRecord::CanRestartRootLauncher()
 void AbilityRecord::ForegroundAbility(uint32_t sceneFlag)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("ForegroundAbility.");
+    HILOG_INFO("Start to foreground ability, name is %{public}s.", abilityInfo_.name.c_str());
     CHECK_POINTER(lifecycleDeal_);
 
     SendEvent(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, AbilityManagerService::FOREGROUNDNEW_TIMEOUT);
@@ -1374,7 +1374,9 @@ bool AbilityRecord::Release(const sptr<IAbilityConnection> & connect)
 bool AbilityRecord::IsNeedToCallRequest() const
 {
     HILOG_DEBUG("ability release call record by callback.");
-    CHECK_POINTER_RETURN_BOOL(callContainer_);
+    if (callContainer_ == nullptr) {
+        return false;
+    }
 
     return callContainer_->IsNeedToCallRequest();
 }

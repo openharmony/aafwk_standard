@@ -611,8 +611,7 @@ int MissionListManager::AttachAbilityThread(const sptr<IAbilityScheduler> &sched
     auto abilityRecord = GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
-    std::string element = abilityRecord->GetWant().GetElement().GetURI();
-    HILOG_DEBUG("Ability: %{public}s", element.c_str());
+    HILOG_DEBUG("AbilityMS attch abilityThread, name is %{public}s.", abilityRecord->GetAbilityInfo().name.c_str());
 
     std::shared_ptr<AbilityEventHandler> handler =
         DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
@@ -639,14 +638,14 @@ int MissionListManager::AttachAbilityThread(const sptr<IAbilityScheduler> &sched
 
 void MissionListManager::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state)
 {
-    HILOG_DEBUG("Ability request app state %{public}d done.", state);
+    HILOG_DEBUG("Ability request state %{public}d done.", state);
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     AppAbilityState abilitState = DelayedSingleton<AppScheduler>::GetInstance()->ConvertToAppAbilityState(state);
     if (abilitState == AppAbilityState::ABILITY_STATE_FOREGROUND) {
         auto abilityRecord = GetAbilityRecordByToken(token);
         CHECK_POINTER(abilityRecord);
         std::string element = abilityRecord->GetWant().GetElement().GetURI();
-        HILOG_DEBUG("ability: %{public}s", element.c_str());
+        HILOG_DEBUG("Ability is %{public}s, start to foreground.", element.c_str());
         abilityRecord->ForegroundAbility(abilityRecord->lifeCycleStateInfo_.sceneFlagBak);
     }
 }

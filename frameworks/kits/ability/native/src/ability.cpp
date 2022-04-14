@@ -200,20 +200,15 @@ bool Ability::PrintDrawnCompleted()
 }
 #endif
 
-/**
- * Will be called when ability start. You should override this function
- *
- * @param want ability start information
- */
 void Ability::OnStart(const Want &want)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin.", __func__);
     if (abilityInfo_ == nullptr) {
         HILOG_ERROR("Ability::OnStart failed abilityInfo_ is nullptr.");
         return;
     }
 
+    HILOG_INFO("%{public}s begin, name is %{public}s.", __func__, abilityInfo_->name.c_str());
 #ifdef SUPPORT_GRAPHICS
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         Rosen::WindowType winType = Rosen::WindowType::WINDOW_TYPE_APP_MAIN_WINDOW;
@@ -244,12 +239,8 @@ void Ability::OnStart(const Want &want)
 
         int defualtDisplayId = Rosen::WindowScene::DEFAULT_DISPLAY_ID;
         int displayId = want.GetIntParam(Want::PARAM_RESV_DISPLAY_ID, defualtDisplayId);
-        HILOG_INFO("Ability::OnStart bundleName:%{public}s, abilityName:%{public}s, windowType:%{public}d, "
-            "displayId:%{public}d",
-            abilityInfo_->bundleName.c_str(),
-            abilityInfo_->name.c_str(),
-            winType,
-            displayId);
+        HILOG_INFO("abilityName:%{public}s, windowType:%{public}d, displayId:%{public}d",
+            abilityInfo_->name.c_str(), winType, displayId);
         auto option = GetWindowOption(want);
         InitWindow(winType, displayId, option);
 
@@ -318,7 +309,7 @@ void Ability::OnStart(const Want &want)
         return;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_START, want);
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end, name is %{public}s.", __func__, abilityInfo_->name.c_str());
 }
 
 /**
@@ -378,12 +369,10 @@ void Ability::Destroy()
 void Ability::OnActive()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}s begin, name is %{public}s.", __func__, abilityInfo_->name.c_str());
 #ifdef SUPPORT_GRAPHICS
     if (abilityWindow_ != nullptr) {
-        HILOG_INFO("%{public}s begin abilityWindow_->OnPostAbilityActive.", __func__);
         abilityWindow_->OnPostAbilityActive();
-        HILOG_INFO("%{public}s end abilityWindow_->OnPostAbilityActive.", __func__);
     }
     bWindowFocus_ = true;
 #endif
@@ -398,7 +387,7 @@ void Ability::OnActive()
         return;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_ACTIVE);
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end, name is %{public}s.", __func__, abilityInfo_->name.c_str());
 }
 
 /**
@@ -832,7 +821,6 @@ void Ability::InitWindow(Rosen::WindowType winType, int32_t displayId, sptr<Rose
         return;
     }
     bool useNewMission = AbilityImpl::IsUseNewMission();
-    HILOG_INFO("%{public}s beign abilityWindow_->InitWindow.", __func__);
     if (useNewMission) {
         abilityWindow_->InitWindow(winType, abilityContext_, sceneListener_, displayId, option);
     } else {
@@ -840,7 +828,6 @@ void Ability::InitWindow(Rosen::WindowType winType, int32_t displayId, sptr<Rose
         sptr<Rosen::IWindowLifeCycle> listener = nullptr;
         abilityWindow_->InitWindow(winType, context, listener, displayId, option);
     }
-    HILOG_INFO("%{public}s end abilityWindow_->InitWindow.", __func__);
 }
 
 /**
@@ -3566,7 +3553,6 @@ bool Ability::CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultS
 #ifdef SUPPORT_GRAPHICS
 sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
 {
-    HILOG_INFO("%{public}s start", __func__);
     sptr<Rosen::WindowOption> option = new Rosen::WindowOption();
     if (option == nullptr) {
         HILOG_ERROR("Ability::GetWindowOption option is null.");
@@ -3586,8 +3572,6 @@ sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
         HILOG_INFO("Set window type for launcher");
         option->SetWindowType(Rosen::WindowType::WINDOW_TYPE_DESKTOP);
     }
-
-    HILOG_INFO("%{public}s end", __func__);
     return option;
 }
 

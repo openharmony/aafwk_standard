@@ -138,13 +138,12 @@ void OHOSApplication::SetRuntime(std::unique_ptr<AbilityRuntime::Runtime>&& runt
  */
 void OHOSApplication::SetApplicationContext(const std::shared_ptr<AbilityRuntime::Context> &abilityRuntimeContext)
 {
-    HILOG_INFO("OHOSApplication::SetApplicationContext begin");
+    HILOG_INFO("OHOSApplication::SetApplicationContext");
     if (abilityRuntimeContext == nullptr) {
         HILOG_ERROR("OHOSApplication::SetApplicationContext failed, context is empty");
         return;
     }
     abilityRuntimeContext_ = abilityRuntimeContext;
-    HILOG_INFO("OHOSApplication::SetApplicationContext end");
 }
 
 /**
@@ -155,13 +154,12 @@ void OHOSApplication::SetApplicationContext(const std::shared_ptr<AbilityRuntime
  */
 void OHOSApplication::SetAbilityRecordMgr(const std::shared_ptr<AbilityRecordMgr> &abilityRecordMgr)
 {
-    HILOG_INFO("OHOSApplication::SetAbilityRecordMgr. Start");
+    HILOG_INFO("OHOSApplication::SetAbilityRecordMgr");
     if (abilityRecordMgr == nullptr) {
         HILOG_ERROR("ContextDeal::SetAbilityRecordMgr failed, abilityRecordMgr is nullptr");
         return;
     }
     abilityRecordMgr_ = abilityRecordMgr;
-    HILOG_INFO("OHOSApplication::SetAbilityRecordMgr. End");
 }
 
 /**
@@ -432,7 +430,7 @@ void OHOSApplication::OnMemoryLevel(int level)
  */
 void OHOSApplication::OnStart()
 {
-    HILOG_INFO("OHOSApplication::OnStart: called");
+    HILOG_INFO("OnStart called.");
 }
 
 /**

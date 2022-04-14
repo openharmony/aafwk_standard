@@ -81,7 +81,6 @@ AbilityThread::~AbilityThread()
 std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalRecord> &abilityRecord)
 {
     std::string abilityName;
-    HILOG_INFO("AbilityThread::CreateAbilityName begin");
     if (abilityRecord == nullptr) {
         HILOG_ERROR("AbilityThread::CreateAbilityName failed,abilityRecord is nullptr");
         return abilityName;
@@ -93,11 +92,8 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
         return abilityName;
     }
 
-    HILOG_INFO("AbilityThread::CreateAbilityName come, ability type is %{public}d, is Native %{public}d",
-        abilityInfo->type, abilityInfo->isNativeAbility);
-
     if (abilityInfo->isNativeAbility) {
-        HILOG_INFO("AbilityThread::CreateAbilityName end, create native ability.");
+        HILOG_INFO("Create ability name success, name is %{public}s.", abilityInfo->name.c_str());
         return abilityInfo->name;
     }
 #ifdef SUPPORT_GRAPHICS
@@ -149,7 +145,7 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
         abilityName = abilityInfo->name;
     }
 
-    HILOG_INFO("AbilityThread::CreateAbilityName end");
+    HILOG_INFO("Create ability name success, name is %{public}s.", abilityName.c_str());
     return abilityName;
 }
 
@@ -166,7 +162,7 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
 std::shared_ptr<ContextDeal> AbilityThread::CreateAndInitContextDeal(std::shared_ptr<OHOSApplication> &application,
     const std::shared_ptr<AbilityLocalRecord> &abilityRecord, const std::shared_ptr<Context> &abilityObject)
 {
-    HILOG_INFO("AbilityThread::CreateAndInitContextDeal begin");
+    HILOG_INFO("AbilityThread::CreateAndInitContextDeal.");
     std::shared_ptr<ContextDeal> contextDeal = nullptr;
     if ((application == nullptr) || (abilityRecord == nullptr) || (abilityObject == nullptr)) {
         HILOG_ERROR("AbilityThread::ability attach failed,context or record or abilityObject is nullptr");
@@ -189,7 +185,6 @@ std::shared_ptr<ContextDeal> AbilityThread::CreateAndInitContextDeal(std::shared
     contextDeal->SetBundleCodePath(abilityRecord->GetAbilityInfo()->codePath);
     contextDeal->SetContext(abilityObject);
     contextDeal->SetRunner(abilityHandler_->GetEventRunner());
-    HILOG_INFO("AbilityThread::CreateAndInitContextDeal end");
     return contextDeal;
 }
 
@@ -443,9 +438,9 @@ void AbilityThread::Attach(
 void AbilityThread::HandleAbilityTransaction(const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("AbilityThread::HandleAbilityTransaction begin");
+    HILOG_INFO("Handle ability transaction begin, name is %{public}s.", want.GetElement().GetAbilityName().c_str());
     if (abilityImpl_ == nullptr) {
-        HILOG_ERROR("AbilityThread::HandleAbilityTransaction abilityImpl_ == nullptr");
+        HILOG_ERROR("Handle ability transaction error, abilityImpl_ == nullptr.");
         return;
     }
 
@@ -453,7 +448,7 @@ void AbilityThread::HandleAbilityTransaction(const Want &want, const LifeCycleSt
         lifeCycleStateInfo.caller.bundleName,
         lifeCycleStateInfo.caller.abilityName);
     abilityImpl_->HandleAbilityTransaction(want, lifeCycleStateInfo);
-    HILOG_INFO("AbilityThread::HandleAbilityTransaction end");
+    HILOG_INFO("Handle ability transaction end.");
 }
 
 /**
@@ -723,11 +718,10 @@ void AbilityThread::HandleExtensionUpdateConfiguration(const Configuration &conf
 void AbilityThread::ScheduleAbilityTransaction(const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("ScheduleAbilityTransaction begin: targeState = %{public}d, isNewWant = %{public}d",
+    HILOG_INFO("Schedule ability transaction, name is %{public}s, targeState is %{public}d, isNewWant is %{public}d.",
+        want.GetElement().GetAbilityName().c_str(),
         lifeCycleStateInfo.state,
         lifeCycleStateInfo.isNewWant);
-
-    want.DumpInfo(0);
 
     if (token_ == nullptr) {
         HILOG_ERROR("ScheduleAbilityTransaction::failed, token_  nullptr");
@@ -756,7 +750,6 @@ void AbilityThread::ScheduleAbilityTransaction(const Want &want, const LifeCycle
     if (!ret) {
         HILOG_ERROR("AbilityThread::ScheduleAbilityTransaction PostTask error");
     }
-    HILOG_INFO("ScheduleAbilityTransaction end");
 }
 
 /**
@@ -1184,7 +1177,7 @@ void AbilityThread::AbilityThreadMain(std::shared_ptr<OHOSApplication> &applicat
     const std::shared_ptr<AbilityLocalRecord> &abilityRecord, const std::shared_ptr<EventRunner> &mainRunner,
     const std::shared_ptr<AbilityRuntime::Context> &stageContext)
 {
-    HILOG_INFO("AbilityThread::AbilityThreadMain begin");
+    HILOG_INFO("AbilityThread main start.");
     sptr<AbilityThread> thread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
     if (thread == nullptr) {
         HILOG_ERROR("AbilityThread::AbilityThreadMain failed,thread  is nullptr");
@@ -1196,7 +1189,7 @@ void AbilityThread::AbilityThreadMain(std::shared_ptr<OHOSApplication> &applicat
     } else {
         thread->Attach(application, abilityRecord, mainRunner, stageContext);
     }
-    HILOG_INFO("AbilityThread::AbilityThreadMain end");
+    HILOG_INFO("AbilityThread main end.");
 }
 
 /**
@@ -1209,7 +1202,7 @@ void AbilityThread::AbilityThreadMain(
     std::shared_ptr<OHOSApplication> &application, const std::shared_ptr<AbilityLocalRecord> &abilityRecord,
     const std::shared_ptr<AbilityRuntime::Context> &stageContext)
 {
-    HILOG_INFO("AbilityThread::AbilityThreadMain begin");
+    HILOG_INFO("AbilityThread main start.");
     sptr<AbilityThread> thread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
     if (thread == nullptr || abilityRecord == nullptr) {
         HILOG_ERROR("AbilityThread::AbilityThreadMain failed, thread is nullptr");
@@ -1221,7 +1214,7 @@ void AbilityThread::AbilityThreadMain(
     } else {
         thread->Attach(application, abilityRecord, stageContext);
     }
-    HILOG_INFO("AbilityThread::AbilityThreadMain end");
+    HILOG_INFO("AbilityThread main end.");
 }
 
 void AbilityThread::InitExtensionFlag(const std::shared_ptr<AbilityLocalRecord> &abilityRecord)

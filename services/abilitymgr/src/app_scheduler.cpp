@@ -106,7 +106,7 @@ int AppScheduler::TerminateAbility(const sptr<IRemoteObject> &token)
 void AppScheduler::MoveToForground(const sptr<IRemoteObject> &token)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_DEBUG("Move to forground.");
+    HILOG_DEBUG("Start to move the ability to foreground.");
     CHECK_POINTER(appMgrClient_);
     appMgrClient_->UpdateAbilityState(token, AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND);
 }

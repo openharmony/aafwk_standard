@@ -189,7 +189,7 @@ std::shared_ptr<ApplicationImpl> MainThread::GetApplicationImpl()
 bool MainThread::ConnectToAppMgr()
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_INFO("MainThread::ConnectToAppMgr start");
+    HILOG_INFO("MainThread ConnectToAppMgr start.");
     auto object = OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->GetSystemAbility(APP_MGR_SERVICE_ID);
     if (object == nullptr) {
         HILOG_ERROR("failed to get app manager service");
@@ -224,7 +224,7 @@ bool MainThread::ConnectToAppMgr()
 void MainThread::Attach()
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_INFO("MainThread::attach called");
+    HILOG_INFO("MainThread attach called.");
     if (!ConnectToAppMgr()) {
         HILOG_ERROR("attachApplication failed");
         return;
@@ -274,7 +274,7 @@ std::shared_ptr<EventHandler> MainThread::GetMainHandler() const
 void MainThread::ScheduleForegroundApplication()
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_INFO("MainThread::scheduleForegroundApplication called begin");
+    HILOG_INFO("Schedule the application to foreground begin.");
     wptr<MainThread> weak = this;
     auto task = [weak]() {
         auto appThread = weak.promote();
@@ -287,7 +287,7 @@ void MainThread::ScheduleForegroundApplication()
     if (!mainHandler_->PostTask(task)) {
         HILOG_ERROR("PostTask task failed");
     }
-    HILOG_INFO("MainThread::scheduleForegroundApplication called end.");
+    HILOG_INFO("Schedule the application to foreground end.");
 }
 
 /**
@@ -403,7 +403,7 @@ void MainThread::ScheduleLowMemory()
 void MainThread::ScheduleLaunchApplication(const AppLaunchData &data, const Configuration &config)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_INFO("MainThread::scheduleLaunchApplication start");
+    HILOG_INFO("MainThread schedule launch application start.");
     wptr<MainThread> weak = this;
     auto task = [weak, data, config]() {
         auto appThread = weak.promote();
@@ -416,7 +416,6 @@ void MainThread::ScheduleLaunchApplication(const AppLaunchData &data, const Conf
     if (!mainHandler_->PostTask(task)) {
         HILOG_ERROR("MainThread::ScheduleLaunchApplication PostTask task failed");
     }
-    HILOG_INFO("MainThread::scheduleLaunchApplication end.");
 }
 
 void MainThread::ScheduleAbilityStage(const HapModuleInfo &abilityStage)
@@ -440,7 +439,7 @@ void MainThread::ScheduleAbilityStage(const HapModuleInfo &abilityStage)
 void MainThread::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemoteObject> &token,
     const std::shared_ptr<AAFwk::Want> &want)
 {
-    HILOG_INFO("MainThread::scheduleLaunchAbility, AbilityInfo name:%{public}s type:%{public}d",
+    HILOG_INFO("MainThread schedule launch ability, name is %{public}s, type is %{public}d.",
         info.name.c_str(), info.type);
 
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>(info);
@@ -532,18 +531,8 @@ void MainThread::ScheduleConfigurationUpdated(const Configuration &config)
     HILOG_INFO("MainThread::ScheduleConfigurationUpdated called end.");
 }
 
-/**
- *
- * @brief Check whether the appLaunchData is legal.
- *
- * @param appLaunchData The appLaunchData should be checked.
- *
- * @return if the appLaunchData is legal, return true. else return false.
- */
 bool MainThread::CheckLaunchApplicationParam(const AppLaunchData &appLaunchData) const
 {
-    HILOG_INFO("MainThread::CheckLaunchApplicationParam called start.");
-
     ApplicationInfo appInfo = appLaunchData.GetApplicationInfo();
     ProcessInfo processInfo = appLaunchData.GetProcessInfo();
 
@@ -556,8 +545,6 @@ bool MainThread::CheckLaunchApplicationParam(const AppLaunchData &appLaunchData)
         HILOG_ERROR("MainThread::checkLaunchApplicationParam processName is empty");
         return false;
     }
-
-    HILOG_INFO("MainThread::CheckLaunchApplicationParam called end.");
     return true;
 }
 
@@ -732,8 +719,6 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     const Configuration &config)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_INFO("MainThread::handleLaunchApplication moduleResPaths count: %{public}zu start",
-        bundleInfo.moduleResPaths.size());
     std::vector<std::string> resPaths;
     ChangeToLocalPath(bundleInfo.name, bundleInfo.moduleResPaths, resPaths);
     for (auto moduleResPath : resPaths) {
@@ -765,7 +750,6 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     resConfig->SetColorMode(ConvertColorMode(colormode));
 #endif
     resourceManager->UpdateResConfig(*resConfig);
-    HILOG_INFO("MainThread::InitResourceManager end.");
     return true;
 }
 /**
@@ -778,7 +762,7 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
 void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, const Configuration &config)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_INFO("MainThread::handleLaunchApplication called start.");
+    HILOG_INFO("MainThread handle launch application start.");
     if (!CheckForHandleLaunchApplication(appLaunchData)) {
         HILOG_ERROR("MainThread::handleLaunchApplication CheckForHandleLaunchApplication failed");
         return;
@@ -821,8 +805,6 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
     }
 
     BundleInfo bundleInfo;
-    HILOG_INFO("MainThread::handleLaunchApplication length: %{public}zu, bundleName: %{public}s",
-        appInfo.bundleName.length(), appInfo.bundleName.c_str());
     if (!bundleMgr->GetBundleInfo(appInfo.bundleName, BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, UNSPECIFIED_USERID)) {
         HILOG_DEBUG("MainThread::handleLaunchApplication GetBundleInfo fail.");
     }
@@ -1249,7 +1231,7 @@ void MainThread::HandleCleanAbility(const sptr<IRemoteObject> &token)
 void MainThread::HandleForegroundApplication()
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_INFO("MainThread::handleForegroundApplication called start.");
+    HILOG_INFO("MainThread handle application to foreground called.");
     if ((application_ == nullptr) || (appMgr_ == nullptr)) {
         HILOG_ERROR("MainThread::handleForegroundApplication error!");
         return;
@@ -1260,8 +1242,9 @@ void MainThread::HandleForegroundApplication()
         return;
     }
 
+    HILOG_INFO("MainThread handle application to foreground success, recordId is %{public}d",
+        applicationImpl_->GetRecordId());
     appMgr_->ApplicationForegrounded(applicationImpl_->GetRecordId());
-    HILOG_INFO("MainThread::handleForegroundApplication called end");
 }
 
 /**
@@ -1483,7 +1466,7 @@ void MainThread::HandleScheduleANRProcess()
 void MainThread::Start()
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_INFO("MainThread::main called start");
+    HILOG_INFO("MainThread start come.");
     std::shared_ptr<EventRunner> runner = EventRunner::GetMainEventRunner();
     if (runner == nullptr) {
         HILOG_ERROR("MainThread::main failed, runner is nullptr");
@@ -1565,7 +1548,7 @@ void MainThread::LoadAbilityLibrary(const std::vector<std::string> &libraryPaths
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
 #ifdef ABILITY_LIBRARY_LOADER
-    HILOG_INFO("MainThread::LoadAbilityLibrary called start");
+    HILOG_INFO("MainThread load ability library start.");
 #ifdef ACEABILITY_LIBRARY_LOADER
 #ifdef _ARM64_
     std::string acelibdir("/system/lib64/libace.z.so");
@@ -1580,24 +1563,22 @@ void MainThread::LoadAbilityLibrary(const std::vector<std::string> &libraryPaths
         HILOG_INFO("Success to dlopen %{public}s", acelibdir.c_str());
         handleAbilityLib_.emplace_back(AceAbilityLib);
     }
-    HILOG_INFO("MainThread::LoadAbilityLibrary. End calling dlopen.");
 #endif  // ACEABILITY_LIBRARY_LOADER
     size_t size = libraryPaths.size();
-    HILOG_INFO("MainThread::LoadAbilityLibrary. size=%{public}u.", (uint32_t)size);
     for (size_t index = 0; index < size; index++) {
         std::string libraryPath = libraryPaths[index];
         HILOG_INFO("MainThread::LoadAbilityLibrary Try to scanDir %{public}s", libraryPath.c_str());
         if (!ScanDir(libraryPath)) {
-            HILOG_ERROR("MainThread::LoadAbilityLibrary scanDir %{public}s not exits", libraryPath.c_str());
+            HILOG_INFO("MainThread::LoadAbilityLibrary scanDir %{public}s not exits", libraryPath.c_str());
         }
         libraryPath = libraryPath + "/libs";
         if (!ScanDir(libraryPath)) {
-            HILOG_ERROR("MainThread::LoadAbilityLibrary scanDir %{public}s not exits", libraryPath.c_str());
+            HILOG_INFO("MainThread::LoadAbilityLibrary scanDir %{public}s not exits", libraryPath.c_str());
         }
     }
 
     if (fileEntries_.empty()) {
-        HILOG_ERROR("No ability library");
+        HILOG_INFO("No ability library");
         return;
     }
 
@@ -1610,9 +1591,8 @@ void MainThread::LoadAbilityLibrary(const std::vector<std::string> &libraryPaths
                     fileEntry.c_str(),
                     dlerror());
                 exit(-1);
-            } else {
-                HILOG_INFO("MainThread::LoadAbilityLibrary Success to dlopen %{public}s", fileEntry.c_str());
             }
+            HILOG_INFO("MainThread::LoadAbilityLibrary Success to dlopen %{public}s", fileEntry.c_str());
             handleAbilityLib_.emplace_back(handleAbilityLib);
         }
     }
@@ -1662,7 +1642,6 @@ void MainThread::CloseAbilityLibrary()
  */
 bool MainThread::ScanDir(const std::string &dirPath)
 {
-    HILOG_INFO("MainThread::ScanDir called start. dirPath:  %{public}s.", dirPath.c_str());
     DIR *dirp = opendir(dirPath.c_str());
     if (dirp == nullptr) {
         HILOG_ERROR("MainThread::ScanDir open dir:%{public}s fail", dirPath.c_str());
@@ -1676,13 +1655,11 @@ bool MainThread::ScanDir(const std::string &dirPath)
         }
 
         std::string currentName(df->d_name);
-        HILOG_DEBUG("folder found:'%{public}s'", df->d_name);
         if (currentName.compare(".") == 0 || currentName.compare("..") == 0) {
             continue;
         }
 
         if (CheckFileType(currentName, abilityLibraryType_)) {
-            HILOG_INFO("MainThread::ScanDir CheckFileType == true.");
             fileEntries_.emplace_back(dirPath + pathSeparator_ + currentName);
         }
     }
@@ -1690,7 +1667,6 @@ bool MainThread::ScanDir(const std::string &dirPath)
     if (closedir(dirp) == -1) {
         HILOG_WARN("close dir fail");
     }
-    HILOG_INFO("MainThread::ScanDir called end.");
     return true;
 }
 

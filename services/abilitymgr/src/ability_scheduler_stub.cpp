@@ -71,11 +71,10 @@ AbilitySchedulerStub::~AbilitySchedulerStub()
 int AbilitySchedulerStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
-    HILOG_DEBUG("AbilitySchedulerStub::OnRemoteRequest, cmd = %d, flags= %d", code, option.GetFlags());
     std::u16string descriptor = AbilitySchedulerStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        HILOG_INFO("local descriptor is not equal to remote");
+        HILOG_ERROR("local descriptor is not equal to remote");
         return ERR_INVALID_STATE;
     }
 

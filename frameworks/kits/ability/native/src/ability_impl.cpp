@@ -142,7 +142,6 @@ void AbilityImpl::Active()
         return;
     }
 
-    HILOG_INFO("AbilityImpl::Active");
     ability_->OnActive();
 #ifdef SUPPORT_GRAPHICS
     if ((lifecycleState_ == AAFwk::ABILITY_STATE_INACTIVE) && (ability_->GetAbilityInfo()->type == AbilityType::PAGE)) {

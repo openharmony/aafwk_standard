@@ -334,7 +334,6 @@ std::shared_ptr<Context> AbilityContext::CreateBundleContext(std::string bundleN
 
 std::shared_ptr<Global::Resource::ResourceManager> AbilityContext::GetResourceManager() const
 {
-    HILOG_INFO("%{public}s begin.", __func__);
     std::shared_ptr<Context> appcontext = GetApplicationContext();
     if (appcontext == nullptr) {
         HILOG_ERROR("AbilityContext::GetResourceManager appcontext is nullptr");
@@ -348,7 +347,6 @@ std::shared_ptr<Global::Resource::ResourceManager> AbilityContext::GetResourceMa
         HILOG_ERROR("AbilityContext::GetResourceManager resourceManager is nullptr");
         return nullptr;
     }
-    HILOG_INFO("%{public}s end.", __func__);
     return resourceManager;
 }
 
@@ -450,9 +448,8 @@ Uri AbilityContext::GetCaller()
 
 void AbilityContext::AttachBaseContext(const std::shared_ptr<Context> &base)
 {
-    HILOG_INFO("AbilityContext::AttachBaseContext. Start.");
+    HILOG_INFO("AbilityContext::AttachBaseContext.");
     ContextContainer::AttachBaseContext(base);
-    HILOG_INFO("AbilityContext::AttachBaseContext. End.");
 }
 
 std::string AbilityContext::GetExternalCacheDir()
