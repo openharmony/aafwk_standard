@@ -182,15 +182,5 @@ bool BundleMgrService::NotifyAbilityLifeStatus(
 {
     return true;
 }
-
-bool BundleMgrService::CheckIsSystemAppByUid(const int uid)
-{
-    int maxSysUid {MAX_SYS_UID};
-    int baseSysUid {ROOT_UID};
-    if (uid >= baseSysUid && uid <= maxSysUid) {
-        return true;
-    }
-    return false;
-}
 }  // namespace AppExecFwk
 }  // namespace OHOS

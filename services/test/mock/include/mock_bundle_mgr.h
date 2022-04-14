@@ -44,7 +44,6 @@ const std::string COM_OHOS_Test = "com.ohos.test";
 const std::string COM_IX_HIACCOUNT = "com.ix.hiAccount";
 const std::string COM_IX_HIACCOUNTSERVICE = "com.ix.hiAccountService";
 constexpr int32_t MAX_SYS_UID = 2899;
-constexpr int32_t ROOT_UID = 0;
 const int32_t BASE_USER_RANGE = 200000;
 const int32_t MOCK_MAIN_UID = 20000000;
 
@@ -440,7 +439,10 @@ public:
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
     bool NotifyAbilityLifeStatus(const std::string &bundleName, const std::string &abilityName,
         const int64_t launchTime, const int uid) override;
-    virtual bool CheckIsSystemAppByUid(const int uid) override;
+    virtual bool CheckIsSystemAppByUid(const int uid) override
+    {
+        return true;
+    };
     virtual bool GetBundleGidsByUid(const std::string &bundleName, const int &uid, std::vector<int> &gids) override
     {
         return true;
