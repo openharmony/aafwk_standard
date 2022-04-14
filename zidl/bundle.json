@@ -31,7 +31,9 @@
         "build": {
             "sub_component": [],
             "inner_kits": [],
-            "test": []
+            "test": [
+                "//foundation/aafwk/standard/zidl/test/ts/moduletest:moduletest"
+            ]
         }
     }
 }
