@@ -372,11 +372,7 @@ ErrCode FormMgrAdapter::HandleDeleteFormCache(FormRecord &dbRecord, const int ui
 
     HILOG_DEBUG("%{public}s, dbRecord.formUserUids size: %{public}zu", __func__, dbRecord.formUserUids.size());
     FormBmsHelper::GetInstance().NotifyModuleNotRemovable(dbRecord.bundleName, dbRecord.moduleName);
-    if (!FormDataMgr::GetInstance().DeleteFormUserUid(formId, uid)) {
-        HILOG_ERROR("%{public}s, failed to remove form user uid", __func__);
-        return ERR_APPEXECFWK_FORM_COMMON_CODE;
-    }
-
+    FormDataMgr::GetInstance().DeleteFormUserUid(formId, uid);
     return result;
 }
 
