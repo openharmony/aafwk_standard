@@ -152,14 +152,14 @@ std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::GetAbilityRunningReco
 void ModuleRunningRecord::OnAbilityStateChanged(
     const std::shared_ptr<AbilityRunningRecord> &ability, const AbilityState state)
 {
-    HILOG_INFO("On ability state changed.");
     if (!ability) {
         HILOG_ERROR("ability is null");
         return;
     }
     AbilityState oldState = ability->GetState();
     ability->SetState(state);
-    HILOG_INFO("OnAbilityStateChanged oldState:%{public}d, state:%{public}d", oldState, state);
+    HILOG_INFO("Ability state change from %{public}d to %{public}d, name is %{public}s.", 
+        oldState, state, ability->GetName().c_str());
     auto serviceInner = appMgrServiceInner_.lock();
     if (serviceInner) {
         serviceInner->OnAbilityStateChanged(ability, state);
@@ -175,7 +175,7 @@ void ModuleRunningRecord::LaunchAbility(const std::shared_ptr<AbilityRunningReco
     }
     const auto &iter = abilities_.find(ability->GetToken());
     if (iter != abilities_.end() && appLifeCycleDeal_->GetApplicationClient()) {
-        HILOG_INFO("Schedule launchAbility ability:%{public}s", ability->GetName().c_str());
+        HILOG_INFO("Schedule launch ability, name is %{public}s.", ability->GetName().c_str());
         appLifeCycleDeal_->LaunchAbility(ability);
         ability->SetState(AbilityState::ABILITY_STATE_READY);
     }

@@ -282,7 +282,7 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
 
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
-        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        HILOG_ERROR("%{public}s: Permission verification failed.", __func__);
         return CHECK_PERMISSION_FAILED;
     }
 
@@ -310,13 +310,13 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
 
     result = CheckStaticCfgPermission(abilityInfo);
     if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
-        HILOG_ERROR("CheckStaticCfgPermission error, result is %{public}d", result);
+        HILOG_ERROR("CheckStaticCfgPermission error, result is %{public}d.", result);
         return result;
     }
     GrantUriPermission(want, validUserId);
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo, callerUid);
     if (result != ERR_OK) {
-        HILOG_ERROR("JudgeAbilityVisibleControl error, result is %{public}d", result);
+        HILOG_ERROR("JudgeAbilityVisibleControl error, result is %{public}d.", result);
         return result;
     }
     auto type = abilityInfo.type;
@@ -325,10 +325,10 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         return ERR_INVALID_VALUE;
     }
     if (!AbilityUtil::IsSystemDialogAbility(abilityInfo.bundleName, abilityInfo.name)) {
-        HILOG_DEBUG("PreLoadAppDataAbilities:%{public}s", abilityInfo.bundleName.c_str());
+        HILOG_DEBUG("PreLoadAppDataAbilities:%{public}s.", abilityInfo.bundleName.c_str());
         result = PreLoadAppDataAbilities(abilityInfo.bundleName, validUserId);
         if (result != ERR_OK) {
-            HILOG_ERROR("StartAbility: App data ability preloading failed, '%{public}s', %{public}d",
+            HILOG_ERROR("StartAbility: App data ability preloading failed, '%{public}s', %{public}d.",
                 abilityInfo.bundleName.c_str(), result);
             return result;
         }
@@ -340,12 +340,12 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
             HILOG_ERROR("connectManager is nullptr. userId=%{public}d", validUserId);
             return ERR_INVALID_VALUE;
         }
-        HILOG_DEBUG("Start service or extension, name is %{public}s", abilityInfo.name.c_str());
+        HILOG_DEBUG("Start service or extension, name is %{public}s.", abilityInfo.name.c_str());
         return connectManager->StartAbility(abilityRequest);
     }
 
     if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
-        HILOG_ERROR("IsAbilityControllerStart failed: %{public}s", abilityInfo.bundleName.c_str());
+        HILOG_ERROR("IsAbilityControllerStart failed: %{public}s.", abilityInfo.bundleName.c_str());
         return ERR_WOULD_BLOCK;
     }
     auto missionListManager = GetListManagerByUserId(validUserId);
@@ -353,7 +353,7 @@ int AbilityManagerService::StartAbilityInner(const Want &want, const sptr<IRemot
         HILOG_ERROR("missionListManager is nullptr. userId=%{public}d", validUserId);
         return ERR_INVALID_VALUE;
     }
-    HILOG_DEBUG("Start ability, name is %{public}s", abilityInfo.name.c_str());
+    HILOG_DEBUG("Start ability, name is %{public}s.", abilityInfo.name.c_str());
     return missionListManager->StartAbility(abilityRequest);
 }
 
@@ -1982,14 +1982,14 @@ void AbilityManagerService::DumpSysState(
 int AbilityManagerService::AbilityTransitionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("Ability transition done, state:%{public}d", state);
+    HILOG_INFO("Ability transition done come, state:%{public}d.", state);
     if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER_AND_RETURN_LOG(abilityRecord, ERR_INVALID_VALUE, "Ability record is nullptr.");
     auto abilityInfo = abilityRecord->GetAbilityInfo();
-    HILOG_DEBUG("state:%{public}d  name:%{public}s", state, abilityInfo.name.c_str());
+    HILOG_DEBUG("Ability transition done come, state:%{public}d, name:%{public}s", state, abilityInfo.name.c_str());
     auto type = abilityInfo.type;
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
     // force timeout ability for test
@@ -2109,10 +2109,9 @@ int AbilityManagerService::ScheduleCommandAbilityDone(const sptr<IRemoteObject> 
 void AbilityManagerService::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const int32_t state)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("On ability request done.");
-
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     CHECK_POINTER(abilityRecord);
+    HILOG_INFO("On ability request done, name is %{public}s", abilityRecord->GetAbilityInfo().name.c_str());
     auto userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
 
     auto type = abilityRecord->GetAbilityInfo().type;
@@ -2318,7 +2317,7 @@ int AbilityManagerService::GenerateAbilityRequest(
     auto abilityInfoFlag = (AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION |
         AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_PERMISSION |
         AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_METADATA);
-    HILOG_DEBUG("QueryAbilityInfo from bms, userId is %{public}d", userId);
+    HILOG_DEBUG("QueryAbilityInfo from bms, userId is %{public}d.", userId);
     IN_PROCESS_CALL_WITHOUT_RET(bms->QueryAbilityInfo(want, abilityInfoFlag, userId, request.abilityInfo));
     if (request.abilityInfo.name.empty() || request.abilityInfo.bundleName.empty()) {
         // try to find extension
@@ -2334,15 +2333,15 @@ int AbilityManagerService::GenerateAbilityRequest(
             HILOG_ERROR("extensionInfo empty.");
             return RESOLVE_ABILITY_ERR;
         }
-        HILOG_DEBUG("Extension ability info found, name=%{public}s",
+        HILOG_DEBUG("Extension ability info found, name=%{public}s.",
             extensionInfo.name.c_str());
         // For compatibility translates to AbilityInfo
         InitAbilityInfoFromExtension(extensionInfo, request.abilityInfo);
     }
-    HILOG_DEBUG("QueryAbilityInfo success, ability name: %{public}s, is stage mode: %{public}d",
+    HILOG_DEBUG("QueryAbilityInfo success, ability name: %{public}s, is stage mode: %{public}d.",
         request.abilityInfo.name.c_str(), request.abilityInfo.isStageBasedModel);
     if (request.abilityInfo.type == AppExecFwk::AbilityType::SERVICE && request.abilityInfo.isStageBasedModel) {
-        HILOG_INFO("stage mode, abilityInfo SERVICE type reset EXTENSION.");
+        HILOG_INFO("Stage mode, abilityInfo SERVICE type reset EXTENSION.");
         request.abilityInfo.type = AppExecFwk::AbilityType::EXTENSION;
     }
 
@@ -2353,7 +2352,7 @@ int AbilityManagerService::GenerateAbilityRequest(
     request.appInfo = request.abilityInfo.applicationInfo;
     request.compatibleVersion = (int32_t)request.appInfo.apiCompatibleVersion;
     request.uid = request.appInfo.uid;
-    HILOG_DEBUG("GenerateAbilityRequest end, app name: %{public}s, bundle name: %{public}s, uid: %{public}d",
+    HILOG_DEBUG("GenerateAbilityRequest end, app name: %{public}s, bundle name: %{public}s, uid: %{public}d.",
         request.appInfo.name.c_str(), request.appInfo.bundleName.c_str(), request.uid);
 
     return ERR_OK;
@@ -3586,12 +3585,12 @@ void AbilityManagerService::InitPendWantManager(int32_t userId, bool switchUser)
 
 int32_t AbilityManagerService::GetValidUserId(const int32_t userId)
 {
-    HILOG_DEBUG("%{public}s, userId = %{public}d", __func__, userId);
+    HILOG_DEBUG("%{public}s, userId = %{public}d.", __func__, userId);
     int32_t validUserId = userId;
 
     if (DEFAULT_INVAL_VALUE == userId) {
         validUserId = IPCSkeleton::GetCallingUid() / BASE_USER_RANGE;
-        HILOG_DEBUG("%{public}s, validUserId = %{public}d, CallingUid = %{public}d", __func__, validUserId,
+        HILOG_DEBUG("%{public}s, validUserId = %{public}d, CallingUid = %{public}d.", __func__, validUserId,
             IPCSkeleton::GetCallingUid());
         if (validUserId == U0_USER_ID) {
             validUserId = GetUserId();

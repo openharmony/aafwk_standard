@@ -107,7 +107,7 @@ ErrCode AbilityManagerClient::StartAbility(
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    HILOG_INFO("%{public}s come, abilityName=%{public}s, userId=%{public}d",
+    HILOG_INFO("%{public}s come, abilityName=%{public}s, userId=%{public}d.",
         __func__, want.GetElement().GetAbilityName().c_str(), userId);
     return abms->StartAbility(want, callerToken, userId, requestCode);
 }
@@ -125,7 +125,7 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, const StartOptions 
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    HILOG_INFO("%{public}s come, abilityName=%{public}s, userId=%{public}d",
+    HILOG_INFO("%{public}s come, abilityName=%{public}s, userId=%{public}d.",
         __func__, want.GetElement().GetAbilityName().c_str(), userId);
     return abms->StartAbility(want, startOptions, callerToken, userId, requestCode);
 }

@@ -29,8 +29,8 @@ using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
 void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
 {
     AbilityImpl::SetUseNewMission(targetState.useNewMission);
-    HILOG_INFO("PageAbilityImpl::HandleAbilityTransaction begin sourceState:%{public}d; targetState: %{public}d; "
-             "isNewWant: %{public}d, sceneFlag: %{public}d",
+    HILOG_INFO("Handle page ability transaction, sourceState:%{public}d, targetState:%{public}d, "
+             "isNewWant:%{public}d, sceneFlag:%{public}d.",
         lifecycleState_,
         targetState.state,
         targetState.isNewWant,
@@ -78,9 +78,8 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         ret = AbilityTransaction(want, targetState);
     }
     if (ret) {
-        HILOG_INFO("AbilityThread::HandleAbilityTransaction before AbilityManagerClient->AbilityTransitionDone");
+        HILOG_INFO("Handle ability transaction done, notify ability manager service.");
         AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
-        HILOG_INFO("AbilityThread::HandleAbilityTransaction after AbilityManagerClient->AbilityTransitionDone");
     }
     HILOG_INFO("PageAbilityImpl::HandleAbilityTransaction end");
 }
