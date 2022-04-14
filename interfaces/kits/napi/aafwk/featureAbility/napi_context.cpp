@@ -2461,6 +2461,122 @@ napi_value NAPI_PrintDrawnCompleted(napi_env env, napi_callback_info info)
     return NAPI_PrintDrawnCompletedCommon(env, info, AbilityType::PAGE);
 }
 
+napi_value NAPI_SetDisplayOrientation(napi_env env, napi_callback_info info)
+{
+#ifdef SUPPORT_GRAPHICS
+    HILOG_DEBUG("%{public}s called.", __func__);
+
+    AsyncJSCallbackInfo *asyncCallbackInfo = CreateAsyncJSCallbackInfo(env);
+    if (asyncCallbackInfo == nullptr) {
+        HILOG_WARN("%{public}s called. Invoke CreateAsyncJSCallbackInfo failed.", __func__);
+        return WrapVoidToJS(env);
+    }
+
+    napi_value rev = NAPI_SetDisplayOrientationWrap(env, info, asyncCallbackInfo);
+    if (rev == nullptr) {
+        FreeAsyncJSCallbackInfo(&asyncCallbackInfo);
+        rev = WrapVoidToJS(env);
+    }
+    return rev;
+#else
+   return WrapVoidToJS(env);
+#endif
+}
+
+#ifdef SUPPORT_GRAPHICS
+napi_value NAPI_SetDisplayOrientationWrap(napi_env env, napi_callback_info info, AsyncJSCallbackInfo *asyncCallbackInfo)
+{
+    HILOG_DEBUG("%{public}s called.", __func__);
+    size_t argc = ARGS_MAX_COUNT;
+    napi_value args[ARGS_MAX_COUNT] = {nullptr};
+    napi_value jsthis = 0;
+    void *data = nullptr;
+
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, &jsthis, &data));
+
+    if (!UnwrapSetDisplayOrientation(env, argc, args, asyncCallbackInfo)) {
+        HILOG_INFO("%{public}s called. Invoke UnwrapSetDisplayOrientation fail", __func__);
+        return nullptr;
+    }
+
+    AsyncParamEx asyncParamEx;
+    if (asyncCallbackInfo->cbInfo.callback != nullptr) {
+        HILOG_INFO("%{public}s called. asyncCallback.", __func__);
+        asyncParamEx.resource = "NAPI_SetDisplayOrientationCallback";
+        asyncParamEx.execute = SetDisplayOrientationExecuteCallbackWork;
+        asyncParamEx.complete = CompleteAsyncCallbackWork;
+
+        return ExecuteAsyncCallbackWork(env, asyncCallbackInfo, &asyncParamEx);
+    } else {
+        HILOG_INFO("%{public}s called. promise.", __func__);
+        asyncParamEx.resource = "NAPI_SetDisplayOrientationPromise";
+        asyncParamEx.execute = SetDisplayOrientationExecuteCallbackWork;
+        asyncParamEx.complete = CompletePromiseCallbackWork;
+
+        return ExecutePromiseCallbackWork(env, asyncCallbackInfo, &asyncParamEx);
+    }
+}
+
+void SetDisplayOrientationExecuteCallbackWork(napi_env env, void *data)
+{
+    HILOG_DEBUG("%{public}s called.", __func__);
+    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
+    if (asyncCallbackInfo == nullptr) {
+        HILOG_INFO("%{public}s called. asyncCallbackInfo is null", __func__);
+        return;
+    }
+
+    asyncCallbackInfo->error_code = NAPI_ERR_NO_ERROR;
+    asyncCallbackInfo->native_data.data_type = NVT_NONE;
+    if (asyncCallbackInfo->ability == nullptr) {
+        asyncCallbackInfo->error_code = NAPI_ERR_ACE_ABILITY;
+        return;
+    }
+
+    int orientation = asyncCallbackInfo->param.paramArgs.GetIntValue("orientation");
+    asyncCallbackInfo->ability->SetDisplayOrientation(orientation);
+    asyncCallbackInfo->native_data.data_type = NVT_INT32;
+    asyncCallbackInfo->native_data.int32_value = 1;
+}
+
+bool UnwrapSetDisplayOrientation(napi_env env, size_t argc, napi_value *argv, AsyncJSCallbackInfo *asyncCallbackInfo)
+{
+    HILOG_DEBUG("%{public}s called, argc=%{public}zu", __func__, argc);
+
+    const size_t argcMax = 2;
+    if (argc > argcMax || argc < argcMax - 1) {
+        HILOG_ERROR("%{public}s called, Params is invalid.", __func__);
+        return false;
+    }
+
+    if (argc == argcMax) {
+        if (!CreateAsyncCallback(env, argv[PARAM1], asyncCallbackInfo)) {
+            HILOG_DEBUG("%{public}s called, the second parameter is invalid.", __func__);
+            return false;
+        }
+    }
+
+    int orientation = 0;
+    if (!UnwrapInt32FromJS2(env, argv[PARAM0], orientation)) {
+        HILOG_ERROR("%{public}s called, the first parameter is invalid.", __func__);
+        return false;
+    }
+
+    asyncCallbackInfo->param.paramArgs.PutIntValue("orientation", orientation);
+    return true;
+}
+#endif
+
+napi_value NAPI_GetDisplayOrientation(napi_env env, napi_callback_info info)
+{
+#ifdef SUPPORT_GRAPHICS
+    HILOG_DEBUG("%{public}s called.", __func__);
+    return NAPI_GetDisplayOrientationCommon(env, info, AbilityType::PAGE);
+#else
+   return 0;
+#endif
+}
+
 napi_value ContextPermissionInit(napi_env env, napi_value exports)
 {
     HILOG_INFO("Context::ContextPermissionInit called.");
@@ -2490,6 +2606,8 @@ napi_value ContextPermissionInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("setShowOnLockScreen", NAPI_SetShowOnLockScreen),
         DECLARE_NAPI_FUNCTION("getOrCreateDistributedDir", NAPI_GetOrCreateDistributedDir),
         DECLARE_NAPI_FUNCTION("setWakeUpScreen", NAPI_SetWakeUpScreen),
+        DECLARE_NAPI_FUNCTION("setDisplayOrientation", NAPI_SetDisplayOrientation),
+        DECLARE_NAPI_FUNCTION("getDisplayOrientation", NAPI_GetDisplayOrientation),
     };
 
     NAPI_CALL(env,
