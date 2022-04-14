@@ -80,25 +80,25 @@ std::shared_ptr<ADelegatorAbilityProperty> IAbilityMonitor::WaitForAbility(const
     return matchedAbility_;
 }
 
-void IAbilityMonitor::OnAbilityStart()
+void IAbilityMonitor::OnAbilityStart(const std::weak_ptr<NativeReference> &abilityObj)
 {}
 
-void IAbilityMonitor::OnAbilityForeground()
+void IAbilityMonitor::OnAbilityForeground(const std::weak_ptr<NativeReference> &abilityObj)
 {}
 
-void IAbilityMonitor::OnAbilityBackground()
+void IAbilityMonitor::OnAbilityBackground(const std::weak_ptr<NativeReference> &abilityObj)
 {}
 
-void IAbilityMonitor::OnAbilityStop()
+void IAbilityMonitor::OnAbilityStop(const std::weak_ptr<NativeReference> &abilityObj)
 {}
 
-void IAbilityMonitor::OnWindowStageCreate()
+void IAbilityMonitor::OnWindowStageCreate(const std::weak_ptr<NativeReference> &abilityObj)
 {}
 
-void IAbilityMonitor::OnWindowStageRestore()
+void IAbilityMonitor::OnWindowStageRestore(const std::weak_ptr<NativeReference> &abilityObj)
 {}
 
-void IAbilityMonitor::OnWindowStageDestroy()
+void IAbilityMonitor::OnWindowStageDestroy(const std::weak_ptr<NativeReference> &abilityObj)
 {}
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -26,7 +26,7 @@ AbilityMonitor::AbilityMonitor(const std::string &name, const std::shared_ptr<JS
     : IAbilityMonitor(name), jsMonitor_(jsAbilityMonitor)
 {}
 
-void AbilityMonitor::OnAbilityStart()
+void AbilityMonitor::OnAbilityStart(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
@@ -34,12 +34,12 @@ void AbilityMonitor::OnAbilityStart()
         return;
     }
 
-    jsMonitor_->onAbilityCreate();
+    jsMonitor_->OnAbilityCreate(abilityObj);
 
     HILOG_INFO("end");
 }
 
-void AbilityMonitor::OnAbilityForeground()
+void AbilityMonitor::OnAbilityForeground(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
@@ -47,12 +47,12 @@ void AbilityMonitor::OnAbilityForeground()
         return;
     }
 
-    jsMonitor_->onAbilityForeground();
+    jsMonitor_->OnAbilityForeground(abilityObj);
 
     HILOG_INFO("end");
 }
 
-void AbilityMonitor::OnAbilityBackground()
+void AbilityMonitor::OnAbilityBackground(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
@@ -60,12 +60,12 @@ void AbilityMonitor::OnAbilityBackground()
         return;
     }
 
-    jsMonitor_->onAbilityBackground();
+    jsMonitor_->OnAbilityBackground(abilityObj);
 
     HILOG_INFO("end");
 }
 
-void AbilityMonitor::OnAbilityStop()
+void AbilityMonitor::OnAbilityStop(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
@@ -73,12 +73,12 @@ void AbilityMonitor::OnAbilityStop()
         return;
     }
 
-    jsMonitor_->onAbilityDestroy();
+    jsMonitor_->OnAbilityDestroy(abilityObj);
 
     HILOG_INFO("end");
 }
 
-void AbilityMonitor::OnWindowStageCreate()
+void AbilityMonitor::OnWindowStageCreate(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
@@ -86,12 +86,12 @@ void AbilityMonitor::OnWindowStageCreate()
         return;
     }
 
-    jsMonitor_->onWindowStageCreate();
+    jsMonitor_->OnWindowStageCreate(abilityObj);
 
     HILOG_INFO("end");
 }
 
-void AbilityMonitor::OnWindowStageRestore()
+void AbilityMonitor::OnWindowStageRestore(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
@@ -99,12 +99,12 @@ void AbilityMonitor::OnWindowStageRestore()
         return;
     }
 
-    jsMonitor_->onWindowStageRestore();
+    jsMonitor_->OnWindowStageRestore(abilityObj);
 
     HILOG_INFO("end");
 }
 
-void AbilityMonitor::OnWindowStageDestroy()
+void AbilityMonitor::OnWindowStageDestroy(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
@@ -112,7 +112,7 @@ void AbilityMonitor::OnWindowStageDestroy()
         return;
     }
 
-    jsMonitor_->onWindowStageDestroy();
+    jsMonitor_->OnWindowStageDestroy(abilityObj);
 
     HILOG_INFO("end");
 }

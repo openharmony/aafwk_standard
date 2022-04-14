@@ -24,187 +24,66 @@ using namespace OHOS::AbilityRuntime;
 JSAbilityMonitor::JSAbilityMonitor(const std::string &abilityName) : abilityName_(abilityName)
 {}
 
-void JSAbilityMonitor::onAbilityCreate()
+void JSAbilityMonitor::OnAbilityCreate(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
-    if (jsAbilityMonitor_ == nullptr) {
-        HILOG_ERROR("jsAbilityMonitor_ nullptr");
-        return;
-    }
+    CallLifecycleCBFunction("onAbilityCreate", abilityObj);
 
-    NativeValue* value = jsAbilityMonitor_->Get();
-    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
-    if (obj == nullptr) {
-        HILOG_ERROR("Failed to get object");
-        return;
-    }
-
-    NativeValue* method = obj->GetProperty("onAbilityCreate");
-    if (method == nullptr) {
-        HILOG_ERROR("Failed to get onAbilityCreate from object");
-        return;
-    }
-
-    NativeValue* argv[] = {};
-    engine_->CallFunction(value, method, argv, 0);
     HILOG_INFO("end");
 }
 
-void JSAbilityMonitor::onAbilityForeground()
+void JSAbilityMonitor::OnAbilityForeground(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
-    if (jsAbilityMonitor_ == nullptr) {
-        HILOG_ERROR("jsAbilityMonitor_ nullptr");
-        return;
-    }
+    CallLifecycleCBFunction("onAbilityForeground", abilityObj);
 
-    NativeValue *value = jsAbilityMonitor_->Get();
-    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
-    if (obj == nullptr) {
-        HILOG_ERROR("Failed to get object");
-        return;
-    }
-
-    NativeValue *method = obj->GetProperty("onAbilityForeground");
-    if (method == nullptr) {
-        HILOG_ERROR("Failed to get onAbilityForeground from object");
-        return;
-    }
-
-    NativeValue *argv[] = {};
-    engine_->CallFunction(value, method, argv, 0);
     HILOG_INFO("end");
 }
 
-void JSAbilityMonitor::onAbilityBackground()
+void JSAbilityMonitor::OnAbilityBackground(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
-    if (jsAbilityMonitor_ == nullptr) {
-        HILOG_ERROR("jsAbilityMonitor_ nullptr");
-        return;
-    }
+    CallLifecycleCBFunction("onAbilityBackground", abilityObj);
 
-    NativeValue *value = jsAbilityMonitor_->Get();
-    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
-    if (obj == nullptr) {
-        HILOG_ERROR("Failed to get object");
-        return;
-    }
-
-    NativeValue *method = obj->GetProperty("onAbilityBackground");
-    if (method == nullptr) {
-        HILOG_ERROR("Failed to get onAbilityBackground from object");
-        return;
-    }
-
-    NativeValue *argv[] = {};
-    engine_->CallFunction(value, method, argv, 0);
     HILOG_INFO("end");
 }
 
-void JSAbilityMonitor::onAbilityDestroy()
+void JSAbilityMonitor::OnAbilityDestroy(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
-    if (jsAbilityMonitor_ == nullptr) {
-        HILOG_ERROR("jsAbilityMonitor_ nullptr");
-        return;
-    }
+    CallLifecycleCBFunction("onAbilityDestroy", abilityObj);
 
-    NativeValue *value = jsAbilityMonitor_->Get();
-    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
-    if (obj == nullptr) {
-        HILOG_ERROR("Failed to get object");
-        return;
-    }
-
-    NativeValue *method = obj->GetProperty("onAbilityDestroy");
-    if (method == nullptr) {
-        HILOG_ERROR("Failed to get onAbilityDestroy from object");
-        return;
-    }
-
-    NativeValue *argv[] = {};
-    engine_->CallFunction(value, method, argv, 0);
     HILOG_INFO("end");
 }
 
-void JSAbilityMonitor::onWindowStageCreate()
+void JSAbilityMonitor::OnWindowStageCreate(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
-    if (jsAbilityMonitor_ == nullptr) {
-        HILOG_ERROR("jsAbilityMonitor_ nullptr");
-        return;
-    }
+    CallLifecycleCBFunction("onWindowStageCreate", abilityObj);
 
-    NativeValue *value = jsAbilityMonitor_->Get();
-    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
-    if (obj == nullptr) {
-        HILOG_ERROR("Failed to get object");
-        return;
-    }
-
-    NativeValue *method = obj->GetProperty("onWindowStageCreate");
-    if (method == nullptr) {
-        HILOG_ERROR("Failed to get onWindowStageCreate from object");
-        return;
-    }
-
-    NativeValue *argv[] = {};
-    engine_->CallFunction(value, method, argv, 0);
     HILOG_INFO("end");
 }
 
-void JSAbilityMonitor::onWindowStageRestore()
+void JSAbilityMonitor::OnWindowStageRestore(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
-    if (jsAbilityMonitor_ == nullptr) {
-        HILOG_ERROR("jsAbilityMonitor_ nullptr");
-        return;
-    }
+    CallLifecycleCBFunction("onWindowStageRestore", abilityObj);
 
-    NativeValue *value = jsAbilityMonitor_->Get();
-    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
-    if (obj == nullptr) {
-        HILOG_ERROR("Failed to get object");
-        return;
-    }
-
-    NativeValue *method = obj->GetProperty("onWindowStageRestore");
-    if (method == nullptr) {
-        HILOG_ERROR("Failed to get onWindowStageRestore from object");
-        return;
-    }
-
-    NativeValue *argv[] = {};
-    engine_->CallFunction(value, method, argv, 0);
     HILOG_INFO("end");
 }
 
-void JSAbilityMonitor::onWindowStageDestroy()
+void JSAbilityMonitor::OnWindowStageDestroy(const std::weak_ptr<NativeReference> &abilityObj)
 {
     HILOG_INFO("enter");
 
-    NativeValue *value = jsAbilityMonitor_->Get();
-    NativeObject *obj = ConvertNativeValueTo<NativeObject>(value);
-    if (obj == nullptr) {
-        HILOG_ERROR("Failed to get object");
-        return;
-    }
+    CallLifecycleCBFunction("onWindowStageDestroy", abilityObj);
 
-    NativeValue *method = obj->GetProperty("onWindowStageDestroy");
-    if (method == nullptr) {
-        HILOG_ERROR("Failed to get onWindowStageDestroy from object");
-        return;
-    }
-
-    NativeValue *argv[] = {};
-    engine_->CallFunction(value, method, argv, 0);
     HILOG_INFO("end");
 }
 
@@ -213,6 +92,41 @@ void JSAbilityMonitor::SetJsAbilityMonitor(NativeValue *jsAbilityMonitor)
     HILOG_INFO("enter");
 
     jsAbilityMonitor_ = std::unique_ptr<NativeReference>(engine_->CreateReference(jsAbilityMonitor, 1));
+}
+
+NativeValue *JSAbilityMonitor::CallLifecycleCBFunction(const std::string &functionName,
+    const std::weak_ptr<NativeReference> &abilityObj)
+{
+    if (functionName.empty()) {
+        HILOG_ERROR("Invalid function name");
+        return nullptr;
+    }
+
+    if (!jsAbilityMonitor_) {
+        HILOG_ERROR("Invalid jsAbilityMonitor");
+        return nullptr;
+    }
+
+    auto value = jsAbilityMonitor_->Get();
+    auto obj = ConvertNativeValueTo<NativeObject>(value);
+    if (obj == nullptr) {
+        HILOG_ERROR("Failed to get object");
+        return nullptr;
+    }
+
+    auto method = obj->GetProperty(functionName.data());
+    if (method == nullptr) {
+        HILOG_ERROR("Failed to get %{public}s from object", functionName.data());
+        return nullptr;
+    }
+
+    auto nativeAbilityObj = engine_->CreateNull();
+    if (!abilityObj.expired()) {
+        nativeAbilityObj = abilityObj.lock()->Get();
+    }
+
+    NativeValue* argv[] = { nativeAbilityObj };
+    return engine_->CallFunction(value, method, argv, ArraySize(argv));
 }
 }  // namespace AbilityDelegatorJs
 }  // namespace OHOS
