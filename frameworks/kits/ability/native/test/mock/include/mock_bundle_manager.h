@@ -69,7 +69,8 @@ public:
     virtual bool GetBundleArchiveInfo(
         const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo) override;
     virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo) override;
-    virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override;
+    virtual bool GetHapModuleInfo(
+        const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override;
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want) override;
     virtual int CheckPublicKeys(const std::string &firstBundleName, const std::string &secondBundleName) override;
     virtual int CheckPermission(const std::string &bundleName, const std::string &permission) override;
@@ -153,7 +154,8 @@ public:
     virtual bool GetBundleArchiveInfo(
         const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo) override;
     virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo) override;
-    virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override;
+    virtual bool GetHapModuleInfo(
+        const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override;
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want) override;
     virtual int CheckPublicKeys(const std::string &firstBundleName, const std::string &secondBundleName) override;
     virtual int CheckPermission(const std::string &bundleName, const std::string &permission) override;
@@ -222,8 +224,7 @@ public:
     {
         return true;
     }
-    virtual bool GetDistributedBundleInfo(
-        const std::string &networkId, int32_t userId, const std::string &bundleName,
+    virtual bool GetDistributedBundleInfo(const std::string &networkId, const std::string &bundleName,
         DistributedBundleInfo &distributedBundleInfo) override
     {
         return true;
