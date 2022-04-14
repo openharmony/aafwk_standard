@@ -670,7 +670,7 @@ ErrCode AbilityManagerClient::StartUserTest(const Want &want, const sptr<IRemote
 }
 
 ErrCode AbilityManagerClient::FinishUserTest(
-    const std::string &msg, const int &resultCode, const std::string &bundleName)
+    const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);

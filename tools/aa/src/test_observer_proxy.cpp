@@ -28,7 +28,7 @@ TestObserverProxy::~TestObserverProxy()
     HILOG_INFO("test observer proxy is destroyed");
 }
 
-void TestObserverProxy::TestStatus(const std::string &msg, const int &resultCode)
+void TestObserverProxy::TestStatus(const std::string &msg, const int64_t &resultCode)
 {
     HILOG_INFO("start");
 
@@ -51,7 +51,7 @@ void TestObserverProxy::TestStatus(const std::string &msg, const int &resultCode
         return;
     }
 
-    if (!data.WriteInt32(resultCode)) {
+    if (!data.WriteInt64(resultCode)) {
         HILOG_ERROR("Failed to write resultCode");
         return;
     }
@@ -64,7 +64,7 @@ void TestObserverProxy::TestStatus(const std::string &msg, const int &resultCode
     }
 }
 
-void TestObserverProxy::TestFinished(const std::string &msg, const int &resultCode)
+void TestObserverProxy::TestFinished(const std::string &msg, const int64_t &resultCode)
 {
     HILOG_INFO("start");
 
@@ -87,7 +87,7 @@ void TestObserverProxy::TestFinished(const std::string &msg, const int &resultCo
         return;
     }
 
-    if (!data.WriteInt32(resultCode)) {
+    if (!data.WriteInt64(resultCode)) {
         HILOG_ERROR("Failed to write resultCode");
         return;
     }

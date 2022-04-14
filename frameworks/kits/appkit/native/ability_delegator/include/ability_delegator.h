@@ -265,7 +265,7 @@ public:
      * exceed 1000 characters.
      * @param resultCode, Indicates the result code.
      */
-    void FinishUserTest(const std::string &msg, const int32_t resultCode);
+    void FinishUserTest(const std::string &msg, const int64_t resultCode);
 
     /**
      * Registers a function for cleanup.

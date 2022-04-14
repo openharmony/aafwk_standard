@@ -383,7 +383,7 @@ int AppMgrService::StartUserTestProcess(const AAFwk::Want &want, const sptr<IRem
     return ERR_OK;
 }
 
-int AppMgrService::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+int AppMgrService::FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     if (!IsReady()) {
         return ERR_INVALID_OPERATION;

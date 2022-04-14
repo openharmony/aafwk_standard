@@ -64,7 +64,7 @@ public:
         return 0;
     }
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+    virtual int FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
     {
         return 0;
     }

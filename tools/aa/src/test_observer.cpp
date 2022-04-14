@@ -33,15 +33,15 @@ TestObserver::TestObserver() : isFinished_(false)
 TestObserver::~TestObserver()
 {}
 
-void TestObserver::TestStatus(const std::string &msg, const int &resultCode)
+void TestObserver::TestStatus(const std::string &msg, const int64_t &resultCode)
 {
-    HILOG_INFO("enter");
+    HILOG_INFO("enter, msg : %{public}s, code : %{public}" PRId64, msg.data(), resultCode);
     std::cout << msg << std::endl;
 }
 
-void TestObserver::TestFinished(const std::string &msg, const int &resultCode)
+void TestObserver::TestFinished(const std::string &msg, const int64_t &resultCode)
 {
-    HILOG_INFO("enter");
+    HILOG_INFO("enter, msg : %{public}s, code : %{public}" PRId64, msg.data(), resultCode);
     std::cout << "TestFinished-ResultCode: " + std::to_string(resultCode) << std::endl;
     std::cout << "TestFinished-ResultMsg: " + msg << std::endl;
     isFinished_ = true;
@@ -63,14 +63,18 @@ ShellCommandResult TestObserver::ExecuteShellCommand(const std::string &cmd, con
 bool TestObserver::WaitForFinish(const int64_t &timeoutMs)
 {
     HILOG_INFO("enter");
+
+    auto realTime = timeoutMs > 0 ? timeoutMs : 0;
     int64_t startTime = SystemTime::GetNowSysTime();
     while (!isFinished_) {
         int64_t nowSysTime = SystemTime::GetNowSysTime();
-        if (timeoutMs && (nowSysTime - startTime > timeoutMs)) {
+        if (realTime && (nowSysTime - startTime > realTime)) {
             return false;
         }
         sleep(1);
     }
+
+    HILOG_INFO("User test finished");
     return true;
 }
 }  // namespace AAFwk

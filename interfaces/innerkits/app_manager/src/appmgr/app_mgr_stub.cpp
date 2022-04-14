@@ -309,7 +309,7 @@ int32_t AppMgrStub::HandleStartUserTestProcess(MessageParcel &data, MessageParce
 int32_t AppMgrStub::HandleFinishUserTest(MessageParcel &data, MessageParcel &reply)
 {
     std::string msg = data.ReadString();
-    int resultCode = data.ReadInt32();
+    int64_t resultCode = data.ReadInt64();
     std::string bundleName = data.ReadString();
     int32_t result = FinishUserTest(msg, resultCode, bundleName);
     reply.WriteInt32(result);

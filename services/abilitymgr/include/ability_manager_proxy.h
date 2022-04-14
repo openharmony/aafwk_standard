@@ -434,7 +434,8 @@ public:
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override;
+    virtual int FinishUserTest(
+        const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override;
 
     /**
      * GetCurrentTopAbility, get the token of current top ability.
