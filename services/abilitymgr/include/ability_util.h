@@ -17,19 +17,21 @@
 #define OHOS_AAFWK_ABILITY_UTIL_H
 
 #include <string>
-#include "hilog_wrapper.h"
+
 #include "ability_config.h"
-#include "ipc_skeleton.h"
-#include "sa_mgr_client.h"
-#include "bundlemgr/bundle_mgr_interface.h"
-#include "system_ability_definition.h"
 #include "ability_manager_errors.h"
+#include "bundlemgr/bundle_mgr_interface.h"
+#include "hilog_wrapper.h"
+#include "ipc_skeleton.h"
+#include "permission_verification.h"
+#include "sa_mgr_client.h"
+#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace AAFwk {
 namespace AbilityUtil {
-constexpr int32_t SYSTEM_UID = 1000;
-constexpr int32_t ROOT_UID = 0;
+const std::string SYSTEM_BASIC = "system_basic";
+const std::string SYSTEM_CORE = "system_core";
 
 static constexpr unsigned int CHANGE_CONFIG_ALL_CHANGED = 0xFFFFFFFF;
 static constexpr unsigned int CHANGE_CONFIG_NONE = 0x00000000;
@@ -152,14 +154,13 @@ static sptr<AppExecFwk::IBundleMgr> GetBundleManager()
         if (callerUid == -1) {
             callerUid = IPCSkeleton::GetCallingUid();
         }
-        if (ROOT_UID == callerUid) {
-            HILOG_ERROR("uid is root");
-            return ABILITY_VISIBLE_FALSE_DENY_REQUEST;
-        }
         auto bms = GetBundleManager();
         CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
         auto isSystemApp = bms->CheckIsSystemAppByUid(callerUid);
-        if (callerUid != SYSTEM_UID && !isSystemApp) {
+
+        auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+        auto apl = abilityInfo.applicationInfo.appPrivilegeLevel;
+        if (!isSaCall && apl != SYSTEM_BASIC && apl != SYSTEM_CORE && !isSystemApp) {
             HILOG_ERROR("caller is not systemAp or system");
             std::string bundleName;
             bool result = bms->GetBundleNameForUid(callerUid, bundleName);

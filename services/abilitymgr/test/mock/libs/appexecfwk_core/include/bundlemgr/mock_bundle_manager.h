@@ -44,7 +44,6 @@ const std::string COM_IX_HISINGLEMUSIC = "com.ix.hiSingleMusicInfo";
 const std::string COM_IX_ACCOUNTSERVICE = "com.ix.accountService";
 const std::string COM_OHOS_TEST = "com.ohos.test";
 constexpr int32_t MAX_SYS_UID = 2899;
-constexpr int32_t ROOT_UID = 0;
 const int32_t BASE_USER_RANGE = 200000;
 const int32_t APPLICATIONINFO_UID = 20000000;
 
@@ -339,7 +338,10 @@ public:
     bool GetBundleInfo(
         const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) override;
     int GetUidByBundleName(const std::string &bundleName, const int userId) override;
-    virtual bool CheckIsSystemAppByUid(const int uid) override;
+    virtual bool CheckIsSystemAppByUid(const int uid) override
+    {
+        return true;
+    };
 
     bool CheckWantEntity(const AAFwk::Want &, AbilityInfo &);
 
