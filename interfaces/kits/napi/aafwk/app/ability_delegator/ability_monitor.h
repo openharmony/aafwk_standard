@@ -44,38 +44,52 @@ public:
 
     /**
      * Called when ability is started.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void OnAbilityStart() override;
+    void OnAbilityStart(const std::weak_ptr<NativeReference> &abilityObj) override;
 
     /**
      * Called when ability is in foreground.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void OnAbilityForeground() override;
+    void OnAbilityForeground(const std::weak_ptr<NativeReference> &abilityObj) override;
 
     /**
      * Called when ability is in background.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void OnAbilityBackground() override;
+    void OnAbilityBackground(const std::weak_ptr<NativeReference> &abilityObj) override;
 
     /**
      * Called when ability is stopped.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void OnAbilityStop() override;
+    void OnAbilityStop(const std::weak_ptr<NativeReference> &abilityObj) override;
 
     /**
      * Called when window stage is created.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void OnWindowStageCreate() override;
+    void OnWindowStageCreate(const std::weak_ptr<NativeReference> &abilityObj) override;
 
     /**
      * Called when window stage is restored.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void OnWindowStageRestore() override;
+    void OnWindowStageRestore(const std::weak_ptr<NativeReference> &abilityObj) override;
 
     /**
      * Called when window stage is destroyed.
+     *
+     * @param abilityObj Indicates the ability object.
      */
-    void OnWindowStageDestroy() override;
+    void OnWindowStageDestroy(const std::weak_ptr<NativeReference> &abilityObj) override;
 
 private:
     std::shared_ptr<JSAbilityMonitor> jsMonitor_;
