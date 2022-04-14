@@ -124,7 +124,7 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
         HILOG_ERROR("CheckLoadabilityConditions failed");
         return;
     }
-    HILOG_INFO("AppMgrService start loading ability, name is %{public}s", abilityInfo->name.c_str());
+    HILOG_INFO("AppMgrService start loading ability, name is %{public}s.", abilityInfo->name.c_str());
 
     if (!appRunningManager_) {
         HILOG_ERROR("appRunningManager_ is nullptr");
@@ -250,7 +250,7 @@ void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppSched
         HILOG_ERROR("app client is null");
         return;
     }
-    HILOG_INFO("attach application pid:%{public}d", pid);
+    HILOG_INFO("AppMgrService attach application come, pid is %{public}d.", pid);
     auto appRecord = GetAppRunningRecordByPid(pid);
     if (!appRecord) {
         HILOG_ERROR("no such appRecord");
@@ -781,6 +781,7 @@ void AppMgrServiceInner::TerminateAbility(const sptr<IRemoteObject> &token)
 void AppMgrServiceInner::UpdateAbilityState(const sptr<IRemoteObject> &token, const AbilityState state)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HILOG_INFO("AppMgrService start to update the ability to state %{public}d.", static_cast<int32_t>(state));
     if (!token) {
         HILOG_ERROR("token is null!");
         return;
@@ -1148,7 +1149,6 @@ ProcessData AppMgrServiceInner::WrapProcessData(const std::shared_ptr<AppRunning
 void AppMgrServiceInner::OnAbilityStateChanged(
     const std::shared_ptr<AbilityRunningRecord> &ability, const AbilityState state)
 {
-    HILOG_DEBUG("begin, state:%{public}d", static_cast<int32_t>(state));
     if (!ability) {
         HILOG_ERROR("ability is null");
         return;
@@ -1256,7 +1256,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     startMsg.bundleName = bundleName;
     startMsg.renderParam = RENDER_PARAM;
     startMsg.coldStart = coldStart;
-    HILOG_DEBUG("StartProcess apl:%{public}s, bundleName:%{public}s coldStart:%{public}d",
+    HILOG_DEBUG("Start process apl is %{public}s, bundleName is %{public}s coldStart is %{public}d.",
         startMsg.apl.c_str(), bundleName.c_str(), coldStart);
 
     bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleGidsByUid(bundleName, uid, startMsg.gids));
@@ -1275,7 +1275,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
         appRunningManager_->RemoveAppRunningRecordById(appRecord->GetRecordId());
         return;
     }
-    HILOG_INFO("Start process success, pid: %{public}d, processName: %{public}s", pid, processName.c_str());
+    HILOG_INFO("Start process success, pid is %{public}d, processName is %{public}s.", pid, processName.c_str());
     appRecord->GetPriorityObject()->SetPid(pid);
     appRecord->SetUid(startMsg.uid);
     appRecord->SetStartMsg(startMsg);

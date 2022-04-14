@@ -305,7 +305,7 @@ void ContextImpl::InitResourceManager(
 
 sptr<AppExecFwk::IBundleMgr> ContextImpl::GetBundleManager() const
 {
-    HILOG_DEBUG("ContextImpl::GetBundleManager begin");
+    HILOG_DEBUG("ContextImpl::GetBundleManager");
     auto bundleObj =
         OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(
             BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
@@ -313,9 +313,7 @@ sptr<AppExecFwk::IBundleMgr> ContextImpl::GetBundleManager() const
         HILOG_ERROR("failed to get bundle manager service");
         return nullptr;
     }
-    HILOG_DEBUG("ContextImpl::GetBundleManager before iface_cast<bundleObj>");
     sptr<AppExecFwk::IBundleMgr> bms = iface_cast<AppExecFwk::IBundleMgr>(bundleObj);
-    HILOG_DEBUG("ContextImpl::GetBundleManager end");
     return bms;
 }
 
