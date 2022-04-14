@@ -3737,7 +3737,8 @@ int AbilityManagerService::StartUserTest(const Want &want, const sptr<IRemoteObj
     return DelayedSingleton<AppScheduler>::GetInstance()->StartUserTest(want, observer, bundleInfo, GetUserId());
 }
 
-int AbilityManagerService::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+int AbilityManagerService::FinishUserTest(
+    const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     HILOG_DEBUG("enter");
     if (bundleName.empty()) {

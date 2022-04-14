@@ -420,7 +420,7 @@ int AppMgrClient::StartUserTestProcess(
     return service->StartUserTestProcess(want, observer, bundleInfo, userId);
 }
 
-int AppMgrClient::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+int AppMgrClient::FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {

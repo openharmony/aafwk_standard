@@ -207,7 +207,8 @@ public:
         return 0;
     }
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override
+    virtual int FinishUserTest(
+        const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override
     {
         return 0;
     }

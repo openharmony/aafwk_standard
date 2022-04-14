@@ -480,7 +480,8 @@ public:
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid);
+    int FinishUserTest(
+        const std::string &msg, const int64_t &resultCode, const std::string &bundleName, const pid_t &pid);
 
     void StartSpecifiedAbility(const AAFwk::Want &want, const AppExecFwk::AbilityInfo &abilityInfo);
 
@@ -742,7 +743,7 @@ private:
     void KillApplicationByRecord(const std::shared_ptr<AppRunningRecord> &appRecord);
     void SendHiSysEvent(const int32_t innerEventId, const int64_t eventId);
     int FinishUserTestLocked(
-        const std::string &msg, const int &resultCode, const std::shared_ptr<AppRunningRecord> &appRecord);
+        const std::string &msg, const int64_t &resultCode, const std::shared_ptr<AppRunningRecord> &appRecord);
     const std::string TASK_ON_CALLBACK_DIED = "OnCallbackDiedTask";
     std::vector<sptr<IApplicationStateObserver>> appStateObservers_;
     std::map<sptr<IRemoteObject>, sptr<IRemoteObject::DeathRecipient>> recipientMap_;

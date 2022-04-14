@@ -2053,7 +2053,8 @@ int AbilityManagerProxy::StartUserTest(const Want &want, const sptr<IRemoteObjec
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+int AbilityManagerProxy::FinishUserTest(
+    const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -2066,8 +2067,8 @@ int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resul
         HILOG_ERROR("msg write failed.");
         return ERR_INVALID_VALUE;
     }
-    if (!data.WriteInt32(resultCode)) {
-        HILOG_ERROR("resultCode:WriteInt32 fail.");
+    if (!data.WriteInt64(resultCode)) {
+        HILOG_ERROR("resultCode:WriteInt64 fail.");
         return ERR_INVALID_VALUE;
     }
     if (!data.WriteString(bundleName)) {
