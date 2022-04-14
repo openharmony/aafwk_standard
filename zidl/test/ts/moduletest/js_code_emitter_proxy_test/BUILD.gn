@@ -80,7 +80,6 @@ zidl_common_sources += [
 
 module_output_path = "zidl/zidl_moduletest"
 ohos_moduletest("js_code_emitter_proxy_test") {
-
   module_out_path = module_output_path
 
   configs = [ ":zidl_module_test_config" ]
@@ -91,7 +90,7 @@ ohos_moduletest("js_code_emitter_proxy_test") {
   deps = [
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utilsecurec"
+    "//utils/native/base:utilsecurec",
   ]
 }
 
