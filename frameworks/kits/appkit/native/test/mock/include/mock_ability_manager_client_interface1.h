@@ -137,10 +137,6 @@ public:
     {
         return true;
     };
-    virtual std::string GetAbilityLabel(const std::string &bundleName, const std::string &className)
-    {
-        return std::string("");
-    };
     virtual bool GetBundleArchiveInfo(const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo)
     {
         return true;
@@ -218,10 +214,6 @@ public:
     virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo)
     {
         return true;
-    };
-    virtual std::string GetAbilityIcon(const std::string &bundleName, const std::string &className)
-    {
-        return std::string("");
     };
     virtual bool CanRequestPermission(
         const std::string &bundleName, const std::string &permissionName, const int userId)
