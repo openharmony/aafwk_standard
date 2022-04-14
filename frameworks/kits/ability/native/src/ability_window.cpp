@@ -33,11 +33,10 @@ AbilityWindow::~AbilityWindow()
  */
 void AbilityWindow::Init(std::shared_ptr<AbilityHandler>& handler, std::shared_ptr<Ability> ability)
 {
-    HILOG_INFO("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}s come.", __func__);
     handler_ = handler;
     ability_ = std::weak_ptr<IAbilityEvent>(ability);
     windowScene_ = std::make_shared<Rosen::WindowScene>();
-    HILOG_INFO("%{public}s end.", __func__);
 }
 
 /**
@@ -83,7 +82,6 @@ bool AbilityWindow::InitWindow(Rosen::WindowType winType,
  */
 void AbilityWindow::OnPostAbilityStart()
 {
-    HILOG_INFO("%{public}s begin.", __func__);
     if (!isWindowAttached) {
         HILOG_ERROR("AbilityWindow::OnPostAbilityStart window not attached.");
         return;
@@ -94,8 +92,6 @@ void AbilityWindow::OnPostAbilityStart()
         windowScene_->GoBackground();
         HILOG_INFO("%{public}s end windowScene_->GoBackground.", __func__);
     }
-
-    HILOG_INFO("%{public}s end.", __func__);
 }
 
 /**

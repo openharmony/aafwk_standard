@@ -149,7 +149,7 @@ NativeValue* JsAbilityContext::SetMissionIcon(NativeEngine* engine, NativeCallba
 
 NativeValue* JsAbilityContext::OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info)
 {
-    HILOG_INFO("OnStartAbility is called");
+    HILOG_INFO("OnStartAbility is called.");
 
     if (info.argc == ARGC_ZERO) {
         HILOG_ERROR("Not enough params");
@@ -159,7 +159,7 @@ NativeValue* JsAbilityContext::OnStartAbility(NativeEngine& engine, NativeCallba
     OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine), reinterpret_cast<napi_value>(info.argv[0]), want);
     InheritWindowMode(want);
     decltype(info.argc) unwrapArgc = 1;
-    HILOG_INFO("abilityName=%{public}s", want.GetElement().GetAbilityName().c_str());
+    HILOG_INFO("Start ability, ability name is %{public}s.", want.GetElement().GetAbilityName().c_str());
     AAFwk::StartOptions startOptions;
     if (info.argc > ARGC_ONE && info.argv[1]->TypeOf() == NATIVE_OBJECT) {
         HILOG_INFO("OnStartAbility start options is used.");

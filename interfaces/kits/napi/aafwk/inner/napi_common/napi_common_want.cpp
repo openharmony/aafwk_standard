@@ -78,8 +78,6 @@ napi_value WrapElementName(napi_env env, const ElementName &elementName)
 
 bool UnwrapElementName(napi_env env, napi_value param, ElementName &elementName)
 {
-    HILOG_INFO("%{public}s called.", __func__);
-
     std::string natValue("");
     if (UnwrapStringByPropertyName(env, param, "deviceId", natValue)) {
         elementName.SetDeviceID(natValue);
@@ -878,8 +876,6 @@ napi_value WrapWant(napi_env env, const Want &want)
 
 bool UnwrapWant(napi_env env, napi_value param, Want &want)
 {
-    HILOG_INFO("%{public}s called.", __func__);
-
     if (!IsTypeForNapiValue(env, param, napi_object)) {
         HILOG_INFO("%{public}s called. Params is invalid.", __func__);
         return false;

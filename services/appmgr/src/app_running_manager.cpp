@@ -124,7 +124,6 @@ std::shared_ptr<AppRunningRecord> AppRunningManager::GetAppRunningRecordByAbilit
     for (const auto &item : appRunningRecordMap_) {
         const auto &appRecord = item.second;
         if (appRecord && appRecord->GetAbilityRunningRecordByToken(abilityToken)) {
-            HILOG_INFO("appRecord is exit");
             return appRecord;
         }
     }

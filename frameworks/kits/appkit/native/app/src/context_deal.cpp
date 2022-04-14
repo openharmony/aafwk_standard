@@ -69,12 +69,11 @@ std::shared_ptr<ProcessInfo> ContextDeal::GetProcessInfo() const
  */
 void ContextDeal::SetProcessInfo(const std::shared_ptr<ProcessInfo> &info)
 {
-    HILOG_INFO("ContextDeal::SetProcessInfo begin");
+    HILOG_INFO("ContextDeal::SetProcessInfo");
     if (info == nullptr) {
         HILOG_ERROR("ContextDeal::SetProcessInfo failed, info is empty");
         return;
     }
-    HILOG_INFO("ContextDeal::SetProcessInfo end");
     processInfo_ = info;
 }
 
@@ -96,13 +95,12 @@ std::shared_ptr<ApplicationInfo> ContextDeal::GetApplicationInfo() const
  */
 void ContextDeal::SetApplicationInfo(const std::shared_ptr<ApplicationInfo> &info)
 {
-    HILOG_INFO("ContextDeal::SetApplicationInfo begin");
+    HILOG_INFO("ContextDeal::SetApplicationInfo");
     if (info == nullptr) {
         HILOG_ERROR("ContextDeal::SetApplicationInfo failed, info is empty");
         return;
     }
     applicationInfo_ = info;
-    HILOG_INFO("ContextDeal::SetApplicationInfo end");
 }
 
 /**
@@ -122,13 +120,12 @@ std::shared_ptr<Context> ContextDeal::GetApplicationContext() const
  */
 void ContextDeal::SetApplicationContext(const std::shared_ptr<Context> &context)
 {
-    HILOG_INFO("ContextDeal::SetApplicationContext begin");
+    HILOG_INFO("ContextDeal::SetApplicationContext");
     if (context == nullptr) {
         HILOG_ERROR("ContextDeal::SetApplicationContext failed, context is empty");
         return;
     }
     appContext_ = context;
-    HILOG_INFO("ContextDeal::SetApplicationContext end");
 }
 
 /**
@@ -181,13 +178,12 @@ const std::shared_ptr<AbilityInfo> ContextDeal::GetAbilityInfo()
  */
 void ContextDeal::SetAbilityInfo(const std::shared_ptr<AbilityInfo> &info)
 {
-    HILOG_INFO("ContextDeal::SetAbilityInfo begin");
+    HILOG_INFO("ContextDeal::SetAbilityInfo");
     if (info == nullptr) {
         HILOG_ERROR("ContextDeal::SetAbilityInfo failed, info is empty");
         return;
     }
     abilityInfo_ = info;
-    HILOG_INFO("ContextDeal::SetAbilityInfo end");
 }
 
 /**
@@ -207,13 +203,12 @@ std::shared_ptr<Context> ContextDeal::GetContext()
  */
 void ContextDeal::SetContext(const std::shared_ptr<Context> &context)
 {
-    HILOG_INFO("ContextDeal::SetContext begin");
+    HILOG_INFO("ContextDeal::SetContext");
     if (context == nullptr) {
         HILOG_ERROR("ContextDeal::SetContext failed, context is empty");
         return;
     }
     abilityContext_ = context;
-    HILOG_INFO("ContextDeal::SetContext end");
 }
 
 /**
@@ -224,7 +219,7 @@ void ContextDeal::SetContext(const std::shared_ptr<Context> &context)
  */
 sptr<IBundleMgr> ContextDeal::GetBundleManager() const
 {
-    HILOG_INFO("ContextDeal::GetBundleManager begin");
+    HILOG_INFO("ContextDeal::GetBundleManager");
     auto bundleObj =
         OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
     if (bundleObj == nullptr) {
@@ -232,7 +227,6 @@ sptr<IBundleMgr> ContextDeal::GetBundleManager() const
         return nullptr;
     }
     sptr<IBundleMgr> bms = iface_cast<IBundleMgr>(bundleObj);
-    HILOG_INFO("ContextDeal::GetBundleManager end");
     return bms;
 }
 
@@ -253,13 +247,12 @@ std::shared_ptr<Global::Resource::ResourceManager> ContextDeal::GetResourceManag
  */
 void ContextDeal::SetProfile(const std::shared_ptr<Profile> &profile)
 {
-    HILOG_INFO("ContextDeal::SetProfile begin");
+    HILOG_INFO("ContextDeal::SetProfile");
     if (profile == nullptr) {
         HILOG_ERROR("ContextDeal::SetProfile failed, profile is nullptr");
         return;
     }
     profile_ = profile;
-    HILOG_INFO("ContextDeal::SetProfile end");
 }
 
 /**
