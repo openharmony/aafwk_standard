@@ -65,7 +65,6 @@ public:
     virtual bool QueryAbilityInfosForClone(const Want &want, std::vector<AbilityInfo> &abilityInfos) override;
     virtual bool QueryAbilityInfoByUri(const std::string &abilityUri, AbilityInfo &abilityInfo) override;
     virtual bool QueryKeepAliveBundleInfos(std::vector<BundleInfo> &bundleInfos) override;
-    virtual std::string GetAbilityLabel(const std::string &bundleName, const std::string &className) override;
     virtual bool GetBundleArchiveInfo(
         const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo) override;
     virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo) override;
@@ -88,7 +87,6 @@ public:
         const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result) override;
     virtual bool IsApplicationEnabled(const std::string &bundleName) override;
     virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) override;
-    virtual std::string GetAbilityIcon(const std::string &bundleName, const std::string &className) override;
     virtual bool CanRequestPermission(
         const std::string &bundleName, const std::string &permissionName, const int userId) override;
     virtual bool RequestPermissionFromUser(
@@ -149,7 +147,6 @@ public:
     virtual bool QueryAbilityInfosForClone(const Want &want, std::vector<AbilityInfo> &abilityInfos) override;
     virtual bool QueryAbilityInfoByUri(const std::string &abilityUri, AbilityInfo &abilityInfo) override;
     virtual bool QueryKeepAliveBundleInfos(std::vector<BundleInfo> &bundleInfos) override;
-    virtual std::string GetAbilityLabel(const std::string &bundleName, const std::string &className) override;
     virtual bool GetBundleArchiveInfo(
         const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo) override;
     virtual bool GetHapModuleInfo(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo) override;
@@ -172,7 +169,6 @@ public:
         const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result) override;
     virtual bool IsApplicationEnabled(const std::string &bundleName) override;
     virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) override;
-    virtual std::string GetAbilityIcon(const std::string &bundleName, const std::string &className) override;
     virtual bool CanRequestPermission(
         const std::string &bundleName, const std::string &permissionName, const int userId) override;
     virtual bool RequestPermissionFromUser(

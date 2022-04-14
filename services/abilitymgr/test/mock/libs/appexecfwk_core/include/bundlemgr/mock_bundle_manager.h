@@ -274,7 +274,6 @@ public:
     MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
     MOCK_METHOD2(GetBundleInfosByMetaData, bool(const std::string &metaData, std::vector<BundleInfo> &bundleInfos));
     MOCK_METHOD1(QueryKeepAliveBundleInfos, bool(std::vector<BundleInfo> &bundleInfos));
-    MOCK_METHOD2(GetAbilityLabel, std::string(const std::string &bundleName, const std::string &className));
     MOCK_METHOD3(
         GetBundleArchiveInfo, bool(const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo));
     MOCK_METHOD2(GetHapModuleInfo, bool(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo));
@@ -306,7 +305,6 @@ public:
     MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(QueryAbilityInfosForClone, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &abilityInfo));
-    MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
     MOCK_METHOD3(
         CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
     MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
@@ -354,7 +352,6 @@ public:
     MOCK_METHOD1(GetAppType, std::string(const std::string &bundleName));
     MOCK_METHOD2(GetBundleInfosByMetaData, bool(const std::string &metaData, std::vector<BundleInfo> &bundleInfos));
     MOCK_METHOD1(QueryKeepAliveBundleInfos, bool(std::vector<BundleInfo> &bundleInfos));
-    MOCK_METHOD2(GetAbilityLabel, std::string(const std::string &bundleName, const std::string &className));
     MOCK_METHOD3(
         GetBundleArchiveInfo, bool(const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo));
     MOCK_METHOD2(GetHapModuleInfo, bool(const AbilityInfo &abilityInfo, HapModuleInfo &hapModuleInfo));
@@ -382,7 +379,6 @@ public:
     MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(QueryAbilityInfosForClone, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &abilityInfo));
-    MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
     MOCK_METHOD3(
         CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
     MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
