@@ -54,43 +54,62 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
     const AAFwk::Want& want = eventData.GetWant();
     std::string action = want.GetAction();
     std::string bundleName = want.GetElement().GetBundleName();
-    if (action.empty() || bundleName.empty()) {
+    if (action.empty() || (action != EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED && bundleName.empty())) {
         HILOG_ERROR("%{public}s failed, invalid param, action: %{public}s, bundleName: %{public}s",
             __func__, action.c_str(), bundleName.c_str());
+        return;
+    }
+    if (eventHandler_ == nullptr) {
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
         return;
     }
     HILOG_INFO("%{public}s, action:%{public}s.", __func__, action.c_str());
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED ||
         action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED) {
         // install or update
-        HILOG_INFO("%{public}s, bundle changed, bundleName: %{public}s", __func__, bundleName.c_str());
-        int userId = want.GetIntParam(KEY_USER_ID, 0);
-        HandleProviderUpdated(bundleName, userId);
-        HandleBundleFormInfoChanged(bundleName);
+        auto task = [this, want, bundleName]() {
+            HILOG_INFO("%{public}s, bundle changed, bundleName: %{public}s", __func__, bundleName.c_str());
+            int userId = want.GetIntParam(KEY_USER_ID, 0);
+            HandleProviderUpdated(bundleName, userId);
+            HandleBundleFormInfoChanged(bundleName);
+        };
+        eventHandler_->PostTask(task);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
-        HILOG_INFO("%{public}s, bundle removed, bundleName: %{public}s", __func__, bundleName.c_str());
-        HandleProviderRemoved(bundleName);
-        HandleBundleFormInfoRemoved(bundleName);
+        auto task = [this, bundleName]() {
+            HILOG_INFO("%{public}s, bundle removed, bundleName: %{public}s", __func__, bundleName.c_str());
+            HandleProviderRemoved(bundleName);
+            HandleBundleFormInfoRemoved(bundleName);
+        };
+        eventHandler_->PostTask(task);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_ABILITY_UPDATED) {
-        HILOG_INFO("%{public}s, bundle updated, bundleName: %{public}s", __func__, bundleName.c_str());
-        int userId = want.GetIntParam(KEY_USER_ID, 0);
-        HandleProviderUpdated(bundleName, userId);
+        auto task = [this, want, bundleName]() {
+            HILOG_INFO("%{public}s, bundle updated, bundleName: %{public}s", __func__, bundleName.c_str());
+            int userId = want.GetIntParam(KEY_USER_ID, 0);
+            HandleProviderUpdated(bundleName, userId);
+        };
+        eventHandler_->PostTask(task);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED) {
-        int userId = want.GetIntParam(KEY_USER_ID, 0);
-        sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
-        if (iBundleMgr == nullptr) {
-            HILOG_ERROR("%{public}s error, failed to get IBundleMgr.", __func__);
-            return;
-        }
-        int uid = IN_PROCESS_CALL(iBundleMgr->GetUidByBundleName(bundleName, userId));
-        HandleBundleDataCleared(bundleName, uid);
-    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_UID_REMOVED) {
-        int32_t userId = want.GetIntParam(KEY_USER_ID, -1);
-        if (userId == -1) {
-            HILOG_ERROR("%{public}s, failed to get userId, bundleName: %{public}s", __func__, bundleName.c_str());
-            return;
-        }
-        HandleUserIdRemoved(userId);
+        auto task = [this, want, bundleName]() {
+            int userId = want.GetIntParam(KEY_USER_ID, 0);
+            sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+            if (iBundleMgr == nullptr) {
+                HILOG_ERROR("%{public}s error, failed to get IBundleMgr.", __func__);
+                return;
+            }
+            int uid = IN_PROCESS_CALL(iBundleMgr->GetUidByBundleName(bundleName, userId));
+            HandleBundleDataCleared(bundleName, uid);
+        };
+        eventHandler_->PostTask(task);
+    } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED) {
+        int32_t userId = eventData.GetCode();
+        auto task = [this, userId]() {
+            if (userId == -1) {
+                HILOG_ERROR("%{public}s, failed to get userId", __func__);
+                return;
+            }
+            HandleUserIdRemoved(userId);
+        };
+        eventHandler_->PostTask(task);
     } else {
         HILOG_WARN("%{public}s warnning, invalid action.", __func__);
     }
