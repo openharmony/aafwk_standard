@@ -78,7 +78,6 @@ std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::AddAbility(const sptr
 
 bool ModuleRunningRecord::IsLastAbilityRecord(const sptr<IRemoteObject> &token)
 {
-    HILOG_INFO("Is last ability record.");
     if (!token) {
         HILOG_ERROR("token is nullptr");
         return false;

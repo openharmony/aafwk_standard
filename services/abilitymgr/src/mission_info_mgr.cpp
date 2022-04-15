@@ -394,7 +394,7 @@ void MissionInfoMgr::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handl
 bool MissionInfoMgr::UpdateMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
     MissionSnapshot& missionSnapshot) const
 {
-    HILOG_ERROR("snapshot: UpdateMissionSnapshot, missionId:%{public}d", missionId);
+    HILOG_INFO("Update mission snapshot, missionId:%{public}d.", missionId);
     auto it = find_if(missionInfoList_.begin(), missionInfoList_.end(), [missionId](const InnerMissionInfo &info) {
         return missionId == info.missionInfo.id;
     });

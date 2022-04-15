@@ -744,7 +744,6 @@ void AppRunningRecord::TerminateAbility(const sptr<IRemoteObject> &token, const 
     auto abilityRecord = GetAbilityRunningRecordByToken(token);
     StateChangedNotifyObserver(abilityRecord, static_cast<int32_t>(AbilityState::ABILITY_STATE_TERMINATED), true);
     moduleRecord->TerminateAbility(token, isForce);
-    HILOG_INFO("AppRunningRecord::TerminateAbility end");
 }
 
 void AppRunningRecord::AbilityTerminated(const sptr<IRemoteObject> &token)

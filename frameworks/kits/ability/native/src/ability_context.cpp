@@ -79,13 +79,11 @@ ErrCode AbilityContext::TerminateAbility(int requestCode)
     if (err != ERR_OK) {
         HILOG_ERROR("AbilityContext::TerminateAbility is failed %{public}d", err);
     }
-    HILOG_INFO("%{public}s end.", __func__);
     return err;
 }
 
 ErrCode AbilityContext::TerminateAbility()
 {
-    HILOG_INFO("%{public}s begin.", __func__);
     std::shared_ptr<AbilityInfo> info = GetAbilityInfo();
     if (info == nullptr) {
         HILOG_ERROR("AbilityContext::TerminateAbility info == nullptr");
@@ -96,14 +94,12 @@ ErrCode AbilityContext::TerminateAbility()
 
     switch (info->type) {
         case AppExecFwk::AbilityType::PAGE:
-            HILOG_INFO("%{public}s begin ams->TerminateAbility for PAGE.", __func__);
+            HILOG_INFO("%{public}s begin, type is page, ability is %{public}s.", __func__, info->name.c_str());
             err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, resultCode_, &resultWant_);
-            HILOG_INFO("%{public}s end ams->TerminateAbility for PAGE, ret=%{public}d", __func__, err);
             break;
         case AppExecFwk::AbilityType::SERVICE:
-            HILOG_INFO("%{public}s begin ams->TerminateAbility for SERVICE.", __func__);
+            HILOG_INFO("%{public}s begin, type is service, ability is %{public}s.", __func__, info->name.c_str());
             err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, -1, nullptr);
-            HILOG_INFO("%{public}s end ams->TerminateAbility for SERVICE, ret=%{public}d", __func__, err);
             break;
         default:
             HILOG_ERROR("AbilityContext::TerminateAbility info type error is %{public}d", info->type);
@@ -113,7 +109,6 @@ ErrCode AbilityContext::TerminateAbility()
     if (err != ERR_OK) {
         HILOG_ERROR("AbilityContext::TerminateAbility is failed %{public}d", err);
     }
-    HILOG_INFO("%{public}s end.", __func__);
     return err;
 }
 

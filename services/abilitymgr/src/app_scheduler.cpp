@@ -114,7 +114,7 @@ void AppScheduler::MoveToForground(const sptr<IRemoteObject> &token)
 void AppScheduler::MoveToBackground(const sptr<IRemoteObject> &token)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_DEBUG("Move to background.");
+    HILOG_DEBUG("Move the app to background.");
     CHECK_POINTER(appMgrClient_);
     appMgrClient_->UpdateAbilityState(token, AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
 }
