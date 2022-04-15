@@ -894,6 +894,11 @@ bool UnwrapWant(napi_env env, napi_value param, Want &want)
         want.SetAction(natValueString);
     }
 
+    natValueString = "";
+    if (UnwrapStringByPropertyName(env, param, "moduleName", natValueString)) {
+        want.SetParam("moduleName", natValueString);
+    }
+
     std::vector<std::string> natValueStringList;
     if (UnwrapStringArrayByPropertyName(env, param, "entities", natValueStringList)) {
         for (size_t i = 0; i < natValueStringList.size(); i++) {

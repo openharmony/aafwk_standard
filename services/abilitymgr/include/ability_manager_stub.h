@@ -154,12 +154,15 @@ private:
 
     int ForceTimeoutForTestInner(MessageParcel &data, MessageParcel &reply);
 
+    int FreeInstallAbilityFromRemoteInner(MessageParcel &data, MessageParcel &reply);
+
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 
     int BlockAmsServiceInner(MessageParcel &data, MessageParcel &reply);
     int BlockAbilityInner(MessageParcel &data, MessageParcel &reply);
     int BlockAppServiceInner(MessageParcel &data, MessageParcel &reply);
+    int GetTopAbilityInner(MessageParcel &data, MessageParcel &reply);
 };
 }  // namespace AAFwk
 }  // namespace OHOS
