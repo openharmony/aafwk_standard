@@ -90,7 +90,8 @@ const std::set<std::string> ONE_ARG_SET { ARGS_ABILITY, ARGS_MISSION_LIST, ARGS_
     ARGS_PENDING_WANT, ARGS_PROCESS, ARGS_DATA };
 
 const std::set<std::string> TWO_ARGS_SET { ARGS_ABILITY, ARGS_ABILITY_BY_ID, ARGS_PENDING_WANT };
-}
+} // namespace
+
 using namespace std::chrono;
 using namespace std::chrono_literals;
 const bool CONCURRENCY_MODE_FALSE = false;
@@ -101,7 +102,6 @@ static const int EXPERIENCE_MEM_THRESHOLD = 20;
 constexpr auto DATA_ABILITY_START_TIMEOUT = 5s;
 constexpr int32_t NON_ANONYMIZE_LENGTH = 6;
 constexpr uint32_t SCENE_FLAG_NORMAL = 0;
-constexpr int32_t DMS_UID = 5522;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const int32_t SWITCH_ACCOUNT_TRY = 3;
 const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
@@ -1082,9 +1082,10 @@ sptr<IWantSender> AbilityManagerService::GetWantSender(
     }
 
     HILOG_INFO("AbilityManagerService::GetWantSender: bundleName = %{public}s", wantSenderInfo.bundleName.c_str());
-    return pendingWantManager_->GetWantSender(
-        callerUid, bundleInfo.uid,
-        IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid)), wantSenderInfo, callerToken);
+    auto apl = bundleInfo.applicationInfo.appPrivilegeLevel;
+    auto isSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid));
+    PendingWantManager::Params params = { bundleInfo.uid, apl, isSystemApp };
+    return pendingWantManager_->GetWantSender(callerUid, params, wantSenderInfo, callerToken);
 }
 
 int AbilityManagerService::SendWantSender(const sptr<IWantSender> &target, const SenderInfo &senderInfo)
@@ -1121,8 +1122,9 @@ void AbilityManagerService::CancelWantSender(const sptr<IWantSender> &sender)
         return;
     }
 
-    pendingWantManager_->CancelWantSender(callerUid, bundleInfo.uid,
-        IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid)), sender);
+    auto apl = bundleInfo.applicationInfo.appPrivilegeLevel;
+    auto isSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid));
+    pendingWantManager_->CancelWantSender(apl, isSystemApp, sender);
 }
 
 int AbilityManagerService::GetPendingWantUid(const sptr<IWantSender> &target)
@@ -3142,17 +3144,17 @@ int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityReq
     auto abilityInfo = abilityRequest.abilityInfo;
     auto callerUid = abilityRequest.callerUid;
     auto targetUid = abilityInfo.applicationInfo.uid;
-    if (AbilityUtil::ROOT_UID == callerUid) {
-        HILOG_DEBUG("uid is root,ability cannot be called.");
-        return RESOLVE_CALL_NO_PERMISSIONS;
-    }
+
     auto bms = GetBundleManager();
     CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
     auto isCallerSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid));
     auto isTargetSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(targetUid));
     HILOG_ERROR("isCallerSystemApp:%{public}d, isTargetSystemApp:%{public}d",
         isCallerSystemApp, isTargetSystemApp);
-    if (callerUid != SYSTEM_UID && !isCallerSystemApp && callerUid != DMS_UID) {
+
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    auto apl = abilityRequest.appInfo.appPrivilegeLevel;
+    if (!isSaCall && apl != AbilityUtil::SYSTEM_BASIC && apl != AbilityUtil::SYSTEM_CORE && !isCallerSystemApp) {
         HILOG_DEBUG("caller is common app.");
         std::string bundleName;
         bool result = IN_PROCESS_CALL(bms->GetBundleNameForUid(callerUid, bundleName));
@@ -3937,11 +3939,6 @@ void AbilityManagerService::StartingScreenLockAbility()
 
 int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
 {
-    int32_t callerUid = IPCSkeleton::GetCallingUid();
-    if (callerUid != AbilityUtil::ROOT_UID) {
-        HILOG_ERROR("calling uid has no permission to force timeout.");
-        return INVALID_DATA;
-    }
     if (abilityName.empty()) {
         HILOG_ERROR("abilityName is empty.");
         return INVALID_DATA;
@@ -4251,11 +4248,6 @@ int AbilityManagerService::VerifyAccountPermission(int32_t userId)
 int AbilityManagerService::BlockAmsService()
 {
     HILOG_DEBUG("%{public}s", __func__);
-    int32_t callerUid = IPCSkeleton::GetCallingUid();
-    if (callerUid != AbilityUtil::ROOT_UID) {
-        HILOG_ERROR("calling uid has no permission to force timeout.");
-        return INVALID_DATA;
-    }
     if (handler_) {
         HILOG_DEBUG("%{public}s begain post block ams service task", __func__);
         auto BlockAmsServiceTask = [aams = shared_from_this()]() {
@@ -4273,22 +4265,12 @@ int AbilityManagerService::BlockAmsService()
 int AbilityManagerService::BlockAbility(int32_t abilityRecordId)
 {
     HILOG_DEBUG("%{public}s", __func__);
-    int32_t callerUid = IPCSkeleton::GetCallingUid();
-    if (callerUid != AbilityUtil::ROOT_UID) {
-        HILOG_ERROR("calling uid has no permission to force timeout.");
-        return INVALID_DATA;
-    }
     return currentMissionListManager_->BlockAbility(abilityRecordId);
 }
 
 int AbilityManagerService::BlockAppService()
 {
     HILOG_DEBUG("%{public}s", __func__);
-    int32_t callerUid = IPCSkeleton::GetCallingUid();
-    if (callerUid != AbilityUtil::ROOT_UID) {
-        HILOG_ERROR("calling uid has no permission to force timeout.");
-        return INVALID_DATA;
-    }
     return DelayedSingleton<AppScheduler>::GetInstance()->BlockAppService();
 }
 
