@@ -46,7 +46,6 @@ namespace {
 const std::string NAME_BUNDLE_MGR_SERVICE = "BundleMgrService";
 static std::shared_ptr<AbilityManagerService> g_abilityMs = nullptr;
 static std::shared_ptr<AppManagerTestService> g_appTestService = nullptr;
-// static bool g_alreadyInit = false;
 
 static const ElementName G_TESTABILITY1("device", "com.ix.hiMusic", "MainAbility1");
 static const ElementName G_TESTABILITY2("device", "com.ix.hiMusic", "MainAbility2");
@@ -195,8 +194,9 @@ void DumpModuleTest::StartAllAbilities()
  * SubFunction: NA
  * FunctionPoints: test AbilityManagerService DumpState
  * EnvConditions: System running normally
- * CaseDescription: DumpState to show info of stacks respectively 
- * Note: This test case is obsolete, arg (--stack) will no longer return any hook functions. Thus abilityNames will remain empty.
+ * CaseDescription: DumpState to show info of stacks respectively
+ * Note: This test case is obsolete, arg (--stack) will no longer
+ * return any hook functions. Thus abilityNames will remain empty.
  */
 HWTEST_F(DumpModuleTest, dump_module_test_001, TestSize.Level2)
 {
@@ -229,7 +229,8 @@ HWTEST_F(DumpModuleTest, dump_module_test_001, TestSize.Level2)
  * FunctionPoints: test AbilityManagerService DumpState
  * EnvConditions: System running normally
  * CaseDescription: DumpState to show info of the top ability
- * Note: This test case is obsolete, arg (--top) deprecated and will not found. Thus dumpInfo will remain empty.
+ * Note: This test case is obsolete, arg (--top) deprecated
+ * and will not found. Thus dumpInfo will remain empty.
  */
 HWTEST_F(DumpModuleTest, dump_module_test_004, TestSize.Level2)
 {
@@ -238,7 +239,7 @@ HWTEST_F(DumpModuleTest, dump_module_test_004, TestSize.Level2)
     g_abilityMs->DumpState(args, dumpInfo);
     std::vector<std::string> abilityNames;
     int abilityNum = MTDumpUtil::GetInstance()->GetAll("AbilityName", dumpInfo, abilityNames);
-    EXPECT_EQ(0, abilityNum); 
+    EXPECT_EQ(0, abilityNum);
 }
 
 /*
