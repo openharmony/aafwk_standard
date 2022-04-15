@@ -51,7 +51,6 @@ ohos_unittest("data_ability_manager_test") {
     "${services_path}/abilitymgr/test:abilityms_test_source",
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
-    "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
     "${services_path}/common:perm_verification",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
@@ -76,5 +75,5 @@ ohos_unittest("data_ability_manager_test") {
 
 group("unittest") {
   testonly = true
-  # deps = [ ":data_ability_manager_test" ]
+  deps = [ ":data_ability_manager_test" ]
 }
