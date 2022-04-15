@@ -2026,5 +2026,16 @@ Want *Want::FromString(std::string &string)
     }
     return want;
 }
+
+Want& Want::SetModuleName(const std::string &moduleName)
+{
+    operation_.SetModuleName(moduleName);
+    return *this;
+}
+
+std::string Want::GetModuleName() const
+{
+    return operation_.GetModuleName();
+}
 }  // namespace AAFwk
 }  // namespace OHOS
