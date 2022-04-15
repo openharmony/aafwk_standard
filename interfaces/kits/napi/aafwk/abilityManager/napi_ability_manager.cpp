@@ -26,6 +26,7 @@
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
+#include "ability_manager_service.h"
 
 using namespace OHOS::AAFwk;
 
@@ -1179,6 +1180,165 @@ napi_value NAPI_IsRamConstrainedDevice(napi_env env, napi_callback_info info)
     } else if (argc == 1) {
         // async
         ret = IsRamConstrainedDeviceAsync(env, argv[0]);
+    } else {
+        HILOG_ERROR("%{public}s js input param error", __func__);
+        NAPI_CALL(env, napi_get_null(env, &ret));
+    }
+    HILOG_INFO("%{public}s end", __func__);
+    return ret;
+}
+
+static void InnerGetTopAbility(napi_env env, AppExecFwk::ElementName &elementName)
+{
+    HILOG_INFO("%{public}s start", __func__);
+    elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
+    HILOG_INFO("%{public}s end", __func__);
+}
+
+static void ConvertElementName(napi_env env, napi_value &value, const AppExecFwk::ElementName &elementName)
+{
+    napi_create_object(env, &value);
+    napi_value bundleName;
+    NAPI_CALL_RETURN_VOID(
+        env, napi_create_string_utf8(env, (elementName.GetBundleName()).c_str(), NAPI_AUTO_LENGTH, &bundleName));
+    NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "bundleName", bundleName));
+    HILOG_INFO("ConvertElementName bundleName=%{public}s.", (elementName.GetBundleName()).c_str());
+
+    napi_value abilityName;
+    NAPI_CALL_RETURN_VOID(
+        env, napi_create_string_utf8(env, (elementName.GetAbilityName()).c_str(), NAPI_AUTO_LENGTH, &abilityName));
+    NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "abilityName", abilityName));
+    HILOG_INFO("ConvertElementName abilityName=%{public}s.", (elementName.GetAbilityName()).c_str());
+
+    napi_value deviceid;
+    NAPI_CALL_RETURN_VOID(
+        env, napi_create_string_utf8(env, (elementName.GetDeviceID()).c_str(), NAPI_AUTO_LENGTH, &deviceid));
+    NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, value, "deviceid", deviceid));
+    HILOG_INFO("ConvertElementName deviceid=%{public}s.", (elementName.GetDeviceID()).c_str());
+}
+
+static void GetTopAbilityExecute(napi_env env, void *data)
+{
+    AsyncGetTopAbilityInfo *cb = static_cast<AsyncGetTopAbilityInfo *>(data);
+    if (cb == nullptr) {
+        HILOG_ERROR("%{public}s, create cb failed.", __func__);
+        return;
+    }
+    InnerGetTopAbility(env, cb->elementName);
+}
+
+static void GetTopAbilityPromiseComplete(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("%{public}s, main event thread complete.", __func__);
+    AsyncGetTopAbilityInfo *cb = static_cast<AsyncGetTopAbilityInfo *>(data);
+    if (cb == nullptr) {
+        HILOG_ERROR("%{public}s, create cb failed.", __func__);
+        return;
+    }
+    napi_value value = nullptr;
+    ConvertElementName(env, value, cb->elementName);
+    NAPI_CALL_RETURN_VOID(env, napi_resolve_deferred(env, cb->deferred, value));
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, cb->asyncWork));
+    if (cb != nullptr) {
+        delete cb;
+        cb = nullptr;
+    }
+    HILOG_INFO("%{public}s,  main event thread complete end.", __func__);
+}
+
+static napi_value GetTopAbilityPromise(napi_env env)
+{
+    napi_value resourceName = nullptr;
+    napi_value retPromise = nullptr;
+    AsyncGetTopAbilityInfo *cb = new (std::nothrow) AsyncGetTopAbilityInfo;
+    if (cb == nullptr) {
+        HILOG_ERROR("%{public}s, create cb failed.", __func__);
+        NAPI_CALL(env, napi_get_null(env, &retPromise));
+        return retPromise;
+    }
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_promise(env, &cb->deferred, &retPromise));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, GetTopAbilityExecute,
+        GetTopAbilityPromiseComplete, (void *)cb, &cb->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, cb->asyncWork));
+    HILOG_INFO("%{public}s, promise end", __func__);
+    return retPromise;
+}
+
+static void GetTopAbilityCallbackComplete(napi_env env, napi_status status, void *data)
+{
+    HILOG_INFO("%{public}s, main event thread complete.", __func__);
+    AsyncGetTopAbilityInfo *cb = static_cast<AsyncGetTopAbilityInfo *>(data);
+    if (cb == nullptr) {
+        HILOG_ERROR("%{public}s, create cb failed.", __func__);
+        return;
+    }
+    const int errorCodeSuccess = 0;
+    const unsigned int argsCount = 2;
+    const unsigned int paramFirst = 0;
+    const unsigned int paramSecond = 1;
+    napi_value result[argsCount] = {nullptr};
+    napi_create_int32(env, errorCodeSuccess, &result[paramFirst]);
+    ConvertElementName(env, result[paramSecond], cb->elementName);
+    napi_value undefined = nullptr;
+    NAPI_CALL_RETURN_VOID(env, napi_get_undefined(env, &undefined));
+    napi_value callback = nullptr;
+    NAPI_CALL_RETURN_VOID(env, napi_get_reference_value(env, cb->callback, &callback));
+    napi_value callResult = nullptr;
+    NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, argsCount, result, &callResult));
+    if (cb->callback != nullptr) {
+        NAPI_CALL_RETURN_VOID(env, napi_delete_reference(env, cb->callback));
+    }
+    NAPI_CALL_RETURN_VOID(env, napi_delete_async_work(env, cb->asyncWork));
+    if (cb != nullptr) {
+        delete cb;
+        cb = nullptr;
+    }
+    HILOG_INFO("%{public}s, main event thread complete end.", __func__);
+}
+
+static napi_value GetTopAbilityCallback(napi_env env, napi_value args)
+{
+    napi_value resourceName = nullptr;
+    napi_value retAsync = nullptr;
+    napi_valuetype valuetype = napi_undefined;
+    AsyncGetTopAbilityInfo *cb = new (std::nothrow) AsyncGetTopAbilityInfo;
+    if (cb == nullptr) {
+        HILOG_ERROR("%{public}s, create cb failed", __func__);
+        NAPI_CALL(env, napi_get_null(env, &retAsync));
+        return retAsync;
+    }
+
+    NAPI_CALL(env, napi_create_string_latin1(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_typeof(env, args, &valuetype));
+    if (valuetype != napi_function) {
+        HILOG_ERROR("%{public}s, value type failed", __func__);
+        NAPI_CALL(env, napi_get_null(env, &retAsync));
+        return retAsync;
+    }
+    NAPI_CALL(env, napi_create_reference(env, args, 1, &cb->callback));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, GetTopAbilityExecute,
+        GetTopAbilityCallbackComplete, (void *)cb, &cb->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, cb->asyncWork));
+    HILOG_INFO("%{public}s, async end", __func__);
+    NAPI_CALL(env, napi_create_int32(env, 0, &retAsync));
+    return retAsync;
+}
+
+napi_value NAPI_GetTopAbility(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s start", __func__);
+    size_t argc = 1;
+    napi_value argv[1] = {nullptr};
+    napi_value ret = nullptr;
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    HILOG_INFO("%{public}s argc = [%{public}zu]", __func__, argc);
+    if (argc == 0) {
+        // promiss
+        ret = GetTopAbilityPromise(env);
+    } else if (argc == 1) {
+        // async
+        ret = GetTopAbilityCallback(env, argv[0]);
     } else {
         HILOG_ERROR("%{public}s js input param error", __func__);
         NAPI_CALL(env, napi_get_null(env, &ret));

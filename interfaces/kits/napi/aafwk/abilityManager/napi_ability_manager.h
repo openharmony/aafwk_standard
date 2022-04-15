@@ -95,6 +95,15 @@ struct CallbackInfo {
     bool isRamConstrainedDevice = false;
 };
 
+struct AsyncGetTopAbilityInfo {
+    napi_env env;
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    napi_ref callback = 0;
+    AppExecFwk::ElementName elementName;
+};
+
+napi_value NAPI_GetTopAbility(napi_env env, napi_callback_info info);
 napi_value NAPI_GetAllRunningProcesses(napi_env env, napi_callback_info info);
 napi_value NAPI_GetActiveProcessInfos(napi_env env, napi_callback_info info);
 napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info);

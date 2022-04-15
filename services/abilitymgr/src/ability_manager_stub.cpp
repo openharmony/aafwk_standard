@@ -73,6 +73,7 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[START_SYNC_MISSIONS] = &AbilityManagerStub::StartSyncRemoteMissionsInner;
     requestFuncMap_[STOP_SYNC_MISSIONS] = &AbilityManagerStub::StopSyncRemoteMissionsInner;
     requestFuncMap_[FORCE_TIMEOUT] = &AbilityManagerStub::ForceTimeoutForTestInner;
+    requestFuncMap_[FREE_INSTALL_ABILITY_FROM_REMOTE] = &AbilityManagerStub::FreeInstallAbilityFromRemoteInner;
 }
 
 void AbilityManagerStub::SecondStepInit()
@@ -131,6 +132,7 @@ void AbilityManagerStub::ThirdStepInit()
     requestFuncMap_[DO_ABILITY_FOREGROUND] = &AbilityManagerStub::DoAbilityForegroundInner;
     requestFuncMap_[DO_ABILITY_BACKGROUND] = &AbilityManagerStub::DoAbilityBackgroundInner;
     requestFuncMap_[GET_MISSION_ID_BY_ABILITY_TOKEN] = &AbilityManagerStub::GetMissionIdByTokenInner;
+    requestFuncMap_[GET_TOP_ABILITY] = &AbilityManagerStub::GetTopAbilityInner;
     requestFuncMap_[SET_MISSION_ICON] = &AbilityManagerStub::SetMissionIconInner;
 }
 
@@ -152,6 +154,16 @@ int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Mess
     }
     HILOG_WARN("default case, need check.");
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+}
+
+int AbilityManagerStub::GetTopAbilityInner(MessageParcel &data, MessageParcel &reply)
+{
+    AppExecFwk::ElementName result = GetTopAbility();
+    if (result.GetDeviceID().empty()) {
+        HILOG_DEBUG("GetTopAbilityInner is nullptr");
+    }
+    reply.WriteParcelable(&result);
+    return NO_ERROR;
 }
 
 int AbilityManagerStub::TerminateAbilityInner(MessageParcel &data, MessageParcel &reply)
@@ -1340,6 +1352,31 @@ int AbilityManagerStub::BlockAmsServiceInner(MessageParcel &data, MessageParcel 
 int AbilityManagerStub::BlockAppServiceInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t result = BlockAppService();
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("reply write failed.");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::FreeInstallAbilityFromRemoteInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::unique_ptr<AAFwk::Want> want(data.ReadParcelable<AAFwk::Want>());
+    if (want == nullptr) {
+        HILOG_ERROR("want is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    want->SetParam(FROM_REMOTE_KEY, true);
+
+    auto callback = data.ReadParcelable<IRemoteObject>();
+    if (callback == nullptr) {
+        HILOG_ERROR("callback is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+
+    int32_t userId = data.ReadInt32();
+    int32_t requestCode = data.ReadInt32();
+    int32_t result = FreeInstallAbilityFromRemote(*want, callback, userId, requestCode);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("reply write failed.");
         return ERR_INVALID_VALUE;

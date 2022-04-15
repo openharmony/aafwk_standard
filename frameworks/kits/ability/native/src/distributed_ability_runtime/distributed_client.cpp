@@ -406,5 +406,35 @@ int32_t DistributedClient::ReleaseRemoteAbility(const sptr<IRemoteObject>& conne
     MessageParcel reply;
     PARCEL_TRANSACT_SYNC_RET_INT(remote, RELEASE_REMOTE_ABILITY, data, reply);
 }
+
+int32_t DistributedClient::StartRemoteFreeInstall(const OHOS::AAFwk::Want& want,
+    int32_t callerUid, int32_t requestCode, uint32_t accessToken, const sptr<IRemoteObject>& callback)
+{
+    HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
+    if (callback == nullptr) {
+        HILOG_ERROR("[%{public}s] callback == nullptr", __FUNCTION__);
+        return ERR_NULL_OBJECT;
+    }
+
+    sptr<IRemoteObject> remote = GetDmsProxy();
+    if (remote == nullptr) {
+        HILOG_ERROR("[%{public}s] remote == nullptr", __FUNCTION__);
+        return ERR_NULL_OBJECT;
+    }
+
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(DMS_PROXY_INTERFACE_TOKEN)) {
+        HILOG_ERROR("[%{public}s] write interface token failed.", __FUNCTION__);
+        return ERR_FLATTEN_OBJECT;
+    }
+
+    PARCEL_WRITE_HELPER(data, Parcelable, &want);
+    PARCEL_WRITE_HELPER(data, Int32, callerUid);
+    PARCEL_WRITE_HELPER(data, Int32, requestCode);
+    PARCEL_WRITE_HELPER(data, Uint32, accessToken);
+    PARCEL_WRITE_HELPER(data, RemoteObject, callback);
+    MessageParcel reply;
+    PARCEL_TRANSACT_SYNC_RET_INT(remote, START_REMOTE_FREE_INSTALL, data, reply);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
