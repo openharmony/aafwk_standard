@@ -210,21 +210,6 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0100, TestSize.Level1)
 }
 
 /*
- * @tc.number    : PendingWantManagerTest_0200
- * @tc.name      : PendingWantManager GetWantSender
- * @tc.desc      : 1.GetWantSender function callingUid = SYSTEM_UID
- */
-HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0200, TestSize.Level1)
-{
-    int32_t callingUid = SYSTEM_UID;
-    int32_t uid = 0;
-    WantSenderInfo wantSenderInfo;
-    pendingManager_ = std::make_shared<PendingWantManager>();
-    EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_NE(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
-}
-
-/*
  * @tc.number    : PendingWantManagerTest_0300
  * @tc.name      : PendingWantManager GetWantSender
  * @tc.desc      : 1.GetWantSender function callingUid = 1 && callingUid != uid
@@ -1012,24 +997,6 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3700, TestSize.Level1)
  * SubFunction: NA
  * FunctionPoints: PendingWant Start Ability
  * EnvConditions: NA
- * CaseDescription: PendingWantStartAbility, DeviceID is null, a single Want, callerUid is SYSTEM_UID.
- */
-HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3800, TestSize.Level1)
-{
-    int32_t callerUid = SYSTEM_UID;
-    Want want;
-    ElementName element("", "bundleName1", "abilityName1");
-    want.SetElement(element);
-    auto result = abilityMs_->pendingWantManager_->PendingWantStartAbility(want, nullptr, -1, callerUid);
-    EXPECT_EQ(ERR_OK, result);
-}
-
-/*
- * Feature: PendingWantManager
- * Function: PendingWantStartAbility
- * SubFunction: NA
- * FunctionPoints: PendingWant Start Ability
- * EnvConditions: NA
  * CaseDescription: PendingWantStartAbility, DeviceID isn't null, a single Want, callerUid is -1.
  */
 HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3900, TestSize.Level1)
@@ -1040,35 +1007,6 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3900, TestSize.Level1)
     want.SetElement(element);
     auto result = abilityMs_->pendingWantManager_->PendingWantStartAbility(want, nullptr, -1, callerUid);
     EXPECT_NE(ERR_OK, result);
-}
-
-/*
- * Feature: PendingWantManager
- * Function: PendingWantStartAbilitys
- * SubFunction: NA
- * FunctionPoints: PendingWant Start Abilitys
- * EnvConditions: NA
- * CaseDescription: PendingWantStartAbilitys, DeviceID is null, multiple Want, callerUid is SYSTEM_UID.
- */
-HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_4000, TestSize.Level1)
-{
-    int32_t callerUid = SYSTEM_UID;
-    WantsInfo wantsInfo;
-    Want want;
-    ElementName element("", "bundleName", "abilityName");
-    want.SetElement(element);
-    wantsInfo.want = want;
-    WantsInfo wantsInfo1;
-    Want want1;
-    ElementName element1("", "bundleName1", "abilityName1");
-    want1.SetElement(element1);
-    wantsInfo1.want = want1;
-    std::vector<WantsInfo> wnatsInfos;
-    wnatsInfos.emplace_back(wantsInfo);
-    wnatsInfos.emplace_back(wantsInfo1);
-    auto result = abilityMs_->pendingWantManager_->PendingWantStartAbilitys(wnatsInfos,
-        nullptr, -1, callerUid);
-    EXPECT_EQ(ERR_OK, result);
 }
 
 /*

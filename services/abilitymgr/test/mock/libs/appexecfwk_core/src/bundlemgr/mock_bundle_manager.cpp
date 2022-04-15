@@ -184,16 +184,6 @@ bool BundleMgrService::GetApplicationInfo(
     return true;
 }
 
-bool BundleMgrService::CheckIsSystemAppByUid(const int uid)
-{
-    int maxSysUid {MAX_SYS_UID};
-    int baseSysUid {ROOT_UID};
-    if (uid >= baseSysUid && uid <= maxSysUid) {
-        return true;
-    }
-    return false;
-}
-
 bool BundleMgrService::CheckWantEntity(const AAFwk::Want &want, AbilityInfo &abilityInfo)
 {
     auto entityVector = want.GetEntities();

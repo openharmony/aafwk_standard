@@ -98,7 +98,6 @@ int32_t GetUserIdByUid(int32_t uid)
 
 using OHOS::AppExecFwk::Constants::PERMISSION_GRANTED;
 using OHOS::AppExecFwk::Constants::PERMISSION_NOT_GRANTED;
-using OHOS::AppExecFwk::Constants::ROOT_UID;
 
 AppMgrServiceInner::AppMgrServiceInner()
     : appProcessManager_(std::make_shared<AppProcessManager>()),

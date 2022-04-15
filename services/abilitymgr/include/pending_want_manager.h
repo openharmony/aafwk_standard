@@ -123,20 +123,23 @@ enum class Flags {
     REPLACE_BUNDLE
 };
 
-constexpr int32_t SYSTEM_UID = 1000;
-
 class PendingWantManager : public std::enable_shared_from_this<PendingWantManager>, public NoCopyable {
 public:
     PendingWantManager();
     explicit PendingWantManager(const std::shared_ptr<PendingWantManager> &manager) {};
     virtual ~PendingWantManager();
 
+    struct Params {
+        int32_t uid;
+        std::string &apl;
+        bool isSystemApp;
+    };
+
 public:
-    sptr<IWantSender> GetWantSender(const int32_t callingUid, const int32_t uid, const bool isSystemApp,
+    sptr<IWantSender> GetWantSender(const int32_t callingUid, Params &params,
         const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken);
     int32_t SendWantSender(const sptr<IWantSender> &target, const SenderInfo &senderInfo);
-    void CancelWantSender(
-        const int32_t callingUid, const int32_t uid, const bool isSystemApp, const sptr<IWantSender> &sender);
+    void CancelWantSender(std::string apl, const bool isSystemApp, const sptr<IWantSender> &sender);
 
     int32_t GetPendingWantUid(const sptr<IWantSender> &target);
     int32_t GetPendingWantUserId(const sptr<IWantSender> &target);
