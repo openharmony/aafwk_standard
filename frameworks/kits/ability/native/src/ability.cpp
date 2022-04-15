@@ -208,7 +208,7 @@ void Ability::OnStart(const Want &want)
         return;
     }
 
-    HILOG_INFO("%{public}s begin, name is %{public}s.", __func__, abilityInfo_->name.c_str());
+    HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 #ifdef SUPPORT_GRAPHICS
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         Rosen::WindowType winType = Rosen::WindowType::WINDOW_TYPE_APP_MAIN_WINDOW;
@@ -309,7 +309,7 @@ void Ability::OnStart(const Want &want)
         return;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_START, want);
-    HILOG_INFO("%{public}s end, name is %{public}s.", __func__, abilityInfo_->name.c_str());
+    HILOG_INFO("%{public}s end, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 }
 
 /**
@@ -321,7 +321,7 @@ void Ability::OnStart(const Want &want)
 void Ability::OnStop()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
     if (abilityLifecycleExecutor_ == nullptr) {
         HILOG_ERROR("Ability::OnStop error. abilityLifecycleExecutor_ == nullptr.");
         return;
@@ -333,7 +333,7 @@ void Ability::OnStop()
         return;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_STOP);
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 }
 
 /**
@@ -341,7 +341,7 @@ void Ability::OnStop()
  */
 void Ability::Destroy()
 {
-    HILOG_INFO("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 #ifdef SUPPORT_GRAPHICS
     // Release the scene.
     if (scene_ != nullptr) {
@@ -355,7 +355,7 @@ void Ability::Destroy()
         abilityWindow_->OnPostAbilityStop(); // Ability will been released when window destroy.
     }
 #endif
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 }
 
 /**
@@ -369,7 +369,7 @@ void Ability::Destroy()
 void Ability::OnActive()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin, name is %{public}s.", __func__, abilityInfo_->name.c_str());
+    HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 #ifdef SUPPORT_GRAPHICS
     if (abilityWindow_ != nullptr) {
         abilityWindow_->OnPostAbilityActive();
@@ -387,7 +387,7 @@ void Ability::OnActive()
         return;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_ACTIVE);
-    HILOG_INFO("%{public}s end, name is %{public}s.", __func__, abilityInfo_->name.c_str());
+    HILOG_INFO("%{public}s end, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 }
 
 /**
@@ -399,12 +399,10 @@ void Ability::OnActive()
 void Ability::OnInactive()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 #ifdef SUPPORT_GRAPHICS
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        HILOG_INFO("%{public}s begin abilityWindow_->OnPostAbilityInactive.", __func__);
         abilityWindow_->OnPostAbilityInactive();
-        HILOG_INFO("%{public}s end abilityWindow_->OnPostAbilityInactive.", __func__);
     }
     bWindowFocus_ = false;
 #endif
@@ -419,7 +417,7 @@ void Ability::OnInactive()
         return;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_INACTIVE);
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 }
 
 #ifdef SUPPORT_GRAPHICS
@@ -556,9 +554,8 @@ void Ability::NotityContinuationResult(const Want& want, bool success)
 void Ability::OnBackground()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        HILOG_INFO("%{public}s begin OnPostAbilityBackground.", __func__);
         if (abilityInfo_->isStageBasedModel) {
             if (scene_ == nullptr) {
                 HILOG_ERROR("Ability::OnBackground error. scene_ == nullptr.");
@@ -574,7 +571,6 @@ void Ability::OnBackground()
             HILOG_INFO("OnPostAbilityBackground sceneFlag:%{public}d.", sceneFlag_);
             abilityWindow_->OnPostAbilityBackground(sceneFlag_);
         }
-        HILOG_INFO("%{public}s end OnPostAbilityBackground.", __func__);
     }
 
     if (abilityLifecycleExecutor_ == nullptr) {
@@ -593,7 +589,7 @@ void Ability::OnBackground()
         return;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_BACKGROUND);
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 }
 #endif
 
@@ -1654,7 +1650,7 @@ ErrCode Ability::StartAbility(const Want &want)
  */
 ErrCode Ability::TerminateAbility()
 {
-    HILOG_INFO("%{public}s begin Ability::TerminateAbility", __func__);
+    HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
     return AbilityContext::TerminateAbility();
 }
 

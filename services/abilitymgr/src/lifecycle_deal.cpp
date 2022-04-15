@@ -88,7 +88,7 @@ void LifecycleDeal::DisconnectAbility(const Want &want)
 
 void LifecycleDeal::Terminate(const Want &want, LifeCycleStateInfo &stateInfo)
 {
-    HILOG_INFO("Terminate.");
+    HILOG_INFO("Terminate, send ipc request.");
     auto abilityScheduler = GetScheduler();
     CHECK_POINTER(abilityScheduler);
     stateInfo.state = AbilityLifeCycleState::ABILITY_STATE_INITIAL;
@@ -142,7 +142,7 @@ void LifecycleDeal::ForegroundNew(const Want &want, LifeCycleStateInfo &stateInf
 
 void LifecycleDeal::BackgroundNew(const Want &want, LifeCycleStateInfo &stateInfo)
 {
-    HILOG_INFO("Go background.");
+    HILOG_INFO("Start move ability to background.");
     auto abilityScheduler = GetScheduler();
     CHECK_POINTER(abilityScheduler);
     HILOG_INFO("caller %{public}s, %{public}s, %{public}s",
