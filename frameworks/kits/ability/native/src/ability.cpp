@@ -322,12 +322,19 @@ void Ability::OnStop()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
+#ifdef SUPPORT_GRAPHICS
+    // Call JS Func(onWindowStageDestroy) and Release the scene.
+    if (scene_ != nullptr) {
+        scene_->GoDestroy();
+        scene_ = nullptr;
+        onSceneDestroyed();
+    }
+#endif
     if (abilityLifecycleExecutor_ == nullptr) {
         HILOG_ERROR("Ability::OnStop error. abilityLifecycleExecutor_ == nullptr.");
         return;
     }
     abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::INITIAL);
-
     if (lifecycle_ == nullptr) {
         HILOG_ERROR("Ability::OnStop error. lifecycle_ == nullptr.");
         return;
@@ -339,20 +346,13 @@ void Ability::OnStop()
 /**
  * @brief Release the window and ability.
  */
-void Ability::Destroy()
+void Ability::DestroyInstance()
 {
     HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 #ifdef SUPPORT_GRAPHICS
-    // Release the scene.
-    if (scene_ != nullptr) {
-        scene_->GoDestroy();
-        scene_ = nullptr;
-        onSceneDestroyed();
-    }
-
     // Release the window.
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        abilityWindow_->OnPostAbilityStop(); // Ability will been released when window destroy.
+        abilityWindow_->OnPostAbilityStop(); // Ability instance will been released when window destroy.
     }
 #endif
     HILOG_INFO("%{public}s end, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
