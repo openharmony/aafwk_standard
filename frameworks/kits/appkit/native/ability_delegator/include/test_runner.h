@@ -34,8 +34,8 @@ public:
      * @param args Indicates the AbilityDelegatorArgs object.
      * @return the TestRunner object if TestRunner object is created successfully; returns null otherwise.
      */
-    static std::unique_ptr<TestRunner> Create(
-        const std::unique_ptr<AbilityRuntime::Runtime> &runtime, const std::shared_ptr<AbilityDelegatorArgs> &args);
+    static std::unique_ptr<TestRunner> Create(const std::unique_ptr<AbilityRuntime::Runtime> &runtime,
+        const std::shared_ptr<AbilityDelegatorArgs> &args, bool isFaJsModel);
 
     /**
      * Default constructor used to create a TestRunner instance.
@@ -56,6 +56,11 @@ public:
      * Runs all test code.
      */
     virtual void Run();
+
+    /**
+     * Initialize runtime only fo ace 1.0.
+     */
+    virtual bool Initialize();
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
