@@ -93,6 +93,12 @@ const std::vector<std::string> &Operation::GetEntities() const
 {
     return entities_;
 }
+
+std::string Operation::GetModuleName() const
+{
+    return moduleName_;
+}
+
 /**
  * @description: Adds the description of an entity to a Want
  * @param entity Indicates the entity description to add
@@ -369,6 +375,11 @@ void Operation::SetEntities(const std::vector<std::string> &entities)
 {
     entities_.clear();
     entities_ = entities;
+}
+
+void Operation::SetModuleName(const std::string &moduleName)
+{
+    moduleName_ = moduleName;
 }
 
 void Operation::DumpInfo(int level) const

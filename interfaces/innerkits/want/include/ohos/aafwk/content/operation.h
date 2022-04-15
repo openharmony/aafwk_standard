@@ -76,6 +76,12 @@ public:
      */
     OHOS::Uri GetUri() const;
 
+    /**
+     * @description: Obtains the description of the ModuleName object in the Operation.
+     * @return Returns the ModuleName description in the Operation.
+     */
+    std::string GetModuleName() const;
+
     bool operator==(const Operation &other) const;
     Operation &operator=(const Operation &other);
 
@@ -182,11 +188,19 @@ private:
      */
     void SetEntities(const std::vector<std::string> &entities);
 
+    /**
+     * @description: Sets an ModuleName object in the Operation.
+     * @param moduleName Indicates the ModuleName description.
+     * @return Returns this Operation object containing the ModuleName.
+     */
+    void SetModuleName(const std::string &moduleName);
+
 private:
     std::string abilityName_;
     std::string action_;
     std::string bundleName_;
     std::string deviceId_;
+    std::string moduleName_;
     std::vector<std::string> entities_;
     unsigned int flags_;
     Uri uri_;
