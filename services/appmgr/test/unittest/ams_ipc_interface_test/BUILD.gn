@@ -44,7 +44,7 @@ ohos_unittest("AmsIpcAppSchedulerInterfaceTest") {
 
 ohos_unittest("AmsIpcAppMgrInterfaceTest") {
   module_out_path = module_output_path
-
+  cflags_cc = []
   sources = [ "ams_ipc_appmgr_interface_test.cpp" ]
   cflags = []
   if (target_cpu == "arm") {
@@ -52,10 +52,14 @@ ohos_unittest("AmsIpcAppMgrInterfaceTest") {
   }
   deps = [
     "${services_path}/appmgr/test:appmgr_test_source",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [
     "bundle_framework:appexecfwk_core",

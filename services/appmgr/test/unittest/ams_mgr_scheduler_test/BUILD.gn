@@ -18,7 +18,7 @@ module_output_path = "ability_runtime/appmgrservice"
 
 ohos_unittest("AmsMgrSchedulerTest") {
   module_out_path = module_output_path
-
+  cflags_cc = []
   include_dirs = [
     "//foundation/aafwk/standard/interfaces/innerkits/base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
@@ -47,9 +47,13 @@ ohos_unittest("AmsMgrSchedulerTest") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/appmgr/test:appmgr_test_source",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//foundation/aafwk/standard/services/appmgr:libams",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [
     "bundle_framework:appexecfwk_core",

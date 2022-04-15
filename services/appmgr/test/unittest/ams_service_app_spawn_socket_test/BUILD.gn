@@ -18,7 +18,7 @@ module_output_path = "ability_runtime/appmgrservice"
 
 ohos_unittest("AmsServiceAppSpawnSocketTest") {
   module_out_path = module_output_path
-
+  cflags_cc = []
   include_dirs = [
     "//base/startup/appspawn_standard/test/mock/include",
     "//base/account/os_account/frameworks/common/database/include",
@@ -39,8 +39,12 @@ ohos_unittest("AmsServiceAppSpawnSocketTest") {
   deps = [
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/appmgr/test:appmgr_test_source",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [
     "appspawn:appspawn_socket_client",
