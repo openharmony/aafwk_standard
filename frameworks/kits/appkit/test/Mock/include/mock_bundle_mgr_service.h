@@ -72,7 +72,6 @@ public:
     MOCK_METHOD2(QueryAbilityInfosForClone, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(QueryAbilityInfoByUri, bool(const std::string &abilityUri, AbilityInfo &abilityInfo));
     MOCK_METHOD1(QueryKeepAliveBundleInfos, bool(std::vector<BundleInfo> &bundleInfos));
-    MOCK_METHOD2(GetAbilityLabel, std::string(const std::string &bundleName, const std::string &className));
     MOCK_METHOD3(
         GetBundleArchiveInfo, bool(const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo));
     MOCK_METHOD2(GetHapModuleInfo, bool(const std::string &hapFilePath, HapModuleInfo &hapModuleInfo));
@@ -114,7 +113,6 @@ public:
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &));
-    MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
     void Wait()
     {
         sem_.Wait();

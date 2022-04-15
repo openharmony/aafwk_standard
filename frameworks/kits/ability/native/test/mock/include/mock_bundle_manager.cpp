@@ -101,10 +101,6 @@ bool BundleMgrProxy::QueryKeepAliveBundleInfos(std::vector<BundleInfo> &bundleIn
 {
     return true;
 }
-std::string BundleMgrProxy::GetAbilityLabel(const std::string &bundleName, const std::string &className)
-{
-    return "";
-}
 bool BundleMgrProxy::GetBundleArchiveInfo(
     const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo)
 {
@@ -187,10 +183,6 @@ bool BundleMgrProxy::IsApplicationEnabled(const std::string &bundleName)
 bool BundleMgrProxy::IsAbilityEnabled(const AbilityInfo &abilityInfo)
 {
     return true;
-}
-std::string BundleMgrProxy::GetAbilityIcon(const std::string &bundleName, const std::string &className)
-{
-    return "";
 }
 bool BundleMgrProxy::CanRequestPermission(
     const std::string &bundleName, const std::string &permissionName, const int userId)
@@ -340,10 +332,6 @@ bool BundleMgrService::QueryKeepAliveBundleInfos(std::vector<BundleInfo> &bundle
 {
     return true;
 }
-std::string BundleMgrService::GetAbilityLabel(const std::string &bundleName, const std::string &className)
-{
-    return "";
-}
 bool BundleMgrService::GetBundleArchiveInfo(
     const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo)
 {
@@ -426,10 +414,6 @@ bool BundleMgrService::IsApplicationEnabled(const std::string &bundleName)
 bool BundleMgrService::IsAbilityEnabled(const AbilityInfo &abilityInfo)
 {
     return true;
-}
-std::string BundleMgrService::GetAbilityIcon(const std::string &bundleName, const std::string &className)
-{
-    return "";
 }
 bool BundleMgrService::CanRequestPermission(
     const std::string &bundleName, const std::string &permissionName, const int userId)
