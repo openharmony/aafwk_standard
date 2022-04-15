@@ -761,6 +761,20 @@ public:
     std::string ToString() const;
 
     static Want *FromString(std::string &string);
+
+    /**
+     * @description: Sets an ModuleName object in a Want.
+     * @param moduleName Indicates the ModuleName description.
+     * @return Returns this Want object containing the ModuleName.
+     */
+    Want &SetModuleName(const std::string &moduleName);
+
+    /**
+     * @description: Obtains the description of the ModuleName object in a Want.
+     * @return Returns the ModuleName description in the Want.
+     */
+    std::string GetModuleName() const;
+
 public:
     // action definition
     static const std::string ACTION_PLAY;
