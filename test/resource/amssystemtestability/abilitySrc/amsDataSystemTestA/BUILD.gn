@@ -57,8 +57,8 @@ ohos_shared_library("amsDataSystemTestA") {
     "${common_path}:libappexecfwk_common",
     "${innerkits_path}/appexecfwk_base:appexecfwk_base",
     "${services_path}/bundlemgr:libbms",
-    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability:native_dataability",
-    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb:native_rdb",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/inner_api/native/dataability:native_dataability",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/inner_api/native/rdb:native_rdb",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utilsbase",
   ]
