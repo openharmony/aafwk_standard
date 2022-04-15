@@ -28,6 +28,7 @@ group("fms_target") {
 }
 
 ohos_shared_library("libfms") {
+  cflags_cc = []
   include_dirs = [
     "${services_path}/common:perm_verification",
     "${aafwk_path}/services/common/include",
@@ -108,14 +109,20 @@ ohos_shared_library("libfms") {
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "os_account_standard:libaccountkits",
-    "os_account_standard:os_account_innerkits",
     "power_manager_native:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "time_native:time_service",
     "utils_base:utils",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    external_deps += [
+      "os_account_standard:libaccountkits",
+      "os_account_standard:os_account_innerkits",
+    ]
+  }
 
   subsystem_name = "aafwk"
   part_name = "form_runtime"

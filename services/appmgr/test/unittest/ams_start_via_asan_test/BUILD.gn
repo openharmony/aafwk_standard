@@ -18,7 +18,7 @@ module_output_path = "ability_runtime/appmgrservice"
 
 ohos_unittest("AmsStartViaAsanTest") {
   module_out_path = module_output_path
-
+  cflags_cc = []
   include_dirs = [
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/account_error/include",
@@ -29,10 +29,12 @@ ohos_unittest("AmsStartViaAsanTest") {
     "ams_start_via_asan_test.cpp",
   ]
 
-  deps = [
-    "${services_path}/appmgr/test:appmgr_test_source",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
-  ]
+  deps = [ "${services_path}/appmgr/test:appmgr_test_source" ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
 }

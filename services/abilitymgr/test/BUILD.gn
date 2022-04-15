@@ -19,6 +19,7 @@ import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
 EVENT_DIR = "//base/notification/ces_standard/"
 
 ohos_source_set("abilityms_test_source") {
+  cflags_cc = []
   sources = [
     "${services_path}/abilitymgr/src/ability_connect_callback_stub.cpp",
     "${services_path}/abilitymgr/src/ability_connect_manager.cpp",
@@ -99,12 +100,16 @@ ohos_source_set("abilityms_test_source") {
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//utils/native/base:utils",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   if (ability_runtime_graphics) {
     sources += [
