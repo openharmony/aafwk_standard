@@ -25,7 +25,9 @@
 #include "file_ex.h"
 #include "hilog_wrapper.h"
 #include "iservice_registry.h"
+#ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
+#endif // OS_ACCOUNT_PART_ENABLED
 #include "spec_task_dispatcher.h"
 #include "sys_mgr_client.h"
 #include "system_ability_definition.h"
@@ -48,6 +50,9 @@ const std::string ContextDeal::CONTEXT_DISTRIBUTED_BASE_MIDDLE("/device_view/loc
 const std::string ContextDeal::CONTEXT_DISTRIBUTED("distributedfiles");
 const std::string ContextDeal::CONTEXT_DATA_STORAGE("/data/storage/");
 const std::string ContextDeal::CONTEXT_ELS[] = {"el1", "el2"};
+#ifndef OS_ACCOUNT_PART_ENABLED
+const int DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
+#endif // OS_ACCOUNT_PART_ENABLED
 
 ContextDeal::ContextDeal(bool isCreateBySystemApp) : isCreateBySystemApp_(isCreateBySystemApp)
 {}
@@ -595,7 +600,11 @@ bool ContextDeal::IsCreateBySystemApp() const
 int ContextDeal::GetCurrentAccountId() const
 {
     int userId = 0;
+#ifdef OS_ACCOUNT_PART_ENABLED
     AccountSA::OsAccountManager::GetOsAccountLocalIdFromProcess(userId);
+#else // OS_ACCOUNT_PART_ENABLED
+    userId = DEFAULT_OS_ACCOUNT_ID;
+#endif // OS_ACCOUNT_PART_ENABLED
     return userId;
 }
 

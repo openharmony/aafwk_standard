@@ -23,8 +23,10 @@
 #include "form_constants.h"
 #include "form_util.h"
 #include "hilog_wrapper.h"
+#ifdef OS_ACCOUNT_PART_ENABLED
 #include "ohos_account_kits.h"
 #include "os_account_manager.h"
+#endif // OS_ACCOUNT_PART_ENABLED
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -35,6 +37,10 @@ constexpr int64_t SEC_TO_NANOSEC = 1000000000;
 constexpr int64_t SEC_TO_MILLISEC = 1000;
 constexpr int64_t MILLISEC_TO_NANOSEC = 1000000;
 constexpr int64_t INVALID_UDID_HASH = 0;
+#ifndef OS_ACCOUNT_PART_ENABLED
+constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
+#endif // OS_ACCOUNT_PART_ENABLED
+
 /**
  * @brief create want for form.
  * @param formName The name of the form.
@@ -191,11 +197,15 @@ std::vector<std::string> FormUtil::StringSplit(const std::string &in, const std:
 int FormUtil::GetCurrentAccountId()
 {
     std::vector<int32_t> osActiveAccountIds;
+#ifdef OS_ACCOUNT_PART_ENABLED
     ErrCode ret = AccountSA::OsAccountManager::QueryActiveOsAccountIds(osActiveAccountIds);
     if (ret != ERR_OK) {
         HILOG_ERROR("QueryActiveOsAccountIds failed.");
         return Constants::ANY_USERID;
     }
+#else // OS_ACCOUNT_PART_ENABLED
+    osActiveAccountIds.push_back(DEFAULT_OS_ACCOUNT_ID);
+#endif // OS_ACCOUNT_PART_ENABLED
 
     if (osActiveAccountIds.empty()) {
         HILOG_ERROR("QueryActiveOsAccountIds is empty, no accounts.");

@@ -18,7 +18,7 @@ module_output_path = "ability_runtime/appmgrservice"
 
 ohos_unittest("AmsAppMgrClientTest") {
   module_out_path = module_output_path
-
+  cflags_cc = []
   sources = [
     "${aafwk_path}/interfaces/innerkits//app_manager/src/appmgr/app_mgr_client.cpp",
     "${aafwk_path}/interfaces/innerkits//app_manager/src/appmgr/app_service_manager.cpp",
@@ -48,11 +48,15 @@ ohos_unittest("AmsAppMgrClientTest") {
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/appmgr/test:appmgr_test_source",
     "${services_path}/common:perm_verification",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//utils/native/base:utils",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [
     "bundle_framework:appexecfwk_core",

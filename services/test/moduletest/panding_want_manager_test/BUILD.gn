@@ -20,7 +20,7 @@ module_output_path = "ability_runtime/mstabilitymgrservice"
 
 ohos_moduletest("PandingWantMgrTest") {
   module_out_path = module_output_path
-
+  cflags_cc = []
   include_dirs = [
     "//foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime",
     "//foundation/aafwk/standard/services/test/mock/include",
@@ -54,7 +54,6 @@ ohos_moduletest("PandingWantMgrTest") {
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
@@ -70,6 +69,11 @@ ohos_moduletest("PandingWantMgrTest") {
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [
     "access_token:libaccesstoken_sdk",

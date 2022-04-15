@@ -18,7 +18,7 @@ module_output_path = "ability_runtime/appmgrservice"
 
 ohos_unittest("AmsAppStateCallbackTest") {
   module_out_path = module_output_path
-
+  cflags_cc = []
   include_dirs = [
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/account_error/include",
@@ -42,10 +42,14 @@ ohos_unittest("AmsAppStateCallbackTest") {
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/common:libappexecfwk_common",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//third_party/googletest:gmock_main",
     "//utils/native/base:utils",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [
     "bundle_framework:appexecfwk_core",

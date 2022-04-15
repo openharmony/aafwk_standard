@@ -26,7 +26,7 @@ config("appmgr_test_config") {
 
 ohos_source_set("appmgr_mst_source") {
   testonly = true
-
+  cflags_cc = []
   sources = [
     "${services_path}/appmgr/src/ability_running_record.cpp",
     "${services_path}/appmgr/src/ams_mgr_scheduler.cpp",
@@ -85,7 +85,6 @@ ohos_source_set("appmgr_mst_source") {
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/common:perm_verification",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
@@ -95,6 +94,11 @@ ohos_source_set("appmgr_mst_source") {
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    public_deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [
     "ability_base:configuration",

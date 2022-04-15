@@ -633,6 +633,13 @@ ohos_unittest("ability_thread_test") {
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  defines = []
+  if (os_account_part_enabled) {
+    defines += [ "OS_ACCOUNT_PART_ENABLED" ]
+    external_deps += [ "os_account_standard:os_account_innerkits" ]
+  }
+
   if (ability_runtime_graphics) {
     deps += [ "//foundation/graphic/standard:libwmclient" ]
     external_deps += [ "input:libmmi-client" ]
@@ -754,6 +761,12 @@ ohos_unittest("data_ability_impl_test") {
     "native_appdatamgr:native_rdb",
   ]
 
+  defines = []
+  if (os_account_part_enabled) {
+    defines += [ "OS_ACCOUNT_PART_ENABLED" ]
+    external_deps += [ "os_account_standard:os_account_innerkits" ]
+  }
+
   if (ability_runtime_graphics) {
     deps += [ "//foundation/graphic/standard:libwmclient" ]
     external_deps += [ "input:libmmi-client" ]
@@ -804,6 +817,12 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
     "native_appdatamgr:native_rdb",
   ]
 
+  defines = []
+  if (os_account_part_enabled) {
+    defines += [ "OS_ACCOUNT_PART_ENABLED" ]
+    external_deps += [ "os_account_standard:os_account_innerkits" ]
+  }
+
   if (ability_runtime_graphics) {
     deps += [ "//foundation/graphic/standard:libwmclient" ]
     external_deps += [ "input:libmmi-client" ]
@@ -853,6 +872,12 @@ ohos_unittest("data_ability_impl_file_test") {
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  defines = []
+  if (os_account_part_enabled) {
+    defines += [ "OS_ACCOUNT_PART_ENABLED" ]
+    external_deps += [ "os_account_standard:os_account_innerkits" ]
+  }
 
   if (ability_runtime_graphics) {
     deps += [ "//foundation/graphic/standard:libwmclient" ]
@@ -905,6 +930,12 @@ ohos_unittest("ability_thread_dataability_test") {
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
   ]
+
+  defines = []
+  if (os_account_part_enabled) {
+    defines += [ "OS_ACCOUNT_PART_ENABLED" ]
+    external_deps += [ "os_account_standard:os_account_innerkits" ]
+  }
 
   if (ability_runtime_graphics) {
     deps += [ "//foundation/graphic/standard:libwmclient" ]
