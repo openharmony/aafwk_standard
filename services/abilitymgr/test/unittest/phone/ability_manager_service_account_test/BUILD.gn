@@ -18,7 +18,7 @@ module_output_path = "ability_runtime/abilitymgr"
 
 ohos_unittest("ability_manager_service_account_test") {
   module_out_path = module_output_path
-
+  cflags_cc = []
   include_dirs = [
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
@@ -47,7 +47,6 @@ ohos_unittest("ability_manager_service_account_test") {
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
     "${services_path}/common:perm_verification",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
@@ -59,6 +58,11 @@ ohos_unittest("ability_manager_service_account_test") {
     "//third_party/libpng:libpng",
     "//utils/native/base:utils",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [
     "device_manager_base:devicemanagersdk",

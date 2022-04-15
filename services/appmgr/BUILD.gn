@@ -84,11 +84,15 @@ ohos_shared_library("libams") {
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "os_account_standard:os_account_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
+
+  if (os_account_part_enabled) {
+    defines += [ "OS_ACCOUNT_PART_ENABLED" ]
+    external_deps += [ "os_account_standard:os_account_innerkits" ]
+  }
 
   if (ability_runtime_graphics) {
     defines += [ "SUPPORT_GRAPHICS" ]

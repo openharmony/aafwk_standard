@@ -17,7 +17,7 @@ import("//foundation/aafwk/standard/aafwk.gni")
 module_output_path = "ability_runtime/appmgrservice"
 ohos_unittest("AmsRecentAppListTest") {
   module_out_path = module_output_path
-
+  cflags_cc = []
   include_dirs = [
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include/",
     "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
@@ -53,7 +53,6 @@ ohos_unittest("AmsRecentAppListTest") {
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
     "${services_path}/common:perm_verification",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
@@ -61,6 +60,11 @@ ohos_unittest("AmsRecentAppListTest") {
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [
     "access_token:libaccesstoken_sdk",

@@ -18,7 +18,7 @@ module_output_path = "ability_runtime/appmgrservice"
 
 ohos_unittest("AppRunningProcessesInfoTest") {
   module_out_path = module_output_path
-
+  cflags_cc = []
   include_dirs = [
     "//foundation/aafwk/standard/interfaces/innerkits/base/include",
     "//foundation/aafwk/standard/interfaces/innerkits/want/include",
@@ -53,10 +53,14 @@ ohos_unittest("AppRunningProcessesInfoTest") {
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
-    "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits",
     "//foundation/aafwk/standard/services/appmgr:libams",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    deps += [ "//base/account/os_account/frameworks/osaccount/native:os_account_innerkits" ]
+  }
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
