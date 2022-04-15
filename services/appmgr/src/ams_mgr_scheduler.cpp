@@ -185,7 +185,7 @@ void AmsMgrScheduler::AbilityAttachTimeOut(const sptr<IRemoteObject> &token)
 
 void AmsMgrScheduler::PrepareTerminate(const sptr<IRemoteObject> &token)
 {
-    HILOG_INFO("AmsMgrScheduler PrepareTerminate begin");
+    HILOG_INFO("Notify AppMgrService to prepare to terminate the ability.");
     if (!IsReady()) {
         return;
     }

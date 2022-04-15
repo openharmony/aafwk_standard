@@ -478,7 +478,7 @@ void MainThread::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemo
  */
 void MainThread::ScheduleCleanAbility(const sptr<IRemoteObject> &token)
 {
-    HILOG_INFO("MainThread::scheduleCleanAbility called start.");
+    HILOG_INFO("Schedule clean ability called, app is %{public}s.", applicationInfo_->name.c_str());
     wptr<MainThread> weak = this;
     auto task = [weak, token]() {
         auto appThread = weak.promote();
@@ -491,7 +491,6 @@ void MainThread::ScheduleCleanAbility(const sptr<IRemoteObject> &token)
     if (!mainHandler_->PostTask(task)) {
         HILOG_ERROR("MainThread::ScheduleCleanAbility PostTask task failed");
     }
-    HILOG_INFO("MainThread::scheduleCleanAbility called end.");
 }
 
 /**
@@ -1183,7 +1182,7 @@ void MainThread::HandleCleanAbilityLocal(const sptr<IRemoteObject> &token)
 void MainThread::HandleCleanAbility(const sptr<IRemoteObject> &token)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_INFO("MainThread::handleCleanAbility called start.");
+    HILOG_INFO("Handle clean ability start, app is %{public}s.", applicationInfo_->name.c_str());
     if (!IsApplicationReady()) {
         HILOG_ERROR("MainThread::handleCleanAbility not init OHOSApplication, should launch application first");
         return;
@@ -1204,7 +1203,7 @@ void MainThread::HandleCleanAbility(const sptr<IRemoteObject> &token)
         HILOG_ERROR("MainThread::handleCleanAbility record->GetAbilityInfo() failed");
         return;
     }
-    HILOG_INFO("MainThread::handleCleanAbility ability name: %{public}s", abilityInfo->name.c_str());
+    HILOG_INFO("Handle clean ability, ability: %{public}s.", abilityInfo->name.c_str());
 
     abilityRecordMgr_->RemoveAbilityRecord(token);
 #ifdef APP_ABILITY_USE_TWO_RUNNER
@@ -1220,7 +1219,7 @@ void MainThread::HandleCleanAbility(const sptr<IRemoteObject> &token)
     }
 #endif
     appMgr_->AbilityCleaned(token);
-    HILOG_INFO("MainThread::handleCleanAbility called end.");
+    HILOG_INFO("Handle clean ability end, app is %{public}s.", applicationInfo_->name.c_str());
 }
 
 /**

@@ -229,7 +229,9 @@ bool AbilityManagerService::Init()
     InitMissionListManager(userId, true);
     SwitchManagers(U0_USER_ID, false);
     int amsTimeOut = amsConfigResolver_->GetAMSTimeOutTime();
-    if (HiviewDFX::Watchdog::GetInstance().AddThread("AMSWatchdog", handler_, amsTimeOut) != 0) {
+    std::string threadName = AbilityConfig::NAME_ABILITY_MGR_SERVICE + "(" +
+        std::to_string(eventLoop_->GetThreadId()) + ")";
+    if (HiviewDFX::Watchdog::GetInstance().AddThread(threadName, handler_, amsTimeOut) != 0) {
         HILOG_ERROR("HiviewDFX::Watchdog::GetInstance AddThread Fail");
     }
 
@@ -573,7 +575,7 @@ int AbilityManagerService::TerminateAbilityWithFlag(const sptr<IRemoteObject> &t
     const Want *resultWant, bool flag)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_DEBUG("Terminate ability for result: %{public}d", (resultWant != nullptr));
+    HILOG_DEBUG("Terminate ability begin, flag:%{public}d.", flag);
     if (!VerificationAllToken(token)) {
         HILOG_ERROR("%{public}s VerificationAllToken failed.", __func__);
         return ERR_INVALID_VALUE;

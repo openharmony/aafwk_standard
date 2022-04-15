@@ -761,7 +761,7 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::CreateAppRunningRecord(con
 void AppMgrServiceInner::TerminateAbility(const sptr<IRemoteObject> &token)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_DEBUG("AppMgrServiceInner::TerminateAbility come");
+    HILOG_DEBUG("Terminate ability come.");
     if (!token) {
         HILOG_ERROR("AppMgrServiceInner::TerminateAbility token is null!");
         return;
@@ -1044,15 +1044,15 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::GetAppRunningRecordByAbili
 void AppMgrServiceInner::AbilityTerminated(const sptr<IRemoteObject> &token)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
-    HILOG_DEBUG("AbilityTerminated come");
+    HILOG_DEBUG("Terminate ability come.");
     if (!token) {
-        HILOG_ERROR("AbilityTerminated error, token is null!");
+        HILOG_ERROR("Terminate ability error, token is null!");
         return;
     }
 
     auto appRecord = appRunningManager_->GetTerminatingAppRunningRecord(token);
     if (!appRecord) {
-        HILOG_ERROR("AbilityTerminated error, appRecord is not exist!");
+        HILOG_ERROR("Terminate ability error, appRecord is not exist!");
         return;
     }
 
@@ -1203,7 +1203,7 @@ void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &
         return;
     }
     ProcessData data = WrapProcessData(appRecord);
-    HILOG_DEBUG("OnProcessDied, bundle:%{public}s, pid:%{public}d, uid:%{public}d, size:%{public}d",
+    HILOG_DEBUG("Process died, bundle:%{public}s, pid:%{public}d, uid:%{public}d, size:%{public}d.",
         data.bundleName.c_str(), data.pid, data.uid, (int32_t)appStateObservers_.size());
     std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
     for (const auto &observer : appStateObservers_) {
@@ -1211,7 +1211,6 @@ void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &
             observer->OnProcessDied(data);
         }
     }
-    HILOG_DEBUG("end");
 }
 
 void AppMgrServiceInner::StartProcess(const std::string &appName, const std::string &processName, bool coldStart,
@@ -1255,7 +1254,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     startMsg.bundleName = bundleName;
     startMsg.renderParam = RENDER_PARAM;
     startMsg.coldStart = coldStart;
-    HILOG_DEBUG("Start process apl is %{public}s, bundleName is %{public}s coldStart is %{public}d.",
+    HILOG_DEBUG("Start process, apl is %{public}s, bundleName is %{public}s coldStart is %{public}d.",
         startMsg.apl.c_str(), bundleName.c_str(), coldStart);
 
     bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleGidsByUid(bundleName, uid, startMsg.gids));
@@ -1486,7 +1485,7 @@ void AppMgrServiceInner::HandleAbilityAttachTimeOut(const sptr<IRemoteObject> &t
 
 void AppMgrServiceInner::PrepareTerminate(const sptr<IRemoteObject> &token)
 {
-    HILOG_INFO("Prepare terminate");
+    HILOG_INFO("AppMgrService prepare to terminate the ability.");
     if (!appRunningManager_) {
         HILOG_ERROR("appRunningManager_ is nullptr");
         return;
