@@ -276,7 +276,7 @@ void AbilityRecord::BackgroundAbility(const Closure &task)
 
 int AbilityRecord::TerminateAbility()
 {
-    HILOG_INFO("Schedule terminate ability to AppMs, ability:%{public}s", abilityInfo_.name.c_str());
+    HILOG_INFO("Schedule terminate ability to AppMs, ability:%{public}s.", abilityInfo_.name.c_str());
     return DelayedSingleton<AppScheduler>::GetInstance()->TerminateAbility(token_);
 }
 

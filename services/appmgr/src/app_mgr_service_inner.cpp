@@ -1255,7 +1255,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     startMsg.bundleName = bundleName;
     startMsg.renderParam = RENDER_PARAM;
     startMsg.coldStart = coldStart;
-    HILOG_DEBUG("Start process apl is %{public}s, bundleName is %{public}s coldStart is %{public}d.",
+    HILOG_DEBUG("Start process, apl is %{public}s, bundleName is %{public}s coldStart is %{public}d.",
         startMsg.apl.c_str(), bundleName.c_str(), coldStart);
 
     bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleGidsByUid(bundleName, uid, startMsg.gids));

@@ -1203,7 +1203,7 @@ void MainThread::HandleCleanAbility(const sptr<IRemoteObject> &token)
         HILOG_ERROR("MainThread::handleCleanAbility record->GetAbilityInfo() failed");
         return;
     }
-    HILOG_INFO("Handle clean ability, ability: %{public}s", abilityInfo->name.c_str());
+    HILOG_INFO("Handle clean ability, ability: %{public}s.", abilityInfo->name.c_str());
 
     abilityRecordMgr_->RemoveAbilityRecord(token);
 #ifdef APP_ABILITY_USE_TWO_RUNNER
