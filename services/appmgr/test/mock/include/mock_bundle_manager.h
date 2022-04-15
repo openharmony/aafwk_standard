@@ -45,7 +45,6 @@ public:
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &));
-    MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
     MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD2(RegisterPermissionsChanged,
         bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
@@ -125,10 +124,6 @@ public:
         bundleInfos.push_back(bundleInfo);
         GTEST_LOG_(INFO) << "bundleInfos size : "<<bundleInfos.size();
         return true;
-    };
-    virtual std::string GetAbilityLabel(const std::string &bundleName, const std::string &className) override
-    {
-        return "";
     };
     virtual bool GetBundleArchiveInfo(
         const std::string &hapFilePath, const BundleFlag flag, BundleInfo &bundleInfo) override
@@ -248,7 +243,6 @@ public:
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &));
-    MOCK_METHOD2(GetAbilityIcon, std::string(const std::string &bundleName, const std::string &className));
     MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD2(RegisterPermissionsChanged,
         bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
@@ -293,10 +287,6 @@ public:
     virtual bool GetBundleInfosByMetaData(const std::string &metaData, std::vector<BundleInfo> &bundleInfos) override
     {
         return true;
-    };
-    virtual std::string GetAbilityLabel(const std::string &bundleName, const std::string &className) override
-    {
-        return "";
     };
     // obtains information about an application bundle contained in a ohos Ability Package (HAP).
     virtual bool GetBundleArchiveInfo(
