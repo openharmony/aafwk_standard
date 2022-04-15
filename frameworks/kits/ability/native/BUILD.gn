@@ -115,10 +115,10 @@ ohos_shared_library("static_subscriber_ipc") {
 
 ohos_shared_library("abilitykit_native") {
   include_dirs = [
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi//common/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/dataability/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/include",
     "//foundation/distributeddatamgr/objectstore/interfaces/innerkits/",
   ]
 
@@ -188,7 +188,7 @@ ohos_shared_library("abilitykit_native") {
     "${kits_path}/appkit/native/app/src/context_container.cpp",
     "${kits_path}/appkit/native/app/src/context_deal.cpp",
     "${kits_path}/appkit/native/app/src/sys_mgr_client.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/src/js_utils.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/common/src/js_utils.cpp",
     "src/continuation/distributed/continuation_handler.cpp",
     "src/continuation/distributed/continuation_manager.cpp",
     "src/continuation/distributed/reverse_continuation_scheduler_primary.cpp",
@@ -208,9 +208,9 @@ ohos_shared_library("abilitykit_native") {
     "src/continuation/remote_register_service/remote_register_service_stub.cpp",
     "src/distributed_ability_runtime/distributed_client.cpp",
 
-    #"//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/napi_rdb_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/src/napi_data_ability_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/src/napi_result_set.cpp",
+    #"//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/napi_rdb_predicates.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/dataability/src/napi_data_ability_predicates.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/src/napi_result_set.cpp",
     "src/ability_runtime/js_ability.cpp",
     "src/ability_runtime/js_ability_context.cpp",
     "src/ability_runtime/js_caller_complex.cpp",
