@@ -7,7 +7,7 @@
         "mission_save_time" : 43200000,
         "root_launcher_restart_max":15,
         "app_not_response_process_timeout_time" : 5000,
-        "ams_timeout_time" : 60
+        "ams_timeout_time" : 180
     },
     "memorythreshold":{
         "home_application": "20"

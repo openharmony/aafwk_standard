@@ -40,7 +40,7 @@ namespace AppExecFwk {
 namespace {
 using namespace std::chrono_literals;
 static const int EXPERIENCE_MEM_THRESHOLD = 20;
-static const int APP_MS_TIMEOUT = 60;
+static const int APP_MS_TIMEOUT = 180;
 static const int APP_MS_BLOCK = 65;
 static const float PERCENTAGE = 100.0;
 const std::string TASK_ATTACH_APPLICATION = "AttachApplicationTask";
@@ -152,7 +152,8 @@ ErrCode AppMgrService::Init()
         HILOG_ERROR("init failed without ams scheduler");
         return ERR_INVALID_OPERATION;
     }
-    if (HiviewDFX::Watchdog::GetInstance().AddThread("APPMSWatchdog", handler_, APP_MS_TIMEOUT) != 0) {
+    std::string threadName = Constants::APP_MGR_SERVICE_NAME + "(" + std::to_string(runner_->GetThreadId()) + ")";
+    if (HiviewDFX::Watchdog::GetInstance().AddThread(threadName, handler_, APP_MS_TIMEOUT) != 0) {
         HILOG_ERROR("HiviewDFX::Watchdog::GetInstance AddThread Fail");
     }
     HILOG_INFO("init success");
