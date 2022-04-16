@@ -78,10 +78,10 @@ AppMgrStub::AppMgrStub()
         &AppMgrStub::HandleAttachRenderProcess;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::POST_ANR_TASK_BY_PID)] =
         &AppMgrStub::HandlePostANRTaskByProcessID;
-    #ifdef ABILITY_COMMAND_FOR_TEST
+#ifdef ABILITY_COMMAND_FOR_TEST
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::BLOCK_APP_SERVICE)] =
         &AppMgrStub::HandleBlockAppServiceDone;
-    #endif
+#endif
 }
 
 AppMgrStub::~AppMgrStub()
