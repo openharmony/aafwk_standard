@@ -263,6 +263,7 @@ public:
      */
     virtual int KillProcess(const std::string &bundleName) override;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * force timeout ability.
      *
@@ -271,6 +272,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override;
+    #endif
 
     /**
      * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
@@ -495,6 +497,7 @@ public:
      */
     virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block ability manager service.
      *
@@ -516,6 +519,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int BlockAppService() override;
+    #endif
 
 private:
     template <typename T>

@@ -296,6 +296,7 @@ public:
      */
     virtual int KillProcess(const std::string &bundleName) = 0;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * force timeout ability.
      *
@@ -304,6 +305,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) = 0;
+    #endif
 
     /**
      * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
@@ -537,6 +539,7 @@ public:
      */
     virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) = 0;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block ability manager service.
      *
@@ -558,6 +561,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int BlockAppService() = 0;
+    #endif
 
     enum {
         // ipc id 1-1000 for kit

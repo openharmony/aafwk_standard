@@ -290,12 +290,14 @@ public:
      */
     void PostANRTaskByProcessID(const pid_t pid);
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block app service.
      *
      * @return Returns ERR_OK on success, others on failure.
      */
     int BlockAppService();
+    #endif
 
 protected:
     /**

@@ -278,9 +278,11 @@ public:
     MOCK_METHOD2(GetExtensionRunningInfos, int(int upperLimit, std::vector<ExtensionRunningInfo> &info));
     MOCK_METHOD1(GetProcessRunningInfos, int(std::vector<AppExecFwk::RunningProcessInfo> &info));
     MOCK_METHOD3(StartAbilityByCall, int(const Want &, const sptr<IAbilityConnection> &, const sptr<IRemoteObject> &));
+    #ifdef ABILITY_COMMAND_FOR_TEST
     MOCK_METHOD0(BlockAppService, int());
     MOCK_METHOD0(BlockAmsService, int());
     MOCK_METHOD1(BlockAbility, int(int32_t abilityRecordId));
+    #endif
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override
     {
@@ -318,10 +320,12 @@ public:
         return 0;
     }
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override
     {
         return 0;
     }
+    #endif
 };
 }  // namespace AAFwk
 }  // namespace OHOS
