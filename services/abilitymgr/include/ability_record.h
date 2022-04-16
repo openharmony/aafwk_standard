@@ -687,8 +687,10 @@ public:
     void SetWindowMode(int32_t windowMode);
     void RemoveWindowMode();
     LifeCycleStateInfo lifeCycleStateInfo_;                // target life state info
+    #ifdef ABILITY_COMMAND_FOR_TEST
     int BlockAbility();
-    
+    #endif
+
     bool CanRestartRootLauncher();
 
 protected:

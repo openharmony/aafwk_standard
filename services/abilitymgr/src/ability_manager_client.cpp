@@ -265,6 +265,7 @@ ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
     return abms->KillProcess(bundleName);
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 ErrCode AbilityManagerClient::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
@@ -272,6 +273,7 @@ ErrCode AbilityManagerClient::ForceTimeoutForTest(const std::string &abilityName
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->ForceTimeoutForTest(abilityName, state);
 }
+#endif
 
 ErrCode AbilityManagerClient::ClearUpApplicationData(const std::string &bundleName)
 {
@@ -744,6 +746,7 @@ ErrCode AbilityManagerClient::SendANRProcessID(int pid)
     return abms->SendANRProcessID(pid);
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 ErrCode AbilityManagerClient::BlockAmsService()
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
@@ -767,6 +770,7 @@ ErrCode AbilityManagerClient::BlockAppService()
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->BlockAppService();
 }
+#endif
 
 sptr<IAbilityManager> AbilityManagerClient::GetAbilityManager()
 {

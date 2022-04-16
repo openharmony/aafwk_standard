@@ -187,8 +187,10 @@ public:
         std::vector<std::string> &info, bool isClient, int32_t abilityRecordId, const std::vector<std::string> &params);
 
     std::shared_ptr<Mission> GetMissionBySpecifiedFlag(const AAFwk::Want &want, const std::string &flag) const;
+    #ifdef ABILITY_COMMAND_FOR_TEST
     int BlockAbilityByRecordId(int32_t abilityRecordId);
-    
+    #endif
+
 private:
     std::string GetTypeName();
     bool MatchedInitialMission(const std::shared_ptr<Mission>& mission, const std::string &bundleName, int32_t uid);

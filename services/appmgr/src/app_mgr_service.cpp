@@ -41,7 +41,9 @@ namespace {
 using namespace std::chrono_literals;
 static const int EXPERIENCE_MEM_THRESHOLD = 20;
 static const int APP_MS_TIMEOUT = 180;
+#ifdef ABILITY_COMMAND_FOR_TEST
 static const int APP_MS_BLOCK = 65;
+#endif
 static const float PERCENTAGE = 100.0;
 const std::string TASK_ATTACH_APPLICATION = "AttachApplicationTask";
 const std::string TASK_APPLICATION_FOREGROUNDED = "ApplicationForegroundedTask";
@@ -460,6 +462,7 @@ void AppMgrService::PostANRTaskByProcessID(const pid_t pid)
     object->ScheduleANRProcess();
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AppMgrService::BlockAppService()
 {
     HILOG_DEBUG("%{public}s begin", __func__);
@@ -475,5 +478,6 @@ int AppMgrService::BlockAppService()
     handler_->PostTask(task);
     return ERR_OK;
 }
+#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS

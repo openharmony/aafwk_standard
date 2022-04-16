@@ -757,6 +757,7 @@ int AbilityManagerProxy::KillProcess(const std::string &bundleName)
     return reply.ReadInt32();
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityManagerProxy::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
 {
     MessageParcel data;
@@ -781,6 +782,7 @@ int AbilityManagerProxy::ForceTimeoutForTest(const std::string &abilityName, con
     }
     return reply.ReadInt32();
 }
+#endif
 
 int AbilityManagerProxy::ClearUpApplicationData(const std::string &bundleName)
 {
@@ -2264,6 +2266,7 @@ int32_t AbilityManagerProxy::GetMissionIdByToken(const sptr<IRemoteObject> &toke
     return reply.ReadInt32();
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityManagerProxy::BlockAmsService()
 {
     MessageParcel data;
@@ -2315,5 +2318,6 @@ int AbilityManagerProxy::BlockAppService()
     }
     return reply.ReadInt32();
 }
+#endif
 }  // namespace AAFwk
 }  // namespace OHOS
