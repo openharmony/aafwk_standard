@@ -55,7 +55,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_LICENSE_IDL_NAME.c_str(), NO_LICENSE_VOID_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_LICENSE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -72,7 +72,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_LICENSE_IDL_NAME.c_str(), NO_LICENSE_BOOL_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_LICENSE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -89,7 +89,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_003, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_LICENSE_IDL_NAME.c_str(), NO_LICENSE_INT_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_LICENSE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -106,7 +106,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_004, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_LICENSE_IDL_NAME.c_str(), NO_LICENSE_STRING_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_LICENSE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -123,7 +123,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_005, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_LICENSE_IDL_NAME.c_str(), NO_LICENSE_INTERFACE_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_LICENSE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -140,7 +140,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_006, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_LICENSE_IDL_NAME.c_str(), NO_LICENSE_IN_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_LICENSE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -157,7 +157,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_007, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_LICENSE_IDL_NAME.c_str(), NO_LICENSE_OUT_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_LICENSE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -174,7 +174,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_008, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_LICENSE_IDL_NAME.c_str(), NO_LICENSE_ONEWAY_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_LICENSE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -192,7 +192,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_009, TestSize.Level1)
         NO_LICENSE_IDL_NAME.c_str(), NO_LICENSE_SEQUENCEABLE_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_LICENSE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -209,7 +209,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_010, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_LICENSE_IDL_NAME.c_str(), NO_LICENSE_MAP_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_LICENSE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -226,7 +226,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_011, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_INTERFACE_IDL_NAME.c_str(), NO_INTERFACE_VOID_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_INTERFACE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -243,7 +243,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_012, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_INTERFACE_IDL_NAME.c_str(), NO_INTERFACE_BOOL_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_INTERFACE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -260,7 +260,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_013, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_INTERFACE_IDL_NAME.c_str(), NO_INTERFACE_INT_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_INTERFACE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -277,7 +277,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_014, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_INTERFACE_IDL_NAME.c_str(), NO_INTERFACE_STRING_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_INTERFACE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -295,7 +295,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_015, TestSize.Level1)
         NO_INTERFACE_IDL_NAME.c_str(), NO_INTERFACE_INTERFACE_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_INTERFACE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -312,7 +312,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_016, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_INTERFACE_IDL_NAME.c_str(), NO_INTERFACE_IN_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_INTERFACE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -329,7 +329,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_017, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_INTERFACE_IDL_NAME.c_str(), NO_INTERFACE_OUT_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_INTERFACE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -346,7 +346,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_018, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_INTERFACE_IDL_NAME.c_str(), NO_INTERFACE_ONEWAY_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_INTERFACE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -364,7 +364,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_019, TestSize.Level1)
         NO_INTERFACE_IDL_NAME.c_str(), NO_INTERFACE_SEQUENCEABLE_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_INTERFACE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -381,7 +381,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_020, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(NO_INTERFACE_IDL_NAME.c_str(), NO_INTERFACE_MAP_TYPE_IDL_CONTENT.c_str(), ""), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", NO_INTERFACE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -398,7 +398,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_021, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(CAPITALIZATION_IDL_NAME.c_str(), CAPITALIZATION_VOID_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", CAPITALIZATION_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -415,7 +415,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_022, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(CAPITALIZATION_IDL_NAME.c_str(), CAPITALIZATION_BOOL_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", CAPITALIZATION_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -432,7 +432,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_023, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(CAPITALIZATION_IDL_NAME.c_str(), CAPITALIZATION_INT_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", CAPITALIZATION_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -449,7 +449,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_024, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(CAPITALIZATION_IDL_NAME.c_str(), CAPITALIZATION_STRING_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", CAPITALIZATION_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -467,7 +467,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_025, TestSize.Level1)
         CAPITALIZATION_IDL_NAME.c_str(), CAPITALIZATION_INTERFACE_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", CAPITALIZATION_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -484,7 +484,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_026, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(CAPITALIZATION_IDL_NAME.c_str(), CAPITALIZATION_IN_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", CAPITALIZATION_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -501,7 +501,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_027, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(CAPITALIZATION_IDL_NAME.c_str(), CAPITALIZATION_OUT_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", CAPITALIZATION_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -518,7 +518,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_028, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(CAPITALIZATION_IDL_NAME.c_str(), CAPITALIZATION_ONEWAY_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", CAPITALIZATION_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -536,7 +536,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_029, TestSize.Level1)
         CAPITALIZATION_IDL_NAME.c_str(), CAPITALIZATION_SEQUENCEABLE_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", CAPITALIZATION_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -553,7 +553,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_030, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(CAPITALIZATION_IDL_NAME.c_str(), CAPITALIZATION_MAP_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", CAPITALIZATION_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -570,7 +570,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_031, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), IN_KEYWORD_AFTER_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -587,7 +587,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_032, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), NOT_EQUAL_TO_FILENAME_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -604,7 +604,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_033, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_SCENE_IDL_NAME.c_str(), ABNORMAL_SCENE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_SCENE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -621,7 +621,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_034, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), UNSIGNED_CHAR_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -638,7 +638,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_035, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), UNSIGNED_SHORT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -655,7 +655,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_036, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), UNSIGNED_INT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -672,7 +672,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_037, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), UNSIGNED_LONG_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -689,7 +689,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_038, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), EMPTY_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -706,7 +706,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_039, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), NOT_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -723,7 +723,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_040, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), NOT_FUNCTION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -740,7 +740,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_041, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), SAME_FUNCTION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -757,7 +757,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_042, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), FUNCTION_NAME_TOO_LONG_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -774,7 +774,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_043, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(I_ABNORMAL_IDL_NAME.c_str(), VARIABLE_NAME_TOO_LONG_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", I_ABNORMAL_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -792,7 +792,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_044, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), MULTIPLE_NAMESPACES_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -809,7 +809,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_045, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), INOUT_SEPARATE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
 }
 
@@ -826,7 +826,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_046, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), INTERFACE_NO_CONTENT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -843,7 +843,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_047, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), PARAM_NO_INOUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 
@@ -860,7 +860,7 @@ HWTEST_F(JsCodeEmitterTest, Ready_048, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), INOUT_NO_BIGPARANTHESES_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_NE(Ready(argc, argv), ERR_OK);
 }
 }  // namespace ModuleTest

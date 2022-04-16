@@ -27,9 +27,9 @@ config("ipc_test_config") {
 
 ohos_executable("idl_server_test") {
   sources = [
+    "./src/idl_test_service_stub.cpp",
     "./src/main_server.cpp",
     "./src/test_service.cpp",
-    "./src/idl_test_service_stub.cpp",
   ]
 
   configs = [ ":ipc_test_config" ]
@@ -48,9 +48,9 @@ ohos_executable("idl_server_test") {
 
 ohos_executable("idl_client_test") {
   sources = [
+    "./src/idl_test_service_proxy.cpp",
     "./src/main_client.cpp",
     "./src/test_client.cpp",
-    "./src/idl_test_service_proxy.cpp",
   ]
 
   configs = [ ":ipc_test_config" ]

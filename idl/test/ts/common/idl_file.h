@@ -23,7 +23,7 @@ namespace Idl {
 namespace TestCommon {
 const std::string LICENSE_CONTENT =
 "/*\n"
-" * Copyright (C) 2021 Huawei Device Co., Ltd.\n"
+" * Copyright (C) 2021 Device Co., Ltd.\n"
 " * Licensed under the Apache License, Version 2.0 (the \"License\");\n"
 " * you may not use this file except in compliance with the License.\n"
 " * You may obtain a copy of the License at\n"
@@ -278,11 +278,16 @@ const std::string NORMAL_TYPE_COMBINATION_IDL_CONTENT2 =
 "interface idl.systemtest.IIdlTest {\n"
 "    short voidParameterTypeShort([in] short param1, [out] short param2, [inout] short param3);\n"
 "    byte voidParameterTypeByte([in] float param1, [out] byte param2, [inout] byte param3);\n"
-"    short[] voidParameterTypeShortArray([in] short[] param1, [out] short[] param2, [inout] MySequenceable[] param3);\n"
-"    int[] voidParameterTypeIntArray([in] int[] param1, [inout] int[] param2 , [out] int[] param3);\n"
-"    long[] voidParameterTypeLongArray([in] short[] param1, [inout] MySequenceable[] param2, [out] long[] param3);\n"
-"    float[] voidParameterTypeFloatArray([in] float[] param1, [inout] float[] param2, [out] float[] param3);\n"
-"    String[] voidParameterTypeStringArray([in] MySequenceable[] param1, [inout] short[] param2, [out] String[] param3);\n"
+"    short[] voidParameterTypeShortArray([in] short[] param1,"
+"[out] short[] param2, [inout] MySequenceable[] param3);\n"
+"    int[] voidParameterTypeIntArray([in] int[] param1,"
+"[inout] int[] param2 , [out] int[] param3);\n"
+"    long[] voidParameterTypeLongArray([in] short[] param1,"
+"[inout] MySequenceable[] param2, [out] long[] param3);\n"
+"    float[] voidParameterTypeFloatArray([in] float[] param1,"
+"[inout] float[] param2, [out] float[] param3);\n"
+"    String[] voidParameterTypeStringArray([in] MySequenceable[] param1,"
+"[inout] short[] param2, [out] String[] param3);\n"
 "}";
 
 const std::string CAPITALIZATION_IDL_NAME = "CapitalizationIdlTest.idl";
