@@ -659,6 +659,7 @@ public:
      */
     virtual int SendANRProcessID(int pid) override;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block ability manager service.
      * @return Returns ERR_OK on success, others on failure.
@@ -678,6 +679,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int BlockAppService() override;
+
     /**
      * force timeout ability.
      *
@@ -686,6 +688,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override;
+    #endif
 
     bool GetDataAbilityUri(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
         const std::string &mainAbility, std::string &uri);

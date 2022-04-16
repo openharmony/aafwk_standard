@@ -114,7 +114,9 @@ constexpr uint32_t SCENE_FLAG_NORMAL = 0;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const int32_t SWITCH_ACCOUNT_TRY = 3;
 const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
+#ifdef ABILITY_COMMAND_FOR_TEST
 const int32_t BLOCK_AMS_SERVICE_TIME = 65;
+#endif
 const std::string EMPTY_DEVICE_ID = "";
 const int32_t APP_MEMORY_SIZE = 512;
 const int32_t GET_PARAMETER_INCORRECT = -9;
@@ -3956,6 +3958,7 @@ void AbilityManagerService::StartingScreenLockAbility()
 #endif
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
 {
     if (abilityName.empty()) {
@@ -3978,6 +3981,7 @@ int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, c
     timeoutMap_.insert(std::make_pair(state, abilityName));
     return ERR_OK;
 }
+#endif
 
 int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abilityInfo)
 {
@@ -4264,6 +4268,7 @@ int AbilityManagerService::VerifyAccountPermission(int32_t userId)
     return CHECK_PERMISSION_FAILED;
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityManagerService::BlockAmsService()
 {
     HILOG_DEBUG("%{public}s", __func__);
@@ -4292,6 +4297,7 @@ int AbilityManagerService::BlockAppService()
     HILOG_DEBUG("%{public}s", __func__);
     return DelayedSingleton<AppScheduler>::GetInstance()->BlockAppService();
 }
+#endif
 
 int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
 {

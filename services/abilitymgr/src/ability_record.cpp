@@ -1512,6 +1512,7 @@ void AbilityRecord::RemoveWindowMode()
     want_.RemoveParam(Want::PARAM_RESV_WINDOW_MODE);
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityRecord::BlockAbility()
 {
     HILOG_INFO("BlockAbility.");
@@ -1521,5 +1522,6 @@ int AbilityRecord::BlockAbility()
     }
     return ERR_NO_INIT;
 }
+#endif
 }  // namespace AAFwk
 }  // namespace OHOS

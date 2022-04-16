@@ -178,11 +178,13 @@ private:
     ErrCode RunAsDumpCommand();
     ErrCode RunAsDumpsysCommand();
     ErrCode RunAsForceStop();
+    #ifdef ABILITY_COMMAND_FOR_TEST
     ErrCode RunForceTimeoutForTest();
     ErrCode RunAsSendAppNotRespondinProcessID();
     ErrCode RunAsBlockAbilityCommand();
     ErrCode RunAsBlockAmsServiceCommand();
     ErrCode RunAsBlockAppServiceCommand();
+    #endif
     sptr<IAbilityManager> GetAbilityManagerService();
 
     ErrCode RunAsDumpCommandOptopt();

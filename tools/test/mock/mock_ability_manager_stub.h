@@ -181,10 +181,12 @@ public:
     {
         return 0;
     }
+
     virtual int SendANRProcessID(int pid)
     {
         return 0;
     }
+
     virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
         bool imAStabilityTest) override
     {
@@ -223,6 +225,7 @@ public:
         return 0;
     }
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override
     {
         return 0;
@@ -242,6 +245,7 @@ public:
     {
         return 0;
     }
+    #endif
 
 public:
     std::string powerState_;

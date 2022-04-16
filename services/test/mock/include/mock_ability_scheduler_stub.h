@@ -59,10 +59,12 @@ public:
         return sptr<IRemoteObject>(nullptr);
     }
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     virtual int BlockAbility() override
     {
         return 0;
     }
+    #endif
 };
 }  // namespace AAFwk
 }  // namespace OHOS
