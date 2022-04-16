@@ -151,12 +151,12 @@ public:
         return sptr<IRemoteObject>(nullptr);
     }
 
-    #ifdef ABILITY_COMMAND_FOR_TEST
+#ifdef ABILITY_COMMAND_FOR_TEST
     virtual int BlockAbility()
     {
         return 0;
     }
-    #endif
+#endif
 
     int code_ = 0;
 };
