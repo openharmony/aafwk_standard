@@ -18,10 +18,12 @@
 #include "js_runtime_utils.h"
 #include "runner_runtime/js_test_runner.h"
 
+extern const char _binary_delegator_mgmt_abc_start[];
+extern const char _binary_delegator_mgmt_abc_end[];
 namespace OHOS {
 namespace RunnerRuntime {
 std::unique_ptr<TestRunner> JsTestRunner::Create(const std::unique_ptr<Runtime> &runtime,
-    const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo)
+    const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo, bool isFaJsModel)
 {
     if (!runtime) {
         HILOG_ERROR("Invalid runtime");
@@ -33,7 +35,8 @@ std::unique_ptr<TestRunner> JsTestRunner::Create(const std::unique_ptr<Runtime> 
         return nullptr;
     }
 
-    auto pTestRunner = new (std::nothrow) JsTestRunner(static_cast<JsRuntime &>(*runtime), args, bundleInfo);
+    auto pTestRunner = new (std::nothrow) JsTestRunner(static_cast<JsRuntime &>(*runtime), args, bundleInfo,
+        isFaJsModel);
     if (!pTestRunner) {
         HILOG_ERROR("Failed to create test runner");
         return nullptr;
@@ -43,8 +46,9 @@ std::unique_ptr<TestRunner> JsTestRunner::Create(const std::unique_ptr<Runtime> 
 }
 
 JsTestRunner::JsTestRunner(
-    JsRuntime &jsRuntime, const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo)
-    : jsRuntime_(jsRuntime)
+    JsRuntime &jsRuntime, const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo,
+    bool isFaJsModel)
+    : jsRuntime_(jsRuntime), isFaJsModel_(isFaJsModel)
 {
     if (args) {
         std::string srcPath;
@@ -60,12 +64,52 @@ JsTestRunner::JsTestRunner(
         srcPath_ = srcPath;
     }
     HILOG_INFO("JsTestRunner srcPath is %{public}s", srcPath_.c_str());
-
-    std::string moduleName;
-    jsTestRunnerObj_ = jsRuntime_.LoadModule(moduleName, srcPath_);
+    if (!isFaJsModel) {
+        std::string moduleName;
+        jsTestRunnerObj_ = jsRuntime_.LoadModule(moduleName, srcPath_);
+    }
 }
 
 JsTestRunner::~JsTestRunner() = default;
+
+bool JsTestRunner::Initialize()
+{
+    if (isFaJsModel_) {
+        if (jsRuntime_.RunScript("/system/etc/strip.native.min.abc") == false) {
+            HILOG_ERROR("RunScript err");
+            return false;
+        }
+        std::vector<uint8_t> buffer((uint8_t*)_binary_delegator_mgmt_abc_start,
+            (uint8_t*)_binary_delegator_mgmt_abc_end);
+        auto mgmtResult = jsRuntime_.GetNativeEngine().RunBufferScript(buffer);
+        if (mgmtResult == nullptr) {
+            HILOG_ERROR("mgmtResult init error");
+            return false;
+        }
+        if (jsRuntime_.RunSendboxScript(srcPath_) == false) {
+            HILOG_ERROR("RunScript srcPath_ err");
+            return false;
+        }
+        NativeEngine& engine = jsRuntime_.GetNativeEngine();
+        NativeObject* object = ConvertNativeValueTo<NativeObject>(engine.GetGlobal());
+        if (object == nullptr) {
+            HILOG_ERROR("Failed to get global object");
+            return false;
+        }
+        NativeValue* mainEntryFunc = object->GetProperty("___mainEntry___");
+        if (mainEntryFunc == nullptr) {
+            HILOG_ERROR("Failed to get mainEntryFunc");
+            return false;
+        }
+        NativeValue* value = engine.GetGlobal();
+        if (value == nullptr) {
+            HILOG_ERROR("Failed to get global");
+            return false;
+        }
+        engine.CallFunction(engine.GetGlobal(), mainEntryFunc, &value, 1);
+    }
+    return true;
+}
 
 void JsTestRunner::Prepare()
 {
@@ -86,6 +130,34 @@ void JsTestRunner::Run()
 void JsTestRunner::CallObjectMethod(const char *name, NativeValue *const *argv, size_t argc)
 {
     HILOG_INFO("JsTestRunner::CallObjectMethod(%{public}s)", name);
+    if (isFaJsModel_) {
+        NativeEngine& engine = jsRuntime_.GetNativeEngine();
+        NativeObject* global = ConvertNativeValueTo<NativeObject>(engine.GetGlobal());
+        if (global == nullptr) {
+            HILOG_ERROR("Failed to get global object");
+            return;
+        }
+
+        NativeObject* exportObject = ConvertNativeValueTo<NativeObject>(global->GetProperty("exports"));
+        if (exportObject == nullptr) {
+            HILOG_ERROR("Failed to get exportObject");
+            return;
+        }
+
+        NativeObject* defaultObject = ConvertNativeValueTo<NativeObject>(exportObject->GetProperty("default"));
+        if (defaultObject == nullptr) {
+            HILOG_ERROR("Failed to get defaultObject");
+            return;
+        }
+
+        NativeValue* func = defaultObject->GetProperty(name);
+        if (func == nullptr || !func->IsCallable()) {
+            HILOG_ERROR("CallRequest func is %{public}s", func == nullptr ? "nullptr" : "not func");
+            return;
+        }
+        engine.CallFunction(engine.CreateUndefined(), func, argv, argc);
+        return;
+    }
 
     if (!jsTestRunnerObj_) {
         HILOG_ERROR("Not found %{public}s", srcPath_.c_str());
