@@ -22,7 +22,7 @@ namespace Idl {
 template<class T>
 class AutoPtr {
 public:
-    inline AutoPtr()
+    AutoPtr()
         : mPtr(nullptr)
     {}
 

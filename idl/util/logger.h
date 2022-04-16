@@ -35,7 +35,7 @@ public:
         /* [in] */ const char* tag,
         /* [in] */ const char* format, ...);
 
-    inline static void SetLevel(
+    static void SetLevel(
         /* [in] */ int level)
     {
         level_ = level;

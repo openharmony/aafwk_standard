@@ -26,46 +26,46 @@ namespace Idl {
 
 class ASTParameter : public ASTNode {
 public:
-    inline void SetName(
+    void SetName(
         /* [in] */ const String& name)
     {
         name_ = name;
     }
 
-    inline String GetName()
+    String GetName()
     {
         return name_;
     }
 
-    inline void SetType(
+    void SetType(
         /* [in] */ ASTType* type)
     {
         type_ = type;
     }
 
-    inline AutoPtr<ASTType> GetType()
+    AutoPtr<ASTType> GetType()
     {
         return type_;
     }
 
-    inline void SetInParameter(
+    void SetInParameter(
         /* [in] */ bool inParameter)
     {
         isInParameter_ = inParameter;
     }
 
-    inline bool IsInParameter()
+    bool IsInParameter()
     {
         return isInParameter_;
     }
 
-    inline void SetOutParameter(
+    void SetOutParameter(
         /* [in] */ bool outParameter)
     {
         isOutParameter_ = outParameter;
     }
 
-    inline bool IsOutParameter()
+    bool IsOutParameter()
     {
         return isOutParameter_;
     }

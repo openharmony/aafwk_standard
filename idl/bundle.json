@@ -31,7 +31,10 @@
         "build": {
             "sub_component": [],
             "inner_kits": [],
-            "test": []
+            "test": [
+                "//foundation/aafwk/standard/idl/test/ts/moduletest:moduletest",
+                "//foundation/aafwk/standard/idl/test/ts/unittest:unittest"
+            ]
         }
     }
 }

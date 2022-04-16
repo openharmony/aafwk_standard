@@ -1,4 +1,4 @@
-# Copyright (c) Huawei Technologies Co., Ltd. 2019-2019. All rights reserved.
+# Copyright (c) Huawei Technologies Co., Ltd. 2022. All rights reserved.
 
 import("//build/ohos.gni")
 
@@ -37,7 +37,6 @@ common_sources += [
   "codegen/code_emitter.cpp",
   "codegen/code_generator.cpp",
   "codegen/cpp_code_emitter.cpp",
-  "codegen/java_code_emitter.cpp",
   "codegen/js_code_emitter.cpp",
 ]
 

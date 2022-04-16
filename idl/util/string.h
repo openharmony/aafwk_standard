@@ -23,7 +23,7 @@ namespace Idl {
 
 class String {
 public:
-    inline String()
+    String()
     {}
 
     String(
@@ -41,22 +41,22 @@ public:
 
     ~String();
 
-    inline const char* string() const
+    const char* string() const
     {
         return string_;
     }
 
-    inline operator const char*() const
+    operator const char*() const
     {
         return string_;
     }
 
-    inline bool IsNull() const
+    bool IsNull() const
     {
         return string_ == nullptr;
     }
 
-    inline bool IsEmpty() const
+    bool IsEmpty() const
     {
         return string_ == nullptr || string_[0] == '\0';
     }
@@ -165,7 +165,7 @@ private:
     char* string_ = nullptr;
 };
 
-inline String operator+(
+String operator+(
     /* [in] */ const String& string1,
     /* [in] */ const char* string2)
 {

@@ -42,12 +42,12 @@ public:
     Token PeekToken(
         /* [in] */ bool skipComment = true);
 
-    inline String GetIdentifier() const
+    String GetIdentifier() const
     {
         return identifier_;
     }
 
-    inline String GetComment() const
+    String GetComment() const
     {
         return comment_;
     }
@@ -57,19 +57,19 @@ public:
     bool SkipCurrentLine(
         /* [in] */ char untilChar);
 
-    inline std::shared_ptr<File> GetSourceFile() const
+    std::shared_ptr<File> GetSourceFile() const
     {
         return currentFile_;
     }
 
     String DumpToken() const;
 
-    inline int GetTokenLineNumber() const
+    int GetTokenLineNumber() const
     {
         return tokenLineNo_;
     }
 
-    inline int GetTokenColumnNumber() const
+    int GetTokenColumnNumber() const
     {
         return tokenColumnNo_;
     }
@@ -92,19 +92,19 @@ private:
     Token ReadBlockComment(
         /* [in] */ char c);
 
-    inline static bool IsAlphabet(
+    static bool IsAlphabet(
         /* [in] */ char c)
     {
         return isalpha(c);
     }
 
-    inline static bool IsDecimalDigital(
+    static bool IsDecimalDigital(
         /* [in] */ char c)
     {
         return isdigit(c);
     }
 
-    inline static bool IsSpace(
+    static bool IsSpace(
         /* [in] */ char c)
     {
         return isspace(c);

@@ -23,7 +23,7 @@ namespace Idl {
 
 class LightRefCountBase {
 public:
-    inline LightRefCountBase()
+    LightRefCountBase()
         : refCount_(0)
     {}
 
@@ -31,13 +31,13 @@ public:
 
     int Release();
 
-    inline int GetRefCount() const
+    int GetRefCount() const
     {
         return refCount_.load(std::memory_order_relaxed);
     }
 
 protected:
-    inline virtual ~LightRefCountBase()
+    virtual ~LightRefCountBase()
     {}
 
 private:

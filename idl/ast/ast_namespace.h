@@ -31,7 +31,7 @@ public:
     ASTNamespace(
         /* [in] */ const String& nspaceStr);
 
-    inline String GetName()
+    String GetName()
     {
         return name_;
     }
@@ -45,7 +45,7 @@ public:
     AutoPtr<ASTNamespace> GetNamespace(
         /* [in] */ size_t index);
 
-    inline size_t GetNamespaceNumber()
+    size_t GetNamespaceNumber()
     {
         return innerNamespaces_.size();
     }
@@ -56,7 +56,7 @@ public:
     AutoPtr<ASTInterfaceType> GetInterface(
         /* [in] */ size_t index);
 
-    inline size_t GetInterfaceNumber()
+    size_t GetInterfaceNumber()
     {
         return interfaces_.size();
     }
@@ -67,12 +67,12 @@ public:
     AutoPtr<ASTSequenceableType> GetSequenceable(
         /* [in] */ size_t index);
 
-    inline size_t GetSequenceableNumber()
+    size_t GetSequenceableNumber()
     {
         return sequenceables_.size();
     }
 
-    inline String ToShortString()
+    String ToShortString()
     {
         return name_;
     }

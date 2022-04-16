@@ -18,7 +18,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include "codegen/cpp_code_emitter.h"
-#include "codegen/java_code_emitter.h"
 #include "codegen/js_code_emitter.h"
 #include "util/logger.h"
 
@@ -37,8 +36,6 @@ CodeGenerator::CodeGenerator(
 {
     if (language.Equals("cpp")) {
         emitter_ = new CppCodeEmitter(metaComponent_);
-    } else if (language.Equals("java")) {
-        emitter_ = new JavaCodeEmitter(metaComponent_);
     } else if (language.Equals("ts")) {
         emitter_ = new JsCodeEmitter(metaComponent_);
     }

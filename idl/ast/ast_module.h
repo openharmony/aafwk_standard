@@ -44,18 +44,18 @@ public:
     void SetIdlFile(
         /* [in] */ const String& idlFile);
 
-    inline String GetName()
+    String GetName()
     {
         return name_;
     }
 
-    inline void SetLicense(
+    void SetLicense(
         /* [in] */ const String& license)
     {
         license_ = license;
     }
 
-    inline String GetLicense()
+    String GetLicense()
     {
         return license_;
     }
@@ -72,7 +72,7 @@ public:
     AutoPtr<ASTNamespace> GetNamespace(
         /* [in] */ size_t index);
 
-    inline size_t GetNamespaceNumber()
+    size_t GetNamespaceNumber()
     {
         return namespaces_.size();
     }
@@ -83,7 +83,7 @@ public:
     AutoPtr<ASTInterfaceType> GetInterface(
         /* [in] */ size_t index);
 
-    inline size_t GetInterfaceNumber()
+    size_t GetInterfaceNumber()
     {
         return interfaces_.size();
     }
@@ -97,7 +97,7 @@ public:
     AutoPtr<ASTSequenceableType> GetSequenceable(
         /* [in] */ size_t index);
 
-    inline size_t GetSequenceableNumber()
+    size_t GetSequenceableNumber()
     {
         return sequenceables_.size();
     }
@@ -113,12 +113,12 @@ public:
 
     using TypeStringMap = std::unordered_map<String, AutoPtr<ASTType>, StringHashFunc, StringEqualFunc>;
 
-    inline const TypeStringMap& GetTypes()
+    const TypeStringMap& GetTypes()
     {
         return types_;
     }
 
-    inline size_t GetTypeNumber()
+    size_t GetTypeNumber()
     {
         return types_.size();
     }

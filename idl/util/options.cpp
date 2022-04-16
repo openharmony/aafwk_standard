@@ -48,9 +48,6 @@ void Options::Parse(
         } else if (option.Equals("-gen-cpp")) {
             doGenerateCode_ = true;
             targetLanguage_ = "cpp";
-        } else if (option.Equals("-gen-java")) {
-            doGenerateCode_ = true;
-            targetLanguage_ = "java";
         } else if (option.Equals("-gen-ts")) {
             doGenerateCode_ = true;
             targetLanguage_ = "ts";
@@ -83,13 +80,13 @@ void Options::ShowErrors()
 void Options::ShowVersion()
 {
     printf("idl %d.%d\n"
-          "Copyright (c) Huawei Technologies Co., Ltd. 2019-2019. All rights reserved.\n\n",
+          "Copyright (c) Huawei Technologies Co., Ltd. 2022. All rights reserved.\n\n",
            VERSION_MAJOR, VERSION_MINOR);
 }
 
 void Options::ShowUsage()
 {
-    printf("Compile a .idl file and generate metadata, or generate C++, Ts and Java codes from metadata.\n"
+    printf("Compile a .idl file and generate metadata, or generate C++ and Ts codes from metadata.\n"
            "Usage: idl [options] file\n"
            "Options:\n"
            "  --help            Display command line options\n"
@@ -99,7 +96,6 @@ void Options::ShowUsage()
            "  -c                Compile the .idl file\n"
            "  -s <file>         Place the metadata into <file>\n"
            "  -gen-cpp          Generate C++ codes\n"
-           "  -gen-java         Generate Java codes\n"
            "  -gen-ts           Generate Ts codes\n"
            "  -d <directory>    Place generated codes into <directory>\n");
 }
