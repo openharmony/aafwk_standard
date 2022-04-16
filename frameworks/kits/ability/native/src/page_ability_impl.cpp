@@ -62,7 +62,8 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         CheckAndRestore();
     }
 
-    if (lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) {
+    if (lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE &&
+        targetState.state != AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
         Inactive();
     }
 
