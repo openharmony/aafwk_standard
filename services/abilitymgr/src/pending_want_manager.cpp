@@ -50,7 +50,6 @@ sptr<IWantSender> PendingWantManager::GetWantSender(const int32_t callingUid, Pa
     auto isSystemApp = params.isSystemApp;
     auto apl = params.apl;
     auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
-    HILOG_INFO("%{public}d: isSACALL", isSaCall);
     if (!isSaCall && apl != AbilityUtil::SYSTEM_BASIC && apl != AbilityUtil::SYSTEM_CORE && !isSystemApp) {
         if (callingUid != params.uid) {
             HILOG_ERROR("is not allowed to send");
