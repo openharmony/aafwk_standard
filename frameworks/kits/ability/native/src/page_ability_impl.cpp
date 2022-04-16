@@ -35,6 +35,9 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         targetState.state,
         targetState.isNewWant,
         targetState.sceneFlag);
+    if (ability_ != nullptr) {
+        ability_->sceneFlag_ = targetState.sceneFlag;
+    }
     if ((lifecycleState_ == targetState.state) && !targetState.isNewWant) {
         if (ability_ != nullptr && targetState.state == AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
             ability_->RequsetFocus(want);
@@ -69,9 +72,6 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
     }
 
     bool ret = false;
-    if (ability_ != nullptr) {
-        ability_->sceneFlag_ = targetState.sceneFlag;
-    }
     if (AbilityImpl::IsUseNewMission()) {
         ret = AbilityTransactionNew(want, targetState);
     } else {
@@ -177,7 +177,6 @@ bool PageAbilityImpl::AbilityTransactionNew(const Want &want, const AAFwk::LifeC
             }
             SerUriString(targetState.caller.deviceId + "/" + targetState.caller.bundleName + "/" +
                          targetState.caller.abilityName);
-            Active();
             if (ability_) {
                 ability_->RequsetFocus(want);
             }
