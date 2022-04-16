@@ -43,11 +43,13 @@ constexpr struct option LONG_OPTIONS[] = {
     {nullptr, 0, nullptr, 0},
 };
 const std::string SHORT_OPTIONS_ApplicationNotRespondin = "hp:";
+#ifdef ABILITY_COMMAND_FOR_TEST
 constexpr struct option LONG_OPTIONS_ApplicationNotRespondin[] = {
     {"help", no_argument, nullptr, 'h'},
     {"pid", required_argument, nullptr, 'p'},
     {nullptr, 0, nullptr, 0},
 };
+#endif
 const std::string SHORT_OPTIONS_DUMP = "has:m:lud::e::LS";
 constexpr struct option LONG_OPTIONS_DUMP[] = {
     {"help", no_argument, nullptr, 'h'},
@@ -95,11 +97,13 @@ ErrCode AbilityManagerShellCommand::CreateCommandMap()
         {"dump", std::bind(&AbilityManagerShellCommand::RunAsDumpsysCommand, this)},
         {"force-stop", std::bind(&AbilityManagerShellCommand::RunAsForceStop, this)},
         {"test", std::bind(&AbilityManagerShellCommand::RunAsTestCommand, this)},
+        #ifdef ABILITY_COMMAND_FOR_TEST
         {"force-timeout", std::bind(&AbilityManagerShellCommand::RunForceTimeoutForTest, this)},
         {"ApplicationNotRespondin", std::bind(&AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID, this)},
         {"block-ability", std::bind(&AbilityManagerShellCommand::RunAsBlockAbilityCommand, this)},
         {"block-ams-service", std::bind(&AbilityManagerShellCommand::RunAsBlockAmsServiceCommand, this)},
         {"block-app-service", std::bind(&AbilityManagerShellCommand::RunAsBlockAppServiceCommand, this)},
+        #endif
     };
 
     return OHOS::ERR_OK;
@@ -758,6 +762,7 @@ ErrCode AbilityManagerShellCommand::RunAsForceStop()
     return result;
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 ErrCode AbilityManagerShellCommand::RunForceTimeoutForTest()
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
@@ -787,6 +792,7 @@ ErrCode AbilityManagerShellCommand::RunForceTimeoutForTest()
     }
     return result;
 }
+#endif
 
 ErrCode AbilityManagerShellCommand::RunAsDumpCommandOptopt()
 {
@@ -1189,6 +1195,7 @@ sptr<IAbilityManager> AbilityManagerShellCommand::GetAbilityManagerService()
     return iface_cast<IAbilityManager>(remoteObject);
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 ErrCode AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID()
 {
     static sptr<IAbilityManager> abilityMs_;
@@ -1333,5 +1340,6 @@ ErrCode AbilityManagerShellCommand::RunAsBlockAppServiceCommand()
     }
     return result;
 }
+#endif
 }  // namespace AAFwk
 }  // namespace OHOS

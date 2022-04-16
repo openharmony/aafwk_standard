@@ -2463,6 +2463,7 @@ void MissionListManager::GetForegroundAbilities(const std::shared_ptr<MissionLis
     }
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int MissionListManager::BlockAbility(int32_t abilityRecordId)
 {
     int ret = -1;
@@ -2501,5 +2502,6 @@ int MissionListManager::BlockAbility(int32_t abilityRecordId)
     }
     return ret;
 }
+#endif
 }  // namespace AAFwk
 }  // namespace OHOS
