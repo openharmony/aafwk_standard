@@ -162,7 +162,7 @@ ErrCode AbilityManagerClient::MinimizeAbility(const sptr<IRemoteObject> &token, 
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    HILOG_INFO("%{public}s called, fromUser=%{public}d", __func__, fromUser);
+    HILOG_INFO("Minimize ability, fromUser:%{public}d.", fromUser);
     return abms->MinimizeAbility(token, fromUser);
 }
 

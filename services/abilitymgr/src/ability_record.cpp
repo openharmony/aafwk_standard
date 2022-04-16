@@ -255,7 +255,10 @@ void AbilityRecord::ProcessForegroundAbility(uint32_t sceneFlag)
 void AbilityRecord::BackgroundAbility(const Closure &task)
 {
     HILOG_INFO("Move the ability to background, ability:%{public}s.", abilityInfo_.name.c_str());
-    CHECK_POINTER(lifecycleDeal_);
+    if (lifecycleDeal_ == nullptr) {
+        HILOG_ERROR("Move the ability to background fail, lifecycleDeal_ is null.");
+        return;
+    }
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler && task) {
         if (!want_.GetBoolParam(DEBUG_APP, false)) {
