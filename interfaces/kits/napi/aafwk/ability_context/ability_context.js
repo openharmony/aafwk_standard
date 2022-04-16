@@ -93,12 +93,12 @@ class AbilityContext extends Context {
         return this.__context_impl__.restoreWindowStage(contentStorage)
     }
 
-    setMissionLabel(label) {
-        return this.__context_impl__.setMissionLabel(label)
+    setMissionLabel(label, callback) {
+        return this.__context_impl__.setMissionLabel(label, callback)
     }
 
-    setMissionIcon(icon) {
-        return this.__context_impl__.setMissionIcon(icon)
+    setMissionIcon(icon, callback) {
+        return this.__context_impl__.setMissionIcon(icon, callback)
     }
 }
 
