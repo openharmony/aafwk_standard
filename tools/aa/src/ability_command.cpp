@@ -14,8 +14,10 @@
  */
 #include "ability_command.h"
 
+#include <csignal>
 #include <cstdlib>
 #include <getopt.h>
+#include <regex>
 #include "ability_manager_client.h"
 #include "hilog_wrapper.h"
 #include "iservice_registry.h"
@@ -1085,11 +1087,24 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
         if ((opt == "-h") || (opt == "--help")) {
             resultReceiver_.append(HELP_MSG_TEST);
             return OHOS::ERR_OK;
-        } else if ((opt == "-b") || (opt == "-w") || (opt == "-p") || (opt == "-m")) {
+        } else if ((opt == "-b") || (opt == "-p") || (opt == "-m")) {
             if (i >= argc_ - 1) {
                 return TestCommandError("error: option [" + opt + "] requires a value.\n");
             }
             std::string argv = argv_[++i];
+            params[opt] = argv;
+        } else if (opt == "-w") {
+            if (i >= argc_ - 1) {
+                return TestCommandError("error: option [" + opt + "] requires a value.\n");
+            }
+
+            std::string argv = argv_[++i];
+            std::smatch sm;
+            auto isNumber = std::regex_match(argv, sm, std::regex(STRING_TEST_REGEX_INTEGER_NUMBERS));
+            if (!isNumber) {
+                return TestCommandError("error: option [" + opt + "] only supports integer numbers.\n");
+            }
+
             params[opt] = argv;
         } else if (opt == "-s") {
             if (i >= argc_ - USER_TEST_COMMAND_PARAMS_NUM) {
@@ -1164,15 +1179,19 @@ ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, st
     }
     HILOG_INFO("%{public}s", STRING_START_USER_TEST_OK.c_str());
 
+    std::signal(SIGCHLD, SIG_DFL);
+
     int64_t timeMs = 0;
     if (!want.GetStringParam("-w").empty()) {
-        int time = std::stoi(want.GetStringParam("-w"));
-        timeMs = time * TIME_RATE_MS;
+        auto time = std::stoi(want.GetStringParam("-w"));
+        timeMs = time > 0 ? time * TIME_RATE_MS : 0;
     }
     if (!observer->WaitForFinish(timeMs)) {
         resultReceiver_ = "Timeout: user test is not completed within the specified time.\n";
         return OHOS::ERR_INVALID_VALUE;
     }
+
+    HILOG_INFO("User test finished successfully");
     resultReceiver_ = STRING_START_USER_TEST_OK + "\n";
 
     return result;

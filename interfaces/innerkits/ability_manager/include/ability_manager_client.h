@@ -567,7 +567,7 @@ public:
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName);
+    ErrCode FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName);
 
     /**
      * GetCurrentTopAbility, get the token of current top ability.

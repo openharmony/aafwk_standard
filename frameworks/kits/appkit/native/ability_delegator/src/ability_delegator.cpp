@@ -571,9 +571,9 @@ std::shared_ptr<ADelegatorAbilityProperty> AbilityDelegator::FindPropertyByToken
     return {};
 }
 
-void AbilityDelegator::FinishUserTest(const std::string &msg, const int32_t resultCode)
+void AbilityDelegator::FinishUserTest(const std::string &msg, const int64_t resultCode)
 {
-    HILOG_INFO("Enter");
+    HILOG_INFO("Enter, msg : %{public}s, code : %{public}" PRId64, msg.data(), resultCode);
 
     if (!observer_) {
         HILOG_ERROR("Invalid observer");

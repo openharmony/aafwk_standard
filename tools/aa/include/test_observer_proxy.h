@@ -40,7 +40,7 @@ public:
      * @param msg, Indicates the status information.
      * @param resultCode, Indicates the result code.
      */
-    virtual void TestStatus(const std::string &msg, const int &resultCode) override;
+    virtual void TestStatus(const std::string &msg, const int64_t &resultCode) override;
 
     /**
      * Outputs information and result code that the test has finished.
@@ -48,7 +48,7 @@ public:
      * @param msg, Indicates the status information.
      * @param resultCode, Indicates the result code.
      */
-    virtual void TestFinished(const std::string &msg, const int &resultCode) override;
+    virtual void TestFinished(const std::string &msg, const int64_t &resultCode) override;
 
     /**
      * Executes the specified shell command.
