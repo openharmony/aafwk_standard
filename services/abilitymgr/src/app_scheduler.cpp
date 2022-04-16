@@ -318,7 +318,7 @@ int AppScheduler::StartUserTest(
     return ERR_OK;
 }
 
-int AppScheduler::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+int AppScheduler::FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
     int ret = appMgrClient_->FinishUserTest(msg, resultCode, bundleName);

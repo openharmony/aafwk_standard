@@ -181,7 +181,7 @@ public:
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) = 0;
+    virtual int FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName) = 0;
 
     virtual void ScheduleAcceptWantDone(const int32_t recordId, const AAFwk::Want &want, const std::string &flag) = 0;
 

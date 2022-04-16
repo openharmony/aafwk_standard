@@ -2001,7 +2001,7 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
 }
 
 int AppMgrServiceInner::FinishUserTest(
-    const std::string &msg, const int &resultCode, const std::string &bundleName, const pid_t &pid)
+    const std::string &msg, const int64_t &resultCode, const std::string &bundleName, const pid_t &pid)
 {
     HILOG_INFO("Enter");
     if (bundleName.empty()) {
@@ -2032,7 +2032,7 @@ int AppMgrServiceInner::FinishUserTest(
 }
 
 int AppMgrServiceInner::FinishUserTestLocked(
-    const std::string &msg, const int &resultCode, const std::shared_ptr<AppRunningRecord> &appRecord)
+    const std::string &msg, const int64_t &resultCode, const std::shared_ptr<AppRunningRecord> &appRecord)
 {
     HILOG_INFO("Enter");
     if (!appRecord) {

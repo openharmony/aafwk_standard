@@ -37,13 +37,13 @@ int TestObserverStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Messag
     switch (code) {
         case static_cast<uint32_t>(ITestObserver::Message::AA_TEST_STATUS): {
             std::string msg = data.ReadString();
-            int resultCode = data.ReadInt32();
+            int64_t resultCode = data.ReadInt64();
             TestStatus(msg, resultCode);
             break;
         }
         case static_cast<uint32_t>(ITestObserver::Message::AA_TEST_FINISHED): {
             std::string msg = data.ReadString();
-            int resultCode = data.ReadInt32();
+            int64_t resultCode = data.ReadInt64();
             TestFinished(msg, resultCode);
             break;
         }
