@@ -43,12 +43,12 @@ public:
 
     void Deserialize();
 
-    inline uintptr_t GetData() const
+    uintptr_t GetData() const
     {
         return baseAddr_;
     }
 
-    inline int GetDataSize() const
+    int GetDataSize() const
     {
         return metaComponent_->size_;
     }

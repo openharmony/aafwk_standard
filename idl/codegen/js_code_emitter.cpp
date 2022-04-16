@@ -59,8 +59,7 @@ void JsCodeEmitter::EmitInterface()
     file.Close();
 }
 
-void JsCodeEmitter::EmitInterfaceImports(
-    /* [in] */ StringBuilder& stringBuilder)
+void JsCodeEmitter::EmitInterfaceImports(StringBuilder& stringBuilder)
 {
     for (const auto &item : methods_) {
         if (item.callbackName_.size() > 0) {
@@ -84,8 +83,7 @@ void JsCodeEmitter::EmitInterfaceImports(
     }
 }
 
-void JsCodeEmitter::EmitInterfaceSelfDefinedTypeImports(
-    /* [in] */ StringBuilder& stringBuilder)
+void JsCodeEmitter::EmitInterfaceSelfDefinedTypeImports(StringBuilder& stringBuilder)
 {
     for (int index = 0; index < metaComponent_->sequenceableNumber_; index++) {
         MetaSequenceable* mp = metaComponent_->sequenceables_[index];
@@ -349,7 +347,7 @@ void JsCodeEmitter::EmitInterfaceProxyMethodBody(MetaMethod* metaMethod, int met
             if ((methods_[methodIndex].parameters_[index].attr_ & ATTR_OUT) != 0) {
                 stringBuilder.Append(prefix).Append(TAB).Append(TAB).Append(TAB).Append(TAB).AppendFormat(
                     "let %s = undefined;\n", UnderlineAdded(
-                    methods_[methodIndex].parameters_[index].name_.c_str()).c_str());
+                        methods_[methodIndex].parameters_[index].name_.c_str()).c_str());
             }
         }
         stringBuilder.Append(prefix).Append(TAB).Append(TAB).Append(TAB).Append(TAB).AppendFormat("callback(");
@@ -469,18 +467,14 @@ void JsCodeEmitter::EmitInterfaceStubImpl(StringBuilder& stringBuilder)
     stringBuilder.Append("}\n");
 }
 
-void JsCodeEmitter::EmitInterfaceStubConstructor(
-    /* [in] */ StringBuilder& stringBuilder,
-    /* [in] */ const String& prefix)
+void JsCodeEmitter::EmitInterfaceStubConstructor(StringBuilder& stringBuilder, const String& prefix)
 {
     stringBuilder.Append(prefix).Append("constructor(des: string) {\n");
     stringBuilder.Append(prefix).Append(TAB).Append("super(des);\n");
     stringBuilder.Append(prefix).Append("}\n");
 }
 
-void JsCodeEmitter::EmitInterfaceStubMethodImpls(
-    /* [in] */ StringBuilder& stringBuilder,
-    /* [in] */ const String& prefix)
+void JsCodeEmitter::EmitInterfaceStubMethodImpls(StringBuilder& stringBuilder, const String& prefix)
 {
     EmitInterfaceStubConstructor(stringBuilder, prefix);
     stringBuilder.Append(prefix).Append(NEWLINE);
@@ -753,8 +747,6 @@ void JsCodeEmitter::EmitReadVariable(const String& parcelName, const std::string
         case TypeKind::Char:
         case TypeKind::Byte:
         case TypeKind::Short:
-            stringBuilder.Append(prefix).AppendFormat("let %s = %s.readInt();\n", name.c_str(), parcelName.string());
-            break;
         case TypeKind::Integer:
             stringBuilder.Append(prefix).AppendFormat("let %s = %s.readInt();\n", name.c_str(), parcelName.string());
             break;
@@ -947,9 +939,6 @@ void JsCodeEmitter::EmitReadOutVariable(const String& parcelName, const std::str
         case TypeKind::Char:
         case TypeKind::Byte:
         case TypeKind::Short:
-            stringBuilder.Append(prefix).AppendFormat("let %s = %s.readInt() as %s;\n",
-                name.c_str(), parcelName.string(), EmitType(mt).string());
-            break;
         case TypeKind::Integer:
             stringBuilder.Append(prefix).AppendFormat("let %s = %s.readInt();\n", name.c_str(), parcelName.string());
             break;
@@ -1088,8 +1077,7 @@ String JsCodeEmitter::MethodName(const String& name)
     return String::Format("%c%s", tolower(name[0]), name.Substring(1).string());
 }
 
-String JsCodeEmitter::ConstantName(
-    /* [in] */ const String& name)
+String JsCodeEmitter::ConstantName(const String& name)
 {
     if (name.IsEmpty()) {
         return name;

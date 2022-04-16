@@ -32,12 +32,12 @@ public:
 
     ~File();
 
-    inline bool IsValid()
+    bool IsValid()
     {
         return fd_ != nullptr;
     }
 
-    inline String GetPath()
+    String GetPath()
     {
         return path_;
     }
@@ -48,12 +48,12 @@ public:
 
     bool IsEof() const;
 
-    inline int GetCharLineNumber() const
+    int GetCharLineNumber() const
     {
         return lineNo_;
     }
 
-    inline int GetCharColumnNumber() const
+    int GetCharColumnNumber() const
     {
         return columnNo_;
     }

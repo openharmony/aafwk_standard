@@ -23,13 +23,13 @@ namespace Idl {
 
 class ASTArrayType : public ASTType {
 public:
-    inline void SetElementType(
+    void SetElementType(
         /* [in] */ ASTType* elementType)
     {
         elementType_ = elementType;
     }
 
-    inline AutoPtr<ASTType> GetElementType()
+    AutoPtr<ASTType> GetElementType()
     {
         return elementType_;
     }

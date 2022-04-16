@@ -23,7 +23,7 @@ namespace Idl {
 
 class Options {
 public:
-    inline Options(
+    Options(
         /* [in] */ int argc,
         /* [in] */ char** argv)
     {
@@ -32,62 +32,62 @@ public:
 
     ~Options() = default;
 
-    inline bool DoShowUsage() const
+    bool DoShowUsage() const
     {
         return doShowUsage_;
     }
 
-    inline bool DoShowVersion() const
+    bool DoShowVersion() const
     {
         return doShowVersion_;
     }
 
-    inline bool DoCompile() const
+    bool DoCompile() const
     {
         return doCompile_;
     }
 
-    inline bool DoDumpAST() const
+    bool DoDumpAST() const
     {
         return doDumpAST_;
     }
 
-    inline bool DoDumpMetadata() const
+    bool DoDumpMetadata() const
     {
         return doDumpMetadata_;
     }
 
-    inline bool DoSaveMetadata() const
+    bool DoSaveMetadata() const
     {
         return doSaveMetadata_;
     }
 
-    inline bool DoGenerateCode() const
+    bool DoGenerateCode() const
     {
         return doGenerateCode_;
     }
 
-    inline bool HasErrors() const
+    bool HasErrors() const
     {
         return !illegalOptions_.IsEmpty() || sourceFile_.IsEmpty();
     }
 
-    inline String GetSourceFile() const
+    String GetSourceFile() const
     {
         return sourceFile_;
     }
 
-    inline String GetMetadataFile() const
+    String GetMetadataFile() const
     {
         return metadataFile_;
     }
 
-    inline String GetTargetLanguage() const
+    String GetTargetLanguage() const
     {
         return targetLanguage_;
     }
 
-    inline String GetGenerationDirectory() const
+    String GetGenerationDirectory() const
     {
         return generationDirectory_;
     }

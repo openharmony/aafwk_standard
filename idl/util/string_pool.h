@@ -34,12 +34,12 @@ public:
     ptrdiff_t GetOffset(
         /* [in] */ const String& string);
 
-    inline size_t GetSize()
+    size_t GetSize()
     {
         return dataOffset_;
     }
 
-    inline char* GetData()
+    char* GetData()
     {
         return data_;
     }

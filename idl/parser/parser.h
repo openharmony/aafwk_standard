@@ -40,7 +40,7 @@ public:
     bool Parse(
         /* [in] */ const String& sourceFile);
 
-    inline AutoPtr<ASTModule> GetModule() const
+    AutoPtr<ASTModule> GetModule() const
     {
         return module_;
     }
@@ -83,7 +83,7 @@ private:
     bool IsValidTypeName(
         /* [in] */ const String& typeName);
 
-    inline static bool IsPrimitiveType(
+    static bool IsPrimitiveType(
         /* [in] */ Token token)
     {
         return token >= Token::BOOLEAN && token <= Token::STRING;

@@ -29,24 +29,24 @@ public:
     void SetNamespace(
         /* [in] */ ASTNamespace* nspace) override;
 
-    inline void SetLicense(
+    void SetLicense(
         /* [in] */ const String& license)
     {
         license_ = license;
     }
 
-    inline String GetLicense() const
+    String GetLicense() const
     {
         return license_;
     }
 
-    inline void SetOneway(
+    void SetOneway(
         /* [in] */ bool oneway)
     {
         oneway_ = oneway;
     }
 
-    inline bool IsOneway()
+    bool IsOneway()
     {
         return oneway_;
     }
@@ -57,7 +57,7 @@ public:
     AutoPtr<ASTMethod> GetMethod(
         /* [in] */ size_t index);
 
-    inline size_t GetMethodNumber()
+    size_t GetMethodNumber()
     {
         return methods_.size();
     }

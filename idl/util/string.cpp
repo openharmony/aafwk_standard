@@ -46,13 +46,13 @@ using SharedData = struct SharedData {
     static void Release(
         /* [in] */ const void* handle);
 
-    inline static char* ToString(
+    static char* ToString(
         /* [in] */ SharedData* header)
     {
         return reinterpret_cast<char*>(header + 1);
     }
 
-    inline static SharedData* GetHeader(
+    static SharedData* GetHeader(
         /* [in] */ const void* handle)
     {
         return reinterpret_cast<SharedData*>(const_cast<void*>(handle)) - 1;

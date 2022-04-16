@@ -28,7 +28,7 @@ public:
     CodeEmitter(
         /* [in] */ MetaComponent* mc);
 
-    inline void SetDirectory(
+    void SetDirectory(
         /* [in] */ const String& directory)
     {
         directory_ = directory;

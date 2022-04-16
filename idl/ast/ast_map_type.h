@@ -24,24 +24,24 @@ namespace Idl {
 
 class ASTMapType : public ASTType {
 public:
-    inline void SetKeyType(
+    void SetKeyType(
         /* [in] */ ASTType* keyType)
     {
         keyType_ = keyType;
     }
 
-    inline AutoPtr<ASTType> GetKeyType()
+    AutoPtr<ASTType> GetKeyType()
     {
         return keyType_;
     }
 
-    inline void SetValueType(
+    void SetValueType(
         /* [in] */ ASTType* valueType)
     {
         valueType_ = valueType;
     }
 
-    inline AutoPtr<ASTType> GetValueType()
+    AutoPtr<ASTType> GetValueType()
     {
         return valueType_;
     }
