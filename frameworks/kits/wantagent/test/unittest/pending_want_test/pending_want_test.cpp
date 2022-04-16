@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,7 @@
 #include "pending_want.h"
 #undef private
 #undef protected
+#include "pending_want_record.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
 #include "want.h"
@@ -72,11 +73,6 @@ public:
 
     static int callBackCancelListenerConnt;
 
-    class WantSender : public AAFwk::WantSenderStub {
-    public:
-        void Send(SenderInfo &senderInfo) override;
-    };
-
     class CancelListenerSon : public CancelListener {
     public:
         void OnCancelled(int resultCode) override;
@@ -84,9 +80,6 @@ public:
 };
 
 int PendingWantTest::callBackCancelListenerConnt = 0;
-
-void PendingWantTest::WantSender::Send(SenderInfo &senderInfo)
-{}
 
 void PendingWantTest::CancelListenerSon::OnCancelled(int resultCode)
 {
@@ -138,7 +131,7 @@ HWTEST_F(PendingWantTest, PendingWant_0100, Function | MediumTest | Level1)
  */
 HWTEST_F(PendingWantTest, PendingWant_0200, Function | MediumTest | Level1)
 {
-    sptr<AAFwk::IWantSender> target(new (std::nothrow) WantSender());
+    sptr<AAFwk::IWantSender> target(new (std::nothrow) PendingWantRecord());
     PendingWant pendingWant(target);
     EXPECT_EQ(pendingWant.target_, target);
     EXPECT_EQ(pendingWant.cancelReceiver_, nullptr);
@@ -439,10 +432,11 @@ HWTEST_F(PendingWantTest, PendingWant_1900, Function | MediumTest | Level1)
     ElementName element("device", "bundleName", "abilityName");
     want->SetElement(element);
     unsigned int flags = 1;
-    flags |= FLAG_NO_CREATE;
+    flags |= FLAG_ONE_SHOT;
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_FOREGROUND_SERVICE;
+    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
     std::shared_ptr<PendingWant> pendingWant =
-        PendingWant::BuildServicePendingWant(nullptr, requestCode, want, flags, type);
+        PendingWant::BuildServicePendingWant(context, requestCode, want, flags, type);
 
     sptr<AAFwk::IWantSender> target2(nullptr);
     std::shared_ptr<PendingWant> pendingWant2 = std::make_shared<PendingWant>(target2);
@@ -456,7 +450,7 @@ HWTEST_F(PendingWantTest, PendingWant_1900, Function | MediumTest | Level1)
  */
 HWTEST_F(PendingWantTest, PendingWant_2000, Function | MediumTest | Level1)
 {
-    sptr<AAFwk::IWantSender> target(new (std::nothrow) WantSender());
+    sptr<AAFwk::IWantSender> target(new (std::nothrow) PendingWantRecord());
     std::shared_ptr<PendingWant> pendingWant = std::make_shared<PendingWant>(target);
     std::shared_ptr<PendingWant> pendingWant2(nullptr);
     EXPECT_EQ(pendingWant->Equals(pendingWant, pendingWant2), false);
@@ -504,7 +498,7 @@ HWTEST_F(PendingWantTest, PendingWant_2400, Function | MediumTest | Level1)
  */
 HWTEST_F(PendingWantTest, PendingWant_2500, Function | MediumTest | Level1)
 {
-    sptr<AAFwk::IWantSender> target(new (std::nothrow) WantSender());
+    sptr<AAFwk::IWantSender> target(new (std::nothrow) PendingWantRecord());
     PendingWant pendingWant(target);
     auto target1 = pendingWant.GetTarget();
     EXPECT_EQ(target1, target);
