@@ -1274,8 +1274,8 @@ void FormDataMgr::DeleteFormsByUserId(const int32_t userId, std::vector<int64_t>
     std::vector<int64_t> removedTempForms;
     {
         std::lock_guard<std::mutex> lock(formRecordMutex_);
-        std::map<int64_t, FormRecord>::iterator itFormRecord;
-        for (itFormRecord = formRecords_.begin(); itFormRecord != formRecords_.end(); itFormRecord++) {
+        auto itFormRecord = formRecords_.begin();
+        while (itFormRecord != formRecords_.end()) {
             if (userId == itFormRecord->second.userId) {
                 if (itFormRecord->second.formTempFlg) {
                     removedTempForms.emplace_back(itFormRecord->second.formId);
@@ -1283,7 +1283,7 @@ void FormDataMgr::DeleteFormsByUserId(const int32_t userId, std::vector<int64_t>
                 removedFormIds.emplace_back(itFormRecord->second.formId);
                 itFormRecord = formRecords_.erase(itFormRecord);
             } else {
-                itFormRecord++;
+                ++itFormRecord;
             }
         }
     }
