@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,7 @@
 #include "event_handler.h"
 #include "ohos/aafwk/base/base_types.h"
 #include "pending_want.h"
+#include "pending_want_record.h"
 #include "want.h"
 #define private public
 #define protected public
@@ -53,14 +54,7 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-    class WantSender : public AAFwk::WantSenderStub {
-    public:
-        void Send(SenderInfo &senderInfo) override;
-    };
 };
-
-void WantAgentTest::WantSender::Send(SenderInfo &senderInfo)
-{}
 
 void WantAgentTest::SetUpTestCase(void)
 {}
@@ -92,7 +86,7 @@ HWTEST_F(WantAgentTest, WantAgent_0100, Function | MediumTest | Level1)
  */
 HWTEST_F(WantAgentTest, WantAgent_0200, Function | MediumTest | Level1)
 {
-    sptr<IWantSender> target(new (std::nothrow) WantSender());
+    sptr<IWantSender> target(new (std::nothrow) PendingWantRecord());
     std::shared_ptr<PendingWant> pendingWant = std::make_shared<PendingWant>(target);
     std::shared_ptr<WantAgent> wantAgent = std::make_shared<WantAgent>(pendingWant);
     EXPECT_EQ(wantAgent->GetPendingWant(), pendingWant);
