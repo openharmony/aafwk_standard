@@ -165,7 +165,7 @@ private:
     char* string_ = nullptr;
 };
 
-String operator+(
+inline String operator+(
     /* [in] */ const String& string1,
     /* [in] */ const char* string2)
 {

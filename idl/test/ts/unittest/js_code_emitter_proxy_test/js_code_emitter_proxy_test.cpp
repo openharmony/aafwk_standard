@@ -52,7 +52,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitWriteArrayVariable_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -93,7 +93,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitWriteArrayVariable_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -135,7 +135,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitWriteArrayVariable_003, TestSize.Level1)
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -177,7 +177,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitWriteArrayVariable_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -219,7 +219,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitWriteArrayVariable_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -264,7 +264,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutArrayVariable_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -304,7 +304,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutArrayVariable_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -345,7 +345,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutArrayVariable_003, TestSize.Level1)
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -386,7 +386,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutArrayVariable_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -427,7 +427,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutArrayVariable_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -467,7 +467,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitWriteMethodParameter_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -504,7 +504,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitWriteMethodParameter_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -541,7 +541,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitWriteMethodParameter_003, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -579,7 +579,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitWriteMethodParameter_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -609,7 +609,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitWriteMethodParameter_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -645,7 +645,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadMethodParameter_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -683,7 +683,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadMethodParameter_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -721,7 +721,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadMethodParameter_003, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -760,7 +760,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadMethodParameter_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -790,7 +790,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadMethodParameter_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT2.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -824,7 +824,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutVariable_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -863,7 +863,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutVariable_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -903,7 +903,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutVariable_003, TestSize.Level1)
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -943,7 +943,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutVariable_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -974,7 +974,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutVariable_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT2.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -994,7 +994,6 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitReadOutVariable_005, TestSize.Level1)
     EXPECT_NE(data.find("readLongArray"), std::string::npos);
     EXPECT_NE(data.find("readFloatArray"), std::string::npos);
     EXPECT_NE(data.find("readStringArray"), std::string::npos);
-
 }
 
 /*
@@ -1010,7 +1009,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitLicense_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -1036,7 +1035,7 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitLicense_002, TestSize.Level1)
         NORMAL_TYPE_IN_IDL_CONTENT.c_str(), fileLicense), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
@@ -1062,11 +1061,10 @@ HWTEST_F(JsCodeEmitterProxyTest, EmitType_001, TestSize.Level1)
         NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
-    
-     StringBuilder stringBuilder;
+    StringBuilder stringBuilder;
     for (int index = 0; index < jsCodeGen_->metaInterface_->methodNumber_; index++) {
         MetaMethod* metaMethod = jsCodeGen_->metaInterface_->methods_[index];
         for (int parameterIndex = 0; parameterIndex < metaMethod->parameterNumber_; parameterIndex++) {
@@ -1103,7 +1101,7 @@ HWTEST_F(JsCodeEmitterProxyTest, FileName_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     String param1;

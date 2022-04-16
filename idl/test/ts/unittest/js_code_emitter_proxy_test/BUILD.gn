@@ -79,7 +79,6 @@ idl_common_sources += [
 
 module_output_path = "idl/ts_unittest"
 ohos_unittest("js_code_emitter_proxy_test") {
-
   module_out_path = module_output_path
 
   configs = [ ":idl_unittest_test_config" ]
@@ -90,7 +89,7 @@ ohos_unittest("js_code_emitter_proxy_test") {
   deps = [
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utilsecurec"
+    "//utils/native/base:utilsecurec",
   ]
 }
 

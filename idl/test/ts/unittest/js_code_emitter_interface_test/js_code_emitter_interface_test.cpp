@@ -55,7 +55,7 @@ HWTEST_F(JsCodeEmitterInterfaceTest, CheckInterfaceType_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), UNKNOW_TYPE_CASE1_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     EXPECT_FALSE(jsCodeGen_->CheckInterfaceType());
@@ -74,7 +74,7 @@ HWTEST_F(JsCodeEmitterInterfaceTest, CheckInterfaceType_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), UNKNOW_TYPE_CASE2_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     EXPECT_FALSE(jsCodeGen_->CheckInterfaceType());
@@ -93,7 +93,7 @@ HWTEST_F(JsCodeEmitterInterfaceTest, CheckInterfaceType_003, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), UNKNOW_TYPE_CASE3_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     EXPECT_FALSE(jsCodeGen_->CheckInterfaceType());
@@ -112,7 +112,7 @@ HWTEST_F(JsCodeEmitterInterfaceTest, CheckInterfaceType_004, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), UNKNOW_TYPE_CASE4_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     EXPECT_FALSE(jsCodeGen_->CheckInterfaceType());
@@ -131,7 +131,7 @@ HWTEST_F(JsCodeEmitterInterfaceTest, CheckInterfaceType_005, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), UNKNOW_TYPE_CASE5_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     EXPECT_FALSE(jsCodeGen_->CheckInterfaceType());
@@ -150,7 +150,7 @@ HWTEST_F(JsCodeEmitterInterfaceTest, CheckInterfaceType_006, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), UNKNOW_TYPE_CASE6_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     EXPECT_FALSE(jsCodeGen_->CheckInterfaceType());
@@ -169,7 +169,7 @@ HWTEST_F(JsCodeEmitterInterfaceTest, CheckInterfaceType_007, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), UNKNOW_TYPE_CASE7_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     EXPECT_FALSE(jsCodeGen_->CheckInterfaceType());
@@ -188,7 +188,7 @@ HWTEST_F(JsCodeEmitterInterfaceTest, CheckInterfaceType_008, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), UNKNOW_TYPE_CASE8_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     EXPECT_FALSE(jsCodeGen_->CheckInterfaceType());
@@ -207,7 +207,7 @@ HWTEST_F(JsCodeEmitterInterfaceTest, CheckInterfaceType_009, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     EXPECT_TRUE(jsCodeGen_->CheckInterfaceType());
@@ -226,16 +226,13 @@ HWTEST_F(JsCodeEmitterInterfaceTest, EmitInterfaceImports_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
+    char** argv = const_cast<char **>(argvArray);
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(jsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     jsCodeGen_->EmitInterfaceImports(stringBuilder);
     EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
 }
-
-
-
 }  // namespace UnitTest
 }  // namespace Idl
 }  // namespace OHOS
