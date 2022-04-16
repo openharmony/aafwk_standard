@@ -250,6 +250,11 @@ void FormProviderData::SetImageDataState(int32_t imageDataState)
 void FormProviderData::SetImageDataMap(std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap)
 {
     imageDataMap_ = imageDataMap;
+    if (!imageDataMap.empty()) {
+        imageDataState_ = IMAGE_DATA_STATE_ADDED;
+    } else {
+        imageDataState_ = IMAGE_DATA_STATE_NO_OPERATION;
+    }
 }
 
 /**

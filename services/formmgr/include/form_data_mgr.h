@@ -337,13 +337,6 @@ public:
         std::map<int64_t, bool> &foundFormsMap);
 
     /**
-     * @brief Update form for host clients.
-     * @param formId The Id of the form.
-     * @param formProviderInfo FormProviderInfo object
-     */
-    void UpdateFormProviderInfo(const int64_t formId, const FormProviderInfo &formProviderInfo);
-
-    /**
      * @brief delete forms by userId.
      *
      * @param userId user ID.

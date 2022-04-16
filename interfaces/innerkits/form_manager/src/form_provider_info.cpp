@@ -46,6 +46,23 @@ void FormProviderInfo::SetFormDataString(std::string &dataString)
     jsBindingData_.SetDataString(dataString);
 }
 /**
+ * @brief Updates imageDataMap in this {@code FormProviderData} object.
+ * @param imageDataMap Indicates the imageDataMap to update.
+ */
+void FormProviderInfo::SetImageDataMap(std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap)
+{
+    jsBindingData_.SetImageDataMap(imageDataMap);
+}
+
+/**
+ * @brief Obtains the imageDataMap stored in this {@code FormProviderData} object.
+ * @return Returns the map that contains shared image data.
+ */
+std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> FormProviderInfo::GetImageDataMap() const
+{
+    return jsBindingData_.GetImageDataMap();
+}
+/**
  * @brief Merge new data to FormProviderData.
  * @param addJsonData data to merge to FormProviderData
  */
