@@ -233,7 +233,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0300, TestSize.Level1)
         .isSystemApp = false,
     };
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, params, wantSenderInfo, nullptr), nullptr);
+    EXPECT_NE(pendingManager_->GetWantSender(callingUid, params, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
