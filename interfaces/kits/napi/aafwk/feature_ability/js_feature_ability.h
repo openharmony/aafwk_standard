@@ -37,6 +37,7 @@ public:
     static void Finalizer(NativeEngine* engine, void* data, void* hint);
     static NativeValue* CreateJsFeatureAbility(NativeEngine &engine);
     static NativeValue* StartAbility(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* StartAbilityForResult(NativeEngine* engine, NativeCallbackInfo* info);
 private:
     Ability* GetAbility(napi_env env);
     Want GetWant(DistributeReqParam &requestParam);
@@ -45,6 +46,9 @@ private:
     static NativeValue* CreateJsResult(NativeEngine &engine, int32_t errCode, const std::string &message);
     void GetExtraParams(DistributeReqParam &requestParam, Want &want);
     NativeValue* OnStartAbility(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue* OnStartAbilityForResult(NativeEngine &engine, NativeCallbackInfo &info);
+
+    int requestCode_ = 0;
 };
 
 NativeValue* JsFeatureAbilityInit(NativeEngine* engine, NativeValue* exportObj);

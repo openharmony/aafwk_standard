@@ -37,6 +37,12 @@ NativeValue* JsFeatureAbility::StartAbility(NativeEngine* engine, NativeCallback
     return (me != nullptr) ? me->OnStartAbility(*engine, *info) : nullptr;
 }
 
+NativeValue* JsFeatureAbility::StartAbilityForResult(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    JsFeatureAbility* me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
+    return (me != nullptr) ? me->OnStartAbilityForResult(*engine, *info) : nullptr;
+}
+
 NativeValue* JsFeatureAbility::OnStartAbility(NativeEngine &engine, NativeCallbackInfo &info)
 {
     HILOG_INFO("%{public}s is called", __FUNCTION__);
@@ -62,6 +68,40 @@ NativeValue* JsFeatureAbility::OnStartAbility(NativeEngine &engine, NativeCallba
     AsyncTask::CompleteCallback complete =
         [want, ability](NativeEngine &engine, AsyncTask &task, int32_t status) {
             auto errcode = ability->StartAbility(want);
+            task.Resolve(engine, JsFeatureAbility::CreateJsResult(engine, errcode, "Start Ability failed."));
+        };
+
+    NativeValue* result = nullptr;
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, nullptr, nullptr, std::move(complete), &result));
+    return result;
+}
+
+NativeValue* JsFeatureAbility::OnStartAbilityForResult(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    HILOG_INFO("%{public}s is called", __FUNCTION__);
+    if (info.argc != 1) {
+        HILOG_ERROR("Params not match");
+        return engine.CreateUndefined();
+    }
+    Ability* ability = GetAbility(reinterpret_cast<napi_env>(&engine));
+    if (ability == nullptr) {
+        HILOG_ERROR("ability is nullptr");
+        return engine.CreateUndefined();
+    }
+
+    DistributeReqParam requestParam;
+    if (!UnWrapRequestParams(reinterpret_cast<napi_env>(&engine), reinterpret_cast<napi_value>(info.argv[0]),
+        requestParam)) {
+        HILOG_ERROR("unwrap request params failed");
+        return engine.CreateUndefined();
+    }
+
+    Want want = GetWant(requestParam);
+    requestCode_ = (requestCode_ == INT_MAX) ? 0 : (requestCode_ + 1);
+    AsyncTask::CompleteCallback complete =
+        [want, ability, requestCode = requestCode_](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            auto errcode = ability->StartAbilityForResult(want, requestCode);
             task.Resolve(engine, JsFeatureAbility::CreateJsResult(engine, errcode, "Start Ability failed."));
         };
 
@@ -262,6 +302,7 @@ NativeValue* JsFeatureAbility::CreateJsFeatureAbility(NativeEngine &engine)
     object->SetNativePointer(jsFeatureAbility.release(), JsFeatureAbility::Finalizer, nullptr);
 
     BindNativeFunction(engine, *object, "startAbility", JsFeatureAbility::StartAbility);
+    BindNativeFunction(engine, *object, "startAbilityForResult", JsFeatureAbility::StartAbilityForResult);
 
     return objValue;
 }
