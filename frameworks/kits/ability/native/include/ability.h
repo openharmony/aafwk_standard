@@ -991,9 +991,9 @@ public:
     bool StopAbility(const AAFwk::Want &want) override;
 
     /**
-     * @brief Release the window and ability.
+     * @brief Release the ability instance.
      */
-    void Destroy();
+    void DestroyInstance();
 
     /**
      * @brief Posts a scheduled Runnable task to a new non-UI thread.
