@@ -411,10 +411,11 @@ ErrCode FormMgrService::Init()
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_ABILITY_UPDATED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
-        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_UID_REMOVED);
+        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED);
         // init TimerReceiver
         EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
         formSysEventReceiver_ = std::make_shared<FormSysEventReceiver>(subscribeInfo);
+        formSysEventReceiver_->SetEventHandler(handler_);
         EventFwk::CommonEventManager::SubscribeCommonEvent(formSysEventReceiver_);
     }
     FormDbCache::GetInstance().Start();
