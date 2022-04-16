@@ -71,11 +71,6 @@ namespace OHOS {
 namespace AAFwk {
 namespace {
 const int32_t MIN_ARGS_SIZE = 1;
-const int32_t MID_ARGS_SIZE = 2;
-const int32_t MAX_ARGS_SIZE = 3;
-const int32_t FIRST_PARAM = 0;
-const int32_t SECOND_PARAM = 1;
-const int32_t THIRD_PARAM = 2;
 
 const std::string ARGS_ABILITY = "-a";
 const std::string ARGS_MISSION_LIST = "-l";
@@ -1729,6 +1724,7 @@ void AbilityManagerService::DumpSysAbilityInner(
 void AbilityManagerService::DumpSysStateInner(
     const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
 {
+    HILOG_INFO("DumpSysStateInner begin:%{public}s", args.c_str());
     std::shared_ptr<AbilityConnectManager> targetManager;
 
     if (isUserID) {
@@ -1756,7 +1752,9 @@ void AbilityManagerService::DumpSysStateInner(
     } else if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {
         targetManager->DumpState(info, isClient);
     } else {
-        info.emplace_back("error: invalid argument, please see 'aa dump -h'.");
+        HILOG_INFO("uri = %{public}s", argList[1].c_str());
+        std::vector<std::string> params(argList.begin() + MIN_DUMP_ARGUMENT_NUM, argList.end());
+        targetManager->DumpStateByUri(info, isClient, argList[1], params);
     }
 }
 
@@ -1979,6 +1977,7 @@ void AbilityManagerService::DumpState(const std::string &args, std::vector<std::
 void AbilityManagerService::DumpSysState(
     const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
 {
+    HILOG_DEBUG("%{public}s begin", __func__);
     std::vector<std::string> argList;
     SplitStr(args, " ", argList);
     if (argList.empty()) {
@@ -4295,24 +4294,18 @@ int AbilityManagerService::BlockAppService()
 
 int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
 {
+    HILOG_DEBUG("Dump begin fd: %{public}d", fd);
     std::vector<std::string> argsStr;
     for (auto arg : args) {
         argsStr.emplace_back(Str16ToStr8(arg));
     }
     int32_t argsSize = static_cast<int32_t>(argsStr.size());
-    if (argsSize < MIN_ARGS_SIZE || argsSize > MAX_ARGS_SIZE) {
+    if (argsSize < MIN_ARGS_SIZE) {
         return ERR_AAFWK_HIDUMP_INVALID_ARGS;
     }
     ErrCode errCode = ERR_OK;
     std::string result;
-    if (argsSize == MIN_ARGS_SIZE) {
-        errCode = ProcessOneParam(argsStr[FIRST_PARAM], result);
-    } else if (argsSize == MID_ARGS_SIZE) {
-        errCode = ProcessTwoParam(argsStr[FIRST_PARAM], argsStr[SECOND_PARAM], result);
-    } else {
-        errCode = ProcessThreeParam(argsStr[FIRST_PARAM], argsStr[SECOND_PARAM], argsStr[THIRD_PARAM], result);
-    }
-
+    errCode = ProcessMultiParam(argsStr, result);
     if (errCode == ERR_AAFWK_HIDUMP_INVALID_ARGS) {
         ShowIllealInfomation(result);
     }
@@ -4322,7 +4315,7 @@ int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
         HILOG_ERROR("dprintf error");
         return ERR_AAFWK_HIDUMP_ERROR;
     }
-
+    HILOG_DEBUG("Dump end");
     return errCode;
 }
 
@@ -4397,6 +4390,54 @@ ErrCode AbilityManagerService::ProcessThreeParam(const std::string& firstParam, 
     std::string cmd = "-a ";
     std::vector<std::string> dumpResults;
     DumpSysState(cmd, dumpResults, false, true, userID);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerService::ProcessMultiParam(std::vector<std::string> &argsStr, std::string &result)
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+    bool isClient = false;
+    bool isUser = false;
+    int userID = DEFAULT_INVAL_VALUE;
+    std::vector<std::string>::iterator it;
+    for (it = argsStr.begin(); it != argsStr.end();) {
+        if (*it == ARGS_CLIENT) {
+            isClient = true;
+            it = argsStr.erase(it);
+            continue;
+        }
+        if (*it == ARGS_USER_ID) {
+            it = argsStr.erase(it);
+            if (it == argsStr.end()) {
+                HILOG_ERROR("ARGS_USER_ID id invalid");
+                return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+            }
+            (void)StrToInt(*it, userID);
+            if (userID < 0) {
+                HILOG_ERROR("ARGS_USER_ID id invalid");
+                return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+            }
+            isUser = true;
+            it = argsStr.erase(it);
+            continue;
+        }
+        it++;
+    }
+    std::string cmd;
+    for (unsigned int i = 0; i < argsStr.size(); i++) {
+        cmd.append(argsStr[i]);
+        if (i != argsStr.size() - 1) {
+            cmd.append(" ");
+        }
+    }
+    HILOG_INFO("%{public}s, isClient:%{public}d, userID is : %{public}d, cmd is : %{public}s",
+        __func__, isClient, userID, cmd.c_str());
+    
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, isClient, isUser, userID);
     for (auto it : dumpResults) {
         result += it + "\n";
     }

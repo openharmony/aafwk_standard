@@ -1102,6 +1102,7 @@ void AbilityConnectManager::HandleAbilityDiedTask(
 
 void AbilityConnectManager::DumpState(std::vector<std::string> &info, bool isClient, const std::string &args) const
 {
+    HILOG_INFO("DumpState args:%{public}s.", args.c_str());
     if (!args.empty()) {
         auto it = std::find_if(serviceMap_.begin(), serviceMap_.end(), [&args](const auto &service) {
             return service.first.compare(args) == 0;
@@ -1119,6 +1120,21 @@ void AbilityConnectManager::DumpState(std::vector<std::string> &info, bool isCli
             info.emplace_back("    uri [" + service.first + "]");
             service.second->DumpService(info, isClient);
         }
+    }
+}
+
+void AbilityConnectManager::DumpStateByUri(std::vector<std::string> &info, bool isClient, const std::string &args,
+    std::vector<std::string> &params) const
+{
+    HILOG_INFO("DumpState args:%{public}s, params size: %{public}zu", args.c_str(), params.size());
+    auto it = std::find_if(serviceMap_.begin(), serviceMap_.end(), [&args](const auto &service) {
+        return service.first.compare(args) == 0;
+    });
+    if (it != serviceMap_.end()) {
+        info.emplace_back("uri [ " + it->first + " ]");
+        it->second->DumpService(info, params, isClient);
+    } else {
+        info.emplace_back(args + ": Nothing to dump.");
     }
 }
 

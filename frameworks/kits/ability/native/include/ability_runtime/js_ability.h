@@ -65,6 +65,14 @@ public:
 
     sptr<IRemoteObject> CallRequest() override;
 
+    /**
+     * @brief dump ability info
+     *
+     * @param params dump params that indicate different dump targets
+     * @param info dump ability info
+     */
+    virtual void Dump(const std::vector<std::string> &params, std::vector<std::string> &info) override;
+
 protected:
 #ifdef SUPPORT_GRAPHICS
     void DoOnForeground(const Want &want) override;
