@@ -76,7 +76,6 @@ private:
      * @brief Run query form info command.
      */
     ErrCode RunAsQueryCommand();
-    // ErrCode RunAsDumpCommand();
 
     /**
      * @brief Query all of form storage infos.
