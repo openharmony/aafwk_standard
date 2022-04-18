@@ -558,6 +558,604 @@ HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubConstructor_005, TestSize.Level
     EXPECT_NE(data.find("constructor"), std::string::npos);
     EXPECT_NE(data.find("super(des)"), std::string::npos);
 }
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceStubMethodImpls
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceStubMethodImpls validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubMethodImpls_001, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    tsCodeGen_->EmitInterfaceStubMethodImpls(stringBuilder, CodeEmitter::TAB);
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("onRemoteRequest(code: number, data, reply, option)"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeVoid"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeShort"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeByte"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeInt"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeLong"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeFloat"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeString"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeBoolean"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeShortArray"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeMySequenceable"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeInterface"), std::string::npos);
+    EXPECT_NE(data.find("voidMap"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceStubMethodImpls
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceStubMethodImpls validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubMethodImpls_002, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    tsCodeGen_->EmitInterfaceStubMethodImpls(stringBuilder, CodeEmitter::TAB);
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("onRemoteRequest(code: number, data, reply, option)"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeVoid"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeShort"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeByte"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeInt"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeLong"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeFloat"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeString"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeBoolean"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeShortArray"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeMySequenceable"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeInterface"), std::string::npos);
+    EXPECT_NE(data.find("voidMap"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceStubMethodImpls
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceStubMethodImpls validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubMethodImpls_003, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    tsCodeGen_->EmitInterfaceStubMethodImpls(stringBuilder, CodeEmitter::TAB);
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("onRemoteRequest(code: number, data, reply, option)"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeVoid"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeShort"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeByte"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeInt"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeLong"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeFloat"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeString"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeBoolean"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeShortArray"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeMySequenceable"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeInterface"), std::string::npos);
+    EXPECT_NE(data.find("voidMap"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceStubMethodImpls
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceStubMethodImpls validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubMethodImpls_004, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    tsCodeGen_->EmitInterfaceStubMethodImpls(stringBuilder, CodeEmitter::TAB);
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("onRemoteRequest(code: number, data, reply, option)"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeVoid"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeShort"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeByte"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeInt"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeLong"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeFloat"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeString"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeBoolean"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeShortArray"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeMySequenceable"), std::string::npos);
+    EXPECT_NE(data.find("voidMap"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceStubMethodImpls
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceStubMethodImpls validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubMethodImpls_005, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    tsCodeGen_->EmitInterfaceStubMethodImpls(stringBuilder, CodeEmitter::TAB);
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("onRemoteRequest(code: number, data, reply, option)"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeShort"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeByte"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeInt"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeLong"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeFloat"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeString"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeBoolean"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeShortArray"), std::string::npos);
+    EXPECT_NE(data.find("voidParameterTypeMySequenceable"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceStubMethodImpl
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceStubMethodImpl validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubMethodImpl_001, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
+        MetaMethod* metaMethod = tsCodeGen_->metaInterface_->methods_[index];
+        tsCodeGen_->EmitInterfaceStubMethodImpl(metaMethod, index, stringBuilder, CodeEmitter::TAB);
+    }
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_VOID"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_SHORT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_BYTE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_INT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_LONG"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_FLOAT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_STRING"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_DOUBLE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_BOOLEAN"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_SHORT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_INTERFACE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_MAP"), std::string::npos);
+    EXPECT_NE(data.find("reply.writeInt"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceStubMethodImpl
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceStubMethodImpl validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubMethodImpl_002, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
+        MetaMethod* metaMethod = tsCodeGen_->metaInterface_->methods_[index];
+        tsCodeGen_->EmitInterfaceStubMethodImpl(metaMethod, index, stringBuilder, CodeEmitter::TAB);
+    }
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_VOID"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_SHORT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_BYTE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_INT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_LONG"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_FLOAT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_STRING"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_DOUBLE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_BOOLEAN"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_SHORT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_INTERFACE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_MAP"), std::string::npos);
+    EXPECT_NE(data.find("reply.writeInt"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceStubMethodImpl
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceStubMethodImpl validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubMethodImpl_003, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
+        MetaMethod* metaMethod = tsCodeGen_->metaInterface_->methods_[index];
+        tsCodeGen_->EmitInterfaceStubMethodImpl(metaMethod, index, stringBuilder, CodeEmitter::TAB);
+    }
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_VOID"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_SHORT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_BYTE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_INT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_LONG"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_FLOAT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_STRING"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_DOUBLE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_BOOLEAN"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_SHORT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_INTERFACE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_MAP"), std::string::npos);
+    EXPECT_NE(data.find("reply.writeInt"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceStubMethodImpl
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceStubMethodImpl validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubMethodImpl_004, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
+        MetaMethod* metaMethod = tsCodeGen_->metaInterface_->methods_[index];
+        tsCodeGen_->EmitInterfaceStubMethodImpl(metaMethod, index, stringBuilder, CodeEmitter::TAB);
+    }
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_VOID"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_SHORT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_BYTE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_INT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_LONG"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_FLOAT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_STRING"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_DOUBLE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_BOOLEAN"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_SHORT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_MAP"), std::string::npos);
+    EXPECT_NE(data.find("reply.writeInt"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceStubMethodImpl
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceStubMethodImpl validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceStubMethodImpl_005, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
+        MetaMethod* metaMethod = tsCodeGen_->metaInterface_->methods_[index];
+        tsCodeGen_->EmitInterfaceStubMethodImpl(metaMethod, index, stringBuilder, CodeEmitter::TAB);
+    }
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_SHORT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_BYTE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_INT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_LONG"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_FLOAT"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_STRING"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_DOUBLE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_BOOLEAN"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_SHORT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE"), std::string::npos);
+    EXPECT_NE(data.find("IdlTestStub.COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("reply.writeInt"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceMethodCommands
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceMethodCommands validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceMethodCommands_001, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    tsCodeGen_->EmitInterfaceMethodCommands(stringBuilder);
+
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_VOID"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_SHORT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BYTE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_LONG"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_FLOAT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_STRING"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_DOUBLE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BOOLEAN"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_SHORT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BYTE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_LONG_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_FLOAT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_STRING_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_DOUBLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BOOLEAN_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INTERFACE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_MAP"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceMethodCommands
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceMethodCommands validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceMethodCommands_002, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    tsCodeGen_->EmitInterfaceMethodCommands(stringBuilder);
+
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_VOID"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_SHORT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BYTE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_LONG"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_FLOAT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_STRING"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_DOUBLE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BOOLEAN"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_SHORT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BYTE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_LONG_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_FLOAT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_STRING_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_DOUBLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BOOLEAN_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INTERFACE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_MAP"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceMethodCommands
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceMethodCommands validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceMethodCommands_003, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    tsCodeGen_->EmitInterfaceMethodCommands(stringBuilder);
+
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_VOID"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_SHORT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BYTE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_LONG"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_FLOAT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_STRING"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_DOUBLE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BOOLEAN"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_SHORT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BYTE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_LONG_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_FLOAT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_STRING_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_DOUBLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BOOLEAN_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INTERFACE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_MAP"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceMethodCommands
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceMethodCommands validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceMethodCommands_004, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    tsCodeGen_->EmitInterfaceMethodCommands(stringBuilder);
+
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_VOID"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_SHORT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BYTE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_LONG"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_FLOAT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_STRING"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_DOUBLE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BOOLEAN"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_SHORT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BYTE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_LONG_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_FLOAT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_STRING_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_DOUBLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BOOLEAN_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_MAP"), std::string::npos);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitInterfaceMethodCommands
+ * SubFunction: NA
+ * FunctionPoints: EmitInterfaceMethodCommands validates the array type
+ * EnvConditions: NA
+ * CaseDescription: Array type keyword generated successfully
+ */
+HWTEST_F(TsCodeEmitterStubTest, EmitInterfaceMethodCommands_005, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = (char**)argvArray;
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitInterface();
+    tsCodeGen_->EmitInterfaceMethodCommands(stringBuilder);
+
+    std::string data(stringBuilder.ToString().string());
+    EXPECT_TRUE(data.length());
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_SHORT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BYTE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_LONG"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_FLOAT"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_STRING"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_DOUBLE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BOOLEAN"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_SHORT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BYTE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_INT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_LONG_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_FLOAT_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_STRING_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_DOUBLE_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_BOOLEAN_ARRAY"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE"), std::string::npos);
+    EXPECT_NE(data.find("static readonly COMMAND_VOID_PARAMETER_TYPE_MY_SEQUENCEABLE_ARRAY"), std::string::npos);
+}
 }  // namespace UnitTest
 }  // namespace Idl
 }  // namespace OHOS

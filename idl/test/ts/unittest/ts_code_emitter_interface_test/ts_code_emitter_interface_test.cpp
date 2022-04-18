@@ -944,7 +944,7 @@ HWTEST_F(TsCodeEmitterInterfaceTest, EmitInterfaceMethodParameter_004, TestSize.
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     MetaParameter mp = {0};
-    mp.name_ = new (std::nothrow) char[]{"name"};
+    mp.name_ = new (std::nothrow) char[] {"name"};
     tsCodeGen_->EmitInterfaceMethodParameter(&mp, stringBuilder, CodeEmitter::TAB);
     EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
     if (mp.name_ != nullptr) {
@@ -1505,6 +1505,741 @@ HWTEST_F(TsCodeEmitterInterfaceTest, EmitInterface_001, TestSize.Level1)
     EXPECT_NE(data.find("voidParameterTypeShort"), std::string::npos);
     EXPECT_NE(data.find("export type voidParameterTypeShortCallback"), std::string::npos);
     free(fileData);
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_001, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Boolean, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_002, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Char, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_003, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Byte, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_004, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Short, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_005, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Integer, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_006, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Long, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_007, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Float, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_008, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Double, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_009, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::String, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_010, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Sequenceable, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_011, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Interface, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_012, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::List, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_013, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Map, 0, 1, new (std::nothrow) int[2] {0}};
+    tsCodeGen_->metaComponent_->types_[mt.nestedTypeIndexes_[0]]->kind_ = TypeKind::String;
+    tsCodeGen_->metaComponent_->types_[mt.nestedTypeIndexes_[1]]->kind_ = TypeKind::String;
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete[] mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitWriteVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitWriteVariable_014, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Array, 0, 1, new (std::nothrow) int(0)};
+    tsCodeGen_->metaComponent_->types_[mt.nestedTypeIndexes_[0]]->kind_ = TypeKind::Boolean;
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitWriteVariable("parcelName", "name", &mt, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_001, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Boolean, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_002, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Char, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_003, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Byte, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_004, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Short, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_005, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Integer, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_006, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Long, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_007, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Float, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_008, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Double, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_009, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::String, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_010, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Sequenceable, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_011, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Interface, 0, 1, new (std::nothrow) int(0)};
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_012, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Map, 0, 1, new (std::nothrow) int[2] {0}};
+    tsCodeGen_->metaComponent_->types_[mt.nestedTypeIndexes_[0]]->kind_ = TypeKind::String;
+    tsCodeGen_->metaComponent_->types_[mt.nestedTypeIndexes_[1]]->kind_ = TypeKind::String;
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete[] mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_013, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Array, 0, 1, new (std::nothrow) int(0)};
+    tsCodeGen_->metaComponent_->types_[mt.nestedTypeIndexes_[0]]->kind_ = TypeKind::Boolean;
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, ATTR_MASK + ATTR_OUT, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
+}
+
+/*
+ * Feature: idl
+ * Function: EmitReadVariable
+ * SubFunction: NA
+ * FunctionPoints:  For generating impotr code.
+ * EnvConditions: NA
+ * CaseDescription: The string in EmitInterfaceMethodExportCallback is not empty.
+ */
+HWTEST_F(TsCodeEmitterInterfaceTest, EmitReadVariable_014, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    MetaType mt = {TypeKind::Array, 0, 1, new (std::nothrow) int(0)};
+    tsCodeGen_->metaComponent_->types_[mt.nestedTypeIndexes_[0]]->kind_ = TypeKind::Boolean;
+    StringBuilder stringBuilder;
+    tsCodeGen_->EmitReadVariable("parcelName", "name", &mt, 0, stringBuilder, CodeEmitter::TAB);
+    EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
+    if (mt.nestedTypeIndexes_ != nullptr) {
+        delete mt.nestedTypeIndexes_;
+        mt.nestedTypeIndexes_ = nullptr;
+    }
 }
 }  // namespace UnitTest
 }  // namespace Idl

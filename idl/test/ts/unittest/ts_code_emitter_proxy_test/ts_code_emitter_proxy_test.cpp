@@ -15,7 +15,7 @@
 
 #include <gtest/gtest.h>
 #include "idl_common.h"
-#include <iostream>
+#include <string.h>
 
 using namespace testing::ext;
 using namespace OHOS::Idl::TestCommon;
@@ -2395,6 +2395,291 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxy_006, TestSize.Level1)
     EXPECT_NE(data.find("voidParameterTypeShort"), std::string::npos);
     EXPECT_NE(data.find("this.proxy.sendRequest"), std::string::npos);
     free(fileData);
+}
+
+/*
+ * Feature: idl
+ * Function: MethodName
+ * SubFunction: NA
+ * FunctionPoints: Method Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify Method Name.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, MethodName_001, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("voidOrderReturnMap");
+    String relustString = tsCodeGen_->MethodName(inPutString);
+    EXPECT_EQ(std::string(relustString.string()), std::string(inPutString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: MethodName
+ * SubFunction: NA
+ * FunctionPoints: Method Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify Method Name.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, MethodName_002, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("VoidOrderReturnMap");
+    const String expectString("voidOrderReturnMap");
+    String relustString = tsCodeGen_->MethodName(inPutString);
+    EXPECT_EQ(std::string(relustString.string()), std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: MethodName
+ * SubFunction: NA
+ * FunctionPoints: Method Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify Method Name.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, MethodName_003, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("VVidOrderReturnMap");
+    const String expectString("vVidOrderReturnMap");
+    String relustString = tsCodeGen_->MethodName(inPutString);
+    EXPECT_EQ(std::string(relustString.string()), std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: MethodName
+ * SubFunction: NA
+ * FunctionPoints: Method Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify Method Name.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, MethodName_004, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("VVid1254789");
+    const String expectString("vVid1254789");
+    String relustString = tsCodeGen_->MethodName(inPutString);
+    EXPECT_EQ(std::string(relustString.string()), std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: ConstantName
+ * SubFunction: NA
+ * FunctionPoints: Constant Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify Constant Name.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, ConstantName_001, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("VVid1254789");
+    const String expectString("VVID1254789");
+    String relustString = tsCodeGen_->ConstantName(inPutString);
+    EXPECT_EQ(std::string(relustString.string()), std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: ConstantName
+ * SubFunction: NA
+ * FunctionPoints: Constant Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify Constant Name.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, ConstantName_002, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("VVidVide");
+    const String expectString("VVID_VIDE");
+    String relustString = tsCodeGen_->ConstantName(inPutString);
+    EXPECT_EQ(std::string(relustString.string()), std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: ConstantName
+ * SubFunction: NA
+ * FunctionPoints: Constant Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify Constant Name.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, ConstantName_003, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("vvidVide_V");
+    const String expectString("VVID_VIDE__V");
+    String relustString = tsCodeGen_->ConstantName(inPutString);
+    EXPECT_EQ(std::string(relustString.string()), std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: StubName
+ * SubFunction: NA
+ * FunctionPoints: Stub Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify Stub Name.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, StubName_001, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("IVid1254789");
+    const String expectString("Vid1254789Stub");
+    String relustString = tsCodeGen_->StubName(inPutString);
+    EXPECT_EQ(std::string(relustString.string()), std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: StubName
+ * SubFunction: NA
+ * FunctionPoints: Stub Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify Stub Name.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, StubName_002, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("iVid1254789");
+    const String expectString("iVid1254789Stub");
+    String relustString = tsCodeGen_->StubName(inPutString);
+    EXPECT_EQ(std::string(relustString.string()), std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: StubName
+ * SubFunction: NA
+ * FunctionPoints: Stub Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify Stub Name.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, StubName_003, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("Vid1254789");
+    const String expectString("Vid1254789Stub");
+    String relustString = tsCodeGen_->StubName(inPutString);
+    EXPECT_EQ(std::string(relustString.string()), std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: UnderlineAdded
+ * SubFunction: NA
+ * FunctionPoints: UnderlineAdded Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify UnderlineAdded.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, UnderlineAdded_001, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("Vid1254789");
+    const String expectString("_Vid1254789");
+    std::string relustString = tsCodeGen_->UnderlineAdded(inPutString);
+    EXPECT_EQ(relustString, std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: UnderlineAdded
+ * SubFunction: NA
+ * FunctionPoints: UnderlineAdded Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify UnderlineAdded.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, UnderlineAdded_002, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("iVid1254789");
+    const String expectString("_iVid1254789");
+    std::string relustString = tsCodeGen_->UnderlineAdded(inPutString);
+    EXPECT_EQ(relustString, std::string(expectString.string()));
+}
+
+/*
+ * Feature: idl
+ * Function: UnderlineAdded
+ * SubFunction: NA
+ * FunctionPoints: UnderlineAdded Name.
+ * EnvConditions: NA
+ * CaseDescription: Verify UnderlineAdded.
+ */
+HWTEST_F(TsCodeEmitterProxyTest, UnderlineAdded_003, TestSize.Level1)
+{
+    EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
+    int argc = 6;
+    const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
+    char** argv = const_cast<char **>(argvArray);
+    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    EXPECT_NE(tsCodeGen_, nullptr);
+    const String inPutString("_Vid1254789");
+    const String expectString("__Vid1254789");
+    std::string relustString = tsCodeGen_->UnderlineAdded(inPutString);
+    EXPECT_EQ(relustString, std::string(expectString.string()));
 }
 }
 }
