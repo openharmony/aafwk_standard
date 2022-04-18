@@ -225,6 +225,13 @@ public:
      */
     std::shared_ptr<AppExecFwk::Configuration> GetConfiguration() const override;
 
+    /**
+     * @brief Obtains the application base directory on the device's internal storage.
+     *
+     * @return Returns the application base directory.
+     */
+    std::string GetBaseDir() const override;
+
 protected:
     sptr<IRemoteObject> token_;
 
@@ -252,7 +259,6 @@ private:
     void InitResourceManager(
         const AppExecFwk::BundleInfo &bundleInfo, const std::shared_ptr<ContextImpl> &appContext) const;
     bool IsCreateBySystemApp() const;
-    std::string GetBaseDir() const;
     int GetCurrentAccountId() const;
     void SetFlags(int64_t flags);
     int GetCurrentActiveAccountId() const;
