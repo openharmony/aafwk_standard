@@ -141,7 +141,7 @@ std::shared_ptr<WantAgent> WantAgentHelper::GetWantAgent(const WantAgentInfo &pa
     WantsInfo wantsInfo;
     wantsInfo.want = *want;
     wantsInfo.resolvedTypes = want->GetType();
-    if (paramsInfo.GetExtraInfo() != nullptr) {
+    if (paramsInfo.GetExtraInfo() != nullptr && !paramsInfo.GetExtraInfo()->IsEmpty()) {
         wantsInfo.want.SetParams(*paramsInfo.GetExtraInfo());
     }
 
