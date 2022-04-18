@@ -656,6 +656,13 @@ ErrCode AbilityManagerClient::RegisterSnapshotHandler(const sptr<ISnapshotHandle
     return abms->RegisterSnapshotHandler(handler);
 }
 
+ErrCode AbilityManagerClient::RegisterWindowHandler(const sptr<IWindowHandler>& handler)
+{
+    auto abms = GetAbilityManager();
+    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    return abms->RegisterWindowHandler(handler);
+}
+
 ErrCode AbilityManagerClient::GetMissionSnapshot(const std::string& deviceId, int32_t missionId,
     MissionSnapshot& snapshot)
 {
