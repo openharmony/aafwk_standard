@@ -24,6 +24,7 @@
 namespace OHOS {
 namespace AbilityRuntime {
 using namespace OHOS::AppExecFwk;
+const std::string RESULT_DATA_TAG = "resultData";
 
 void JsFeatureAbility::Finalizer(NativeEngine* engine, void* data, void* hint)
 {
@@ -41,6 +42,60 @@ NativeValue* JsFeatureAbility::StartAbilityForResult(NativeEngine* engine, Nativ
 {
     JsFeatureAbility* me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
     return (me != nullptr) ? me->OnStartAbilityForResult(*engine, *info) : nullptr;
+}
+
+NativeValue *JsFeatureAbility::FinishWithResult(NativeEngine *engine, NativeCallbackInfo *info)
+{
+    JsFeatureAbility *me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
+    return (me != nullptr) ? me->OnFinishWithResult(*engine, *info) : nullptr;
+}
+
+NativeValue *JsFeatureAbility::GetDeviceList(NativeEngine *engine, NativeCallbackInfo *info)
+{
+    JsFeatureAbility *me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
+    return (me != nullptr) ? me->OnGetDeviceList(*engine, *info) : nullptr;
+}
+
+NativeValue *JsFeatureAbility::CallAbility(NativeEngine *engine, NativeCallbackInfo *info)
+{
+    JsFeatureAbility *me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
+    return (me != nullptr) ? me->OnCallAbility(*engine, *info) : nullptr;
+}
+
+NativeValue *JsFeatureAbility::ContinueAbility(NativeEngine *engine, NativeCallbackInfo *info)
+{
+    JsFeatureAbility *me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
+    return (me != nullptr) ? me->OnContinueAbility(*engine, *info) : nullptr;
+}
+
+NativeValue *JsFeatureAbility::SubscribeAbilityEvent(NativeEngine *engine, NativeCallbackInfo *info)
+{
+    JsFeatureAbility *me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
+    return (me != nullptr) ? me->OnSubscribeAbilityEvent(*engine, *info) : nullptr;
+}
+
+NativeValue *JsFeatureAbility::UnsubscribeAbilityEvent(NativeEngine *engine, NativeCallbackInfo *info)
+{
+    JsFeatureAbility *me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
+    return (me != nullptr) ? me->OnUnsubscribeAbilityEvent(*engine, *info) : nullptr;
+}
+
+NativeValue *JsFeatureAbility::SendMsg(NativeEngine *engine, NativeCallbackInfo *info)
+{
+    JsFeatureAbility *me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
+    return (me != nullptr) ? me->OnSendMsg(*engine, *info) : nullptr;
+}
+
+NativeValue *JsFeatureAbility::SubscribeMsg(NativeEngine *engine, NativeCallbackInfo *info)
+{
+    JsFeatureAbility *me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
+    return (me != nullptr) ? me->OnSubscribeMsg(*engine, *info) : nullptr;
+}
+
+NativeValue *JsFeatureAbility::UnsubscribeMsg(NativeEngine *engine, NativeCallbackInfo *info)
+{
+    JsFeatureAbility *me = CheckParamsAndGetThis<JsFeatureAbility>(engine, info);
+    return (me != nullptr) ? me->OnUnsubscribeMsg(*engine, *info) : nullptr;
 }
 
 NativeValue* JsFeatureAbility::OnStartAbility(NativeEngine &engine, NativeCallbackInfo &info)
@@ -109,6 +164,115 @@ NativeValue* JsFeatureAbility::OnStartAbilityForResult(NativeEngine& engine, Nat
     AsyncTask::Schedule(
         engine, CreateAsyncTaskWithLastParam(engine, nullptr, nullptr, std::move(complete), &result));
     return result;
+}
+
+NativeValue *JsFeatureAbility::OnFinishWithResult(NativeEngine &engine, NativeCallbackInfo &info)
+{
+    HILOG_INFO("%{public}s is called", __FUNCTION__);
+    if (info.argc != 1) {
+        HILOG_ERROR("Params not match");
+        return engine.CreateUndefined();
+    }
+
+    Ability *ability = GetAbility(reinterpret_cast<napi_env>(&engine));
+    if (ability == nullptr) {
+        HILOG_ERROR("ability is nullptr");
+        return engine.CreateUndefined();
+    }
+
+    auto env = reinterpret_cast<napi_env>(&engine);
+    auto arg0 = reinterpret_cast<napi_value>(info.argv[0]);
+    if (!IsTypeForNapiValue(env, arg0, napi_object)) {
+        HILOG_ERROR("Params is invalid.");
+        return engine.CreateUndefined();
+    }
+
+    int32_t code = ERR_OK;
+    if (!UnwrapInt32ByPropertyName(env, arg0, "code", code)) {
+        HILOG_ERROR("Failed to get code.");
+        return engine.CreateUndefined();
+    }
+
+    napi_value jsResultObj = GetPropertyValueByPropertyName(env, arg0, "result", napi_object);
+    if (jsResultObj == nullptr) {
+        HILOG_ERROR("Failed to get result.");
+        return engine.CreateUndefined();
+    }
+
+    napi_value globalValue = nullptr;
+    napi_get_global(env, &globalValue);
+    napi_value jsonValue;
+    napi_get_named_property(env, globalValue, "JSON", &jsonValue);
+    napi_value stringifyValue = nullptr;
+    napi_get_named_property(env, jsonValue, "stringify", &stringifyValue);
+    napi_value transValue = nullptr;
+    napi_call_function(env, jsonValue, stringifyValue, 1, &jsResultObj, &transValue);
+    std::string resultStr {};
+    resultStr = UnwrapStringFromJS(env, transValue, "");
+
+    HILOG_DEBUG("code: %{public}d, result:%{public}s", code, resultStr.c_str());
+    Want want;
+    want.SetParam(RESULT_DATA_TAG, resultStr);
+    ability->SetResult(code, want);
+
+    AsyncTask::CompleteCallback complete =
+        [ability](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            auto errCode = ability->TerminateAbility();
+            task.Resolve(engine, JsFeatureAbility::CreateJsResult(engine, errCode, "FinishWithResult failed."));
+        };
+
+    NativeValue *result = nullptr;
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, nullptr, nullptr, std::move(complete), &result));
+    return result;
+}
+
+NativeValue *JsFeatureAbility::OnGetDeviceList(NativeEngine &engine, NativeCallbackInfo &info)
+{
+    HILOG_INFO("%{public}s is called", __FUNCTION__);
+    return engine.CreateUndefined();
+}
+
+NativeValue *JsFeatureAbility::OnCallAbility(NativeEngine &engine, NativeCallbackInfo &info)
+{
+    HILOG_INFO("%{public}s is called", __FUNCTION__);
+    return engine.CreateUndefined();
+}
+
+NativeValue *JsFeatureAbility::OnContinueAbility(NativeEngine &engine, NativeCallbackInfo &info)
+{
+    HILOG_INFO("%{public}s is called", __FUNCTION__);
+    return engine.CreateUndefined();
+}
+
+NativeValue *JsFeatureAbility::OnSubscribeAbilityEvent(NativeEngine &engine, NativeCallbackInfo &info)
+{
+    HILOG_INFO("%{public}s is called", __FUNCTION__);
+    return engine.CreateUndefined();
+}
+
+NativeValue *JsFeatureAbility::OnUnsubscribeAbilityEvent(NativeEngine &engine, NativeCallbackInfo &info)
+{
+    HILOG_INFO("%{public}s is called", __FUNCTION__);
+    return engine.CreateUndefined();
+}
+
+NativeValue *JsFeatureAbility::OnSendMsg(NativeEngine &engine, NativeCallbackInfo &info)
+{
+    HILOG_INFO("%{public}s is called", __FUNCTION__);
+    return engine.CreateUndefined();
+}
+
+NativeValue *JsFeatureAbility::OnSubscribeMsg(NativeEngine &engine, NativeCallbackInfo &info)
+{
+    HILOG_INFO("%{public}s is called", __FUNCTION__);
+    return engine.CreateUndefined();
+}
+
+NativeValue *JsFeatureAbility::OnUnsubscribeMsg(NativeEngine &engine, NativeCallbackInfo &info)
+{
+    HILOG_INFO("%{public}s is called", __FUNCTION__);
+    return engine.CreateUndefined();
 }
 
 Ability* JsFeatureAbility::GetAbility(napi_env env)
@@ -303,6 +467,15 @@ NativeValue* JsFeatureAbility::CreateJsFeatureAbility(NativeEngine &engine)
 
     BindNativeFunction(engine, *object, "startAbility", JsFeatureAbility::StartAbility);
     BindNativeFunction(engine, *object, "startAbilityForResult", JsFeatureAbility::StartAbilityForResult);
+    BindNativeFunction(engine, *object, "finishWithResult", JsFeatureAbility::FinishWithResult);
+    BindNativeFunction(engine, *object, "getDeviceList", JsFeatureAbility::GetDeviceList);
+    BindNativeFunction(engine, *object, "callAbility", JsFeatureAbility::CallAbility);
+    BindNativeFunction(engine, *object, "continueAbility", JsFeatureAbility::ContinueAbility);
+    BindNativeFunction(engine, *object, "subscribeAbilityEvent", JsFeatureAbility::SubscribeAbilityEvent);
+    BindNativeFunction(engine, *object, "unsubscribeAbilityEvent", JsFeatureAbility::UnsubscribeAbilityEvent);
+    BindNativeFunction(engine, *object, "sendMsg", JsFeatureAbility::SendMsg);
+    BindNativeFunction(engine, *object, "subscribeMsg", JsFeatureAbility::SubscribeMsg);
+    BindNativeFunction(engine, *object, "unsubscribeMsg", JsFeatureAbility::UnsubscribeMsg);
 
     return objValue;
 }
