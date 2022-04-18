@@ -167,8 +167,6 @@ std::shared_ptr<ElementName> AbilityContext::GetCallingAbility()
 
 bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbilityConnection> &conn)
 {
-    HILOG_INFO("%{public}s begin.", __func__);
-
     AppExecFwk::AbilityType type = GetAbilityInfoType();
 
     std::shared_ptr<AbilityInfo> abilityInfo = GetAbilityInfo();
@@ -176,6 +174,8 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
         HILOG_ERROR("AbilityContext::ConnectAbility info == nullptr");
         return false;
     }
+
+    HILOG_INFO("Connect ability begin, ability:%{public}s.", abilityInfo->name.c_str());
 
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
         HILOG_ERROR("AbilityContext::ConnectAbility AbilityType = %{public}d", type);
