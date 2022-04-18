@@ -3563,7 +3563,7 @@ sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
     if (abilityInfo_) {
         std::vector<CustomizeData> datas = abilityInfo_->metaData.customizeData;
         for (CustomizeData data : datas) {
-            if (data.name == "ShowOnLockScreen") {
+            if (data.name == SHOW_ON_LOCK_SCREEN) {
                 showOnLockScreen = true;
             }
         }
