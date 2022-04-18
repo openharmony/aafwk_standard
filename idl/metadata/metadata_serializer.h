@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,14 +25,12 @@ namespace Idl {
 
 class MetadataSerializer {
 public:
-    explicit MetadataSerializer(
-        /* [in] */ MetaComponent* mc)
+    explicit MetadataSerializer(MetaComponent* mc)
         : metaComponent_(mc),
           baseAddr_(reinterpret_cast<uintptr_t>(mc))
     {}
 
-    explicit MetadataSerializer(
-        /* [in] */ uintptr_t addr)
+    explicit MetadataSerializer(uintptr_t addr)
         : metaComponent_(reinterpret_cast<MetaComponent*>(addr)),
           baseAddr_(addr)
     {}
@@ -54,53 +52,37 @@ public:
     }
 
 private:
-    void SerializeMetaComponent(
-        /* [in] */ MetaComponent* mc);
+    void SerializeMetaComponent(MetaComponent* mc);
 
-    void SerializeMetaNamespace(
-        /* [in] */ MetaNamespace* mn);
+    void SerializeMetaNamespace(MetaNamespace* mn);
 
-    void SerializeMetaSequenceable(
-        /* [in] */ MetaSequenceable* mp);
+    void SerializeMetaSequenceable(MetaSequenceable* mp);
 
-    void SerializeMetaInterface(
-        /* [in] */ MetaInterface* mi);
+    void SerializeMetaInterface(MetaInterface* mi);
 
-    void SerializeMetaMethod(
-        /* [in] */ MetaMethod* mm);
+    void SerializeMetaMethod(MetaMethod* mm);
 
-    void SerializeMetaParameter(
-        /* [in] */ MetaParameter* mp);
+    void SerializeMetaParameter(MetaParameter* mp);
 
-    void SerializeMetaType(
-        /* [in] */ MetaType* mt);
+    void SerializeMetaType(MetaType* mt);
 
-    ptrdiff_t SerializeAdjust(
-        /* [in] */ const void* addr);
+    ptrdiff_t SerializeAdjust(const void* addr);
 
-    void DeserializeMetaComponent(
-        /* [in] */ MetaComponent* mc);
+    void DeserializeMetaComponent(MetaComponent* mc);
 
-    void DeserializeMetaNamespace(
-        /* [in] */ MetaNamespace* mn);
+    void DeserializeMetaNamespace(MetaNamespace* mn);
 
-    void DeserializeMetaSequenceable(
-        /* [in] */ MetaSequenceable* mp);
+    void DeserializeMetaSequenceable(MetaSequenceable* mp);
 
-    void DeserializeMetaInterface(
-        /* [in] */ MetaInterface* mi);
+    void DeserializeMetaInterface(MetaInterface* mi);
 
-    void DeserializeMetaMethod(
-        /* [in] */ MetaMethod* mm);
+    void DeserializeMetaMethod(MetaMethod* mm);
 
-    void DeserializeMetaParameter(
-        /* [in] */ MetaParameter* mp);
+    void DeserializeMetaParameter(MetaParameter* mp);
 
-    void DeserializeMetaType(
-        /* [in] */ MetaType* mt);
+    void DeserializeMetaType(MetaType* mt);
 
-    uintptr_t DeserializeAdjust(
-        /* [in] */ const void* addr);
+    uintptr_t DeserializeAdjust(const void* addr);
 
     MetaComponent* metaComponent_;
     uintptr_t baseAddr_;

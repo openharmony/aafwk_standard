@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_IDL_JSCODEEMITTER_H
-#define OHOS_IDL_JSCODEEMITTER_H
+#ifndef OHOS_IDL_TSCODEEMITTER_H
+#define OHOS_IDL_TSCODEEMITTER_H
 
 #include <string>
 #include <vector>
@@ -24,9 +24,9 @@
 
 namespace OHOS {
 namespace Idl {
-class JsCodeEmitter : public CodeEmitter {
+class TsCodeEmitter : public CodeEmitter {
 public:
-    JsCodeEmitter(MetaComponent* mc)
+    TsCodeEmitter(MetaComponent* mc)
         : CodeEmitter(mc)
     {}
 
@@ -150,4 +150,4 @@ private:
 }
 }
 
-#endif // OHOS_IDL_JSCODEEMITTER_H
+#endif // OHOS_IDL_TSCODEEMITTER_H

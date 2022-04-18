@@ -38,8 +38,7 @@ void ASTMethod::BuildSignature()
     signature_ = sb.ToString();
 }
 
-void ASTMethod::AddParameter(
-    /* [in] */ ASTParameter* parameter)
+void ASTMethod::AddParameter(ASTParameter* parameter)
 {
     if (parameter == nullptr) {
         return;
@@ -47,8 +46,7 @@ void ASTMethod::AddParameter(
     parameters_.push_back(parameter);
 }
 
-AutoPtr<ASTParameter> ASTMethod::GetParameter(
-    /* [in] */ size_t index)
+AutoPtr<ASTParameter> ASTMethod::GetParameter(size_t index)
 {
     if (index >= parameters_.size()) {
         return nullptr;
@@ -57,8 +55,7 @@ AutoPtr<ASTParameter> ASTMethod::GetParameter(
     return parameters_[index];
 }
 
-String ASTMethod::Dump(
-    /* [in] */ const String& prefix)
+String ASTMethod::Dump(const String& prefix)
 {
     StringBuilder sb;
 

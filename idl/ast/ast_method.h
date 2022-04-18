@@ -27,8 +27,7 @@ namespace Idl {
 
 class ASTMethod : public ASTNode {
 public:
-    void SetName(
-        /* [in] */ const String& name)
+    void SetName(const String& name)
     {
         name_ = name;
     }
@@ -40,8 +39,7 @@ public:
 
     String GetSignature();
 
-    void SetOneway(
-        /* [in] */ bool oneway)
+    void SetOneway(bool oneway)
     {
         oneway_ = oneway;
     }
@@ -51,8 +49,7 @@ public:
         return oneway_;
     }
 
-    void SetReturnType(
-        /* [in] */ ASTType* type)
+    void SetReturnType(ASTType* type)
     {
         returnType_ = type;
     }
@@ -62,19 +59,16 @@ public:
         return returnType_;
     }
 
-    void AddParameter(
-        /* [in] */ ASTParameter* parameter);
+    void AddParameter(ASTParameter* parameter);
 
-    AutoPtr<ASTParameter> GetParameter(
-        /* [in] */ size_t index);
+    AutoPtr<ASTParameter> GetParameter(size_t index);
 
     size_t GetParameterNumber()
     {
         return parameters_.size();
     }
 
-    String Dump(
-        /* [in] */ const String& prefix) override;
+    String Dump(const String& prefix) override;
 
 private:
     void BuildSignature();

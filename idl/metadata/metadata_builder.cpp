@@ -58,8 +58,7 @@ size_t MetadataBuilder::CalculateMetadataSize()
     return baseAddr_;
 }
 
-void MetadataBuilder::CalculateMetaComponent(
-    /* [in] */ ASTModule* module)
+void MetadataBuilder::CalculateMetaComponent(ASTModule* module)
 {
     int namespaceNumber = module->GetNamespaceNumber();
     int sequenceableNumber = module->GetSequenceableNumber();
@@ -101,8 +100,7 @@ void MetadataBuilder::CalculateMetaComponent(
     CalculateStringPool();
 }
 
-void MetadataBuilder::CalculateMetaNamespace(
-    /* [in] */ ASTNamespace* nspace)
+void MetadataBuilder::CalculateMetaNamespace(ASTNamespace* nspace)
 {
     int sequenceableNumber = nspace->GetSequenceableNumber();
     int interfaceNumber = nspace->GetInterfaceNumber();
@@ -125,8 +123,7 @@ void MetadataBuilder::CalculateMetaNamespace(
     }
 }
 
-void MetadataBuilder::CalculateMetaSequenceable(
-    /* [in] */ ASTSequenceableType* sequenceable)
+void MetadataBuilder::CalculateMetaSequenceable(ASTSequenceableType* sequenceable)
 {
     // begin address
     baseAddr_ = ALIGN8(baseAddr_);
@@ -136,8 +133,7 @@ void MetadataBuilder::CalculateMetaSequenceable(
     baseAddr_ = baseAddr_ + sizeof(MetaSequenceable);
 }
 
-void MetadataBuilder::CalculateMetaInterface(
-    /* [in] */ ASTInterfaceType* interface)
+void MetadataBuilder::CalculateMetaInterface(ASTInterfaceType* interface)
 {
     int methodNumber = interface->GetMethodNumber();
 
@@ -156,8 +152,7 @@ void MetadataBuilder::CalculateMetaInterface(
     }
 }
 
-void MetadataBuilder::CalculateMetaMethod(
-    /* [in] */ ASTMethod* method)
+void MetadataBuilder::CalculateMetaMethod(ASTMethod* method)
 {
     int parameterNumber = method->GetParameterNumber();
 
@@ -175,8 +170,7 @@ void MetadataBuilder::CalculateMetaMethod(
     }
 }
 
-void MetadataBuilder::CalculateMetaParameter(
-    /* [in] */ ASTParameter* parameter)
+void MetadataBuilder::CalculateMetaParameter(ASTParameter* parameter)
 {
     // begin address
     baseAddr_ = ALIGN8(baseAddr_);
@@ -185,8 +179,7 @@ void MetadataBuilder::CalculateMetaParameter(
     baseAddr_ = baseAddr_ + sizeof(MetaParameter);
 }
 
-void MetadataBuilder::CalculateMetaType(
-    /* [in] */ ASTType* type)
+void MetadataBuilder::CalculateMetaType(ASTType* type)
 {
     // begin address
     baseAddr_ = ALIGN8(baseAddr_);
@@ -212,15 +205,13 @@ void MetadataBuilder::CalculateStringPool()
     baseAddr_ = baseAddr_ + stringPool_.GetSize();
 }
 
-void MetadataBuilder::WriteMetadata(
-    /* [in] */ uintptr_t base)
+void MetadataBuilder::WriteMetadata(uintptr_t base)
 {
     baseAddr_ = base;
     WriteMetaComponent(module_);
 }
 
-void MetadataBuilder::WriteMetaComponent(
-    /* [in] */ ASTModule* module)
+void MetadataBuilder::WriteMetaComponent(ASTModule* module)
 {
     int namespaceNumber = module->GetNamespaceNumber();
     int sequenceableNumber = module->GetSequenceableNumber();
@@ -277,8 +268,7 @@ void MetadataBuilder::WriteMetaComponent(
     }
 }
 
-MetaNamespace* MetadataBuilder::WriteMetaNamespace(
-    /* [in] */ ASTNamespace* nspace)
+MetaNamespace* MetadataBuilder::WriteMetaNamespace(ASTNamespace* nspace)
 {
     int sequenceableNumber = nspace->GetSequenceableNumber();
     int interfaceNumber = nspace->GetInterfaceNumber();
@@ -321,8 +311,7 @@ MetaNamespace* MetadataBuilder::WriteMetaNamespace(
     return mn;
 }
 
-MetaSequenceable* MetadataBuilder::WriteMetaSequenceable(
-    /* [in] */ ASTSequenceableType* parcelabe)
+MetaSequenceable* MetadataBuilder::WriteMetaSequenceable(ASTSequenceableType* parcelabe)
 {
     // begin address
     baseAddr_ = ALIGN8(baseAddr_);
@@ -335,8 +324,7 @@ MetaSequenceable* MetadataBuilder::WriteMetaSequenceable(
     return mp;
 }
 
-MetaInterface* MetadataBuilder::WriteMetaInterface(
-    /* [in] */ ASTInterfaceType* interface)
+MetaInterface* MetadataBuilder::WriteMetaInterface(ASTInterfaceType* interface)
 {
     int methodNumber = interface->GetMethodNumber();
 
@@ -362,8 +350,7 @@ MetaInterface* MetadataBuilder::WriteMetaInterface(
     return mi;
 }
 
-MetaMethod* MetadataBuilder::WriteMetaMethod(
-    /* [in] */ ASTMethod* method)
+MetaMethod* MetadataBuilder::WriteMetaMethod(ASTMethod* method)
 {
     int parameterNumber = method->GetParameterNumber();
 
@@ -388,8 +375,7 @@ MetaMethod* MetadataBuilder::WriteMetaMethod(
     return mm;
 }
 
-MetaParameter* MetadataBuilder::WriteMetaParameter(
-    /* [in] */ ASTParameter* parameter)
+MetaParameter* MetadataBuilder::WriteMetaParameter(ASTParameter* parameter)
 {
     // begin address
     baseAddr_ = ALIGN8(baseAddr_);
@@ -408,8 +394,7 @@ MetaParameter* MetadataBuilder::WriteMetaParameter(
     return mp;
 }
 
-MetaType* MetadataBuilder::WriteMetaType(
-    /* [in] */ ASTType* type)
+MetaType* MetadataBuilder::WriteMetaType(ASTType* type)
 {
     // begin address
     baseAddr_ = ALIGN8(baseAddr_);
@@ -457,14 +442,12 @@ MetaType* MetadataBuilder::WriteMetaType(
     return mt;
 }
 
-char* MetadataBuilder::WriteString(
-    /* [in] */ const String& string)
+char* MetadataBuilder::WriteString(const String& string)
 {
     return string.IsNull() ? nullptr : metaComponent_->stringPool_ + stringPool_.GetOffset(string);
 }
 
-TypeKind MetadataBuilder::Type2Kind(
-    /* [in] */ ASTType* type)
+TypeKind MetadataBuilder::Type2Kind(ASTType* type)
 {
     if (type->IsCharType()) {
         return TypeKind::Char;

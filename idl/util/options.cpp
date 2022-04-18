@@ -22,9 +22,7 @@
 namespace OHOS {
 namespace Idl {
 
-void Options::Parse(
-    /* [in] */ int argc,
-    /* [in] */ char** argv)
+void Options::Parse(int argc, char** argv)
 {
     StringBuilder errors;
     program_ = argv[0];

@@ -23,8 +23,7 @@ void MetadataSerializer::Serialize()
     SerializeMetaComponent(metaComponent_);
 }
 
-void MetadataSerializer::SerializeMetaComponent(
-    /* [in] */ MetaComponent* mc)
+void MetadataSerializer::SerializeMetaComponent(MetaComponent* mc)
 {
     mc->name_ = reinterpret_cast<char*>(SerializeAdjust(mc->name_));
 
@@ -59,8 +58,7 @@ void MetadataSerializer::SerializeMetaComponent(
     mc->stringPool_ = reinterpret_cast<char*>(SerializeAdjust(mc->stringPool_));
 }
 
-void MetadataSerializer::SerializeMetaNamespace(
-    /* [in] */ MetaNamespace* mn)
+void MetadataSerializer::SerializeMetaNamespace(MetaNamespace* mn)
 {
     mn->name_ = reinterpret_cast<char*>(SerializeAdjust(mn->name_));
     mn->sequenceableIndexes_ = reinterpret_cast<int*>(SerializeAdjust(mn->sequenceableIndexes_));
@@ -74,15 +72,13 @@ void MetadataSerializer::SerializeMetaNamespace(
     mn->namespaces_ = reinterpret_cast<MetaNamespace**>(SerializeAdjust(mn->namespaces_));
 }
 
-void MetadataSerializer::SerializeMetaSequenceable(
-    /* [in] */ MetaSequenceable* mp)
+void MetadataSerializer::SerializeMetaSequenceable(MetaSequenceable* mp)
 {
     mp->name_ = reinterpret_cast<char*>(SerializeAdjust(mp->name_));
     mp->namespace_ = reinterpret_cast<char*>(SerializeAdjust(mp->namespace_));
 }
 
-void MetadataSerializer::SerializeMetaInterface(
-    /* [in] */ MetaInterface* mi)
+void MetadataSerializer::SerializeMetaInterface(MetaInterface* mi)
 {
     mi->license_ = reinterpret_cast<char*>(SerializeAdjust(mi->license_));
     mi->name_ = reinterpret_cast<char*>(SerializeAdjust(mi->name_));
@@ -96,8 +92,7 @@ void MetadataSerializer::SerializeMetaInterface(
     mi->methods_ = reinterpret_cast<MetaMethod**>(SerializeAdjust(mi->methods_));
 }
 
-void MetadataSerializer::SerializeMetaMethod(
-    /* [in] */ MetaMethod* mm)
+void MetadataSerializer::SerializeMetaMethod(MetaMethod* mm)
 {
     mm->name_ = reinterpret_cast<char*>(SerializeAdjust(mm->name_));
     mm->signature_ = reinterpret_cast<char*>(SerializeAdjust(mm->signature_));
@@ -110,20 +105,17 @@ void MetadataSerializer::SerializeMetaMethod(
     mm->parameters_ = reinterpret_cast<MetaParameter**>(SerializeAdjust(mm->parameters_));
 }
 
-void MetadataSerializer::SerializeMetaParameter(
-    /* [in] */ MetaParameter* mp)
+void MetadataSerializer::SerializeMetaParameter(MetaParameter* mp)
 {
     mp->name_ = reinterpret_cast<char*>(SerializeAdjust(mp->name_));
 }
 
-void MetadataSerializer::SerializeMetaType(
-    /* [in] */ MetaType* mt)
+void MetadataSerializer::SerializeMetaType(MetaType* mt)
 {
     mt->nestedTypeIndexes_ = reinterpret_cast<int*>(SerializeAdjust(mt->nestedTypeIndexes_));
 }
 
-ptrdiff_t MetadataSerializer::SerializeAdjust(
-    /* [in] */ const void* addr)
+ptrdiff_t MetadataSerializer::SerializeAdjust(const void* addr)
 {
     return reinterpret_cast<uintptr_t>(addr) - baseAddr_;
 }
@@ -133,8 +125,7 @@ void MetadataSerializer::Deserialize()
     DeserializeMetaComponent(metaComponent_);
 }
 
-void MetadataSerializer::DeserializeMetaComponent(
-    /* [in] */ MetaComponent* mc)
+void MetadataSerializer::DeserializeMetaComponent(MetaComponent* mc)
 {
     mc->name_ = reinterpret_cast<char*>(DeserializeAdjust(mc->name_));
 
@@ -169,8 +160,7 @@ void MetadataSerializer::DeserializeMetaComponent(
     mc->stringPool_ = reinterpret_cast<char*>(DeserializeAdjust(mc->stringPool_));
 }
 
-void MetadataSerializer::DeserializeMetaNamespace(
-    /* [in] */ MetaNamespace* mn)
+void MetadataSerializer::DeserializeMetaNamespace(MetaNamespace* mn)
 {
     mn->name_ = reinterpret_cast<char*>(DeserializeAdjust(mn->name_));
     mn->sequenceableIndexes_ = reinterpret_cast<int*>(DeserializeAdjust(mn->sequenceableIndexes_));
@@ -184,15 +174,13 @@ void MetadataSerializer::DeserializeMetaNamespace(
     }
 }
 
-void MetadataSerializer::DeserializeMetaSequenceable(
-    /* [in] */ MetaSequenceable* mp)
+void MetadataSerializer::DeserializeMetaSequenceable(MetaSequenceable* mp)
 {
     mp->name_ = reinterpret_cast<char*>(DeserializeAdjust(mp->name_));
     mp->namespace_ = reinterpret_cast<char*>(DeserializeAdjust(mp->namespace_));
 }
 
-void MetadataSerializer::DeserializeMetaInterface(
-    /* [in] */ MetaInterface* mi)
+void MetadataSerializer::DeserializeMetaInterface(MetaInterface* mi)
 {
     mi->license_ = reinterpret_cast<char*>(DeserializeAdjust(mi->license_));
     mi->name_ = reinterpret_cast<char*>(DeserializeAdjust(mi->name_));
@@ -206,8 +194,7 @@ void MetadataSerializer::DeserializeMetaInterface(
     }
 }
 
-void MetadataSerializer::DeserializeMetaMethod(
-    /* [in] */ MetaMethod* mm)
+void MetadataSerializer::DeserializeMetaMethod(MetaMethod* mm)
 {
     mm->name_ = reinterpret_cast<char*>(DeserializeAdjust(mm->name_));
     mm->signature_ = reinterpret_cast<char*>(DeserializeAdjust(mm->signature_));
@@ -220,20 +207,17 @@ void MetadataSerializer::DeserializeMetaMethod(
     }
 }
 
-void MetadataSerializer::DeserializeMetaParameter(
-    /* [in] */ MetaParameter* mp)
+void MetadataSerializer::DeserializeMetaParameter(MetaParameter* mp)
 {
     mp->name_ = reinterpret_cast<char*>(DeserializeAdjust(mp->name_));
 }
 
-void MetadataSerializer::DeserializeMetaType(
-    /* [in] */ MetaType* mt)
+void MetadataSerializer::DeserializeMetaType(MetaType* mt)
 {
     mt->nestedTypeIndexes_ = reinterpret_cast<int*>(DeserializeAdjust(mt->nestedTypeIndexes_));
 }
 
-uintptr_t MetadataSerializer::DeserializeAdjust(
-    /* [in] */ const void* addr)
+uintptr_t MetadataSerializer::DeserializeAdjust(const void* addr)
 {
     return reinterpret_cast<ptrdiff_t>(addr) + baseAddr_;
 }

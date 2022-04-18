@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,18 +26,13 @@ public:
     String()
     {}
 
-    String(
-        /* [in] */ const char* string);
+    String(const char* string);
 
-    String(
-        /* [in] */ const char* string,
-        /* [in] */ size_t length);
+    String(const char* string, size_t length);
 
-    String(
-        /* [in] */ const String& other);
+    String(const String& other);
 
-    String(
-        /* [in] */ String&& other);
+    String(String&& other);
 
     ~String();
 
@@ -63,111 +58,72 @@ public:
 
     int GetLength() const;
 
-    char operator[](
-        /* [in] */ int index) const;
+    char operator[](int index) const;
 
-    bool Equals(
-        /* [in] */ const char* string) const;
+    bool Equals(const char* string) const;
 
-    bool Equals(
-        /* [in] */ const String& other) const;
+    bool Equals(const String& other) const;
 
     int GetHashCode() const;
 
-    int IndexOf(
-        /* [in] */ char c,
-        /* [in] */ int fromIndex = 0) const;
+    int IndexOf(char c, int fromIndex = 0) const;
 
-    int IndexOf(
-        /* [in] */ const char* string,
-        /* [in] */ int fromIndex = 0) const;
+    int IndexOf(const char* string, int fromIndex = 0) const;
 
-    int IndexOf(
-        /* [in] */ const String& other,
-        /* [in] */ int fromIndex = 0) const;
+    int IndexOf(const String& other, int fromIndex = 0) const;
 
-    int LastIndexOf(
-        /* [in] */ char c,
-        /* [in] */ int fromIndex = 0) const;
+    int LastIndexOf(char c, int fromIndex = 0) const;
 
-    int LastIndexOf(
-        /* [in] */ const char* string,
-        /* [in] */ int fromIndex = 0) const;
+    int LastIndexOf(const char* string, int fromIndex = 0) const;
 
-    int LastIndexOf(
-        /* [in] */ const String& other,
-        /* [in] */ int fromIndex = 0) const;
+    int LastIndexOf(const String& other, int fromIndex = 0) const;
 
-    bool StartsWith(
-        /* [in] */ const char* string) const;
+    bool StartsWith(const char* string) const;
 
-    bool StartsWith(
-        /* [in] */ const String& other) const;
+    bool StartsWith(const String& other) const;
 
-    bool EndsWith(
-        /* [in] */ const char* string) const;
+    bool EndsWith(const char* string) const;
 
-    bool EndsWith(
-        /* [in] */ const String& other) const;
+    bool EndsWith(const String& other) const;
 
     String ToLowerCase() const;
 
     String ToUpperCase() const;
 
-    String Substring(
-        /* [in] */ int begin) const;
+    String Substring(int begin) const;
 
-    String Substring(
-        /* [in] */ int begin,
-        /* [in] */ int end) const;
+    String Substring(int begin, int end) const;
 
-    String Replace(
-        /* [in] */ char oldChar,
-        /* [in] */ char newChar) const;
+    String Replace(char oldChar, char newChar) const;
 
-    String Replace(
-        /* [in] */ const char* target,
-        /* [in] */ const char* replacement) const;
+    String Replace(const char* target, const char* replacement) const;
 
-    String Replace(
-        /* [in] */ const String& target,
-        /* [in] */ const String& replacement) const;
+    String Replace(const String& target, const String& replacement) const;
 
-    String& operator=(
-        /* [in] */ const char* string);
+    String& operator=(const char* string);
 
-    String& operator=(
-        /* [in] */ const String& other);
+    String& operator=(const String& other);
 
-    String& operator=(
-        /* [in] */ String&& other);
+    String& operator=(String&& other);
 
-    String operator+=(
-        /* [in] */ const char* string) const;
+    String operator+=(const char* string) const;
 
-    String operator+=(
-        /* [in] */ const String& other) const;
+    String operator+=(const String& other) const;
 
-    static String Format(
-        /* [in] */ const char* format, ...);
+    static String Format(const char* format, ...);
 
     static const char* TAG;
     static constexpr int MAX_SIZE = 262144; // 2^18
 
 private:
-    String(
-        /* [in] */ int size);
+    String(int size);
 
-    int LastIndexOfInternal(
-        /* [in] */ const char* string,
-        /* [in] */ int fromIndex) const;
+    int LastIndexOfInternal(const char* string, int fromIndex) const;
 
     char* string_ = nullptr;
 };
 
-inline String operator+(
-    /* [in] */ const String& string1,
-    /* [in] */ const char* string2)
+inline String operator+(const String& string1, const char* string2)
 {
     return string1 += string2;
 }

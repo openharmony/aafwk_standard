@@ -23,8 +23,7 @@ namespace Idl {
 
 const char* MetadataReader::TAG = "MetadataReader";
 
-std::shared_ptr<MetaComponent> MetadataReader::ReadMetadataFromFile(
-    /* [in] */ const String& filePath)
+std::shared_ptr<MetaComponent> MetadataReader::ReadMetadataFromFile(const String& filePath)
 {
     File file(filePath, File::READ);
     if (!file.IsValid()) {

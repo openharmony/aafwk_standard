@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,8 +28,7 @@ namespace Idl {
 
 class MetadataBuilder {
 public:
-    explicit MetadataBuilder(
-        /* [in] */ ASTModule* module)
+    explicit MetadataBuilder(ASTModule* module)
         : module_(module)
     {}
 
@@ -40,58 +39,41 @@ public:
 private:
     size_t CalculateMetadataSize();
 
-    void CalculateMetaComponent(
-        /* [in] */ ASTModule* module);
+    void CalculateMetaComponent(ASTModule* module);
 
-    void CalculateMetaNamespace(
-        /* [in] */ ASTNamespace* nspace);
+    void CalculateMetaNamespace(ASTNamespace* nspace);
 
-    void CalculateMetaSequenceable(
-        /* [in] */ ASTSequenceableType* sequenceable);
+    void CalculateMetaSequenceable(ASTSequenceableType* sequenceable);
 
-    void CalculateMetaInterface(
-        /* [in] */ ASTInterfaceType* interface);
+    void CalculateMetaInterface(ASTInterfaceType* interface);
 
-    void CalculateMetaMethod(
-        /* [in] */ ASTMethod* method);
+    void CalculateMetaMethod(ASTMethod* method);
 
-    void CalculateMetaParameter(
-        /* [in] */ ASTParameter* parameter);
+    void CalculateMetaParameter(ASTParameter* parameter);
 
-    void CalculateMetaType(
-        /* [in] */ ASTType* type);
+    void CalculateMetaType(ASTType* type);
 
     void CalculateStringPool();
 
-    void WriteMetadata(
-        /* [in] */ uintptr_t base);
+    void WriteMetadata(uintptr_t base);
 
-    void WriteMetaComponent(
-        /* [in] */ ASTModule* module);
+    void WriteMetaComponent(ASTModule* module);
 
-    MetaNamespace* WriteMetaNamespace(
-        /* [in] */ ASTNamespace* nspace);
+    MetaNamespace* WriteMetaNamespace(ASTNamespace* nspace);
 
-    MetaSequenceable* WriteMetaSequenceable(
-        /* [in] */ ASTSequenceableType* parcelabe);
+    MetaSequenceable* WriteMetaSequenceable(ASTSequenceableType* parcelabe);
 
-    MetaInterface* WriteMetaInterface(
-        /* [in] */ ASTInterfaceType* interface);
+    MetaInterface* WriteMetaInterface(ASTInterfaceType* interface);
 
-    MetaMethod* WriteMetaMethod(
-        /* [in] */ ASTMethod* method);
+    MetaMethod* WriteMetaMethod(ASTMethod* method);
 
-    MetaParameter* WriteMetaParameter(
-        /* [in] */ ASTParameter* parameter);
+    MetaParameter* WriteMetaParameter(ASTParameter* parameter);
 
-    MetaType* WriteMetaType(
-        /* [in] */ ASTType* type);
+    MetaType* WriteMetaType(ASTType* type);
 
-    char* WriteString(
-        /* [in] */ const String& string);
+    char* WriteString(const String& string);
 
-    TypeKind Type2Kind(
-        /* [in] */ ASTType* type);
+    TypeKind Type2Kind(ASTType* type);
 
     static const char* TAG;
     AutoPtr<ASTModule> module_;

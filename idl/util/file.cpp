@@ -28,9 +28,7 @@ constexpr unsigned int File::WRITE;
 constexpr unsigned int File::APPEND;
 #endif
 
-File::File(
-    /* [in] */ const String& path,
-    /* [in] */ int mode)
+File::File(const String& path, int mode)
     : mode_(mode)
 {
     if (path.IsEmpty()) {
@@ -120,9 +118,7 @@ int File::Read()
     return count != 0 ? count : -1;
 }
 
-bool File::ReadData(
-    /* [out] */ void* data,
-    /* [in] */ size_t size)
+bool File::ReadData(void* data, size_t size)
 {
     if (data == nullptr || size == 0) {
         return true;
@@ -136,9 +132,7 @@ bool File::ReadData(
     return count == 1;
 }
 
-bool File::WriteData(
-    /* [in] */ const void* data,
-    /* [in] */ size_t size)
+bool File::WriteData(const void* data, size_t size)
 {
     if (data == nullptr || size == 0) {
         return true;
@@ -168,8 +162,7 @@ bool File::Reset()
     return fseek(fd_, 0, SEEK_SET) == 0;
 }
 
-bool File::Skip(
-    /* [in] */ long size)
+bool File::Skip(long size)
 {
     if (fd_ == nullptr) {
         return false;

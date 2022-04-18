@@ -31,29 +31,22 @@ namespace Idl {
 constexpr int LINE_MAX_SIZE = 1024;
 
 using SharedData = struct SharedData {
-    SharedData(
-        /* [in] */ int refCount,
-        /* [in] */ int size)
+    SharedData(int refCount, int size)
         : refCount_(refCount), size_(size)
     {}
 
-    static SharedData* Allocate(
-        /* [in] */ int size);
+    static SharedData* Allocate(int size);
 
-    static void AddRef(
-        /* [in] */ const void* handle);
+    static void AddRef(const void* handle);
 
-    static void Release(
-        /* [in] */ const void* handle);
+    static void Release(const void* handle);
 
-    static char* ToString(
-        /* [in] */ SharedData* header)
+    static char* ToString(SharedData* header)
     {
         return reinterpret_cast<char*>(header + 1);
     }
 
-    static SharedData* GetHeader(
-        /* [in] */ const void* handle)
+    static SharedData* GetHeader(const void* handle)
     {
         return reinterpret_cast<SharedData*>(const_cast<void*>(handle)) - 1;
     }
@@ -62,8 +55,7 @@ using SharedData = struct SharedData {
     int size_;
 };
 
-SharedData* SharedData::Allocate(
-    /* [in] */ int size)
+SharedData* SharedData::Allocate(int size)
 {
     if (size < 0) {
         Logger::E(String::TAG, "Size %d is illegal.", size);
@@ -84,8 +76,7 @@ SharedData* SharedData::Allocate(
     return handle;
 }
 
-void SharedData::AddRef(
-    /* [in] */ const void* handle)
+void SharedData::AddRef(const void* handle)
 {
     if (handle == nullptr) {
         return;
@@ -98,8 +89,7 @@ void SharedData::AddRef(
     };
 }
 
-void SharedData::Release(
-    /* [in] */ const void* handle)
+void SharedData::Release(const void* handle)
 {
     if (handle == nullptr) {
         return;
@@ -117,8 +107,7 @@ void SharedData::Release(
 
 const char* String::TAG = "String";
 
-String::String(
-    /* [in] */ const char* string)
+String::String(const char* string)
 {
     if (string != nullptr) {
         string_ = SharedData::ToString(SharedData::Allocate(strlen(string)));
@@ -128,9 +117,7 @@ String::String(
     }
 }
 
-String::String(
-    /* [in] */ const char* string,
-    /* [in] */ size_t length)
+String::String(const char* string, size_t length)
 {
     if (string !=  nullptr) {
         string_ = SharedData::ToString(SharedData::Allocate(length));
@@ -146,22 +133,19 @@ String::String(
     }
 }
 
-String::String(
-    /* [in] */ const String& other)
+String::String(const String& other)
 {
     string_ = other.string_;
     SharedData::AddRef(string_);
 }
 
-String::String(
-    /* [in] */ String&& other)
+String::String(String&& other)
 {
     string_ = other.string_;
     other.string_ = nullptr;
 }
 
-String::String(
-    /* [in] */ int size)
+String::String(int size)
 {
     string_ = SharedData::ToString(SharedData::Allocate(size));
     if (string_ != nullptr) {
@@ -183,8 +167,7 @@ int String::GetLength() const
     return SharedData::GetHeader(string_)->size_;
 }
 
-char String::operator[](
-    /* [in] */ int index) const
+char String::operator[](int index) const
 {
     if (index < 0 || index >= GetLength()) {
         return '\0';
@@ -192,8 +175,7 @@ char String::operator[](
     return string_[index];
 }
 
-bool String::Equals(
-    /* [in] */ const char* string) const
+bool String::Equals(const char* string) const
 {
     if (string_ == nullptr && string == nullptr) {
         return true;
@@ -209,8 +191,7 @@ bool String::Equals(
     return false;
 }
 
-bool String::Equals(
-    /* [in] */ const String& other) const
+bool String::Equals(const String& other) const
 {
     if (string_ == nullptr && other.string_ == nullptr) {
         return true;
@@ -240,9 +221,7 @@ int String::GetHashCode() const
     return (hash & 0x7FFFFFFF);
 }
 
-int String::IndexOf(
-    /* [in] */ char c,
-    /* [in] */ int fromIndex) const
+int String::IndexOf(char c, int fromIndex) const
 {
     if (IsEmpty() || c == '\0') {
         return -1;
@@ -265,9 +244,7 @@ int String::IndexOf(
     return -1;
 }
 
-int String::IndexOf(
-    /* [in] */ const char* string,
-    /* [in] */ int fromIndex) const
+int String::IndexOf(const char* string, int fromIndex) const
 {
     if (IsEmpty() || string == nullptr || string[0] == '\0') {
         return -1;
@@ -283,9 +260,7 @@ int String::IndexOf(
     return c != nullptr ? c - string_ : -1;
 }
 
-int String::IndexOf(
-    /* [in] */ const String& other,
-    /* [in] */ int fromIndex) const
+int String::IndexOf(const String& other, int fromIndex) const
 {
     if (IsEmpty() || other.IsEmpty()) {
         return -1;
@@ -301,9 +276,7 @@ int String::IndexOf(
     return c != nullptr ? c - string_ : -1;
 }
 
-int String::LastIndexOf(
-    /* [in] */ char c,
-    /* [in] */ int fromIndex) const
+int String::LastIndexOf(char c, int fromIndex) const
 {
     if (IsEmpty() || c == '\0') {
         return -1;
@@ -324,9 +297,7 @@ int String::LastIndexOf(
     return -1;
 }
 
-int String::LastIndexOf(
-    /* [in] */ const char* string,
-    /* [in] */ int fromIndex) const
+int String::LastIndexOf(const char* string, int fromIndex) const
 {
     if (IsEmpty() || string == nullptr || string[0] == '\0') {
         return -1;
@@ -341,9 +312,7 @@ int String::LastIndexOf(
     return LastIndexOfInternal(string, fromIndex);
 }
 
-int String::LastIndexOf(
-    /* [in] */ const String& other,
-    /* [in] */ int fromIndex) const
+int String::LastIndexOf(const String& other, int fromIndex) const
 {
     if (IsEmpty() || other.IsEmpty()) {
         return -1;
@@ -358,9 +327,7 @@ int String::LastIndexOf(
     return LastIndexOfInternal(other.string(), fromIndex);
 }
 
-int String::LastIndexOfInternal(
-    /* [in] */ const char* string,
-    /* [in] */ int fromIndex) const
+int String::LastIndexOfInternal(const char* string, int fromIndex) const
 {
     int sourceLen = GetLength();
     int stringLen = strlen(string);
@@ -396,8 +363,7 @@ startSearchLastChar:
     }
 }
 
-bool String::StartsWith(
-    /* [in] */ const char* string) const
+bool String::StartsWith(const char* string) const
 {
     if (string == nullptr || string_ == nullptr) {
         return false;
@@ -415,8 +381,7 @@ bool String::StartsWith(
     return memcmp(string_, string, count) == 0;
 }
 
-bool String::StartsWith(
-    /* [in] */ const String& other) const
+bool String::StartsWith(const String& other) const
 {
     if (other.string_ == nullptr || string_ == nullptr) {
         return false;
@@ -434,8 +399,7 @@ bool String::StartsWith(
     return memcmp(string_, other.string_, count) == 0;
 }
 
-bool String::EndsWith(
-    /* [in] */ const char* string) const
+bool String::EndsWith(const char* string) const
 {
     if (string == nullptr || string_ == nullptr) {
         return false;
@@ -454,8 +418,7 @@ bool String::EndsWith(
     return memcmp(string_ + len - count, string, count) == 0;
 }
 
-bool String::EndsWith(
-    /* [in] */ const String& other) const
+bool String::EndsWith(const String& other) const
 {
     if (other.string_ == nullptr || string_ == nullptr) {
         return false;
@@ -512,8 +475,7 @@ String String::ToUpperCase() const
     return *this;
 }
 
-String String::Substring(
-    /* [in] */ int begin) const
+String String::Substring(int begin) const
 {
     if (begin < 0 || begin >= GetLength()) {
         return String();
@@ -522,9 +484,7 @@ String String::Substring(
     return String(string_ + begin);
 }
 
-String String::Substring(
-    /* [in] */ int begin,
-    /* [in] */ int end) const
+String String::Substring(int begin, int end) const
 {
     if (begin < 0 || end > GetLength() || begin > end) {
         return String();
@@ -533,9 +493,7 @@ String String::Substring(
     return String(string_ + begin, end - begin);
 }
 
-String String::Replace(
-    /* [in] */ char oldChar,
-    /* [in] */ char newChar) const
+String String::Replace(char oldChar, char newChar) const
 {
     if (oldChar == newChar) {
         return *this;
@@ -556,9 +514,7 @@ String String::Replace(
     return *this;
 }
 
-String String::Replace(
-    /* [in] */ const char* target,
-    /* [in] */ const char* replacement) const
+String String::Replace(const char* target, const char* replacement) const
 {
     if (target == nullptr || target[0] == '\0' || replacement == nullptr) {
         return *this;
@@ -582,9 +538,7 @@ String String::Replace(
     return sb.ToString();
 }
 
-String String::Replace(
-    /* [in] */ const String& target,
-    /* [in] */ const String& replacement) const
+String String::Replace(const String& target, const String& replacement) const
 {
     if (target.IsEmpty() || replacement.IsNull()) {
         return *this;
@@ -608,8 +562,7 @@ String String::Replace(
     return sb.ToString();
 }
 
-String& String::operator=(
-    /* [in] */ const char* string)
+String& String::operator=(const char* string)
 {
     SharedData::Release(string_);
 
@@ -625,8 +578,7 @@ String& String::operator=(
     return *this;
 }
 
-String& String::operator=(
-    /* [in] */ const String& other)
+String& String::operator=(const String& other)
 {
     if (string_ == other.string_) {
         return *this;
@@ -638,8 +590,7 @@ String& String::operator=(
     return *this;
 }
 
-String& String::operator=(
-    /* [in] */ String&& other)
+String& String::operator=(String&& other)
 {
     SharedData::Release(string_);
     string_ = other.string_;
@@ -647,8 +598,7 @@ String& String::operator=(
     return *this;
 }
 
-String String::operator+=(
-    /* [in] */ const char* string) const
+String String::operator+=(const char* string) const
 {
     if (string == nullptr || string[0] == '\0') {
         return *this;
@@ -664,8 +614,7 @@ String String::operator+=(
     return newString;
 }
 
-String String::operator+=(
-    /* [in] */ const String& other) const
+String String::operator+=(const String& other) const
 {
     if (other.IsEmpty()) {
         return *this;
@@ -681,8 +630,7 @@ String String::operator+=(
     return newString;
 }
 
-String String::Format(
-    /* [in] */ const char* format, ...)
+String String::Format(const char* format, ...)
 {
     va_list args, argsCopy;
 

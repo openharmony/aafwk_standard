@@ -52,7 +52,7 @@ idl_common_sources += [
   "${IDL_DIR}/codegen/code_emitter.cpp",
   "${IDL_DIR}/codegen/code_generator.cpp",
   "${IDL_DIR}/codegen/cpp_code_emitter.cpp",
-  "${IDL_DIR}/codegen/js_code_emitter.cpp",
+  "${IDL_DIR}/codegen/ts_code_emitter.cpp",
 ]
 
 idl_common_sources += [
@@ -78,12 +78,12 @@ idl_common_sources += [
 ]
 
 module_output_path = "idl/ts_unittest"
-ohos_unittest("js_code_emitter_proxy_test") {
+ohos_unittest("ts_code_emitter_proxy_test") {
   module_out_path = module_output_path
 
   configs = [ ":idl_unittest_test_config" ]
 
-  sources = [ "js_code_emitter_proxy_test.cpp" ]
+  sources = [ "ts_code_emitter_proxy_test.cpp" ]
   sources += idl_common_sources
 
   deps = [
@@ -95,5 +95,5 @@ ohos_unittest("js_code_emitter_proxy_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":js_code_emitter_proxy_test" ]
+  deps = [ ":ts_code_emitter_proxy_test" ]
 }

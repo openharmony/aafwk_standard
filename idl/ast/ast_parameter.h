@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,8 +26,7 @@ namespace Idl {
 
 class ASTParameter : public ASTNode {
 public:
-    void SetName(
-        /* [in] */ const String& name)
+    void SetName(const String& name)
     {
         name_ = name;
     }
@@ -37,8 +36,7 @@ public:
         return name_;
     }
 
-    void SetType(
-        /* [in] */ ASTType* type)
+    void SetType(ASTType* type)
     {
         type_ = type;
     }
@@ -48,8 +46,7 @@ public:
         return type_;
     }
 
-    void SetInParameter(
-        /* [in] */ bool inParameter)
+    void SetInParameter(bool inParameter)
     {
         isInParameter_ = inParameter;
     }
@@ -59,8 +56,7 @@ public:
         return isInParameter_;
     }
 
-    void SetOutParameter(
-        /* [in] */ bool outParameter)
+    void SetOutParameter(bool outParameter)
     {
         isOutParameter_ = outParameter;
     }
@@ -70,8 +66,7 @@ public:
         return isOutParameter_;
     }
 
-    String Dump(
-        /* [in] */ const String& prefix) override;
+    String Dump(const String& prefix) override;
 
 private:
     String name_;

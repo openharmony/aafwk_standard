@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,14 +33,11 @@ public:
 
     ~Lexer();
 
-    bool OpenSourceFile(
-        /* [in] */ const String& filePath);
+    bool OpenSourceFile(const String& filePath);
 
-    Token GetToken(
-        /* [in] */ bool skipComment = true);
+    Token GetToken(bool skipComment = true);
 
-    Token PeekToken(
-        /* [in] */ bool skipComment = true);
+    Token PeekToken(bool skipComment = true);
 
     String GetIdentifier() const
     {
@@ -54,8 +51,7 @@ public:
 
     void SkipCurrentLine();
 
-    bool SkipCurrentLine(
-        /* [in] */ char untilChar);
+    bool SkipCurrentLine(char untilChar);
 
     std::shared_ptr<File> GetSourceFile() const
     {
@@ -74,38 +70,30 @@ public:
         return tokenColumnNo_;
     }
 
-    static int TokenToChar(
-        /* [in] */ Token token);
+    static int TokenToChar(Token token);
 
 private:
     void InitializeKeywords();
 
-    Token ReadToken(
-        /* [in] */ bool skipComment);
+    Token ReadToken(bool skipComment);
 
-    Token ReadIdentifier(
-        /* [in] */ char c);
+    Token ReadIdentifier(char c);
 
-    Token ReadLineComment(
-        /* [in] */ char c);
+    Token ReadLineComment(char c);
 
-    Token ReadBlockComment(
-        /* [in] */ char c);
+    Token ReadBlockComment(char c);
 
-    static bool IsAlphabet(
-        /* [in] */ char c)
+    static bool IsAlphabet(char c)
     {
         return isalpha(c);
     }
 
-    static bool IsDecimalDigital(
-        /* [in] */ char c)
+    static bool IsDecimalDigital(char c)
     {
         return isdigit(c);
     }
 
-    static bool IsSpace(
-        /* [in] */ char c)
+    static bool IsSpace(char c)
     {
         return isspace(c);
     }

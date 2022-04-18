@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,8 +23,7 @@ namespace Idl {
 
 class ASTSequenceableType : public ASTType {
 public:
-    void SetNamespace(
-        /* [in] */ ASTNamespace* nspace) override;
+    void SetNamespace(ASTNamespace* nspace) override;
 
     String GetSignature() override;
 
@@ -32,8 +31,7 @@ public:
 
     String ToString() override;
 
-    String Dump(
-        /* [in] */ const String& prefix) override;
+    String Dump(const String& prefix) override;
 };
 
 }

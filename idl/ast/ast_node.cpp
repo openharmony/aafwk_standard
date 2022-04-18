@@ -26,8 +26,7 @@ String ASTNode::ToString()
     return "ASTNode";
 }
 
-String ASTNode::Dump(
-    /* [in] */ const String& prefix)
+String ASTNode::Dump(const String& prefix)
 {
     return prefix + "ASTNode";
 }

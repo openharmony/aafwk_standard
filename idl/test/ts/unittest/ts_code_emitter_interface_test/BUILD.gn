@@ -17,7 +17,7 @@ IDL_DIR = "../../../.."
 
 config("idl_unittest_test_config") {
   include_dirs = [
-    "../../common",
+    "../../common/",
     "${IDL_DIR}/",
     "//utils/native/base/include/",
   ]
@@ -51,7 +51,7 @@ common_sources += [
   "${IDL_DIR}/codegen/code_emitter.cpp",
   "${IDL_DIR}/codegen/code_generator.cpp",
   "${IDL_DIR}/codegen/cpp_code_emitter.cpp",
-  "${IDL_DIR}/codegen/js_code_emitter.cpp",
+  "${IDL_DIR}/codegen/ts_code_emitter.cpp",
 ]
 
 common_sources += [
@@ -77,15 +77,15 @@ common_sources += [
 ]
 module_output_path = "idl/ts_unittest"
 
-ohos_unittest("js_code_emitter_stub_test") {
+ohos_unittest("ts_code_emitter_interface_test") {
   module_out_path = module_output_path
   configs = [ ":idl_unittest_test_config" ]
-  sources = [ "js_code_emitter_stub_test.cpp" ]
+  sources = [ "ts_code_emitter_interface_test.cpp" ]
   sources += common_sources
   deps = [ "//utils/native/base:utilsecurec" ]
 }
 
 group("unittest") {
   testonly = true
-  deps = [ ":js_code_emitter_stub_test" ]
+  deps = [ ":ts_code_emitter_interface_test" ]
 }
