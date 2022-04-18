@@ -608,7 +608,8 @@ public:
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override;
+    virtual int FinishUserTest(
+        const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override;
 
     /**
      * GetCurrentTopAbility, get the token of current top ability.
@@ -667,6 +668,7 @@ public:
      */
     virtual int SendANRProcessID(int pid) override;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block ability manager service.
      * @return Returns ERR_OK on success, others on failure.
@@ -686,6 +688,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int BlockAppService() override;
+
     /**
      * force timeout ability.
      *
@@ -694,6 +697,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override;
+    #endif
 
     bool GetDataAbilityUri(const std::vector<AppExecFwk::AbilityInfo> &abilityInfos,
         const std::string &mainAbility, std::string &uri);
@@ -938,6 +942,7 @@ private:
     ErrCode ProcessTwoParam(const std::string& firstParam, const std::string& secondParam, std::string &result);
     ErrCode ProcessThreeParam(const std::string& firstParam, const std::string& secondParam,
         const std::string& thirdParam, std::string &result);
+    ErrCode ProcessMultiParam(std::vector<std::string> &argsStr, std::string &result);
     void ShowHelp(std::string &result);
     void ShowIllealInfomation(std::string &result);
 

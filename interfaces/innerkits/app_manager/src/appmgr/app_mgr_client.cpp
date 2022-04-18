@@ -420,7 +420,7 @@ int AppMgrClient::StartUserTestProcess(
     return service->StartUserTestProcess(want, observer, bundleInfo, userId);
 }
 
-int AppMgrClient::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+int AppMgrClient::FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
     if (service == nullptr) {
@@ -527,6 +527,7 @@ void AppMgrClient::PostANRTaskByProcessID(const pid_t pid)
     service->PostANRTaskByProcessID(pid);
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AppMgrClient::BlockAppService()
 {
     HILOG_INFO("%{public}s", __func__);
@@ -537,5 +538,6 @@ int AppMgrClient::BlockAppService()
     }
     return service->BlockAppService();
 }
+#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS

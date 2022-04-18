@@ -282,7 +282,9 @@ public:
 
     virtual void DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info) = 0;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     virtual int BlockAbility() = 0;
+    #endif
 
     virtual sptr<IRemoteObject> CallRequest() = 0;
 

@@ -775,6 +775,12 @@ public:
      */
     std::string GetModuleName() const;
 
+    /**
+    * @description: Sets a device id in a Want.
+    * @param deviceId Indicates the device id to set.
+    * @return Returns this Want object containing the flag.
+    */
+    Want &SetDeviceId(const std::string &deviceId);
 public:
     // action definition
     static const std::string ACTION_PLAY;

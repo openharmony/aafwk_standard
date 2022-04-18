@@ -14,8 +14,10 @@
  */
 #include "ability_command.h"
 
+#include <csignal>
 #include <cstdlib>
 #include <getopt.h>
+#include <regex>
 #include "ability_manager_client.h"
 #include "hilog_wrapper.h"
 #include "iservice_registry.h"
@@ -43,11 +45,13 @@ constexpr struct option LONG_OPTIONS[] = {
     {nullptr, 0, nullptr, 0},
 };
 const std::string SHORT_OPTIONS_ApplicationNotRespondin = "hp:";
+#ifdef ABILITY_COMMAND_FOR_TEST
 constexpr struct option LONG_OPTIONS_ApplicationNotRespondin[] = {
     {"help", no_argument, nullptr, 'h'},
     {"pid", required_argument, nullptr, 'p'},
     {nullptr, 0, nullptr, 0},
 };
+#endif
 const std::string SHORT_OPTIONS_DUMP = "has:m:lud::e::LS";
 constexpr struct option LONG_OPTIONS_DUMP[] = {
     {"help", no_argument, nullptr, 'h'},
@@ -95,11 +99,13 @@ ErrCode AbilityManagerShellCommand::CreateCommandMap()
         {"dump", std::bind(&AbilityManagerShellCommand::RunAsDumpsysCommand, this)},
         {"force-stop", std::bind(&AbilityManagerShellCommand::RunAsForceStop, this)},
         {"test", std::bind(&AbilityManagerShellCommand::RunAsTestCommand, this)},
+#ifdef ABILITY_COMMAND_FOR_TEST
         {"force-timeout", std::bind(&AbilityManagerShellCommand::RunForceTimeoutForTest, this)},
         {"ApplicationNotRespondin", std::bind(&AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID, this)},
         {"block-ability", std::bind(&AbilityManagerShellCommand::RunAsBlockAbilityCommand, this)},
         {"block-ams-service", std::bind(&AbilityManagerShellCommand::RunAsBlockAmsServiceCommand, this)},
         {"block-app-service", std::bind(&AbilityManagerShellCommand::RunAsBlockAppServiceCommand, this)},
+#endif
     };
 
     return OHOS::ERR_OK;
@@ -758,6 +764,7 @@ ErrCode AbilityManagerShellCommand::RunAsForceStop()
     return result;
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 ErrCode AbilityManagerShellCommand::RunForceTimeoutForTest()
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
@@ -787,6 +794,7 @@ ErrCode AbilityManagerShellCommand::RunForceTimeoutForTest()
     }
     return result;
 }
+#endif
 
 ErrCode AbilityManagerShellCommand::RunAsDumpCommandOptopt()
 {
@@ -1085,11 +1093,24 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
         if ((opt == "-h") || (opt == "--help")) {
             resultReceiver_.append(HELP_MSG_TEST);
             return OHOS::ERR_OK;
-        } else if ((opt == "-b") || (opt == "-w") || (opt == "-p") || (opt == "-m")) {
+        } else if ((opt == "-b") || (opt == "-p") || (opt == "-m")) {
             if (i >= argc_ - 1) {
                 return TestCommandError("error: option [" + opt + "] requires a value.\n");
             }
             std::string argv = argv_[++i];
+            params[opt] = argv;
+        } else if (opt == "-w") {
+            if (i >= argc_ - 1) {
+                return TestCommandError("error: option [" + opt + "] requires a value.\n");
+            }
+
+            std::string argv = argv_[++i];
+            std::smatch sm;
+            auto isNumber = std::regex_match(argv, sm, std::regex(STRING_TEST_REGEX_INTEGER_NUMBERS));
+            if (!isNumber) {
+                return TestCommandError("error: option [" + opt + "] only supports integer numbers.\n");
+            }
+
             params[opt] = argv;
         } else if (opt == "-s") {
             if (i >= argc_ - USER_TEST_COMMAND_PARAMS_NUM) {
@@ -1164,15 +1185,19 @@ ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, st
     }
     HILOG_INFO("%{public}s", STRING_START_USER_TEST_OK.c_str());
 
+    std::signal(SIGCHLD, SIG_DFL);
+
     int64_t timeMs = 0;
     if (!want.GetStringParam("-w").empty()) {
-        int time = std::stoi(want.GetStringParam("-w"));
-        timeMs = time * TIME_RATE_MS;
+        auto time = std::stoi(want.GetStringParam("-w"));
+        timeMs = time > 0 ? time * TIME_RATE_MS : 0;
     }
     if (!observer->WaitForFinish(timeMs)) {
         resultReceiver_ = "Timeout: user test is not completed within the specified time.\n";
         return OHOS::ERR_INVALID_VALUE;
     }
+
+    HILOG_INFO("User test finished successfully");
     resultReceiver_ = STRING_START_USER_TEST_OK + "\n";
 
     return result;
@@ -1189,6 +1214,7 @@ sptr<IAbilityManager> AbilityManagerShellCommand::GetAbilityManagerService()
     return iface_cast<IAbilityManager>(remoteObject);
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 ErrCode AbilityManagerShellCommand::RunAsSendAppNotRespondinProcessID()
 {
     static sptr<IAbilityManager> abilityMs_;
@@ -1333,5 +1359,6 @@ ErrCode AbilityManagerShellCommand::RunAsBlockAppServiceCommand()
     }
     return result;
 }
+#endif
 }  // namespace AAFwk
 }  // namespace OHOS

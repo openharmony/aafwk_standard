@@ -27,6 +27,8 @@
 #include "napi_common_configuration.h"
 #include "napi_common_want.h"
 #include "napi_remote_object.h"
+#include "ohos/aafwk/base/array_wrapper.h"
+#include "ohos/aafwk/base/string_wrapper.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -291,7 +293,61 @@ void JsServiceExtension::OnConfigurationUpdated(const AppExecFwk::Configuration&
     napi_value napiConfiguration = OHOS::AppExecFwk::WrapConfiguration(
         reinterpret_cast<napi_env>(&nativeEngine), *fullConfig);
     NativeValue* jsConfiguration = reinterpret_cast<NativeValue*>(napiConfiguration);
-    CallObjectMethod("onConfigurationUpdated", &jsConfiguration, 1);
+    CallObjectMethod("onConfigurationUpdated", &jsConfiguration, ARGC_ONE);
+}
+
+void JsServiceExtension::Dump(const std::vector<std::string> &params, std::vector<std::string> &info)
+{
+    Extension::Dump(params, info);
+    HILOG_INFO("%{public}s called.", __func__);
+    HandleScope handleScope(jsRuntime_);
+    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+    // create js array object of params
+    NativeValue* arrayValue = nativeEngine.CreateArray(params.size());
+    NativeArray* array = ConvertNativeValueTo<NativeArray>(arrayValue);
+    uint32_t index = 0;
+    for (const auto &param : params) {
+        array->SetElement(index++, CreateJsValue(nativeEngine, param));
+    }
+    NativeValue* argv[] = { arrayValue };
+
+    if (!jsObj_) {
+        HILOG_WARN("Not found ServiceExtension.js");
+        return;
+    }
+
+    NativeValue* value = jsObj_->Get();
+    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
+    if (obj == nullptr) {
+        HILOG_ERROR("Failed to get ServiceExtension object");
+        return;
+    }
+
+    NativeValue* method = obj->GetProperty("dump");
+    if (method == nullptr) {
+        HILOG_ERROR("Failed to get onConnect from ServiceExtension object");
+        return;
+    }
+    HILOG_INFO("JsServiceExtension::CallFunction onConnect, success");
+    NativeValue* dumpInfo = nativeEngine.CallFunction(value, method, argv, ARGC_ONE);
+    if (dumpInfo == nullptr) {
+        HILOG_ERROR("dumpInfo nullptr.");
+        return;
+    }
+    NativeArray* dumpInfoNative = ConvertNativeValueTo<NativeArray>(dumpInfo);
+    if (dumpInfoNative == nullptr) {
+        HILOG_ERROR("dumpInfoNative nullptr.");
+        return;
+    }
+    for (uint32_t i = 0; i < dumpInfoNative->GetLength(); i++) {
+        std::string dumpInfoStr;
+        if (!ConvertFromJsValue(nativeEngine, dumpInfoNative->GetElement(i), dumpInfoStr)) {
+            HILOG_ERROR("Parse dumpInfoStr failed");
+            return;
+        }
+        info.push_back(dumpInfoStr);
+    }
+    HILOG_DEBUG("Dump info size: %{public}zu", info.size());
 }
 }
 }

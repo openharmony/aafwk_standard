@@ -204,18 +204,6 @@ void FormDataMgr::CreateFormInfo(const int64_t formId, const FormRecord &record,
     formInfo.versionName = record.versionName;
     formInfo.compatibleVersion = record.compatibleVersion;
     formInfo.icon = record.icon;
-    auto sharedImageMap = record.formProviderInfo.GetFormData().GetImageDataMap();
-    if (sharedImageMap.size() > FormJsInfo::IMAGE_DATA_THRESHOLD) {
-        return;
-    }
-    for (auto entry : sharedImageMap) {
-        auto picName = entry.first;
-        auto ashmem = entry.second.first;
-        auto fd = ashmem->GetAshmemFd();
-        auto len = ashmem->GetAshmemSize();
-        std::pair<int, int32_t> imageDataPair = std::make_pair(fd, len);
-        formInfo.imageDataMap[picName] = imageDataPair;
-    }
 }
 /**
  * @brief Check temp form count is max.
@@ -927,21 +915,6 @@ void FormDataMgr::UpdateHostNeedRefresh(const int64_t formId, const bool needRef
 /**
  * @brief Update form for host clients.
  * @param formId The Id of the form.
- * @param formProviderInfo FormProviderInfo object
- */
-void FormDataMgr::UpdateFormProviderInfo(const int64_t formId, const FormProviderInfo &formProviderInfo)
-{
-    std::lock_guard<std::mutex> lock(formRecordMutex_);
-    auto itFormRecord = formRecords_.find(formId);
-    if (itFormRecord == formRecords_.end()) {
-        HILOG_ERROR("%{public}s, form info not find", __func__);
-        return;
-    }
-    itFormRecord->second.formProviderInfo = formProviderInfo;
-}
-/**
- * @brief Update form for host clients.
- * @param formId The Id of the form.
  * @param formRecord The form info.
  * @return Returns true if form update, false if other.
  */
@@ -1301,8 +1274,8 @@ void FormDataMgr::DeleteFormsByUserId(const int32_t userId, std::vector<int64_t>
     std::vector<int64_t> removedTempForms;
     {
         std::lock_guard<std::mutex> lock(formRecordMutex_);
-        std::map<int64_t, FormRecord>::iterator itFormRecord;
-        for (itFormRecord = formRecords_.begin(); itFormRecord != formRecords_.end(); itFormRecord++) {
+        auto itFormRecord = formRecords_.begin();
+        while (itFormRecord != formRecords_.end()) {
             if (userId == itFormRecord->second.userId) {
                 if (itFormRecord->second.formTempFlg) {
                     removedTempForms.emplace_back(itFormRecord->second.formId);
@@ -1310,7 +1283,7 @@ void FormDataMgr::DeleteFormsByUserId(const int32_t userId, std::vector<int64_t>
                 removedFormIds.emplace_back(itFormRecord->second.formId);
                 itFormRecord = formRecords_.erase(itFormRecord);
             } else {
-                itFormRecord++;
+                ++itFormRecord;
             }
         }
     }

@@ -105,9 +105,11 @@ public:
     MOCK_METHOD2(GetExtensionRunningInfos, int(int upperLimit, std::vector<ExtensionRunningInfo> &info));
     MOCK_METHOD1(GetProcessRunningInfos, int(std::vector<AppExecFwk::RunningProcessInfo> &info));
     MOCK_METHOD3(StartAbilityByCall, int(const Want &, const sptr<IAbilityConnection> &, const sptr<IRemoteObject> &));
+    #ifdef ABILITY_COMMAND_FOR_TEST
     MOCK_METHOD0(BlockAppService, int());
     MOCK_METHOD0(BlockAmsService, int());
     MOCK_METHOD1(BlockAbility, int(int32_t abilityRecordId));
+    #endif
 
     virtual int StartAbility(
         const Want &want,
@@ -182,7 +184,8 @@ public:
         return 0;
     }
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override
+    virtual int FinishUserTest(
+        const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override
     {
         return 0;
     }
@@ -218,10 +221,12 @@ public:
         sem_.Post();
     }
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override
     {
         return 0;
     }
+    #endif
 
 private:
     Semaphore sem_;

@@ -350,6 +350,7 @@ public:
      */
     std::shared_ptr<AbilityRecord> GetCurrentTopAbility(const std::string &bundleName);
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block ability.
      *
@@ -357,6 +358,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int BlockAbility(int abilityReocrdId);
+    #endif
 
     void UninstallApp(const std::string &bundleName, int32_t uid);
 

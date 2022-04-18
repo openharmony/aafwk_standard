@@ -99,10 +99,12 @@ public:
         sem_.Post();
     }
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override
     {
         return 0;
     }
+    #endif
 
 private:
     bool DumpStateCalled_ = false;

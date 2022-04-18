@@ -71,11 +71,6 @@ namespace OHOS {
 namespace AAFwk {
 namespace {
 const int32_t MIN_ARGS_SIZE = 1;
-const int32_t MID_ARGS_SIZE = 2;
-const int32_t MAX_ARGS_SIZE = 3;
-const int32_t FIRST_PARAM = 0;
-const int32_t SECOND_PARAM = 1;
-const int32_t THIRD_PARAM = 2;
 
 const std::string ARGS_ABILITY = "-a";
 const std::string ARGS_MISSION_LIST = "-l";
@@ -117,7 +112,9 @@ constexpr uint32_t SCENE_FLAG_NORMAL = 0;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const int32_t SWITCH_ACCOUNT_TRY = 3;
 const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
+#ifdef ABILITY_COMMAND_FOR_TEST
 const int32_t BLOCK_AMS_SERVICE_TIME = 65;
+#endif
 const std::string EMPTY_DEVICE_ID = "";
 const int32_t APP_MEMORY_SIZE = 512;
 const int32_t GET_PARAMETER_INCORRECT = -9;
@@ -131,6 +128,7 @@ const std::string ACTION_CHOOSE = "ohos.want.action.select";
 const std::u16string DMS_FREE_INSTALL_CALLBACK_TOKEN = u"ohos.DistributedSchedule.IDmsFreeInstallCallback";
 constexpr uint32_t IDmsFreeInstallCallback_ON_FREE_INSTALL_DONE = 0;
 const std::string HIGHEST_PRIORITY_ABILITY_ENTITY = "flag.home.intent.from.system";
+const std::string FREE_INSTALL_TYPE_KEY = "freeInstallType";
 const std::map<std::string, AbilityManagerService::DumpKey> AbilityManagerService::dumpMap = {
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("--all", KEY_DUMP_ALL),
     std::map<std::string, AbilityManagerService::DumpKey>::value_type("-a", KEY_DUMP_ALL),
@@ -300,7 +298,7 @@ int AbilityManagerService::StartAbility(const Want &want, const sptr<IRemoteObje
 
         Want fiWant = want;
         std::string freeInstallType = "StartAbility";
-        fiWant.SetParam("freeInstallType", freeInstallType);
+        fiWant.SetParam(FREE_INSTALL_TYPE_KEY, freeInstallType);
         auto ret = StartFreeInstall(fiWant, userId, requestCode, callerToken);
         HandleFreeInstallErrorCode(ret);
         HILOG_INFO("StartAbility with free install flags ret = %{public}d", ret);
@@ -802,7 +800,7 @@ int AbilityManagerService::TerminateAbilityByCaller(const sptr<IRemoteObject> &c
 
 int AbilityManagerService::MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser)
 {
-    HILOG_INFO("Minimize ability.");
+    HILOG_INFO("Minimize ability, fromUser:%{public}d.", fromUser);
     if (!VerificationAllToken(token)) {
         return ERR_INVALID_VALUE;
     }
@@ -1813,6 +1811,7 @@ void AbilityManagerService::DumpSysAbilityInner(
 void AbilityManagerService::DumpSysStateInner(
     const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
 {
+    HILOG_INFO("DumpSysStateInner begin:%{public}s", args.c_str());
     std::shared_ptr<AbilityConnectManager> targetManager;
 
     if (isUserID) {
@@ -1840,7 +1839,9 @@ void AbilityManagerService::DumpSysStateInner(
     } else if (argList.size() < MIN_DUMP_ARGUMENT_NUM) {
         targetManager->DumpState(info, isClient);
     } else {
-        info.emplace_back("error: invalid argument, please see 'aa dump -h'.");
+        HILOG_INFO("uri = %{public}s", argList[1].c_str());
+        std::vector<std::string> params(argList.begin() + MIN_DUMP_ARGUMENT_NUM, argList.end());
+        targetManager->DumpStateByUri(info, isClient, argList[1], params);
     }
 }
 
@@ -2063,6 +2064,7 @@ void AbilityManagerService::DumpState(const std::string &args, std::vector<std::
 void AbilityManagerService::DumpSysState(
     const std::string& args, std::vector<std::string>& info, bool isClient, bool isUserID, int userId)
 {
+    HILOG_DEBUG("%{public}s begin", __func__);
     std::vector<std::string> argList;
     SplitStr(args, " ", argList);
     if (argList.empty()) {
@@ -3841,7 +3843,8 @@ int AbilityManagerService::StartUserTest(const Want &want, const sptr<IRemoteObj
     return DelayedSingleton<AppScheduler>::GetInstance()->StartUserTest(want, observer, bundleInfo, GetUserId());
 }
 
-int AbilityManagerService::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+int AbilityManagerService::FinishUserTest(
+    const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     HILOG_DEBUG("enter");
     if (bundleName.empty()) {
@@ -4040,6 +4043,7 @@ void AbilityManagerService::StartingScreenLockAbility()
 #endif
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
 {
     if (abilityName.empty()) {
@@ -4062,6 +4066,7 @@ int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, c
     timeoutMap_.insert(std::make_pair(state, abilityName));
     return ERR_OK;
 }
+#endif
 
 int AbilityManagerService::CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abilityInfo)
 {
@@ -4348,6 +4353,7 @@ int AbilityManagerService::VerifyAccountPermission(int32_t userId)
     return CHECK_PERMISSION_FAILED;
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityManagerService::BlockAmsService()
 {
     HILOG_DEBUG("%{public}s", __func__);
@@ -4376,6 +4382,7 @@ int AbilityManagerService::BlockAppService()
     HILOG_DEBUG("%{public}s", __func__);
     return DelayedSingleton<AppScheduler>::GetInstance()->BlockAppService();
 }
+#endif
 
 bool AbilityManagerService::CheckIsFreeInstall(const Want &want)
 {
@@ -4562,7 +4569,7 @@ void AbilityManagerService::NotifyFreeInstallResult(const Want &want, int result
                 continue;
             }
 
-            std::string freeInstallType = want.GetStringParam("freeInstallType");
+            std::string freeInstallType = want.GetStringParam(FREE_INSTALL_TYPE_KEY);
             if (!isFromRemote && resultCode == ERR_OK && freeInstallType.compare("ConnectAbility") == 0) {
                 resultCode = ERR_OK;
             } else if (!isFromRemote && resultCode == ERR_OK && freeInstallType.compare("StartAbility") == 0) {
@@ -4698,24 +4705,18 @@ AppExecFwk::ElementName AbilityManagerService::GetTopAbility()
 
 int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
 {
+    HILOG_DEBUG("Dump begin fd: %{public}d", fd);
     std::vector<std::string> argsStr;
     for (auto arg : args) {
         argsStr.emplace_back(Str16ToStr8(arg));
     }
     int32_t argsSize = static_cast<int32_t>(argsStr.size());
-    if (argsSize < MIN_ARGS_SIZE || argsSize > MAX_ARGS_SIZE) {
+    if (argsSize < MIN_ARGS_SIZE) {
         return ERR_AAFWK_HIDUMP_INVALID_ARGS;
     }
     ErrCode errCode = ERR_OK;
     std::string result;
-    if (argsSize == MIN_ARGS_SIZE) {
-        errCode = ProcessOneParam(argsStr[FIRST_PARAM], result);
-    } else if (argsSize == MID_ARGS_SIZE) {
-        errCode = ProcessTwoParam(argsStr[FIRST_PARAM], argsStr[SECOND_PARAM], result);
-    } else {
-        errCode = ProcessThreeParam(argsStr[FIRST_PARAM], argsStr[SECOND_PARAM], argsStr[THIRD_PARAM], result);
-    }
-
+    errCode = ProcessMultiParam(argsStr, result);
     if (errCode == ERR_AAFWK_HIDUMP_INVALID_ARGS) {
         ShowIllealInfomation(result);
     }
@@ -4725,7 +4726,7 @@ int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
         HILOG_ERROR("dprintf error");
         return ERR_AAFWK_HIDUMP_ERROR;
     }
-
+    HILOG_DEBUG("Dump end");
     return errCode;
 }
 
@@ -4800,6 +4801,54 @@ ErrCode AbilityManagerService::ProcessThreeParam(const std::string& firstParam, 
     std::string cmd = "-a ";
     std::vector<std::string> dumpResults;
     DumpSysState(cmd, dumpResults, false, true, userID);
+    for (auto it : dumpResults) {
+        result += it + "\n";
+    }
+    return ERR_OK;
+}
+
+ErrCode AbilityManagerService::ProcessMultiParam(std::vector<std::string> &argsStr, std::string &result)
+{
+    HILOG_DEBUG("%{public}s begin", __func__);
+    bool isClient = false;
+    bool isUser = false;
+    int userID = DEFAULT_INVAL_VALUE;
+    std::vector<std::string>::iterator it;
+    for (it = argsStr.begin(); it != argsStr.end();) {
+        if (*it == ARGS_CLIENT) {
+            isClient = true;
+            it = argsStr.erase(it);
+            continue;
+        }
+        if (*it == ARGS_USER_ID) {
+            it = argsStr.erase(it);
+            if (it == argsStr.end()) {
+                HILOG_ERROR("ARGS_USER_ID id invalid");
+                return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+            }
+            (void)StrToInt(*it, userID);
+            if (userID < 0) {
+                HILOG_ERROR("ARGS_USER_ID id invalid");
+                return ERR_AAFWK_HIDUMP_INVALID_ARGS;
+            }
+            isUser = true;
+            it = argsStr.erase(it);
+            continue;
+        }
+        it++;
+    }
+    std::string cmd;
+    for (unsigned int i = 0; i < argsStr.size(); i++) {
+        cmd.append(argsStr[i]);
+        if (i != argsStr.size() - 1) {
+            cmd.append(" ");
+        }
+    }
+    HILOG_INFO("%{public}s, isClient:%{public}d, userID is : %{public}d, cmd is : %{public}s",
+        __func__, isClient, userID, cmd.c_str());
+    
+    std::vector<std::string> dumpResults;
+    DumpSysState(cmd, dumpResults, isClient, isUser, userID);
     for (auto it : dumpResults) {
         result += it + "\n";
     }

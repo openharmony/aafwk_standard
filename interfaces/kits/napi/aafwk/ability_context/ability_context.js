@@ -92,6 +92,14 @@ class AbilityContext extends Context {
     restoreWindowStage(contentStorage) {
         return this.__context_impl__.restoreWindowStage(contentStorage)
     }
+
+    setMissionLabel(label, callback) {
+        return this.__context_impl__.setMissionLabel(label, callback)
+    }
+
+    setMissionIcon(icon, callback) {
+        return this.__context_impl__.setMissionIcon(icon, callback)
+    }
 }
 
 export default AbilityContext

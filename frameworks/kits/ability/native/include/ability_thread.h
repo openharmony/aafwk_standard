@@ -493,11 +493,13 @@ private:
      */
     void HandleUpdateConfiguration(const Configuration &config);
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block ability.
      * @return Returns ERR_OK on success, others on failure.
      */
     int BlockAbility();
+    #endif
 
     /**
      * @brief Handle the scheduling update configuration of extension.

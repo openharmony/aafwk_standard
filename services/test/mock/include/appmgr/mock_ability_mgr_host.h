@@ -302,10 +302,12 @@ public:
         return 0;
     }
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override
     {
         return 0;
     }
+    #endif
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -104,11 +104,11 @@ int MissionListManager::StartAbility(const std::shared_ptr<AbilityRecord> &curre
 
 int MissionListManager::MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser)
 {
-    HILOG_INFO("Minimize ability.");
+    HILOG_INFO("Minimize ability, fromUser:%{public}d.", fromUser);
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     // check if ability is in list to avoid user create fake token.
     CHECK_POINTER_AND_RETURN_LOG(
-        GetAbilityRecordByToken(token), INNER_ERR, "Ability is not in mission list.");
+        GetAbilityRecordByToken(token), INNER_ERR, "Minimize ability fail, ability is not in mission list.");
     auto abilityRecord = Token::GetAbilityRecordByToken(token);
     return MinimizeAbilityLocked(abilityRecord, fromUser);
 }
@@ -571,18 +571,21 @@ void MissionListManager::MoveMissionListToTop(const std::shared_ptr<MissionList>
 
 int MissionListManager::MinimizeAbilityLocked(const std::shared_ptr<AbilityRecord> &abilityRecord, bool fromUser)
 {
-    HILOG_INFO("%{public}s, called", __func__);
-    CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+    if (abilityRecord == nullptr) {
+        HILOG_ERROR("Minimize ability fail, ability record is null.");
+        return ERR_INVALID_VALUE;
+    }
+    HILOG_INFO("%{public}s called, ability:%{public}s.", __func__, abilityRecord->GetAbilityInfo().name.c_str());
 
     if (!abilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW) &&
         !abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
-        HILOG_WARN("Ability state is invalid, not foregroundnew or foregerounding_new.");
+        HILOG_ERROR("Minimize ability fail, ability state is invalid, not foregroundnew or foregerounding_new.");
         return ERR_OK;
     }
 
     auto topAbility = GetCurrentTopAbilityLocked();
     if (!fromUser && abilityRecord == topAbility) {
-        HILOG_DEBUG("top ability refuse to background when not from user.");
+        HILOG_ERROR("Minimize ability fail, top ability refuse to background when not from user.");
         return ERR_INVALID_OPERATION;
     }
 
@@ -1300,14 +1303,16 @@ int MissionListManager::SetMissionLockedState(int missionId, bool lockedState)
 
 void MissionListManager::MoveToBackgroundTask(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
-    CHECK_POINTER(abilityRecord);
+    if (abilityRecord == nullptr) {
+        HILOG_ERROR("Move the ability to background fail, ability record is null.");
+        return;
+    }
+    HILOG_INFO("Move the ability to background, ability:%{public}s.", abilityRecord->GetAbilityInfo().name.c_str());
     abilityRecord->SetIsNewWant(false);
-    std::string backElement = abilityRecord->GetWant().GetElement().GetURI();
-    HILOG_INFO("Move the ability to background, ability: %{public}s.", backElement.c_str());
     auto self(shared_from_this());
     UpdateMissionSnapshot(abilityRecord);
     auto task = [abilityRecord, self]() {
-        HILOG_WARN("Mission list manager move to background timeout.");
+        HILOG_ERROR("Mission list manager move to background timeout.");
         self->PrintTimeOutLog(abilityRecord, AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG);
         self->CompleteBackground(abilityRecord);
     };
@@ -2463,6 +2468,7 @@ void MissionListManager::GetForegroundAbilities(const std::shared_ptr<MissionLis
     }
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int MissionListManager::BlockAbility(int32_t abilityRecordId)
 {
     int ret = -1;
@@ -2501,5 +2507,6 @@ int MissionListManager::BlockAbility(int32_t abilityRecordId)
     }
     return ret;
 }
+#endif
 }  // namespace AAFwk
 }  // namespace OHOS

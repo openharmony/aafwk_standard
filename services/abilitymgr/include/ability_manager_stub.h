@@ -152,16 +152,21 @@ private:
     int IsRunningInStabilityTestInner(MessageParcel &data, MessageParcel &reply);
     int MoveMissionToFrontByOptionsInner(MessageParcel &data, MessageParcel &reply);
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     int ForceTimeoutForTestInner(MessageParcel &data, MessageParcel &reply);
+    #endif
 
     int FreeInstallAbilityFromRemoteInner(MessageParcel &data, MessageParcel &reply);
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     int BlockAmsServiceInner(MessageParcel &data, MessageParcel &reply);
     int BlockAbilityInner(MessageParcel &data, MessageParcel &reply);
     int BlockAppServiceInner(MessageParcel &data, MessageParcel &reply);
+    #endif
+
     int GetTopAbilityInner(MessageParcel &data, MessageParcel &reply);
 };
 }  // namespace AAFwk

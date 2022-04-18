@@ -506,9 +506,9 @@ bool FormTimerMgr::HandleSystemTimeChanged()
     HILOG_INFO("%{public}s start", __func__);
     if (!updateAtTimerTasks_.empty()) {
         atTimerWakeUpTime_ = LONG_MAX;
-        return UpdateAtTimerAlarm();
+        UpdateAtTimerAlarm();
     }
-
+    UpdateLimiterAlarm();
     HILOG_INFO("%{public}s end", __func__);
     return true;
 }

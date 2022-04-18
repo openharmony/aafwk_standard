@@ -42,7 +42,9 @@ namespace AppExecFwk {
 using namespace std::chrono_literals;
 using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
 using DataObsMgrClient = OHOS::AAFwk::DataObsMgrClient;
+#ifdef ABILITY_COMMAND_FOR_TEST
 const int32_t BLOCK_ABILITY_TIME = 20;
+#endif
 constexpr static char ACE_SERVICE_ABILITY_NAME[] = "AceServiceAbility";
 constexpr static char ACE_DATA_ABILITY_NAME[] = "AceDataAbility";
 #ifdef SUPPORT_GRAPHICS
@@ -1506,7 +1508,7 @@ void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std:
         return;
     }
 
-    if (!params.empty() && currentAbility_ != nullptr) {
+    if (currentAbility_ != nullptr) {
         if (abilityImpl_->IsStageBasedModel()) {
             auto scene = currentAbility_->GetScene();
             if (scene == nullptr) {
@@ -1519,9 +1521,16 @@ void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std:
                 return;
             }
             window->DumpInfo(params, info);
-        } else {
-            currentAbility_->Dump(params, info);
         }
+        currentAbility_->Dump(params, info);
+    }
+
+    if (currentExtension_ != nullptr) {
+        currentExtension_->Dump(params, info);
+    }
+
+    if (!params.empty()) {
+        HILOG_INFO("params not empty");
         return;
     }
 
@@ -1556,7 +1565,7 @@ void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std:
         localCallContainer->DumpCalls(info);
     }
 
-    HILOG_INFO("localCallContainer need to get calls info.");
+    HILOG_INFO("%{public}s end.", __func__);
 }
 #else
 void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info)
@@ -1595,6 +1604,7 @@ sptr<IRemoteObject> AbilityThread::CallRequest()
     return retval;
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityThread::BlockAbility()
 {
     HILOG_INFO("AbilityThread::BlockAblity begin");
@@ -1610,5 +1620,6 @@ int AbilityThread::BlockAbility()
     }
     return ERR_NO_INIT;
 }
+#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS
