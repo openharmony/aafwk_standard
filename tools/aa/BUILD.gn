@@ -29,6 +29,7 @@ config("ability_command_config") {
 ohos_source_set("tools_aa_source_set") {
   sources = [
     "src/ability_command.cpp",
+    "src/ability_tool_command.cpp",
     "src/shell_command.cpp",
     "src/shell_command_executor.cpp",
     "src/shell_command_result.cpp",
@@ -85,6 +86,8 @@ ohos_executable("aa") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
+
+  symlink_target_name = [ "ability_tool" ]
 
   install_enable = true
 

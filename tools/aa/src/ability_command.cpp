@@ -52,20 +52,6 @@ constexpr struct option LONG_OPTIONS_ApplicationNotRespondin[] = {
     {nullptr, 0, nullptr, 0},
 };
 #endif
-const std::string SHORT_OPTIONS_DUMP = "has:m:lud::e::LS";
-constexpr struct option LONG_OPTIONS_DUMP[] = {
-    {"help", no_argument, nullptr, 'h'},
-    {"all", no_argument, nullptr, 'a'},
-    {"stack", required_argument, nullptr, 's'},
-    {"mission", required_argument, nullptr, 'm'},
-    {"stack-list", no_argument, nullptr, 'l'},
-    {"ui", no_argument, nullptr, 'u'},
-    {"data", no_argument, nullptr, 'd'},
-    {"serv", no_argument, nullptr, 'e'},
-    {"mission-list", no_argument, nullptr, 'L'},
-    {"mission-infos", no_argument, nullptr, 'S'},
-    {nullptr, 0, nullptr, 0},
-};
 const std::string SHORT_OPTIONS_DUMPSYS = "hal::i:e::p::r::d::u:c";
 constexpr struct option LONG_OPTIONS_DUMPSYS[] = {
     {"help", no_argument, nullptr, 'h'},
@@ -644,105 +630,6 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
     return result;
 }
 
-ErrCode AbilityManagerShellCommand::RunAsDumpCommand()
-{
-    ErrCode result = OHOS::ERR_OK;
-
-    std::string args;
-    for (auto arg : argList_) {
-        args += arg;
-        args += " ";
-    }
-
-    int option = getopt_long(argc_, argv_, SHORT_OPTIONS_DUMP.c_str(), LONG_OPTIONS_DUMP, nullptr);
-
-    HILOG_INFO("option: %{public}d, optopt: %{public}d, optind: %{public}d", option, optopt, optind);
-
-    if (optind < 0 || optind > argc_) {
-        return OHOS::ERR_INVALID_VALUE;
-    }
-
-    switch (option) {
-        case 'h': {
-            // 'aa dump -h'
-            // 'aa dump --help'
-            result = OHOS::ERR_INVALID_VALUE;
-            break;
-        }
-        case 'a': {
-            // 'aa dump -a'
-            // 'aa dump --all'
-            break;
-        }
-        case 's': {
-            // 'aa dump -s xxx'
-            // 'aa dump --stack xxx'
-            break;
-        }
-        case 'm': {
-            // 'aa dump -m xxx'
-            // 'aa dump --mission xxx'
-            break;
-        }
-        case 'l': {
-            // 'aa dump -l'
-            // 'aa dump --stack-list'
-            break;
-        }
-        case 'd': {
-            // 'aa dump -d'
-            // 'aa dump --data'
-            break;
-        }
-        case 'e': {
-            // 'aa dump -e'
-            // 'aa dump --serv'
-            break;
-        }
-        case 'L': {
-            // 'aa dump -L'
-            // 'aa dump --mission-list'
-            break;
-        }
-        case 'S': {
-            // 'aa dump -S'
-            // 'aa dump --mission-infos'
-            break;
-        }
-        case '?': {
-            result = RunAsDumpCommandOptopt();
-            break;
-        }
-        default: {
-            if (strcmp(argv_[optind], cmd_.c_str()) == 0) {
-                // 'aa dump' with no option: aa dump
-                // 'aa dump' with a wrong argument: aa dump xxx
-                HILOG_INFO("'aa dump' with no option.");
-
-                resultReceiver_.append(HELP_MSG_NO_OPTION + "\n");
-                result = OHOS::ERR_INVALID_VALUE;
-            }
-            break;
-        }
-    }
-
-    if (result != OHOS::ERR_OK) {
-        resultReceiver_.append(HELP_MSG_DUMP);
-    } else {
-        std::vector<std::string> dumpResults;
-        result = AbilityManagerClient::GetInstance()->DumpState(args, dumpResults);
-        if (result == OHOS::ERR_OK) {
-            for (auto it : dumpResults) {
-                resultReceiver_ += it + "\n";
-            }
-        } else {
-            HILOG_INFO("failed to dump state.");
-        }
-    }
-
-    return result;
-}
-
 ErrCode AbilityManagerShellCommand::RunAsForceStop()
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
@@ -795,60 +682,6 @@ ErrCode AbilityManagerShellCommand::RunForceTimeoutForTest()
     return result;
 }
 #endif
-
-ErrCode AbilityManagerShellCommand::RunAsDumpCommandOptopt()
-{
-    ErrCode result = OHOS::ERR_OK;
-
-    switch (optopt) {
-        case 's': {
-            // 'aa dump -s' with no argument: aa dump -s
-            // 'aa dump --stack' with no argument: aa dump --stack
-            HILOG_INFO("'aa dump -s' with no argument.");
-
-            resultReceiver_.append("error: option ");
-            resultReceiver_.append("requires a value.\n");
-            result = OHOS::ERR_INVALID_VALUE;
-            break;
-        }
-        case 'm': {
-            // 'aa dump -m' with no argument: aa dump -m
-            // 'aa dump --mission' with no argument: aa dump --mission
-            HILOG_INFO("'aa dump -m' with no argument.");
-
-            resultReceiver_.append("error: option ");
-            resultReceiver_.append("requires a value.\n");
-            result = OHOS::ERR_INVALID_VALUE;
-            break;
-        }
-        case 0: {
-            // 'aa dump' with an unknown option: aa dump --x
-            // 'aa dump' with an unknown option: aa dump --xxx
-            std::string unknownOption = "";
-            std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
-
-            HILOG_INFO("'aa dump' with an unknown option.");
-
-            resultReceiver_.append(unknownOptionMsg);
-            result = OHOS::ERR_INVALID_VALUE;
-            break;
-        }
-        default: {
-            // 'aa dump' with an unknown option: aa dump -x
-            // 'aa dump' with an unknown option: aa dump -xxx
-            std::string unknownOption = "";
-            std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
-
-            HILOG_INFO("'aa dump' with an unknown option.");
-
-            resultReceiver_.append(unknownOptionMsg);
-            result = OHOS::ERR_INVALID_VALUE;
-            break;
-        }
-    }
-
-    return result;
-}
 
 ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &windowMode)
 {
