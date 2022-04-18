@@ -152,6 +152,8 @@ private:
     int IsRunningInStabilityTestInner(MessageParcel &data, MessageParcel &reply);
     int MoveMissionToFrontByOptionsInner(MessageParcel &data, MessageParcel &reply);
 
+    int RegisterWindowHandlerInner(MessageParcel &data, MessageParcel &reply);
+
     #ifdef ABILITY_COMMAND_FOR_TEST
     int ForceTimeoutForTestInner(MessageParcel &data, MessageParcel &reply);
     #endif

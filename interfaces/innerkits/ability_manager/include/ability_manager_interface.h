@@ -547,6 +547,8 @@ public:
      */
     virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) = 0;
 
+    virtual int RegisterWindowHandler(const sptr<IWindowHandler>& handler) = 0;
+
     #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block ability manager service.
@@ -862,6 +864,8 @@ public:
         DUMP_STATE = 2001,
         DUMPSYS_STATE = 2002,
         FORCE_TIMEOUT,
+
+        REGISTER_WINDOW_HANDLER = 2500,
 
         GET_TOP_ABILITY = 3000,
         FREE_INSTALL_ABILITY_FROM_REMOTE = 3001,
