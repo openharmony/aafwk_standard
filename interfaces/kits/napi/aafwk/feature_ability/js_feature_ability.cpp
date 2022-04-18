@@ -132,7 +132,7 @@ NativeValue* JsFeatureAbility::OnStartAbility(NativeEngine &engine, NativeCallba
     return result;
 }
 
-NativeValue* JsFeatureAbility::OnStartAbilityForResult(NativeEngine& engine, NativeCallbackInfo& info)
+NativeValue* JsFeatureAbility::OnStartAbilityForResult(NativeEngine &engine, NativeCallbackInfo &info)
 {
     HILOG_INFO("%{public}s is called", __FUNCTION__);
     if (info.argc != 1) {
@@ -153,16 +153,28 @@ NativeValue* JsFeatureAbility::OnStartAbilityForResult(NativeEngine& engine, Nat
     }
 
     Want want = GetWant(requestParam);
-    requestCode_ = (requestCode_ == INT_MAX) ? 0 : (requestCode_ + 1);
-    AsyncTask::CompleteCallback complete =
-        [want, ability, requestCode = requestCode_](NativeEngine &engine, AsyncTask &task, int32_t status) {
-            auto errcode = ability->StartAbilityForResult(want, requestCode);
-            task.Resolve(engine, JsFeatureAbility::CreateJsResult(engine, errcode, "Start Ability failed."));
-        };
-
     NativeValue* result = nullptr;
-    AsyncTask::Schedule(
-        engine, CreateAsyncTaskWithLastParam(engine, nullptr, nullptr, std::move(complete), &result));
+    std::unique_ptr<AsyncTask> uasyncTask =
+        CreateAsyncTaskWithLastParam(engine, nullptr, nullptr, nullptr, &result);
+
+    std::shared_ptr<AsyncTask> asyncTask = std::move(uasyncTask);
+    FeatureAbilityTask task = [&engine, asyncTask](int resultCode, const AAFwk::Want& want) {
+        HILOG_INFO("OnStartAbilityForResult async callback is called");
+        std::string data = want.GetStringParam("resultData");
+        NativeValue* abilityResult = JsFeatureAbility::CreateJsResult(engine, resultCode, data);
+        if (abilityResult == nullptr) {
+            HILOG_WARN("wrap abilityResult failed");
+            asyncTask->Reject(engine, CreateJsError(engine, 1, "failed to get result data!"));
+        } else {
+            asyncTask->Resolve(engine, abilityResult);
+        }
+        HILOG_INFO("OnStartAbilityForResult async callback is called end");
+    };
+
+    requestCode_ = (requestCode_ == INT_MAX) ? 0 : (requestCode_ + 1);
+    ability->StartFeatureAbilityForResult(want, requestCode_, std::move(task));
+
+    HILOG_INFO("OnStartAbilityForResult is called end");
     return result;
 }
 
