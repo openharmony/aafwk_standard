@@ -39,7 +39,6 @@
                     "header": {
                       "header_base": "//foundation/aafwk/standard/interfaces/innerkits/base/include/",
                       "header_files": [
-                        "ohos/aafwk/base/array_wrapper.h",
                         "ohos/aafwk/base/base_def.h",
                         "ohos/aafwk/base/base_interfaces.h",
                         "ohos/aafwk/base/base_object.h",

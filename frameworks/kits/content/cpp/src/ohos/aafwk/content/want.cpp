@@ -21,7 +21,6 @@
 #include <regex>
 #include <securec.h>
 
-#include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/base_object.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
@@ -33,6 +32,7 @@
 #include "ohos/aafwk/base/double_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
+#include "ohos/aafwk/content/array_wrapper.h"
 #include "parcel_macro_base.h"
 #include "string_ex.h"
 #include "want_params_wrapper.h"

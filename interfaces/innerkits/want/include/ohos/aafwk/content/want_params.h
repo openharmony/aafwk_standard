@@ -109,6 +109,7 @@ private:
         VALUE_TYPE_PARCELABLE = 21,
         VALUE_TYPE_PARCELABLEARRAY = 22,
         VALUE_TYPE_SERIALIZABLE = 23,
+        VALUE_TYPE_WANTPARAMSARRAY = 24,
         VALUE_TYPE_LIST = 50,
 
         VALUE_TYPE_WANTPARAMS = 101,
@@ -139,6 +140,7 @@ private:
     bool ReadFromParcelArrayLong(Parcel &parcel, sptr<IArray> &ao);
     bool ReadFromParcelArrayFloat(Parcel &parcel, sptr<IArray> &ao);
     bool ReadFromParcelArrayDouble(Parcel &parcel, sptr<IArray> &ao);
+    bool ReadFromParcelArrayWantParams(Parcel &parcel, sptr<IArray> &ao);
     bool ReadFromParcelWantParamWrapper(Parcel &parcel, const std::string &key);
 
     bool WriteArrayToParcelString(Parcel &parcel, IArray *ao) const;
@@ -150,6 +152,7 @@ private:
     bool WriteArrayToParcelLong(Parcel &parcel, IArray *ao) const;
     bool WriteArrayToParcelFloat(Parcel &parcel, IArray *ao) const;
     bool WriteArrayToParcelDouble(Parcel &parcel, IArray *ao) const;
+    bool WriteArrayToParcelWantParams(Parcel &parcel, IArray *ao) const;
 
     bool WriteMarshalling(Parcel &parcel, sptr<IInterface> &o) const;
     bool WriteToParcelString(Parcel &parcel, sptr<IInterface> &o) const;

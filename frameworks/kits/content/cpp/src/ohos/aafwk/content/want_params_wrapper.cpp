@@ -150,7 +150,7 @@ sptr<IWantParams> WantParamWrapper::Parse(const std::string &str)
             }
         }
     }
-    sptr<IWantParams> iwantParams = new WantParamWrapper(wantPaqrams);
+    sptr<IWantParams> iwantParams = new (std::nothrow) WantParamWrapper(wantPaqrams);
     return iwantParams;
 }
 

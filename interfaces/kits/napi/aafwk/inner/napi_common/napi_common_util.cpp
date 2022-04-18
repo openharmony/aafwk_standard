@@ -598,6 +598,7 @@ bool UnwrapArrayComplexFromJS(napi_env env, napi_value param, ComplexArrayData &
     value.boolList.clear();
     value.doubleList.clear();
     value.stringList.clear();
+    value.objectList.clear();
 
     for (uint32_t i = 0; i < arraySize; i++) {
         jsValue = nullptr;
@@ -622,6 +623,10 @@ bool UnwrapArrayComplexFromJS(napi_env env, napi_value param, ComplexArrayData &
             }
             case napi_number: {
                 isDouble = UnwrapArrayComplexFromJSNumber(env, value, isDouble, jsValue);
+                break;
+            }
+            case napi_object: {
+                value.objectList.push_back(jsValue);
                 break;
             }
             default:

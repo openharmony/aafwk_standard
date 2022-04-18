@@ -115,6 +115,7 @@ typedef struct __ComplexArrayData {
     std::vector<bool> boolList;
     std::vector<double> doubleList;
     std::vector<std::string> stringList;
+    std::vector<napi_value> objectList;
 } ComplexArrayData;
 
 }  // namespace AppExecFwk

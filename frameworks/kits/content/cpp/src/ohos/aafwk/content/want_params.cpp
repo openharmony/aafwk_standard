@@ -16,7 +16,6 @@
 #include "want_params.h"
 
 #include "ability_base_log_wrapper.h"
-#include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/base_interfaces.h"
 #include "ohos/aafwk/base/base_object.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
@@ -28,10 +27,11 @@
 #include "ohos/aafwk/base/short_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
+#include "ohos/aafwk/content/array_wrapper.h"
+#include "ohos/aafwk/content/want_params_wrapper.h"
 #include "parcel.h"
 #include "securec.h"
 #include "string_ex.h"
-#include "want_params_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -203,6 +203,8 @@ bool WantParams::NewArrayData(IArray *source, sptr<IArray> &dest)
         SetNewArray<double, AAFwk::Double, AAFwk::IDouble>(AAFwk::g_IID_IDouble, source, dest);
     } else if (Array::IsStringArray(source)) {
         SetNewArray<std::string, AAFwk::String, AAFwk::IString>(AAFwk::g_IID_IString, source, dest);
+    } else if (Array::IsWantParamsArray(source)) {
+        SetNewArray<WantParams, AAFwk::WantParamWrapper, AAFwk::IWantParams>(AAFwk::g_IID_IWantParams, source, dest);
     } else {
         return false;
     }
@@ -572,7 +574,6 @@ bool WantParams::DoMarshalling(Parcel &parcel) const
         if (!parcel.WriteString16(Str8ToStr16(key))) {
             return false;
         }
-
         if (!WriteMarshalling(parcel, o)) {
             return false;
         }
@@ -828,6 +829,35 @@ bool WantParams::WriteArrayToParcelDouble(Parcel &parcel, IArray *ao) const
     return parcel.WriteDoubleVector(array);
 }
 
+bool WantParams::WriteArrayToParcelWantParams(Parcel &parcel, IArray *ao) const
+{
+    if (ao == nullptr) {
+        return false;
+    }
+    if (!parcel.WriteInt32(VALUE_TYPE_WANTPARAMSARRAY)) {
+        return false;
+    }
+    std::vector<WantParams> array;
+    auto func = [&](AAFwk::IInterface *object) {
+        if (object != nullptr) {
+            IWantParams *value = AAFwk::IWantParams::Query(object);
+            if (value != nullptr) {
+                array.push_back(AAFwk::WantParamWrapper::Unbox(value));
+            }
+        }
+    };
+    AAFwk::Array::ForEach(ao, func);
+    if (!parcel.WriteInt32(array.size())) {
+        return false;
+    }
+    for (const auto& wp : array) {
+        auto wrapper = AAFwk::WantParamWrapper::Box(wp);
+        auto str = static_cast<WantParamWrapper *>(IWantParams::Query(wrapper))->ToString();
+        parcel.WriteString16(Str8ToStr16(str));
+    }
+    return true;
+}
+
 bool WantParams::WriteArrayToParcel(Parcel &parcel, IArray *ao) const
 {
     if (Array::IsStringArray(ao)) {
@@ -848,6 +878,8 @@ bool WantParams::WriteArrayToParcel(Parcel &parcel, IArray *ao) const
         return WriteArrayToParcelFloat(parcel, ao);
     } else if (Array::IsDoubleArray(ao)) {
         return WriteArrayToParcelDouble(parcel, ao);
+    } else if (Array::IsWantParamsArray(ao)) {
+        return WriteArrayToParcelWantParams(parcel, ao);
     } else {
         return true;
     }
@@ -969,6 +1001,28 @@ bool WantParams::ReadFromParcelArrayDouble(Parcel &parcel, sptr<IArray> &ao)
     return SetArray<double, Double>(g_IID_IDouble, value, ao);
 }
 
+bool WantParams::ReadFromParcelArrayWantParams(Parcel &parcel, sptr<IArray> &ao)
+{
+    int32_t size = parcel.ReadInt32();
+    std::vector<sptr<IInterface>> arrayWantParams;
+    for (int32_t i = 0; i < size; ++i) {
+        std::u16string value = parcel.ReadString16();
+        sptr<IInterface> interface = WantParamWrapper::Parse(Str16ToStr8(value));
+        if (interface != nullptr) {
+            arrayWantParams.push_back(interface);
+        }
+    }
+    size = arrayWantParams.size();
+    ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_IWantParams);
+    if (ao != nullptr) {
+        for (int i = 0; i < size; i++) {
+            ao->Set(i, arrayWantParams[i]);
+        }
+        return true;
+    }
+    return false;
+}
+
 bool WantParams::ReadArrayToParcel(Parcel &parcel, int type, sptr<IArray> &ao)
 {
     switch (type) {
@@ -991,6 +1045,8 @@ bool WantParams::ReadArrayToParcel(Parcel &parcel, int type, sptr<IArray> &ao)
             return ReadFromParcelArrayFloat(parcel, ao);
         case VALUE_TYPE_DOUBLEARRAY:
             return ReadFromParcelArrayDouble(parcel, ao);
+        case VALUE_TYPE_WANTPARAMSARRAY:
+            return ReadFromParcelArrayWantParams(parcel, ao);
         default:
             break;
     }
@@ -1319,10 +1375,9 @@ void WantParams::DumpInfo(int level) const
         typeId = WantParams::GetDataType(it.second);
         if (typeId != VALUE_TYPE_NULL) {
             std::string value = WantParams::GetStringByType(it.second, typeId);
-            ABILITYBASE_LOGI(
-                "=WantParams::params_[%{public}s] : %{private}s =============", it.first.c_str(), value.c_str());
+            ABILITYBASE_LOGI("=WantParams[%{public}s]:%{private}s =======", it.first.c_str(), value.c_str());
         } else {
-            ABILITYBASE_LOGI("=WantParams::params_[%{public}s] : type error =============", it.first.c_str());
+            ABILITYBASE_LOGI("=WantParams[%{public}s]:type error =======", it.first.c_str());
         }
     }
 }

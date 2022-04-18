@@ -46,6 +46,7 @@ wantImpl = "${kits_path}/content/cpp/src/ohos/aafwk/content"
 
 ohos_shared_library("want") {
   sources = [
+    "${wantImpl}/array_wrapper.cpp",
     "${wantImpl}/element_name.cpp",
     "${wantImpl}/extra_params.cpp",
     "${wantImpl}/operation.cpp",
