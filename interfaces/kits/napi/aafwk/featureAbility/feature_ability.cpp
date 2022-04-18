@@ -1379,7 +1379,7 @@ napi_value NAPI_AcquireDataAbilityHelper(napi_env env, napi_callback_info info)
  */
 napi_value NAPI_FAConnectAbility(napi_env env, napi_callback_info info)
 {
-    HILOG_INFO("%{public}s called.", __func__);
+    HILOG_INFO("FA connect ability called.");
     return NAPI_ConnectAbilityCommon(env, info, AbilityType::PAGE);
 }
 

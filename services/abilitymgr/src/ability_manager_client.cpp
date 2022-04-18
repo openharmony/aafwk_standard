@@ -171,8 +171,8 @@ ErrCode AbilityManagerClient::ConnectAbility(
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    HILOG_INFO("%{public}s called, bundleName=%{public}s, abilityName=%{public}s, userId=%{public}d",
-        __func__, want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), userId);
+    HILOG_INFO("Connect ability called, bundleName:%{public}s, abilityName:%{public}s, userId:%{public}d.",
+        want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), userId);
     return abms->ConnectAbility(want, connect, callerToken, userId);
 }
 
