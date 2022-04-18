@@ -28,13 +28,11 @@ namespace Idl {
 
 const char* Parser::TAG = "Parser";
 
-Parser::Parser(
-    /* [in] */ const Options& options)
+Parser::Parser(const Options& options)
     : options_(options)
 {}
 
-bool Parser::Parse(
-    /* [in] */ const String& sourceFile)
+bool Parser::Parse(const String& sourceFile)
 {
     bool ret = lexer_.OpenSourceFile(sourceFile);
     if (!ret) {
@@ -228,8 +226,7 @@ bool Parser::ParseInterface()
     }
 }
 
-bool Parser::ParseMethod(
-    /* [in] */ ASTInterfaceType* interface)
+bool Parser::ParseMethod(ASTInterfaceType* interface)
 {
     bool ret = true;
     bool oneway = false;
@@ -370,8 +367,7 @@ bool Parser::ParseMethod(
     return ret;
 }
 
-bool Parser::ParseParameter(
-    /* [in] */ ASTMethod* method)
+bool Parser::ParseParameter(ASTMethod* method)
 {
     Token token = lexer_.PeekToken();
     if (token != Token::BRACKETS_LEFT) {
@@ -659,8 +655,7 @@ bool Parser::CheckIntegrity()
     return true;
 }
 
-bool Parser::IsValidTypeName(
-    /* [in] */ const String& typeName)
+bool Parser::IsValidTypeName(const String& typeName)
 {
     if (typeName[0] == '.') {
         return false;
@@ -673,9 +668,7 @@ bool Parser::IsValidTypeName(
     return true;
 }
 
-void Parser::LogError(
-    /* [in] */ Token token,
-    /* [in] */ const String& message)
+void Parser::LogError(Token token,const String& message)
 {
     AutoPtr<ErrorInfo> error = new ErrorInfo();
 

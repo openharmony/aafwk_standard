@@ -19,8 +19,7 @@
 namespace OHOS {
 namespace Idl {
 
-void ASTSequenceableType::SetNamespace(
-    /* [in] */ ASTNamespace* nspace)
+void ASTSequenceableType::SetNamespace(ASTNamespace* nspace)
 {
     ASTType::SetNamespace(nspace);
     if (namespace_ != nullptr) {
@@ -45,8 +44,7 @@ String ASTSequenceableType::ToString()
     return name_;
 }
 
-String ASTSequenceableType::Dump(
-    /* [in] */ const String& prefix)
+String ASTSequenceableType::Dump(const String& prefix)
 {
     StringBuilder sb;
 

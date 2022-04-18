@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,20 +23,13 @@ namespace Idl {
 
 class Logger {
 public:
-    static void D(
-        /* [in] */ const char* tag,
-        /* [in] */ const char* format, ...);
+    static void D(const char* tag, const char* format, ...);
 
-    static void E(
-        /* [in] */ const char* tag,
-        /* [in] */ const char* format, ...);
+    static void E(const char* tag, const char* format, ...);
 
-    static void V(
-        /* [in] */ const char* tag,
-        /* [in] */ const char* format, ...);
+    static void V(const char* tag, const char* format, ...);
 
-    static void SetLevel(
-        /* [in] */ int level)
+    static void SetLevel(int level)
     {
         level_ = level;
     }
@@ -51,15 +44,9 @@ private:
 
     ~Logger();
 
-    static void Log(
-        /* [in] */ const char* tag,
-        /* [in] */ const char* format,
-        /* [in] */ va_list args);
+    static void Log(const char* tag, const char* format, va_list args);
 
-    static void Err(
-        /* [in] */ const char* tag,
-        /* [in] */ const char* format,
-        /* [in] */ va_list args);
+    static void Err(const char* tag, const char* format, va_list args);
 
     static int level_;
 };

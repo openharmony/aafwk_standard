@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "codegen/js_code_emitter.h"
+#include "codegen/ts_code_emitter.h"
 
 #include <cctype>
 #include <cstdio>
@@ -28,7 +28,7 @@ namespace Idl {
 namespace {
 const std::string PROXY = "proxy";
 const std::string THIS_PROXY = "this.proxy";
-static const char* TAG = "JsCodeEmitter";
+static const char* TAG = "TsCodeEmitter";
 const std::string UNKNOWN_TYPE = "unknown type";
 const String NEWLINE = "\n";
 const String RETURN_VALUE = "returnValue";
@@ -36,7 +36,7 @@ const std::string ERR_CODE_TYPE = "errCode: number";
 const String ERR_CODE = "errCode";
 }
 
-void JsCodeEmitter::EmitInterface()
+void TsCodeEmitter::EmitInterface()
 {
     if (!CheckInterfaceType()) {
         return;
@@ -59,7 +59,7 @@ void JsCodeEmitter::EmitInterface()
     file.Close();
 }
 
-void JsCodeEmitter::EmitInterfaceImports(StringBuilder& stringBuilder)
+void TsCodeEmitter::EmitInterfaceImports(StringBuilder& stringBuilder)
 {
     for (const auto &item : methods_) {
         if (item.callbackName_.size() > 0) {
@@ -83,7 +83,7 @@ void JsCodeEmitter::EmitInterfaceImports(StringBuilder& stringBuilder)
     }
 }
 
-void JsCodeEmitter::EmitInterfaceSelfDefinedTypeImports(StringBuilder& stringBuilder)
+void TsCodeEmitter::EmitInterfaceSelfDefinedTypeImports(StringBuilder& stringBuilder)
 {
     for (int index = 0; index < metaComponent_->sequenceableNumber_; index++) {
         MetaSequenceable* mp = metaComponent_->sequenceables_[index];
@@ -98,7 +98,7 @@ void JsCodeEmitter::EmitInterfaceSelfDefinedTypeImports(StringBuilder& stringBui
     }
 }
 
-void JsCodeEmitter::EmitInterfaceDefinition(StringBuilder& stringBuilder)
+void TsCodeEmitter::EmitInterfaceDefinition(StringBuilder& stringBuilder)
 {
     stringBuilder.AppendFormat("export default interface %s {\n", metaInterface_->name_);
     EmitInterfaceMethods(stringBuilder, TAB);
@@ -111,7 +111,7 @@ void JsCodeEmitter::EmitInterfaceDefinition(StringBuilder& stringBuilder)
     }
 }
 
-void JsCodeEmitter::EmitInterfaceMethods(StringBuilder& stringBuilder, const String& prefix)
+void TsCodeEmitter::EmitInterfaceMethods(StringBuilder& stringBuilder, const String& prefix)
 {
     for (int index = 0; index < metaInterface_->methodNumber_; index++) {
         MetaMethod* metaMethod = metaInterface_->methods_[index];
@@ -120,7 +120,7 @@ void JsCodeEmitter::EmitInterfaceMethods(StringBuilder& stringBuilder, const Str
 
 }
 
-void JsCodeEmitter::EmitInterfaceMethod(MetaMethod* metaMethod, StringBuilder& stringBuilder, const String& prefix)
+void TsCodeEmitter::EmitInterfaceMethod(MetaMethod* metaMethod, StringBuilder& stringBuilder, const String& prefix)
 {
     MetaType* returnType = metaComponent_->types_[metaMethod->returnTypeIndex_];
     Method method;
@@ -198,19 +198,19 @@ void JsCodeEmitter::EmitInterfaceMethod(MetaMethod* metaMethod, StringBuilder& s
     methods_.emplace_back(method);
 }
 
-void JsCodeEmitter::EmitInterfaceMethodParameter(MetaParameter* mp, StringBuilder& stringBuilder, const String& prefix)
+void TsCodeEmitter::EmitInterfaceMethodParameter(MetaParameter* mp, StringBuilder& stringBuilder, const String& prefix)
 {
     MetaType* paraType = metaComponent_->types_[mp->typeIndex_];
     stringBuilder.AppendFormat("%s: %s", mp->name_,  EmitType(paraType).string());
 }
 
-void JsCodeEmitter::EmitMethodInParameter(StringBuilder& stringBuilder, const std::string& name,
+void TsCodeEmitter::EmitMethodInParameter(StringBuilder& stringBuilder, const std::string& name,
     const std::string& type, const String& prefix)
 {
     stringBuilder.AppendFormat("%s: %s", name.c_str(), type.c_str());
 }
 
-void JsCodeEmitter::EmitInterfaceMethodExportCallback(Method& m, const Parameter& para, bool isLast)
+void TsCodeEmitter::EmitInterfaceMethodExportCallback(Method& m, const Parameter& para, bool isLast)
 {
     StringBuilder exportCallback;
     exportCallback.Append(m.exportFunction_.c_str());
@@ -222,7 +222,7 @@ void JsCodeEmitter::EmitInterfaceMethodExportCallback(Method& m, const Parameter
     m.exportFunction_ = exportCallback.ToString();
 }
 
-void JsCodeEmitter::EmitInterfaceProxy()
+void TsCodeEmitter::EmitInterfaceProxy()
 {
     if (!CheckInterfaceType()) {
         return;
@@ -245,7 +245,7 @@ void JsCodeEmitter::EmitInterfaceProxy()
     file.Close();
 }
 
-void JsCodeEmitter::EmitInterfaceProxyImpl(StringBuilder& stringBuilder)
+void TsCodeEmitter::EmitInterfaceProxyImpl(StringBuilder& stringBuilder)
 {
     stringBuilder.AppendFormat("export default class %s implements %s {\n", proxyName_.string(),
         interfaceName_.string());
@@ -259,14 +259,14 @@ void JsCodeEmitter::EmitInterfaceProxyImpl(StringBuilder& stringBuilder)
     stringBuilder.Append("}\n");
 }
 
-void JsCodeEmitter::EmitInterfaceProxyConstructor(StringBuilder& stringBuilder, const String& prefix)
+void TsCodeEmitter::EmitInterfaceProxyConstructor(StringBuilder& stringBuilder, const String& prefix)
 {
     stringBuilder.Append(prefix).AppendFormat("constructor(%s) {\n", PROXY.c_str());
     stringBuilder.Append(prefix).Append(TAB).AppendFormat("%s = %s;\n", THIS_PROXY.c_str(), PROXY.c_str());
     stringBuilder.Append(prefix).Append("}\n");
 }
 
-void JsCodeEmitter::EmitInterfaceProxyMethodImpls(StringBuilder& stringBuilder, const String& prefix)
+void TsCodeEmitter::EmitInterfaceProxyMethodImpls(StringBuilder& stringBuilder, const String& prefix)
 {
     for (int index = 0; index < metaInterface_->methodNumber_; index++) {
         MetaMethod* metaMethod = metaInterface_->methods_[index];
@@ -277,7 +277,7 @@ void JsCodeEmitter::EmitInterfaceProxyMethodImpls(StringBuilder& stringBuilder, 
     }
 }
 
-void JsCodeEmitter::EmitInterfaceProxyMethodImpl(MetaMethod* metaMethod, int methodIndex, StringBuilder& stringBuilder,
+void TsCodeEmitter::EmitInterfaceProxyMethodImpl(MetaMethod* metaMethod, int methodIndex, StringBuilder& stringBuilder,
     const String& prefix)
 {
     stringBuilder.Append(prefix).AppendFormat("%s(", MethodName(metaMethod->name_).string());
@@ -304,7 +304,7 @@ void JsCodeEmitter::EmitInterfaceProxyMethodImpl(MetaMethod* metaMethod, int met
     EmitInterfaceProxyMethodBody(metaMethod, methodIndex, stringBuilder, prefix);
 }
 
-void JsCodeEmitter::EmitInterfaceProxyMethodBody(MetaMethod* metaMethod, int methodIndex, StringBuilder& stringBuilder,
+void TsCodeEmitter::EmitInterfaceProxyMethodBody(MetaMethod* metaMethod, int methodIndex, StringBuilder& stringBuilder,
     const String& prefix)
 {
     bool haveOutPara = false;
@@ -419,7 +419,7 @@ void JsCodeEmitter::EmitInterfaceProxyMethodBody(MetaMethod* metaMethod, int met
     stringBuilder.Append(prefix).Append("}\n");
 }
 
-void JsCodeEmitter::EmitWriteMethodParameter(MetaParameter* mp, const String& parcelName, StringBuilder& stringBuilder,
+void TsCodeEmitter::EmitWriteMethodParameter(MetaParameter* mp, const String& parcelName, StringBuilder& stringBuilder,
     const String& prefix)
 {
     MetaType* mt = metaComponent_->types_[mp->typeIndex_];
@@ -427,7 +427,7 @@ void JsCodeEmitter::EmitWriteMethodParameter(MetaParameter* mp, const String& pa
     EmitWriteVariable(parcelName, name, mt, stringBuilder, prefix);
 }
 
-void JsCodeEmitter::EmitReadMethodParameter(MetaParameter* mp, const String& parcelName, StringBuilder& stringBuilder,
+void TsCodeEmitter::EmitReadMethodParameter(MetaParameter* mp, const String& parcelName, StringBuilder& stringBuilder,
     const String& prefix)
 {
     MetaType* mt = metaComponent_->types_[mp->typeIndex_];
@@ -435,7 +435,7 @@ void JsCodeEmitter::EmitReadMethodParameter(MetaParameter* mp, const String& par
     EmitReadOutVariable(parcelName, name, mt, stringBuilder, prefix);
 }
 
-void JsCodeEmitter::EmitInterfaceStub()
+void TsCodeEmitter::EmitInterfaceStub()
 {
     if (!CheckInterfaceType()) {
         return;
@@ -457,7 +457,7 @@ void JsCodeEmitter::EmitInterfaceStub()
     file.Close();
 }
 
-void JsCodeEmitter::EmitInterfaceStubImpl(StringBuilder& stringBuilder)
+void TsCodeEmitter::EmitInterfaceStubImpl(StringBuilder& stringBuilder)
 {
     stringBuilder.AppendFormat("export default class %s extends rpc.RemoteObject implements %s {\n",
         stubName_.string(), interfaceName_.string());
@@ -467,14 +467,14 @@ void JsCodeEmitter::EmitInterfaceStubImpl(StringBuilder& stringBuilder)
     stringBuilder.Append("}\n");
 }
 
-void JsCodeEmitter::EmitInterfaceStubConstructor(StringBuilder& stringBuilder, const String& prefix)
+void TsCodeEmitter::EmitInterfaceStubConstructor(StringBuilder& stringBuilder, const String& prefix)
 {
     stringBuilder.Append(prefix).Append("constructor(des: string) {\n");
     stringBuilder.Append(prefix).Append(TAB).Append("super(des);\n");
     stringBuilder.Append(prefix).Append("}\n");
 }
 
-void JsCodeEmitter::EmitInterfaceStubMethodImpls(StringBuilder& stringBuilder, const String& prefix)
+void TsCodeEmitter::EmitInterfaceStubMethodImpls(StringBuilder& stringBuilder, const String& prefix)
 {
     EmitInterfaceStubConstructor(stringBuilder, prefix);
     stringBuilder.Append(prefix).Append(NEWLINE);
@@ -520,7 +520,7 @@ void JsCodeEmitter::EmitInterfaceStubMethodImpls(StringBuilder& stringBuilder, c
     }
 }
 
-void JsCodeEmitter::EmitInterfaceStubMethodImpl(MetaMethod* metaMethod, int methodIndex, StringBuilder& stringBuilder,
+void TsCodeEmitter::EmitInterfaceStubMethodImpl(MetaMethod* metaMethod, int methodIndex, StringBuilder& stringBuilder,
     const String& prefix)
 {
     bool haveOutPara = false;
@@ -600,7 +600,7 @@ void JsCodeEmitter::EmitInterfaceStubMethodImpl(MetaMethod* metaMethod, int meth
     stringBuilder.Append(prefix).Append("}\n");
 }
 
-void JsCodeEmitter::EmitInterfaceMethodCommands(StringBuilder& stringBuilder)
+void TsCodeEmitter::EmitInterfaceMethodCommands(StringBuilder& stringBuilder)
 {
     for (int index = 0; index < metaInterface_->methodNumber_; index++) {
         MetaMethod* metaMethod = metaInterface_->methods_[index];
@@ -609,12 +609,12 @@ void JsCodeEmitter::EmitInterfaceMethodCommands(StringBuilder& stringBuilder)
     }
 }
 
-void JsCodeEmitter::EmitLicense(StringBuilder& stringBuilder)
+void TsCodeEmitter::EmitLicense(StringBuilder& stringBuilder)
 {
     stringBuilder.Append(metaInterface_->license_).Append(NEWLINE);
 }
 
-void JsCodeEmitter::EmitWriteVariable(const String& parcelName, const std::string& name, MetaType* mt,
+void TsCodeEmitter::EmitWriteVariable(const String& parcelName, const std::string& name, MetaType* mt,
     StringBuilder& stringBuilder,
     const String& prefix)
 {
@@ -682,7 +682,7 @@ void JsCodeEmitter::EmitWriteVariable(const String& parcelName, const std::strin
     }
 }
 
-void JsCodeEmitter::EmitWriteArrayVariable(const String& parcelName, const std::string& name, MetaType* mt,
+void TsCodeEmitter::EmitWriteArrayVariable(const String& parcelName, const std::string& name, MetaType* mt,
     StringBuilder& stringBuilder,
     const String& prefix)
 {
@@ -734,7 +734,7 @@ void JsCodeEmitter::EmitWriteArrayVariable(const String& parcelName, const std::
     }
 }
 
-void JsCodeEmitter::EmitReadVariable(const String& parcelName, const std::string& name, MetaType* mt,
+void TsCodeEmitter::EmitReadVariable(const String& parcelName, const std::string& name, MetaType* mt,
     unsigned int attributes,
     StringBuilder& stringBuilder,
     const String& prefix)
@@ -805,7 +805,7 @@ void JsCodeEmitter::EmitReadVariable(const String& parcelName, const std::string
     }
 }
 
-void JsCodeEmitter::EmitReadArrayVariable(const String& parcelName, const std::string& name, MetaType* mt,
+void TsCodeEmitter::EmitReadArrayVariable(const String& parcelName, const std::string& name, MetaType* mt,
     unsigned int attributes, StringBuilder& stringBuilder, const String& prefix)
 {
     MetaType* innerType = metaComponent_->types_[mt->nestedTypeIndexes_[0]];
@@ -866,7 +866,7 @@ void JsCodeEmitter::EmitReadArrayVariable(const String& parcelName, const std::s
     }
 }
 
-void JsCodeEmitter::EmitReadOutArrayVariable(const String& parcelName, const std::string& name, MetaType* mt,
+void TsCodeEmitter::EmitReadOutArrayVariable(const String& parcelName, const std::string& name, MetaType* mt,
     StringBuilder& stringBuilder,
     const String& prefix)
 {
@@ -927,7 +927,7 @@ void JsCodeEmitter::EmitReadOutArrayVariable(const String& parcelName, const std
     }
 }
 
-void JsCodeEmitter::EmitReadOutVariable(const String& parcelName, const std::string& name, MetaType* mt,
+void TsCodeEmitter::EmitReadOutVariable(const String& parcelName, const std::string& name, MetaType* mt,
     StringBuilder& stringBuilder,
     const String& prefix)
 {
@@ -999,7 +999,7 @@ void JsCodeEmitter::EmitReadOutVariable(const String& parcelName, const std::str
     }
 }
 
-String JsCodeEmitter::EmitType(MetaType* mt)
+String TsCodeEmitter::EmitType(MetaType* mt)
 {
     switch (mt->kind_) {
         case TypeKind::Boolean:
@@ -1048,7 +1048,7 @@ String JsCodeEmitter::EmitType(MetaType* mt)
     }
 }
 
-String JsCodeEmitter::FileName(const String& name)
+String TsCodeEmitter::FileName(const String& name)
 {
     if (name.IsEmpty()) {
         return name;
@@ -1069,7 +1069,7 @@ String JsCodeEmitter::FileName(const String& name)
     return stringBuilder.ToString().Replace('.', '/');
 }
 
-String JsCodeEmitter::MethodName(const String& name)
+String TsCodeEmitter::MethodName(const String& name)
 {
     if (name.IsEmpty() || islower(name[0])) {
         return name;
@@ -1077,7 +1077,7 @@ String JsCodeEmitter::MethodName(const String& name)
     return String::Format("%c%s", tolower(name[0]), name.Substring(1).string());
 }
 
-String JsCodeEmitter::ConstantName(const String& name)
+String TsCodeEmitter::ConstantName(const String& name)
 {
     if (name.IsEmpty()) {
         return name;
@@ -1100,18 +1100,18 @@ String JsCodeEmitter::ConstantName(const String& name)
     return stringBuilder.ToString();
 }
 
-String JsCodeEmitter::StubName(const String& name)
+String TsCodeEmitter::StubName(const String& name)
 {
     return name.StartsWith("I") ? (name.Substring(1) + "Stub") : (name + "Stub");
 }
 
-const std::string JsCodeEmitter::UnderlineAdded(const String& originName)
+const std::string TsCodeEmitter::UnderlineAdded(const String& originName)
 {
     std::string underline("_");
     return underline + std::string(originName.string());
 }
 
-bool JsCodeEmitter::CheckInterfaceType()
+bool TsCodeEmitter::CheckInterfaceType()
 {
     for (int index = 0; index < metaInterface_->methodNumber_; index++) {
         MetaMethod* metaMethod = metaInterface_->methods_[index];

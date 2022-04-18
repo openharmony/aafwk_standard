@@ -15,5 +15,5 @@ import("//build/ohos.gni")
 group("moduletest") {
   testonly = true
 
-  deps = [ "js_code_emitter_test:moduletest" ]
+  deps = [ "ts_code_emitter_test:moduletest" ]
 }

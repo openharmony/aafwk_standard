@@ -35,8 +35,7 @@ StringBuilder::~StringBuilder()
     }
 }
 
-StringBuilder& StringBuilder::Append(
-    /* [in] */ char c)
+StringBuilder& StringBuilder::Append(char c)
 {
     if (position_ + 1 >= capacity_) {
         if (!Grow(1)) {
@@ -49,8 +48,7 @@ StringBuilder& StringBuilder::Append(
     return *this;
 }
 
-StringBuilder& StringBuilder::Append(
-    /* [in] */ const char* string)
+StringBuilder& StringBuilder::Append(const char* string)
 {
     if (string == nullptr || string[0] == '\0') {
         return *this;
@@ -68,8 +66,7 @@ StringBuilder& StringBuilder::Append(
     return *this;
 }
 
-StringBuilder& StringBuilder::Append(
-    /* [in] */ const String& string)
+StringBuilder& StringBuilder::Append(const String& string)
 {
     if (string.IsEmpty()) {
         return *this;
@@ -87,8 +84,7 @@ StringBuilder& StringBuilder::Append(
     return *this;
 }
 
-StringBuilder& StringBuilder::AppendFormat(
-    /* [in] */ const char* format, ...)
+StringBuilder& StringBuilder::AppendFormat(const char* format, ...)
 {
     va_list args, argsCopy;
 
@@ -123,8 +119,7 @@ StringBuilder& StringBuilder::AppendFormat(
     return *this;
 }
 
-bool StringBuilder::Grow(
-    /* [in] */ size_t size)
+bool StringBuilder::Grow(size_t size)
 {
     if (capacity_ > String::MAX_SIZE) {
         Logger::E(TAG, "The StringBuilder is full.");

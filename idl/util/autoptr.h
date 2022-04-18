@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,28 +26,21 @@ public:
         : mPtr(nullptr)
     {}
 
-    AutoPtr(
-        /* [in] */ T* other);
+    AutoPtr(T* other);
 
-    AutoPtr(
-        /* [in] */ const AutoPtr<T>& other);
+    AutoPtr(const AutoPtr<T>& other);
 
-    AutoPtr(
-        /* [in] */ AutoPtr<T>&& other);
+    AutoPtr(AutoPtr<T>&& other);
 
     ~AutoPtr();
 
-    AutoPtr& operator=(
-        /* [in] */ T* other);
+    AutoPtr& operator=(T* other);
 
-    AutoPtr& operator=(
-        /* [in] */ const AutoPtr<T>& other);
+    AutoPtr& operator=(const AutoPtr<T>& other);
 
-    AutoPtr& operator=(
-        /* [in] */ AutoPtr<T>&& other);
+    AutoPtr& operator=(AutoPtr<T>&& other);
 
-    void MoveTo(
-        /* [out] */ T** other);
+    void MoveTo(T** other);
 
     inline operator T*() const;
 
@@ -59,49 +52,36 @@ public:
 
     inline T* Get() const;
 
-    inline bool operator==(
-        /* [in] */ T* other) const;
+    inline bool operator==(T* other) const;
 
-    inline bool operator==(
-        /* [in] */ const AutoPtr<T>& other) const;
+    inline bool operator==(const AutoPtr<T>& other) const;
 
-    inline bool operator!=(
-        /* [in] */ T* other) const;
+    inline bool operator!=(T* other) const;
 
-    inline bool operator!=(
-        /* [in] */ const AutoPtr<T>& other) const;
+    inline bool operator!=(const AutoPtr<T>& other) const;
 
-    inline bool operator>(
-        /* [in] */ T* other) const;
+    inline bool operator>(T* other) const;
 
-    inline bool operator>(
-        /* [in] */ const AutoPtr<T>& other) const;
+    inline bool operator>(const AutoPtr<T>& other) const;
 
-    inline bool operator<(
-        /* [in] */ T* other) const;
+    inline bool operator<(T* other) const;
 
-    inline bool operator<(
-        /* [in] */ const AutoPtr<T>& other) const;
+    inline bool operator<(const AutoPtr<T>& other) const;
 
-    inline bool operator<=(
-        /* [in] */ T* other) const;
+    inline bool operator<=(T* other) const;
 
-    inline bool operator<=(
-        /* [in] */ const AutoPtr<T>& other) const;
+    inline bool operator<=(const AutoPtr<T>& other) const;
 
-    inline bool operator>=(
-        /* [in] */ T* other) const;
+    inline bool operator>=(T* other) const;
 
-    inline bool operator>=(
-        /* [in] */ const AutoPtr<T>& other) const;
+    inline bool operator>=(const AutoPtr<T>& other) const;
 
 private:
     T* mPtr;
 };
 
 template<class T>
-AutoPtr<T>::AutoPtr(
-    /* [in] */ T* other)
+AutoPtr<T>::AutoPtr(T* other)
     : mPtr(other)
 {
     if (mPtr != nullptr) {
@@ -110,8 +90,7 @@ AutoPtr<T>::AutoPtr(
 }
 
 template<class T>
-AutoPtr<T>::AutoPtr(
-    /* [in] */ const AutoPtr<T>& other)
+AutoPtr<T>::AutoPtr(const AutoPtr<T>& other)
     : mPtr(other.mPtr)
 {
     if (mPtr != nullptr) {
@@ -120,8 +99,7 @@ AutoPtr<T>::AutoPtr(
 }
 
 template<class T>
-AutoPtr<T>::AutoPtr(
-    /* [in] */ AutoPtr<T>&& other)
+AutoPtr<T>::AutoPtr(AutoPtr<T>&& other)
     : mPtr(other.mPtr)
 {
     other.mPtr = nullptr;
@@ -136,8 +114,7 @@ AutoPtr<T>::~AutoPtr()
 }
 
 template<class T>
-AutoPtr<T>& AutoPtr<T>::operator=(
-    /* [in] */ T* other)
+AutoPtr<T>& AutoPtr<T>::operator=(T* other)
 {
     if (mPtr == other) return *this;
 
@@ -152,8 +129,7 @@ AutoPtr<T>& AutoPtr<T>::operator=(
 }
 
 template<class T>
-AutoPtr<T>& AutoPtr<T>::operator=(
-    /* [in] */ const AutoPtr<T>& other)
+AutoPtr<T>& AutoPtr<T>::operator=(const AutoPtr<T>& other)
 {
     if (mPtr == other.mPtr) return *this;
 
@@ -168,8 +144,7 @@ AutoPtr<T>& AutoPtr<T>::operator=(
 }
 
 template<class T>
-AutoPtr<T>& AutoPtr<T>::operator=(
-    /* [in] */ AutoPtr<T>&& other)
+AutoPtr<T>& AutoPtr<T>::operator=(AutoPtr<T>&& other)
 {
     if (mPtr != nullptr) {
         mPtr->Release();
@@ -180,8 +155,7 @@ AutoPtr<T>& AutoPtr<T>::operator=(
 }
 
 template<class T>
-void AutoPtr<T>::MoveTo(
-    /* [out] */ T** other)
+void AutoPtr<T>::MoveTo(T** other)
 {
     if (other != nullptr) {
         *other = mPtr;
@@ -220,85 +194,73 @@ T* AutoPtr<T>::Get() const
 }
 
 template<class T>
-bool AutoPtr<T>::operator==(
-    /* [in] */ T* other) const
+bool AutoPtr<T>::operator==(T* other) const
 {
     return mPtr == other;
 }
 
 template<class T>
-bool AutoPtr<T>::operator==(
-    /* [in] */ const AutoPtr<T>& other) const
+bool AutoPtr<T>::operator==(const AutoPtr<T>& other) const
 {
     return mPtr == other.mPtr;
 }
 
 template<class T>
-bool AutoPtr<T>::operator!=(
-    /* [in] */ T* other) const
+bool AutoPtr<T>::operator!=(T* other) const
 {
     return mPtr != other;
 }
 
 template<class T>
-bool AutoPtr<T>::operator!=(
-    /* [in] */ const AutoPtr<T>& other) const
+bool AutoPtr<T>::operator!=(const AutoPtr<T>& other) const
 {
     return mPtr != other.mPtr;
 }
 
 template<class T>
-bool AutoPtr<T>::operator>(
-    /* [in] */ T* other) const
+bool AutoPtr<T>::operator>(T* other) const
 {
     return mPtr > other;
 }
 
 template<class T>
-bool AutoPtr<T>::operator>(
-    /* [in] */ const AutoPtr<T>& other) const
+bool AutoPtr<T>::operator>(const AutoPtr<T>& other) const
 {
     return mPtr > other.mPtr;
 }
 
 template<class T>
-bool AutoPtr<T>::operator<(
-    /* [in] */ T* other) const
+bool AutoPtr<T>::operator<(T* other) const
 {
     return mPtr < other;
 }
 
 template<class T>
-bool AutoPtr<T>::operator<(
-    /* [in] */ const AutoPtr<T>& other) const
+bool AutoPtr<T>::operator<(const AutoPtr<T>& other) const
 {
     return mPtr < other.mPtr;
 }
 
 template<class T>
-bool AutoPtr<T>::operator<=(
-    /* [in] */ T* other) const
+bool AutoPtr<T>::operator<=(T* other) const
 {
     return mPtr <= other;
 }
 
 template<class T>
-bool AutoPtr<T>::operator<=(
-    /* [in] */ const AutoPtr<T>& other) const
+bool AutoPtr<T>::operator<=(const AutoPtr<T>& other) const
 {
     return mPtr <= other.mPtr;
 }
 
 template<class T>
-bool AutoPtr<T>::operator>=(
-    /* [in] */ T* other) const
+bool AutoPtr<T>::operator>=(T* other) const
 {
     return mPtr >= other;
 }
 
 template<class T>
-bool AutoPtr<T>::operator>=(
-    /* [in] */ const AutoPtr<T>& other) const
+bool AutoPtr<T>::operator>=(const AutoPtr<T>& other) const
 {
     return mPtr >= other.mPtr;
 }

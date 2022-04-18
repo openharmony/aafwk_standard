@@ -63,8 +63,7 @@ void Lexer::InitializeKeywords()
     }
 }
 
-bool Lexer::OpenSourceFile(
-    /* [in] */ const String& filePath)
+bool Lexer::OpenSourceFile(const String& filePath)
 {
     currentFile_ = std::make_shared<File>(filePath, File::READ);
     if (!currentFile_->IsValid()) {
@@ -74,8 +73,7 @@ bool Lexer::OpenSourceFile(
     return true;
 }
 
-Token Lexer::GetToken(
-    /* [in] */ bool skipComment)
+Token Lexer::GetToken(bool skipComment)
 {
     if (!havePeek_) {
         currentToken_ = ReadToken(skipComment);
@@ -84,8 +82,7 @@ Token Lexer::GetToken(
     return currentToken_;
 }
 
-Token Lexer::PeekToken(
-    /* [in] */ bool skipComment)
+Token Lexer::PeekToken(bool skipComment)
 {
     if (!havePeek_) {
         currentToken_ = ReadToken(skipComment);
@@ -94,8 +91,7 @@ Token Lexer::PeekToken(
     return currentToken_;
 }
 
-Token Lexer::ReadToken(
-    /* [in] */ bool skipComment)
+Token Lexer::ReadToken(bool skipComment)
 {
     while (!currentFile_->IsEof()) {
         char c = currentFile_->GetChar();
@@ -165,8 +161,7 @@ Token Lexer::ReadToken(
     return currentToken_;
 }
 
-Token Lexer::ReadIdentifier(
-    /* [in] */ char c)
+Token Lexer::ReadIdentifier(char c)
 {
     StringBuilder sb;
 
@@ -194,8 +189,7 @@ Token Lexer::ReadIdentifier(
     return currentToken_;
 }
 
-Token Lexer::ReadLineComment(
-    /* [in] */ char c)
+Token Lexer::ReadLineComment(char c)
 {
     StringBuilder sb;
 
@@ -212,8 +206,7 @@ Token Lexer::ReadLineComment(
     return currentToken_;
 }
 
-Token Lexer::ReadBlockComment(
-    /* [in] */ char c)
+Token Lexer::ReadBlockComment(char c)
 {
     StringBuilder sb;
 
@@ -243,8 +236,7 @@ void Lexer::SkipCurrentLine()
     }
 }
 
-bool Lexer::SkipCurrentLine(
-    /* [in] */ char untilChar)
+bool Lexer::SkipCurrentLine(char untilChar)
 {
     while (!currentFile_->IsEof()) {
         int c = currentFile_->GetChar();
@@ -259,8 +251,7 @@ bool Lexer::SkipCurrentLine(
     return true;
 }
 
-int Lexer::TokenToChar(
-    /* [in] */ Token token)
+int Lexer::TokenToChar(Token token)
 {
     switch (token) {
         case Token::ANGLE_BRACKETS_LEFT:

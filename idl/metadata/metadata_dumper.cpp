@@ -22,8 +22,7 @@ namespace Idl {
 
 const char* MetadataDumper::TAB = "    ";
 
-void MetadataDumper::Dump(
-    /* [in] */ const String& prefix)
+void MetadataDumper::Dump(const String& prefix)
 {
     if (metaComponent_ == nullptr) {
         return;
@@ -33,9 +32,7 @@ void MetadataDumper::Dump(
     printf("%s\n", dumpStr.string());
 }
 
-String MetadataDumper::DumpMetaComponent(
-    /* [in] */ MetaComponent* mc,
-    /* [in] */ const String& prefix)
+String MetadataDumper::DumpMetaComponent(MetaComponent* mc, const String& prefix)
 {
     StringBuilder sb;
 
@@ -95,10 +92,7 @@ String MetadataDumper::DumpMetaComponent(
     return sb.ToString();
 }
 
-void MetadataDumper::DumpMetaNamespace(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ MetaNamespace* mn,
-    /* [in] */ const String& prefix)
+void MetadataDumper::DumpMetaNamespace(StringBuilder& sb, MetaNamespace* mn, const String& prefix)
 {
     sb.Append(prefix).Append("{\n");
     sb.Append(prefix + TAB).AppendFormat("\"name_\" : \"%s\",\n", mn->name_);
@@ -151,10 +145,7 @@ void MetadataDumper::DumpMetaNamespace(
     sb.Append(prefix).Append("}");
 }
 
-void MetadataDumper::DumpMetaSequenceable(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ MetaSequenceable* mp,
-    /* [in] */ const String& prefix)
+void MetadataDumper::DumpMetaSequenceable(StringBuilder& sb, MetaSequenceable* mp, const String& prefix)
 {
     sb.Append(prefix).Append("{\n");
     sb.Append(prefix + TAB).AppendFormat("\"name_\" : \"%s\",\n", mp->name_);
@@ -162,10 +153,7 @@ void MetadataDumper::DumpMetaSequenceable(
     sb.Append(prefix).Append("}");
 }
 
-void MetadataDumper::DumpMetaInterface(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ MetaInterface* mi,
-    /* [in] */ const String& prefix)
+void MetadataDumper::DumpMetaInterface(StringBuilder& sb, MetaInterface* mi, const String& prefix)
 {
     sb.Append(prefix).Append("{\n");
     sb.Append(prefix + TAB).AppendFormat("\"name_\" : \"%s\",\n", mi->name_);
@@ -191,10 +179,7 @@ void MetadataDumper::DumpMetaInterface(
     sb.Append(prefix).Append("}");
 }
 
-void MetadataDumper::DumpMetaMethod(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ MetaMethod* mm,
-    /* [in] */ const String& prefix)
+void MetadataDumper::DumpMetaMethod(StringBuilder& sb, MetaMethod* mm, const String& prefix)
 {
     sb.Append(prefix).Append("{\n");
     sb.Append(prefix + TAB).AppendFormat("\"name_\" : \"%s\",\n", mm->name_);
@@ -221,10 +206,7 @@ void MetadataDumper::DumpMetaMethod(
     sb.Append(prefix).Append("}");
 }
 
-void MetadataDumper::DumpMetaParameter(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ MetaParameter* mp,
-    /* [in] */ const String& prefix)
+void MetadataDumper::DumpMetaParameter(StringBuilder& sb, MetaParameter* mp, const String& prefix)
 {
     sb.Append(prefix).Append("{\n");
     sb.Append(prefix + TAB).AppendFormat("\"name_\" : \"%s\",\n", mp->name_);
@@ -244,8 +226,7 @@ void MetadataDumper::DumpMetaParameter(
     sb.Append(prefix).Append("}");
 }
 
-String MetadataDumper::DumpMetaType(
-    /* [in] */ MetaType* mt)
+String MetadataDumper::DumpMetaType(MetaType* mt)
 {
     switch (mt->kind_) {
         case TypeKind::Char:

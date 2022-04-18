@@ -44,8 +44,7 @@ ASTModule::ASTModule()
     types_["void"] = voidType_.Get();
 }
 
-void ASTModule::SetIdlFile(
-    /* [in] */ const String& idlFile)
+void ASTModule::SetIdlFile(const String& idlFile)
 {
     idlFilePath_ = idlFile;
 #ifdef __MINGW32__
@@ -58,8 +57,7 @@ void ASTModule::SetIdlFile(
     name_ = idlFilePath_.Substring((index == -1) ? 0 : (index + 1), end);
 }
 
-AutoPtr<ASTNamespace> ASTModule::ParseNamespace(
-    /* [in] */ const String& nspaceStr)
+AutoPtr<ASTNamespace> ASTModule::ParseNamespace(const String& nspaceStr)
 {
     AutoPtr<ASTNamespace> currNspace;
     int begin = 0;
@@ -86,8 +84,7 @@ AutoPtr<ASTNamespace> ASTModule::ParseNamespace(
     return currNspace;
 }
 
-void ASTModule::AddNamespace(
-    /* [in] */ ASTNamespace* nspace)
+void ASTModule::AddNamespace(ASTNamespace* nspace)
 {
     if (nspace == nullptr) {
         return;
@@ -95,8 +92,7 @@ void ASTModule::AddNamespace(
     namespaces_.push_back(nspace);
 }
 
-AutoPtr<ASTNamespace> ASTModule::FindNamespace(
-    /* [in] */ const String& nspaceStr)
+AutoPtr<ASTNamespace> ASTModule::FindNamespace(const String& nspaceStr)
 {
     for (auto nspace : namespaces_) {
         if (nspace->ToShortString().Equals(nspaceStr)) {
@@ -116,8 +112,7 @@ AutoPtr<ASTNamespace> ASTModule::GetNamespace(
     return namespaces_[index];
 }
 
-void ASTModule::AddInterface(
-    /* [in] */ ASTInterfaceType* interface)
+void ASTModule::AddInterface(ASTInterfaceType* interface)
 {
     if (interface == nullptr) {
         return;
@@ -127,8 +122,7 @@ void ASTModule::AddInterface(
     types_[interface->ToString()] = (ASTType*)interface;
 }
 
-AutoPtr<ASTInterfaceType> ASTModule::GetInterface(
-    /* [in] */ size_t index)
+AutoPtr<ASTInterfaceType> ASTModule::GetInterface(size_t index)
 {
     if (index >= interfaces_.size()) {
         return nullptr;
@@ -137,8 +131,7 @@ AutoPtr<ASTInterfaceType> ASTModule::GetInterface(
     return interfaces_[index];
 }
 
-int ASTModule::IndexOf(
-    /* [in] */ ASTInterfaceType* interface)
+int ASTModule::IndexOf(ASTInterfaceType* interface)
 {
     for (size_t i = 0; i < interfaces_.size(); i++) {
         if (interfaces_[i] == interface) {
@@ -148,8 +141,7 @@ int ASTModule::IndexOf(
     return -1;
 }
 
-void ASTModule::AddSequenceable(
-    /* [in] */ ASTSequenceableType* sequenceable)
+void ASTModule::AddSequenceable(ASTSequenceableType* sequenceable)
 {
     if (sequenceable == nullptr) {
         return;
@@ -159,8 +151,7 @@ void ASTModule::AddSequenceable(
     types_[sequenceable->ToString()] = (ASTType*)sequenceable;
 }
 
-AutoPtr<ASTSequenceableType> ASTModule::GetSequenceable(
-    /* [in] */ size_t index)
+AutoPtr<ASTSequenceableType> ASTModule::GetSequenceable(size_t index)
 {
     if (index >= sequenceables_.size()) {
         return nullptr;
@@ -169,8 +160,7 @@ AutoPtr<ASTSequenceableType> ASTModule::GetSequenceable(
     return sequenceables_[index];
 }
 
-int ASTModule::IndexOf(
-    /* [in] */ ASTSequenceableType* sequenceable)
+int ASTModule::IndexOf(ASTSequenceableType* sequenceable)
 {
     for (size_t i = 0; i < sequenceables_.size(); i++) {
         if (sequenceables_[i] == sequenceable) {
@@ -180,8 +170,7 @@ int ASTModule::IndexOf(
     return -1;
 }
 
-void ASTModule::AddType(
-    /* [in] */ ASTType* type)
+void ASTModule::AddType(ASTType* type)
 {
     if (type == nullptr) {
         return;
@@ -190,8 +179,7 @@ void ASTModule::AddType(
     types_[type->ToString()] = type;
 }
 
-AutoPtr<ASTType> ASTModule::FindType(
-    /* [in] */ const String& typeName)
+AutoPtr<ASTType> ASTModule::FindType(const String& typeName)
 {
     if (typeName.IsEmpty()) {
         return nullptr;
@@ -201,8 +189,7 @@ AutoPtr<ASTType> ASTModule::FindType(
     return it != types_.end() ? it->second : nullptr;
 }
 
-int ASTModule::IndexOf(
-    /* [in] */ ASTType* type)
+int ASTModule::IndexOf(ASTType* type)
 {
     int i = 0;
     for (auto it = types_.begin(); it != types_.end(); ++it, ++i) {
@@ -222,8 +209,7 @@ bool ASTModule::IsValid()
     return interfaces_.size() > 0;
 }
 
-String ASTModule::Dump(
-    /* [in] */ const String& prefix)
+String ASTModule::Dump(const String& prefix)
 {
     StringBuilder sb;
 

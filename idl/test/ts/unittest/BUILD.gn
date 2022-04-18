@@ -16,8 +16,8 @@ group("unittest") {
   testonly = true
 
   deps = [
-    "js_code_emitter_interface_test:unittest",
-    "js_code_emitter_proxy_test:unittest",
-    "js_code_emitter_stub_test:unittest",
+    "ts_code_emitter_interface_test:unittest",
+    "ts_code_emitter_proxy_test:unittest",
+    "ts_code_emitter_stub_test:unittest",
   ]
 }

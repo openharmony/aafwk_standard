@@ -38,8 +38,7 @@ StringPool::~StringPool()
     }
 }
 
-void StringPool::Add(
-    /* [in] */ const String& string)
+void StringPool::Add(const String& string)
 {
     if (string.IsEmpty() || stringOffsets_.find(string) != stringOffsets_.end()) {
         return;
@@ -51,14 +50,12 @@ void StringPool::Add(
     }
 }
 
-ptrdiff_t StringPool::GetOffset(
-    /* [in] */ const String& string)
+ptrdiff_t StringPool::GetOffset(const String& string)
 {
     return stringOffsets_[string];
 }
 
-ptrdiff_t StringPool::AddInternal(
-    /* [in] */ const String& string)
+ptrdiff_t StringPool::AddInternal(const String& string)
 {
     if (!Grow(string.GetLength() + 1)) {
         return -1;
@@ -70,8 +67,7 @@ ptrdiff_t StringPool::AddInternal(
     return addr - data_;
 }
 
-bool StringPool::Grow(
-    /* [in] */ size_t expand)
+bool StringPool::Grow(size_t expand)
 {
     size_t newSize = dataOffset_ + expand;
     if (newSize < dataCapacity_) {

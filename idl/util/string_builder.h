@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,23 +25,18 @@ class StringBuilder {
 public:
     ~StringBuilder();
 
-    StringBuilder& Append(
-        /* [in] */ char c);
+    StringBuilder& Append(char c);
 
-    StringBuilder& Append(
-        /* [in] */ const char* string);
+    StringBuilder& Append(const char* string);
 
-    StringBuilder& Append(
-        /* [in] */ const String& string);
+    StringBuilder& Append(const String& string);
 
-    StringBuilder& AppendFormat(
-        /* [in] */ const char* format, ...);
+    StringBuilder& AppendFormat(const char* format, ...);
 
     String ToString() const;
 
 private:
-    bool Grow(
-        /* [in] */ size_t size);
+    bool Grow(size_t size);
 
     static const char* TAG;
     char* buffer_ = nullptr;

@@ -20,14 +20,12 @@
 namespace OHOS {
 namespace Idl {
 
-ASTNamespace:: ASTNamespace(
-    /* [in] */ const String& nspaceStr)
+ASTNamespace:: ASTNamespace(const String& nspaceStr)
     : name_(nspaceStr),
       outerNamespace_(nullptr)
 {}
 
-void ASTNamespace::AddNamespace(
-    /* [in] */ ASTNamespace* innerNspace)
+void ASTNamespace::AddNamespace(ASTNamespace* innerNspace)
 {
     if (innerNspace == nullptr) {
         return;
@@ -37,8 +35,7 @@ void ASTNamespace::AddNamespace(
     innerNspace->outerNamespace_ = this;
 }
 
-AutoPtr<ASTNamespace> ASTNamespace::FindNamespace(
-    /* [in] */ const String& nspaceStr)
+AutoPtr<ASTNamespace> ASTNamespace::FindNamespace(const String& nspaceStr)
 {
     if (nspaceStr.IsEmpty()) {
         return nullptr;
@@ -52,8 +49,7 @@ AutoPtr<ASTNamespace> ASTNamespace::FindNamespace(
     return nullptr;
 }
 
-AutoPtr<ASTNamespace> ASTNamespace::GetNamespace(
-    /* [in] */ size_t index)
+AutoPtr<ASTNamespace> ASTNamespace::GetNamespace(size_t index)
 {
     if (index >= innerNamespaces_.size()) {
         return nullptr;
@@ -62,8 +58,7 @@ AutoPtr<ASTNamespace> ASTNamespace::GetNamespace(
     return innerNamespaces_[index];
 }
 
-void ASTNamespace::AddInterface(
-    /* [in] */ ASTInterfaceType* interface)
+void ASTNamespace::AddInterface(ASTInterfaceType* interface)
 {
     if (interface == nullptr) {
         return;
@@ -72,8 +67,7 @@ void ASTNamespace::AddInterface(
     interfaces_.push_back(interface);
 }
 
-AutoPtr<ASTInterfaceType> ASTNamespace::GetInterface(
-    /* [in] */ size_t index)
+AutoPtr<ASTInterfaceType> ASTNamespace::GetInterface(size_t index)
 {
     if (index >= interfaces_.size()) {
         return nullptr;
@@ -82,8 +76,7 @@ AutoPtr<ASTInterfaceType> ASTNamespace::GetInterface(
     return interfaces_[index];
 }
 
-void ASTNamespace::AddSequenceable(
-    /* [in] */ ASTSequenceableType* sequenceable)
+void ASTNamespace::AddSequenceable(ASTSequenceableType* sequenceable)
 {
     if (sequenceable == nullptr) {
         return;
@@ -92,8 +85,7 @@ void ASTNamespace::AddSequenceable(
     sequenceables_.push_back(sequenceable);
 }
 
-AutoPtr<ASTSequenceableType> ASTNamespace::GetSequenceable(
-    /* [in] */ size_t index)
+AutoPtr<ASTSequenceableType> ASTNamespace::GetSequenceable(size_t index)
 {
     if (index >= sequenceables_.size()) {
         return nullptr;

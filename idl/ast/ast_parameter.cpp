@@ -19,8 +19,7 @@
 namespace OHOS {
 namespace Idl {
 
-String ASTParameter::Dump(
-    /* [in] */ const String& prefix)
+String ASTParameter::Dump(const String& prefix)
 {
     StringBuilder sb;
 

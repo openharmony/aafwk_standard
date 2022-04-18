@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include "codegen/cpp_code_emitter.h"
-#include "codegen/js_code_emitter.h"
+#include "codegen/ts_code_emitter.h"
 #include "util/logger.h"
 
 namespace OHOS {
@@ -26,10 +26,7 @@ namespace Idl {
 
 const char* CodeGenerator::TAG = "CodeGenerator";
 
-CodeGenerator::CodeGenerator(
-    /* [in] */ MetaComponent* mc,
-    /* [in] */ const String& language,
-    /* [in] */ const String& dir)
+CodeGenerator::CodeGenerator(MetaComponent* mc, const String& language, const String& dir)
     : targetLanguage_(language),
       targetDirectory_(dir),
       metaComponent_(mc)
@@ -37,7 +34,7 @@ CodeGenerator::CodeGenerator(
     if (language.Equals("cpp")) {
         emitter_ = new CppCodeEmitter(metaComponent_);
     } else if (language.Equals("ts")) {
-        emitter_ = new JsCodeEmitter(metaComponent_);
+        emitter_ = new TsCodeEmitter(metaComponent_);
     }
 }
 

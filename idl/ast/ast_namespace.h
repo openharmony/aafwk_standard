@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,44 +28,36 @@ class ASTSequenceableType;
 
 class ASTNamespace : public ASTNode {
 public:
-    ASTNamespace(
-        /* [in] */ const String& nspaceStr);
+    ASTNamespace(const String& nspaceStr);
 
     String GetName()
     {
         return name_;
     }
 
-    void AddNamespace(
-        /* [in] */ ASTNamespace* innerNspace);
+    void AddNamespace(ASTNamespace* innerNspace);
 
-    AutoPtr<ASTNamespace> FindNamespace(
-        /* [in] */ const String& nspaceStr);
+    AutoPtr<ASTNamespace> FindNamespace(const String& nspaceStr);
 
-    AutoPtr<ASTNamespace> GetNamespace(
-        /* [in] */ size_t index);
+    AutoPtr<ASTNamespace> GetNamespace(size_t index);
 
     size_t GetNamespaceNumber()
     {
         return innerNamespaces_.size();
     }
 
-    void AddInterface(
-        /* [in] */ ASTInterfaceType* interface);
+    void AddInterface(ASTInterfaceType* interface);
 
-    AutoPtr<ASTInterfaceType> GetInterface(
-        /* [in] */ size_t index);
+    AutoPtr<ASTInterfaceType> GetInterface(size_t index);
 
     size_t GetInterfaceNumber()
     {
         return interfaces_.size();
     }
 
-    void AddSequenceable(
-        /* [in] */ ASTSequenceableType* sequenceable);
+    void AddSequenceable(ASTSequenceableType* sequenceable);
 
-    AutoPtr<ASTSequenceableType> GetSequenceable(
-        /* [in] */ size_t index);
+    AutoPtr<ASTSequenceableType> GetSequenceable(size_t index);
 
     size_t GetSequenceableNumber()
     {

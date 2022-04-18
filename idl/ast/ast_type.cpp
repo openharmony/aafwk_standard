@@ -18,8 +18,7 @@
 namespace OHOS {
 namespace Idl {
 
-void ASTType::SetName(
-    /* [in] */ const String& name)
+void ASTType::SetName(const String& name)
 {
     name_ = name;
 }
@@ -29,8 +28,7 @@ String ASTType::GetName()
     return name_;
 }
 
-void ASTType::SetNamespace(
-    /* [in] */ ASTNamespace* nspace)
+void ASTType::SetNamespace(ASTNamespace* nspace)
 {
     namespace_ = nspace;
 }

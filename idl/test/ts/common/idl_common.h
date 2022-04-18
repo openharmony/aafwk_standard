@@ -22,7 +22,7 @@
 #define protected public
 #include "codegen/code_emitter.h"
 #include "codegen/code_generator.h"
-#include "codegen/js_code_emitter.h"
+#include "codegen/ts_code_emitter.h"
 #undef private
 #undef protected
 #include "metadata/metadata_builder.h"
@@ -51,7 +51,7 @@ public:
     int Ready(int argc, char** argv)
     {
         Options options(argc, argv);
-        std::shared_ptr<MetaComponent> metadata;
+        std::shared_ptr<MetaComponent> metadata = nullptr;
 
         if (options.DoCompile()) {
             Parser parser(options);
@@ -61,6 +61,7 @@ public:
 
             MetadataBuilder builder(parser.GetModule());
             metadata = builder.Build();
+            metadata_ = metadata;
             if (metadata == nullptr) {
                 return ERR_FAIL;
             }
@@ -96,8 +97,8 @@ public:
                 }
             }
             if (options.GetTargetLanguage().Equals("ts")) {
-                this->jsCodeGen_ = std::make_shared<JsCodeEmitter>(metadata.get());
-                this->jsCodeGen_->SetDirectory(options.GetGenerationDirectory());
+                this->tsCodeGen_ = std::make_shared<TsCodeEmitter>(metadata.get());
+                this->tsCodeGen_->SetDirectory(options.GetGenerationDirectory());
             }
         }
         return 0;
@@ -124,7 +125,8 @@ public:
         return ERR_OK;
     }
 
-    std::shared_ptr<JsCodeEmitter> jsCodeGen_ = nullptr;
+    std::shared_ptr<MetaComponent> metadata_ = nullptr;
+    std::shared_ptr<TsCodeEmitter> tsCodeGen_ = nullptr;
 };
 }
 }

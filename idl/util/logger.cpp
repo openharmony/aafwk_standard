@@ -22,9 +22,7 @@ namespace Idl {
 
 int Logger::level_ = DEBUG;
 
-void Logger::D(
-    /* [in] */ const char* tag,
-    /* [in] */ const char* format, ...)
+void Logger::D(const char* tag, const char* format, ...)
 {
     if (level_ > DEBUG) return;
 
@@ -34,9 +32,7 @@ void Logger::D(
     va_end(args);
 }
 
-void Logger::E(
-    /* [in] */ const char* tag,
-    /* [in] */ const char* format, ...)
+void Logger::E(const char* tag, const char* format, ...)
 {
     if (level_ > ERROR) return;
 
@@ -46,9 +42,7 @@ void Logger::E(
     va_end(args);
 }
 
-void Logger::V(
-    /* [in] */ const char* tag,
-    /* [in] */ const char* format, ...)
+void Logger::V(const char* tag, const char* format, ...)
 {
     if (level_ > VERBOSE) return;
 
@@ -58,20 +52,14 @@ void Logger::V(
     va_end(args);
 }
 
-void Logger::Log(
-    /* [in] */ const char* tag,
-    /* [in] */ const char* format,
-    /* [in] */ va_list args)
+void Logger::Log(const char* tag, const char* format, va_list args)
 {
     printf("[%s]: ", tag);
     vprintf(format, args);
     printf("\n");
 }
 
-void Logger::Err(
-    /* [in] */ const char* tag,
-    /* [in] */ const char* format,
-    /* [in] */ va_list args)
+void Logger::Err(const char* tag, const char* format, va_list args)
 {
     fprintf(stderr, "[%s]: ", tag);
     vfprintf(stderr, format, args);

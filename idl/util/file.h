@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,9 +26,7 @@ namespace Idl {
 
 class File {
 public:
-    File(
-        /* [in] */ const String& path,
-        /* [in] */ int mode);
+    File(const String& path, int mode);
 
     ~File();
 
@@ -58,20 +56,15 @@ public:
         return columnNo_;
     }
 
-    bool ReadData(
-        /* [out] */ void* data,
-        /* [in] */ size_t size);
+    bool ReadData(void* data, size_t size);
 
-    bool WriteData(
-        /* [in] */ const void* data,
-        /* [in] */ size_t size);
+    bool WriteData(const void* data, size_t size);
 
     void Flush();
 
     bool Reset();
 
-    bool Skip(
-        /* [in] */ long size);
+    bool Skip(long size);
 
     void Close();
 

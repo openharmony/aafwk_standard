@@ -19,8 +19,7 @@
 namespace OHOS {
 namespace Idl {
 
-void ASTInterfaceType::SetNamespace(
-    /* [in] */ ASTNamespace* nspace)
+void ASTInterfaceType::SetNamespace(ASTNamespace* nspace)
 {
     ASTType::SetNamespace(nspace);
     if (namespace_ != nullptr) {
@@ -28,8 +27,7 @@ void ASTInterfaceType::SetNamespace(
     }
 }
 
-void ASTInterfaceType::AddMethod(
-    /* [in] */ ASTMethod* method)
+void ASTInterfaceType::AddMethod(ASTMethod* method)
 {
     if (method == nullptr) {
         return;
@@ -37,8 +35,7 @@ void ASTInterfaceType::AddMethod(
     methods_.push_back(method);
 }
 
-AutoPtr<ASTMethod> ASTInterfaceType::GetMethod(
-    /* [in] */ size_t index)
+AutoPtr<ASTMethod> ASTInterfaceType::GetMethod(size_t index)
 {
     if (index >= methods_.size()) {
         return nullptr;
@@ -64,8 +61,7 @@ String ASTInterfaceType::ToString()
     return name_;
 }
 
-String ASTInterfaceType::Dump(
-    /* [in] */ const String& prefix)
+String ASTInterfaceType::Dump(const String& prefix)
 {
     StringBuilder sb;
 

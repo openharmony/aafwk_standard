@@ -15,9 +15,9 @@ import("//build/test.gni")
 
 IDL_DIR = "../../../.."
 
-config("idl_unittest_test_config") {
+config("idl_module_test_config") {
   include_dirs = [
-    "../../common/",
+    "../../common",
     "${IDL_DIR}/",
     "//utils/native/base/include/",
   ]
@@ -51,7 +51,7 @@ common_sources += [
   "${IDL_DIR}/codegen/code_emitter.cpp",
   "${IDL_DIR}/codegen/code_generator.cpp",
   "${IDL_DIR}/codegen/cpp_code_emitter.cpp",
-  "${IDL_DIR}/codegen/js_code_emitter.cpp",
+  "${IDL_DIR}/codegen/ts_code_emitter.cpp",
 ]
 
 common_sources += [
@@ -75,17 +75,17 @@ common_sources += [
   "${IDL_DIR}/util/string_builder.cpp",
   "${IDL_DIR}/util/string_pool.cpp",
 ]
-module_output_path = "idl/ts_unittest"
+module_output_path = "idl/ts_moduletest"
 
-ohos_unittest("js_code_emitter_interface_test") {
+ohos_moduletest("ts_code_emitter_test") {
   module_out_path = module_output_path
-  configs = [ ":idl_unittest_test_config" ]
-  sources = [ "js_code_emitter_interface_test.cpp" ]
+  configs = [ ":idl_module_test_config" ]
+  sources = [ "ts_code_emitter_test.cpp" ]
   sources += common_sources
   deps = [ "//utils/native/base:utilsecurec" ]
 }
 
-group("unittest") {
+group("moduletest") {
   testonly = true
-  deps = [ ":js_code_emitter_interface_test" ]
+  deps = [ ":ts_code_emitter_test" ]
 }

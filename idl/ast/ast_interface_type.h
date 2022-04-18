@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,11 +26,9 @@ namespace Idl {
 
 class ASTInterfaceType : public ASTType {
 public:
-    void SetNamespace(
-        /* [in] */ ASTNamespace* nspace) override;
+    void SetNamespace(ASTNamespace* nspace) override;
 
-    void SetLicense(
-        /* [in] */ const String& license)
+    void SetLicense(const String& license)
     {
         license_ = license;
     }
@@ -40,8 +38,7 @@ public:
         return license_;
     }
 
-    void SetOneway(
-        /* [in] */ bool oneway)
+    void SetOneway(bool oneway)
     {
         oneway_ = oneway;
     }
@@ -51,19 +48,16 @@ public:
         return oneway_;
     }
 
-    void AddMethod(
-        /* [in] */ ASTMethod* method);
+    void AddMethod(ASTMethod* method);
 
-    AutoPtr<ASTMethod> GetMethod(
-        /* [in] */ size_t index);
+    AutoPtr<ASTMethod> GetMethod(size_t index);
 
     size_t GetMethodNumber()
     {
         return methods_.size();
     }
 
-    void SetExternal(
-        /* [in] */ bool external)
+    void SetExternal(bool external)
     {
         isExternal_ = external;
     }
@@ -79,8 +73,7 @@ public:
 
     String ToString() override;
 
-    String Dump(
-        /* [in] */ const String& prefix) override;
+    String Dump(const String& prefix) override;
 
 private:
     String license_;

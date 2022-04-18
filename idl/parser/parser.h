@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,13 +32,11 @@ namespace Idl {
 
 class Parser {
 public:
-    explicit Parser(
-        /* [in] */ const Options& options);
+    explicit Parser( const Options& options);
 
     ~Parser() = default;
 
-    bool Parse(
-        /* [in] */ const String& sourceFile);
+    bool Parse(const String& sourceFile);
 
     AutoPtr<ASTModule> GetModule() const
     {
@@ -62,11 +60,9 @@ private:
 
     bool ParseInterface();
 
-    bool ParseMethod(
-        /* [in] */ ASTInterfaceType* interface);
+    bool ParseMethod(ASTInterfaceType* interface);
 
-    bool ParseParameter(
-        /* [in] */ ASTMethod* method);
+    bool ParseParameter(ASTMethod* method);
 
     AutoPtr<ASTNamespace> NameSpaceEmpty();
 
@@ -80,18 +76,14 @@ private:
 
     bool CheckIntegrity();
 
-    bool IsValidTypeName(
-        /* [in] */ const String& typeName);
+    bool IsValidTypeName(const String& typeName);
 
-    static bool IsPrimitiveType(
-        /* [in] */ Token token)
+    static bool IsPrimitiveType(Token token)
     {
         return token >= Token::BOOLEAN && token <= Token::STRING;
     }
 
-    void LogError(
-        /* [in] */ Token token,
-        /* [in] */ const String& message);
+    void LogError(Token token,const String& message);
 
     void ShowError();
 

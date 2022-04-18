@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,16 +41,14 @@ class ASTModule : public ASTNode {
 public:
     ASTModule();
 
-    void SetIdlFile(
-        /* [in] */ const String& idlFile);
+    void SetIdlFile(const String& idlFile);
 
     String GetName()
     {
         return name_;
     }
 
-    void SetLicense(
-        /* [in] */ const String& license)
+    void SetLicense(const String& license)
     {
         license_ = license;
     }
@@ -60,56 +58,44 @@ public:
         return license_;
     }
 
-    AutoPtr<ASTNamespace> ParseNamespace(
-        /* [in] */ const String& nspaceStr);
+    AutoPtr<ASTNamespace> ParseNamespace(const String& nspaceStr);
 
-    void AddNamespace(
-        /* [in] */ ASTNamespace* nspace);
+    void AddNamespace(ASTNamespace* nspace);
 
-    AutoPtr<ASTNamespace> FindNamespace(
-        /* [in] */ const String& nspaceStr);
+    AutoPtr<ASTNamespace> FindNamespace(const String& nspaceStr);
 
-    AutoPtr<ASTNamespace> GetNamespace(
-        /* [in] */ size_t index);
+    AutoPtr<ASTNamespace> GetNamespace(size_t index);
 
     size_t GetNamespaceNumber()
     {
         return namespaces_.size();
     }
 
-    void AddInterface(
-        /* [in] */ ASTInterfaceType* interface);
+    void AddInterface(ASTInterfaceType* interface);
 
-    AutoPtr<ASTInterfaceType> GetInterface(
-        /* [in] */ size_t index);
+    AutoPtr<ASTInterfaceType> GetInterface(size_t index);
 
     size_t GetInterfaceNumber()
     {
         return interfaces_.size();
     }
 
-    int IndexOf(
-        /* [in] */ ASTInterfaceType* interface);
+    int IndexOf(ASTInterfaceType* interface);
 
-    void AddSequenceable(
-        /* [in] */ ASTSequenceableType* sequenceable);
+    void AddSequenceable(ASTSequenceableType* sequenceable);
 
-    AutoPtr<ASTSequenceableType> GetSequenceable(
-        /* [in] */ size_t index);
+    AutoPtr<ASTSequenceableType> GetSequenceable( size_t index);
 
     size_t GetSequenceableNumber()
     {
         return sequenceables_.size();
     }
 
-    int IndexOf(
-        /* [in] */ ASTSequenceableType* sequenceable);
+    int IndexOf(ASTSequenceableType* sequenceable);
 
-    void AddType(
-        /* [in] */ ASTType* type);
+    void AddType(ASTType* type);
 
-    AutoPtr<ASTType> FindType(
-        /* [in] */ const String& typeName);
+    AutoPtr<ASTType> FindType(const String& typeName);
 
     using TypeStringMap = std::unordered_map<String, AutoPtr<ASTType>, StringHashFunc, StringEqualFunc>;
 
@@ -123,13 +109,11 @@ public:
         return types_.size();
     }
 
-    int IndexOf(
-        /* [in] */ ASTType* type);
+    int IndexOf(ASTType* type);
 
     bool IsValid();
 
-    String Dump(
-        /* [in] */ const String& prefix) override;
+    String Dump(const String& prefix) override;
 
 private:
     String name_;

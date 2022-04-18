@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,48 +25,28 @@ namespace Idl {
 
 class MetadataDumper {
 public:
-    explicit MetadataDumper(
-        /* [in] */ MetaComponent* mc)
+    explicit MetadataDumper(MetaComponent* mc)
         : metaComponent_(mc)
     {}
 
     ~MetadataDumper() = default;
 
-    void Dump(
-        /* [in] */ const String& prefix);
+    void Dump(const String& prefix);
 
 private:
-    String DumpMetaComponent(
-        /* [in] */ MetaComponent* mc,
-        /* [in] */ const String& prefix);
+    String DumpMetaComponent(MetaComponent* mc, const String& prefix);
 
-    void DumpMetaNamespace(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ MetaNamespace* mn,
-        /* [in] */ const String& prefix);
+    void DumpMetaNamespace(StringBuilder& sb, MetaNamespace* mn, const String& prefix);
 
-    void DumpMetaSequenceable(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ MetaSequenceable* mp,
-        /* [in] */ const String& prefix);
+    void DumpMetaSequenceable(StringBuilder& sb, MetaSequenceable* mp, const String& prefix);
 
-    void DumpMetaInterface(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ MetaInterface* mi,
-        /* [in] */ const String& prefix);
+    void DumpMetaInterface(StringBuilder& sb, MetaInterface* mi, const String& prefix);
 
-    void DumpMetaMethod(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ MetaMethod* mm,
-        /* [in] */ const String& prefix);
+    void DumpMetaMethod(StringBuilder& sb, MetaMethod* mm, const String& prefix);
 
-    void DumpMetaParameter(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ MetaParameter* mp,
-        /* [in] */ const String& prefix);
+    void DumpMetaParameter(StringBuilder& sb, MetaParameter* mp, const String& prefix);
 
-    String DumpMetaType(
-        /* [in] */ MetaType* mt);
+    String DumpMetaType(MetaType* mt);
 
     static const char* TAB;
     MetaComponent* metaComponent_;

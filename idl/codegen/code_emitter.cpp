@@ -20,8 +20,7 @@ namespace Idl {
 
 const char* CodeEmitter::TAB = "    ";
 
-CodeEmitter::CodeEmitter(
-    /* [in] */ MetaComponent* mc)
+CodeEmitter::CodeEmitter(MetaComponent* mc)
     : metaComponent_(mc)
 {
     metaInterface_ = nullptr;
