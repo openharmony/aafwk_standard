@@ -3749,7 +3749,16 @@ void Ability::SetDisplayOrientation(int orientation)
             orientation = defualtOrientation;
         }
     }
-    window->SetRequestedOrientation(static_cast<Rosen::Orientation>(orientation));
+    if (orientation == static_cast<int>(DisplayOrientation::LANDSCAPE)) {
+        HILOG_DEBUG("%{public}s, to set LANDSCAPE", __func__);
+        window->SetRequestedOrientation(Rosen::Orientation::HORIZONTAL);
+    } else if (orientation == static_cast<int>(DisplayOrientation::PORTRAIT)) {
+        HILOG_DEBUG("%{public}s, to set PORTRAIT", __func__);
+        window->SetRequestedOrientation(Rosen::Orientation::VERTICAL);
+    } else {
+        HILOG_DEBUG("%{public}s, to set UNSPECIFIED", __func__);
+        window->SetRequestedOrientation(Rosen::Orientation::UNSPECIFIED);
+    }
 }
 
 int Ability::GetDisplayOrientation()
@@ -3765,7 +3774,17 @@ int Ability::GetDisplayOrientation()
         HILOG_ERROR("window is nullptr.");
         return 0;
     }
-    return static_cast<int>(window->GetRequestedOrientation());
+    auto orientation = window->GetRequestedOrientation();
+    if (orientation == Rosen::Orientation::HORIZONTAL) {
+        HILOG_DEBUG("%{public}s, get window orientation: LANDSCAPE", __func__);
+        return static_cast<int>(DisplayOrientation::LANDSCAPE);
+    }
+    if (orientation == Rosen::Orientation::VERTICAL) {
+        HILOG_DEBUG("%{public}s, get window orientation: PORTRAIT", __func__);
+        return static_cast<int>(DisplayOrientation::PORTRAIT);
+    }
+    HILOG_DEBUG("%{public}s, get window orientation: UNSPECIFIED", __func__);
+    return 0;
 }
 #endif
 }  // namespace AppExecFwk
