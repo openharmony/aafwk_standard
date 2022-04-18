@@ -353,8 +353,8 @@ int AbilityConnectManager::AttachAbilityThreadLocked(
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_INFO("Ability: %{public}s", element.c_str());
     abilityRecord->SetScheduler(scheduler);
+    abilityRecord->Inactivate();
 
-    DelayedSingleton<AppScheduler>::GetInstance()->MoveToForground(token);
     return ERR_OK;
 }
 
@@ -850,7 +850,8 @@ void AbilityConnectManager::TerminateDone(const std::shared_ptr<AbilityRecord> &
             "Transition life state error. expect %{public}s, actual %{public}s", expect.c_str(), actual.c_str());
         return;
     }
-    DelayedSingleton<AppScheduler>::GetInstance()->MoveToBackground(abilityRecord->GetToken());
+    DelayedSingleton<AppScheduler>::GetInstance()->TerminateAbility(abilityRecord->GetToken());
+    RemoveServiceAbility(abilityRecord);
 }
 
 bool AbilityConnectManager::IsAbilityConnected(const std::shared_ptr<AbilityRecord> &abilityRecord,
