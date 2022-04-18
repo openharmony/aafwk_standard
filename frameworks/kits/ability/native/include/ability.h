@@ -79,6 +79,7 @@ class Runtime;
 class KeyEvent;
 #endif
 namespace AppExecFwk {
+using FeatureAbilityTask = std::function<void(int, const AAFwk::Want&)>;
 class DataAbilityResult;
 class DataAbilityOperation;
 class AbilityPostEventTimeout;
@@ -253,6 +254,8 @@ public:
      * @return errCode ERR_OK on success, others on failure.
      */
     ErrCode StartAbility(const Want &want, AbilityStartSetting abilityStartSetting);
+
+    ErrCode StartFeatureAbilityForResult(const Want &want, int requestCode, FeatureAbilityTask &&task);
 
     // lifecycle callback
     virtual void Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
@@ -648,6 +651,8 @@ public:
      *
      */
     virtual void OnAbilityResult(int requestCode, int resultCode, const Want &resultData);
+
+    virtual void OnFeatureAbilityResult(int requestCode, int resultCode, const Want &resultData);
 
     /**
      * @brief Called back when the Back key is pressed.
@@ -1695,6 +1700,7 @@ private:
     std::shared_ptr<AbilityLifecycleExecutor> abilityLifecycleExecutor_ = nullptr;
     std::shared_ptr<OHOSApplication> application_ = nullptr;
     std::vector<std::string> types_;
+    std::map<int, FeatureAbilityTask> resultCallbacks_;
 #ifdef SUPPORT_GRAPHICS
     std::shared_ptr<AbilityWindow> abilityWindow_ = nullptr;
 #endif
