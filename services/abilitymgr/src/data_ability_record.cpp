@@ -233,11 +233,6 @@ int DataAbilityRecord::AddClient(const sptr<IRemoteObject> &client, bool tryBind
             clientAbilityRecord->GetAbilityInfo().name.c_str());
     }
 
-    if (clients_.size() == 1) {
-        HILOG_INFO("Moving data ability app to foreground...");
-        appScheduler->MoveToForground(ability_->GetToken());
-    }
-
     HILOG_INFO("Data ability '%{public}s|%{public}s'.",
         ability_->GetApplicationInfo().bundleName.c_str(),
         ability_->GetAbilityInfo().name.c_str());
@@ -291,11 +286,6 @@ int DataAbilityRecord::RemoveClient(const sptr<IRemoteObject> &client, bool isSy
                 ability_->GetAbilityInfo().name.c_str());
             break;
         }
-    }
-
-    if (clients_.empty()) {
-        HILOG_INFO("Moving data ability to background...");
-        appScheduler->MoveToBackground(ability_->GetToken());
     }
 
     return ERR_OK;
@@ -375,11 +365,6 @@ int DataAbilityRecord::RemoveClients(const std::shared_ptr<AbilityRecord> &clien
                 ++it;
             }
         }
-    }
-
-    if (clients_.empty()) {
-        HILOG_INFO("Moving data ability to background...");
-        appScheduler->MoveToBackground(ability_->GetToken());
     }
 
     return ERR_OK;
@@ -554,11 +539,6 @@ void DataAbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
                 ++it;
             }
         }
-    }
-
-    if (clients_.empty()) {
-        HILOG_INFO("Moving data ability to background...");
-        appScheduler->MoveToBackground(ability_->GetToken());
     }
 }
 }  // namespace AAFwk

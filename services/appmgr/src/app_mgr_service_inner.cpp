@@ -811,6 +811,10 @@ void AppMgrServiceInner::UpdateAbilityState(const sptr<IRemoteObject> &token, co
         HILOG_ERROR("current state is already, no need update!");
         return;
     }
+    if (abilityRecord->GetAbilityInfo() == nullptr) {
+        HILOG_ERROR("ability info nullptr!");
+        return;
+    }
     auto type = abilityRecord->GetAbilityInfo()->type;
     if (type == AppExecFwk::AbilityType::SERVICE &&
         (state == AbilityState::ABILITY_STATE_CREATE ||
