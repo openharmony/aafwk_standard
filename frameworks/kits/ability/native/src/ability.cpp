@@ -79,6 +79,7 @@ const int Ability::DEFAULT_DMS_SESSION_ID(0);
 const std::string PERMISSION_REQUIRE_FORM = "ohos.permission.REQUIRE_FORM";
 const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
+const std::string SHOW_ON_LOCK_SCREEN = "ShowOnLockScreen";
 
 #ifdef SUPPORT_GRAPHICS
 static std::mutex formLock;
@@ -3558,7 +3559,16 @@ sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
         AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
     HILOG_INFO("Ability::GetWindowOption window mode is %{public}d.", windowMode);
     option->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
-    if (showOnLockScreen_) {
+    bool showOnLockScreen = false;
+    if (abilityInfo_) {
+        std::vector<CustomizeData> datas = abilityInfo_->metaData.customizeData;
+        for (CustomizeData data : datas) {
+            if (data.name == "ShowOnLockScreen") {
+                showOnLockScreen = true;
+            }
+        }
+    }
+    if (showOnLockScreen_ || showOnLockScreen) {
         HILOG_DEBUG("Ability::GetWindowOption come, add window flag WINDOW_FLAG_SHOW_WHEN_LOCKED.");
         option->AddWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
     }
