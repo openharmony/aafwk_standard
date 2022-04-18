@@ -38,6 +38,15 @@ public:
     static NativeValue* CreateJsFeatureAbility(NativeEngine &engine);
     static NativeValue* StartAbility(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* StartAbilityForResult(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* FinishWithResult(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* GetDeviceList(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* CallAbility(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* ContinueAbility(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* SubscribeAbilityEvent(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* UnsubscribeAbilityEvent(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* SendMsg(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* SubscribeMsg(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* UnsubscribeMsg(NativeEngine* engine, NativeCallbackInfo* info);
 private:
     Ability* GetAbility(napi_env env);
     Want GetWant(DistributeReqParam &requestParam);
@@ -47,6 +56,15 @@ private:
     void GetExtraParams(DistributeReqParam &requestParam, Want &want);
     NativeValue* OnStartAbility(NativeEngine &engine, NativeCallbackInfo &info);
     NativeValue* OnStartAbilityForResult(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue* OnFinishWithResult(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue* OnGetDeviceList(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue* OnCallAbility(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue* OnContinueAbility(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue* OnSubscribeAbilityEvent(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue* OnUnsubscribeAbilityEvent(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue* OnSendMsg(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue* OnSubscribeMsg(NativeEngine &engine, NativeCallbackInfo &info);
+    NativeValue* OnUnsubscribeMsg(NativeEngine &engine, NativeCallbackInfo &info);
 
     int requestCode_ = 0;
 };
