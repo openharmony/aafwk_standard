@@ -78,6 +78,12 @@ abilityms_files = [
   "src/user_event_handler.cpp",
 ]
 
+free_install = [
+  "${services_path}/abilitymgr/src/atomic_service_status_callback_proxy.cpp",
+  "${services_path}/abilitymgr/src/atomic_service_status_callback_stub.cpp",
+  "${services_path}/abilitymgr/src/atomic_service_status_callback.cpp",
+]
+
 if (ability_runtime_graphics) {
   abilityms_files += [
     "src/screenshot_handler.cpp",

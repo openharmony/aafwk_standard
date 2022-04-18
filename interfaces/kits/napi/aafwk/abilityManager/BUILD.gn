@@ -20,6 +20,7 @@ ohos_shared_library("abilitymanager") {
     "//third_party/node/src",
     "${services_path}/common/include",
     "./",
+    "${services_path}/abilitymgr/include",
   ]
 
   sources = [
@@ -29,6 +30,7 @@ ohos_shared_library("abilitymanager") {
 
   deps = [
     "${kits_path}/appkit:appkit_native",
+    "${services_path}/abilitymgr:abilityms",
     "${services_path}/appmgr:libams",
   ]
 
@@ -55,6 +57,7 @@ ohos_shared_library("abilitymanager") {
     external_deps += [
       "multimedia_image_standard:image",
       "multimedia_image_standard:image_native",
+      "window_manager:libwm",
     ]
     defines = [ "SUPPORT_GRAPHICS" ]
   }

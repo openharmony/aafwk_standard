@@ -23,6 +23,7 @@ ohos_unittest("app_scheduler_test") {
   include_dirs = [
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
+    "${services_path}/abilitymgr/include",
   ]
 
   #sources = abilityms_files
@@ -30,6 +31,7 @@ ohos_unittest("app_scheduler_test") {
     "//foundation/aafwk/standard/services/abilitymgr/src/app_scheduler.cpp",
     "app_scheduler_test.cpp",
   ]
+  sources += free_install
   configs = [
     "${services_path}/abilitymgr:abilityms_config",
     "${services_path}/abilitymgr/test/mock:aafwk_mock_config",

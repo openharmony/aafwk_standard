@@ -256,6 +256,13 @@ public:
     virtual int StopServiceAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE) override;
 
     /**
+     * Get top ability.
+     *
+     * @return Returns front desk focus ability elementName.
+     */
+    virtual AppExecFwk::ElementName GetTopAbility() override;
+
+    /**
      * Kill the process immediately.
      *
      * @param bundleName.
@@ -520,6 +527,18 @@ public:
      */
     virtual int BlockAppService() override;
     #endif
+
+    /**
+     * Call free install from remote.
+     *
+     * @param want, the want of the ability to start.
+     * @param userId, Designation User ID.
+     * @param requestCode, Ability request code.
+     * @param callback, Callback from remote.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int FreeInstallAbilityFromRemote(const Want &want, const sptr<IRemoteObject> &callback,
+        int32_t userId, int requestCode = DEFAULT_INVAL_VALUE) override;
 
 private:
     template <typename T>
