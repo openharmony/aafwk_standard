@@ -247,7 +247,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0400, TestSize.Level1)
     int32_t uid = 1;
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
-     PendingWantManager::Params params {
+    PendingWantManager::Params params {
         .uid = uid,
         .apl = test_apl,
         .isSystemApp = false,
