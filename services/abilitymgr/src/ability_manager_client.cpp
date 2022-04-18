@@ -229,7 +229,7 @@ ErrCode AbilityManagerClient::Connect()
         HILOG_ERROR("Fail to get registry.");
         return GET_ABILITY_SERVICE_FAILED;
     }
-    sptr<IRemoteObject>  remoteObj = systemManager->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
+    sptr<IRemoteObject> remoteObj = systemManager->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
     if (remoteObj == nullptr) {
         HILOG_ERROR("Fail to connect ability manager service.");
         return GET_ABILITY_SERVICE_FAILED;
