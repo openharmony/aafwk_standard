@@ -534,6 +534,9 @@ void AbilityImpl::SendResult(int requestCode, int resultCode, const Want &result
     } else {
         ability_->OnAbilityResult(requestCode, resultCode, resultData);
     }
+
+    // for api5 FeatureAbility::startAbilityForResult
+    ability_->OnFeatureAbilityResult(requestCode, resultCode, resultData);
     HILOG_INFO("%{public}s end.", __func__);
 }
 
