@@ -61,16 +61,6 @@ const std::string HELP_MSG_STOP_SERVICE =
     "  -h, --help                                                   list available commands\n"
     "  [-d <device-id>] -a <ability-name> -b <bundle-name>          stop service with an element name\n";
 
-const std::string HELP_MSG_DUMP = "usage: aa dump <options>\n"
-                                  "options list:\n"
-                                  "  -h, --help                   list available commands\n"
-                                  "  -a, --all                    dump all abilities\n"
-                                  "  -s, --stack <number>         dump the ability info of a specificed stack\n"
-                                  "  -m, --mission <number>       dump the ability info of a specificed mission\n"
-                                  "  -l, --stack-list             dump the mission list of every stack\n"
-                                  "  -e, --serv                   dump the service abilities\n"
-                                  "  -d, --data                   dump the data abilities\n";
-
 const std::string HELP_MSG_DUMPSYS = "usage: aa dump <options>\n"
                                   "options list:\n"
                                   "  -h, --help                   list available commands\n"
@@ -120,15 +110,7 @@ const std::string STRING_START_ABILITY_OK = "start ability successfully.";
 const std::string STRING_START_ABILITY_NG = "error: failed to start ability.";
 
 const std::string STRING_STOP_SERVICE_ABILITY_OK = "stop service ability successfully.";
-const std::string STRING_STOP_SERVICE_ABILITY_NG =
-    "error: failed to stop service ability.";
-
-const std::string STRING_SCREEN_POWER_ON = "on";
-
-const std::string STRING_SCREEN_POWER_ON_OK = "power on screen successfully.";
-const std::string STRING_SCREEN_POWER_ON_NG = "error: failed to power on screen.";
-const std::string STRING_SCREEN_POWER_OFF_OK = "power off screen successfully.";
-const std::string STRING_SCREEN_POWER_OFF_NG = "error: failed to power off screen.";
+const std::string STRING_STOP_SERVICE_ABILITY_NG = "error: failed to stop service ability.";
 
 const std::string STRING_FORCE_STOP_OK = "force stop process successfully.";
 const std::string STRING_FORCE_STOP_NG = "error: failed to force stop process.";
@@ -136,23 +118,20 @@ const std::string STRING_FORCE_STOP_NG = "error: failed to force stop process.";
 const std::string STRING_START_USER_TEST_OK = "start user test successfully.";
 const std::string STRING_START_USER_TEST_NG = "error: failed to start user test.";
 
-
 const std::string STRING_BLOCK_ABILITY_OK = "block ability successfully.";
 const std::string STRING_BLOCK_ABILITY_NG = "error: failed to block stop ability.";
 
 const std::string STRING_BLOCK_AMS_SERVICE_OK = "block ams service successfully.";
 const std::string STRING_BLOCK_AMS_SERVICE_NG = "error: failed to block ams service.";
 
-const std::string  STRING_BLOCK_APP_SERVICE_OK = "block app service successfully.";
-const std::string  STRING_BLOCK_APP_SERVICE_NG =
-    "error: failed to block app service.";
+const std::string STRING_BLOCK_APP_SERVICE_OK = "block app service successfully.";
+const std::string STRING_BLOCK_APP_SERVICE_NG = "error: failed to block app service.";
 
 const int USER_TEST_COMMAND_START_INDEX = 2;
 const int USER_TEST_COMMAND_PARAMS_NUM = 2;
 const int TIME_RATE_MS = 1000;
 const std::string STRING_FORCE_TIMEOUT_OK = "force ability timeout successfully.";
 const std::string STRING_FORCE_TIMEOUT_NG = "error: failed to force ability timeout.";
-
 
 const int NUMBER_TWO = 2;
 const int NUMBER_ONE = 1;
@@ -168,16 +147,18 @@ public:
     ~AbilityManagerShellCommand() override
     {}
 
+    ErrCode CreateMessageMap() override;
+    bool IsTestCommandIntegrity(const std::map<std::string, std::string> &params);
+    ErrCode StartUserTest(const std::map<std::string, std::string> &params, const bool isDebug);
+
 private:
     ErrCode CreateCommandMap() override;
-    ErrCode CreateMessageMap() override;
     ErrCode init() override;
 
     ErrCode RunAsHelpCommand();
     ErrCode RunAsScreenCommand();
     ErrCode RunAsStartAbility();
     ErrCode RunAsStopService();
-    ErrCode RunAsDumpCommand();
     ErrCode RunAsDumpsysCommand();
     ErrCode RunAsForceStop();
     #ifdef ABILITY_COMMAND_FOR_TEST
@@ -189,12 +170,9 @@ private:
     #endif
     sptr<IAbilityManager> GetAbilityManagerService();
 
-    ErrCode RunAsDumpCommandOptopt();
     ErrCode MakeWantFromCmd(Want &want, std::string &windowMode);
     ErrCode RunAsTestCommand();
-    bool IsTestCommandIntegrity(const std::map<std::string, std::string> &params);
     ErrCode TestCommandError(const std::string &info);
-    ErrCode StartUserTest(const std::map<std::string, std::string> &params, const bool isDebug);
 };
 }  // namespace AAFwk
 }  // namespace OHOS
