@@ -255,7 +255,10 @@ void AbilityRecord::ProcessForegroundAbility(uint32_t sceneFlag)
 void AbilityRecord::BackgroundAbility(const Closure &task)
 {
     HILOG_INFO("Move the ability to background, ability:%{public}s.", abilityInfo_.name.c_str());
-    CHECK_POINTER(lifecycleDeal_);
+    if (lifecycleDeal_ == nullptr) {
+        HILOG_ERROR("Move the ability to background fail, lifecycleDeal_ is null.");
+        return;
+    }
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     if (handler && task) {
         if (!want_.GetBoolParam(DEBUG_APP, false)) {
@@ -890,6 +893,12 @@ int64_t AbilityRecord::GetStartTime() const
 
 void AbilityRecord::DumpService(std::vector<std::string> &info, bool isClient) const
 {
+    std::vector<std::string> params;
+    DumpService(info, params, isClient);
+}
+
+void AbilityRecord::DumpService(std::vector<std::string> &info, std::vector<std::string> &params, bool isClient) const
+{
     info.emplace_back("      AbilityRecord ID #" + std::to_string(GetRecordId()) + "   state #" +
                       AbilityRecord::ConvertAbilityState(GetAbilityState()) + "   start time [" +
                       std::to_string(GetStartTime()) + "]");
@@ -910,7 +919,6 @@ void AbilityRecord::DumpService(std::vector<std::string> &info, bool isClient) c
     }
     // add dump client info
     if (isClient && scheduler_ && isReady_) {
-        std::vector<std::string> params;
         scheduler_->DumpAbilityInfo(params, info);
         AppExecFwk::Configuration config;
         if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
@@ -1512,6 +1520,7 @@ void AbilityRecord::RemoveWindowMode()
     want_.RemoveParam(Want::PARAM_RESV_WINDOW_MODE);
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityRecord::BlockAbility()
 {
     HILOG_INFO("BlockAbility.");
@@ -1521,5 +1530,6 @@ int AbilityRecord::BlockAbility()
     }
     return ERR_NO_INIT;
 }
+#endif
 }  // namespace AAFwk
 }  // namespace OHOS

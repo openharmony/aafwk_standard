@@ -318,7 +318,7 @@ int AppScheduler::StartUserTest(
     return ERR_OK;
 }
 
-int AppScheduler::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+int AppScheduler::FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
     int ret = appMgrClient_->FinishUserTest(msg, resultCode, bundleName);
@@ -371,6 +371,7 @@ void AppScheduler::PostANRTaskByProcessID(const pid_t pid)
     appMgrClient_->PostANRTaskByProcessID(pid);
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AppScheduler::BlockAppService()
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
@@ -382,5 +383,6 @@ int AppScheduler::BlockAppService()
     }
     return ERR_OK;
 }
+#endif
 }  // namespace AAFwk
 }  // namespace OHOS

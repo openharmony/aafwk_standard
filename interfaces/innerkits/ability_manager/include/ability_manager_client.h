@@ -278,6 +278,7 @@ public:
      */
     ErrCode KillProcess(const std::string &bundleName);
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Force ability timeout.
      *
@@ -286,6 +287,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode ForceTimeoutForTest(const std::string &abilityName, const std::string &state);
+    #endif
 
     /**
      * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
@@ -574,7 +576,7 @@ public:
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName);
+    ErrCode FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName);
 
     /**
      * GetCurrentTopAbility, get the token of current top ability.
@@ -635,6 +637,7 @@ public:
      */
     ErrCode SendANRProcessID(int pid);
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block ability manager service.
      *
@@ -656,6 +659,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     ErrCode BlockAppService();
+    #endif
 
     /**
      * Free install ability from remote DMS.

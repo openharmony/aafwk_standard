@@ -270,6 +270,7 @@ public:
      */
     virtual int KillProcess(const std::string &bundleName) override;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * force timeout ability.
      *
@@ -278,6 +279,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override;
+    #endif
 
     /**
      * ClearUpApplicationData, call ClearUpApplicationData() through proxy project,
@@ -441,7 +443,8 @@ public:
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override;
+    virtual int FinishUserTest(
+        const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override;
 
     /**
      * GetCurrentTopAbility, get the token of current top ability.
@@ -501,6 +504,7 @@ public:
      */
     virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block ability manager service.
      *
@@ -522,6 +526,7 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int BlockAppService() override;
+    #endif
 
     /**
      * Call free install from remote.

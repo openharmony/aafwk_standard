@@ -38,11 +38,6 @@ void Extension::Init(const std::shared_ptr<AppExecFwk::AbilityLocalRecord> &reco
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-/**
- * Will be called when extension start. You should override this function
- *
- * @param want start information
- */
 void Extension::OnStart(const AAFwk::Want &want)
 {
     HILOG_INFO("OnStart begin.");
@@ -51,25 +46,12 @@ void Extension::OnStart(const AAFwk::Want &want)
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-/**
- * Will be called when extension stop. You should override this function
- *
- * @param want start information
- */
 void Extension::OnStop()
 {
     HILOG_INFO("OnStop begin.");
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-/**
- * @brief Called when this Service extension is connected for the first time.
- *
- * You can override this function to implement your own processing logic.
- *
- * @param want Indicates the {@link Want} structure containing connection information about the Service extension.
- * @return Returns a pointer to the <b>sid</b> of the connected Service extension.
- */
 sptr<IRemoteObject> Extension::OnConnect(const AAFwk::Want &want)
 {
     HILOG_INFO("%{public}s begin.", __func__);
@@ -77,31 +59,12 @@ sptr<IRemoteObject> Extension::OnConnect(const AAFwk::Want &want)
     return nullptr;
 }
 
-/**
- * @brief Called when all abilities connected to this Service ability are disconnected.
- *
- * You can override this function to implement your own processing logic.
- *
- */
 void Extension::OnDisconnect(const AAFwk::Want &want)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-/**
- * @brief Called back when Service is started.
- * This method can be called only by Service. You can use the StartAbility(ohos.aafwk.content.Want) method to start
- * Service. Then the system calls back the current method to use the transferred want parameter to execute its own
- * logic.
- *
- * @param want Indicates the want of Service to start.
- * @param restart Indicates the startup mode. The value true indicates that Service is restarted after being destroyed,
- * and the value false indicates a normal startup.
- * @param startId Indicates the number of times the Service extension has been started. The startId is incremented by 1
- * every time the extension is started. For example, if the extension has been started for six times,
- * the value of startId is 6.
- */
 void Extension::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
     HILOG_INFO("%{public}s begin restart=%{public}s,startId=%{public}d.",
@@ -122,12 +85,12 @@ void Extension::SetLastRequestWant(const AAFwk::Want &want)
     lastRequestWant_ = std::make_shared<AAFwk::Want>(want);
 }
 
-/**
- * @brief Called when the system configuration is updated.
- *
- * @param configuration Indicates the updated configuration information.
- */
 void Extension::OnConfigurationUpdated(const AppExecFwk::Configuration &configuration)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+}
+
+void Extension::Dump(const std::vector<std::string> &params, std::vector<std::string> &info)
 {
     HILOG_INFO("%{public}s called.", __func__);
 }

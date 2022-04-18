@@ -39,7 +39,7 @@ public:
      * @return the TestRunner object if JsTestRunner object is created successfully; returns null otherwise.
      */
     static std::unique_ptr<TestRunner> Create(const std::unique_ptr<Runtime> &runtime,
-        const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo);
+        const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo, bool isFaJsModel);
 
     /**
      * Default deconstructor used to deconstruct.
@@ -56,9 +56,11 @@ public:
      */
     void Run() override;
 
+    bool Initialize() override;
+
 private:
     JsTestRunner(JsRuntime &jsRuntime,
-        const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo);
+        const std::shared_ptr<AbilityDelegatorArgs> &args, const AppExecFwk::BundleInfo &bundleInfo, bool isFaJsModel);
 
     void CallObjectMethod(const char *name, NativeValue *const *argv = nullptr, size_t argc = 0);
     void ReportFinished(const std::string &msg);
@@ -67,6 +69,7 @@ private:
     JsRuntime &jsRuntime_;
     std::unique_ptr<NativeReference> jsTestRunnerObj_;
     std::string srcPath_;
+    bool isFaJsModel_ = false;
 };
 }  // namespace RunnerRuntime
 }  // namespace OHOS

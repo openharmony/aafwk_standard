@@ -780,6 +780,7 @@ int AbilityManagerProxy::KillProcess(const std::string &bundleName)
     return reply.ReadInt32();
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityManagerProxy::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
 {
     MessageParcel data;
@@ -804,6 +805,7 @@ int AbilityManagerProxy::ForceTimeoutForTest(const std::string &abilityName, con
     }
     return reply.ReadInt32();
 }
+#endif
 
 int AbilityManagerProxy::ClearUpApplicationData(const std::string &bundleName)
 {
@@ -2076,7 +2078,8 @@ int AbilityManagerProxy::StartUserTest(const Want &want, const sptr<IRemoteObjec
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+int AbilityManagerProxy::FinishUserTest(
+    const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -2089,8 +2092,8 @@ int AbilityManagerProxy::FinishUserTest(const std::string &msg, const int &resul
         HILOG_ERROR("msg write failed.");
         return ERR_INVALID_VALUE;
     }
-    if (!data.WriteInt32(resultCode)) {
-        HILOG_ERROR("resultCode:WriteInt32 fail.");
+    if (!data.WriteInt64(resultCode)) {
+        HILOG_ERROR("resultCode:WriteInt64 fail.");
         return ERR_INVALID_VALUE;
     }
     if (!data.WriteString(bundleName)) {
@@ -2286,6 +2289,7 @@ int32_t AbilityManagerProxy::GetMissionIdByToken(const sptr<IRemoteObject> &toke
     return reply.ReadInt32();
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityManagerProxy::BlockAmsService()
 {
     MessageParcel data;
@@ -2302,6 +2306,42 @@ int AbilityManagerProxy::BlockAmsService()
     return reply.ReadInt32();
 }
 
+int AbilityManagerProxy::BlockAbility(int32_t abilityRecordId)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteInt32(abilityRecordId)) {
+        HILOG_ERROR("pid WriteInt32 fail.");
+        return ERR_INVALID_VALUE;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::BLOCK_ABILITY, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("BlockAbility error: %d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
+int AbilityManagerProxy::BlockAppService()
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::BLOCK_APP_SERVICE, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("BlockAmsService error: %d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+#endif
 int AbilityManagerProxy::FreeInstallAbilityFromRemote(const Want &want, const sptr<IRemoteObject> &callback,
     int32_t userId, int requestCode)
 {
@@ -2339,42 +2379,6 @@ int AbilityManagerProxy::FreeInstallAbilityFromRemote(const Want &want, const sp
         return error;
     }
 
-    return reply.ReadInt32();
-}
-
-int AbilityManagerProxy::BlockAbility(int32_t abilityRecordId)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteInt32(abilityRecordId)) {
-        HILOG_ERROR("pid WriteInt32 fail.");
-        return ERR_INVALID_VALUE;
-    }
-    auto error = Remote()->SendRequest(IAbilityManager::BLOCK_ABILITY, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("BlockAbility error: %d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
-int AbilityManagerProxy::BlockAppService()
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    auto error = Remote()->SendRequest(IAbilityManager::BLOCK_APP_SERVICE, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("BlockAmsService error: %d", error);
-        return error;
-    }
     return reply.ReadInt32();
 }
 }  // namespace AAFwk

@@ -123,6 +123,14 @@ public:
      */
     virtual void OnConfigurationUpdated(const AppExecFwk::Configuration& configuration);
 
+    /**
+     * @brief Called when extension need dump info.
+     *
+     * @param params The params from service.
+     * @param info The dump info to show.
+     */
+    virtual void Dump(const std::vector<std::string> &params, std::vector<std::string> &info);
+
     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_ = nullptr;
 private:
     std::shared_ptr<AppExecFwk::AbilityHandler> handler_ = nullptr;

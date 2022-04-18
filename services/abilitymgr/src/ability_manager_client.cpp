@@ -162,7 +162,7 @@ ErrCode AbilityManagerClient::MinimizeAbility(const sptr<IRemoteObject> &token, 
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    HILOG_INFO("%{public}s called, fromUser=%{public}d", __func__, fromUser);
+    HILOG_INFO("Minimize ability, fromUser:%{public}d.", fromUser);
     return abms->MinimizeAbility(token, fromUser);
 }
 
@@ -265,6 +265,7 @@ ErrCode AbilityManagerClient::KillProcess(const std::string &bundleName)
     return abms->KillProcess(bundleName);
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 ErrCode AbilityManagerClient::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
@@ -272,6 +273,7 @@ ErrCode AbilityManagerClient::ForceTimeoutForTest(const std::string &abilityName
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->ForceTimeoutForTest(abilityName, state);
 }
+#endif
 
 ErrCode AbilityManagerClient::ClearUpApplicationData(const std::string &bundleName)
 {
@@ -670,7 +672,7 @@ ErrCode AbilityManagerClient::StartUserTest(const Want &want, const sptr<IRemote
 }
 
 ErrCode AbilityManagerClient::FinishUserTest(
-    const std::string &msg, const int &resultCode, const std::string &bundleName)
+    const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
@@ -744,6 +746,7 @@ ErrCode AbilityManagerClient::SendANRProcessID(int pid)
     return abms->SendANRProcessID(pid);
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 ErrCode AbilityManagerClient::BlockAmsService()
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
@@ -767,6 +770,7 @@ ErrCode AbilityManagerClient::BlockAppService()
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->BlockAppService();
 }
+#endif
 
 sptr<IAbilityManager> AbilityManagerClient::GetAbilityManager()
 {

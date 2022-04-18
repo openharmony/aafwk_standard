@@ -72,7 +72,9 @@ void AbilityManagerStub::FirstStepInit()
     requestFuncMap_[START_ABILITY_FOR_OPTIONS] = &AbilityManagerStub::StartAbilityForOptionsInner;
     requestFuncMap_[START_SYNC_MISSIONS] = &AbilityManagerStub::StartSyncRemoteMissionsInner;
     requestFuncMap_[STOP_SYNC_MISSIONS] = &AbilityManagerStub::StopSyncRemoteMissionsInner;
+#ifdef ABILITY_COMMAND_FOR_TEST
     requestFuncMap_[FORCE_TIMEOUT] = &AbilityManagerStub::ForceTimeoutForTestInner;
+#endif
     requestFuncMap_[FREE_INSTALL_ABILITY_FROM_REMOTE] = &AbilityManagerStub::FreeInstallAbilityFromRemoteInner;
 }
 
@@ -117,9 +119,11 @@ void AbilityManagerStub::SecondStepInit()
     requestFuncMap_[GET_MISSION_SNAPSHOT_INFO] = &AbilityManagerStub::GetMissionSnapshotInfoInner;
     requestFuncMap_[IS_USER_A_STABILITY_TEST] = &AbilityManagerStub::IsRunningInStabilityTestInner;
     requestFuncMap_[SEND_APP_NOT_RESPONSE_PROCESS_ID] = &AbilityManagerStub::SendANRProcessIDInner;
+#ifdef ABILITY_COMMAND_FOR_TEST
     requestFuncMap_[BLOCK_ABILITY] = &AbilityManagerStub::BlockAbilityInner;
     requestFuncMap_[BLOCK_AMS_SERVICE] = &AbilityManagerStub::BlockAmsServiceInner;
     requestFuncMap_[BLOCK_APP_SERVICE] = &AbilityManagerStub::BlockAppServiceInner;
+#endif
 }
 
 void AbilityManagerStub::ThirdStepInit()
@@ -1239,7 +1243,7 @@ int AbilityManagerStub::StartUserTestInner(MessageParcel &data, MessageParcel &r
 int AbilityManagerStub::FinishUserTestInner(MessageParcel &data, MessageParcel &reply)
 {
     std::string msg = data.ReadString();
-    int resultCode = data.ReadInt32();
+    int64_t resultCode = data.ReadInt64();
     std::string bundleName = data.ReadString();
     int32_t result = FinishUserTest(msg, resultCode, bundleName);
     reply.WriteInt32(result);
@@ -1316,6 +1320,7 @@ int AbilityManagerStub::SendANRProcessIDInner(MessageParcel &data, MessageParcel
     return NO_ERROR;
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AbilityManagerStub::ForceTimeoutForTestInner(MessageParcel &data, MessageParcel &reply)
 {
     std::string abilityName = Str16ToStr8(data.ReadString16());
@@ -1358,6 +1363,7 @@ int AbilityManagerStub::BlockAppServiceInner(MessageParcel &data, MessageParcel 
     }
     return NO_ERROR;
 }
+#endif
 
 int AbilityManagerStub::FreeInstallAbilityFromRemoteInner(MessageParcel &data, MessageParcel &reply)
 {

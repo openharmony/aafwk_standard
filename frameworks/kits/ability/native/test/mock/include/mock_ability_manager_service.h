@@ -136,9 +136,11 @@ public:
 
     MOCK_METHOD2(GetWantSenderInfo, int(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info));
     MOCK_METHOD3(StartAbilityByCall, int(const Want &, const sptr<IAbilityConnection> &, const sptr<IRemoteObject> &));
+    #ifdef ABILITY_COMMAND_FOR_TEST
     MOCK_METHOD0(BlockAppService, int());
     MOCK_METHOD0(BlockAmsService, int());
     MOCK_METHOD1(BlockAbility, int(int32_t abilityRecordId));
+    #endif
 
     sptr<IAbilityScheduler> AcquireDataAbility(
         const Uri &uri, bool tryBind, const sptr<IRemoteObject> &callerToken) override
@@ -231,7 +233,8 @@ public:
         return 0;
     }
 
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override
+    virtual int FinishUserTest(
+        const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override
     {
         return 0;
     }
@@ -251,10 +254,12 @@ public:
         return 0;
     }
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override
     {
         return 0;
     }
+    #endif
 
     enum class RequestCode {
         E_STATE_INITIAL = 0,

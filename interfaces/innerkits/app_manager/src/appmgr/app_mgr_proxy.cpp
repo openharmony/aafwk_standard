@@ -496,7 +496,7 @@ int AppMgrProxy::StartUserTestProcess(
     return reply.ReadInt32();
 }
 
-int AppMgrProxy::FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName)
+int AppMgrProxy::FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -509,7 +509,7 @@ int AppMgrProxy::FinishUserTest(const std::string &msg, const int &resultCode, c
         HILOG_ERROR("msg write failed.");
         return ERR_FLATTEN_OBJECT;
     }
-    if (!data.WriteInt32(resultCode)) {
+    if (!data.WriteInt64(resultCode)) {
         HILOG_ERROR("resultCode:WriteInt32 fail.");
         return ERR_FLATTEN_OBJECT;
     }
@@ -659,6 +659,7 @@ void AppMgrProxy::PostANRTaskByProcessID(const pid_t pid)
     }
 }
 
+#ifdef ABILITY_COMMAND_FOR_TEST
 int AppMgrProxy::BlockAppService()
 {
     MessageParcel data;
@@ -677,5 +678,6 @@ int AppMgrProxy::BlockAppService()
     }
     return reply.ReadInt32();
 }
+#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS

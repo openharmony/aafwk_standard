@@ -230,6 +230,9 @@ public:
 
     void DumpState(std::vector<std::string> &info, bool isClient, const std::string &args = "") const;
 
+    void DumpStateByUri(std::vector<std::string> &info, bool isClient, const std::string &args,
+        std::vector<std::string> &params) const;
+
     void StopAllExtensions();
 
     void StartRootLauncher(const std::shared_ptr<AbilityRecord> &abilityRecord);

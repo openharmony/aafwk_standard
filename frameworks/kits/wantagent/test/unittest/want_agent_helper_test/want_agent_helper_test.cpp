@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +22,11 @@
 #include "element_name.h"
 #include "event_handler.h"
 #include "ohos/aafwk/base/base_types.h"
+#define private public
+#define protected public
 #include "pending_want.h"
+#undef private
+#undef protected
 #include "want.h"
 #include "want_agent.h"
 #include "want_agent_constant.h"
@@ -55,14 +59,7 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-    class WantSender : public AAFwk::WantSenderStub {
-    public:
-        void Send(SenderInfo &senderInfo) override;
-    };
 };
-
-void WantAgentHelperTest::WantSender::Send(SenderInfo &senderInfo)
-{}
 
 void WantAgentHelperTest::SetUpTestCase(void)
 {}
@@ -560,10 +557,29 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_2600, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_2700, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    sptr<IWantSender> target(new (std::nothrow) WantSender());
-    std::shared_ptr<PendingWant> pendingWant = std::make_shared<PendingWant>(target);
+
+    // pendingwant
+    int requestCode = 10;
+    std::shared_ptr<Want> want = std::make_shared<Want>();
+    ElementName element("device", "bundleName", "abilityName");
+    want->SetElement(element);
+    unsigned int flags = 1;
+    flags |= FLAG_ONE_SHOT;
+    WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_FOREGROUND_SERVICE;
+    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<PendingWant> pendingWant =
+        PendingWant::BuildServicePendingWant(context, requestCode, want, flags, type);
+
+    // pendingwant2
+    int requestCode2 = 11;
+    std::shared_ptr<Want> want2 = std::make_shared<Want>();
+    ElementName element2("device", "bundle", "ability");
+    want2->SetElement(element2);
+    std::shared_ptr<PendingWant> pendingWant2 =
+        PendingWant::BuildServicePendingWant(context, requestCode2, want2, flags, type);
+
     std::shared_ptr<WantAgent> wantAgent = std::make_shared<WantAgent>(pendingWant);
-    std::shared_ptr<WantAgent> wantAgent2(nullptr);
+    std::shared_ptr<WantAgent> wantAgent2 = std::make_shared<WantAgent>(pendingWant2);
     auto isEqual = wantAgentHelper->JudgeEquality(wantAgent, wantAgent2);
     EXPECT_EQ(isEqual, false);
 }
@@ -576,8 +592,18 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_2700, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_2800, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    sptr<IWantSender> target(new (std::nothrow) WantSender());
-    std::shared_ptr<PendingWant> pendingWant = std::make_shared<PendingWant>(target);
+
+    int requestCode = 10;
+    std::shared_ptr<Want> want = std::make_shared<Want>();
+    ElementName element("device", "bundleName", "abilityName");
+    want->SetElement(element);
+    unsigned int flags = 1;
+    flags |= FLAG_ONE_SHOT;
+    WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_FOREGROUND_SERVICE;
+    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<PendingWant> pendingWant =
+        PendingWant::BuildServicePendingWant(context, requestCode, want, flags, type);
+
     std::shared_ptr<WantAgent> wantAgent = std::make_shared<WantAgent>(pendingWant);
     std::shared_ptr<WantAgent> wantAgent2 = std::make_shared<WantAgent>(pendingWant);
     auto isEqual = wantAgentHelper->JudgeEquality(wantAgent, wantAgent2);
@@ -592,8 +618,18 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_2800, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_2900, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    sptr<IWantSender> target(new (std::nothrow) WantSender());
-    std::shared_ptr<PendingWant> pendingWant = std::make_shared<PendingWant>(target);
+
+    int requestCode = 10;
+    std::shared_ptr<Want> want = std::make_shared<Want>();
+    ElementName element("device", "bundleName", "abilityName");
+    want->SetElement(element);
+    unsigned int flags = 1;
+    flags |= FLAG_ONE_SHOT;
+    WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_FOREGROUND_SERVICE;
+    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<PendingWant> pendingWant =
+        PendingWant::BuildServicePendingWant(context, requestCode, want, flags, type);
+
     std::shared_ptr<PendingWant> pendingWant2(nullptr);
     std::shared_ptr<WantAgent> wantAgent = std::make_shared<WantAgent>(pendingWant);
     std::shared_ptr<WantAgent> wantAgent2 = std::make_shared<WantAgent>(pendingWant2);

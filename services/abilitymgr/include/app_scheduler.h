@@ -259,7 +259,7 @@ public:
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName);
+    int FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName);
 
     int GetProcessRunningInfosByUserId(std::vector<AppExecFwk::RunningProcessInfo> &info, int32_t userId);
     std::string ConvertAppState(const AppState &state);
@@ -290,12 +290,14 @@ public:
      */
     void PostANRTaskByProcessID(const pid_t pid);
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block app service.
      *
      * @return Returns ERR_OK on success, others on failure.
      */
     int BlockAppService();
+    #endif
 
 protected:
     /**

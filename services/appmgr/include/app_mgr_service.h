@@ -195,7 +195,8 @@ public:
      *
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int FinishUserTest(const std::string &msg, const int &resultCode, const std::string &bundleName) override;
+    virtual int FinishUserTest(
+        const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override;
 
     virtual void ScheduleAcceptWantDone(
         const int32_t recordId, const AAFwk::Want &want, const std::string &flag) override;
@@ -221,12 +222,14 @@ public:
      */
     virtual void PostANRTaskByProcessID(const pid_t pid) override;
 
+    #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block app service.
      *
      * @return Returns ERR_OK on success, others on failure.
      */
     virtual int BlockAppService() override;
+    #endif
 
 private:
     /**

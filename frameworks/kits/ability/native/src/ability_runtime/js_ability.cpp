@@ -588,5 +588,53 @@ void JsAbility::RequsetFocus(const Want &want)
     scene_->GoForeground(Ability::sceneFlag_);
 }
 #endif
+
+void JsAbility::Dump(const std::vector<std::string> &params, std::vector<std::string> &info)
+{
+    Ability::Dump(params, info);
+    HILOG_INFO("%{public}s called.", __func__);
+    HandleScope handleScope(jsRuntime_);
+    auto& nativeEngine = jsRuntime_.GetNativeEngine();
+    // create js array object of params
+    NativeValue* argv[] = { CreateNativeArray(nativeEngine, params) };
+
+    if (!jsAbilityObj_) {
+        HILOG_WARN("Not found .js");
+        return;
+    }
+
+    NativeValue* value = jsAbilityObj_->Get();
+    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
+    if (obj == nullptr) {
+        HILOG_ERROR("Failed to get object");
+        return;
+    }
+
+    NativeValue* method = obj->GetProperty("dump");
+    if (method == nullptr) {
+        HILOG_ERROR("Failed to get dump from object");
+        return;
+    }
+    HILOG_INFO("Dump CallFunction dump, success");
+    NativeValue* dumpInfo = nativeEngine.CallFunction(value, method, argv, 1);
+    if (dumpInfo == nullptr) {
+        HILOG_ERROR("dumpInfo nullptr.");
+        return;
+    }
+    NativeArray* dumpInfoNative = ConvertNativeValueTo<NativeArray>(dumpInfo);
+    if (dumpInfoNative == nullptr) {
+        HILOG_ERROR("dumpInfoNative nullptr.");
+        return;
+    }
+    for (uint32_t i = 0; i < dumpInfoNative->GetLength(); i++) {
+        std::string dumpInfoStr;
+        if (!ConvertFromJsValue(nativeEngine, dumpInfoNative->GetElement(i), dumpInfoStr)) {
+            HILOG_ERROR("Parse dumpInfoStr failed");
+            return;
+        }
+        info.push_back(dumpInfoStr);
+    }
+    HILOG_DEBUG("Dump info size: %{public}zu", info.size());
+}
 }  // namespace AbilityRuntime
 }  // namespace OHOS

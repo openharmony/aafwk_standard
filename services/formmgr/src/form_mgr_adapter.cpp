@@ -372,11 +372,7 @@ ErrCode FormMgrAdapter::HandleDeleteFormCache(FormRecord &dbRecord, const int ui
 
     HILOG_DEBUG("%{public}s, dbRecord.formUserUids size: %{public}zu", __func__, dbRecord.formUserUids.size());
     FormBmsHelper::GetInstance().NotifyModuleNotRemovable(dbRecord.bundleName, dbRecord.moduleName);
-    if (!FormDataMgr::GetInstance().DeleteFormUserUid(formId, uid)) {
-        HILOG_ERROR("%{public}s, failed to remove form user uid", __func__);
-        return ERR_APPEXECFWK_FORM_COMMON_CODE;
-    }
-
+    FormDataMgr::GetInstance().DeleteFormUserUid(formId, uid);
     return result;
 }
 
@@ -836,7 +832,7 @@ ErrCode FormMgrAdapter::AddExistFormRecord(const FormItemInfo &info, const sptr<
 
     FormRecord newRecord(record);
 
-    if (newRecord.needRefresh) {
+    if (newRecord.needRefresh || !FormCacheMgr::GetInstance().IsExist(newRecord.formId)) {
         newRecord.isInited = false;
         FormDataMgr::GetInstance().SetFormCacheInited(formId, false);
         // acquire formInfo from provider
@@ -856,8 +852,10 @@ ErrCode FormMgrAdapter::AddExistFormRecord(const FormItemInfo &info, const sptr<
 
     // create form info for js
     std::string cacheData;
-    if (FormCacheMgr::GetInstance().GetData(formId, cacheData)) {
+    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageMap;
+    if (FormCacheMgr::GetInstance().GetData(formId, cacheData, imageMap)) {
         formInfo.formData = cacheData;
+        formInfo.formProviderData.SetImageDataMap(imageMap);
     }
     FormDataMgr::GetInstance().CreateFormInfo(formId, record, formInfo);
 
@@ -1696,9 +1694,11 @@ bool FormMgrAdapter::UpdateProviderInfoToHost(const int64_t matchedFormId, const
     // If the form need refrsh flag is true and form visibleType is FORM_VISIBLE, refresh the form host.
     if (formRecord.needRefresh && formVisibleType == Constants::FORM_VISIBLE) {
         std::string cacheData;
+        std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageMap;
         // If the form has business cache, refresh the form host.
-        if (FormCacheMgr::GetInstance().GetData(matchedFormId, cacheData)) {
+        if (FormCacheMgr::GetInstance().GetData(matchedFormId, cacheData, imageMap)) {
             formRecord.formProviderInfo.SetFormDataString(cacheData);
+            formRecord.formProviderInfo.SetImageDataMap(imageMap);
             formHostRecord.OnUpdate(matchedFormId, formRecord);
         }
     }

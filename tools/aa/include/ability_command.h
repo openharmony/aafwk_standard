@@ -158,6 +158,8 @@ const int NUMBER_TWO = 2;
 const int NUMBER_ONE = 1;
 
 const std::string DEBUG_VALUE = "true";
+
+const std::string STRING_TEST_REGEX_INTEGER_NUMBERS = "^(0|[1-9][0-9]*|-[1-9][0-9]*)$";
 }  // namespace
 
 class AbilityManagerShellCommand : public ShellCommand {
@@ -178,11 +180,13 @@ private:
     ErrCode RunAsDumpCommand();
     ErrCode RunAsDumpsysCommand();
     ErrCode RunAsForceStop();
+    #ifdef ABILITY_COMMAND_FOR_TEST
     ErrCode RunForceTimeoutForTest();
     ErrCode RunAsSendAppNotRespondinProcessID();
     ErrCode RunAsBlockAbilityCommand();
     ErrCode RunAsBlockAmsServiceCommand();
     ErrCode RunAsBlockAppServiceCommand();
+    #endif
     sptr<IAbilityManager> GetAbilityManagerService();
 
     ErrCode RunAsDumpCommandOptopt();

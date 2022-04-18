@@ -21,6 +21,8 @@
 #include <singleton.h>
 #include <string>
 
+#include "ashmem.h"
+
 namespace OHOS {
 namespace AppExecFwk {
 /**
@@ -36,17 +38,21 @@ public:
      * @brief Get form data.
      * @param formId Form id.
      * @param data Cache data.
+     * @param imageMap Image map cache.
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
-    bool GetData(const int64_t formId, std::string &data) const;
+    bool GetData(const int64_t formId, std::string &data,
+        std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> &imageMap) const;
 
     /**
      * @brief Add form data.
      * @param formId Form id.
      * @param data Cache data.
+     * @param imageMap Image map cache.
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
-    bool AddData(const int64_t formId, const std::string &data);
+    bool AddData(const int64_t formId, const std::string &data,
+        const std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> &imageMap);
 
     /**
      * @brief Delete form data.
@@ -71,6 +77,7 @@ public:
 private:
     mutable std::mutex cacheMutex_;
     std::map<int64_t, std::string> cacheData_;
+    std::map<int64_t, std::map<std::string, std::pair<sptr<Ashmem>, int32_t>>> cacheImageMap_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
