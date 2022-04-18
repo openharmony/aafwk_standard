@@ -42,6 +42,8 @@ INTERFACE_INNER IInterface
     virtual IInterface *Query(const InterfaceID &iid) = 0; /* [in] */
 
     virtual InterfaceID GetInterfaceID(IInterface * object) = 0; /* [in] */
+
+    virtual ~IInterface() {}
 };
 
 INTERFACE(IBoolean, 492ef6c0 - e122 - 401d - 80c4 - bb65e2325766)
