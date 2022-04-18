@@ -1183,7 +1183,7 @@ ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, st
         resultReceiver_.append(GetMessageFromCode(result));
         return result;
     }
-    HILOG_INFO("%{public}s", STRING_START_USER_TEST_OK.c_str());
+    HILOG_INFO("%{public}s", STRING_USER_TEST_STARTED.c_str());
 
     std::signal(SIGCHLD, SIG_DFL);
 
@@ -1197,8 +1197,8 @@ ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, st
         return OHOS::ERR_INVALID_VALUE;
     }
 
-    HILOG_INFO("User test finished successfully");
-    resultReceiver_ = STRING_START_USER_TEST_OK + "\n";
+    HILOG_INFO("%{public}s", STRING_USER_TEST_FINISHED.c_str());
+    resultReceiver_ = STRING_USER_TEST_FINISHED + "\n";
 
     return result;
 }

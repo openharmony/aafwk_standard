@@ -133,8 +133,9 @@ const std::string STRING_SCREEN_POWER_OFF_NG = "error: failed to power off scree
 const std::string STRING_FORCE_STOP_OK = "force stop process successfully.";
 const std::string STRING_FORCE_STOP_NG = "error: failed to force stop process.";
 
-const std::string STRING_START_USER_TEST_OK = "start user test successfully.";
 const std::string STRING_START_USER_TEST_NG = "error: failed to start user test.";
+const std::string STRING_USER_TEST_STARTED = "user test started.";
+const std::string STRING_USER_TEST_FINISHED = "user test finished.";
 
 
 const std::string STRING_BLOCK_ABILITY_OK = "block ability successfully.";
