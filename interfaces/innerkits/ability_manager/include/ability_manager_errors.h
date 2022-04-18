@@ -251,6 +251,270 @@ enum {
      */
     RECENT_IGNORE_UNAVAILABLE = 0x0002,
 };
+
+enum NativeFreeInstallError {
+    FREE_INSTALL_OK = 0,
+    /**
+     * FA search failed.
+     */
+    FA_FREE_INSTALL_QUERY_ERROR = 0x800001,
+
+    /**
+     * HAG query timeout.
+     */
+    HAG_QUERY_TIMEOUT = 0x800002,
+
+    /**
+     * FA Network unavailable.
+     */
+    FA_NETWORK_UNAVAILABLE = 0x800003,
+
+    /**
+     * FA internal system error.
+     */
+    FA_FREE_INSTALL_SERVICE_ERROR = 0x600001,
+
+    /**
+     * FA distribution center crash.
+     */
+    FA_CRASH = 0x600002,
+
+    /**
+     * FA distribution center processing timeout(30s).
+     */
+    FA_TIMEOUT = 0x600003,
+
+    /**
+     * BMS unknown exception.
+     */
+    UNKNOWN_EXCEPTION = 0x600004,
+
+    /**
+     * It is not supported to pull up PA across applications on the same device
+     */
+    NOT_SUPPORT_PA_ON_SAME_DEVICE = 0x800004,
+
+    /**
+     * FA internal system error.
+     */
+    FA_INTERNET_ERROR = 0x800005,
+
+    /**
+     * The user confirms to jump to the application market upgrade.
+     */
+    JUMP_TO_THE_APPLICATION_MARKET_UPGRADE = 0x800006,
+
+    /**
+     * User gives up.
+     */
+    USER_GIVES_UP = 0x800007,
+
+    /**
+     * Installation error in free installation.
+     */
+    INSTALLATION_ERROR_IN_FREE_INSTALL = 0x800008,
+
+    /**
+     * HAP package download timed out.
+     */
+    HAP_PACKAGE_DOWNLOAD_TIMED_OUT = 0x800009,
+
+    /**
+     * There are concurrent tasks, waiting for retry.
+     */
+    CONCURRENT_TASKS_WAITING_FOR_RETRY = 0x800010,
+
+    /**
+     * FA package does not support free installation.
+     */
+    FA_PACKAGE_DOES_NOT_SUPPORT_FREE_INSTALL = 0x800011,
+
+    /**
+     * The app is not allowed to pull this FA.
+     */
+    NOT_ALLOWED_TO_PULL_THIS_FA = 0x800012,
+
+    /**
+     * Not support cross-device free install PA
+     */
+    NOT_SUPPORT_CROSS_DEVICE_FREE_INSTALL_PA = 0x80013,
+
+    /**
+     * Free install timeout
+     */
+    FREE_INSTALL_TIMEOUT = 0x710003,
+
+    /**
+     * Not top ability
+     */
+    NOT_TOP_ABILITY = 0x500001,
+
+    /**
+     * Target bundle name is not exist in targetBundleList.
+     */
+    TARGET_BUNDLE_NOT_EXIST = 0x500002,
+
+    /**
+     * FA Network unavailable in free install.
+     */
+    FA_FREE_INSTALL_INTERNET_ERROR = 0x800013,
+
+    /**
+     * Permission denied.
+     */
+    DMS_PERMISSION_DENIED = 29360157,
+
+    /**
+     * Invalid parameters.
+     */
+    INVALID_PARAMETERS_ERR = 29360128,
+
+    /**
+     * Remote DMS is not compatible.
+     */
+    REMOTE_DEVICE_NOT_COMPATIBLE = 502,
+
+    /**
+     * Remote service's device is offline.
+     */
+    DEVICE_OFFLINE_ERR = 29360142,
+};
+
+static const std::map<NativeFreeInstallError, int> FIErrorToAppMaps = {
+    {FREE_INSTALL_OK, 0},
+    {FA_FREE_INSTALL_QUERY_ERROR, 1},
+    {HAG_QUERY_TIMEOUT, 1},
+    {FA_NETWORK_UNAVAILABLE, 2},
+    {FA_FREE_INSTALL_SERVICE_ERROR, 3},
+    {FA_CRASH, 3},
+    {FA_TIMEOUT, 3},
+    {UNKNOWN_EXCEPTION, 3},
+    {NOT_SUPPORT_PA_ON_SAME_DEVICE, 3},
+    {FA_INTERNET_ERROR, 3},
+    {JUMP_TO_THE_APPLICATION_MARKET_UPGRADE, 3},
+    {USER_GIVES_UP, 4},
+    {INSTALLATION_ERROR_IN_FREE_INSTALL, 4},
+    {HAP_PACKAGE_DOWNLOAD_TIMED_OUT, 4},
+    {CONCURRENT_TASKS_WAITING_FOR_RETRY, 5},
+    {FA_PACKAGE_DOES_NOT_SUPPORT_FREE_INSTALL, 6},
+    {NOT_ALLOWED_TO_PULL_THIS_FA, 7},
+    {NOT_SUPPORT_CROSS_DEVICE_FREE_INSTALL_PA, 7},
+    {DMS_PERMISSION_DENIED, 8},
+    {INVALID_PARAMETERS_ERR, 9},
+    {REMOTE_DEVICE_NOT_COMPATIBLE, 10},
+    {DEVICE_OFFLINE_ERR, 11},
+    {FREE_INSTALL_TIMEOUT, 12},
+    {NOT_TOP_ABILITY, 13},
+    {TARGET_BUNDLE_NOT_EXIST, 14},
+    {FA_FREE_INSTALL_INTERNET_ERROR, 15}
+};
+
+static const std::map<NativeFreeInstallError, std::string> FIErrorStrs = {
+    {
+        FREE_INSTALL_OK,
+        "Free install ok."
+    },
+    {
+        FA_FREE_INSTALL_QUERY_ERROR,
+        "FA search failed"
+    },
+    {
+        HAG_QUERY_TIMEOUT,
+        "HAG query timeout."
+    },
+    {
+        FA_NETWORK_UNAVAILABLE,
+        "FA Network unavailable."
+    },
+    {
+        FA_FREE_INSTALL_SERVICE_ERROR,
+        "FA internal system error."
+    },
+    {
+        FA_CRASH,
+        "FA distribution center crash."
+    },
+    {
+        FA_TIMEOUT,
+        "FA distribution center processing timeout."
+    },
+    {
+        UNKNOWN_EXCEPTION,
+        "Unknown exception."
+    },
+    {
+        NOT_SUPPORT_PA_ON_SAME_DEVICE,
+        "It is not supported to pull up PA across applications on the same device."
+    },
+    {
+        FA_INTERNET_ERROR,
+        "FA internal system error."
+    },
+    {
+        JUMP_TO_THE_APPLICATION_MARKET_UPGRADE,
+        "The user confirms to jump to the application market upgrade."
+    },
+    {
+        USER_GIVES_UP,
+        "User gives up."
+    },
+    {
+        INSTALLATION_ERROR_IN_FREE_INSTALL,
+        "Installation error in free installation."
+    },
+    {
+        HAP_PACKAGE_DOWNLOAD_TIMED_OUT,
+        "HAP package download timed out."
+    },
+    {
+        CONCURRENT_TASKS_WAITING_FOR_RETRY,
+        "There are concurrent tasks, waiting for retry."
+    },
+    {
+        FA_PACKAGE_DOES_NOT_SUPPORT_FREE_INSTALL,
+        "FA package does not support free installation."
+    },
+    {
+        NOT_ALLOWED_TO_PULL_THIS_FA,
+        "The app is not allowed to pull this FA."
+    },
+    {
+        NOT_SUPPORT_CROSS_DEVICE_FREE_INSTALL_PA,
+        "Not support cross-device free install PA."
+    },
+    {
+        DMS_PERMISSION_DENIED,
+        "Permission denied."
+    },
+    {
+        INVALID_PARAMETERS_ERR,
+        "Invalid parameters."
+    },
+    {
+        REMOTE_DEVICE_NOT_COMPATIBLE,
+        "Remote DMS is not compatible."
+    },
+    {
+        DEVICE_OFFLINE_ERR,
+        "Remote service's device is offline."
+    },
+    {
+        FREE_INSTALL_TIMEOUT,
+        "free install timeout."
+    },
+    {
+        NOT_TOP_ABILITY,
+        "Not top ability"
+    },
+    {
+        TARGET_BUNDLE_NOT_EXIST,
+        "Target bundle name is not exist in targetBundleList."
+    },
+    {
+        FA_FREE_INSTALL_INTERNET_ERROR,
+        "Network unavailable."
+    },
+};
 }  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_ABILITY_MANAGER_ERRORS_H

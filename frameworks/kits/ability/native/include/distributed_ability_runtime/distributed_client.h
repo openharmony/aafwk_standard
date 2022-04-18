@@ -52,6 +52,8 @@ public:
     int32_t StartRemoteAbilityByCall(const OHOS::AAFwk::Want& want, const sptr<IRemoteObject>& connect,
         int32_t callerUid, int32_t callerPid, uint32_t accessToken);
     int32_t ReleaseRemoteAbility(const sptr<IRemoteObject>& connect, const AppExecFwk::ElementName &element);
+    int32_t StartRemoteFreeInstall(const OHOS::AAFwk::Want& want,
+        int32_t callerUid, int32_t requestCode, uint32_t accessToken, const sptr<IRemoteObject>& callback);
     enum {
         START_REMOTE_ABILITY = 1,
         CONNECT_REMOTE_ABILITY = 6,
@@ -67,6 +69,7 @@ public:
         GET_REMOTE_MISSION_SNAPSHOT_INFO = 99,
         START_REMOTE_ABILITY_BY_CALL = 150,
         RELEASE_REMOTE_ABILITY = 151,
+        START_REMOTE_FREE_INSTALL = 200,
     };
 private:
     sptr<IRemoteObject> GetDmsProxy();

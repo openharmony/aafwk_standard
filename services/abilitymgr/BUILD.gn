@@ -80,6 +80,7 @@ config("abilityms_config") {
 
 ohos_shared_library("abilityms") {
   sources = abilityms_files
+  sources += free_install
   sources += [ "src/sa_mgr_client.cpp" ]
   cflags_cc = []
   configs = [ ":abilityms_config" ]
@@ -135,6 +136,7 @@ ohos_shared_library("abilityms") {
       "i18n:intl_util",
       "multimedia_image_standard:image_native",
       "window_manager:libdm",
+      "window_manager:libwm",
     ]
   }
 
