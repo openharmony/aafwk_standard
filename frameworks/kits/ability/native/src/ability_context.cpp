@@ -167,8 +167,6 @@ std::shared_ptr<ElementName> AbilityContext::GetCallingAbility()
 
 bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbilityConnection> &conn)
 {
-    HILOG_INFO("%{public}s begin.", __func__);
-
     AppExecFwk::AbilityType type = GetAbilityInfoType();
 
     std::shared_ptr<AbilityInfo> abilityInfo = GetAbilityInfo();
@@ -176,6 +174,8 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
         HILOG_ERROR("AbilityContext::ConnectAbility info == nullptr");
         return false;
     }
+
+    HILOG_INFO("Connect ability begin, ability:%{public}s.", abilityInfo->name.c_str());
 
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
         HILOG_ERROR("AbilityContext::ConnectAbility AbilityType = %{public}d", type);
@@ -194,7 +194,7 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
 
 ErrCode AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
 {
-    HILOG_INFO("%{public}s begin.", __func__);
+    HILOG_INFO("Disconnect ability begin.");
 
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
@@ -203,11 +203,9 @@ ErrCode AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> 
     }
 
     ErrCode ret = AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(conn);
-    HILOG_INFO("%{public}s end ams->DisconnectAbility, ret=%{public}d", __func__, ret);
     if (ret != ERR_OK) {
-        HILOG_ERROR("AbilityContext::DisconnectAbility error");
+        HILOG_ERROR("AbilityContext::DisconnectAbility error, ret=%{public}d.", ret);
     }
-    HILOG_DEBUG("AbilityContext::DisconnectAbility end");
     return ret;
 }
 
@@ -220,15 +218,12 @@ bool AbilityContext::StopAbility(const AAFwk::Want &want)
         return false;
     }
 
-    HILOG_INFO("%{public}s begin ams->StopServiceAbility", __func__);
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StopServiceAbility(want);
-    HILOG_INFO("%{public}s end ams->StopServiceAbility, ret=%{public}d", __func__, err);
     if (err != ERR_OK) {
         HILOG_ERROR("AbilityContext::StopAbility is failed %{public}d", err);
         return false;
     }
 
-    HILOG_INFO("%{public}s end.", __func__);
     return true;
 }
 

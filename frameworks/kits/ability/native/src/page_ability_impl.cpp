@@ -81,8 +81,7 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         ret = AbilityTransaction(want, targetState);
     }
     if (ret) {
-        HILOG_INFO("Handle ability transaction done, notify ability manager service, ability:%{public}s.",
-            ability_->GetAbilityName().c_str());
+        HILOG_INFO("Handle ability transaction done, notify ability manager service.");
         AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
     }
     HILOG_INFO("PageAbilityImpl::HandleAbilityTransaction end");
