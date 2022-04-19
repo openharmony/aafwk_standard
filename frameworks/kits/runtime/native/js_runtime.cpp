@@ -30,7 +30,6 @@
 #include "js_asset_manager.h"
 #include "hilog_wrapper.h"
 #include "js_runtime_utils.h"
-#include "js_timer_module.h"
 
 #include "systemcapability.h"
 #include "parameters.h"
@@ -367,7 +366,6 @@ void RegisterInitWorkerFunc(NativeEngine& engine)
         }
 
         InitConsoleLogModule(*nativeEngine, *globalObj);
-        JsTimerModule::GetInstance()->InitTimerModule(*nativeEngine);
     };
     engine.SetInitWorkerFunc(initWorkerFunc);
 }
