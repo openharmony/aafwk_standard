@@ -156,6 +156,8 @@ public:
             delete[] argv_[i];
             argv_[i] = nullptr;
         }
+        delete[] argv_;
+        argv_ = nullptr;
     };
 
     char** GetArgv()
