@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class MetadataDumper {
 public:
     explicit MetadataDumper(MetaComponent* mc)
@@ -51,7 +50,6 @@ private:
     static const char* TAB;
     MetaComponent* metaComponent_;
 };
-
 }
 }
 

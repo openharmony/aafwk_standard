@@ -19,9 +19,7 @@
 
 namespace OHOS {
 namespace Idl {
-
 const char* MetadataDumper::TAB = "    ";
-
 void MetadataDumper::Dump(const String& prefix)
 {
     if (metaComponent_ == nullptr) {
@@ -159,7 +157,7 @@ void MetadataDumper::DumpMetaInterface(StringBuilder& sb, MetaInterface* mi, con
     sb.Append(prefix + TAB).AppendFormat("\"name_\" : \"%s\",\n", mi->name_);
     sb.Append(prefix + TAB).AppendFormat("\"namespace_\" : \"%s\",\n", mi->namespace_);
     sb.Append(prefix + TAB).AppendFormat("\"properties_\" : \"%s\",\n",
-            (mi->properties_ & INTERFACE_PROPERTY_ONEWAY) != 0 ? "oneway" : "");
+        (mi->properties_ & INTERFACE_PROPERTY_ONEWAY) != 0 ? "oneway" : "");
     sb.Append(prefix + TAB).AppendFormat("\"methodNumber_\" : \"%d\",\n", mi->methodNumber_);
     sb.Append(prefix + TAB).AppendFormat("\"external_\" : \"%d\",\n", mi->external_);
 
@@ -185,7 +183,7 @@ void MetadataDumper::DumpMetaMethod(StringBuilder& sb, MetaMethod* mm, const Str
     sb.Append(prefix + TAB).AppendFormat("\"name_\" : \"%s\",\n", mm->name_);
     sb.Append(prefix + TAB).AppendFormat("\"signature_\" : \"%s\",\n", mm->signature_);
     sb.Append(prefix + TAB).AppendFormat("\"properties_\" : \"%s\",\n",
-            (mm->properties_ & METHOD_PROPERTY_ONEWAY) != 0 ? "oneway" : "");
+        (mm->properties_ & METHOD_PROPERTY_ONEWAY) != 0 ? "oneway" : "");
     MetaType* type = metaComponent_->types_[mm->returnTypeIndex_];
     sb.Append(prefix + TAB).AppendFormat("\"returnType_\" : \"%s\",\n", DumpMetaType(type).string());
     sb.Append(prefix + TAB).AppendFormat("\"parameterNumber_\" : \"%d\",\n", mm->parameterNumber_);
@@ -275,6 +273,5 @@ String MetadataDumper::DumpMetaType(MetaType* mt)
             return "unknown";
     }
 }
-
 }
 }

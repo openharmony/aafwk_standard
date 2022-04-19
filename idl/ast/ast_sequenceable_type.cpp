@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 void ASTSequenceableType::SetNamespace(ASTNamespace* nspace)
 {
     ASTType::SetNamespace(nspace);
@@ -57,6 +56,5 @@ String ASTSequenceableType::Dump(const String& prefix)
 
     return sb.ToString();
 }
-
 }
 }

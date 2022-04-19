@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 static constexpr int METADATA_MAGIC_NUMBER = 0x1DF02ED1;
 
 enum class TypeKind {
@@ -117,7 +116,6 @@ struct MetaType {
     int                 nestedTypeNumber_;
     int*                nestedTypeIndexes_;
 };
-
 }
 }
 

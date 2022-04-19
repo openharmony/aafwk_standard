@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTStringType : public ASTType {
 public:
     String GetSignature() override;
@@ -32,5 +31,4 @@ public:
 
 }
 }
-
 #endif // OHOS_IDL_ASTSTRINGTYPE_H

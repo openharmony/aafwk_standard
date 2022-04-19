@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class MetadataReader {
 public:
     static std::shared_ptr<MetaComponent> ReadMetadataFromFile(const String& filePath);
@@ -30,7 +29,6 @@ public:
 private:
     static const char* TAG;
 };
-
 }
 }
 

@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTMethod::GetSignature()
 {
     if (signature_.IsEmpty()) {
@@ -76,6 +75,5 @@ String ASTMethod::Dump(const String& prefix)
 
     return sb.ToString();
 }
-
 }
 }

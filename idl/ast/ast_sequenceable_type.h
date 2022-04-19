@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTSequenceableType : public ASTType {
 public:
     void SetNamespace(ASTNamespace* nspace) override;
@@ -33,7 +32,6 @@ public:
 
     String Dump(const String& prefix) override;
 };
-
 }
 }
 

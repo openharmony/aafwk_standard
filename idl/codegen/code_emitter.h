@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class CodeEmitter : public LightRefCountBase {
 public:
     CodeEmitter(MetaComponent* mc);
@@ -51,7 +50,6 @@ protected:
     String stubName_;
     String stubFullName_;
 };
-
 }
 }
 

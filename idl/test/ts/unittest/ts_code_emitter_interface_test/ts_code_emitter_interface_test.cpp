@@ -642,7 +642,6 @@ HWTEST_F(TsCodeEmitterInterfaceTest, EmitInterfaceDefinition_005, TestSize.Level
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterfaceDefinition(stringBuilder);
     EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
-
 }
 
 /*
@@ -992,7 +991,7 @@ HWTEST_F(TsCodeEmitterInterfaceTest, EmitMethodInParameter_001, TestSize.Level1)
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
-    tsCodeGen_->EmitMethodInParameter(stringBuilder, "name", "type" ,CodeEmitter::TAB);
+    tsCodeGen_->EmitMethodInParameter(stringBuilder, "name", "type", CodeEmitter::TAB);
     EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
 }
 
@@ -1013,7 +1012,7 @@ HWTEST_F(TsCodeEmitterInterfaceTest, EmitMethodInParameter_002, TestSize.Level1)
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
-    tsCodeGen_->EmitMethodInParameter(stringBuilder, "name", "type" ,CodeEmitter::TAB);
+    tsCodeGen_->EmitMethodInParameter(stringBuilder, "name", "type", CodeEmitter::TAB);
     EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
 }
 
@@ -1034,7 +1033,7 @@ HWTEST_F(TsCodeEmitterInterfaceTest, EmitMethodInParameter_003, TestSize.Level1)
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
-    tsCodeGen_->EmitMethodInParameter(stringBuilder, "name", "type" ,CodeEmitter::TAB);
+    tsCodeGen_->EmitMethodInParameter(stringBuilder, "name", "type", CodeEmitter::TAB);
     EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
 }
 
@@ -1055,7 +1054,7 @@ HWTEST_F(TsCodeEmitterInterfaceTest, EmitMethodInParameter_004, TestSize.Level1)
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
-    tsCodeGen_->EmitMethodInParameter(stringBuilder, "name", "type" ,CodeEmitter::TAB);
+    tsCodeGen_->EmitMethodInParameter(stringBuilder, "name", "type", CodeEmitter::TAB);
     EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
 }
 
@@ -1076,7 +1075,7 @@ HWTEST_F(TsCodeEmitterInterfaceTest, EmitMethodInParameter_005, TestSize.Level1)
     EXPECT_EQ(Ready(argc, argv), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
-    tsCodeGen_->EmitMethodInParameter(stringBuilder, "name", "boolean" ,CodeEmitter::TAB);
+    tsCodeGen_->EmitMethodInParameter(stringBuilder, "name", "boolean", CodeEmitter::TAB);
     EXPECT_FALSE(stringBuilder.ToString().IsEmpty());
 }
 

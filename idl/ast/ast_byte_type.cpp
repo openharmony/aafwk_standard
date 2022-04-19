@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTByteType::GetSignature()
 {
     return "B";
@@ -32,6 +31,5 @@ String ASTByteType::ToString()
 {
     return "byte";
 }
-
 }
 }

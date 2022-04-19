@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
+#include <cstring>
 #include <gtest/gtest.h>
 #include "idl_common.h"
-#include <string.h>
 
 using namespace testing::ext;
 using namespace OHOS::Idl::TestCommon;

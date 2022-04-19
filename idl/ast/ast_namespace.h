@@ -25,7 +25,6 @@ namespace Idl {
 
 class ASTInterfaceType;
 class ASTSequenceableType;
-
 class ASTNamespace : public ASTNode {
 public:
     ASTNamespace(const String& nspaceStr);
@@ -78,7 +77,6 @@ private:
     std::vector<AutoPtr<ASTInterfaceType>> interfaces_;
     std::vector<AutoPtr<ASTSequenceableType>> sequenceables_;
 };
-
 }
 }
 

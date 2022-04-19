@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTVoidType::GetSignature()
 {
     return "V";
@@ -32,6 +31,5 @@ String ASTVoidType::ToString()
 {
     return "void";
 }
-
 }
 }

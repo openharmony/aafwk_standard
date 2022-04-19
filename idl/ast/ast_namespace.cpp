@@ -19,8 +19,7 @@
 
 namespace OHOS {
 namespace Idl {
-
-ASTNamespace:: ASTNamespace(const String& nspaceStr)
+ASTNamespace::ASTNamespace(const String& nspaceStr)
     : name_(nspaceStr),
       outerNamespace_(nullptr)
 {}
@@ -104,6 +103,5 @@ String ASTNamespace::ToString()
     }
     return nspaceStr;
 }
-
 }
 }

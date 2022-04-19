@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTType : public ASTNode {
 public:
     virtual void SetName(const String& name);
@@ -74,7 +73,6 @@ protected:
     String name_;
     AutoPtr<ASTNamespace> namespace_;
 };
-
 }
 }
 

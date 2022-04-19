@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 void MetadataSerializer::Serialize()
 {
     SerializeMetaComponent(metaComponent_);
@@ -221,6 +220,5 @@ uintptr_t MetadataSerializer::DeserializeAdjust(const void* addr)
 {
     return reinterpret_cast<ptrdiff_t>(addr) + baseAddr_;
 }
-
 }
 }

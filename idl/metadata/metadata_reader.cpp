@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 const char* MetadataReader::TAG = "MetadataReader";
 
 std::shared_ptr<MetaComponent> MetadataReader::ReadMetadataFromFile(const String& filePath)
@@ -66,14 +65,12 @@ std::shared_ptr<MetaComponent> MetadataReader::ReadMetadataFromFile(const String
     }
 
     std::shared_ptr<MetaComponent> metadata(
-            (MetaComponent*)data,
-            [](MetaComponent* p){ free(p); });
+        (MetaComponent*)data, [](MetaComponent* p) { free(p); });
 
     MetadataSerializer serializer((uintptr_t)data);
     serializer.Deserialize();
 
     return metadata;
 }
-
 }
 }

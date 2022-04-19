@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTMapType::GetSignature()
 {
     return String::Format("LMap[%s%s];", keyType_->GetSignature().string(), valueType_->GetSignature().string());
@@ -32,6 +31,5 @@ String ASTMapType::ToString()
 {
     return String::Format("Map<%s, %s>", keyType_->ToString().string(), valueType_->ToString().string());
 }
-
 }
 }

@@ -25,7 +25,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class MetadataBuilder {
 public:
     explicit MetadataBuilder(ASTModule* module)
@@ -82,7 +81,6 @@ private:
     size_t size_ = 0;
     StringPool stringPool_;
 };
-
 }
 }
 

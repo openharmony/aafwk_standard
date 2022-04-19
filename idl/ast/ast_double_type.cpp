@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTDoubleType::GetSignature()
 {
     return "D";
@@ -32,6 +31,5 @@ String ASTDoubleType::ToString()
 {
     return "double";
 }
-
 }
 }

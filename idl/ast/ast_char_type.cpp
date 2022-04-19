@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTCharType::GetSignature()
 {
     return "C";
@@ -32,6 +31,5 @@ String ASTCharType::ToString()
 {
     return "char";
 }
-
 }
 }

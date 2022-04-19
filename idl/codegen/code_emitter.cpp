@@ -17,9 +17,7 @@
 
 namespace OHOS {
 namespace Idl {
-
 const char* CodeEmitter::TAB = "    ";
-
 CodeEmitter::CodeEmitter(MetaComponent* mc)
     : metaComponent_(mc)
 {
@@ -42,6 +40,5 @@ CodeEmitter::CodeEmitter(MetaComponent* mc)
         stubFullName_ = metaInterface_->namespace_ + stubName_;
     }
 }
-
 }
 }

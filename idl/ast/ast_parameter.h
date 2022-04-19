@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTParameter : public ASTNode {
 public:
     void SetName(const String& name)
@@ -74,7 +73,6 @@ private:
     bool isInParameter_ = false;
     bool isOutParameter_ = false;
 };
-
 }
 }
 

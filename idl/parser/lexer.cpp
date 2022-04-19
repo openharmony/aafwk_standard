@@ -20,28 +20,27 @@
 
 namespace OHOS {
 namespace Idl {
-
 static struct Keywords {
     String key_;
     Token token_;
 } g_keywords[] = {
-    { String("boolean"), Token::BOOLEAN },
-    { String("byte"), Token::BYTE },
-    { String("char"), Token::CHAR },
-    { String("double"), Token::DOUBLE },
-    { String("float"), Token::FLOAT },
-    { String("in"), Token::IN },
-    { String("inout"), Token::INOUT },
-    { String("int"), Token::INTEGER },
-    { String("interface"), Token::INTERFACE },
-    { String("List"), Token::LIST },
-    { String("long"), Token::LONG },
-    { String("Map"), Token::MAP },
-    { String("oneway"), Token::ONEWAY },
-    { String("out"), Token::OUT },
-    { String("sequenceable"), Token::SEQUENCEABLE },
-    { String("short"), Token::SHORT },
-    { String("String"), Token::STRING },
+    {String("boolean"), Token::BOOLEAN},
+    {String("byte"), Token::BYTE},
+    {String("char"), Token::CHAR},
+    {String("double"), Token::DOUBLE},
+    {String("float"), Token::FLOAT},
+    {String("in"), Token::IN},
+    {String("inout"), Token::INOUT},
+    {String("int"), Token::INTEGER},
+    {String("interface"), Token::INTERFACE},
+    {String("List"), Token::LIST},
+    {String("long"), Token::LONG},
+    {String("Map"), Token::MAP},
+    {String("oneway"), Token::ONEWAY},
+    {String("out"), Token::OUT},
+    {String("sequenceable"), Token::SEQUENCEABLE},
+    {String("short"), Token::SHORT},
+    {String("String"), Token::STRING},
 };
 
 Lexer::Lexer()
@@ -369,6 +368,5 @@ String Lexer::DumpToken() const
             return "unknown token";
     }
 }
-
 }
 }

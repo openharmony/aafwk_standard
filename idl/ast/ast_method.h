@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTMethod : public ASTNode {
 public:
     void SetName(const String& name)
@@ -79,7 +78,6 @@ private:
     AutoPtr<ASTType> returnType_;
     std::vector<AutoPtr<ASTParameter>> parameters_;
 };
-
 }
 }
 

@@ -29,10 +29,9 @@
 
 namespace OHOS {
 namespace Idl {
-
 class Parser {
 public:
-    explicit Parser( const Options& options);
+    explicit Parser(const Options& options);
 
     ~Parser() = default;
 
@@ -83,7 +82,7 @@ private:
         return token >= Token::BOOLEAN && token <= Token::STRING;
     }
 
-    void LogError(Token token,const String& message);
+    void LogError(Token token, const String& message);
 
     void ShowError();
 
@@ -95,8 +94,6 @@ private:
     Lexer lexer_;
     AutoPtr<ErrorInfo> errors_;
 };
-
 }
 }
-
 #endif // OHOS_IDL_PARSER_H
