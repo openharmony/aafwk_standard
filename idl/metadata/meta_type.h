@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 enum class TypeKind {
     Unknown     = 0,
     Char        = 1,

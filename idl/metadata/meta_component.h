@@ -16,13 +16,14 @@
 #ifndef OHOS_IDL_METADATA_H
 #define OHOS_IDL_METADATA_H
 
+#include <cstring>
+
 #include "meta_interface.h"
 #include "meta_method.h"
 #include "meta_namespace.h"
 #include "meta_patameter.h"
 #include "meta_sequenceable.h"
 #include "meta_type.h"
-#include <cstring>
 
 namespace OHOS {
 namespace Idl {
