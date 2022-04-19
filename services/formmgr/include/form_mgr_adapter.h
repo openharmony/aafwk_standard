@@ -544,6 +544,16 @@ private:
      * @return Returns user ID.
      */
     int32_t GetCurrentUserId(const int callingUid);
+    /**
+     * @brief AcquireFormState want check.
+     * @param bundleName The bundle name of the form.
+     * @param abilityName The ability name of the form.
+     * @param want The want of the form.
+     * @param provider the provider info.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode AcquireFormStateCheck(const std::string &bundleName, const std::string &abilityName, const Want &want,
+                                  std::string &provider);
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

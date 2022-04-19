@@ -70,15 +70,15 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
         auto task = [this, want, bundleName]() {
             HILOG_INFO("%{public}s, bundle changed, bundleName: %{public}s", __func__, bundleName.c_str());
             int userId = want.GetIntParam(KEY_USER_ID, 0);
-            HandleProviderUpdated(bundleName, userId);
             HandleBundleFormInfoChanged(bundleName);
+            HandleProviderUpdated(bundleName, userId);
         };
         eventHandler_->PostTask(task);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
         auto task = [this, bundleName]() {
             HILOG_INFO("%{public}s, bundle removed, bundleName: %{public}s", __func__, bundleName.c_str());
-            HandleProviderRemoved(bundleName);
             HandleBundleFormInfoRemoved(bundleName);
+            HandleProviderRemoved(bundleName);
         };
         eventHandler_->PostTask(task);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_ABILITY_UPDATED) {
@@ -136,7 +136,7 @@ void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, 
     }
 
     std::vector<FormInfo> targetForms;
-    if (!IN_PROCESS_CALL(iBundleMgr->GetFormsInfoByApp(bundleName, targetForms))) {
+    if (FormInfoMgr::GetInstance().GetFormsInfoByBundle(bundleName, targetForms) != ERR_OK) {
         HILOG_ERROR("%{public}s error, failed to get forms info.", __func__);
         return;
     }
@@ -544,7 +544,7 @@ void FormSysEventReceiver::HandleUserIdRemoved(const int32_t userId)
 
     // delete form timer
     std::vector<int64_t>::iterator itRemoved;
-    for (itRemoved = removedFormIds.begin();itRemoved != removedFormIds.end(); itRemoved++) {
+    for (itRemoved = removedFormIds.begin();itRemoved != removedFormIds.end(); ++itRemoved) {
         FormTimerMgr::GetInstance().RemoveFormTimer(*itRemoved);
     }
 }
