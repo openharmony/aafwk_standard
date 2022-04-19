@@ -138,9 +138,8 @@ public:
         for (int i = 0; i < argc_; ++i) {
             const int itemSize = strlen(args[i]);
             argv_[i] = new char[itemSize + 1] {0};
-            auto ret = strcpy_s(argv_[i], itemSize + 1, args[i]);
-            if (ret != EOK) {
-                GTEST_LOG_(ERROR) << "strcpy_s error [" << ret << "]";
+            if (strcpy_s(argv_[i], itemSize + 1, args[i])) {
+                GTEST_LOG_(ERROR) << "strcpy_s error [!EOK]";
             }
         }
     };
