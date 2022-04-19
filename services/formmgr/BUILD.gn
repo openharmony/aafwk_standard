@@ -34,8 +34,6 @@ ohos_shared_library("libfms") {
     "${aafwk_path}/services/common/include",
     "${appexecfwk_path}/common/log/include",
     "${kits_path}/appkit/native/ability_runtime",
-
-    #  "//third_party/libuuid",
   ]
   sources = [
     "src/form_ability_connection.cpp",
@@ -88,8 +86,6 @@ ohos_shared_library("libfms") {
   deps = [
     "${kits_path}/appkit:app_context",
     "${services_path}/common:perm_verification",
-
-    #  "//third_party/libuuid:libuuid_static",
   ]
 
   external_deps = [

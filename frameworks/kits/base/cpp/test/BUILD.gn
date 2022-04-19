@@ -26,7 +26,6 @@ baseImpl =
 ohos_unittest("base_test") {
   module_out_path = module_output_path
   sources = [
-    "${baseImpl}/array_wrapper.cpp",
     "${baseImpl}/base.cpp",
     "${baseImpl}/base_object.cpp",
     "${baseImpl}/bool_wrapper.cpp",

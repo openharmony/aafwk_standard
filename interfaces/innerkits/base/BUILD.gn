@@ -30,7 +30,6 @@ baseImpl = "${kits_path}/base/cpp/src/ohos/aafwk/base"
 
 ohos_shared_library("base") {
   sources = [
-    "${baseImpl}/array_wrapper.cpp",
     "${baseImpl}/base.cpp",
     "${baseImpl}/base_object.cpp",
     "${baseImpl}/bool_wrapper.cpp",

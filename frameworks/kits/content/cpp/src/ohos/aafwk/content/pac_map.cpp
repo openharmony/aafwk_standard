@@ -24,7 +24,6 @@
 #include <sstream>
 #include <string>
 
-#include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
 #include "ohos/aafwk/base/byte_wrapper.h"
 #include "ohos/aafwk/base/double_wrapper.h"
@@ -36,6 +35,7 @@
 #include "ohos/aafwk/base/user_object_base.h"
 #include "ohos/aafwk/base/user_object_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
+#include "ohos/aafwk/content/array_wrapper.h"
 #include "parcel_macro_base.h"
 #include "string_ex.h"
 
