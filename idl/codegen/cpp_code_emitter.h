@@ -23,11 +23,9 @@
 
 namespace OHOS {
 namespace Idl {
-
 class CppCodeEmitter : public CodeEmitter {
 public:
-    CppCodeEmitter(
-        /* [in] */ MetaComponent* mc)
+    CppCodeEmitter(MetaComponent* mc)
         : CodeEmitter(mc)
     {}
 
@@ -40,198 +38,107 @@ public:
 private:
     void EmitInterfaceHeaderFile();
 
-    void EmitInterfaceInclusions(
-        /* [in] */ StringBuilder& sb);
+    void EmitInterfaceInclusions(StringBuilder& sb);
 
-    void EmitInterfaceStdlibInclusions(
-        /* [in] */ StringBuilder& sb);
+    void EmitInterfaceStdlibInclusions(StringBuilder& sb);
 
-    void EmitInterfaceDBinderInclusions(
-        /* [in] */ StringBuilder& sb);
+    void EmitInterfaceDBinderInclusions(StringBuilder& sb);
 
-    void EmitInterfaceParametersInclusions(
-        /* [in] */ StringBuilder& sb);
+    void EmitInterfaceSelfDefinedTypeInclusions(StringBuilder& sb);
 
-    void EmitInterfaceSelfDefinedTypeInclusions(
-        /* [in] */ StringBuilder& sb);
+    bool EmitInterfaceUsings(StringBuilder& sb);
 
-    bool EmitInterfaceUsings(
-        /* [in] */ StringBuilder& sb);
+    void EmitInterfaceSelfDefinedTypeUsings(StringBuilder& sb);
 
-    void EmitInterfaceSelfDefinedTypeUsings(
-        /* [in] */ StringBuilder& sb);
+    void EmitInterfaceDefinition(StringBuilder& sb);
 
-    void EmitInterfaceDefinition(
-        /* [in] */ StringBuilder& sb);
+    void EmitInterfaceBody(StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceBody(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceMethods(StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceMethods(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceMethod(MetaMethod* mm, StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceMethod(
-        /* [in] */ MetaMethod* mm,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceMethodParameter(MetaParameter* mp, StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceMethodParameter(
-        /* [in] */ MetaParameter* mp,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
-
-    void EmitInterfaceMethodReturn(
-        /* [in] */ MetaType* mt,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceMethodReturn(MetaType* mt, StringBuilder& sb, const String& prefix);
 
     void EmitInterfaceProxyHeaderFile();
 
-    void EmitInterfaceProxyInHeaderFile(
-        /* [in] */ StringBuilder& sb);
+    void EmitInterfaceProxyInHeaderFile(StringBuilder& sb);
 
-    void EmitInterfaceProxyConstructor(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceProxyConstructor(StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceProxyMethodDecls(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceProxyMethodDecls(StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceProxyMethodDecl(
-        /* [in] */ MetaMethod* mm,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceProxyMethodDecl(MetaMethod* mm, StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceProxyConstants(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceProxyConstants(StringBuilder& sb, const String& prefix);
 
     void EmitInterfaceProxyCppFile();
 
-    void EmitInterfaceProxyMethodImpls(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceProxyMethodImpls(StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceProxyMethodImpl(
-        /* [in] */ MetaMethod* mm,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceProxyMethodImpl(MetaMethod* mm, StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceProxyMethodBody(
-        /* [in] */ MetaMethod* mm,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceProxyMethodBody(MetaMethod* mm, StringBuilder& sb, const String& prefix);
 
-    void EmitWriteMethodParameter(
-        /* [in] */ MetaParameter* mp,
-        /* [in] */ const String& parcelName,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitWriteMethodParameter(MetaParameter* mp, const String& parcelName, StringBuilder& sb,
+        const String& prefix);
 
-    void EmitReadMethodParameter(
-        /* [in] */ MetaParameter* mp,
-        /* [in] */ const String& parcelName,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitReadMethodParameter(MetaParameter* mp, const String& parcelName, StringBuilder& sb, const String& prefix);
 
     void EmitInterfaceStubHeaderFile();
 
-    void EmitInterfaceStubInHeaderFile(
-        /* [in] */ StringBuilder& sb);
+    void EmitInterfaceStubInHeaderFile(StringBuilder& sb);
 
-    void EmitInterfaceStubMethodDecls(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceStubMethodDecls(StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceStubConstants(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceStubConstants(StringBuilder& sb, const String& prefix);
 
     void EmitInterfaceStubCppFile();
 
-    void EmitInterfaceStubMethodImpls(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceStubMethodImpls(StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceStubMethodImpl(
-        /* [in] */ MetaMethod* mm,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceStubMethodImpl(MetaMethod* mm, StringBuilder& sb, const String& prefix);
 
-    void EmitInterfaceMethodCommands(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitInterfaceMethodCommands(StringBuilder& sb, const String& prefix);
 
-    void EmitLicense(
-        /* [in] */ StringBuilder& sb);
+    void EmitLicense(StringBuilder& sb);
 
-    void EmitHeadMacro(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& fullName);
+    void EmitHeadMacro(StringBuilder& sb, const String& fullName);
 
-    void EmitTailMacro(
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& fullName);
+    void EmitTailMacro(StringBuilder& sb, const String& fullName);
 
-    void EmitBeginNamespace(
-        /* [in] */ StringBuilder& sb);
+    void EmitBeginNamespace(StringBuilder& sb);
 
-    void EmitEndNamespace(
-        /* [in] */ StringBuilder& sb);
+    void EmitEndNamespace(StringBuilder& sb);
 
-    void EmitWriteVariable(
-        /* [in] */ const String& parcelName,
-        /* [in] */ const std::string& name,
-        /* [in] */ MetaType* mt,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitWriteVariable(const String& parcelName, const std::string& name, MetaType* mt, StringBuilder& sb,
+        const String& prefix);
 
-    void EmitReadVariable(
-        /* [in] */ const String& parcelName,
-        /* [in] */ const std::string& name,
-        /* [in] */ MetaType* mt,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix,
-        /* [in] */ bool emitType = true);
+    void EmitReadVariable(const String& parcelName, const std::string& name, MetaType* mt, StringBuilder& sb,
+        const String& prefix, bool emitType = true);
 
-    void EmitLocalVariable(
-        /* [in] */ MetaParameter* mp,
-        /* [in] */ StringBuilder& sb,
-        /* [in] */ const String& prefix);
+    void EmitLocalVariable(MetaParameter* mp, StringBuilder& sb, const String& prefix);
 
-    void EmitReturnParameter(
-        /* [in] */ const String& name,
-        /* [in] */ MetaType* mt,
-        /* [in] */ StringBuilder& sb);
+    void EmitReturnParameter(const String& name, MetaType* mt, StringBuilder& sb);
 
-    String EmitType(
-        /* [in] */ MetaType* mt,
-        /* [in] */ unsigned int attributes,
-        /* [in] */ bool isInnerType);
+    String EmitType(MetaType* mt, unsigned int attributes, bool isInnerType);
 
-    String FileName(
-        /* [in] */ const String& name);
+    String FileName(const String& name);
 
     String GetFilePath(const String& fpnp);
 
     String GetNamespace(const String& fpnp);
 
-    String MacroName(
-        /* [in] */ const String& name);
+    String MacroName(const String& name);
 
-    String CppFullName(
-        /* [in] */ const String& name);
+    String CppFullName(const String& name);
 
-    String ConstantName(
-        /* [in] */ const String& name);
+    String ConstantName(const String& name);
 
     const std::string UnderlineAdded(const String& name);
 };
-
 }
 }
-
 #endif // OHOS_IDL_CPPCODEEMITTER_H
