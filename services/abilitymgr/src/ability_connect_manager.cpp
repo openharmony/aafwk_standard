@@ -296,7 +296,7 @@ int AbilityConnectManager::ConnectAbilityLocked(const AbilityRequest &abilityReq
 int AbilityConnectManager::DisconnectAbilityLocked(const sptr<IAbilityConnection> &connect)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("Disconnect ability locked.");
+    HILOG_INFO("Disconnect ability begin.");
     std::lock_guard<std::recursive_mutex> guard(Lock_);
 
     // 1. check whether callback was connected.
@@ -312,9 +312,10 @@ int AbilityConnectManager::DisconnectAbilityLocked(const sptr<IAbilityConnection
         if (connectRecord) {
             auto abilityRecord = connectRecord->GetAbilityRecord();
             CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
+            HILOG_INFO("Disconnect ability, caller:%{public}s.", abilityRecord->GetAbilityInfo().name.c_str());
             int result = AbilityUtil::JudgeAbilityVisibleControl(abilityRecord->GetAbilityInfo());
             if (result != ERR_OK) {
-                HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
+                HILOG_ERROR("Judge ability visible error.");
                 return result;
             }
             int ret = connectRecord->DisconnectAbility();
@@ -322,7 +323,6 @@ int AbilityConnectManager::DisconnectAbilityLocked(const sptr<IAbilityConnection
                 HILOG_ERROR("Disconnect ability fail , ret = %{public}d.", ret);
                 return ret;
             }
-            HILOG_INFO("Disconnect ability ,connect record id %{public}d", connectRecord->GetRecordId());
         }
     }
 
@@ -495,7 +495,7 @@ int AbilityConnectManager::ScheduleDisconnectAbilityDoneLocked(const sptr<IRemot
     }
 
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
-    HILOG_INFO("disconnect ability done with service %{public}s", element.c_str());
+    HILOG_INFO("Disconnect ability done, service:%{public}s.", element.c_str());
 
     // complete disconnect and remove record from conn map
     connect->ScheduleDisconnectAbilityDone();

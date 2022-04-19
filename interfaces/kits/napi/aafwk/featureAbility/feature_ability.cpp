@@ -1393,7 +1393,7 @@ napi_value NAPI_FAConnectAbility(napi_env env, napi_callback_info info)
  */
 napi_value NAPI_FADisConnectAbility(napi_env env, napi_callback_info info)
 {
-    HILOG_INFO("%{public}s called.", __func__);
+    HILOG_INFO("FA disconnect ability called.");
     return NAPI_DisConnectAbilityCommon(env, info, AbilityType::PAGE);
 }
 

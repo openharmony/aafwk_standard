@@ -528,7 +528,7 @@ void AbilityRecord::ConnectAbility()
 
 void AbilityRecord::DisconnectAbility()
 {
-    HILOG_INFO("Disconnect ability.");
+    HILOG_INFO("Disconnect ability, ability:%{public}s.", abilityInfo_.name.c_str());
     CHECK_POINTER(lifecycleDeal_);
     lifecycleDeal_->DisconnectAbility(want_);
 }
