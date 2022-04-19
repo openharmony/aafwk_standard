@@ -137,6 +137,7 @@ ohos_unittest("want_params_test") {
 
   deps = [
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",

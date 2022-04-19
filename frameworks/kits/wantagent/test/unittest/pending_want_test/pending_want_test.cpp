@@ -40,7 +40,6 @@
 #include "want_agent_helper.h"
 #include "want_sender_info.h"
 #include "want_sender_stub.h"
-#include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
 #include "ohos/aafwk/base/byte_wrapper.h"
@@ -50,6 +49,7 @@
 #include "ohos/aafwk/base/long_wrapper.h"
 #include "ohos/aafwk/base/short_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
+#include "ohos/aafwk/content/array_wrapper.h"
 
 using namespace testing::ext;
 using namespace OHOS::AAFwk;
