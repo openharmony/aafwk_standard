@@ -121,7 +121,7 @@ group("unittest") {
   testonly = true
 
   deps = [
-    # ":ability_record_test",
+    ":ability_record_test",
     ":ability_record_test_call",
   ]
 }
