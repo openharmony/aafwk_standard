@@ -212,7 +212,7 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
         HILOG_ERROR("Attach ability failed, abilityInfo is nullptr.");
         return;
     }
-    HILOG_INFO("Attach ability begin, ability:%{public}s.", abilityRecord->GetAbilityInfo().name.c_str());
+    HILOG_INFO("Attach ability begin, ability:%{public}s.", abilityRecord->GetAbilityInfo()->name.c_str());
     abilityHandler_ = std::make_shared<AbilityHandler>(mainRunner, this);
     if (abilityHandler_ == nullptr) {
         HILOG_ERROR("Attach ability failed, abilityHandler_ is nullptr.");
