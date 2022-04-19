@@ -500,18 +500,18 @@ void AbilityThread::HandleConnectAbility(const Want &want)
 void AbilityThread::HandleDisconnectAbility(const Want &want)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("AbilityThread::HandleDisconnectAbility begin");
+    HILOG_INFO("Handle disconnect ability begin.");
     if (abilityImpl_ == nullptr) {
-        HILOG_ERROR("AbilityThread::HandleDisconnectAbility abilityImpl_ == nullptr");
+        HILOG_ERROR("Handle disconnect ability error, abilityImpl_ == nullptr.");
         return;
     }
 
     abilityImpl_->DisconnectAbility(want);
+    HILOG_INFO("Handle disconnect ability done, notify ability manager service.");
     ErrCode err = AbilityManagerClient::GetInstance()->ScheduleDisconnectAbilityDone(token_);
     if (err != ERR_OK) {
-        HILOG_ERROR("AbilityThread:: HandleDisconnectAbility failed err = %{public}d", err);
+        HILOG_ERROR("Handle disconnect ability error, err = %{public}d.", err);
     }
-    HILOG_INFO("AbilityThread::HandleDisconnectAbility end");
 }
 
 /**
@@ -795,12 +795,12 @@ void AbilityThread::ScheduleConnectAbility(const Want &want)
  */
 void AbilityThread::ScheduleDisconnectAbility(const Want &want)
 {
-    HILOG_INFO("AbilityThread::ScheduleDisconnectAbility begin, isExtension_:%{public}d", isExtension_);
+    HILOG_INFO("Schedule disconnect ability begin, isExtension:%{public}d.", isExtension_);
     wptr<AbilityThread> weak = this;
     auto task = [weak, want]() {
         auto abilityThread = weak.promote();
         if (abilityThread == nullptr) {
-            HILOG_ERROR("abilityThread is nullptr, ScheduleDisconnectAbility failed.");
+            HILOG_ERROR("Schedule disconnect ability error, abilityThread is nullptr.");
             return;
         }
         if (abilityThread->isExtension_) {
@@ -811,15 +811,14 @@ void AbilityThread::ScheduleDisconnectAbility(const Want &want)
     };
 
     if (abilityHandler_ == nullptr) {
-        HILOG_ERROR("AbilityThread::ScheduleDisconnectAbility abilityHandler_ == nullptr");
+        HILOG_ERROR("Schedule disconnect ability error, abilityHandler_ == nullptr");
         return;
     }
 
     bool ret = abilityHandler_->PostTask(task);
     if (!ret) {
-        HILOG_ERROR("AbilityThread::ScheduleDisconnectAbility PostTask error");
+        HILOG_ERROR("Schedule disconnect ability error, PostTask error");
     }
-    HILOG_INFO("AbilityThread::ScheduleDisconnectAbility end");
 }
 
 /**
