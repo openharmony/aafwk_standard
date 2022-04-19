@@ -18,7 +18,7 @@
 
 #include <memory>
 #include "ast/ast_module.h"
-#include "metadata/metadata.h"
+#include "metadata/meta_component.h"
 #include "util/autoptr.h"
 #include "util/string.h"
 #include "util/string_pool.h"

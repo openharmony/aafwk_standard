@@ -16,9 +16,9 @@
 #ifndef OHOS_IDL_METADATASERIALIZER_H
 #define OHOS_IDL_METADATASERIALIZER_H
 
-#include <stddef.h>
-#include <stdint.h>
-#include "metadata/metadata.h"
+#include <cstddef>
+#include <cstdint>
+#include "metadata/meta_component.h"
 
 namespace OHOS {
 namespace Idl {

@@ -13,21 +13,38 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_IDL_ASTSTRINGTYPE_H
-#define OHOS_IDL_ASTSTRINGTYPE_H
-
-#include "ast/ast_type.h"
+#ifndef OHOS_IDL_METATYPE_H
+#define OHOS_IDL_METATYPE_H
 
 namespace OHOS {
 namespace Idl {
-class ASTStringType : public ASTType {
-public:
-    String GetSignature() override;
 
-    bool IsStringType() override;
+enum class TypeKind {
+    Unknown     = 0,
+    Char        = 1,
+    Boolean     = 2,
+    Byte        = 3,
+    Short       = 4,
+    Integer     = 5,
+    Long        = 6,
+    Float       = 7,
+    Double      = 8,
+    String      = 9,
+    Void        = 10,
+    Sequenceable  = 11,
+    Interface   = 12,
+    List        = 13,
+    Map         = 14,
+    Array       = 15,
+};
 
-    String ToString() override;
+struct MetaType {
+    TypeKind            kind_;
+    int                 index_;
+    int                 nestedTypeNumber_;
+    int*                nestedTypeIndexes_;
 };
 }
 }
-#endif // OHOS_IDL_ASTSTRINGTYPE_H
+
+#endif // OHOS_IDL_METATYPE_H
