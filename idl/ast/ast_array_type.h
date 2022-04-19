@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTArrayType : public ASTType {
 public:
     void SetElementType(ASTType* elementType)
@@ -42,7 +41,6 @@ public:
 private:
     AutoPtr<ASTType> elementType_;
 };
-
 }
 }
 

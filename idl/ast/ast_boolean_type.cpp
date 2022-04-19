@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTBooleanType::GetSignature()
 {
     return "Z";
@@ -32,6 +31,5 @@ String ASTBooleanType::ToString()
 {
     return "boolean";
 }
-
 }
 }

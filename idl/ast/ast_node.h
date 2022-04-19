@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTNode : public LightRefCountBase {
 public:
     virtual ~ASTNode();
@@ -30,7 +29,6 @@ public:
 
     virtual String Dump(const String& prefix);
 };
-
 }
 }
 

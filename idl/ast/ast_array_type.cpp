@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTArrayType::GetSignature()
 {
     return String::Format("[%s", elementType_->GetSignature().string());
@@ -32,6 +31,5 @@ String ASTArrayType::ToString()
 {
     return String::Format("%s[]", elementType_->ToString().string());
 }
-
 }
 }

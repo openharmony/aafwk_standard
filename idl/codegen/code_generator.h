@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class CodeGenerator {
 public:
     CodeGenerator(MetaComponent* mc, const String& language, const String& dir);
@@ -35,14 +34,12 @@ public:
 private:
     bool ResolveDirectory();
 
-
     static const char* TAG;
     String targetLanguage_;
     String targetDirectory_;
     MetaComponent* metaComponent_;
     AutoPtr<CodeEmitter> emitter_;
 };
-
 }
 }
 

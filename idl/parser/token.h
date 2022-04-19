@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 enum class Token {
     UNKNOWN              = 0,
     // types
@@ -58,7 +57,6 @@ enum class Token {
     COMMENT_LINE,
     END_OF_FILE,
 };
-
 }
 }
 

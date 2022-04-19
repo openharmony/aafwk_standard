@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 ASTModule::ASTModule()
 {
     booleanType_ = new ASTBooleanType();
@@ -102,8 +101,7 @@ AutoPtr<ASTNamespace> ASTModule::FindNamespace(const String& nspaceStr)
     return nullptr;
 }
 
-AutoPtr<ASTNamespace> ASTModule::GetNamespace(
-    /* [in]  */ size_t index)
+AutoPtr<ASTNamespace> ASTModule::GetNamespace(size_t index)
 {
     if (index >= namespaces_.size()) {
         return nullptr;
@@ -242,6 +240,5 @@ String ASTModule::Dump(const String& prefix)
 
     return sb.ToString();
 }
-
 }
 }

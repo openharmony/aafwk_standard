@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTInterfaceType : public ASTType {
 public:
     void SetNamespace(ASTNamespace* nspace) override;
@@ -81,7 +80,6 @@ private:
     std::vector<AutoPtr<ASTMethod>> methods_;
     bool isExternal_ = false;
 };
-
 }
 }
 

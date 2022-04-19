@@ -36,7 +36,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTModule : public ASTNode {
 public:
     ASTModule();
@@ -84,7 +83,7 @@ public:
 
     void AddSequenceable(ASTSequenceableType* sequenceable);
 
-    AutoPtr<ASTSequenceableType> GetSequenceable( size_t index);
+    AutoPtr<ASTSequenceableType> GetSequenceable(size_t index);
 
     size_t GetSequenceableNumber()
     {
@@ -136,7 +135,6 @@ private:
 
     String idlFilePath_;
 };
-
 }
 }
 

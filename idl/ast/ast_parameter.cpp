@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTParameter::Dump(const String& prefix)
 {
     StringBuilder sb;
@@ -40,6 +39,5 @@ String ASTParameter::Dump(const String& prefix)
 
     return sb.ToString();
 }
-
 }
 }

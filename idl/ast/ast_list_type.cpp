@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTListType::GetSignature()
 {
     return String::Format("LList[%s];", elementType_->GetSignature().string());
@@ -32,6 +31,5 @@ String ASTListType::ToString()
 {
     return String::Format("List<%s>", elementType_->ToString().string());
 }
-
 }
 }

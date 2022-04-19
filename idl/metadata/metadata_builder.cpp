@@ -25,9 +25,7 @@
 
 namespace OHOS {
 namespace Idl {
-
 const char* MetadataBuilder::TAG = "MetadataBuilder";
-
 std::shared_ptr<MetaComponent> MetadataBuilder::Build()
 {
     if (!module_->IsValid()) {
@@ -43,8 +41,7 @@ std::shared_ptr<MetaComponent> MetadataBuilder::Build()
     }
 
     metaComponent_.reset(
-            new(metadata) MetaComponent,
-            [](MetaComponent* p){ free(p); });
+        new(metadata) MetaComponent, [](MetaComponent* p) { free(p); });
 
     WriteMetadata(reinterpret_cast<uintptr_t>(metadata));
 
@@ -191,7 +188,8 @@ void MetadataBuilder::CalculateMetaType(ASTType* type)
         baseAddr_ = baseAddr_ + sizeof(int*);
     } else if (type->IsMapType()) {
         // end address
-        baseAddr_ = baseAddr_ + sizeof(int*) * 2;
+        int typeNumber = 2;
+        baseAddr_ = baseAddr_ + sizeof(int*) * typeNumber;
     } else if (type->IsArrayType()) {
         baseAddr_ = baseAddr_ + sizeof(int*);
     }
@@ -418,7 +416,8 @@ MetaType* MetadataBuilder::WriteMetaType(ASTType* type)
         // end address
         baseAddr_ = baseAddr_ + sizeof(int*);
     } else if (type->IsMapType()) {
-        mt->nestedTypeNumber_ = 2;
+        int typeNumber = 2;
+        mt->nestedTypeNumber_ = typeNumber;
         // nestedTypeIndexes_'s address
         baseAddr_ = ALIGN8(baseAddr_);
         mt->nestedTypeIndexes_ = reinterpret_cast<int*>(baseAddr_);
@@ -427,7 +426,7 @@ MetaType* MetadataBuilder::WriteMetaType(ASTType* type)
         mt->nestedTypeIndexes_[0] = module_->IndexOf(keyType);
         mt->nestedTypeIndexes_[1] = module_->IndexOf(valueType);
         // end address
-        baseAddr_ = baseAddr_ + sizeof(int*) * 2;
+        baseAddr_ = baseAddr_ + sizeof(int*) * typeNumber;
     } else if (type->IsArrayType()) {
         mt->nestedTypeNumber_ = 1;
         // nestedTypeIndexes_'s address
@@ -482,6 +481,5 @@ TypeKind MetadataBuilder::Type2Kind(ASTType* type)
     }
     return TypeKind::Unknown;
 }
-
 }
 }

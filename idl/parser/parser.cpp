@@ -25,7 +25,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 const char* Parser::TAG = "Parser";
 
 Parser::Parser(const Options& options)
@@ -113,8 +112,8 @@ bool Parser::ParseInterface()
     if (token == Token::BRACKETS_LEFT) {
         token = lexer_.PeekToken();
         if (token != Token::ONEWAY) {
-            LogError(Token::IDENTIFIER, String::Format("\"%s\" is an illegal interface property.", lexer_.DumpToken().string()));
-
+            LogError(Token::IDENTIFIER,
+                String::Format("\"%s\" is an illegal interface property.", lexer_.DumpToken().string()));
             if (token != Token::BRACKETS_RIGHT) {
                 lexer_.SkipCurrentLine(Lexer::TokenToChar(Token::BRACKETS_RIGHT));
             }
@@ -344,8 +343,6 @@ bool Parser::ParseMethod(ASTInterfaceType* interface)
             }
         }
     }
-
-
     lexer_.GetToken();
     if (!ret) {
         lexer_.SkipCurrentLine();
@@ -668,7 +665,7 @@ bool Parser::IsValidTypeName(const String& typeName)
     return true;
 }
 
-void Parser::LogError(Token token,const String& message)
+void Parser::LogError(Token token, const String& message)
 {
     AutoPtr<ErrorInfo> error = new ErrorInfo();
 
@@ -703,7 +700,8 @@ void Parser::ShowError()
     }
 }
 
-AutoPtr<ASTNamespace> Parser::NameSpaceEmpty() {
+AutoPtr<ASTNamespace> Parser::NameSpaceEmpty()
+{
     AutoPtr<ASTNamespace> currNspace = nullptr;
     currNspace = module_->FindNamespace("");
     if (currNspace == nullptr) {

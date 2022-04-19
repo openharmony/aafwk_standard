@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 void ASTType::SetName(const String& name)
 {
     name_ = name;
@@ -122,6 +121,5 @@ String ASTType::ToString()
 {
     return namespace_ == nullptr ? name_ : namespace_->ToString() + name_;
 }
-
 }
 }

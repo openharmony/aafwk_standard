@@ -26,7 +26,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class Lexer {
 public:
     Lexer();
@@ -108,7 +107,6 @@ private:
     bool havePeek_ = false;
     std::shared_ptr<File> currentFile_;
 };
-
 }
 }
 

@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTMapType : public ASTType {
 public:
     void SetKeyType(ASTType* keyType)
@@ -54,7 +53,6 @@ private:
     AutoPtr<ASTType> keyType_;
     AutoPtr<ASTType> valueType_;
 };
-
 }
 }
 

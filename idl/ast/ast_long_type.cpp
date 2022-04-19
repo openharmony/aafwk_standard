@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTLongType::GetSignature()
 {
     return "J";
@@ -32,6 +31,5 @@ String ASTLongType::ToString()
 {
     return "long";
 }
-
 }
 }

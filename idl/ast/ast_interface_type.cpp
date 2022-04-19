@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 void ASTInterfaceType::SetNamespace(ASTNamespace* nspace)
 {
     ASTType::SetNamespace(nspace);
@@ -86,6 +85,5 @@ String ASTInterfaceType::Dump(const String& prefix)
 
     return sb.ToString();
 }
-
 }
 }

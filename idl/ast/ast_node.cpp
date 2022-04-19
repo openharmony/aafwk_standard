@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 ASTNode::~ASTNode()
 {}
 
@@ -30,6 +29,5 @@ String ASTNode::Dump(const String& prefix)
 {
     return prefix + "ASTNode";
 }
-
 }
 }

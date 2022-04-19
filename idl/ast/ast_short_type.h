@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class ASTShortType : public ASTType {
 public:
     String GetSignature() override;
@@ -29,7 +28,6 @@ public:
 
     String ToString() override;
 };
-
 }
 }
 

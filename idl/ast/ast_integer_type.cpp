@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTIntegerType::GetSignature()
 {
     return "I";
@@ -32,6 +31,5 @@ String ASTIntegerType::ToString()
 {
     return "int";
 }
-
 }
 }

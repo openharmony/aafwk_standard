@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class MetadataSerializer {
 public:
     explicit MetadataSerializer(MetaComponent* mc)
@@ -87,7 +86,6 @@ private:
     MetaComponent* metaComponent_;
     uintptr_t baseAddr_;
 };
-
 }
 }
 

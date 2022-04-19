@@ -23,9 +23,7 @@
 
 namespace OHOS {
 namespace Idl {
-
 const char* CodeGenerator::TAG = "CodeGenerator";
-
 CodeGenerator::CodeGenerator(MetaComponent* mc, const String& language, const String& dir)
     : targetLanguage_(language),
       targetDirectory_(dir),
@@ -41,7 +39,7 @@ CodeGenerator::CodeGenerator(MetaComponent* mc, const String& language, const St
 bool CodeGenerator::ResolveDirectory()
 {
 #ifdef __MINGW32__
-    if(targetDirectory_.IndexOf(":\\") == -1) {
+    if (targetDirectory_.IndexOf(":\\") == -1) {
         char* cmd = getcwd(nullptr, 0);
         targetDirectory_ = String::Format("%s\\%s", cmd, targetDirectory_.string());
         free(cmd);
@@ -84,6 +82,5 @@ bool CodeGenerator::Generate()
 
     return true;
 }
-
 }
 }

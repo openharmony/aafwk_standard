@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTShortType::GetSignature()
 {
     return "S";
@@ -32,6 +31,5 @@ String ASTShortType::ToString()
 {
     return "short";
 }
-
 }
 }

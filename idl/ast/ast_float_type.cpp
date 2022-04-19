@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 String ASTFloatType::GetSignature()
 {
     return "F";
@@ -32,6 +31,5 @@ String ASTFloatType::ToString()
 {
     return "float";
 }
-
 }
 }

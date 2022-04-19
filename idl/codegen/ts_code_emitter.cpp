@@ -117,7 +117,6 @@ void TsCodeEmitter::EmitInterfaceMethods(StringBuilder& stringBuilder, const Str
         MetaMethod* metaMethod = metaInterface_->methods_[index];
         EmitInterfaceMethod(metaMethod, stringBuilder, prefix);
     }
-
 }
 
 void TsCodeEmitter::EmitInterfaceMethod(MetaMethod* metaMethod, StringBuilder& stringBuilder, const String& prefix)
