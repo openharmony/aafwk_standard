@@ -76,7 +76,8 @@ void AppkitNativeModuleTestThird::TearDown(void)
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -109,7 +110,8 @@ HWTEST_F(AppkitNativeModuleTestThird, App_Context_ApplicationContext_0100, Funct
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
