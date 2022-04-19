@@ -54,17 +54,14 @@ void CppCodeEmitter::EmitInterfaceHeaderFile()
     file.Close();
 }
 
-void CppCodeEmitter::EmitInterfaceInclusions(
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitInterfaceInclusions(StringBuilder& sb)
 {
     EmitInterfaceStdlibInclusions(sb);
     EmitInterfaceDBinderInclusions(sb);
-    // EmitInterfaceParametersInclusions(sb); no idea what does this do
     EmitInterfaceSelfDefinedTypeInclusions(sb);
 }
 
-void CppCodeEmitter::EmitInterfaceStdlibInclusions(
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitInterfaceStdlibInclusions(StringBuilder& sb)
 {
     bool includeString = false;
     bool includeList = false;
@@ -108,16 +105,9 @@ void CppCodeEmitter::EmitInterfaceStdlibInclusions(
     }
 }
 
-void CppCodeEmitter::EmitInterfaceDBinderInclusions(
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitInterfaceDBinderInclusions(StringBuilder& sb)
 {
     sb.Append("#include <iremote_broker.h>\n");
-}
-
-void CppCodeEmitter::EmitInterfaceParametersInclusions(
-    /* [in] */ StringBuilder& sb)
-{
-    sb.Append("#include \"parameters.h\"\n");
 }
 
 String CppCodeEmitter::GetFilePath(const String& fpnp)
@@ -140,8 +130,7 @@ String CppCodeEmitter::GetNamespace(const String& fpnp)
     return res;
 }
 
-void CppCodeEmitter::EmitInterfaceSelfDefinedTypeInclusions(
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitInterfaceSelfDefinedTypeInclusions(StringBuilder& sb)
 {
     for (int i = 0; i < metaComponent_->sequenceableNumber_; i++) {
         MetaSequenceable* mp = metaComponent_->sequenceables_[i];
@@ -160,8 +149,7 @@ void CppCodeEmitter::EmitInterfaceSelfDefinedTypeInclusions(
     }
 }
 
-bool CppCodeEmitter::EmitInterfaceUsings(
-    /* [in] */ StringBuilder& sb)
+bool CppCodeEmitter::EmitInterfaceUsings(StringBuilder& sb)
 {
     bool ret = false;
     for (int i = 0; i < metaComponent_->sequenceableNumber_; i++) {
@@ -190,8 +178,7 @@ bool CppCodeEmitter::EmitInterfaceUsings(
     return ret;
 }
 
-void CppCodeEmitter::EmitInterfaceDefinition(
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitInterfaceDefinition(StringBuilder& sb)
 {
     EmitBeginNamespace(sb);
     sb.AppendFormat("class %s : public IRemoteBroker {\n", metaInterface_->name_);
@@ -201,9 +188,7 @@ void CppCodeEmitter::EmitInterfaceDefinition(
     EmitEndNamespace(sb);
 }
 
-void CppCodeEmitter::EmitInterfaceBody(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceBody(StringBuilder& sb, const String& prefix)
 {
     String nameWithoutPath = GetNamespace(interfaceFullName_);
     sb.Append(TAB).AppendFormat("DECLARE_INTERFACE_DESCRIPTOR(u\"%s\");\n", nameWithoutPath.string());
@@ -211,9 +196,7 @@ void CppCodeEmitter::EmitInterfaceBody(
     EmitInterfaceMethods(sb, TAB);
 }
 
-void CppCodeEmitter::EmitInterfaceMethods(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceMethods(StringBuilder& sb, const String& prefix)
 {
     if (metaInterface_->methodNumber_ > 0) {
         for (int i = 0; i < metaInterface_->methodNumber_; i++) {
@@ -226,10 +209,7 @@ void CppCodeEmitter::EmitInterfaceMethods(
     }
 }
 
-void CppCodeEmitter::EmitInterfaceMethod(
-    /* [in] */ MetaMethod* mm,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceMethod(MetaMethod* mm, StringBuilder& sb, const String& prefix)
 {
     MetaType* returnType = metaComponent_->types_[mm->returnTypeIndex_];
     if (mm->parameterNumber_ == 0 && returnType->kind_ == TypeKind::Void) {
@@ -250,10 +230,7 @@ void CppCodeEmitter::EmitInterfaceMethod(
     }
 }
 
-void CppCodeEmitter::EmitInterfaceMethodParameter(
-    /* [in] */ MetaParameter* mp,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceMethodParameter(MetaParameter* mp, StringBuilder& sb, const String& prefix)
 {
     if ((mp->attributes_ & ATTR_MASK) == (ATTR_IN | ATTR_OUT)) {
         sb.Append(prefix).Append("/* [in, out] */ ");
@@ -268,10 +245,7 @@ void CppCodeEmitter::EmitInterfaceMethodParameter(
     sb.AppendFormat("%s %s", EmitType(mt, mp->attributes_, false).string(), name.c_str());
 }
 
-void CppCodeEmitter::EmitInterfaceMethodReturn(
-    /* [in] */ MetaType* mt,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceMethodReturn(MetaType* mt, StringBuilder& sb, const String& prefix)
 {
     sb.Append(prefix).AppendFormat("/* [out] */ %s result", EmitType(mt, ATTR_OUT, false).string());
 }
@@ -305,12 +279,10 @@ void CppCodeEmitter::EmitInterfaceProxyHeaderFile()
     file.Close();
 }
 
-void CppCodeEmitter::EmitInterfaceProxyInHeaderFile(
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitInterfaceProxyInHeaderFile(StringBuilder& sb)
 {
     EmitBeginNamespace(sb);
-    sb.AppendFormat("class %s : public IRemoteProxy<%s> {\n",
-            proxyName_.string(), interfaceName_.string());
+    sb.AppendFormat("class %s : public IRemoteProxy<%s> {\n", proxyName_.string(), interfaceName_.string());
     sb.Append("public:\n");
     EmitInterfaceProxyConstructor(sb, TAB);
     sb.Append("\n");
@@ -322,9 +294,7 @@ void CppCodeEmitter::EmitInterfaceProxyInHeaderFile(
     EmitEndNamespace(sb);
 }
 
-void CppCodeEmitter::EmitInterfaceProxyConstructor(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceProxyConstructor(StringBuilder& sb, const String& prefix)
 {
     sb.Append(prefix).AppendFormat("explicit %s(\n", proxyName_.string());
     sb.Append(prefix + TAB).Append("/* [in] */ const sptr<IRemoteObject>& remote)\n");
@@ -335,9 +305,7 @@ void CppCodeEmitter::EmitInterfaceProxyConstructor(
     sb.Append(prefix).Append("{}\n");
 }
 
-void CppCodeEmitter::EmitInterfaceProxyMethodDecls(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceProxyMethodDecls(StringBuilder& sb, const String& prefix)
 {
     if (metaInterface_->methodNumber_ > 0) {
         for (int i = 0; i < metaInterface_->methodNumber_; i++) {
@@ -350,10 +318,7 @@ void CppCodeEmitter::EmitInterfaceProxyMethodDecls(
     }
 }
 
-void CppCodeEmitter::EmitInterfaceProxyMethodDecl(
-    /* [in] */ MetaMethod* mm,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceProxyMethodDecl(MetaMethod* mm, StringBuilder& sb, const String& prefix)
 {
     MetaType* returnType = metaComponent_->types_[mm->returnTypeIndex_];
     if (mm->parameterNumber_ == 0 && returnType->kind_ == TypeKind::Void) {
@@ -374,9 +339,7 @@ void CppCodeEmitter::EmitInterfaceProxyMethodDecl(
     }
 }
 
-void CppCodeEmitter::EmitInterfaceProxyConstants(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceProxyConstants(StringBuilder& sb, const String& prefix)
 {
     EmitInterfaceMethodCommands(sb, prefix);
     sb.Append("\n");
@@ -404,9 +367,7 @@ void CppCodeEmitter::EmitInterfaceProxyCppFile()
     file.Close();
 }
 
-void CppCodeEmitter::EmitInterfaceProxyMethodImpls(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceProxyMethodImpls(StringBuilder& sb, const String& prefix)
 {
     if (metaInterface_->methodNumber_ > 0) {
         for (int i = 0; i < metaInterface_->methodNumber_; i++) {
@@ -419,10 +380,7 @@ void CppCodeEmitter::EmitInterfaceProxyMethodImpls(
     }
 }
 
-void CppCodeEmitter::EmitInterfaceProxyMethodImpl(
-    /* [in] */ MetaMethod* mm,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceProxyMethodImpl(MetaMethod* mm, StringBuilder& sb, const String& prefix)
 {
     MetaType* returnType = metaComponent_->types_[mm->returnTypeIndex_];
     if (mm->parameterNumber_ == 0 && returnType->kind_ == TypeKind::Void) {
@@ -444,17 +402,13 @@ void CppCodeEmitter::EmitInterfaceProxyMethodImpl(
     EmitInterfaceProxyMethodBody(mm, sb, prefix);
 }
 
-void CppCodeEmitter::EmitInterfaceProxyMethodBody(
-    /* [in] */ MetaMethod* mm,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceProxyMethodBody(MetaMethod* mm, StringBuilder& sb, const String& prefix)
 {
     sb.Append(prefix).Append("{\n");
     sb.Append(prefix + TAB).Append("MessageParcel data;\n");
     sb.Append(prefix + TAB).Append("MessageParcel reply;\n");
     sb.Append(prefix + TAB).AppendFormat("MessageOption option(%s);\n",
-            (mm->properties_ & METHOD_PROPERTY_ONEWAY) != 0
-            ? "MessageOption::TF_ASYNC" : "MessageOption::TF_SYNC");
+        (mm->properties_ & METHOD_PROPERTY_ONEWAY) != 0 ? "MessageOption::TF_ASYNC" : "MessageOption::TF_SYNC");
     sb.Append("\n");
 
     for (int i = 0; i < mm->parameterNumber_; i++) {
@@ -465,7 +419,7 @@ void CppCodeEmitter::EmitInterfaceProxyMethodBody(
     }
     sb.Append("\n");
     sb.Append(prefix + TAB).AppendFormat("int32_t st = Remote()->SendRequest(COMMAND_%s, data, reply, option);\n",
-            ConstantName(mm->name_).string());
+        ConstantName(mm->name_).string());
     sb.Append(prefix + TAB).Append("if (st != ERR_NONE) {\n");
     sb.Append(prefix + TAB).Append("    return st;\n");
     sb.Append(prefix + TAB).Append("}\n");
@@ -491,22 +445,16 @@ void CppCodeEmitter::EmitInterfaceProxyMethodBody(
     sb.Append(prefix).Append("}\n");
 }
 
-void CppCodeEmitter::EmitWriteMethodParameter(
-    /* [in] */ MetaParameter* mp,
-    /* [in] */ const String& parcelName,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitWriteMethodParameter(MetaParameter* mp, const String& parcelName, StringBuilder& sb,
+    const String& prefix)
 {
     MetaType* mt = metaComponent_->types_[mp->typeIndex_];
     const std::string name = UnderlineAdded(mp->name_);
     EmitWriteVariable(parcelName, name, mt, sb, prefix);
 }
 
-void CppCodeEmitter::EmitReadMethodParameter(
-    /* [in] */ MetaParameter* mp,
-    /* [in] */ const String& parcelName,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitReadMethodParameter(MetaParameter* mp, const String& parcelName, StringBuilder& sb,
+    const String& prefix)
 {
     MetaType* mt = metaComponent_->types_[mp->typeIndex_];
     const std::string name = UnderlineAdded(mp->name_);
@@ -542,8 +490,7 @@ void CppCodeEmitter::EmitInterfaceStubHeaderFile()
     file.Close();
 }
 
-void CppCodeEmitter::EmitInterfaceStubInHeaderFile(
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitInterfaceStubInHeaderFile(StringBuilder& sb)
 {
     EmitBeginNamespace(sb);
     sb.AppendFormat("class %s : public IRemoteStub<%s> {\n", stubName_.string(), interfaceName_.string());
@@ -556,9 +503,7 @@ void CppCodeEmitter::EmitInterfaceStubInHeaderFile(
     EmitEndNamespace(sb);
 }
 
-void CppCodeEmitter::EmitInterfaceStubMethodDecls(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceStubMethodDecls(StringBuilder& sb, const String& prefix)
 {
     sb.Append(prefix).Append("int OnRemoteRequest(\n");
     sb.Append(prefix + TAB).Append("/* [in] */ uint32_t code,\n");
@@ -567,9 +512,7 @@ void CppCodeEmitter::EmitInterfaceStubMethodDecls(
     sb.Append(prefix + TAB).Append("/* [in] */ MessageOption& option) override;\n");
 }
 
-void CppCodeEmitter::EmitInterfaceStubConstants(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceStubConstants(StringBuilder& sb, const String& prefix)
 {
     EmitInterfaceMethodCommands(sb, prefix);
 }
@@ -595,9 +538,7 @@ void CppCodeEmitter::EmitInterfaceStubCppFile()
     file.Close();
 }
 
-void CppCodeEmitter::EmitInterfaceStubMethodImpls(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceStubMethodImpls(StringBuilder& sb, const String& prefix)
 {
     sb.Append(prefix).AppendFormat("int %s::OnRemoteRequest(\n", stubName_.string());
     sb.Append(prefix + TAB).Append("/* [in] */ uint32_t code,\n");
@@ -612,16 +553,13 @@ void CppCodeEmitter::EmitInterfaceStubMethodImpls(
     }
     sb.Append(prefix + TAB).Append(TAB).Append("default:\n");
     sb.Append(prefix + TAB).Append(TAB).Append(TAB).Append(
-            "return IPCObjectStub::OnRemoteRequest(code, data, reply, option);\n");
+        "return IPCObjectStub::OnRemoteRequest(code, data, reply, option);\n");
     sb.Append(prefix + TAB).Append("}\n\n");
     sb.Append(prefix + TAB).Append("return ERR_TRANSACTION_FAILED;\n");
     sb.Append(prefix).Append("}\n");
 }
 
-void CppCodeEmitter::EmitInterfaceStubMethodImpl(
-    /* [in] */ MetaMethod* mm,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceStubMethodImpl(MetaMethod* mm, StringBuilder& sb, const String& prefix)
 {
     sb.Append(prefix).AppendFormat("case COMMAND_%s: {\n", ConstantName(mm->name_).string());
     for (int i = 0; i < mm->parameterNumber_; i++) {
@@ -684,9 +622,7 @@ void CppCodeEmitter::EmitInterfaceStubMethodImpl(
     sb.Append(prefix).Append("}\n");
 }
 
-void CppCodeEmitter::EmitInterfaceMethodCommands(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitInterfaceMethodCommands(StringBuilder& sb, const String& prefix)
 {
     for (int i = 0; i < metaInterface_->methodNumber_; i++) {
         MetaMethod* mm = metaInterface_->methods_[i];
@@ -694,31 +630,25 @@ void CppCodeEmitter::EmitInterfaceMethodCommands(
     }
 }
 
-void CppCodeEmitter::EmitLicense(
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitLicense(StringBuilder& sb)
 {
     sb.Append(metaInterface_->license_).Append("\n");
 }
 
-void CppCodeEmitter::EmitHeadMacro(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& fullName)
+void CppCodeEmitter::EmitHeadMacro(StringBuilder& sb, const String& fullName)
 {
     String macroName = MacroName(fullName);
     sb.Append("#ifndef ").Append(macroName).Append("\n");
     sb.Append("#define ").Append(macroName).Append("\n");
 }
 
-void CppCodeEmitter::EmitTailMacro(
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& fullName)
+void CppCodeEmitter::EmitTailMacro(StringBuilder& sb, const String& fullName)
 {
     String macroName = MacroName(fullName);
     sb.Append("#endif // ").Append(macroName).Append("\n\n");
 }
 
-void CppCodeEmitter::EmitBeginNamespace(
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitBeginNamespace(StringBuilder& sb)
 {
     String nspace = GetNamespace(metaInterface_->namespace_);
     int index = nspace.IndexOf('.');
@@ -729,26 +659,20 @@ void CppCodeEmitter::EmitBeginNamespace(
     }
 }
 
-void CppCodeEmitter::EmitEndNamespace(
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitEndNamespace(StringBuilder& sb)
 {
     String nspace = GetNamespace(metaInterface_->namespace_);
     nspace = nspace.Substring(0, nspace.GetLength() - 1);
     while (!nspace.IsEmpty()) {
         int index = nspace.LastIndexOf('.');
-        sb.AppendFormat("} // namespace %s\n", index != -1
-                ? nspace.Substring(index + 1, nspace.GetLength()).string()
-                : nspace.string());
+        sb.AppendFormat("} // namespace %s\n", index != -1 ?
+            nspace.Substring(index + 1, nspace.GetLength()).string() : nspace.string());
         nspace = nspace.Substring(0, index);
     }
 }
 
-void CppCodeEmitter::EmitWriteVariable(
-    /* [in] */ const String& parcelName,
-    /* [in] */ const std::string& name,
-    /* [in] */ MetaType* mt,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitWriteVariable(const String& parcelName, const std::string& name, MetaType* mt,
+    StringBuilder& sb, const String& prefix)
 {
     switch (mt->kind_) {
         case TypeKind::Boolean:
@@ -804,13 +728,8 @@ void CppCodeEmitter::EmitWriteVariable(
     }
 }
 
-void CppCodeEmitter::EmitReadVariable(
-    /* [in] */ const String& parcelName,
-    /* [in] */ const std::string& name,
-    /* [in] */ MetaType* mt,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix,
-    /* [in] */ bool emitType)
+void CppCodeEmitter::EmitReadVariable(const String& parcelName, const std::string& name, MetaType* mt,
+    StringBuilder& sb, const String& prefix, bool emitType)
 {
     switch (mt->kind_) {
         case TypeKind::Boolean:
@@ -928,10 +847,7 @@ void CppCodeEmitter::EmitReadVariable(
     }
 }
 
-void CppCodeEmitter::EmitLocalVariable(
-    /* [in] */ MetaParameter* mp,
-    /* [in] */ StringBuilder& sb,
-    /* [in] */ const String& prefix)
+void CppCodeEmitter::EmitLocalVariable(MetaParameter* mp, StringBuilder& sb, const String& prefix)
 {
     MetaType* mt = metaComponent_->types_[mp->typeIndex_];
     const std::string name = UnderlineAdded(mp->name_);
@@ -942,10 +858,7 @@ void CppCodeEmitter::EmitLocalVariable(
     }
 }
 
-void CppCodeEmitter::EmitReturnParameter(
-    /* [in] */ const String& name,
-    /* [in] */ MetaType* mt,
-    /* [in] */ StringBuilder& sb)
+void CppCodeEmitter::EmitReturnParameter(const String& name, MetaType* mt, StringBuilder& sb)
 {
     switch (mt->kind_) {
         case TypeKind::Char:
@@ -969,10 +882,7 @@ void CppCodeEmitter::EmitReturnParameter(
     }
 }
 
-String CppCodeEmitter::EmitType(
-    /* [in] */ MetaType* mt,
-    /* [in] */ unsigned int attributes,
-    /* [in] */ bool isInnerType)
+String CppCodeEmitter::EmitType(MetaType* mt, unsigned int attributes, bool isInnerType)
 {
     switch(mt->kind_) {
         case TypeKind::Char:
@@ -1095,8 +1005,7 @@ String CppCodeEmitter::EmitType(
     }
 }
 
-String CppCodeEmitter::CppFullName(
-    /* [in] */ const String& name)
+String CppCodeEmitter::CppFullName(const String& name)
 {
     if (name.IsEmpty()) {
         return name;
@@ -1105,8 +1014,7 @@ String CppCodeEmitter::CppFullName(
     return name.Replace(".", "::");
 }
 
-String CppCodeEmitter::FileName(
-    /* [in] */ const String& name)
+String CppCodeEmitter::FileName(const String& name)
 {
     if (name.IsEmpty()) {
         return name;
@@ -1130,8 +1038,7 @@ String CppCodeEmitter::FileName(
     return sb.ToString().Replace('.', '/');
 }
 
-String CppCodeEmitter::MacroName(
-    /* [in] */ const String& name)
+String CppCodeEmitter::MacroName(const String& name)
 {
     if (name.IsEmpty()) {
         return name;
@@ -1141,8 +1048,7 @@ String CppCodeEmitter::MacroName(
     return macro;
 }
 
-String CppCodeEmitter::ConstantName(
-    /* [in] */ const String& name)
+String CppCodeEmitter::ConstantName(const String& name)
 {
     if (name.IsEmpty()) {
         return name;
@@ -1170,6 +1076,5 @@ const std::string CppCodeEmitter::UnderlineAdded(const String& originName)
     std::string underline("_");
     return underline + std::string(originName.string());
 }
-
 }
 }
