@@ -17,7 +17,7 @@
 #define OHOS_IDL_METADATAREADER_H
 
 #include <memory>
-#include "metadata/metadata.h"
+#include "metadata/meta_component.h"
 #include "util/string.h"
 
 namespace OHOS {
