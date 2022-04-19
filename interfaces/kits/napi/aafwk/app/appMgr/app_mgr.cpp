@@ -148,7 +148,11 @@ napi_value NAPI_KillProcessesByBundleName(napi_env env, napi_callback_info info)
                 AsyncCallbackInfo *async_callback_info = (AsyncCallbackInfo *)data;
                 napi_value result;
                 napi_create_int32(async_callback_info->env, async_callback_info->result, &result);
-                napi_resolve_deferred(async_callback_info->env, async_callback_info->deferred, result);
+                if (async_callback_info->result == ERR_OK) {
+                    napi_resolve_deferred(async_callback_info->env, async_callback_info->deferred, result);
+                } else {
+                    napi_reject_deferred(async_callback_info->env, async_callback_info->deferred, result);
+                }
                 napi_delete_async_work(env, async_callback_info->asyncWork);
                 delete async_callback_info;
             },
