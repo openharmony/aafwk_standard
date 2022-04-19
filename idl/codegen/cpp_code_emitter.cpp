@@ -15,15 +15,11 @@
 
 #include "codegen/cpp_code_emitter.h"
 
-#include <cctype>
-#include <cstdio>
-
 #include "securec.h"
 #include "util/file.h"
 
 namespace OHOS {
 namespace Idl {
-
 void CppCodeEmitter::EmitInterface()
 {
     EmitInterfaceHeaderFile();
@@ -575,7 +571,8 @@ void CppCodeEmitter::EmitInterfaceStubMethodImpl(MetaMethod* mm, StringBuilder& 
     MetaType* returnType = metaComponent_->types_[mm->returnTypeIndex_];
     if (returnType->kind_ != TypeKind::Void) {
         if ((returnType->kind_ == TypeKind::Sequenceable) || (returnType->kind_ == TypeKind::Interface)) {
-            sb.Append(prefix + TAB).AppendFormat("%s result = nullptr;\n", EmitType(returnType, ATTR_IN, true).string());
+            sb.Append(prefix + TAB).AppendFormat("%s result = nullptr;\n",
+                EmitType(returnType, ATTR_IN, true).string());
         } else {
             sb.Append(prefix + TAB).AppendFormat("%s result;\n", EmitType(returnType, ATTR_IN, true).string());
         }
@@ -626,7 +623,8 @@ void CppCodeEmitter::EmitInterfaceMethodCommands(StringBuilder& sb, const String
 {
     for (int i = 0; i < metaInterface_->methodNumber_; i++) {
         MetaMethod* mm = metaInterface_->methods_[i];
-        sb.Append(prefix).AppendFormat("static constexpr int COMMAND_%s = MIN_TRANSACTION_ID + %d;\n", ConstantName(mm->name_).string(), i);
+        sb.Append(prefix).AppendFormat("static constexpr int COMMAND_%s = MIN_TRANSACTION_ID + %d;\n",
+            ConstantName(mm->name_).string(), i);
     }
 }
 
@@ -972,14 +970,14 @@ String CppCodeEmitter::EmitType(MetaType* mt, unsigned int attributes, bool isIn
             MetaType* elementType = metaComponent_->types_[mt->nestedTypeIndexes_[0]];
             if (attributes & ATTR_OUT) {
                 return String::Format("std::vector<%s>&",
-                        EmitType(elementType, ATTR_IN, true).string());
+                    EmitType(elementType, ATTR_IN, true).string());
             } else {
                 if (!isInnerType) {
                     return String::Format("const std::vector<%s>&",
-                            EmitType(elementType, ATTR_IN, true).string());
+                        EmitType(elementType, ATTR_IN, true).string());
                 } else {
                     return String::Format("std::vector<%s>",
-                            EmitType(elementType, ATTR_IN, true).string());
+                        EmitType(elementType, ATTR_IN, true).string());
                 }
             }
         }
@@ -988,14 +986,14 @@ String CppCodeEmitter::EmitType(MetaType* mt, unsigned int attributes, bool isIn
             MetaType* valueType = metaComponent_->types_[mt->nestedTypeIndexes_[1]];
             if (attributes & ATTR_OUT) {
                 return String::Format("std::unordered_map<%s, %s>&",
-                        EmitType(keyType, ATTR_IN, true).string(), EmitType(valueType, ATTR_IN, true).string());
+                    EmitType(keyType, ATTR_IN, true).string(), EmitType(valueType, ATTR_IN, true).string());
             } else {
                 if (!isInnerType) {
                     return String::Format("const std::unordered_map<%s, %s>&",
-                            EmitType(keyType, ATTR_IN, true).string(), EmitType(valueType, ATTR_IN, true).string());
+                        EmitType(keyType, ATTR_IN, true).string(), EmitType(valueType, ATTR_IN, true).string());
                 } else {
                     return String::Format("std::unordered_map<%s, %s>",
-                            EmitType(keyType, ATTR_IN, true).string(), EmitType(valueType, ATTR_IN, true).string());
+                        EmitType(keyType, ATTR_IN, true).string(), EmitType(valueType, ATTR_IN, true).string());
                 }
             }
             break;
