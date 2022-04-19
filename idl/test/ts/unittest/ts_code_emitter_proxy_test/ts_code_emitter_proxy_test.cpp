@@ -52,8 +52,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitWriteArrayVariable_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -93,8 +93,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitWriteArrayVariable_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -135,8 +135,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitWriteArrayVariable_003, TestSize.Level1)
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -177,8 +177,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitWriteArrayVariable_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -219,8 +219,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitWriteArrayVariable_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     int count = 0;
@@ -264,8 +264,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadOutArrayVariable_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -304,8 +304,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadOutArrayVariable_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -345,8 +345,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadOutArrayVariable_003, TestSize.Level1)
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -386,8 +386,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadOutArrayVariable_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -427,8 +427,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadOutArrayVariable_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -467,8 +467,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitWriteMethodParameter_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -504,8 +504,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitWriteMethodParameter_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -541,8 +541,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitWriteMethodParameter_003, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -579,8 +579,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitWriteMethodParameter_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -609,8 +609,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitWriteMethodParameter_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -645,8 +645,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadMethodParameter_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -683,8 +683,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadMethodParameter_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -721,8 +721,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadMethodParameter_003, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -760,8 +760,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadMethodParameter_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -790,8 +790,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadMethodParameter_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT2.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -824,8 +824,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadOutVariable_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -863,8 +863,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadOutVariable_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -903,8 +903,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadOutVariable_003, TestSize.Level1)
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -943,8 +943,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadOutVariable_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -974,8 +974,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitReadOutVariable_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT2.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -1009,8 +1009,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitLicense_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitLicense(stringBuilder);
@@ -1035,8 +1035,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitLicense_002, TestSize.Level1)
         NORMAL_TYPE_IN_IDL_CONTENT.c_str(), fileLicense), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitLicense(stringBuilder);
@@ -1061,8 +1061,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitType_001, TestSize.Level1)
         NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     for (int index = 0; index < tsCodeGen_->metaInterface_->methodNumber_; index++) {
@@ -1101,8 +1101,8 @@ HWTEST_F(TsCodeEmitterProxyTest, FileName_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     String param1;
     EXPECT_TRUE(tsCodeGen_->FileName(param1).Equals(param1));
@@ -1127,8 +1127,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyImpl_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1171,8 +1171,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyImpl_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1215,8 +1215,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyImpl_003, TestSize.Level1)
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1259,8 +1259,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyImpl_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1304,8 +1304,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyImpl_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1347,8 +1347,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyConstructor_001, TestSize.Lev
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterfaceProxyConstructor(stringBuilder, CodeEmitter::TAB);
@@ -1369,8 +1369,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyConstructor_002, TestSize.Lev
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterfaceProxyConstructor(stringBuilder, CodeEmitter::TAB);
@@ -1392,8 +1392,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyConstructor_003, TestSize.Lev
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterfaceProxyConstructor(stringBuilder, CodeEmitter::TAB);
@@ -1415,8 +1415,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyConstructor_004, TestSize.Lev
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterfaceProxyConstructor(stringBuilder, CodeEmitter::TAB);
@@ -1438,8 +1438,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyConstructor_005, TestSize.Lev
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterfaceProxyConstructor(stringBuilder, CodeEmitter::TAB);
@@ -1460,8 +1460,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodImpls_001, TestSize.Lev
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1501,8 +1501,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodImpls_002, TestSize.Lev
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1542,8 +1542,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodImpls_003, TestSize.Lev
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1583,8 +1583,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodImpls_004, TestSize.Lev
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1625,8 +1625,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodImpls_005, TestSize.Lev
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1665,8 +1665,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodImpl_001, TestSize.Leve
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1709,8 +1709,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodImpl_002, TestSize.Leve
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1753,8 +1753,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodImpl_003, TestSize.Leve
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1797,8 +1797,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodImpl_004, TestSize.Leve
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1842,8 +1842,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodImpl_005, TestSize.Leve
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1885,8 +1885,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodBody_001, TestSize.Leve
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1929,8 +1929,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodBody_002, TestSize.Leve
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -1973,8 +1973,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodBody_003, TestSize.Leve
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -2017,8 +2017,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodBody_004, TestSize.Leve
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -2062,8 +2062,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxyMethodBody_005, TestSize.Leve
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -2106,8 +2106,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxy_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -2159,8 +2159,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxy_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_IN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -2212,8 +2212,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxy_003, TestSize.Level1)
         NORMAL_TYPE_IN_AND_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -2265,8 +2265,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxy_004, TestSize.Level1)
         NORMAL_TYPE_RETURN_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -2319,8 +2319,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxy_005, TestSize.Level1)
         NORMAL_TYPE_COMBINATION_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     StringBuilder stringBuilder;
     tsCodeGen_->EmitInterface();
@@ -2373,8 +2373,8 @@ HWTEST_F(TsCodeEmitterProxyTest, EmitInterfaceProxy_006, TestSize.Level1)
         ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", INTERFACE_SPECIAL_NAME_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = (char**)argvArray;
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     tsCodeGen_->EmitInterface();
     tsCodeGen_->EmitInterfaceProxy();
@@ -2410,8 +2410,8 @@ HWTEST_F(TsCodeEmitterProxyTest, MethodName_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("voidOrderReturnMap");
     String relustString = tsCodeGen_->MethodName(inPutString);
@@ -2431,8 +2431,8 @@ HWTEST_F(TsCodeEmitterProxyTest, MethodName_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("VoidOrderReturnMap");
     const String expectString("voidOrderReturnMap");
@@ -2453,8 +2453,8 @@ HWTEST_F(TsCodeEmitterProxyTest, MethodName_003, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("VVidOrderReturnMap");
     const String expectString("vVidOrderReturnMap");
@@ -2475,8 +2475,8 @@ HWTEST_F(TsCodeEmitterProxyTest, MethodName_004, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("VVid1254789");
     const String expectString("vVid1254789");
@@ -2497,8 +2497,8 @@ HWTEST_F(TsCodeEmitterProxyTest, ConstantName_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("VVid1254789");
     const String expectString("VVID1254789");
@@ -2519,8 +2519,8 @@ HWTEST_F(TsCodeEmitterProxyTest, ConstantName_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("VVidVide");
     const String expectString("VVID_VIDE");
@@ -2541,8 +2541,8 @@ HWTEST_F(TsCodeEmitterProxyTest, ConstantName_003, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("vvidVide_V");
     const String expectString("VVID_VIDE__V");
@@ -2563,8 +2563,8 @@ HWTEST_F(TsCodeEmitterProxyTest, StubName_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("IVid1254789");
     const String expectString("Vid1254789Stub");
@@ -2585,8 +2585,8 @@ HWTEST_F(TsCodeEmitterProxyTest, StubName_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("iVid1254789");
     const String expectString("iVid1254789Stub");
@@ -2607,8 +2607,8 @@ HWTEST_F(TsCodeEmitterProxyTest, StubName_003, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("Vid1254789");
     const String expectString("Vid1254789Stub");
@@ -2629,8 +2629,8 @@ HWTEST_F(TsCodeEmitterProxyTest, UnderlineAdded_001, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("Vid1254789");
     const String expectString("_Vid1254789");
@@ -2651,8 +2651,8 @@ HWTEST_F(TsCodeEmitterProxyTest, UnderlineAdded_002, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("iVid1254789");
     const String expectString("_iVid1254789");
@@ -2673,8 +2673,8 @@ HWTEST_F(TsCodeEmitterProxyTest, UnderlineAdded_003, TestSize.Level1)
     EXPECT_EQ(PrepareIdlFile(UNKNOW_TYPE_IDL_NAME.c_str(), NORMAL_TYPE_OUT_IDL_CONTENT.c_str()), ERR_OK);
     int argc = 6;
     const char* argvArray[] = {"./idl", "-c", UNKNOW_TYPE_IDL_NAME.c_str(), "-gen-ts", "-d", "."};
-    char** argv = const_cast<char **>(argvArray);
-    EXPECT_EQ(Ready(argc, argv), ERR_OK);
+    ParameterArgv parameters(argvArray, argc);
+    EXPECT_EQ(Ready(argc, parameters.GetArgv()), ERR_OK);
     EXPECT_NE(tsCodeGen_, nullptr);
     const String inPutString("_Vid1254789");
     const String expectString("__Vid1254789");
