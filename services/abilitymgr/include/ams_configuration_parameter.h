@@ -29,13 +29,11 @@ const std::string AMS_CONFIG_FILE_PATH {"/system/etc/ams_service_config.json"};
 const std::string SERVICE_ITEM_AMS {"service_startup_config"};
 const std::string STARTUP_SETTINGS_DATA {"startup_settings_data"};
 const std::string STARTUP_SCREEN_LOCK {"startup_screen_lock"};
-const std::string STARTUP_PHONE_SERVICE {"startup_phone_service"};
 const std::string MISSION_SAVE_TIME {"mission_save_time"};
 const std::string APP_NOT_RESPONSE_PROCESS_TIMEOUT_TIME {"app_not_response_process_timeout_time"};
 const std::string AMS_TIMEOUT_TIME {"ams_timeout_time"};
 const std::string SYSTEM_CONFIGURATION {"system_configuration"};
 const std::string SYSTEM_ORIENTATION {"system_orientation"};
-const std::string STARTUP_MMS {"startup_mms"};
 const std::string ROOT_LAUNCHER_RESTART_MAX {"root_launcher_restart_max"};
 }  // namespace AmsConfig
 
@@ -60,16 +58,6 @@ public:
      * return false : ams do not start screen lock
      */
     bool GetStartScreenLockState() const;
-    /**
-     * return true : ams can start phone service
-     * return false : ams do not start phone service
-     */
-    bool GetPhoneServiceState() const;
-    /**
-     * return true : ams can start mms
-     * return false : ams do not start mms
-     */
-    bool GetStartMmsState() const;
     /**
      * Get profile information
      */
@@ -121,8 +109,6 @@ private:
     bool nonConfigFile_ {false};
     bool canStartSettingsData_ {false};
     bool canStartScreenLock_ {false};
-    bool canStartPhoneService_ {false};
-    bool canStartMms {false};
     int maxRestartNum_ = 0;
     std::string orientation_ {""};
     int missionSaveTime_ {12 * 60 * 60 * 1000};
