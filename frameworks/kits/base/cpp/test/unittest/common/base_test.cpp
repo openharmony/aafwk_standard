@@ -15,7 +15,6 @@
 
 #include <gtest/gtest.h>
 #include "ohos/aafwk/base/light_refbase.h"
-#include "ohos/aafwk/base/array_wrapper.h"
 #include "ohos/aafwk/base/base_object.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
@@ -1006,105 +1005,6 @@ HWTEST_F(AAFwkBaseTest, string_test_004, TestSize.Level1)
 HWTEST_F(AAFwkBaseTest, string_test_005, TestSize.Level1)
 {
     EXPECT_EQ(Object::ToString(String::Box("-10.000006")), std::string("-10.000006"));
-}
-
-/*
- * Feature: Array
- * Function: GetLength and GetType
- * SubFunction: NA
- * FunctionPoints: GetLength and GetType
- * EnvConditions: NA
- * CaseDescription: Verify GetLength and GetType method of Array.
- */
-HWTEST_F(AAFwkBaseTest, array_test_001, TestSize.Level1)
-{
-    sptr<Array> arrayObj = new Array(9, g_IID_IInteger);
-    long size;
-    arrayObj->GetLength(&size);
-    EXPECT_EQ(size, 9);
-    InterfaceID type;
-    arrayObj->GetType(&type);
-    EXPECT_EQ(type, g_IID_IInteger);
-}
-
-/*
- * Feature: Array
- * Function: Get and Set
- * SubFunction: NA
- * FunctionPoints: Get and Set
- * EnvConditions: NA
- * CaseDescription: Verify Get and Set method of Array.
- */
-HWTEST_F(AAFwkBaseTest, array_test_002, TestSize.Level1)
-{
-    sptr<Array> arrayObj = new Array(19, g_IID_IInteger);
-    arrayObj->Set(0, Integer::Box(23));
-    sptr<IInterface> valueObj;
-    arrayObj->Get(0, valueObj);
-    EXPECT_TRUE(valueObj != nullptr);
-    EXPECT_EQ(Integer::Unbox(IInteger::Query(valueObj)), 23);
-    arrayObj->Get(1, valueObj);
-    EXPECT_TRUE(valueObj == nullptr);
-}
-
-/*
- * Feature: Array
- * Function: ToString
- * SubFunction: NA
- * FunctionPoints: ToString
- * EnvConditions: NA
- * CaseDescription: Verify ToString method of Array.
- */
-HWTEST_F(AAFwkBaseTest, array_test_003, TestSize.Level1)
-{
-    sptr<Array> arrayObj = new Array(5, g_IID_IInteger);
-    arrayObj->Set(0, Integer::Box(2));
-    arrayObj->Set(1, Integer::Box(3));
-    arrayObj->Set(2, Integer::Box(5));
-    arrayObj->Set(3, Integer::Box(7));
-    arrayObj->Set(4, Integer::Box(11));
-    EXPECT_EQ(arrayObj->ToString(), std::string("I5{2,3,5,7,11}"));
-}
-
-/*
- * Feature: Array
- * Function: Parse
- * SubFunction: NA
- * FunctionPoints: Parse
- * EnvConditions: NA
- * CaseDescription: Verify Parse method of Array.
- */
-HWTEST_F(AAFwkBaseTest, array_test_004, TestSize.Level1)
-{
-    sptr<IArray> arrayObj = Array::Parse("I5{2,3,5,7,11}");
-    sptr<IInterface> valueObj;
-    arrayObj->Get(0, valueObj);
-    EXPECT_EQ(Integer::Unbox(IInteger::Query(valueObj)), 2);
-    arrayObj->Get(1, valueObj);
-    EXPECT_EQ(Integer::Unbox(IInteger::Query(valueObj)), 3);
-    arrayObj->Get(2, valueObj);
-    EXPECT_EQ(Integer::Unbox(IInteger::Query(valueObj)), 5);
-    arrayObj->Get(3, valueObj);
-    EXPECT_EQ(Integer::Unbox(IInteger::Query(valueObj)), 7);
-    arrayObj->Get(4, valueObj);
-    EXPECT_EQ(Integer::Unbox(IInteger::Query(valueObj)), 11);
-}
-
-/*
- * Feature: Array
- * Function: Equals
- * SubFunction: NA
- * FunctionPoints: Equals
- * EnvConditions: NA
- * CaseDescription: Verify Equals method of Array.
- */
-HWTEST_F(AAFwkBaseTest, array_test_005, TestSize.Level1)
-{
-    sptr<IArray> arrayObj1 = Array::Parse("I5{2,3,5,7,11}");
-    sptr<IArray> arrayObj2 = Array::Parse("I5{2,3,7,7,11}");
-    sptr<IArray> arrayObj3 = Array::Parse("I5{2,3,5,7,11}");
-    EXPECT_FALSE(Object::Equals(arrayObj1, arrayObj2));
-    EXPECT_TRUE(Object::Equals(arrayObj1, arrayObj3));
 }
 }  // namespace AAFwk
 }  // namespace OHOS

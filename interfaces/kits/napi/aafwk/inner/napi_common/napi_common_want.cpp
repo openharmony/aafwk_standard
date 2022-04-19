@@ -17,7 +17,7 @@
 
 #include "hilog_wrapper.h"
 #include "napi_common_util.h"
-#include "ohos/aafwk/base/array_wrapper.h"
+#include "ohos/aafwk/content/array_wrapper.h"
 #include "ohos/aafwk/base/bool_wrapper.h"
 #include "ohos/aafwk/base/byte_wrapper.h"
 #include "ohos/aafwk/base/double_wrapper.h"
@@ -56,8 +56,6 @@ void InnerInitWantOptionsData(std::map<std::string, unsigned int> &flagMap)
 
 napi_value WrapElementName(napi_env env, const ElementName &elementName)
 {
-    HILOG_INFO("%{public}s called. DeviceID=%{public}s, BundleName=%{public}s, AbilityName=%{public}s", __func__,
-        elementName.GetDeviceID().c_str(), elementName.GetBundleName().c_str(), elementName.GetAbilityName().c_str());
     napi_value jsObject = nullptr;
     NAPI_CALL(env, napi_create_object(env, &jsObject));
 
@@ -465,6 +463,24 @@ bool InnerWrapWantParamsArrayFloat(napi_env env, napi_value jsObject, const std:
     return false;
 }
 
+napi_value WrapArrayWantParamsToJS(napi_env env, const std::vector<WantParams> &value)
+{
+    napi_value jsArray = nullptr;
+    napi_value jsValue = nullptr;
+    uint32_t index = 0;
+
+    NAPI_CALL(env, napi_create_array(env, &jsArray));
+    for (uint32_t i = 0; i < value.size(); i++) {
+        jsValue = WrapWantParams(env, value[i]);
+        if (jsValue != nullptr) {
+            if (napi_set_element(env, jsArray, index, jsValue) == napi_ok) {
+                index++;
+            }
+        }
+    }
+    return jsArray;
+}
+
 bool InnerWrapWantParamsArrayDouble(napi_env env, napi_value jsObject, const std::string &key, sptr<AAFwk::IArray> &ao)
 {
     long size = 0;
@@ -484,6 +500,33 @@ bool InnerWrapWantParamsArrayDouble(napi_env env, napi_value jsObject, const std
     }
 
     napi_value jsValue = WrapArrayDoubleToJS(env, natArray);
+    if (jsValue != nullptr) {
+        NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
+        return true;
+    }
+    return false;
+}
+
+bool InnerWrapWantParamsArrayWantParams(napi_env env, napi_value jsObject,
+    const std::string &key, sptr<AAFwk::IArray> &ao)
+{
+    long size = 0;
+    if (ao->GetLength(size) != ERR_OK) {
+        return false;
+    }
+
+    std::vector<WantParams> natArray;
+    for (long i = 0; i < size; i++) {
+        sptr<AAFwk::IInterface> iface = nullptr;
+        if (ao->Get(i, iface) == ERR_OK) {
+            AAFwk::IWantParams *iValue = AAFwk::IWantParams::Query(iface);
+            if (iValue != nullptr) {
+                natArray.push_back(AAFwk::WantParamWrapper::Unbox(iValue));
+            }
+        }
+    }
+
+    napi_value jsValue = WrapArrayWantParamsToJS(env, natArray);
     if (jsValue != nullptr) {
         NAPI_CALL_BASE(env, napi_set_named_property(env, jsObject, key.c_str(), jsValue), false);
         return true;
@@ -512,6 +555,8 @@ bool InnerWrapWantParamsArray(napi_env env, napi_value jsObject, const std::stri
         return InnerWrapWantParamsArrayChar(env, jsObject, key, ao);
     } else if (AAFwk::Array::IsDoubleArray(ao)) {
         return InnerWrapWantParamsArrayDouble(env, jsObject, key, ao);
+    } else if (AAFwk::Array::IsWantParamsArray(ao)) {
+        return InnerWrapWantParamsArrayWantParams(env, jsObject, key, ao);
     } else {
         return false;
     }
@@ -555,6 +600,25 @@ napi_value WrapWantParams(napi_env env, const AAFwk::WantParams &wantParams)
         }
     }
     return jsObject;
+}
+
+bool InnerSetWantParamsArrayObject(napi_env env, const std::string &key,
+    const std::vector<napi_value> &value, AAFwk::WantParams &wantParams)
+{
+    size_t size = value.size();
+    sptr<AAFwk::IArray> ao = new (std::nothrow) AAFwk::Array(size, AAFwk::g_IID_IWantParams);
+    if (ao != nullptr) {
+        for (size_t i = 0; i < size; i++) {
+            AAFwk::WantParams wp;
+            UnwrapWantParams(env, value[i], wp);
+            wp.DumpInfo(0);
+            ao->Set(i, AAFwk::WantParamWrapper::Box(wp));
+        }
+        wantParams.SetParam(key, ao);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool InnerSetWantParamsArrayString(
@@ -643,6 +707,9 @@ bool InnerUnwrapWantParamsArray(napi_env env, const std::string &key, napi_value
         return false;
     }
 
+    if (natArrayValue.objectList.size() > 0) {
+        return InnerSetWantParamsArrayObject(env, key, natArrayValue.objectList, wantParams);
+    }
     if (natArrayValue.stringList.size() > 0) {
         return InnerSetWantParamsArrayString(key, natArrayValue.stringList, wantParams);
     }
@@ -824,7 +891,6 @@ bool InnerUnwrapWantOptions(napi_env env, napi_value param, const char *property
 
 napi_value WrapWant(napi_env env, const Want &want)
 {
-    HILOG_INFO("%{public}s called.", __func__);
     napi_value jsObject = nullptr;
     napi_value jsValue = nullptr;
 

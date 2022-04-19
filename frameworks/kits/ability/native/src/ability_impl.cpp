@@ -417,14 +417,12 @@ sptr<IRemoteObject> AbilityImpl::ConnectAbility(const Want &want)
  */
 void AbilityImpl::DisconnectAbility(const Want &want)
 {
-    HILOG_INFO("%{public}s begin.", __func__);
     if (ability_ == nullptr) {
-        HILOG_ERROR("AbilityImpl::DisconnectAbility ability_ is nullptr");
+        HILOG_ERROR("Disconnect ability error, ability_ is nullptr.");
         return;
     }
-
+    HILOG_INFO("Disconnect ability begin, ability:%{public}s.", ability_->GetAbilityName().c_str());
     ability_->OnDisconnect(want);
-    HILOG_INFO("%{public}s end.", __func__);
 }
 
 /**

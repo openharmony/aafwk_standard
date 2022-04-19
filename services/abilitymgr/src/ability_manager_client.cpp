@@ -171,8 +171,8 @@ ErrCode AbilityManagerClient::ConnectAbility(
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    HILOG_INFO("%{public}s called, bundleName=%{public}s, abilityName=%{public}s, userId=%{public}d",
-        __func__, want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), userId);
+    HILOG_INFO("Connect ability called, bundleName:%{public}s, abilityName:%{public}s, userId:%{public}d.",
+        want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), userId);
     return abms->ConnectAbility(want, connect, callerToken, userId);
 }
 
@@ -229,7 +229,7 @@ ErrCode AbilityManagerClient::Connect()
         HILOG_ERROR("Fail to get registry.");
         return GET_ABILITY_SERVICE_FAILED;
     }
-    sptr<IRemoteObject>  remoteObj = systemManager->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
+    sptr<IRemoteObject> remoteObj = systemManager->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
     if (remoteObj == nullptr) {
         HILOG_ERROR("Fail to connect ability manager service.");
         return GET_ABILITY_SERVICE_FAILED;

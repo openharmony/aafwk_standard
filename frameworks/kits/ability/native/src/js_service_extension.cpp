@@ -27,8 +27,6 @@
 #include "napi_common_configuration.h"
 #include "napi_common_want.h"
 #include "napi_remote_object.h"
-#include "ohos/aafwk/base/array_wrapper.h"
-#include "ohos/aafwk/base/string_wrapper.h"
 
 namespace OHOS {
 namespace AbilityRuntime {

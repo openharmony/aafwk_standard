@@ -111,7 +111,6 @@ constexpr int32_t NON_ANONYMIZE_LENGTH = 6;
 constexpr uint32_t SCENE_FLAG_NORMAL = 0;
 const int32_t MAX_NUMBER_OF_DISTRIBUTED_MISSIONS = 20;
 const int32_t SWITCH_ACCOUNT_TRY = 3;
-const int32_t MAX_NUMBER_OF_CONNECT_BMS = 15;
 #ifdef ABILITY_COMMAND_FOR_TEST
 const int32_t BLOCK_AMS_SERVICE_TIME = 65;
 #endif
@@ -841,7 +840,7 @@ int AbilityManagerService::ConnectAbility(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("Connect ability.");
+    HILOG_INFO("Connect ability called.");
     CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
 
@@ -921,7 +920,7 @@ int AbilityManagerService::IsConnectFreeInstall(
 int AbilityManagerService::DisconnectAbility(const sptr<IAbilityConnection> &connect)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_DEBUG("Disconnect ability.");
+    HILOG_DEBUG("Disconnect ability called.");
     CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
 
@@ -934,7 +933,7 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
     const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin ConnectAbilityLocal", __func__);
+    HILOG_INFO("Connect local ability begin.");
     if (!JudgeMultiUserConcurrency(userId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
         return ERR_INVALID_VALUE;
@@ -1000,7 +999,7 @@ int AbilityManagerService::ConnectRemoteAbility(const Want &want, const sptr<IRe
 
 int AbilityManagerService::DisconnectLocalAbility(const sptr<IAbilityConnection> &connect)
 {
-    HILOG_INFO("%{public}s begin DisconnectAbilityLocal", __func__);
+    HILOG_INFO("Disconnect local ability begin.");
     return connectManager_->DisconnectAbilityLocked(connect);
 }
 
@@ -2349,62 +2348,6 @@ void AbilityManagerService::StartHighestPriorityAbility(bool isBoot)
     (void)StartAbility(abilityWant, userId, DEFAULT_INVAL_VALUE);
 }
 
-void AbilityManagerService::StartingPhoneServiceAbility()
-{
-    HILOG_DEBUG("%{public}s", __func__);
-    auto bms = GetBundleManager();
-    CHECK_POINTER_IS_NULLPTR(bms);
-
-    AppExecFwk::AbilityInfo phoneServiceInfo;
-    Want phoneServiceWant;
-    phoneServiceWant.SetElementName(AbilityConfig::PHONE_SERVICE_BUNDLE_NAME,
-        AbilityConfig::PHONE_SERVICE_ABILITY_NAME);
-
-    auto userId = GetUserId();
-    int attemptNums = 1;
-    HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
-    IN_PROCESS_CALL_WITHOUT_RET(
-        while (!(bms->QueryAbilityInfo(phoneServiceWant,
-            OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, phoneServiceInfo)) &&
-            attemptNums <= MAX_NUMBER_OF_CONNECT_BMS) {
-            HILOG_INFO("Waiting query phone service ability info completed.");
-            usleep(REPOLL_TIME_MICRO_SECONDS);
-            attemptNums++;
-        }
-    );
-
-    (void)StartAbility(phoneServiceWant, userId, DEFAULT_INVAL_VALUE);
-}
-
-void AbilityManagerService::StartingMmsAbility()
-{
-    HILOG_DEBUG("%{public}s", __func__);
-    auto bms = GetBundleManager();
-    CHECK_POINTER_IS_NULLPTR(bms);
-
-    AppExecFwk::AbilityInfo mmsInfo;
-    Want mmsWant;
-    mmsWant.SetElementName(AbilityConfig::MMS_BUNDLE_NAME, AbilityConfig::MMS_ABILITY_NAME);
-
-    auto userId = GetUserId();
-    int attemptNums = 1;
-    HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
-    IN_PROCESS_CALL_WITHOUT_RET(
-        while (!(bms->QueryAbilityInfo(mmsWant,
-            OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, mmsInfo)) &&
-            attemptNums <= MAX_NUMBER_OF_CONNECT_BMS) {
-            HILOG_INFO("Waiting query mms service completed.");
-            usleep(REPOLL_TIME_MICRO_SECONDS);
-            attemptNums++;
-        }
-    );
-
-    HILOG_INFO("attemptNums : %{public}d", attemptNums);
-    if (attemptNums <= MAX_NUMBER_OF_CONNECT_BMS) {
-        (void)StartAbility(mmsWant, userId, DEFAULT_INVAL_VALUE);
-    }
-}
-
 int AbilityManagerService::GenerateAbilityRequest(
     const Want &want, int requestCode, AbilityRequest &request, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
@@ -3610,16 +3553,6 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot
 
     if (amsConfigResolver_->GetStartScreenLockState()) {
         StartingScreenLockAbility();
-    }
-
-    if (amsConfigResolver_->GetPhoneServiceState()) {
-        HILOG_INFO("start phone service");
-        StartingPhoneServiceAbility();
-    }
-
-    if (amsConfigResolver_->GetStartMmsState()) {
-        HILOG_INFO("start mms");
-        StartingMmsAbility();
     }
 #endif
 }
