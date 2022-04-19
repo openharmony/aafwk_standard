@@ -66,8 +66,7 @@ void ServiceAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk:
     }
 
     if (ret) {
-        HILOG_INFO("Handle service transaction done, notify ability manager service, service:%{public}s.",
-            ability_->GetAbilityName().c_str());
+        HILOG_INFO("Handle service transaction done, notify ability manager service.");
         AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
     }
 }
