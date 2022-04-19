@@ -459,7 +459,7 @@ void AbilityRecord::Activate()
 
 void AbilityRecord::Inactivate()
 {
-    HILOG_INFO("Inactivate.");
+    HILOG_INFO("Inactivate ability start, ability:%{public}s.", abilityInfo_.name.c_str());
     CHECK_POINTER(lifecycleDeal_);
 
     SendEvent(AbilityManagerService::INACTIVE_TIMEOUT_MSG, AbilityManagerService::INACTIVE_TIMEOUT);
@@ -468,6 +468,7 @@ void AbilityRecord::Inactivate()
     // earlier than above actions.
     currentState_ = AbilityState::INACTIVATING;
     lifecycleDeal_->Inactivate(want_, lifeCycleStateInfo_);
+    HILOG_INFO("Inactivate ability end, ability:%{public}s.", abilityInfo_.name.c_str());
 }
 
 void AbilityRecord::MoveToBackground(const Closure &task)
@@ -527,7 +528,7 @@ void AbilityRecord::ConnectAbility()
 
 void AbilityRecord::DisconnectAbility()
 {
-    HILOG_INFO("Disconnect ability.");
+    HILOG_INFO("Disconnect ability, ability:%{public}s.", abilityInfo_.name.c_str());
     CHECK_POINTER(lifecycleDeal_);
     lifecycleDeal_->DisconnectAbility(want_);
 }

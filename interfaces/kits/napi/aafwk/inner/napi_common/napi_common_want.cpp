@@ -56,8 +56,6 @@ void InnerInitWantOptionsData(std::map<std::string, unsigned int> &flagMap)
 
 napi_value WrapElementName(napi_env env, const ElementName &elementName)
 {
-    HILOG_INFO("%{public}s called. DeviceID=%{public}s, BundleName=%{public}s, AbilityName=%{public}s", __func__,
-        elementName.GetDeviceID().c_str(), elementName.GetBundleName().c_str(), elementName.GetAbilityName().c_str());
     napi_value jsObject = nullptr;
     NAPI_CALL(env, napi_create_object(env, &jsObject));
 
@@ -893,7 +891,6 @@ bool InnerUnwrapWantOptions(napi_env env, napi_value param, const char *property
 
 napi_value WrapWant(napi_env env, const Want &want)
 {
-    HILOG_INFO("%{public}s called.", __func__);
     napi_value jsObject = nullptr;
     napi_value jsValue = nullptr;
 
