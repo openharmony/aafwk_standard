@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class File {
 public:
     File(const String& path, int mode);
@@ -89,8 +88,6 @@ private:
     String path_;
     unsigned int mode_ = 0;
 };
-
 }
 }
-
 #endif // OHOS_IDL_STRING_H

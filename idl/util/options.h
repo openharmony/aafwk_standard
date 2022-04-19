@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class Options {
 public:
     Options(int argc, char** argv)
@@ -117,8 +116,6 @@ private:
     bool doSaveMetadata_ = false;
     bool doGenerateCode_ = false;
 };
-
 }
 }
-
 #endif // OHOS_IDL_OPTIONS_H

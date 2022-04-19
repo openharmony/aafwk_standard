@@ -14,13 +14,11 @@
  */
 
 #include "util/string_pool.h"
-#include <cstring>
 #include "securec.h"
 #include "util/logger.h"
 
 namespace OHOS {
 namespace Idl {
-
 const char* StringPool::TAG = "StringPool";
 
 StringPool::StringPool()
@@ -62,7 +60,10 @@ ptrdiff_t StringPool::AddInternal(const String& string)
     }
 
     char* addr = data_ + dataOffset_;
-    (void)strcpy_s(addr, dataCapacity_ - dataOffset_, string.string());
+    if (strcpy_s(addr, dataCapacity_ - dataOffset_, string.string())) {
+        Logger::E(TAG, "Error to copy str");
+        return -1;
+    }
     dataOffset_ += string.GetLength() + 1;
     return addr - data_;
 }
@@ -92,6 +93,5 @@ bool StringPool::Grow(size_t expand)
     dataCapacity_ = newSize;
     return true;
 }
-
 }
 }

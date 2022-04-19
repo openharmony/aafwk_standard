@@ -15,16 +15,12 @@
 
 #include "util/string_builder.h"
 
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
 #include "securec.h"
 
 #include "util/logger.h"
 
 namespace OHOS {
 namespace Idl {
-
 const char* StringBuilder::TAG = "StringBuilder";
 constexpr int LINE_MAX_SIZE = 1024;
 
@@ -61,7 +57,9 @@ StringBuilder& StringBuilder::Append(const char* string)
         }
     }
 
-    (void)memcpy_s(buffer_ + position_, capacity_ - position_, string, len);
+    if (memcpy_s(buffer_ + position_, capacity_ - position_, string, len) != EOK) {
+        return *this;
+    }
     position_ += len;
     return *this;
 }
@@ -79,7 +77,9 @@ StringBuilder& StringBuilder::Append(const String& string)
         }
     }
 
-    (void)memcpy_s(buffer_ + position_, capacity_ - position_, string.string(), len);
+    if (memcpy_s(buffer_ + position_, capacity_ - position_, string.string(), len) != EOK) {
+        return *this;
+    }
     position_ += len;
     return *this;
 }
@@ -161,6 +161,5 @@ String StringBuilder::ToString() const
 {
     return String(buffer_, position_);
 }
-
 }
 }

@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class StringBuilder {
 public:
     ~StringBuilder();
@@ -43,8 +42,6 @@ private:
     size_t position_ = 0;
     size_t capacity_ = 0;
 };
-
 }
 }
-
 #endif // OHOS_IDL_STRINGBUILDER_H

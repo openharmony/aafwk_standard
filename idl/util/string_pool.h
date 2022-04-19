@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 class StringPool {
 public:
     StringPool();
@@ -53,8 +52,6 @@ private:
     ptrdiff_t dataOffset_ = 0;
     std::unordered_map<String, ptrdiff_t, StringHashFunc, StringEqualFunc> stringOffsets_;
 };
-
 }
 }
-
 #endif // OHOS_IDL_STRINGPOOL_H

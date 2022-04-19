@@ -20,11 +20,9 @@
 
 namespace OHOS {
 namespace Idl {
-
 class String {
 public:
-    String()
-    {}
+    String() {}
 
     String(const char* string);
 
@@ -141,8 +139,6 @@ struct StringEqualFunc {
         return lhs.Equals(rhs);
     }
 };
-
 }
 }
-
 #endif // OHOS_IDL_STRING_H
