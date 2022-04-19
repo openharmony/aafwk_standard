@@ -37,16 +37,6 @@ bool AmsConfigurationParameter::GetStartScreenLockState() const
     return canStartScreenLock_;
 }
 
-bool AmsConfigurationParameter::GetPhoneServiceState() const
-{
-    return canStartPhoneService_;
-}
-
-bool AmsConfigurationParameter::GetStartMmsState() const
-{
-    return canStartMms;
-}
-
 bool AmsConfigurationParameter::NonConfigFile() const
 {
     return nonConfigFile_;
@@ -129,9 +119,6 @@ int AmsConfigurationParameter::LoadAppConfigurationForStartUpService(nlohmann::j
     if (Object.contains(AmsConfig::SERVICE_ITEM_AMS)) {
         canStartSettingsData_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_SETTINGS_DATA).get<bool>();
         canStartScreenLock_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_SCREEN_LOCK).get<bool>();
-        canStartPhoneService_ =
-            Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_PHONE_SERVICE).get<bool>();
-        canStartMms = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::STARTUP_MMS).get<bool>();
         missionSaveTime_ = Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::MISSION_SAVE_TIME).get<int>();
         anrTime_ =
             Object.at(AmsConfig::SERVICE_ITEM_AMS).at(AmsConfig::APP_NOT_RESPONSE_PROCESS_TIMEOUT_TIME).get<int>();
