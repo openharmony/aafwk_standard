@@ -3536,7 +3536,6 @@ napi_value NAPI_StopAbilityCommon(napi_env env, napi_callback_info info, Ability
  */
 ConnectAbilityCB *CreateConnectAbilityCBInfo(napi_env env)
 {
-    HILOG_INFO("%{public}s called.", __func__);
     napi_value global = nullptr;
     NAPI_CALL(env, napi_get_global(env, &global));
 
@@ -3556,7 +3555,6 @@ ConnectAbilityCB *CreateConnectAbilityCBInfo(napi_env env)
     connectAbilityCB->cbBase.deferred = nullptr;
     connectAbilityCB->cbBase.ability = ability;
 
-    HILOG_INFO("%{public}s end.", __func__);
     return connectAbilityCB;
 }
 
@@ -4000,7 +3998,6 @@ napi_value DisConnectAbilityWrap(napi_env env, napi_callback_info info, ConnectA
         connectAbilityCB->abilityConnection = item->second;
         HILOG_INFO("%{public}s find conn ability exist", __func__);
     } else {
-        HILOG_INFO("%{public}s not find conn ability exist.", __func__);
         HILOG_INFO("%{public}s there is no ability to disconnect.", __func__);
         return nullptr;
     }

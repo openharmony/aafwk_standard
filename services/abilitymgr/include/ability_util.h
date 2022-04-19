@@ -148,9 +148,9 @@ static sptr<AppExecFwk::IBundleMgr> GetBundleManager()
 
 [[maybe_unused]] static int JudgeAbilityVisibleControl(const AppExecFwk::AbilityInfo &abilityInfo, int callerUid = -1)
 {
-    HILOG_DEBUG("%{public}s begin", __func__);
+    HILOG_DEBUG("Judge ability visible begin.");
     if (!abilityInfo.visible) {
-        HILOG_ERROR("ability visible is false");
+        HILOG_INFO("Ability visible is false.");
         if (callerUid == -1) {
             callerUid = IPCSkeleton::GetCallingUid();
         }
@@ -161,7 +161,7 @@ static sptr<AppExecFwk::IBundleMgr> GetBundleManager()
         auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
         auto apl = abilityInfo.applicationInfo.appPrivilegeLevel;
         if (!isSaCall && apl != SYSTEM_BASIC && apl != SYSTEM_CORE && !isSystemApp) {
-            HILOG_ERROR("caller is not systemAp or system");
+            HILOG_INFO("Caller is not systemAp or system.");
             std::string bundleName;
             bool result = bms->GetBundleNameForUid(callerUid, bundleName);
             if (!result) {
@@ -169,15 +169,15 @@ static sptr<AppExecFwk::IBundleMgr> GetBundleManager()
                 return ABILITY_VISIBLE_FALSE_DENY_REQUEST;
             }
             if (bundleName != abilityInfo.bundleName) {
-                HILOG_ERROR("caller ability bundlename not equal abilityInfo.bundleName bundleName: %{public}s "
-                            "abilityInfo.bundleName: %{public}s",
+                HILOG_ERROR("Judge ability visible error, caller bundleName:%{public}s not equal callee "
+                            "bundleName: %{public}s",
                     bundleName.c_str(),
                     abilityInfo.bundleName.c_str());
                 return ABILITY_VISIBLE_FALSE_DENY_REQUEST;
             }
         }
     }
-    HILOG_DEBUG("%{public}s end", __func__);
+    HILOG_DEBUG("Judge ability visible success.");
     return ERR_OK;
 }
 }  // namespace AbilityUtil

@@ -605,7 +605,7 @@ void Ability::OnBackground()
 sptr<IRemoteObject> Ability::OnConnect(const Want &want)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin.", __func__);
+    HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
     if (abilityLifecycleExecutor_ == nullptr) {
         HILOG_ERROR("Ability::OnConnect error. abilityLifecycleExecutor_ == nullptr.");
         return nullptr;
@@ -617,7 +617,7 @@ sptr<IRemoteObject> Ability::OnConnect(const Want &want)
         return nullptr;
     }
     lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_ACTIVE);
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("%{public}s end, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
     return nullptr;
 }
 
@@ -630,6 +630,7 @@ sptr<IRemoteObject> Ability::OnConnect(const Want &want)
 void Ability::OnDisconnect(const Want &want)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HILOG_INFO("%{public}s come, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
 }
 
 /**
