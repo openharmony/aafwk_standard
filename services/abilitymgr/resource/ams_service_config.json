@@ -2,8 +2,6 @@
     "service_startup_config":{
         "startup_settings_data": true,
         "startup_screen_lock" : true,
-        "startup_phone_service" : true,
-        "startup_mms":true,
         "mission_save_time" : 43200000,
         "root_launcher_restart_max":15,
         "app_not_response_process_timeout_time" : 5000,
