@@ -20,12 +20,9 @@
 
 namespace OHOS {
 namespace Idl {
-
 class LightRefCountBase {
 public:
-    LightRefCountBase()
-        : refCount_(0)
-    {}
+    LightRefCountBase() : refCount_(0) {}
 
     int AddRef();
 
@@ -37,14 +34,11 @@ public:
     }
 
 protected:
-    virtual ~LightRefCountBase()
-    {}
+    virtual ~LightRefCountBase() {}
 
 private:
     std::atomic<int> refCount_;
 };
-
 }
 }
-
 #endif // OHOS_IDL_LIGHTREFCOUNTBASE_H

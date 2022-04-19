@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 #ifdef __MINGW32__
 constexpr unsigned int File::READ;
 constexpr unsigned int File::WRITE;
@@ -48,7 +47,6 @@ File::File(const String& path, int mode)
         char* absolutePath = realpath(path.string(), nullptr);
         if (absolutePath != nullptr) {
             path_ = absolutePath;
-
             free(absolutePath);
 
         } else {
@@ -178,6 +176,5 @@ void File::Close()
         fd_ = nullptr;
     }
 }
-
 }
 }

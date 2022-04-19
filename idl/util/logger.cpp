@@ -19,7 +19,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 int Logger::level_ = DEBUG;
 
 void Logger::D(const char* tag, const char* format, ...)
@@ -65,6 +64,5 @@ void Logger::Err(const char* tag, const char* format, va_list args)
     vfprintf(stderr, format, args);
     fprintf(stderr, "\n");
 }
-
 }
 }

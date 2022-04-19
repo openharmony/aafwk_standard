@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 template<class T>
 class AutoPtr {
 public:
@@ -264,8 +263,6 @@ bool AutoPtr<T>::operator>=(const AutoPtr<T>& other) const
 {
     return mPtr >= other.mPtr;
 }
-
 }
 }
-
 #endif // OHOS_IDL_AUTOPTR_H

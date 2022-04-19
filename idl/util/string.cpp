@@ -19,9 +19,9 @@
 #include <cctype>
 #include <cstddef>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <new>
-#include <cstdlib>
 #include "securec.h"
 
 #include "util/logger.h"
@@ -214,7 +214,7 @@ int String::GetHashCode() const
 
     const char* string = string_;
     if (string != nullptr) {
-        for ( ; *string; ++string) {
+        for (; *string; ++string) {
             hash = hash * seed + (*string);
         }
     }

@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 int LightRefCountBase::AddRef()
 {
     const int beforeCount = refCount_.fetch_add(1, std::memory_order_relaxed);
@@ -32,6 +31,5 @@ int LightRefCountBase::Release()
     }
     return beforeCount - 1;
 }
-
 }
 }

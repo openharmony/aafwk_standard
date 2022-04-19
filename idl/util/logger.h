@@ -16,11 +16,10 @@
 #ifndef OHOS_IDL_LOGGER_H
 #define OHOS_IDL_LOGGER_H
 
-#include <stdarg.h>
+#include <cstdarg>
 
 namespace OHOS {
 namespace Idl {
-
 class Logger {
 public:
     static void D(const char* tag, const char* format, ...);
@@ -50,8 +49,6 @@ private:
 
     static int level_;
 };
-
 }
 }
-
 #endif // OHOS_IDL_LOGGER_H

@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace Idl {
-
 void Options::Parse(int argc, char** argv)
 {
     StringBuilder errors;
@@ -97,6 +96,5 @@ void Options::ShowUsage()
            "  -gen-ts           Generate Ts codes\n"
            "  -d <directory>    Place generated codes into <directory>\n");
 }
-
 }
 }
