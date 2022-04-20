@@ -337,17 +337,16 @@ void TsCodeEmitter::EmitInterfaceProxyMethodBody(MetaMethod* metaMethod, int met
     if (returnType->kind_ != TypeKind::Void || haveOutPara) {
         stringBuilder.Append(prefix).Append(TAB).Append(TAB).Append(TAB).AppendFormat(
             "if (%s != 0) {\n", UnderlineAdded(ERR_CODE).c_str());
-
-        if (returnType->kind_ != TypeKind::Void) {
-            stringBuilder.Append(prefix).Append(TAB).Append(TAB).Append(TAB).Append(TAB).AppendFormat(
-                "let %s = undefined;\n", UnderlineAdded(RETURN_VALUE).c_str());
-        }
         for (size_t index = 0; index < methods_[methodIndex].parameters_.size(); index++) {
             if ((methods_[methodIndex].parameters_[index].attr_ & ATTR_OUT) != 0) {
                 stringBuilder.Append(prefix).Append(TAB).Append(TAB).Append(TAB).Append(TAB).AppendFormat(
                     "let %s = undefined;\n", UnderlineAdded(
                         methods_[methodIndex].parameters_[index].name_.c_str()).c_str());
             }
+        }
+        if (returnType->kind_ != TypeKind::Void) {
+            stringBuilder.Append(prefix).Append(TAB).Append(TAB).Append(TAB).Append(TAB).AppendFormat(
+                "let %s = undefined;\n", UnderlineAdded(RETURN_VALUE).c_str());
         }
         stringBuilder.Append(prefix).Append(TAB).Append(TAB).Append(TAB).Append(TAB).AppendFormat("callback(");
         stringBuilder.AppendFormat("%s", UnderlineAdded(ERR_CODE).c_str());
@@ -376,16 +375,16 @@ void TsCodeEmitter::EmitInterfaceProxyMethodBody(MetaMethod* metaMethod, int met
         stringBuilder.Append(prefix).Append(TAB).Append(TAB).Append(TAB).Append("}\n");
     }
     // emit return
-    if (returnType->kind_ != TypeKind::Void) {
-        String parcelName = "result.reply";
-        EmitReadOutVariable(parcelName, UnderlineAdded(RETURN_VALUE), returnType, stringBuilder,
-            prefix + TAB + TAB + TAB);
-    }
     for (int index = 0; index < metaMethod->parameterNumber_; index++) {
         MetaParameter* mp = metaMethod->parameters_[index];
         if ((mp->attributes_ & ATTR_OUT) != 0) {
             EmitReadMethodParameter(mp, "result.reply", stringBuilder, prefix + TAB + TAB + TAB);
         }
+    }
+    if (returnType->kind_ != TypeKind::Void) {
+        String parcelName = "result.reply";
+        EmitReadOutVariable(parcelName, UnderlineAdded(RETURN_VALUE), returnType, stringBuilder,
+            prefix + TAB + TAB + TAB);
     }
     stringBuilder.Append(prefix).Append(TAB).Append(TAB).Append(TAB).AppendFormat("callback(");
     stringBuilder.AppendFormat("%s", UnderlineAdded(ERR_CODE).c_str());
@@ -582,14 +581,14 @@ void TsCodeEmitter::EmitInterfaceStubMethodImpl(MetaMethod* metaMethod, int meth
 
     if (returnType->kind_ != TypeKind::Void || haveOutPara) {
         stringBuilder.Append(prefix).Append(TAB).Append(TAB).AppendFormat("if (%s == 0) {\n", ERR_CODE.string());
-        if (returnType->kind_ != TypeKind::Void) {
-            EmitWriteVariable("reply", RETURN_VALUE.string(), returnType, stringBuilder, prefix + TAB + TAB + TAB);
-        }
         for (int index = 0; index < metaMethod->parameterNumber_; index++) {
             MetaParameter* mp = metaMethod->parameters_[index];
             if ((mp->attributes_ & ATTR_OUT) != 0) {
                 EmitWriteMethodParameter(mp, "reply", stringBuilder, prefix + TAB + TAB + TAB);
             }
+        }
+        if (returnType->kind_ != TypeKind::Void) {
+            EmitWriteVariable("reply", RETURN_VALUE.string(), returnType, stringBuilder, prefix + TAB + TAB + TAB);
         }
         stringBuilder.Append(prefix).Append(TAB).Append(TAB).Append("}\n");
     }
