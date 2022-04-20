@@ -60,6 +60,14 @@ public:
     virtual ErrCode StartProcess(const AppSpawnStartMsg &startMsg, pid_t &pid);
 
     /**
+     * Get render process termination status.
+     *
+     * @param startMsg, request message.
+     * @param status, termination status of render process, get from appspawn.
+     */
+    virtual ErrCode GetRenderProcessTerminationStatus(const AppSpawnStartMsg &startMsg, int &status);
+
+    /**
      * Return the connect state.
      */
     SpawnConnectionState QueryConnectionState() const;
