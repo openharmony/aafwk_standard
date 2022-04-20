@@ -65,6 +65,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_first") {
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
@@ -106,6 +107,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_second") {
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
@@ -147,6 +149,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_third") {
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
@@ -188,6 +191,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_fourth") {
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration",
     "//foundation/aafwk/standard/interfaces/innerkits/base:base",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
@@ -213,10 +217,10 @@ group("moduletest") {
   deps = []
 
   deps += [
-    # ":appexecfwk_appkit_native_app_module_test_first",
-    # ":appexecfwk_appkit_native_app_module_test_fourth",
-    # ":appexecfwk_appkit_native_app_module_test_second",
-    # ":appexecfwk_appkit_native_app_module_test_third",
+    ":appexecfwk_appkit_native_app_module_test_first",
+    ":appexecfwk_appkit_native_app_module_test_fourth",
+    ":appexecfwk_appkit_native_app_module_test_second",
+    ":appexecfwk_appkit_native_app_module_test_third",
   ]
 }
 ###############################################################################
