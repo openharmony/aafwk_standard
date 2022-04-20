@@ -59,7 +59,7 @@ std::shared_ptr<PendingWant> PendingWant::GetAbility(
     WantsInfo wantsInfo;
     wantsInfo.want = *want;
     wantsInfo.resolvedTypes = want != nullptr ? want->GetType() : "";
-    if (options != nullptr) {
+    if (options != nullptr && !options->IsEmpty()) {
         wantsInfo.want.SetParams(*options);
     }
 
@@ -103,7 +103,7 @@ std::shared_ptr<PendingWant> PendingWant::GetAbilities(const std::shared_ptr<OHO
             wantsInfo.want = *want;
         }
         wantsInfo.resolvedTypes = want != nullptr ? want->GetType() : "";
-        if (options != nullptr) {
+        if (options != nullptr && !options->IsEmpty()) {
             wantsInfo.want.SetParams(*options);
         }
         wantSenderInfo.allWants.push_back(wantsInfo);
