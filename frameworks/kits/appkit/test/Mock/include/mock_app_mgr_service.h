@@ -39,11 +39,11 @@ public:
     MOCK_METHOD1(AddAbilityStageDone, void(const int32_t recordId));
     MOCK_METHOD1(StartupResidentProcess, void(const std::vector<AppExecFwk::BundleInfo> &bundleInfos));
     MOCK_METHOD2(GetProcessRunningInfosByUserId, int(std::vector<RunningProcessInfo> &info, int32_t userId));
-    MOCK_METHOD4(StartUserTestProcess, int(const AAFwk::Want &want, const sptr<IRemoteObject> &observer, 
+    MOCK_METHOD4(StartUserTestProcess, int(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
         const BundleInfo &bundleInfo, int32_t userId));
-    MOCK_METHOD3(FinishUserTest, int(const std::string &msg, const int64_t &resultCode, 
+    MOCK_METHOD3(FinishUserTest, int(const std::string &msg, const int64_t &resultCode,
         const std::string &bundleName));
-    MOCK_METHOD3(ScheduleAcceptWantDone, void(const int32_t recordId, const AAFwk::Want &want, 
+    MOCK_METHOD3(ScheduleAcceptWantDone, void(const int32_t recordId, const AAFwk::Want &want,
         const std::string &flag));
     MOCK_METHOD2(GetAbilityRecordsByProcessID, int(const int pid, std::vector<sptr<IRemoteObject>> &tokens));
     MOCK_METHOD4(StartRenderProcess, int(const std::string &renderParam, int32_t ipcFd,
