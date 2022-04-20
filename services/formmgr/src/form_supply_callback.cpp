@@ -140,20 +140,24 @@ void FormSupplyCallback::AddConnection(sptr<FormAbilityConnection> connection)
 void FormSupplyCallback::RemoveConnection(long connectId)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    std::lock_guard<std::mutex> lock_l(conMutex_);
-    auto conIterator = connections_.find(connectId);
-    if (conIterator != connections_.end()) {
-        sptr<FormAbilityConnection> connection = conIterator->second;
-        if (connection != nullptr) {
-            if (CanDisConnect(connection)) {
-                FormAmsHelper::GetInstance().DisConnectServiceAbility(connection);
-                HILOG_INFO("%{public}s end, disconnect service ability", __func__);
-            } else {
-                FormAmsHelper::GetInstance().DisConnectServiceAbilityDelay(connection);
-                HILOG_INFO("%{public}s end, disconnect service ability delay", __func__);
-            }
+    sptr<FormAbilityConnection> connection = nullptr;
+    {
+        std::lock_guard<std::mutex> lock_l(conMutex_);
+        auto conIterator = connections_.find(connectId);
+        if (conIterator != connections_.end()) {
+            connection = conIterator->second;
+            connections_.erase(connectId);
         }
-        connections_.erase(connectId);
+    }
+
+    if (connection != nullptr) {
+        if (CanDisConnect(connection)) {
+            FormAmsHelper::GetInstance().DisConnectServiceAbility(connection);
+            HILOG_INFO("%{public}s end, disconnect service ability", __func__);
+        } else {
+            FormAmsHelper::GetInstance().DisConnectServiceAbilityDelay(connection);
+            HILOG_INFO("%{public}s end, disconnect service ability delay", __func__);
+        }
     }
     HILOG_INFO("%{public}s end.", __func__);
 }
