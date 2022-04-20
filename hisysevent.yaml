@@ -21,13 +21,20 @@ LIFECYCLE_TIMEOUT:
   PROCESS_NAME: {type: STRING, desc: process name}
   MSG: {type: STRING, desc: application event message}
 
-JS_EXCEPTION:
-  __BASE: {type: FAULT, level: CRITICAL, tag: STABILITY, desc: application freeze}
-  PID: {type: INT32, desc: pid}
-  UID: {type: INT32, desc: uid}
-  PACKAGE_NAME: {type: STRING, desc: package name}
-  PROCESS_NAME: {type: STRING, desc: process name}
-  MSG: {type: STRING, desc: application event message}
+JS_ERROR:
+  __BASE: {type: FAULT, level: CRITICAL, tag: STABILITY, desc: js runtime error}
+  MODULE: {type: STRING, desc: app package name}
+  VERSION: {type: STRING, desc: app version}
+  REASON: {type: STRING, desc: error type}
+  PAGE: {type: STRING, desc: current running ability}
+  JSVM: {type: STRING, desc: js runtime type}
+  SUMMARY: {type: STRING, desc: fault summary}
+  FAULT_TYPE: {type: STRING, desc: fault type}
+  LOG_PATH: {type: STRING, desc: fault log path}
+  FINGERPRINT: {type: STRING, desc: unique id for grouping same fault}
+  FG: {type: INT32, desc: whether current app is in foreground}
+  HAPPEN_TIME: {type: INT64, desc: fault trigger time}
+  LIFETIME: {type: INT64, desc: elapse time since process start}
 
 THREAD_BLOCK_6S:
   __BASE: {type: FAULT, level: CRITICAL, tag: STABILITY, desc: application freeze}
