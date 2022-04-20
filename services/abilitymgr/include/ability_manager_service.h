@@ -829,23 +829,12 @@ private:
      *
      */
     void StartingScreenLockAbility();
-    /**
-     * starting phone service ability.
-     *
-     */
-    void StartingPhoneServiceAbility();
 
     /**
      * starting system ui abilites.
      *
      */
     void StartingSystemUiAbility(const SatrtUiMode &mode);
-
-    /**
-     * starting mms ability.
-     *
-     */
-    void StartingMmsAbility();
 
     /**
      * connet bms.
