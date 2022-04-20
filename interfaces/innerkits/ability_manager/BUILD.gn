@@ -44,6 +44,8 @@ config("ability_manager_public_config") {
     defines = [ "SUPPORT_GRAPHICS" ]
   }
 
+  defines += [ "ABILITY_COMMAND_FOR_TEST" ]
+
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
