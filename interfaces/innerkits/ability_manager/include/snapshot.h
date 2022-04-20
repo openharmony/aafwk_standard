@@ -66,6 +66,23 @@ public:
      */
     virtual int32_t GetSnapshot(const sptr<IRemoteObject>& token, Snapshot& snapshot) = 0;
 };
+
+
+/**
+ * @class IWindowHandler
+ * Window handler, use to get window
+ */
+class IWindowHandler : public OHOS::IRemoteBroker {
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"ohos.aafwk.WindowHandler");
+
+    /**
+     * @brief Get the Window object
+     * @param abilityToken ability token
+     * @return int32_t function result
+     */
+    virtual int32_t GetFocusAbility(sptr<IRemoteObject>& abilityToken);
+};
 } // namespace AAFwk
 } // namespace OHOS
 #endif // OHOS_AAFWK_SNAPSHOT_H
