@@ -35,7 +35,7 @@ public:
     MOCK_METHOD1(DisconnectAbility, int(const sptr<IAbilityConnection> &connect));
     MOCK_METHOD3(AcquireDataAbility, sptr<IAbilityScheduler>(const Uri &, bool, const sptr<IRemoteObject> &));
     MOCK_METHOD2(ReleaseDataAbility, int(sptr<IAbilityScheduler>, const sptr<IRemoteObject> &));
-    MOCK_METHOD2(AttachAbilityThread, int(const sptr<IAbilityScheduler> &scheduler, 
+    MOCK_METHOD2(AttachAbilityThread, int(const sptr<IAbilityScheduler> &scheduler,
         const sptr<IRemoteObject> &token));
     MOCK_METHOD3(AbilityTransitionDone, int(const sptr<IRemoteObject> &token, int state, const PacMap &saveData));
     MOCK_METHOD2(
