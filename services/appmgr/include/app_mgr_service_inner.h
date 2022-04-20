@@ -503,6 +503,8 @@ public:
 
     virtual void AttachRenderProcess(const pid_t pid, const sptr<IRenderScheduler> &scheduler);
 
+    virtual int GetRenderProcessTerminationStatus(pid_t renderPid, int &status);
+
     int VerifyProcessPermission();
 
     int VerifyAccountPermission(const std::string &permissionName, const int userId);

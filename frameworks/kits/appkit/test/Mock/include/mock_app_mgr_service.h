@@ -52,6 +52,7 @@ public:
     MOCK_METHOD4(StartRenderProcess, int(const std::string &renderParam, int32_t ipcFd,
         int32_t sharedFd, pid_t &renderPid));
     MOCK_METHOD1(AttachRenderProcess, void(const sptr<IRemoteObject> &renderScheduler));
+    MOCK_METHOD2(GetRenderProcessTerminationStatus, int(pid_t renderPid, int &status));
     MOCK_METHOD1(PostANRTaskByProcessID, void(const pid_t pid));
     
     void AttachApplication(const sptr<IRemoteObject> &app)
