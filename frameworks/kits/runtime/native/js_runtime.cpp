@@ -63,11 +63,11 @@ public:
         }
     }
 
-    void StartDebugMode(bool needBreakPoint) override
+    void StartDebugMode(bool needBreakPoint, int32_t instanceId) override
     {
         if (!debugMode_) {
             HILOG_INFO("Ark VM is starting debug mode [%{public}s]", needBreakPoint ? "break" : "normal");
-            panda::JSNApi::StartDebugger(ARK_DEBUGGER_LIB_PATH, vm_, needBreakPoint);
+            panda::JSNApi::StartDebugger(ARK_DEBUGGER_LIB_PATH, vm_, needBreakPoint, instanceId);
             debugMode_ = true;
         }
     }
