@@ -40,7 +40,7 @@ public:
     MOCK_METHOD4(SendRequest, int(uint32_t, MessageParcel &, MessageParcel &, MessageOption &));
     MOCK_METHOD3(ScheduleCommandAbility, void(const Want &, bool, int));
     MOCK_METHOD1(NotifyContinuationResult, void(int32_t result));
-    MOCK_METHOD1(ContinueAbility, void(const std::string& deviceId));
+    MOCK_METHOD2(ContinueAbility, void(const std::string& deviceId, uint32_t versionCode));
     MOCK_METHOD2(DumpAbilityInfo, void(const std::vector<std::string> &params, std::vector<std::string> &info));
 
     int InvokeSendRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)

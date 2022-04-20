@@ -742,7 +742,8 @@ int AbilityManagerStub::ContinueAbilityInner(MessageParcel &data, MessageParcel 
 {
     std::string deviceId = data.ReadString();
     int32_t missionId = data.ReadInt32();
-    int32_t result = ContinueAbility(deviceId, missionId);
+    uint32_t versionCode = data.ReadUint32();
+    int32_t result = ContinueAbility(deviceId, missionId, versionCode);
     HILOG_INFO("ContinueAbilityInner result = %{public}d", result);
     return result;
 }

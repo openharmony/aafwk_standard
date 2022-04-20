@@ -943,7 +943,7 @@ std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> AbilitySchedulerProx
     return results;
 }
 
-void AbilitySchedulerProxy::ContinueAbility(const std::string& deviceId)
+void AbilitySchedulerProxy::ContinueAbility(const std::string& deviceId, uint32_t versionCode)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -954,6 +954,10 @@ void AbilitySchedulerProxy::ContinueAbility(const std::string& deviceId)
     }
     if (!data.WriteString(deviceId)) {
         HILOG_ERROR("ContinueAbility fail to write deviceId");
+        return;
+    }
+    if (!data.WriteUint32(versionCode)) {
+        HILOG_ERROR("ContinueAbility fail to write versionCode");
         return;
     }
 

@@ -195,9 +195,10 @@ public:
      *
      * @param deviceId, target deviceId.
      * @param missionId, indicates which ability to continue.
+     * @param versionCode, target bundle version.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int ContinueAbility(const std::string &deviceId, int32_t missionId) override;
+    virtual int ContinueAbility(const std::string &deviceId, int32_t missionId, uint32_t versionCode) override;
 
     /**
      * StartContinuation, continue ability to remote.
