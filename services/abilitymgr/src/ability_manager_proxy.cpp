@@ -1238,7 +1238,7 @@ int AbilityManagerProxy::ContinueMission(const std::string &srcDeviceId, const s
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::ContinueAbility(const std::string &deviceId, int32_t missionId)
+int AbilityManagerProxy::ContinueAbility(const std::string &deviceId, int32_t missionId, uint32_t versionCode)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -1252,6 +1252,10 @@ int AbilityManagerProxy::ContinueAbility(const std::string &deviceId, int32_t mi
     }
     if (!data.WriteInt32(missionId)) {
         HILOG_ERROR("missionId write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteUint32(versionCode)) {
+        HILOG_ERROR("versionCode write failed.");
         return INNER_ERR;
     }
 

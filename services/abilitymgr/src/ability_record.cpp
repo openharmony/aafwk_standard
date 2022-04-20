@@ -1394,12 +1394,12 @@ bool AbilityRecord::IsNeedToCallRequest() const
     return callContainer_->IsNeedToCallRequest();
 }
 
-void AbilityRecord::ContinueAbility(const std::string& deviceId)
+void AbilityRecord::ContinueAbility(const std::string& deviceId, uint32_t versionCode)
 {
     HILOG_INFO("ContinueAbility.");
     CHECK_POINTER(lifecycleDeal_);
 
-    lifecycleDeal_->ContinueAbility(deviceId);
+    lifecycleDeal_->ContinueAbility(deviceId, versionCode);
 }
 
 void AbilityRecord::SetSwitchingPause(bool state)

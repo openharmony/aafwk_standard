@@ -912,13 +912,13 @@ std::vector<std::shared_ptr<DataAbilityResult>> AbilityImpl::ExecuteBatch(
     return results;
 }
 
-void AbilityImpl::ContinueAbility(const std::string& deviceId)
+void AbilityImpl::ContinueAbility(const std::string& deviceId, uint32_t versionCode)
 {
     if (ability_ == nullptr) {
         HILOG_ERROR("AbilityImpl::ContinueAbility ability_ is nullptr");
         return;
     }
-    ability_->ContinueAbilityWithStack(deviceId);
+    ability_->ContinueAbilityWithStack(deviceId, versionCode);
 }
 
 void AbilityImpl::NotifyContinuationResult(int32_t result)

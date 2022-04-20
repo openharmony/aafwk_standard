@@ -1473,9 +1473,9 @@ public:
      * ability slices must implement the IAbilityContinuation interface.
      *
      * @param deviceId Indicates the ID of the target device where this ability will be migrated to.
-     *
+     * @param versionCode Target bundle version.
      */
-    virtual void ContinueAbilityWithStack(const std::string &deviceId) final;
+    virtual void ContinueAbilityWithStack(const std::string &deviceId, uint32_t versionCode) final;
 
     /**
      * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
