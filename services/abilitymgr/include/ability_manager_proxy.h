@@ -439,6 +439,8 @@ public:
 
     virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) override;
 
+    virtual int RegisterWindowHandler(const sptr<IWindowHandler>& handler) override;
+
     virtual int GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot) override;
 
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;

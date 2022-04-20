@@ -3384,6 +3384,18 @@ int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>&
     return ERR_OK;
 }
 
+int AbilityManagerService::RegisterWindowHandler(const sptr<IWindowHandler> &handler)
+{
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return 0;
+    }
+    windowHandler_ = handler;
+    HILOG_INFO("window: AbilityManagerService register windows handler success.");
+    return ERR_OK;
+}
+
 int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, int32_t missionId,
     MissionSnapshot& missionSnapshot)
 {

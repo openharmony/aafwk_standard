@@ -182,6 +182,11 @@ public:
         return 0;
     }
 
+    virtual int RegisterWindowHandler(const sptr<IWindowHandler>& handler) override
+    {
+        return 0;
+    }
+
     virtual int SendANRProcessID(int pid)
     {
         return 0;

@@ -539,6 +539,13 @@ public:
     ErrCode RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler);
 
     /**
+     * @brief Register the window handler
+     * @param handler window handler
+     * @return ErrCode Returns ERR_OK on success, others on failure.
+     */
+    ErrCode RegisterWindowHandler(const sptr<IWindowHandler>& handler);
+
+    /**
      * Set mission label of this ability.
      *
      * @param abilityToken Indidate token of ability.
