@@ -3087,6 +3087,7 @@ sptr<IRemoteObject> AbilityManagerService::GetAbilityTokenByMissionId(int32_t mi
 
 void AbilityManagerService::StartingSettingsDataAbility()
 {
+#ifdef SUPPORT_GRAPHICS
     HILOG_DEBUG("%{public}s", __func__);
     auto bms = GetBundleManager();
     CHECK_POINTER_IS_NULLPTR(bms);
@@ -3114,6 +3115,7 @@ void AbilityManagerService::StartingSettingsDataAbility()
     // start settings data ability
     Uri uri(abilityUri);
     (void)AcquireDataAbility(uri, true, nullptr);
+#endif
 }
 
 int AbilityManagerService::StartRemoteAbilityByCall(const Want &want, const sptr<IRemoteObject> &connect)
@@ -3566,6 +3568,7 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot
     HILOG_INFO("StartSystemAbilityByUser, userId:%{public}d, currentUserId:%{public}d", userId, GetUserId());
     ConnectBmsService();
 
+#ifdef SUPPORT_GRAPHICS
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
         StartHighestPriorityAbility(isBoot);
@@ -3579,6 +3582,7 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot
     if (amsConfigResolver_->GetStartScreenLockState()) {
         StartingScreenLockAbility();
     }
+#endif
 }
 
 void AbilityManagerService::InitConnectManager(int32_t userId, bool switchUser)
