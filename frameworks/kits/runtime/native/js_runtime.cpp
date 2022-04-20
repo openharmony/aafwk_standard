@@ -26,8 +26,6 @@
 #include "declarative_module_preloader.h"
 #endif
 #include "event_handler.h"
-#include "js_file_asset_provider.h"
-#include "js_asset_manager.h"
 #include "hilog_wrapper.h"
 #include "js_runtime_utils.h"
 
@@ -39,13 +37,12 @@ namespace AbilityRuntime {
 namespace {
 constexpr uint8_t SYSCAP_MAX_SIZE = 64;
 constexpr int64_t DEFAULT_GC_POOL_SIZE = 0x10000000; // 256MB
+constexpr int64_t ASSET_FILE_MAX_SIZE = 20 * 1024 * 1024;
 #if defined(_ARM64_)
 constexpr char ARK_DEBUGGER_LIB_PATH[] = "/system/lib64/libark_debugger.z.so";
 #else
 constexpr char ARK_DEBUGGER_LIB_PATH[] = "/system/lib/libark_debugger.z.so";
 #endif
-const char SLASH = '/';
-const char SLASHSTR[] = "/";
 
 class ArkJsRuntime : public JsRuntime {
 public:
@@ -284,72 +281,6 @@ bool MakeFilePath(const std::string& codePath, const std::string& modulePath, st
     return true;
 }
 
-inline bool StartWith(const std::string& dst, const std::string& prefix)
-{
-    return dst.compare(0, prefix.size(), prefix) == 0;
-}
-
-bool ParseFileUri(const std::shared_ptr<AssetManager>& assetManager, const std::string& fileUri,
-    std::string& assetsFilePath)
-{
-    if (!assetManager) {
-        HILOG_ERROR("AssetManager is null");
-        return false;
-    }
-
-    if (fileUri.empty() || (fileUri.length() > PATH_MAX)) {
-        HILOG_ERROR("Uri is empty or length out of boundry");
-        return false;
-    }
-
-    std::string fileName;
-    std::string filePath;
-    size_t slashPos = fileUri.find_last_of(SLASH);
-    if (slashPos == std::string::npos) {
-        fileName = fileUri;
-    } else {
-        fileName = fileUri.substr(slashPos + 1);
-        filePath = fileUri.substr(0, slashPos + 1);
-    }
-
-    if (StartWith(filePath, SLASHSTR)) {
-        filePath = filePath.substr(1);
-    }
-
-    std::vector<std::string> files;
-    assetManager->GetAssetList(filePath, files);
-
-    bool fileExist = false;
-    for (const auto& file : files) {
-        bool startWithSlash = StartWith(file, SLASHSTR);
-        if ((startWithSlash && (file.substr(1) == fileName)) || (!startWithSlash && (file == fileName))) {
-            assetsFilePath = filePath + file;
-            fileExist = true;
-            break;
-        }
-    }
-
-    return fileExist;
-}
-
-template<class T>
-bool GetAssetContentAllowEmpty(const std::shared_ptr<AssetManager>& assetManager, const std::string& url, T& content)
-{
-    if (!assetManager) {
-        HILOG_ERROR("AssetManager is null");
-        return false;
-    }
-    auto jsAsset = assetManager->GetAsset(url);
-    if (jsAsset == nullptr) {
-        HILOG_WARN("Asset is null, url:%{public}s", url.c_str());
-        return false;
-    }
-    auto bufLen = jsAsset->GetSize();
-    auto buffer = jsAsset->GetData();
-    content.assign(buffer, buffer + bufLen);
-    return true;
-}
-
 void RegisterInitWorkerFunc(NativeEngine& engine)
 {
     auto&& initWorkerFunc = [](NativeEngine* nativeEngine) {
@@ -370,10 +301,39 @@ void RegisterInitWorkerFunc(NativeEngine& engine)
     engine.SetInitWorkerFunc(initWorkerFunc);
 }
 
-void RegisterAssetFunc(NativeEngine& engine, std::shared_ptr<AssetManager> assetManager)
+bool GetResourceData(const std::string& filePath, std::vector<uint8_t>& content)
 {
-    auto&& assetFunc = [assetManager](const std::string& uri, std::vector<uint8_t>& content, std::string &ami) {
-        HILOG_INFO("RegisterAssetFunc called");
+    std::ifstream stream(filePath);
+    if (!stream.is_open()) {
+        HILOG_ERROR("GetResourceData failed with file can't open, check uri.");
+        return false;
+    }
+
+    stream.seekg(0, std::ios::end);
+    auto fileLen = stream.tellg();
+    if (fileLen > ASSET_FILE_MAX_SIZE) {
+        HILOG_ERROR("GetResourceData failed with file too large.");
+        stream.close();
+        return false;
+    }
+
+    content.resize(fileLen);
+    stream.seekg(0, std::ios::beg);
+    stream.read(reinterpret_cast<char*>(content.data()), content.size());
+    stream.close();
+
+    return true;
+}
+
+void RegisterAssetFunc(NativeEngine& engine, const std::string& codePath)
+{
+    auto&& assetFunc = [codePath](const std::string& uri, std::vector<uint8_t>& content, std::string &ami) {
+        if (uri.empty()) {
+            HILOG_ERROR("Uri is empty.");
+            return;
+        }
+
+        HILOG_INFO("RegisterAssetFunc called, uri: %{private}s", uri.c_str());
         size_t index = uri.find_last_of(".");
         if (index == std::string::npos) {
             HILOG_ERROR("Invalid uri");
@@ -381,14 +341,11 @@ void RegisterAssetFunc(NativeEngine& engine, std::shared_ptr<AssetManager> asset
         }
 
         std::string fileUri = uri.substr(0, index) + ".abc";
-        std::string targetFilePath;
-        if (!ParseFileUri(assetManager, fileUri, targetFilePath)) {
-            HILOG_ERROR("Parse file uri failed.");
-            return;
-        }
-
-        ami = assetManager->GetAssetPath(targetFilePath) + targetFilePath;
-        if (!GetAssetContentAllowEmpty(assetManager, targetFilePath, content)) {
+        std::string targetFile = codePath;
+        targetFile += (codePath.back() == '/') ? fileUri : "/" + fileUri;
+        ami = targetFile;
+        HILOG_INFO("Get asset, ami: %{private}s", ami.c_str());
+        if (!GetResourceData(ami, content)) {
             HILOG_ERROR("Get asset content failed.");
             return;
         }
@@ -396,25 +353,10 @@ void RegisterAssetFunc(NativeEngine& engine, std::shared_ptr<AssetManager> asset
     engine.SetGetAssetFunc(assetFunc);
 }
 
-void RegisterWorker(NativeEngine& engine, std::shared_ptr<AssetManager> assetManager)
+void RegisterWorker(NativeEngine& engine, const std::string& codePath)
 {
     RegisterInitWorkerFunc(engine);
-    RegisterAssetFunc(engine, assetManager);
-}
-
-std::shared_ptr<AssetManager> GetAssetManager(const std::string& packagePath, const std::vector<std::string>& paths)
-{
-    std::shared_ptr<JsAssetManager> jsAssetManager = std::make_shared<JsAssetManager>();
-
-    if (jsAssetManager && !packagePath.empty()) {
-        auto assetProvider = std::make_shared<JsFileAssetProvider>();
-        if (assetProvider && assetProvider->Initialize(packagePath, paths)) {
-            HILOG_INFO("Push AssetProvider to queue.");
-            jsAssetManager->PushBack(std::move(assetProvider));
-        }
-    }
-
-    return jsAssetManager;
+    RegisterAssetFunc(engine, codePath);
 }
 } // namespace
 
@@ -476,10 +418,7 @@ bool JsRuntime::Initialize(const Options& options)
         moduleManager->SetAppLibPath(packagePath.c_str());
     }
 
-    std::string packagePathStr = options.codePath + "/entry/";
-    std::vector<std::string> assetBasePathStr = { std::string("ets/"), std::string("resources/base/profile/") };
-    assetManager_ = GetAssetManager(packagePathStr, assetBasePathStr);
-    RegisterWorker(*nativeEngine_, assetManager_);
+    RegisterWorker(*nativeEngine_, options.codePath);
 
     return true;
 }
