@@ -73,7 +73,7 @@ const std::string Ability::NAVIGATION_BAR("com.ohos.systemui.navigationbar.MainA
 const std::string Ability::KEYGUARD("com.ohos.screenlock");
 const std::string DEVICE_MANAGER_BUNDLE_NAME = "com.ohos.devicemanagerui";
 const std::string DEVICE_MANAGER_NAME = "com.ohos.devicemanagerui.MainAbility";
-const std::string Ability::DMS_SESSION_ID("missionId");
+const std::string Ability::DMS_SESSION_ID("sessionId");
 const std::string Ability::DMS_ORIGIN_DEVICE_ID("deviceId");
 const int Ability::DEFAULT_DMS_SESSION_ID(0);
 const std::string PERMISSION_REQUIRE_FORM = "ohos.permission.REQUIRE_FORM";
