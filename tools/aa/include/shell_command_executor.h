@@ -53,11 +53,11 @@ private:
     std::string cmd_;
     int64_t timeoutSec_ {0};
     ShellCommandResult cmdResult_;
+    bool isDone_ {false};
 
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
     std::condition_variable cvWork_;
     std::mutex mtxWork_;
-    std::mutex mtxSyncWork_;
     std::mutex mtxCopy_;
 };
 }  // namespace AAFwk
