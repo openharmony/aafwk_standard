@@ -57,6 +57,8 @@ ohos_shared_library("libams") {
     "AMS_LOG_DOMAIN = 0xD001110",
   ]
 
+  defines += [ "ABILITY_COMMAND_FOR_TEST" ]
+
   configs = [ ":appmgr_config" ]
   cflags = []
   if (target_cpu == "arm") {
