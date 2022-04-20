@@ -13,22 +13,17 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_IDLTESTSERVICESTUB_H
-#define OHOS_IDLTESTSERVICESTUB_H
-
-#include <iremote_stub.h>
-
-#include "iidl_test_service.h"
+#ifndef OHOS_IDL_METAPARAMETER_H
+#define OHOS_IDL_METAPARAMETER_H
 
 namespace OHOS {
-class IdlTestServiceStub : public IRemoteStub<IIdlTestService> {
-public:
-    int OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
-
-private:
-    static constexpr int COMMAND_TEST_INT_TRANSACTION = MIN_TRANSACTION_ID + 0;
-    static constexpr int COMMAND_TEST_STRING_TRANSACTION = MIN_TRANSACTION_ID + 1;
+namespace Idl {
+struct MetaParameter {
+    char*               name_;
+    unsigned int        attributes_;
+    int                 typeIndex_;
 };
-} // namespace OHOS
-#endif // OHOS_IDLTESTSERVICESTUB_H
+}
+}
 
+#endif // OHOS_IDL_METAPARAMETER_H

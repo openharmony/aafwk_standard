@@ -16,9 +16,7 @@
 #include "idl_test_service_proxy.h"
 
 namespace OHOS {
-ErrCode IdlTestServiceProxy::TestIntTransaction(
-    /* [in] */ int _data,
-    /* [out] */ int& result)
+ErrCode IdlTestServiceProxy::TestIntTransaction(int _data, int& result)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -47,8 +45,7 @@ ErrCode IdlTestServiceProxy::TestIntTransaction(
     return ERR_OK;
 }
 
-ErrCode IdlTestServiceProxy::TestStringTransaction(
-    /* [in] */ const std::string& _data)
+ErrCode IdlTestServiceProxy::TestStringTransaction(const std::string& _data)
 {
     MessageParcel data;
     MessageParcel reply;

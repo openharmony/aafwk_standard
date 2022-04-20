@@ -16,11 +16,8 @@
 #include "idl_test_service_stub.h"
 
 namespace OHOS {
-int IdlTestServiceStub::OnRemoteRequest(
-    /* [in] */ uint32_t code,
-    /* [in] */ MessageParcel& data,
-    /* [out] */ MessageParcel& reply,
-    /* [in] */ MessageOption& option)
+int IdlTestServiceStub::OnRemoteRequest(uint32_t code, MessageParcel& data,
+    MessageParcel& reply, MessageOption& option)
 {
     if (data.ReadInterfaceToken() != GetDescriptor()) {
         return ERR_TRANSACTION_FAILED;

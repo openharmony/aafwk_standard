@@ -14,6 +14,7 @@
  */
 
 #include "parser/parser.h"
+#include <cstdio>
 #include "ast/ast_array_type.h"
 #include "ast/ast_list_type.h"
 #include "ast/ast_map_type.h"
@@ -21,7 +22,6 @@
 #include "ast/ast_sequenceable_type.h"
 #include "util/logger.h"
 #include "util/string_builder.h"
-#include <cstdio>
 
 namespace OHOS {
 namespace Idl {
@@ -38,20 +38,16 @@ bool Parser::Parse(const String& sourceFile)
         Logger::E(TAG, "Fail to open file \"%s\".", sourceFile.string());
         return false;
     }
-
     ret = ParseFile();
     ret = CheckIntegrity() && ret;
-
     if (!ret) {
         ShowError();
         return false;
     }
-
     if (options_.DoDumpAST()) {
         String astStr = module_->Dump("");
         printf("%s\n", astStr.string());
     }
-
     return ret;
 }
 
@@ -120,10 +116,8 @@ bool Parser::ParseInterface()
             ret = false;
         }
         lexer_.GetToken();
-
         oneway = true;
         hasProperties = true;
-
         token = lexer_.PeekToken();
         if (token != Token::BRACKETS_RIGHT) {
             LogError(Token::IDENTIFIER, String("\"]\" is expected."));
@@ -144,11 +138,8 @@ bool Parser::ParseInterface()
             lexer_.GetToken();
         }
     }
-
     String interfaceFullName;
-
     token = lexer_.PeekToken();
-
     if (token != Token::IDENTIFIER) {
         LogError(token, String::Format("%s is not expected.", lexer_.DumpToken().string()));
         lexer_.SkipCurrentLine();
