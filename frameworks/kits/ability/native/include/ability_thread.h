@@ -395,6 +395,8 @@ public:
     std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
         const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
 private:
+    void DumpAbilityInfoInner(const std::vector<std::string> &params, std::vector<std::string> &info);
+    void DumpOtherInfo(std::vector<std::string> &info);
     /**
      * @description: Create the abilityname.
      *

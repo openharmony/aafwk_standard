@@ -829,5 +829,14 @@ AppExecFwk::ElementName AbilityManagerClient::GetTopAbility()
 
     return abms->GetTopAbility();
 }
+
+ErrCode AbilityManagerClient::DumpAbilityInfoDone(std::vector<std::string> &infos,
+    const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("DumpAbilityInfoDone begin.");
+    auto abms = GetAbilityManager();
+    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    return abms->DumpAbilityInfoDone(infos, callerToken);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
