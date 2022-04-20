@@ -36,12 +36,14 @@ config("ability_manager_public_config") {
     "${innerkits_path}/dataobs_manager/include",
   ]
 
+  defines = [ "ABILITY_COMMAND_FOR_TEST" ]
+
   if (ability_runtime_graphics) {
     include_dirs += [
       "//foundation/multimedia/image_standard/interfaces/innerkits/include",
     ]
 
-    defines = [ "SUPPORT_GRAPHICS" ]
+    defines += [ "SUPPORT_GRAPHICS" ]
   }
 
   cflags = []
