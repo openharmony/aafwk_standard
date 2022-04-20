@@ -23,7 +23,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "asset_manager.h"
 #include "native_engine/native_engine.h"
 
 #include "runtime.h"
@@ -78,7 +77,6 @@ protected:
     uint32_t callbackId_ = 0;
 
     std::unordered_map<std::string, NativeReference*> modules_;
-    std::shared_ptr<AssetManager> assetManager_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS
