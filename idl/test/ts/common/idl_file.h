@@ -23,7 +23,7 @@ namespace Idl {
 namespace TestCommon {
 const std::string LICENSE_CONTENT =
 "/*\n"
-" * Copyright (C) 2022 Huawei Device Co., Ltd.\n"
+" * Copyright (C) 2022 Device Co., Ltd.\n"
 " * Licensed under the Apache License, Version 2.0 (the \"License\");\n"
 " * you may not use this file except in compliance with the License.\n"
 " * You may obtain a copy of the License at\n"
