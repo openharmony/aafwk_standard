@@ -442,6 +442,16 @@ void AppMgrService::AttachRenderProcess(const sptr<IRemoteObject> &scheduler)
     handler_->PostTask(fun, TASK_ATTACH_RENDER_PROCESS);
 }
 
+int32_t AppMgrService::GetRenderProcessTerminationStatus(pid_t renderPid, int &status)
+{
+    if (!IsReady()) {
+        HILOG_ERROR("GetRenderProcessTerminationStatus failed, AppMgrService not ready.");
+        return ERR_INVALID_OPERATION;
+    }
+
+    return appMgrServiceInner_->GetRenderProcessTerminationStatus(renderPid, status);
+}
+
 void AppMgrService::PostANRTaskByProcessID(const pid_t pid)
 {
     HILOG_DEBUG("PostANRTaskByProcessID called.");
