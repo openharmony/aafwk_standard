@@ -607,11 +607,6 @@ int AbilitySchedulerStub::DumpAbilityInfoInner(MessageParcel &data, MessageParce
 
     DumpAbilityInfo(params, infos);
 
-    reply.WriteInt32(infos.size());
-    for (auto stack : infos) {
-        reply.WriteString16(Str8ToStr16(stack));
-    }
-
     return NO_ERROR;
 }
 int AbilitySchedulerStub::CallRequestInner(MessageParcel &data, MessageParcel &reply)

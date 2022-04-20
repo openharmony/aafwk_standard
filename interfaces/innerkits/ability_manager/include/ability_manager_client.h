@@ -680,6 +680,15 @@ public:
     ErrCode FreeInstallAbilityFromRemote(const Want &want, const sptr<IRemoteObject> &callback, int32_t userId,
         int requestCode = DEFAULT_INVAL_VALUE);
 
+    /**
+     * Called when client complete dump.
+     *
+     * @param infos The dump info.
+     * @param callerToken The caller ability token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode DumpAbilityInfoDone(std::vector<std::string> &infos, const sptr<IRemoteObject> &callerToken);
+
 private:
     class AbilityMgrDeathRecipient : public IRemoteObject::DeathRecipient {
     public:

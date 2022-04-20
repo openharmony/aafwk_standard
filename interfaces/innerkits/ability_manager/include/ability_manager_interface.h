@@ -574,6 +574,17 @@ public:
     #endif
 
     /**
+     * Called when client complete dump.
+     *
+     * @param infos The dump info.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DumpAbilityInfoDone(std::vector<std::string> &infos, const sptr<IRemoteObject> &callerToken)
+    {
+        return 0;
+    }
+
+    /**
      * Call free install from remote.
      *
      * @param want, the want of the ability to start.
@@ -757,6 +768,9 @@ public:
 
         // ipc id for set mission icon (58)
         SET_MISSION_ICON,
+
+        // dump ability info done (59)
+        DUMP_ABILITY_INFO_DONE,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)
