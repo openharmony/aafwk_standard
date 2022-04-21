@@ -23,20 +23,16 @@
 namespace OHOS {
 class IdlTestServiceProxy : public IRemoteProxy<IIdlTestService> {
 public:
-    explicit IdlTestServiceProxy(
-        /* [in] */ const sptr<IRemoteObject>& remote)
+    explicit IdlTestServiceProxy(const sptr<IRemoteObject>& remote)
         : IRemoteProxy<IIdlTestService>(remote)
     {}
 
     virtual ~IdlTestServiceProxy()
     {}
 
-    ErrCode TestIntTransaction(
-        /* [in] */ int _data,
-        /* [out] */ int& result) override;
+    ErrCode TestIntTransaction(int _data, int& result) override;
 
-    ErrCode TestStringTransaction(
-        /* [in] */ const std::string& _data) override;
+    ErrCode TestStringTransaction(const std::string& _data) override;
 
 private:
     static constexpr int COMMAND_TEST_INT_TRANSACTION = MIN_TRANSACTION_ID + 0;

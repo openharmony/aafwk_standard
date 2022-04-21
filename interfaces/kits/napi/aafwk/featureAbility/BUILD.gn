@@ -17,16 +17,16 @@ import("//foundation/aafwk/standard/feature.gni")
 ohos_shared_library("featureability") {
   include_dirs = [
     "./",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/common/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/dataability/include",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/include",
   ]
 
   sources = [
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/src/js_utils.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/src/napi_data_ability_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/src/napi_result_set.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/common/src/js_utils.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/dataability/src/napi_data_ability_predicates.cpp",
+    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/src/napi_result_set.cpp",
     "feature_ability.cpp",
     "feature_ability_constant.cpp",
     "napi_context.cpp",

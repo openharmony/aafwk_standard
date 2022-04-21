@@ -854,16 +854,32 @@ int AbilityManagerService::ConnectAbility(
         return result;
     }
 
-    if (CheckIfOperateRemote(want)) {
+    Want abilityWant = want;
+    std::string uri = abilityWant.GetUri().ToString();
+    if (!uri.empty()) {
+        // if the want include uri, it may only has uri information. it is probably a datashare extension.
+        HILOG_INFO("%{public}s, called. uri:%{public}s, userId %{public}d", __func__, uri.c_str(), userId);
+        AppExecFwk::ExtensionAbilityInfo extensionInfo;
+        auto bms = GetBundleManager();
+        CHECK_POINTER_AND_RETURN(bms, ERR_INVALID_VALUE);
+        bool queryResult = IN_PROCESS_CALL(bms->QueryExtensionAbilityInfoByUri(uri, userId, extensionInfo));
+        if (!queryResult || extensionInfo.name.empty() || extensionInfo.bundleName.empty()) {
+            HILOG_ERROR("Invalid extension ability info.");
+            return ERR_INVALID_VALUE;
+        }
+        abilityWant.SetElementName(extensionInfo.bundleName, extensionInfo.name);
+    }
+
+    if (CheckIfOperateRemote(abilityWant)) {
         HILOG_INFO("AbilityManagerService::ConnectAbility. try to ConnectRemoteAbility");
-        return ConnectRemoteAbility(want, connect->AsObject());
+        return ConnectRemoteAbility(abilityWant, connect->AsObject());
     }
 
     if (callerToken != nullptr && callerToken->GetObjectDescriptor() != u"ohos.aafwk.AbilityToken") {
         HILOG_INFO("%{public}s invalid Token.", __func__);
-        return ConnectLocalAbility(want, validUserId, connect, nullptr);
+        return ConnectLocalAbility(abilityWant, validUserId, connect, nullptr);
     }
-    return ConnectLocalAbility(want, validUserId, connect, callerToken);
+    return ConnectLocalAbility(abilityWant, validUserId, connect, callerToken);
 }
 
 int AbilityManagerService::IsConnectFreeInstall(
@@ -3071,6 +3087,7 @@ sptr<IRemoteObject> AbilityManagerService::GetAbilityTokenByMissionId(int32_t mi
 
 void AbilityManagerService::StartingSettingsDataAbility()
 {
+#ifdef SUPPORT_GRAPHICS
     HILOG_DEBUG("%{public}s", __func__);
     auto bms = GetBundleManager();
     CHECK_POINTER_IS_NULLPTR(bms);
@@ -3098,6 +3115,7 @@ void AbilityManagerService::StartingSettingsDataAbility()
     // start settings data ability
     Uri uri(abilityUri);
     (void)AcquireDataAbility(uri, true, nullptr);
+#endif
 }
 
 int AbilityManagerService::StartRemoteAbilityByCall(const Want &want, const sptr<IRemoteObject> &connect)
@@ -3384,6 +3402,18 @@ int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>&
     return ERR_OK;
 }
 
+int AbilityManagerService::RegisterWindowHandler(const sptr<IWindowHandler> &handler)
+{
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return 0;
+    }
+    windowHandler_ = handler;
+    HILOG_INFO("window: AbilityManagerService register windows handler success.");
+    return ERR_OK;
+}
+
 int32_t AbilityManagerService::GetMissionSnapshot(const std::string& deviceId, int32_t missionId,
     MissionSnapshot& missionSnapshot)
 {
@@ -3538,6 +3568,7 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot
     HILOG_INFO("StartSystemAbilityByUser, userId:%{public}d, currentUserId:%{public}d", userId, GetUserId());
     ConnectBmsService();
 
+#ifdef SUPPORT_GRAPHICS
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
         StartHighestPriorityAbility(isBoot);
@@ -3551,6 +3582,7 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot
     if (amsConfigResolver_->GetStartScreenLockState()) {
         StartingScreenLockAbility();
     }
+#endif
 }
 
 void AbilityManagerService::InitConnectManager(int32_t userId, bool switchUser)

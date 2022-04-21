@@ -77,7 +77,8 @@ void AppkitNativeModuleTestFirst::TearDown(void)
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -143,7 +144,8 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_0100, Function | 
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -254,7 +256,8 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_0500, Function | 
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -288,7 +291,8 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_0600, Function | 
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -314,7 +318,7 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_0700, Function | 
     OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->RegisterSystemAbility(APP_MGR_SERVICE_ID, AppMgrObject_);
     runner_->Run();
     usleep(USleepTime);
-
+    
     AppLaunchData lanchdate;
     ApplicationInfo appinf;
     ProcessInfo processing("TestProcess", TestProcessInfo);
@@ -322,11 +326,12 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_0700, Function | 
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -356,7 +361,8 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_0800, Function | 
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -394,7 +400,8 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_0900, Function | 
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -402,7 +409,7 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_0900, Function | 
 
     usleep(USleepTime);
 
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -432,7 +439,8 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_1000, Function | 
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -470,7 +478,8 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_1100, Function | 
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -482,7 +491,7 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_1100, Function | 
 
     usleep(USleepTime);
 
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 
@@ -512,7 +521,8 @@ HWTEST_F(AppkitNativeModuleTestFirst, App_ApplicationLifeCycle_1200, Function | 
     appinf.moduleSourceDirs.push_back("/hos/lib/libabilitydemo_native.z.so");
     lanchdate.SetApplicationInfo(appinf);
     lanchdate.SetProcessInfo(processing);
-    mockAppMgr->ScheduleLaunchApplication(lanchdate);
+    Configuration config;
+    mockAppMgr->ScheduleLaunchApplication(lanchdate, config);
 
     usleep(USleepTime);
 

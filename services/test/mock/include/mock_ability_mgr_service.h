@@ -163,6 +163,11 @@ public:
         return 0;
     }
 
+    virtual int RegisterWindowHandler(const sptr<IWindowHandler>& handler) override
+    {
+        return 0;
+    }
+
     virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
         bool imAStabilityTest) override
     {

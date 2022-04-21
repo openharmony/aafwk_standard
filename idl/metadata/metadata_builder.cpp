@@ -34,16 +34,19 @@ std::shared_ptr<MetaComponent> MetadataBuilder::Build()
     }
 
     size_ = CalculateMetadataSize();
-    void* metadata =  calloc(size_, 1);
-    if (metadata == nullptr) {
-        Logger::E(TAG, "Out of memory.");
+    if (size_ > 0) {
+        void* metadata =  calloc(size_, 1);
+        if (metadata == nullptr) {
+            Logger::E(TAG, "Out of memory.");
+            return nullptr;
+        }
+        metaComponent_.reset(
+            new(metadata) MetaComponent, [](MetaComponent* p) { free(p); });
+
+        WriteMetadata(reinterpret_cast<uintptr_t>(metadata));
+    } else {
         return nullptr;
     }
-
-    metaComponent_.reset(
-        new(metadata) MetaComponent, [](MetaComponent* p) { free(p); });
-
-    WriteMetadata(reinterpret_cast<uintptr_t>(metadata));
 
     return metaComponent_;
 }

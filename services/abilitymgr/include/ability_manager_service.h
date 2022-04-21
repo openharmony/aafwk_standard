@@ -588,6 +588,8 @@ public:
 
     virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) override;
 
+    virtual int RegisterWindowHandler(const sptr<IWindowHandler>& handler) override;
+
     virtual int32_t GetMissionSnapshot(const std::string& deviceId, int32_t missionId,
         MissionSnapshot& snapshot) override;
 
@@ -1029,6 +1031,7 @@ private:
 
     std::unordered_map<int, std::shared_ptr<MissionListManager>> missionListManagers_;
     std::shared_ptr<MissionListManager> currentMissionListManager_;
+    sptr<IWindowHandler> windowHandler_;
     std::shared_ptr<UserController> userController_;
     sptr<AppExecFwk::IAbilityController> abilityController_ = nullptr;
     bool controllerIsAStabilityTest_ = false;

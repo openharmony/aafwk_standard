@@ -24,12 +24,9 @@ class IIdlTestService : public IRemoteBroker {
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.IIdlTestService");
 
-    virtual ErrCode TestIntTransaction(
-        /* [in] */ int _data,
-        /* [out] */ int& result) = 0;
+    virtual ErrCode TestIntTransaction(int _data, int& result) = 0;
 
-    virtual ErrCode TestStringTransaction(
-        /* [in] */ const std::string& _data) = 0;
+    virtual ErrCode TestStringTransaction(const std::string& _data) = 0;
 };
 } // namespace OHOS
 #endif // OHOS_IIDLTESTSERVICE_H

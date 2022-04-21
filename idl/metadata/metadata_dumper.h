@@ -16,7 +16,7 @@
 #ifndef OHOS_IDL_METADATADUMPER_H
 #define OHOS_IDL_METADATADUMPER_H
 
-#include "metadata/metadata.h"
+#include "metadata/meta_component.h"
 #include "util/string.h"
 #include "util/string_builder.h"
 
