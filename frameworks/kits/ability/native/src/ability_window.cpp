@@ -105,19 +105,6 @@ void AbilityWindow::OnPostAbilityActive()
         HILOG_ERROR("AbilityWindow::OnPostAbilityActive window not attached.");
         return;
     }
-
-    if (windowScene_) {
-        HILOG_INFO("%{public}s begin windowScene_->GoForeground.", __func__);
-        windowScene_->GoForeground();
-        HILOG_INFO("%{public}s end windowScene_->GoForeground.", __func__);
-
-        HILOG_INFO("%{public}s begin windowScene_->RequestFocus.", __func__);
-        if (!(winType_ >= Rosen::WindowType::SYSTEM_WINDOW_BASE && winType_ < Rosen::WindowType::SYSTEM_WINDOW_END)) {
-            windowScene_->RequestFocus();
-        }
-        HILOG_INFO("%{public}s end windowScene_->RequestFocus.", __func__);
-    }
-
     HILOG_INFO("AbilityWindow::OnPostAbilityActive end.");
 }
 
