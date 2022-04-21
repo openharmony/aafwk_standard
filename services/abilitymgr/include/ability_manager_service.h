@@ -582,13 +582,16 @@ public:
 #ifdef SUPPORT_GRAPHICS
     virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
         const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
+
+    virtual int RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler) override;
+
+    sptr<IWindowManagerServiceHandler> GetWindowHander();
 #endif
 
     void ClearUserData(int32_t userId);
 
     virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) override;
 
-    virtual int RegisterWindowHandler(const sptr<IWindowHandler>& handler) override;
 
     virtual int32_t GetMissionSnapshot(const std::string& deviceId, int32_t missionId,
         MissionSnapshot& snapshot) override;
@@ -1031,7 +1034,9 @@ private:
 
     std::unordered_map<int, std::shared_ptr<MissionListManager>> missionListManagers_;
     std::shared_ptr<MissionListManager> currentMissionListManager_;
-    sptr<IWindowHandler> windowHandler_;
+#ifdef SUPPORT_GRAPHICS
+    sptr<IWindowManagerServiceHandler> wmsHandler_;
+#endif
     std::shared_ptr<UserController> userController_;
     sptr<AppExecFwk::IAbilityController> abilityController_ = nullptr;
     bool controllerIsAStabilityTest_ = false;

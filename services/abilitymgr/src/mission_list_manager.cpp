@@ -23,6 +23,7 @@
 #include "hilog_wrapper.h"
 #include "mission_info_mgr.h"
 #include "hisysevent.h"
+#include "window_info.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -183,6 +184,27 @@ int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromL
     if (startOptions != nullptr) {
         targetAbilityRecord->SetWindowMode(startOptions->GetWindowMode());
     }
+
+#ifdef SUPPORT_GRAPHICS
+    auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
+    if (abilityMgr) {
+        auto windowHandler = abilityMgr->GetWindowHander();
+        if (windowHandler) {
+            WindowTransitionInfo toInfo;
+            auto abilityInfo = targetAbilityRecord->GetAbilityInfo();
+            toInfo.abilityName_ = abilityInfo.name;
+            toInfo.bundleName_ = abilityInfo.bundleName;
+            if (startOptions != nullptr) {
+                toInfo.mode_ =  WindowMode(startOptions->GetWindowMode());
+                toInfo.displayId_ = DisplayId(startOptions->GetDisplayID());
+            }
+            toInfo.abilityToken_ = targetAbilityRecord->GetToken();
+            WindowTransitionInfo fromInfo;
+            windowHandler->NotifyWindowTransition(fromInfo, toInfo);
+        }
+    }
+#endif
+
     // schedule target ability to foreground.
     targetAbilityRecord->ProcessForegroundAbility();
     HILOG_DEBUG("SetMovingState, missionId: %{public}d", missionId);
@@ -245,6 +267,46 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
         HILOG_ERROR("Failed to get mission or record.");
         return ERR_INVALID_VALUE;
     }
+
+#ifdef SUPPORT_GRAPHICS
+    auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
+    if (abilityMgr) {
+        auto windowHandler = abilityMgr->GetWindowHander();
+        if (windowHandler) {
+            WindowTransitionInfo fromInfo;
+            if (callerAbility) {
+                auto abilityInfo = callerAbility->GetAbilityInfo();
+                fromInfo.abilityName_ = abilityInfo.name;
+                fromInfo.bundleName_ = abilityInfo.bundleName;
+                fromInfo.abilityToken_ = callerAbility->GetToken();
+            }
+            WindowTransitionInfo toInfo;
+            auto abilityInfo = abilityRequest.abilityInfo;
+            toInfo.abilityName_ = abilityInfo.name;
+            toInfo.bundleName_ = abilityInfo.bundleName;
+            auto abilityStartSetting = abilityRequest.startSetting;
+            if (abilityStartSetting) {
+                int32_t mode = std::stoi(abilityStartSetting->GetProperty(AbilityStartSetting::WINDOW_MODE_KEY));
+                toInfo.mode_ = WindowMode(mode);
+                int32_t displayId =
+                    std::stoi(abilityStartSetting->GetProperty(AbilityStartSetting::WINDOW_DISPLAY_ID_KEY));
+                toInfo.displayId_ = DisplayId(displayId);
+            } else {
+                int32_t mode = abilityRequest.want.GetIntParam(Want::PARAM_RESV_WINDOW_MODE, -1);
+                int32_t displayId = abilityRequest.want.GetIntParam(Want::PARAM_RESV_DISPLAY_ID, -1);
+                if (mode != -1) {
+                    toInfo.mode_ = WindowMode(mode);
+                }
+                if (displayId != -1) {
+                    toInfo.displayId_ = DisplayId(displayId);
+                }
+            }
+            toInfo.abilityToken_ = targetAbilityRecord->GetToken();
+            windowHandler->NotifyWindowTransition(fromInfo, toInfo);
+        }
+    }
+#endif
+
     if (abilityRequest.IsContinuation()) {
         targetAbilityRecord->SetLaunchReason(LaunchReason::LAUNCHREASON_CONTINUATION);
     } else {
