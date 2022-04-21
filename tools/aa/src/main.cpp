@@ -20,10 +20,10 @@
 
 int main(int argc, char *argv[])
 {
-    if (strcmp(argv[0], "aa") == 0) {
+    if (strcmp(argv[0], "aa") == 0 || strcmp(argv[0], "/system/bin/aa") == 0) {
         OHOS::AAFwk::AbilityManagerShellCommand cmd(argc, argv);
         std::cout << cmd.ExecCommand();
-    } else {
+    } else if (strcmp(argv[0], "ability_tool") == 0 || strcmp(argv[0], "/system/bin/ability_tool") == 0) {
         OHOS::AAFwk::AbilityToolCommand cmd(argc, argv);
         std::cout << cmd.ExecCommand();
     }
