@@ -39,7 +39,7 @@ ohos_systemtest("ams_check_service") {
   include_dirs = [
     "//foundation/distributedschedule/safwk/services/safwk/include",
     "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/include",
-    "//base/notification/ces_standard/test/systemtest/common/resource",
+    "//base/notification/common_event_service/test/systemtest/common/resource",
   ]
 
   sources = [
@@ -78,7 +78,7 @@ ohos_systemtest("ams_check_service") {
 
   external_deps = [
     "bundle_framework:appexecfwk_core",
-    "ces_standard:cesfwk_innerkits",
+    "common_event_service:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
