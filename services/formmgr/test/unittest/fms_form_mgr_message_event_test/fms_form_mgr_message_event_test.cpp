@@ -23,6 +23,7 @@
 #define private public
 #include "form_mgr.h"
 #undef private
+#include "form_mgr_errors.h"
 #include "form_mgr_service.h"
 #include "if_system_ability_manager.h"
 #include "inner_bundle_info.h"

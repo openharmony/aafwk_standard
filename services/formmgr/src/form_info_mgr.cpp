@@ -21,6 +21,7 @@
 #include "extension_form_profile.h"
 #include "form_bms_helper.h"
 #include "form_info_storage_mgr.h"
+#include "form_mgr_errors.h"
 #include "form_util.h"
 #include "hilog_wrapper.h"
 #include "in_process_call_wrapper.h"

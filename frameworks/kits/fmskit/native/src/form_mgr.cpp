@@ -19,6 +19,7 @@
 
 #include "appexecfwk_errors.h"
 #include "form_errors.h"
+#include "form_mgr_errors.h"
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"

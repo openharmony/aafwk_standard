@@ -46,6 +46,7 @@
 #include "display_type.h"
 #include "form_host_client.h"
 #include "form_mgr.h"
+#include "form_mgr_errors.h"
 #include "form_provider_client.h"
 #endif
 #include "if_system_ability_manager.h"

@@ -23,6 +23,7 @@
 #include "form_constants.h"
 #include "form_data_mgr.h"
 #include "form_mgr_adapter.h"
+#include "form_mgr_errors.h"
 #include "form_mgr_service.h"
 #include "form_timer_mgr.h"
 #undef private

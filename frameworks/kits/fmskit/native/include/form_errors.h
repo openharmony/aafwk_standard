@@ -19,6 +19,8 @@
 #include <map>
 #include <singleton.h>
 
+#include "errors.h"
+
 namespace OHOS {
 namespace AppExecFwk {
 /**

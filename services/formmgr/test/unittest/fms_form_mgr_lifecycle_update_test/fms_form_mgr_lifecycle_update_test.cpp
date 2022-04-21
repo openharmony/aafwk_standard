@@ -22,6 +22,7 @@
 #define private public
 #include "form_data_mgr.h"
 #include "form_mgr.h"
+#include "form_mgr_errors.h"
 #include "form_mgr_service.h"
 #undef private
 #include "if_system_ability_manager.h"

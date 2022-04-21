@@ -20,6 +20,7 @@
 #include "form_data_mgr.h"
 #include "form_db_cache.h"
 #include "form_db_info.h"
+#include "form_mgr_errors.h"
 #include "form_provider_mgr.h"
 #include "hilog_wrapper.h"
 

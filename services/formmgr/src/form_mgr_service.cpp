@@ -30,6 +30,7 @@
 #include "form_db_cache.h"
 #include "form_info_mgr.h"
 #include "form_mgr_adapter.h"
+#include "form_mgr_errors.h"
 #include "form_task_mgr.h"
 #include "form_timer_mgr.h"
 #include "hilog_wrapper.h"

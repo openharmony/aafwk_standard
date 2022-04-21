@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "form_mgr_errors.h"
 #include "form_storage_mgr.h"
 #include "hilog_wrapper.h"
 #include "kvstore_death_recipient_callback.h"
