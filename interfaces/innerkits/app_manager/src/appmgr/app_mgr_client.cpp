@@ -527,7 +527,7 @@ void AppMgrClient::PostANRTaskByProcessID(const pid_t pid)
     service->PostANRTaskByProcessID(pid);
 }
 
-sptr<IRemoteObject> AppMgrClient::GetRemoteObject() 
+sptr<IRemoteObject> AppMgrClient::GetRemoteObject()
 {
     return mgrHolder_->GetRemoteObject();
 }
