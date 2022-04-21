@@ -21,10 +21,12 @@ config("appmgr_sdk_config") {
     "${innerkits_path}/ability_manager/include",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
   ]
+  defines = [ "ABILITY_COMMAND_FOR_TEST" ]
 }
 
 config("appexecfwk_core_config") {
   include_dirs = [ "include" ]
+  defines = [ "ABILITY_COMMAND_FOR_TEST" ]
 }
 
 ohos_shared_library("app_manager") {
