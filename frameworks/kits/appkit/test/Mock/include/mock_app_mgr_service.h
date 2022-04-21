@@ -38,8 +38,23 @@ public:
     MOCK_METHOD2(GetSystemMemoryAttr, void(SystemMemoryAttr &memoryInfo, std::string &strConfig));
     MOCK_METHOD1(AddAbilityStageDone, void(const int32_t recordId));
     MOCK_METHOD1(StartupResidentProcess, void(const std::vector<AppExecFwk::BundleInfo> &bundleInfos));
-
-    virtual void AttachApplication(const sptr<IRemoteObject> &app) override
+    MOCK_METHOD2(GetProcessRunningInfosByUserId, int(std::vector<RunningProcessInfo> &info, int32_t userId));
+    MOCK_METHOD4(StartUserTestProcess, int(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
+        const BundleInfo &bundleInfo, int32_t userId));
+    MOCK_METHOD3(FinishUserTest, int(const std::string &msg, const int64_t &resultCode,
+        const std::string &bundleName));
+    MOCK_METHOD3(ScheduleAcceptWantDone, void(const int32_t recordId, const AAFwk::Want &want,
+        const std::string &flag));
+    MOCK_METHOD2(GetAbilityRecordsByProcessID, int(const int pid, std::vector<sptr<IRemoteObject>> &tokens));
+    #ifdef ABILITY_COMMAND_FOR_TEST
+    MOCK_METHOD0(BlockAppService, int());
+    #endif
+    MOCK_METHOD4(StartRenderProcess, int(const std::string &renderParam, int32_t ipcFd,
+        int32_t sharedFd, pid_t &renderPid));
+    MOCK_METHOD1(AttachRenderProcess, void(const sptr<IRemoteObject> &renderScheduler));
+    MOCK_METHOD1(PostANRTaskByProcessID, void(const pid_t pid));
+    
+    void AttachApplication(const sptr<IRemoteObject> &app)
     {
         GTEST_LOG_(INFO) << "MockAppMgrService::AttachApplication called";
         Attached_ = true;
@@ -88,7 +103,7 @@ public:
         return 0;
     }
 
-    virtual int IsBackgroundRunningRestricted(const std::string &appName) override
+    int IsBackgroundRunningRestricted(const std::string &appName)
     {
         return 0;
     };
@@ -134,7 +149,6 @@ public:
             return;
         }
         AppProcessData processData;
-        processData.appName = "";
         processData.pid = 1;
         processData.appState = ApplicationState::APP_STATE_BEGIN;
         callback_->OnAppStateChanged(processData);
@@ -156,10 +170,10 @@ public:
         }
     }
 
-    void ScheduleLaunchApplication(const AppLaunchData &lanchdata)
+    void ScheduleLaunchApplication(const AppLaunchData &lanchdata, const Configuration & config)
     {
         if (Appthread_ != nullptr) {
-            Appthread_->ScheduleLaunchApplication(lanchdata);
+            Appthread_->ScheduleLaunchApplication(lanchdata, config);
         }
     }
 
