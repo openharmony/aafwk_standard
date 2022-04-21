@@ -34,21 +34,17 @@ ShellCommandResult ShellCommandExecutor::WaitWorkDone()
 {
     HILOG_INFO("enter");
 
-    std::unique_lock<std::mutex> syncLock(mtxSyncWork_);
-
     if (!DoWork()) {
         HILOG_INFO("Failed to execute command : \"%{public}s\"", cmd_.data());
         return cmdResult_;
     }
 
     std::unique_lock<std::mutex> workLock(mtxWork_);
-    syncLock.unlock();
 
+    auto condition = [this]() { return isDone_; };
     if (timeoutSec_ <= 0) {
-        while (timeoutSec_ <= 0) {
-            cvWork_.wait(workLock);
-        }
-    } else if (cvWork_.wait_for(workLock, timeoutSec_ * 1s) == std::cv_status::timeout) {
+        cvWork_.wait(workLock, condition);
+    } else if (!cvWork_.wait_for(workLock, timeoutSec_ * 1s, condition)) {
         HILOG_WARN("Command execution timed out! cmd : \"%{public}s\", timeoutSec : %{public}" PRId64,
             cmd_.data(), timeoutSec_);
         std::cout << "Warning! Command execution timed out! cmd : " << cmd_ << ", timeoutSec : " << timeoutSec_
@@ -86,12 +82,14 @@ bool ShellCommandExecutor::DoWork()
     handler_->PostTask([this, self]() {
         HILOG_INFO("DoWork async task begin, cmd : \"%{public}s\"", cmd_.data());
 
-        std::unique_lock<std::mutex> syncLock(mtxSyncWork_);
-
         FILE *file = popen(cmd_.c_str(), "r");
         if (!file) {
             HILOG_ERROR("Failed to call popen, cmd : \"%{public}s\"", cmd_.data());
 
+            {
+                std::unique_lock<std::mutex> workLock(mtxWork_);
+                isDone_ = true;
+            }
             cvWork_.notify_one();
             HILOG_INFO("DoWork async task end, cmd : \"%{public}s\"", cmd_.data());
             return;
@@ -109,6 +107,10 @@ bool ShellCommandExecutor::DoWork()
         cmdResult_.exitCode = pclose(file);
         file = nullptr;
 
+        {
+            std::unique_lock<std::mutex> workLock(mtxWork_);
+            isDone_ = true;
+        }
         cvWork_.notify_one();
         HILOG_INFO("DoWork async task end, cmd : \"%{public}s\"", cmd_.data());
     });
