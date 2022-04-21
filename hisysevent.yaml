@@ -23,7 +23,8 @@ LIFECYCLE_TIMEOUT:
 
 JS_ERROR:
   __BASE: {type: FAULT, level: CRITICAL, tag: STABILITY, desc: js runtime error}
-  MODULE: {type: STRING, desc: app package name}
+  MODULE: {type: STRING, desc: module name}
+  PACKAGE_NAME: {type: STRING, desc: app package name}
   VERSION: {type: STRING, desc: app version}
   REASON: {type: STRING, desc: error type}
   PAGE: {type: STRING, desc: current running ability}
