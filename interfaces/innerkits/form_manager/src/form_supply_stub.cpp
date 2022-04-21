@@ -15,6 +15,7 @@
 
 #include "appexecfwk_errors.h"
 #include "form_constants.h"
+#include "form_mgr_errors.h"
 #include "form_supply_stub.h"
 #include "hilog_wrapper.h"
 #include "ipc_skeleton.h"

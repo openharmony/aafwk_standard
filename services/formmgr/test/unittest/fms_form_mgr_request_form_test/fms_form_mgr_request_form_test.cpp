@@ -21,6 +21,7 @@
 #define private public
 #include "form_mgr.h"
 #undef private
+#include "form_mgr_errors.h"
 #include "form_mgr_service.h"
 #include "form_ams_helper.h"
 #include "form_bms_helper.h"

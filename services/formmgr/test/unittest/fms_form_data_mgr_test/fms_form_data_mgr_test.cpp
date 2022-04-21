@@ -22,6 +22,7 @@
 #include "form_data_mgr.h"
 #undef private
 #include "form_constants.h"
+#include "form_mgr_errors.h"
 #include "form_record.h"
 #include "hilog_wrapper.h"
 #include "mock_form_host_client.h"
