@@ -3285,6 +3285,23 @@ int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token,
 
     return missionListManager->SetMissionIcon(token, icon);
 }
+
+int AbilityManagerService::RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler> &handler)
+{
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return 0;
+    }
+    wmsHandler_ = handler;
+    HILOG_INFO("window: AbilityManagerService register windows handler success.");
+    return ERR_OK;
+}
+
+sptr<IWindowManagerServiceHandler> AbilityManagerService::GetWindowHander()
+{
+    return wmsHandler_;
+}
 #endif
 
 int AbilityManagerService::StartUser(int userId)
@@ -3397,18 +3414,6 @@ int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>&
     }
     currentMissionListManager_->RegisterSnapshotHandler(handler);
     HILOG_INFO("snapshot: AbilityManagerService register snapshot handler success.");
-    return ERR_OK;
-}
-
-int AbilityManagerService::RegisterWindowHandler(const sptr<IWindowHandler> &handler)
-{
-    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
-    if (!isSaCall) {
-        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
-        return 0;
-    }
-    windowHandler_ = handler;
-    HILOG_INFO("window: AbilityManagerService register windows handler success.");
     return ERR_OK;
 }
 

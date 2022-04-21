@@ -1753,6 +1753,26 @@ int AbilityManagerProxy::SetMissionIcon(const sptr<IRemoteObject> &token,
     }
     return reply.ReadInt32();
 }
+
+int AbilityManagerProxy::RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteRemoteObject(handler->AsObject())) {
+        HILOG_ERROR("window: handler write failed.");
+        return INNER_ERR;
+    }
+    auto error = Remote()->SendRequest(IAbilityManager::REGISTER_WINDOW_HANDLER, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("window: send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
 #endif
 
 int AbilityManagerProxy::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
@@ -2003,26 +2023,6 @@ int AbilityManagerProxy::RegisterSnapshotHandler(const sptr<ISnapshotHandler>& h
     auto error = Remote()->SendRequest(IAbilityManager::REGISTER_SNAPSHOT_HANDLER, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("snapshot: send request error: %{public}d", error);
-        return error;
-    }
-    return reply.ReadInt32();
-}
-
-int AbilityManagerProxy::RegisterWindowHandler(const sptr<IWindowHandler>& handler)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    if (!WriteInterfaceToken(data)) {
-        return INNER_ERR;
-    }
-    if (!data.WriteRemoteObject(handler->AsObject())) {
-        HILOG_ERROR("window: handler write failed.");
-        return INNER_ERR;
-    }
-    auto error = Remote()->SendRequest(IAbilityManager::REGISTER_WINDOW_HANDLER, data, reply, option);
-    if (error != NO_ERROR) {
-        HILOG_ERROR("window: send request error: %{public}d", error);
         return error;
     }
     return reply.ReadInt32();
