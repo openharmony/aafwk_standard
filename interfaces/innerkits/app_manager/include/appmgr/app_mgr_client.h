@@ -269,6 +269,12 @@ public:
 
 private:
     void SetServiceManager(std::unique_ptr<AppServiceManager> serviceMgr);
+    /**
+     * This function is implemented for the Unittests only. 
+     *
+     * @return Returns private variable remote_ of the inner class aka "AppMgrRemoteHolder".  
+     */
+    sptr<IRemoteObject> GetRemoteObject();
 
 private:
     std::shared_ptr<AppMgrRemoteHolder> mgrHolder_;
