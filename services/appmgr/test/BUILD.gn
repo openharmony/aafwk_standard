@@ -118,7 +118,6 @@ group("unittest") {
     "unittest/ams_ability_running_record_test:unittest",
     "unittest/ams_app_death_recipient_test:unittest",
     "unittest/ams_app_life_cycle_test:unittest",
-
     "unittest/ams_app_mgr_client_test:unittest",
     "unittest/ams_app_running_record_test:unittest",
     "unittest/ams_app_state_callback_test:unittest",
