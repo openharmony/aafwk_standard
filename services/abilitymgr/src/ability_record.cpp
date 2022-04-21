@@ -868,16 +868,7 @@ void AbilityRecord::DumpAbilityState(
     }
 
     // add dump client info
-    if (isClient && scheduler_ && isReady_) {
-        scheduler_->DumpAbilityInfo(params, info);
-        if (!params.empty()) {
-            return;
-        }
-        AppExecFwk::Configuration config;
-        if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
-            info.emplace_back("        configuration: " + config.GetName());
-        }
-    }
+    DumpClientInfo(info, params, isClient, params.empty());
 }
 
 void AbilityRecord::SetStartTime()
@@ -919,13 +910,7 @@ void AbilityRecord::DumpService(std::vector<std::string> &info, std::vector<std:
         }
     }
     // add dump client info
-    if (isClient && scheduler_ && isReady_) {
-        scheduler_->DumpAbilityInfo(params, info);
-        AppExecFwk::Configuration config;
-        if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
-            info.emplace_back("      configuration: " + config.GetName());
-        }
-    }
+    DumpClientInfo(info, params, isClient);
 }
 
 void AbilityRecord::GetAbilityRecordInfo(AbilityRecordInfo &recordInfo)
@@ -1460,19 +1445,65 @@ void AbilityRecord::DumpSys(std::vector<std::string> &info, bool isClient)
         dumpInfo = "        can restart num #" + std::to_string(restartCount_);
         info.push_back(dumpInfo);
     }
-    DumpClientInfo(info, isClient);
+    const std::vector<std::string> params;
+    DumpClientInfo(info, params, isClient);
 }
 
-void AbilityRecord::DumpClientInfo(std::vector<std::string> &info, bool isClient)
+void AbilityRecord::DumpClientInfo(std::vector<std::string> &info, const std::vector<std::string> &params,
+    bool isClient, bool dumpConfig) const
 {
-    if (isClient && scheduler_ && isReady_) {
-        std::vector<std::string> params;
-        scheduler_->DumpAbilityInfo(params, info);
-        AppExecFwk::Configuration config;
-        if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
-            info.emplace_back("          configuration: " + config.GetName());
-        }
+    if (!isClient || !scheduler_ || !isReady_) {
+        HILOG_ERROR("something nullptr.");
+        return;
     }
+    std::unique_lock<std::mutex> lock(dumpLock_);
+    scheduler_->DumpAbilityInfo(params, info);
+
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    if (handler) {
+        handler->PostTask([condition = &dumpCondition_, isWaiting = &isDumpWaiting_]() {
+                HILOG_INFO("Dump time out, isWaiting:%{public}d.", *isWaiting);
+                if (*isWaiting && condition != nullptr) {
+                    condition->notify_all();
+                }
+            }, std::string("Dump") + std::to_string(recordId_), AbilityManagerService::DUMP_TIMEOUT);
+    }
+
+    HILOG_INFO("Dump begin wait.");
+    isDumpWaiting_ = true;
+    dumpCondition_.wait(lock);
+    isDumpWaiting_ = false;
+    HILOG_INFO("Dump done and begin parse.");
+    for (auto one : dumpInfos_) {
+        info.emplace_back(one);
+    }
+
+    if (!dumpConfig) {
+        HILOG_INFO("not dumpConfig.");
+        return;
+    }
+    AppExecFwk::Configuration config;
+    if (DelayedSingleton<AppScheduler>::GetInstance()->GetConfiguration(config) == ERR_OK) {
+        info.emplace_back("          configuration: " + config.GetName());
+    }
+}
+
+void AbilityRecord::DumpAbilityInfoDone(std::vector<std::string> &infos)
+{
+    HILOG_INFO("DumpAbilityInfoDone begin.");
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    if (handler) {
+        handler->RemoveTask(std::string("Dump") + std::to_string(recordId_));
+    }
+    if (!isDumpWaiting_) {
+        HILOG_ERROR("not waiting.");
+        return;
+    }
+    dumpInfos_.clear();
+    for (auto info : infos) {
+        dumpInfos_.emplace_back(info);
+    }
+    dumpCondition_.notify_all();
 }
 
 void AbilityRecord::GrantUriPermission(const Want &want)
