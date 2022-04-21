@@ -104,5 +104,5 @@ ohos_moduletest("specified_ability_service_test") {
 
 group("moduletest") {
   testonly = true
-  # deps = [ ":specified_ability_service_test" ]
+  deps = [ ":specified_ability_service_test" ]
 }

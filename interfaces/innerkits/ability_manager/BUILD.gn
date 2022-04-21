@@ -30,9 +30,9 @@ config("ability_manager_public_config") {
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "${innerkits_path}/app_manager/include/appmgr",
     "${kits_path}/appkit/native/app/include",
-    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_rdb/include",
-    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_appdatafwk/include",
-    "//foundation/distributeddatamgr/appdatamgr/interfaces/innerkits/native_dataability/include",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/inner_api/native/rdb/include",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/inner_api/native/appdatafwk/include",
+    "//foundation/distributeddatamgr/appdatamgr/interfaces/inner_api/native/dataability/include",
     "${innerkits_path}/dataobs_manager/include",
   ]
 

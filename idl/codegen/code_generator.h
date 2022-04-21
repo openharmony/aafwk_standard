@@ -17,7 +17,7 @@
 #define OHOS_IDL_CODEGENERATOR_H
 
 #include "codegen/code_emitter.h"
-#include "metadata/metadata.h"
+#include "metadata/meta_component.h"
 #include "util/autoptr.h"
 #include "util/string.h"
 

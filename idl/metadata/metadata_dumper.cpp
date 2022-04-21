@@ -14,7 +14,6 @@
  */
 
 #include "metadata/metadata_dumper.h"
-#include <cstdio>
 #include "util/string_builder.h"
 
 namespace OHOS {
@@ -27,7 +26,6 @@ void MetadataDumper::Dump(const String& prefix)
     }
 
     String dumpStr = DumpMetaComponent(metaComponent_, prefix);
-    printf("%s\n", dumpStr.string());
 }
 
 String MetadataDumper::DumpMetaComponent(MetaComponent* mc, const String& prefix)

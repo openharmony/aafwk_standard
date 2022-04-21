@@ -25,7 +25,7 @@ using namespace OHOS;
 using namespace OHOS::HiviewDFX;
 static constexpr HiLogLabel LABEL = { LOG_CORE, LOG_ID_IPC, "IPCTestClient" };
 
-enum TestCommand {
+enum class TestCommand {
     TEST_CMD_NONE = 0,
     TEST_CMD_INT_TRANS = 1,
     TEST_CMD_STRING_TRANS = 2
