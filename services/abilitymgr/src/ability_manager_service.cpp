@@ -4695,83 +4695,6 @@ int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
     return errCode;
 }
 
-ErrCode AbilityManagerService::ProcessOneParam(std::string& args, std::string &result)
-{
-    if (args == "-h") {
-        ShowHelp(result);
-        return ERR_OK;
-    }
-
-    std::string cmd;
-    auto iter = ONE_ARG_SET.find(args);
-    if (iter != ONE_ARG_SET.end()) {
-        cmd = *iter;
-    } else {
-        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
-    }
-
-    cmd += " ";
-    std::vector<std::string> dumpResults;
-    DumpSysState(cmd, dumpResults, false, false, -1);
-    for (auto it : dumpResults) {
-        result += it + "\n";
-    }
-    return ERR_OK;
-}
-
-ErrCode AbilityManagerService::ProcessTwoParam(const std::string& firstParam, const std::string& secondParam,
-    std::string &result)
-{
-    std::string cmd;
-    auto iter = TWO_ARGS_SET.find(firstParam);
-    if (iter != TWO_ARGS_SET.end()) {
-        cmd = *iter;
-    } else {
-        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
-    }
-
-    bool isClient = false;
-    if (cmd == "-a" && secondParam == "-c") {
-        isClient = true;
-    }
-
-    if (isClient) {
-        cmd = cmd + " ";
-    } else {
-        cmd = cmd + " " + secondParam + " ";
-    }
-
-    std::vector<std::string> dumpResults;
-    DumpSysState(cmd, dumpResults, isClient, false, -1);
-    for (auto it : dumpResults) {
-        result += it + "\n";
-    }
-    return ERR_OK;
-}
-
-ErrCode AbilityManagerService::ProcessThreeParam(const std::string& firstParam, const std::string& secondParam,
-    const std::string& thirdParam, std::string &result)
-{
-    if (firstParam != "-a" || secondParam != "-u") {
-        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
-    }
-
-    int userID = DEFAULT_INVAL_VALUE;
-    (void)StrToInt(thirdParam, userID);
-    HILOG_DEBUG("%{public}s, userID is : %{public}d", __func__, userID);
-    if (userID < 0) {
-        return ERR_AAFWK_HIDUMP_INVALID_ARGS;
-    }
-
-    std::string cmd = "-a ";
-    std::vector<std::string> dumpResults;
-    DumpSysState(cmd, dumpResults, false, true, userID);
-    for (auto it : dumpResults) {
-        result += it + "\n";
-    }
-    return ERR_OK;
-}
-
 ErrCode AbilityManagerService::ProcessMultiParam(std::vector<std::string> &argsStr, std::string &result)
 {
     HILOG_DEBUG("%{public}s begin", __func__);
@@ -4879,6 +4802,18 @@ bool AbilityManagerService::IsTopAbility(const sptr<IRemoteObject> &callerToken)
     }
 
     return false;
+}
+
+int AbilityManagerService::DumpAbilityInfoDone(std::vector<std::string> &infos, const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_DEBUG("DumpAbilityInfoDone begin");
+    auto abilityRecord = Token::GetAbilityRecordByToken(callerToken);
+    if (abilityRecord == nullptr) {
+        HILOG_ERROR("abilityRecord nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    abilityRecord->DumpAbilityInfoDone(infos);
+    return ERR_OK;
 }
 }  // namespace AAFwk
 }  // namespace OHOS
