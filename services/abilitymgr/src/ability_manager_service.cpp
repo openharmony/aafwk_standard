@@ -258,7 +258,7 @@ bool AbilityManagerService::Init()
     }
 
     auto startSystemTask = [aams = shared_from_this()]() { aams->StartSystemApplication(); };
-    handler_->PostTask(startSystemTask, "startLauncherAbility");
+    handler_->PostTask(startSystemTask, "StartSystemApplication");
     HILOG_INFO("Init success.");
     return true;
 }
@@ -2920,20 +2920,8 @@ void AbilityManagerService::StartingSystemUiAbility()
 {
 #ifdef SUPPORT_GRAPHICS
     HILOG_DEBUG("%{public}s", __func__);
-    AppExecFwk::AbilityInfo systemUiInfo;
-    auto bms = GetBundleManager();
-    CHECK_POINTER_IS_NULLPTR(bms);
     Want systemUiWant;
     systemUiWant.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_ABILITY_NAME);
-    uint32_t waitCnt = 0;
-    // Wait 10 minutes for the installation to complete.
-    IN_PROCESS_CALL_WITHOUT_RET(
-        while (!bms->QueryAbilityInfo(systemUiWant, systemUiInfo) && waitCnt < MAX_WAIT_SYSTEM_UI_NUM) {
-            HILOG_INFO("Waiting query system ui info completed.");
-            usleep(REPOLL_TIME_MICRO_SECONDS);
-            waitCnt++;
-        }
-    );
     (void)StartAbility(systemUiWant, U0_USER_ID, DEFAULT_INVAL_VALUE);
 #endif
 }
@@ -3981,30 +3969,10 @@ void AbilityManagerService::StartingScreenLockAbility()
 {
 #ifdef SUPPORT_GRAPHICS
     HILOG_DEBUG("%{public}s", __func__);
-    auto bms = GetBundleManager();
-    CHECK_POINTER_IS_NULLPTR(bms);
-
-    constexpr int maxAttemptNums = 5;
     auto userId = GetUserId();
-    int attemptNums = 1;
-    AppExecFwk::AbilityInfo screenLockInfo;
     Want screenLockWant;
     screenLockWant.SetElementName(AbilityConfig::SCREEN_LOCK_BUNDLE_NAME, AbilityConfig::SCREEN_LOCK_ABILITY_NAME);
-    HILOG_DEBUG("%{public}s, QueryAbilityInfo, userId is %{public}d", __func__, userId);
-    IN_PROCESS_CALL_WITHOUT_RET(
-        while (!(bms->QueryAbilityInfo(screenLockWant,
-            OHOS::AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_DEFAULT, userId, screenLockInfo)) &&
-            attemptNums <= maxAttemptNums) {
-            HILOG_INFO("Waiting query mms service completed.");
-            usleep(REPOLL_TIME_MICRO_SECONDS);
-            attemptNums++;
-        }
-    );
-
-    HILOG_INFO("attemptNums : %{public}d", attemptNums);
-    if (attemptNums <= maxAttemptNums) {
-        (void)StartAbility(screenLockWant, userId, DEFAULT_INVAL_VALUE);
-    }
+    (void)StartAbility(screenLockWant, userId, DEFAULT_INVAL_VALUE);
 #endif
 }
 
