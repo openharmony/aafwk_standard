@@ -12,7 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "system_test_form_util.h"
+
+#include "form_mgr_errors.h"
 #include "iservice_registry.h"
 #include "status_receiver_host.h"
 #include "install_tool_status_receiver.h"

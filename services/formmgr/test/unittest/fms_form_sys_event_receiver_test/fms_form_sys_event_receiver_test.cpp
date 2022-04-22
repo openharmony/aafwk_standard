@@ -27,6 +27,7 @@
 #include "form_host_interface.h"
 #include "form_mgr.h"
 #undef private
+#include "form_mgr_errors.h"
 #include "form_mgr_service.h"
 #include "form_refresh_limiter.h"
 #include "form_sys_event_receiver.h"

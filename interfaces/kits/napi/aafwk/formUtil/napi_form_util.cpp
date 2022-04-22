@@ -20,6 +20,7 @@
 #include <uv.h>
 #include <vector>
 
+#include "form_mgr_errors.h"
 #include "hilog_wrapper.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"

@@ -22,6 +22,7 @@
 #include "form_constants.h"
 #include "form_data_mgr.h"
 #include "form_delete_connection.h"
+#include "form_mgr_errors.h"
 #include "form_msg_event_connection.h"
 #include "form_provider_mgr.h"
 #include "form_record.h"

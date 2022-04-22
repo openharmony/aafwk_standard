@@ -33,6 +33,7 @@
 #include "form_event_notify_connection.h"
 #include "form_info_mgr.h"
 #include "form_mgr_adapter.h"
+#include "form_mgr_errors.h"
 #include "form_provider_info.h"
 #include "form_provider_interface.h"
 #include "form_provider_mgr.h"
@@ -1198,8 +1199,6 @@ ErrCode FormMgrAdapter::CreateFormItemInfo(const BundleInfo &bundleInfo,
         return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
     }
     itemInfo.SetHostBundleName(hostBundleName);
-    std::string icon = iBundleMgr->GetAbilityIcon(bundleInfo.name, formInfo.abilityName);
-    itemInfo.SetIcon(icon);
 
     itemInfo.SetAbilityName(formInfo.abilityName);
     itemInfo.SetModuleName(formInfo.moduleName); // formInfo.moduleName: bundleMagr do not set
