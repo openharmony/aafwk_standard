@@ -18,6 +18,7 @@
 #include "appexecfwk_errors.h"
 #include "form_ams_helper.h"
 #include "form_constants.h"
+#include "form_mgr_errors.h"
 #include "form_provider_mgr.h"
 #include "form_supply_callback.h"
 #include "form_util.h"

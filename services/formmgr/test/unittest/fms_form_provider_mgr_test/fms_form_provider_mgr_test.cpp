@@ -24,6 +24,7 @@
 #include "form_refresh_limiter.h"
 #include "form_host_interface.h"
 #undef private
+#include "form_mgr_errors.h"
 #include "form_mgr_service.h"
 #include "form_provider_mgr.h"
 #include "if_system_ability_manager.h"

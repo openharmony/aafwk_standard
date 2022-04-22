@@ -16,6 +16,7 @@
 #include "form_info_storage_mgr.h"
 #include <thread>
 #include <unistd.h>
+#include "form_mgr_errors.h"
 #include "hilog_wrapper.h"
 #include "kvstore_death_recipient_callback.h"
 

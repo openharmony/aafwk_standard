@@ -160,7 +160,7 @@ NativeValue* JsFeatureAbility::OnStartAbilityForResult(NativeEngine &engine, Nat
     std::shared_ptr<AsyncTask> asyncTask = std::move(uasyncTask);
     FeatureAbilityTask task = [&engine, asyncTask](int resultCode, const AAFwk::Want& want) {
         HILOG_INFO("OnStartAbilityForResult async callback is called");
-        std::string data = want.GetStringParam("resultData");
+        std::string data = want.GetStringParam(RESULT_DATA_TAG);
         NativeValue* abilityResult = JsFeatureAbility::CreateJsResult(engine, resultCode, data);
         if (abilityResult == nullptr) {
             HILOG_WARN("wrap abilityResult failed");

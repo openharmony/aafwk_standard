@@ -13,8 +13,10 @@
  * limitations under the License.
  */
 
-#include "appexecfwk_errors.h"
 #include "form_errors.h"
+
+#include "appexecfwk_errors.h"
+#include "form_mgr_errors.h"
 
 namespace OHOS {
 namespace AppExecFwk {

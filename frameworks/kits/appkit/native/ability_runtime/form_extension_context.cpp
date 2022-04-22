@@ -18,6 +18,7 @@
 #include "ability_manager_client.h"
 #include "appexecfwk_errors.h"
 #include "form_mgr.h"
+#include "form_mgr_errors.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {

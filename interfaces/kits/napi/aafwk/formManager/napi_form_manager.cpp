@@ -20,6 +20,7 @@
 #include <uv.h>
 #include <vector>
 
+#include "form_mgr_errors.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "napi_common_util.h"

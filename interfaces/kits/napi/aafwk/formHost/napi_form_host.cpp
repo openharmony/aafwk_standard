@@ -23,6 +23,7 @@
 #include "form_info.h"
 #include "form_callback_interface.h"
 #include "form_host_client.h"
+#include "form_mgr_errors.h"
 #include "hilog_wrapper.h"
 #include "napi_form_util.h"
 #include "napi/native_api.h"

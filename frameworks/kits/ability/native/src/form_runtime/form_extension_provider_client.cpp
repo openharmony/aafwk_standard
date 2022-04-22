@@ -21,6 +21,7 @@
 #include "event_handler.h"
 #include "event_runner.h"
 #include "form_extension.h"
+#include "form_mgr_errors.h"
 #include "form_supply_proxy.h"
 #include "hilog_wrapper.h"
 #include "ipc_skeleton.h"
