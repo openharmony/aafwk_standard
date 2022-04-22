@@ -983,7 +983,7 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
     }
     auto type = abilityInfo.type;
     if (type != AppExecFwk::AbilityType::SERVICE && type != AppExecFwk::AbilityType::EXTENSION) {
-        HILOG_ERROR("Connect Ability failed, target Ability is not Service.");
+        HILOG_ERROR("Connect ability failed, target ability is not Service.");
         return TARGET_ABILITY_NOT_SERVICE;
     }
     result = PreLoadAppDataAbilities(abilityInfo.bundleName, validUserId);
