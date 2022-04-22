@@ -173,6 +173,5 @@ int AmsConfigurationParameter::GetMemThreshold(const std::string &key)
 
     return std::stoi(threshold->second);
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS
