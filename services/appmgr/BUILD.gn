@@ -25,9 +25,7 @@ config("appmgr_config") {
 }
 
 group("ams_target") {
-  deps = [
-    ":libams",
-  ]
+  deps = [ ":libams" ]
 }
 
 ohos_shared_library("libams") {
