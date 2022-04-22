@@ -133,25 +133,6 @@ void AbilityLocalRecord::SetAbilityThread(const sptr<AbilityThread> &abilityThre
     abilityThread_ = abilityThread;
 }
 
-/**
- * @description: Obtains api version based on ability record.
- * @return api version.
- */
-int AbilityLocalRecord::GetCompatibleVersion()
-{
-    return compatibleVersion_;
-}
-
-/**
- * @description: Set api version in an ability record.
- * @param compatibleVersion api version
- * @return None.
- */
-void AbilityLocalRecord::SetCompatibleVersion(int32_t compatibleVersion)
-{
-    compatibleVersion_ = compatibleVersion;
-}
-
 void AbilityLocalRecord::SetWant(const std::shared_ptr<AAFwk::Want> &want)
 {
     want_ = want;

@@ -48,17 +48,6 @@ public:
     void HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState) override;
 
     /**
-     * @brief Handling the life cycle switching of PageAbility in switch.
-     *
-     * @param want Indicates the structure containing information about the ability.
-     * @param targetState The life cycle state to switch to.
-     *
-     * @return return true if the lifecycle transaction successfully, otherwise return false.
-     *
-     */
-    bool AbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState);
-
-    /**
       * @brief Handling the life cycle switching of PageAbility in switch.
       *
       * @param want Indicates the structure containing information about the ability.
@@ -67,7 +56,7 @@ public:
       * @return return true if the lifecycle transaction successfully, otherwise return false.
       *
       */
-    bool AbilityTransactionNew(const Want &want, const AAFwk::LifeCycleStateInfo &targetState);
+    bool AbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState);
 
     /**
      * @brief Execution the KeyDown callback of the ability

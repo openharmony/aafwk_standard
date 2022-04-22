@@ -47,8 +47,7 @@ AbilityImplFactory::~AbilityImplFactory()
  *
  * @return AbilityImpl object
  */
-std::shared_ptr<AbilityImpl> AbilityImplFactory::MakeAbilityImplObject(const std::shared_ptr<AbilityInfo> &info,
-    int compatibleVersion)
+std::shared_ptr<AbilityImpl> AbilityImplFactory::MakeAbilityImplObject(const std::shared_ptr<AbilityInfo> &info)
 {
     if (info == nullptr) {
         HILOG_ERROR("AbilityImplFactory::MakeAbilityImplObject is error nullptr == info ");
