@@ -936,7 +936,7 @@ int AbilityManagerService::IsConnectFreeInstall(
 int AbilityManagerService::DisconnectAbility(const sptr<IAbilityConnection> &connect)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_DEBUG("Disconnect ability called.");
+    HILOG_DEBUG("Disconnect ability begin.");
     CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
 

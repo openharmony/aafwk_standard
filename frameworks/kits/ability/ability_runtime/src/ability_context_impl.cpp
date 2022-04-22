@@ -200,7 +200,8 @@ void AbilityContextImpl::OnAbilityResult(int requestCode, int resultCode, const 
 bool AbilityContextImpl::ConnectAbility(const AAFwk::Want &want,
                                         const sptr<AbilityConnectCallback> &connectCallback)
 {
-    HILOG_DEBUG("%{public}s begin.", __func__);
+    HILOG_DEBUG("Connect ability begin, ability:%{public}s.",
+        abilityInfo_ == nullptr ? "".c_str() : abilityInfo_->name.c_str());
     ErrCode ret =
         ConnectionManager::GetInstance().ConnectAbility(token_, want, connectCallback);
     HILOG_INFO("AbilityContextImpl::ConnectAbility ErrorCode = %{public}d", ret);
