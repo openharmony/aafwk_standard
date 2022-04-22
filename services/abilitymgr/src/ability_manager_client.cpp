@@ -182,6 +182,7 @@ ErrCode AbilityManagerClient::DisconnectAbility(const sptr<IAbilityConnection> &
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    HILOG_INFO("Disconnect ability begin.");
     return abms->DisconnectAbility(connect);
 }
 
