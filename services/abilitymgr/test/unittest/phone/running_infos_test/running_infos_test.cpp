@@ -620,8 +620,7 @@ HWTEST_F(RunningInfosTest, DataGetAbilityRunningInfos_001, TestSize.Level1)
     std::shared_ptr<AbilityRecord> abilityRecord = std::make_shared<AbilityRecord>(abilityRequest.want,
         abilityRequest.abilityInfo,
         abilityRequest.appInfo,
-        abilityRequest.requestCode,
-        abilityRequest.compatibleVersion);
+        abilityRequest.requestCode);
     dataAbilityRecord->ability_ = abilityRecord;
     const std::string dataAbilityName(abilityRequest.abilityInfo.bundleName + '.' + abilityRequest.abilityInfo.name);
     abilityMs_->dataAbilityManager_->dataAbilityRecordsLoading_.insert(
@@ -659,8 +658,7 @@ HWTEST_F(RunningInfosTest, DataGetAbilityRunningInfos_002, TestSize.Level1)
     std::shared_ptr<AbilityRecord> abilityRecord = std::make_shared<AbilityRecord>(abilityRequest.want,
         abilityRequest.abilityInfo,
         abilityRequest.appInfo,
-        abilityRequest.requestCode,
-        abilityRequest.compatibleVersion);
+        abilityRequest.requestCode);
     dataAbilityRecord->ability_ = abilityRecord;
     const std::string dataAbilityName(abilityRequest.abilityInfo.bundleName + '.' + abilityRequest.abilityInfo.name);
     abilityMs_->dataAbilityManager_->dataAbilityRecordsLoaded_.insert(
@@ -698,8 +696,7 @@ HWTEST_F(RunningInfosTest, DataGetAbilityRunningInfos_003, TestSize.Level1)
     std::shared_ptr<AbilityRecord> abilityRecord = std::make_shared<AbilityRecord>(abilityRequest.want,
         abilityRequest.abilityInfo,
         abilityRequest.appInfo,
-        abilityRequest.requestCode,
-        abilityRequest.compatibleVersion);
+        abilityRequest.requestCode);
     dataAbilityRecord->ability_ = abilityRecord;
     const std::string dataAbilityName(abilityRequest.abilityInfo.bundleName + '.' + abilityRequest.abilityInfo.name);
     abilityMs_->dataAbilityManager_->dataAbilityRecordsLoading_.insert(
@@ -714,8 +711,7 @@ HWTEST_F(RunningInfosTest, DataGetAbilityRunningInfos_003, TestSize.Level1)
     std::shared_ptr<AbilityRecord> abilityRecord2 = std::make_shared<AbilityRecord>(abilityRequest2.want,
         abilityRequest2.abilityInfo,
         abilityRequest2.appInfo,
-        abilityRequest2.requestCode,
-        abilityRequest2.compatibleVersion);
+        abilityRequest2.requestCode);
     dataAbilityRecord2->ability_ = abilityRecord2;
     const std::string dataAbilityName2(abilityRequest2.abilityInfo.bundleName + '.' + abilityRequest2.abilityInfo.name);
     abilityMs_->dataAbilityManager_->dataAbilityRecordsLoaded_.insert(
