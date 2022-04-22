@@ -232,7 +232,7 @@ HWTEST_F(AmsAbilityRunningRecordTest, UpdateAbilityRunningRecord_001, TestSize.L
     EXPECT_EQ(abilityRunningRecord->GetState(), AbilityState::ABILITY_STATE_FOREGROUND) << "execute fail!";
 
     appRunningRecord->SetState(ApplicationState::APP_STATE_FOREGROUND);
-    EXPECT_CALL(*mockedAppClient_, ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*mockedAppClient_, ScheduleBackgroundApplication()).Times(2);
     appRunningRecord->UpdateAbilityState(token, AbilityState::ABILITY_STATE_BACKGROUND);
     EXPECT_EQ(abilityRunningRecord->GetState(), AbilityState::ABILITY_STATE_BACKGROUND) << "execute fail!";
     HILOG_DEBUG("UpdateAbilityRunningRecord_001 end.");
