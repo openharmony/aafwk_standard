@@ -1149,14 +1149,14 @@ int AbilityThread::BatchInsert(const Uri &uri, const std::vector<NativeRdb::Valu
     return ret;
 }
 
-void AbilityThread::ContinueAbility(const std::string& deviceId)
+void AbilityThread::ContinueAbility(const std::string& deviceId, uint32_t versionCode)
 {
     HILOG_INFO("ContinueAbility, deviceId:%{public}s", deviceId.c_str());
     if (abilityImpl_ == nullptr) {
         HILOG_ERROR("AbilityThread::ContinueAbility abilityImpl_ is nullptr");
         return;
     }
-    abilityImpl_->ContinueAbility(deviceId);
+    abilityImpl_->ContinueAbility(deviceId, versionCode);
 }
 
 void AbilityThread::NotifyContinuationResult(int32_t result)

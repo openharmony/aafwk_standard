@@ -41,7 +41,7 @@ public:
     MOCK_METHOD1(ScheduleNotifyChange, bool(const Uri &uri));
     MOCK_METHOD1(ExecuteBatch, std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>>(const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations));
     MOCK_METHOD1(NotifyContinuationResult, void(int32_t result));
-    MOCK_METHOD1(ContinueAbility, void(const std::string& deviceId));
+    MOCK_METHOD2(ContinueAbility, void(const std::string& deviceId, uint32_t versionCode));
     MOCK_METHOD2(DumpAbilityInfo, void(const std::vector<std::string> &params, std::vector<std::string> &info));
     std::vector<std::string> GetFileTypes(const Uri &uri, const std::string &mimeTypeFilter)
     {

@@ -283,10 +283,11 @@ public:
      * ContinueAbility, call ContinueAbility() through proxy project,
      * Notify continue ability.
      *
-     * @param The target deviceId.
+     * @param deviceId Target deviceId.
+     * @param versionCode Target bundle version.
      * @return
      */
-    void ContinueAbility(const std::string& deviceId) override;
+    void ContinueAbility(const std::string& deviceId, uint32_t versionCode) override;
 
     /**
      * NotifyContinuationResult, call NotifyContinuationResult() through proxy project,

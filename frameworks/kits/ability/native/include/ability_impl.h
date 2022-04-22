@@ -345,11 +345,11 @@ public:
     /**
      * @brief continue ability to target device.
      *
-     * @param deviceId: target deviceId
-     *
+     * @param deviceId target deviceId
+     * @param versionCode Target bundle version.
      * @return
      */
-    void ContinueAbility(const std::string& deviceId);
+    void ContinueAbility(const std::string& deviceId, uint32_t versionCode);
 
     /**
      * @brief Notify continuation result to ability.

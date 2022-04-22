@@ -35,6 +35,7 @@ const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
 const int32_t CONTINUE_ABILITY_REJECTED = 29360197;
 const int32_t CONTINUE_SAVE_DATA_FAILED = 29360198;
 const int32_t CONTINUE_ON_CONTINUE_FAILED = 29360199;
+const int32_t CONTINUE_ON_CONTINUE_MISMATCH = 29360204;
 #ifdef SUPPORT_GRAPHICS
 const int32_t CONTINUE_GET_CONTENT_FAILED = 29360200;
 #endif
@@ -87,15 +88,15 @@ std::string ContinuationManager::GetOriginalDeviceId()
     return originalDeviceId_;
 }
 
-void ContinuationManager::ContinueAbilityWithStack(const std::string &deviceId)
+void ContinuationManager::ContinueAbilityWithStack(const std::string &deviceId, uint32_t versionCode)
 {
     HILOG_INFO("%{public}s called begin", __func__);
 
-    HandleContinueAbilityWithStack(deviceId);
+    HandleContinueAbilityWithStack(deviceId, versionCode);
     HILOG_INFO("%{public}s called end", __func__);
 }
 
-bool ContinuationManager::HandleContinueAbilityWithStack(const std::string &deviceId)
+bool ContinuationManager::HandleContinueAbilityWithStack(const std::string &deviceId, uint32_t versionCode)
 {
     HILOG_INFO("%{public}s called begin", __func__);
 
@@ -112,8 +113,8 @@ bool ContinuationManager::HandleContinueAbilityWithStack(const std::string &devi
     }
 
     InitMainHandlerIfNeed();
-    auto task = [continuationHandler, continueToken, deviceId]() {
-        continuationHandler->HandleStartContinuationWithStack(continueToken, deviceId);
+    auto task = [continuationHandler, continueToken, deviceId, versionCode]() {
+        continuationHandler->HandleStartContinuationWithStack(continueToken, deviceId, versionCode);
     };
     if (!mainHandler_->PostTask(task)) {
         HILOG_ERROR("HandleContinueAbilityWithStack postTask failed");
@@ -160,6 +161,10 @@ int32_t ContinuationManager::OnContinueAndGetContent(WantParams &wantParams)
     int32_t status = ability->OnContinue(wantParams);
     HILOG_INFO("OnContinue end, status: %{public}d", status);
     if (status != OnContinueResult::AGREE) {
+        if (status == OnContinueResult::MISMATCH) {
+            HILOG_ERROR("OnContinue version mismatch.");
+            return CONTINUE_ON_CONTINUE_MISMATCH;
+        }
         HILOG_ERROR("OnContinue failed.");
         return CONTINUE_ON_CONTINUE_FAILED;
     }

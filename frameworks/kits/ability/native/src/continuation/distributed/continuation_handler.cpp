@@ -23,6 +23,7 @@ using OHOS::AAFwk::WantParams;
 namespace OHOS {
 namespace AppExecFwk {
 const std::string ContinuationHandler::ORIGINAL_DEVICE_ID("deviceId");
+const std::string VERSION_CODE_KEY = "version";
 ContinuationHandler::ContinuationHandler(
     std::weak_ptr<ContinuationManager> &continuationManager, std::weak_ptr<Ability> &ability)
 {
@@ -31,7 +32,7 @@ ContinuationHandler::ContinuationHandler(
 }
 
 bool ContinuationHandler::HandleStartContinuationWithStack(const sptr<IRemoteObject> &token,
-    const std::string &deviceId)
+    const std::string &deviceId, uint32_t versionCode)
 {
     HILOG_INFO("%{public}s called begin", __func__);
     if (token == nullptr) {
@@ -53,7 +54,9 @@ bool ContinuationHandler::HandleStartContinuationWithStack(const sptr<IRemoteObj
     }
 
     // decided to start continuation. Callback to ability.
-    WantParams wantParams;
+    Want want;
+    want.SetParam(VERSION_CODE_KEY, static_cast<int32_t>(versionCode));
+    WantParams wantParams = want.GetParams();
     int32_t status = continuationManagerTmp->OnContinue(wantParams);
     if (status != ERR_OK) {
         HILOG_INFO("OnContinue failed, BundleName = %{public}s, ClassName= %{public}s, status: %{public}d",
@@ -62,7 +65,8 @@ bool ContinuationHandler::HandleStartContinuationWithStack(const sptr<IRemoteObj
             status);
     }
 
-    Want want = SetWantParams(wantParams);
+    want.SetParams(wantParams);
+    want.AddFlags(want.FLAG_ABILITY_CONTINUATION);
     want.SetElementName(deviceId, abilityInfo_->bundleName, abilityInfo_->name);
 
     int result = AAFwk::AbilityManagerClient::GetInstance()->StartContinuation(want, token, status);

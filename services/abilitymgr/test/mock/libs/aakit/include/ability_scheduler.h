@@ -97,7 +97,7 @@ public:
     };
     virtual void NotifyContinuationResult(int32_t result) override
     {};
-    virtual void ContinueAbility(const std::string& deviceId) override
+    virtual void ContinueAbility(const std::string& deviceId, uint32_t versionCode) override
     {};
     virtual void DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info) override
     {};
