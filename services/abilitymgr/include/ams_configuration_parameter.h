@@ -74,12 +74,7 @@ public:
      * Get current system direction parameters, Temporary method.
      */
     std::string GetOrientation() const;
-    /**
-     * check if use new mission.
-     *
-     * return true if use mission list, false if use mission stack.
-     */
-    bool IsUseNewMission() const;
+
     /**
      * Get the max number of restart.
      */

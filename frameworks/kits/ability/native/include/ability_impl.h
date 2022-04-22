@@ -49,20 +49,6 @@ public:
         std::shared_ptr<ContextDeal> &contextDeal);
 
     /**
-     * @brief Set if use new mission.
-     *
-     * @param useNewMission new mission flag.
-     */
-    static void SetUseNewMission(bool useNewMission);
-
-    /**
-     * @brief Get if use new mission.
-     *
-     * @return return true if use new mission.
-     */
-    static bool IsUseNewMission();
-
-    /**
      * @brief Connect the ability. and Calling information back to Ability.
      *
      * @param want The Want object to connect to.
@@ -362,7 +348,6 @@ public:
 
     bool IsStageBasedModel() const;
 
-    int GetCompatibleVersion();
 #ifdef SUPPORT_GRAPHICS
     void AfterUnFocused();
     void AfterFocused();

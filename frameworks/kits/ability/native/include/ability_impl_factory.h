@@ -28,12 +28,10 @@ public:
      * @brief Create impl object based on abilitytype
      *
      * @param type AbilityType:PAGE/SERVICE/PROVIDER
-     * @param compatibleVersion api version
      *
      * @return AbilityImpl object
      */
-    std::shared_ptr<AbilityImpl> MakeAbilityImplObject(const std::shared_ptr<AbilityInfo> &info,
-        int compatibleVersion);
+    std::shared_ptr<AbilityImpl> MakeAbilityImplObject(const std::shared_ptr<AbilityInfo> &info);
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

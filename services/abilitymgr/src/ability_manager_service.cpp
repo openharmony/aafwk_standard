@@ -2416,7 +2416,6 @@ int AbilityManagerService::GenerateAbilityRequest(
         return RESOLVE_APP_ERR;
     }
     request.appInfo = request.abilityInfo.applicationInfo;
-    request.compatibleVersion = (int32_t)request.appInfo.apiCompatibleVersion;
     request.uid = request.appInfo.uid;
     HILOG_DEBUG("GenerateAbilityRequest end, app name: %{public}s, bundle name: %{public}s, uid: %{public}d.",
         request.appInfo.name.c_str(), request.appInfo.bundleName.c_str(), request.uid);
@@ -3147,8 +3146,8 @@ int AbilityManagerService::StartAbilityByCall(
         return result;
     }
 
-    if (!abilityRequest.IsNewVersion()) {
-        HILOG_ERROR("target ability compatible version is lower than 8.");
+    if (!abilityRequest.abilityInfo.isStageBasedModel) {
+        HILOG_ERROR("target ability is not stage base model.");
         return RESOLVE_CALL_ABILITY_VERSION_ERR;
     }
 
@@ -4702,7 +4701,7 @@ ErrCode AbilityManagerService::ProcessMultiParam(std::vector<std::string> &argsS
     }
     HILOG_INFO("%{public}s, isClient:%{public}d, userID is : %{public}d, cmd is : %{public}s",
         __func__, isClient, userID, cmd.c_str());
-    
+
     std::vector<std::string> dumpResults;
     DumpSysState(cmd, dumpResults, isClient, isUser, userID);
     for (auto it : dumpResults) {
