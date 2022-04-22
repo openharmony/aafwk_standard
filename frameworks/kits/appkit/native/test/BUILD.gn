@@ -391,8 +391,7 @@ group("unittest") {
     ":application_test",
     ":context_container_test",
     ":context_deal_test",
-    
-    # ":watchdog_test",
+    ":watchdog_test",
   ]
 }
 ###############################################################################
