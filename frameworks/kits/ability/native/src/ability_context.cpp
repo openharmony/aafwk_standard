@@ -105,11 +105,11 @@ ErrCode AbilityContext::TerminateAbility()
 
     switch (info->type) {
         case AppExecFwk::AbilityType::PAGE:
-            HILOG_INFO("%{public}s begin, type is page, ability is %{public}s.", __func__, info->name.c_str());
+            HILOG_INFO("Terminate ability begin, type is page, ability is %{public}s.", info->name.c_str());
             err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, resultCode_, &resultWant_);
             break;
         case AppExecFwk::AbilityType::SERVICE:
-            HILOG_INFO("%{public}s begin, type is service, ability is %{public}s.", __func__, info->name.c_str());
+            HILOG_INFO("Terminate ability begin, type is service, ability is %{public}s.", info->name.c_str());
             err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, -1, nullptr);
             break;
         default:
