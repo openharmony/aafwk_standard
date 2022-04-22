@@ -220,7 +220,11 @@ void AbilityManagerService::OnStart()
     }
 #ifdef SUPPORT_GRAPHICS
     if (focusChangedListener_ == nullptr) {
-        focusChangedListener_ = new AbilityManagerService::FocusChangedListener();
+        focusChangedListener_ = new (std::nothrow) AbilityManagerService::FocusChangedListener();
+        if (focusChangedListener_ == nullptr) {
+            HILOG_ERROR("new focusChangedListener fail");
+            return;
+        }
     }
     WindowManager::GetInstance().RegisterFocusChangedListener(focusChangedListener_);
 #endif
@@ -4396,7 +4400,11 @@ int AbilityManagerService::StartFreeInstall(const Want &want, int32_t userId, in
     };
     freeInstallList_.push_back(info);
 
-    sptr<AtomicServiceStatusCallback> callback = new AtomicServiceStatusCallback(weak_from_this());
+    sptr<AtomicServiceStatusCallback> callback = new (std::nothrow) AtomicServiceStatusCallback(weak_from_this());
+    if (callback == nullptr) {
+        HILOG_ERROR("new AtomicServiceStatusCallback failed");
+        return FA_FREE_INSTALL_SERVICE_ERROR;
+    }
     if (CheckIfOperateRemote(want)) {
         HILOG_INFO("StartFreeInstall for remote.");
         int32_t callerUid = IPCSkeleton::GetCallingUid();
@@ -4628,7 +4636,6 @@ AppExecFwk::ElementName AbilityManagerService::GetTopAbility()
     bool hasLocalDeviceId = GetLocalDeviceId(localDeviceId);
     if (isDeviceEmpty && hasLocalDeviceId) {
         elementName.SetDeviceID(localDeviceId);
-        HILOG_DEBUG("%{public}s  DeviceId %{public}s .", __func__, elementName.GetDeviceID().c_str());
     }
     HILOG_DEBUG("%{public}s  end.", __func__);
     return elementName;
@@ -4702,7 +4709,7 @@ ErrCode AbilityManagerService::ProcessMultiParam(std::vector<std::string> &argsS
     }
     HILOG_INFO("%{public}s, isClient:%{public}d, userID is : %{public}d, cmd is : %{public}s",
         __func__, isClient, userID, cmd.c_str());
-    
+
     std::vector<std::string> dumpResults;
     DumpSysState(cmd, dumpResults, isClient, isUser, userID);
     for (auto it : dumpResults) {
