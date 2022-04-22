@@ -61,7 +61,8 @@ void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Li
         CheckAndRestore();
     }
 
-    if (lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE) {
+    if (lifecycleState_ == AAFwk::ABILITY_STATE_ACTIVE &&
+        targetState.state != AAFwk::ABILITY_STATE_FOREGROUND_NEW) {
         Inactive();
     }
 
@@ -180,7 +181,6 @@ bool PageAbilityImpl::AbilityTransactionNew(const Want &want, const AAFwk::LifeC
             }
             SerUriString(targetState.caller.deviceId + "/" + targetState.caller.bundleName + "/" +
                          targetState.caller.abilityName);
-            Active();
             if (ability_) {
                 ability_->RequsetFocus(want);
             }

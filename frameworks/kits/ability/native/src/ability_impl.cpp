@@ -220,6 +220,7 @@ void AbilityImpl::AfterUnFocused()
     auto task = [abilityImpl = shared_from_this(), ability = ability_, contextDeal = contextDeal_]() {
         auto info = contextDeal->GetLifeCycleStateInfo();
         info.state = AbilityLifeCycleState::ABILITY_STATE_INACTIVE;
+        info.isNewWant = false;
         Want want(*(ability->GetWant()));
         abilityImpl->HandleAbilityTransaction(want, info);
     };
@@ -244,6 +245,7 @@ void AbilityImpl::AfterFocused()
     auto task = [abilityImpl = shared_from_this(), ability = ability_, contextDeal = contextDeal_]() {
         auto info = contextDeal->GetLifeCycleStateInfo();
         info.state = AbilityLifeCycleState::ABILITY_STATE_ACTIVE;
+        info.isNewWant = false;
         Want want(*(ability->GetWant()));
         abilityImpl->HandleAbilityTransaction(want, info);
     };
