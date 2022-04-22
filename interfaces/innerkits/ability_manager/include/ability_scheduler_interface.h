@@ -277,7 +277,7 @@ public:
     virtual Uri DenormalizeUri(const Uri &uri) = 0;
     virtual std::vector<std::shared_ptr<AppExecFwk::DataAbilityResult>> ExecuteBatch(
         const std::vector<std::shared_ptr<AppExecFwk::DataAbilityOperation>> &operations) = 0;
-    virtual void ContinueAbility(const std::string& deviceId) = 0;
+    virtual void ContinueAbility(const std::string& deviceId, uint32_t versionCode) = 0;
     virtual void NotifyContinuationResult(int32_t result) = 0;
 
     virtual void DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info) = 0;
