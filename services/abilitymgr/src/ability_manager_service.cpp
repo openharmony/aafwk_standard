@@ -196,12 +196,12 @@ AbilityManagerService::~AbilityManagerService()
 void AbilityManagerService::OnStart()
 {
     if (state_ == ServiceRunningState::STATE_RUNNING) {
-        HILOG_INFO("Ability manager service has already started.");
+        HILOG_INFO("AMS has already started.");
         return;
     }
-    HILOG_INFO("Ability manager service starting.");
+    HILOG_INFO("AMS starting.");
     if (!Init()) {
-        HILOG_ERROR("Failed to init service.");
+        HILOG_ERROR("Failed to init AMS.");
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
@@ -210,12 +210,12 @@ void AbilityManagerService::OnStart()
      * so it can't affect the TDD test program */
     instance_ = DelayedSingleton<AbilityManagerService>::GetInstance().get();
     if (instance_ == nullptr) {
-        HILOG_ERROR("OnStart. instance_ == nullptr !");
+        HILOG_ERROR("AMS enter OnStart, but instance_ is nullptr!");
         return;
     }
     bool ret = Publish(instance_);
     if (!ret) {
-        HILOG_ERROR("Init publish failed!");
+        HILOG_ERROR("Publish AMS failed!");
         return;
     }
 #ifdef SUPPORT_GRAPHICS
@@ -224,7 +224,7 @@ void AbilityManagerService::OnStart()
     }
     WindowManager::GetInstance().RegisterFocusChangedListener(focusChangedListener_);
 #endif
-    HILOG_INFO("Ability manager service start success.");
+    HILOG_INFO("AMS start success.");
 }
 
 bool AbilityManagerService::Init()
@@ -265,7 +265,7 @@ bool AbilityManagerService::Init()
 
 void AbilityManagerService::OnStop()
 {
-    HILOG_INFO("Stop Ability manager service.");
+    HILOG_INFO("Stop AMS.");
     eventLoop_.reset();
     handler_.reset();
     state_ = ServiceRunningState::STATE_NOT_START;

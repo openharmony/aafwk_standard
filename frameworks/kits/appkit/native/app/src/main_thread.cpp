@@ -1702,7 +1702,7 @@ bool MainThread::CheckFileType(const std::string &fileName, const std::string &e
 
     auto position = fileName.rfind('.');
     if (position == std::string::npos) {
-        HILOG_ERROR("filename no extension name");
+        HILOG_WARN("filename no extension name");
         return false;
     }
 
