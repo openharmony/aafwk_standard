@@ -172,7 +172,8 @@
             "//foundation/aafwk/standard/frameworks/kits/appkit/native/test:unittest",
             "//foundation/aafwk/standard/frameworks/kits/appkit/test:moduletest",
             "//foundation/aafwk/standard/frameworks/kits/wantagent/test/:unittest",
-            "//foundation/aafwk/standard/services/appmgr/test:unittest"
+            "//foundation/aafwk/standard/services/appmgr/test:unittest",
+            "//foundation/aafwk/standard/test/fuzztest:fuzztest"
           ]
         }
     }

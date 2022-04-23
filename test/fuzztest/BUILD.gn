@@ -17,16 +17,15 @@ group("fuzztest") {
   testonly = true
 
   deps = [
-    "AcquireDataAbility_fuzzer:fuzztest",
-    "CompelVerifyPermission_fuzzer:fuzztest",
-    "FinishUserTest_fuzzer:fuzztest",
-    "GetWantSender_fuzzer:fuzztest",
-    "SetMissionLabel_fuzzer:fuzztest",
-    "StartAbility_fuzzer:fuzztest",
-    "StartContinuation_fuzzer:fuzztest",
-    "StopServiceAbility_fuzzer:fuzztest",
-    "UpdateConfiguration_fuzzer:fuzztest",
-    "WantAgentHelperString_fuzzer:fuzztest",
-    "WantAgentHelperTrigger_fuzzer:fuzztest",
+    "acquiredataability_fuzzer:fuzztest",
+    "finishusertest_fuzzer:fuzztest",
+    "getwantsender_fuzzer:fuzztest",
+    "setmissionlabel_fuzzer:fuzztest",
+    "startability_fuzzer:fuzztest",
+    "startcontinuation_fuzzer:fuzztest",
+    "stopserviceability_fuzzer:fuzztest",
+    "updateconfiguration_fuzzer:fuzztest",
+    "wantagenthelperstring_fuzzer:fuzztest",
+    "wantagenthelpertrigger_fuzzer:fuzztest",
   ]
 }
