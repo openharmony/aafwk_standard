@@ -948,7 +948,6 @@ int AbilityManagerStub::MoveMissionToFrontByOptionsInner(MessageParcel &data, Me
 
 int AbilityManagerStub::StartAbilityByCallInner(MessageParcel &data, MessageParcel &reply)
 {
-
     HILOG_DEBUG("AbilityManagerStub::StartAbilityByCallInner begin.");
     Want *want = data.ReadParcelable<Want>();
     if (want == nullptr) {
