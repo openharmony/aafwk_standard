@@ -165,7 +165,7 @@ bool FormSupplyCallback::CanDisConnect(sptr<FormAbilityConnection> &connection)
 {
     HILOG_INFO("%{public}s called.", __func__);
     int count = 0;
-    for(auto &conn : connections_) {
+    for (auto &conn : connections_) {
         if (connection->GetProviderKey() == conn.second->GetProviderKey()) {
             HILOG_INFO("%{public}s, key: %{public}s", __func__, conn.second->GetProviderKey().c_str());
             count++;
