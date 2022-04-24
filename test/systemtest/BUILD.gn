@@ -25,6 +25,5 @@ group("systemtest") {
   deps = [
     "common/ams:systemtest",
     "common/fms:systemtest",
-    "common/task_dispatcher:systemtest_task",
   ]
 }

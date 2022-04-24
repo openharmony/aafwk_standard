@@ -28,10 +28,8 @@
 #ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
 #endif // OS_ACCOUNT_PART_ENABLED
-#include "spec_task_dispatcher.h"
 #include "sys_mgr_client.h"
 #include "system_ability_definition.h"
-#include "task_dispatcher_context.h"
 
 #define MODE 0771
 namespace OHOS {
@@ -1193,109 +1191,6 @@ AAFwk::LifeCycleStateInfo ContextDeal::GetLifeCycleStateInfo() const
  */
 void ContextDeal::StartAbilities(const std::vector<AAFwk::Want> &wants)
 {}
-
-/**
- * @brief Obtains a task dispatcher that is bound to the UI thread.
- *
- * @return Returns the task dispatcher that is bound to the UI thread.
- */
-std::shared_ptr<TaskDispatcher> ContextDeal::GetUITaskDispatcher()
-{
-    return ContextDeal::GetMainTaskDispatcher();
-}
-
-/**
- * @brief Obtains a task dispatcher that is bound to the application main thread.
- *
- * @return Returns the task dispatcher that is bound to the application main thread.
- */
-std::shared_ptr<TaskDispatcher> ContextDeal::GetMainTaskDispatcher()
-{
-    HILOG_INFO("ContextDeal::GetMainTaskDispatcher begin");
-    if (mainTaskDispatcher_ != nullptr) {
-        return mainTaskDispatcher_;
-    }
-
-    if (mainEventRunner_ == nullptr) {
-        HILOG_ERROR("ContextDeal::GetMainTaskDispatcher mainTaskDispatcher_ is nullptr");
-        return nullptr;
-    }
-
-    std::shared_ptr<SpecDispatcherConfig> config =
-        std::make_shared<SpecDispatcherConfig>(SpecDispatcherConfig::MAIN, TaskPriority::HIGH);
-    if (config == nullptr) {
-        HILOG_ERROR("ContextDeal::GetMainTaskDispatcher config is nullptr");
-        return nullptr;
-    }
-
-    mainTaskDispatcher_ = std::make_shared<SpecTaskDispatcher>(config, mainEventRunner_);
-    HILOG_INFO("ContextDeal::GetMainTaskDispatcher end");
-    return mainTaskDispatcher_;
-}
-
-/**
- * @brief Creates a parallel task dispatcher with a specified priority.
- *
- * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
- * @param priority Indicates the priority of all tasks dispatched by the parallel task dispatcher.
- *
- * @return Returns a parallel task dispatcher.
- */
-std::shared_ptr<TaskDispatcher> ContextDeal::CreateParallelTaskDispatcher(
-    const std::string &name, const TaskPriority &priority)
-{
-    HILOG_INFO("ContextDeal::CreateParallelTaskDispatcher begin");
-    if (appContext_ == nullptr) {
-        HILOG_ERROR("ContextDeal::CreateParallelTaskDispatcher appContext_ is nullptr");
-        return nullptr;
-    }
-
-    std::shared_ptr<TaskDispatcher> task = appContext_->CreateParallelTaskDispatcher(name, priority);
-    HILOG_INFO("ContextDeal::CreateParallelTaskDispatcher end");
-    return task;
-}
-
-/**
- * @brief Creates a serial task dispatcher with a specified priority.
- *
- * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
- * @param priority Indicates the priority of all tasks dispatched by the created task dispatcher.
- *
- * @return Returns a serial task dispatcher.
- */
-std::shared_ptr<TaskDispatcher> ContextDeal::CreateSerialTaskDispatcher(
-    const std::string &name, const TaskPriority &priority)
-{
-    HILOG_INFO("ContextDeal::CreateSerialTaskDispatcher begin");
-    if (appContext_ == nullptr) {
-        HILOG_ERROR("ContextDeal::CreateSerialTaskDispatcher appContext_ is nullptr");
-        return nullptr;
-    }
-
-    std::shared_ptr<TaskDispatcher> task = appContext_->CreateSerialTaskDispatcher(name, priority);
-    HILOG_INFO("ContextDeal::CreateSerialTaskDispatcher end");
-    return task;
-}
-
-/**
- * @brief Obtains a global task dispatcher with a specified priority.
- *
- * @param priority Indicates the priority of all tasks dispatched by the global task dispatcher.
- *
- * @return Returns a global task dispatcher.
- */
-std::shared_ptr<TaskDispatcher> ContextDeal::GetGlobalTaskDispatcher(const TaskPriority &priority)
-{
-    HILOG_INFO("ContextDeal::GetGlobalTaskDispatcher begin");
-    if (appContext_ == nullptr) {
-        HILOG_ERROR("ContextDeal::GetGlobalTaskDispatcher appContext_ is nullptr");
-        return nullptr;
-    }
-
-    std::shared_ptr<TaskDispatcher> task = appContext_->GetGlobalTaskDispatcher(priority);
-    HILOG_INFO("ContextDeal::GetGlobalTaskDispatcher end");
-    return task;
-}
 
 /**
  * @brief Set EventRunner for main thread.

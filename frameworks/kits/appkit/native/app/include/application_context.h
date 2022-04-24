@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-class TaskDispatcherContext;
 class ApplicationContext : public ContextContainer, public std::enable_shared_from_this<ApplicationContext> {
 public:
     ApplicationContext();
@@ -155,40 +154,8 @@ public:
      */
     int GetMissionId() override;
 
-    /**
-     * @brief Creates a parallel task dispatcher with a specified priority.
-     *
-     * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
-     * @param priority Indicates the priority of all tasks dispatched by the parallel task dispatcher.
-     *
-     * @return Returns a parallel task dispatcher.
-     */
-    std::shared_ptr<TaskDispatcher> CreateParallelTaskDispatcher(
-        const std::string &name, const TaskPriority &priority) override;
-
-    /**
-     * @brief Creates a serial task dispatcher with a specified priority.
-     *
-     * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
-     * @param priority Indicates the priority of all tasks dispatched by the created task dispatcher.
-     *
-     * @return Returns a serial task dispatcher.
-     */
-    std::shared_ptr<TaskDispatcher> CreateSerialTaskDispatcher(
-        const std::string &name, const TaskPriority &priority) override;
-
-    /**
-     * @brief Obtains a global task dispatcher with a specified priority.
-     *
-     * @param priority Indicates the priority of all tasks dispatched by the global task dispatcher.
-     *
-     * @return Returns a global task dispatcher.
-     */
-    std::shared_ptr<TaskDispatcher> GetGlobalTaskDispatcher(const TaskPriority &priority) override;
-
 protected:
     sptr<IRemoteObject> GetToken() override;
-    std::shared_ptr<TaskDispatcherContext> taskDispatcherContext_ = nullptr;
     std::mutex mutex_;
 };
 }  // namespace AppExecFwk
