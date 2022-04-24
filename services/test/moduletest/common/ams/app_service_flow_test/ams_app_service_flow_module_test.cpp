@@ -183,7 +183,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_001, TestSize.Level1)
         ApplicationState::APP_STATE_BACKGROUND);
 
     EXPECT_CALL(*(testAppB.mockAppScheduler_), ScheduleForegroundApplication()).Times(1);
-    EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(2);
 
     // simulate press back key
     serviceInner_->UpdateAbilityState(testAppB.GetToken("abilityB1"), AbilityState::ABILITY_STATE_FOREGROUND);
@@ -301,7 +301,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_BackKey_004, TestSize.Level1)
         ApplicationState::APP_STATE_BACKGROUND);
 
     EXPECT_CALL(*(testAppB.mockAppScheduler_), ScheduleForegroundApplication()).Times(1);
-    EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(2);
     EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleCleanAbility(_)).Times(2);
 
     // simulate press back key
@@ -450,7 +450,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOff_002, TestSize.Level1
         AbilityState::ABILITY_STATE_BACKGROUND,
         ApplicationState::APP_STATE_BACKGROUND);
 
-    EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(2);
 
     // simulate press screenOff key
     serviceInner_->UpdateAbilityState(testAppB.GetToken("abilityB1"), AbilityState::ABILITY_STATE_BACKGROUND);
@@ -693,7 +693,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOnAndOff_001, TestSize.L
         ApplicationState::APP_STATE_BACKGROUND);
 
     EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleForegroundApplication()).Times(CYCLE_NUMBER + 1);
-    EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(CYCLE_NUMBER);
+    EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(CYCLE_NUMBER + 1);
 
     for (uint32_t i = 0; i < CYCLE_NUMBER; i++) {
         // simulate press ScreenOn key
