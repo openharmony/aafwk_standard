@@ -267,11 +267,7 @@ void InnerCreateCallbackRetMsg(napi_env env, int32_t code, napi_value* result)
     napi_set_named_property(env, error, "msg", errMsg);
 
     result[0] = error;
-    if (code == ERR_OK) {
-        napi_value data = nullptr;
-        napi_create_int32(env, ERR_OK, &data);
-        result[1] = data;
-    }
+    napi_get_undefined(env, &result[1]);
     HILOG_DEBUG("%{public}s, end.", __func__);
 }
 
@@ -288,7 +284,7 @@ void InnerCreatePromiseRetMsg(napi_env env, int32_t code, napi_value* result)
 {
     HILOG_DEBUG("%{public}s called. code:%{public}d", __func__, code);
     if (code == ERR_OK) {
-        napi_create_int32(env, ERR_OK, result);
+        napi_get_undefined(env, result);
         return;
     }
     napi_value errInfo = nullptr;
@@ -307,7 +303,7 @@ void InnerCreatePromiseRetMsg(napi_env env, int32_t code, napi_value* result)
     napi_create_string_utf8(env, retMsg.c_str(), NAPI_AUTO_LENGTH, &errMsg);
     napi_set_named_property(env, errInfo, "msg", errMsg);
 
-    result[0] = errInfo;
+    *result = errInfo;
     HILOG_DEBUG("%{public}s, end.", __func__);
 }
 
