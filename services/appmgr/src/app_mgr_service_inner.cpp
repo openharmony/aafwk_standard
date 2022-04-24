@@ -2550,14 +2550,6 @@ void AppMgrServiceInner::OnRenderRemoteDied(const wptr<IRemoteObject> &remote)
     }
 }
 
-void AppMgrServiceInner::OnRenderRemoteDied(const wptr<IRemoteObject> &remote)
-{
-    HILOG_ERROR("On render remote died.");
-    if (appRunningManager_) {
-        appRunningManager_->OnRemoteRenderDied(remote);
-    }
-}
-
 uint32_t AppMgrServiceInner::BuildStartFlags(const AAFwk::Want &want, const AbilityInfo &abilityInfo)
 {
     uint32_t startFlags = 0x0;
