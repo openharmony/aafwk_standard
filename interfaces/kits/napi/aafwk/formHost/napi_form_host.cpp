@@ -2262,11 +2262,8 @@ napi_value DeleteInvalidFormsCallback(napi_env env, AsyncDeleteInvalidFormsCallb
             if (asyncCallbackInfo->callback != nullptr) {
                 napi_value callback;
                 napi_value callbackValues[ARGS_SIZE_TWO] = {nullptr, nullptr};
+                InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, &callbackValues[0]);
                 if (asyncCallbackInfo->result == ERR_OK) {
-                    napi_create_int32(env, asyncCallbackInfo->result, &callbackValues[0]);
-                    napi_create_int32(env, asyncCallbackInfo->numFormsDeleted, &callbackValues[1]);
-                } else {
-                    InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, &callbackValues[0]);
                     napi_create_int32(env, asyncCallbackInfo->numFormsDeleted, &callbackValues[1]);
                 }
 
@@ -2417,11 +2414,8 @@ void AcquireFormStateCallbackComplete(napi_env env, AsyncAcquireFormStateCallbac
     if (asyncCallbackInfo->callback != nullptr) {
         napi_value callback;
         napi_value callbackValues[ARGS_SIZE_TWO] = {nullptr, nullptr};
+        InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, &callbackValues[0]);
         if (asyncCallbackInfo->result == ERR_OK) {
-            napi_create_int32(env, asyncCallbackInfo->result, &callbackValues[0]);
-            callbackValues[1] = ParseFormStateInfo(env, asyncCallbackInfo->stateInfo);
-        } else {
-            InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, &callbackValues[0]);
             callbackValues[1] = ParseFormStateInfo(env, asyncCallbackInfo->stateInfo);
         }
 
@@ -2851,11 +2845,7 @@ napi_value NotifyFormsVisibleCallback(napi_env env, AsyncNotifyFormsVisibleCallb
             if (asyncCallbackInfo->callback != nullptr) {
                 napi_value callback;
                 napi_value callbackValues[ARGS_SIZE_TWO] = {nullptr, nullptr};
-                if (asyncCallbackInfo->result == ERR_OK) {
-                    napi_create_int32(env, asyncCallbackInfo->result, &callbackValues[0]);
-                } else {
-                    InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, &callbackValues[0]);
-                }
+                InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, callbackValues);
 
                 napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
                 napi_value callResult;
@@ -2893,14 +2883,12 @@ napi_value NotifyFormsVisiblePromise(napi_env env, AsyncNotifyFormsVisibleCallba
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("%{public}s, promise complete", __func__);
             auto *asyncCallbackInfo = (AsyncNotifyFormsVisibleCallbackInfo *) data;
-            if (asyncCallbackInfo->result != ERR_OK) {
-                napi_value result;
-                InnerCreatePromiseRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
-            } else {
-                napi_value result;
-                napi_create_int32(env, asyncCallbackInfo->result, &result);
+            napi_value result;
+            InnerCreatePromiseRetMsg(env, asyncCallbackInfo->result, &result);
+            if (asyncCallbackInfo->result == ERR_OK) {
                 napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+            } else {
+                napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
             }
             napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
             delete asyncCallbackInfo;
@@ -3002,11 +2990,7 @@ napi_value NotifyFormsEnableUpdateCallback(napi_env env,
             if (asyncCallbackInfo->callback != nullptr) {
                 napi_value callback;
                 napi_value callbackValues[ARGS_SIZE_TWO] = {nullptr, nullptr};
-                if (asyncCallbackInfo->result == ERR_OK) {
-                    napi_create_int32(env, asyncCallbackInfo->result, &callbackValues[0]);
-                } else {
-                    InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, &callbackValues[0]);
-                }
+                InnerCreateCallbackRetMsg(env, asyncCallbackInfo->result, callbackValues);
 
                 napi_get_reference_value(env, asyncCallbackInfo->callback, &callback);
                 napi_value callResult;
@@ -3045,14 +3029,12 @@ napi_value NotifyFormsEnableUpdatePromise(napi_env env,
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("%{public}s, promise complete", __func__);
             auto *asyncCallbackInfo = (AsyncNotifyFormsEnableUpdateCallbackInfo *) data;
-            if (asyncCallbackInfo->result != ERR_OK) {
-                napi_value result;
-                InnerCreatePromiseRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
-            } else {
-                napi_value result;
-                napi_create_int32(env, asyncCallbackInfo->result, &result);
+            napi_value result;
+            InnerCreatePromiseRetMsg(env, asyncCallbackInfo->result, &result);
+            if (asyncCallbackInfo->result == ERR_OK) {
                 napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+            } else {
+                napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
             }
             napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
             delete asyncCallbackInfo;
