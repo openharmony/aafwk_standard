@@ -66,7 +66,7 @@ public:
      * @return {str_iter}                     : iter pointing to string containing @args
      * @Introduction: Match the first @matchStr in @dumpInfo from @begin and return the iter.
      */
-    str_iter GetSpecific(const string &args, const str_vec &dumpInfo, const str_iter &begin);
+    str_iter GetSpecific(const string &matchStr, const str_vec &dumpInfo, const str_iter &begin);
 
     /**
      *
