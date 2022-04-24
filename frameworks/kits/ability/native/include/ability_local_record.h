@@ -113,19 +113,6 @@ public:
      */
     void SetAbilityThread(const sptr<AbilityThread> &abilityThread);
 
-    /**
-    * @description: Obtains api version based on ability record.
-    * @return api version.
-    */
-    int GetCompatibleVersion();
-
-    /**
-    * @description: Set api version in an ability record.
-    * @param compatibleVersion api version
-    * @return None.
-    */
-    void SetCompatibleVersion(int compatibleVersion);
-
     void SetWant(const std::shared_ptr<AAFwk::Want> &want);
 
     const std::shared_ptr<AAFwk::Want> &GetWant();
@@ -136,7 +123,6 @@ private:
     std::shared_ptr<EventHandler> handler_ = nullptr;
     std::shared_ptr<AbilityImpl> abilityImpl_ = nullptr;  // store abilityImpl
     sptr<AbilityThread> abilityThread_;
-    int compatibleVersion_ = 0;
     std::shared_ptr<AAFwk::Want> want_ = nullptr;
 };
 }  // namespace AppExecFwk

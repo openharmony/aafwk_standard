@@ -51,7 +51,6 @@ class CallContainer;
 
 const std::string ABILITY_TOKEN_NAME = "AbilityToken";
 const std::string LINE_SEPARATOR = "\n";
-constexpr int32_t API_VERSION_7 = 7;
 
 /**
  * @class Token
@@ -137,13 +136,7 @@ struct AbilityRequest {
     sptr<IAbilityConnection> connect = nullptr;
 
     std::shared_ptr<AbilityStartSetting> startSetting = nullptr;
-    int32_t compatibleVersion = 0;
     std::string specifiedFlag;
-
-    bool IsNewVersion() const
-    {
-        return compatibleVersion > API_VERSION_7;
-    }
 
     bool IsContinuation() const
     {
@@ -185,7 +178,7 @@ enum ResolveResultType {
 class AbilityRecord : public std::enable_shared_from_this<AbilityRecord> {
 public:
     AbilityRecord(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,
-        const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode = -1, int32_t apiVersion = 1);
+        const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode = -1);
 
     virtual ~AbilityRecord();
 
@@ -660,14 +653,12 @@ public:
 
     void ClearFlag();
 
-    bool IsNewVersion();
     void SetLaunchReason(const LaunchReason &reason);
     void SetLastExitReason(const LastExitReason &reason);
     void ContinueAbility(const std::string& deviceId, uint32_t versionCode);
     void NotifyContinuationResult(int32_t result);
     std::shared_ptr<MissionList> GetOwnedMissionList() const;
 
-    void SetUseNewMission();
     void SetMission(const std::shared_ptr<Mission> &mission);
     void SetMissionList(const std::shared_ptr<MissionList> &missionList);
     std::shared_ptr<Mission> GetMission() const;
@@ -738,7 +729,6 @@ private:
 
     int requestCode_ = -1;  // requestCode_: >= 0 for-result start mode; <0 for normal start mode in default.
     sptr<IRemoteObject::DeathRecipient> schedulerDeathRecipient_ = {};  // scheduler binderDied Recipient
-    sptr<AppExecFwk::IBundleMgr> iBundleManager_;
 
     /**
      * result_: ability starts with for-result mode will send result before being terminated.
@@ -767,7 +757,6 @@ private:
     bool isRestarting_ = false;     // is restarting ?
     AppState appState_ = AppState::BEGIN;
 
-    int32_t compatibleVersion_ = 0; // > 7 new version, <= 7 old version.
     int32_t uid_ = 0;
     std::weak_ptr<MissionList> missionList_;
     std::weak_ptr<Mission> mission_;
@@ -788,21 +777,6 @@ private:
     mutable std::condition_variable dumpCondition_;
     mutable bool isDumpWaiting_ = false;
     std::vector<std::string> dumpInfos_;
-};
-
-class AbilityRecordNew : public AbilityRecord {
-public:
-    AbilityRecordNew(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,
-        const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode = -1, int32_t apiVersion = 1);
-
-    ~AbilityRecordNew();
-
-    void Activate() override;
-    void Inactivate() override;
-    void MoveToBackground(const Closure &task) override;
-
-    void ForegroundNew();
-    void BackgroundNew(const Closure &task);
 };
 }  // namespace AAFwk
 }  // namespace OHOS

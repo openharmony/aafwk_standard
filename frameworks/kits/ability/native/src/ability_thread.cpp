@@ -225,7 +225,6 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
         HILOG_ERROR("Attach ability failed, load ability failed.");
         return;
     }
-    ability->SetCompatibleVersion(abilityRecord->GetCompatibleVersion());
 
     currentAbility_.reset(ability);
     token_ = abilityRecord->GetToken();
@@ -242,8 +241,7 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
 
     // 3.new abilityImpl
     abilityImpl_ =
-        DelayedSingleton<AbilityImplFactory>::GetInstance()->MakeAbilityImplObject(abilityRecord->GetAbilityInfo(),
-            abilityRecord->GetCompatibleVersion());
+        DelayedSingleton<AbilityImplFactory>::GetInstance()->MakeAbilityImplObject(abilityRecord->GetAbilityInfo());
     if (abilityImpl_ == nullptr) {
         HILOG_ERROR("Attach ability failed, abilityImpl_ == nullptr.");
         return;
@@ -403,7 +401,6 @@ void AbilityThread::Attach(
         HILOG_ERROR("AbilityThread::ability attach failed,load ability failed");
         return;
     }
-    ability->SetCompatibleVersion(abilityRecord->GetCompatibleVersion());
 
     currentAbility_.reset(ability);
     token_ = abilityRecord->GetToken();
@@ -420,8 +417,7 @@ void AbilityThread::Attach(
 
     // 3.new abilityImpl
     abilityImpl_ =
-        DelayedSingleton<AbilityImplFactory>::GetInstance()->MakeAbilityImplObject(abilityRecord->GetAbilityInfo(),
-            abilityRecord->GetCompatibleVersion());
+        DelayedSingleton<AbilityImplFactory>::GetInstance()->MakeAbilityImplObject(abilityRecord->GetAbilityInfo());
     if (abilityImpl_ == nullptr) {
         HILOG_ERROR("AbilityThread::ability abilityImpl_ == nullptr");
         return;

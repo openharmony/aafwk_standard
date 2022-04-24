@@ -483,22 +483,7 @@ public:
      * @return Returns the display orientation of the window.
      */
     int GetDisplayOrientation() override;
-#endif
 
-    /**
-    * @description: Obtains api version based on ability.
-    * @return api version.
-    */
-    int GetCompatibleVersion();
-
-    /**
-    * @description: Set api version in an ability.
-    * @param compatibleVersion api version
-    * @return None.
-    */
-    void SetCompatibleVersion(int compatibleVersion);
-
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Called when a key is lone pressed.
      *
@@ -1710,7 +1695,6 @@ private:
     bool bWindowFocus_ = false;
     bool showOnLockScreen_ = false;
 #endif
-    int compatibleVersion_ = 0;
 
     static const std::string SYSTEM_UI;
     static const std::string STATUS_BAR;
