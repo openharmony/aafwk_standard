@@ -35,9 +35,6 @@ config("ability_config") {
     "${services_path}/common/include",
     "//third_party/node/src",
     "${innerkits_path}/ability_manager/include/continuation",
-    "${aafwk_path}/common/task_dispatcher/include/dispatcher",
-    "${aafwk_path}/common/task_dispatcher/include/task",
-    "${aafwk_path}/common/task_dispatcher/include/threading",
     "${kits_path}/appkit/native/app/include/task",
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common",
     "${aafwk_path}/interfaces/kits/napi/aafwk/featureAbility",
@@ -232,7 +229,6 @@ ohos_shared_library("abilitykit_native") {
   external_deps = [
     "ability_base:base",
     "ability_base:configuration",
-    "ability_base:task_dispatcher",
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:ability_context_native",

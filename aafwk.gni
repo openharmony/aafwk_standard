@@ -21,8 +21,6 @@ kits_path = "${aafwk_path}/frameworks/kits"
 
 innerkits_path = "${aafwk_path}/interfaces/innerkits"
 
-dispatcher_path = "${aafwk_path}/common/task_dispatcher"
-
 system_test_app_path =
     "${aafwk_path}/test/resource/amssystemtestability/abilitySrc"
 

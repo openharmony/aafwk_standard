@@ -56,7 +56,6 @@ class DataAbilityHelper;
 class DataShareHelper;
 class ContinuationConnector;
 class IAbilityManager;
-class TaskDispatcher;
 class EventRunner;
 class Context {
 public:
@@ -590,51 +589,6 @@ public:
      * @param wants Indicates the Want containing information array about the target ability to start.
      */
     virtual void StartAbilities(const std::vector<AAFwk::Want> &wants) = 0;
-
-    /**
-     * @brief Obtains a task dispatcher that is bound to the UI thread.
-     *
-     * @return Returns the task dispatcher that is bound to the UI thread.
-     */
-    virtual std::shared_ptr<TaskDispatcher> GetUITaskDispatcher() = 0;
-
-    /**
-     * @brief Obtains a task dispatcher that is bound to the application main thread.
-     *
-     * @return Returns the task dispatcher that is bound to the application main thread.
-     */
-    virtual std::shared_ptr<TaskDispatcher> GetMainTaskDispatcher() = 0;
-
-    /**
-     * @brief Creates a parallel task dispatcher with a specified priority.
-     *
-     * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
-     * @param priority Indicates the priority of all tasks dispatched by the parallel task dispatcher.
-     *
-     * @return Returns a parallel task dispatcher.
-     */
-    virtual std::shared_ptr<TaskDispatcher> CreateParallelTaskDispatcher(
-        const std::string &name, const TaskPriority &priority) = 0;
-
-    /**
-     * @brief Creates a serial task dispatcher with a specified priority.
-     *
-     * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
-     * @param priority Indicates the priority of all tasks dispatched by the created task dispatcher.
-     *
-     * @return Returns a serial task dispatcher.
-     */
-    virtual std::shared_ptr<TaskDispatcher> CreateSerialTaskDispatcher(
-        const std::string &name, const TaskPriority &priority) = 0;
-
-    /**
-     * @brief Obtains a global task dispatcher with a specified priority.
-     *
-     * @param priority Indicates the priority of all tasks dispatched by the global task dispatcher.
-     *
-     * @return Returns a global task dispatcher.
-     */
-    virtual std::shared_ptr<TaskDispatcher> GetGlobalTaskDispatcher(const TaskPriority &priority) = 0;
 
     /**
      * @brief Checks whether the configuration of this ability is changing.

@@ -32,9 +32,6 @@ config("module_private_config") {
     "${aafwk_path}/frameworks/kits/appkit/native/test/mock/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "${aafwk_path}/common/task_dispatcher/include/dispatcher",
-    "${aafwk_path}/common/task_dispatcher/include/task",
-    "${aafwk_path}/common/task_dispatcher/include/threading",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include/task",
   ]
   cflags = []
@@ -58,9 +55,6 @@ config("module_context_config") {
     "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
-    "${aafwk_path}/common/task_dispatcher/include/dispatcher",
-    "${aafwk_path}/common/task_dispatcher/include/task",
-    "${aafwk_path}/common/task_dispatcher/include/threading",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include/task",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
@@ -129,7 +123,6 @@ ohos_unittest("application_test") {
     "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
@@ -170,7 +163,6 @@ ohos_unittest("context_container_test") {
   deps = [
     "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
@@ -197,7 +189,6 @@ ohos_unittest("application_context_for_task_dispacher_test") {
   deps = [
     "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
@@ -223,7 +214,6 @@ ohos_unittest("context_deal_for_task_dispacher_test") {
   deps = [
     "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
@@ -257,7 +247,6 @@ ohos_unittest("context_deal_test") {
   deps = [
     "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/appexecfwk/standard/common:libappexecfwk_common",
@@ -292,7 +281,6 @@ ohos_unittest("application_impl_test") {
     "${ABILITY_INNERKITS_PATH}/uri_permission:uri_permission_mgr",
     "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
     "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
