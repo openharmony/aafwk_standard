@@ -100,7 +100,7 @@ int32_t UserController::StartUser(int32_t userId, bool isForeground)
         return -1;
     }
 
-    if (isForeground) {
+    if (isForeground && GetCurrentUserId() != USER_ID_NO_HEAD) {
         // start freezing screen
         DelayedSingleton<AbilityManagerService>::GetInstance()->StartFreezingScreen();
     }
