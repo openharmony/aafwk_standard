@@ -1557,7 +1557,6 @@ void AbilityThread::DumpAbilityInfoInner(const std::vector<std::string> &params,
         currentExtension_->Dump(params, info);
     }
     if (params.empty()) {
-        HILOG_INFO("params not empty");
         DumpOtherInfo(info);
         return;
     }
