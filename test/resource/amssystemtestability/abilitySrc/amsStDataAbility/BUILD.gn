@@ -14,7 +14,7 @@
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 SUBDEMOSYSTEM_DIR = "//foundation/appexecfwk/standard/test/resource/amssystemtestability/abilitySrc/amsStDataAbility"
-EVENT_DIR = "//base/notification/ces_standard/cesfwk"
+EVENT_DIR = "//base/notification/common_event_service/cesfwk"
 
 config("verify_act_ability_config") {
   visibility = [ ":*" ]
@@ -50,8 +50,8 @@ ohos_shared_library("amsStDataAbility") {
   public_configs = [ ":verify_act_ability_public_config" ]
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "//base/notification/ces_standard/frameworks/native:cesfwk_innerkits",
-    "//base/notification/ces_standard/interfaces/kits/napi/common_event:commonevent",
+    "//base/notification/common_event_service/frameworks/native:cesfwk_innerkits",
+    "//base/notification/common_event_service/interfaces/kits/napi/common_event:commonevent",
     "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
     "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
