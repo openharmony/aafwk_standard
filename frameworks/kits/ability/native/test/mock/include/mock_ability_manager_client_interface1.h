@@ -72,7 +72,6 @@ public:
 
     size_t startAbilityRunCount_;
 };
-
 }  // namespace AppExecFwk
 }  // namespace OHOS
 
@@ -112,6 +111,6 @@ private:
     int terminateAbilityValue_;
     int missionId_;
 };
-};  // namespace AAFwk
+}  // namespace AAFwk
 }  // namespace OHOS
 #endif  // OHOS_AAFWK_ABILITY_MANAGER_H

@@ -585,7 +585,8 @@ int AbilitySchedulerStub::ExecuteBatchInner(MessageParcel &data, MessageParcel &
 int AbilitySchedulerStub::ContinueAbilityInner(MessageParcel &data, MessageParcel &reply)
 {
     std::string deviceId = data.ReadString();
-    ContinueAbility(deviceId);
+    uint32_t versionCode = data.ReadUint32();
+    ContinueAbility(deviceId, versionCode);
     return NO_ERROR;
 }
 

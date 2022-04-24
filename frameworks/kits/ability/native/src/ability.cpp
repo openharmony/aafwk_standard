@@ -1830,7 +1830,7 @@ std::string Ability::GetContentInfo()
  * is null, this method has the same effect as continueAbility().
  *
  */
-void Ability::ContinueAbilityWithStack(const std::string &deviceId)
+void Ability::ContinueAbilityWithStack(const std::string &deviceId, uint32_t versionCode)
 {
     if (deviceId.empty()) {
         HILOG_ERROR("ContinueAbilityWithStack(deviceId) failed. deviceId is empty");
@@ -1841,7 +1841,7 @@ void Ability::ContinueAbilityWithStack(const std::string &deviceId)
         HILOG_ERROR("ContinueAbilityWithStack(deviceId) failed. VerifySupportForContinuation failed");
         return;
     }
-    continuationManager_->ContinueAbilityWithStack(deviceId);
+    continuationManager_->ContinueAbilityWithStack(deviceId, versionCode);
 }
 
 /**

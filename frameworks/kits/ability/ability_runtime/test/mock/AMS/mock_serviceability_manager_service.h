@@ -170,7 +170,7 @@ public:
         return 0;
     }
 
-    int ContinueAbility(const std::string &deviceId, int32_t missionId)
+    int ContinueAbility(const std::string &deviceId, int32_t missionId, uint32_t versionCode)
     {
         return 0;
     }

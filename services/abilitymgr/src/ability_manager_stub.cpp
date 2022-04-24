@@ -756,7 +756,8 @@ int AbilityManagerStub::ContinueAbilityInner(MessageParcel &data, MessageParcel 
 {
     std::string deviceId = data.ReadString();
     int32_t missionId = data.ReadInt32();
-    int32_t result = ContinueAbility(deviceId, missionId);
+    uint32_t versionCode = data.ReadUint32();
+    int32_t result = ContinueAbility(deviceId, missionId, versionCode);
     HILOG_INFO("ContinueAbilityInner result = %{public}d", result);
     return result;
 }
@@ -947,7 +948,6 @@ int AbilityManagerStub::MoveMissionToFrontByOptionsInner(MessageParcel &data, Me
 
 int AbilityManagerStub::StartAbilityByCallInner(MessageParcel &data, MessageParcel &reply)
 {
-
     HILOG_DEBUG("AbilityManagerStub::StartAbilityByCallInner begin.");
     Want *want = data.ReadParcelable<Want>();
     if (want == nullptr) {

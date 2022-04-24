@@ -43,7 +43,7 @@ public:
 
     std::string GetOriginalDeviceId();
 
-    void ContinueAbilityWithStack(const std::string &deviceId);
+    void ContinueAbilityWithStack(const std::string &deviceId, uint32_t versionCode);
 
     void ContinueAbility(bool reversible, const std::string &deviceId);
 
@@ -82,7 +82,7 @@ private:
 
     bool CheckContinuationIllegal();
 
-    bool HandleContinueAbilityWithStack(const std::string &deviceId);
+    bool HandleContinueAbilityWithStack(const std::string &deviceId, uint32_t versionCode);
 
     bool HandleContinueAbility(bool reversible, const std::string &deviceId);
 
