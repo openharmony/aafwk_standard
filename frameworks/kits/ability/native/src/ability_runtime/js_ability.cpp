@@ -120,7 +120,7 @@ void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
 
 void JsAbility::OnStart(const Want &want)
 {
-    HILOG_INFO("OnStart begin, ability is %{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("OnStart begin, ability is %{public}s.", GetAbilityName().c_str());
     Ability::OnStart(want);
 
     if (!jsAbilityObj_) {
@@ -155,7 +155,7 @@ void JsAbility::OnStart(const Want &want)
         HILOG_INFO("Call AbilityDelegator::PostPerformStart");
         delegator->PostPerformStart(CreateADelegatorAbilityProperty());
     }
-    HILOG_INFO("OnStart end, ability is %{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("OnStart end, ability is %{public}s.", GetAbilityName().c_str());
 }
 
 void JsAbility::OnStop()
@@ -180,7 +180,7 @@ void JsAbility::OnStop()
 #ifdef SUPPORT_GRAPHICS
 void JsAbility::OnSceneCreated()
 {
-    HILOG_INFO("OnSceneCreated begin, ability is %{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("OnSceneCreated begin, ability is %{public}s.", GetAbilityName().c_str());
     Ability::OnSceneCreated();
     auto jsAppWindowStage = CreateAppWindowStage();
     if (jsAppWindowStage == nullptr) {
@@ -195,7 +195,7 @@ void JsAbility::OnSceneCreated()
         HILOG_INFO("Call AbilityDelegator::PostPerformScenceCreated");
         delegator->PostPerformScenceCreated(CreateADelegatorAbilityProperty());
     }
-    HILOG_INFO("OnSceneCreated end, ability is %{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("OnSceneCreated end, ability is %{public}s.", GetAbilityName().c_str());
 }
 
 void JsAbility::OnSceneRestored()
@@ -219,7 +219,7 @@ void JsAbility::OnSceneRestored()
 
 void JsAbility::onSceneDestroyed()
 {
-    HILOG_INFO("onSceneDestroyed begin, ability is %{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("onSceneDestroyed begin, ability is %{public}s.", GetAbilityName().c_str());
     Ability::onSceneDestroyed();
 
     CallObjectMethod("onWindowStageDestroy");
@@ -229,12 +229,12 @@ void JsAbility::onSceneDestroyed()
         HILOG_INFO("Call AbilityDelegator::PostPerformScenceDestroyed");
         delegator->PostPerformScenceDestroyed(CreateADelegatorAbilityProperty());
     }
-    HILOG_INFO("onSceneDestroyed end, ability is %{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("onSceneDestroyed end, ability is %{public}s.", GetAbilityName().c_str());
 }
 
 void JsAbility::OnForeground(const Want &want)
 {
-    HILOG_INFO("OnForeground begin, ability is %{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("OnForeground begin, ability is %{public}s.", GetAbilityName().c_str());
     Ability::OnForeground(want);
 
     HandleScope handleScope(jsRuntime_);
@@ -259,7 +259,7 @@ void JsAbility::OnForeground(const Want &want)
         HILOG_INFO("Call AbilityDelegator::PostPerformForeground");
         delegator->PostPerformForeground(CreateADelegatorAbilityProperty());
     }
-    HILOG_INFO("OnForeground end, ability is %{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("OnForeground end, ability is %{public}s.", GetAbilityName().c_str());
 }
 
 void JsAbility::OnBackground()

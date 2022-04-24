@@ -195,7 +195,7 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
 ErrCode AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
 {
     std::shared_ptr<AbilityInfo> info = GetAbilityInfo();
-    HILOG_INFO("Disconnect ability begin, caller:%{public}s.", info == nullptr ? "".c_str() : info->name.c_str());
+    HILOG_INFO("Disconnect ability begin, caller:%{public}s.", info == nullptr ? "" : info->name.c_str());
 
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {
