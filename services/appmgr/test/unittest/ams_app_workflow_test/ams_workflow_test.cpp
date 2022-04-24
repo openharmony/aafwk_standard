@@ -209,7 +209,7 @@ HWTEST_F(AmsWorkFlowTest, BackKey_002, TestSize.Level1)
     sptr<IRemoteObject> tokenB = new MockAbilityToken();
     CreateTestApplicationRecord(
         "B", tokenB, "A", AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_FOREGROUND);
-    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(0);
+    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
 
     serviceInner_->UpdateAbilityState(tokenB, AbilityState::ABILITY_STATE_FOREGROUND);
     serviceInner_->UpdateAbilityState(tokenA, AbilityState::ABILITY_STATE_BACKGROUND);
@@ -240,7 +240,7 @@ HWTEST_F(AmsWorkFlowTest, BackKey_003, TestSize.Level1)
     TestApplicationPreRecord appC = CreateTestApplicationRecord(
         "C", tokenC, "C", AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_BACKGROUND);
     EXPECT_CALL(*(appC.mockAppScheduler_), ScheduleForegroundApplication()).Times(1);
-    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(2);
 
     serviceInner_->UpdateAbilityState(tokenC, AbilityState::ABILITY_STATE_FOREGROUND);
     serviceInner_->ApplicationForegrounded(appC.appRecord_->GetRecordId());
@@ -279,7 +279,7 @@ HWTEST_F(AmsWorkFlowTest, BackKey_004, TestSize.Level1)
     CreateTestApplicationRecord(
         "D", tokenD, "C", AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_BACKGROUND);
     EXPECT_CALL(*(appC.mockAppScheduler_), ScheduleForegroundApplication()).Times(1);
-    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(2);
 
     serviceInner_->UpdateAbilityState(tokenC, AbilityState::ABILITY_STATE_FOREGROUND);
     serviceInner_->ApplicationForegrounded(appC.appRecord_->GetRecordId());
@@ -358,7 +358,7 @@ HWTEST_F(AmsWorkFlowTest, BackKey_006, TestSize.Level1)
         "C", tokenC, "C", AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_BACKGROUND);
     appC.appRecord_->LaunchPendingAbilities();
     EXPECT_CALL(*(appC.mockAppScheduler_), ScheduleForegroundApplication()).Times(1);
-    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(2);
     EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleCleanAbility(_)).Times(2);
     EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleTerminateApplication()).Times(1);
 
@@ -407,7 +407,7 @@ HWTEST_F(AmsWorkFlowTest, BackKey_007, TestSize.Level1)
     CreateTestApplicationRecord(
         "D", tokenD, "C", AbilityState::ABILITY_STATE_BACKGROUND, ApplicationState::APP_STATE_BACKGROUND);
     EXPECT_CALL(*(appC.mockAppScheduler_), ScheduleForegroundApplication()).Times(1);
-    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(2);
     EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleCleanAbility(_)).Times(2);
     EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleTerminateApplication()).Times(1);
 
@@ -471,7 +471,7 @@ HWTEST_F(AmsWorkFlowTest, ScreenOff_002, TestSize.Level1)
     sptr<IRemoteObject> tokenB = new MockAbilityToken();
     CreateTestApplicationRecord(
         "B", tokenB, "A", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
-    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(2);
 
     serviceInner_->UpdateAbilityState(tokenA, AbilityState::ABILITY_STATE_BACKGROUND);
     serviceInner_->UpdateAbilityState(tokenB, AbilityState::ABILITY_STATE_BACKGROUND);
@@ -556,7 +556,7 @@ HWTEST_F(AmsWorkFlowTest, ScreenOff_005, TestSize.Level1)
     sptr<IRemoteObject> tokenB = new MockAbilityToken();
     CreateTestApplicationRecord(
         "B", tokenB, "A", AbilityState::ABILITY_STATE_FOREGROUND, ApplicationState::APP_STATE_FOREGROUND);
-    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(2);
     EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleCleanAbility(_)).Times(2);
     EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleTerminateApplication()).Times(1);
 
@@ -827,7 +827,7 @@ HWTEST_F(AmsWorkFlowTest, ChangeAbility_004, TestSize.Level1)
         "C", tokenC, "C", AbilityState::ABILITY_STATE_READY, ApplicationState::APP_STATE_READY);
     appC.appRecord_->LaunchPendingAbilities();
     EXPECT_CALL(*(appC.mockAppScheduler_), ScheduleForegroundApplication()).Times(1);
-    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(1);
+    EXPECT_CALL(*(appA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(2);
 
     serviceInner_->UpdateAbilityState(tokenC, AbilityState::ABILITY_STATE_FOREGROUND);
     serviceInner_->ApplicationForegrounded(appC.appRecord_->GetRecordId());

@@ -54,192 +54,192 @@ enum {
      */
     RESOLVE_APP_ERR,
     /**
-     * Result(2097157) for StartAbility: The ability to start is already at the top.
+     * Result(2097156) for StartAbility: The ability to start is already at the top.
      */
     ABILITY_EXISTED,
     /**
-     * Result(2097158) for StartAbility: An error to create mission stack.
+     * Result(2097157) for StartAbility: An error to create mission stack.
      */
     CREATE_MISSION_STACK_FAILED,
     /**
-     * Result(2097160) for StartAbility: An error to create ability record.
+     * Result(2097158) for StartAbility: An error to create ability record.
      */
     CREATE_ABILITY_RECORD_FAILED,
     /**
-     * Result(2097161) for StartAbility: The ability to start is waiting.
+     * Result(2097159) for StartAbility: The ability to start is waiting.
      */
     START_ABILITY_WAITING,
     /**
-     * Result(2097162) for TerminateAbility: Don't allow to terminate launcher.
+     * Result(2097160) for TerminateAbility: Don't allow to terminate launcher.
      */
     TERMINATE_LAUNCHER_DENIED,
     /**
-     * Result(2097163) for DisconnectAbility: Connection not exist.
+     * Result(2097161) for DisconnectAbility: Connection not exist.
      */
     CONNECTION_NOT_EXIST,
     /**
-     * Result(2097164) for DisconnectAbility:Connection is invalid state.
+     * Result(2097162) for DisconnectAbility:Connection is invalid state.
      */
     INVALID_CONNECTION_STATE,
     /**
-     * Result(2097165) for LoadctAbility:LoadAbility timeout.
+     * Result(2097163) for LoadctAbility:LoadAbility timeout.
      */
     LOAD_ABILITY_TIMEOUT,
     /**
-     * Result(2097166) for DisconnectAbility:Connection timeout.
+     * Result(2097164) for DisconnectAbility:Connection timeout.
      */
     CONNECTION_TIMEOUT,
     /**
-     * Result(2097167) for start service: An error of the get BundleManagerService.
+     * Result(2097165) for start service: An error of the get BundleManagerService.
      */
     GET_BUNDLE_MANAGER_SERVICE_FAILED,
     /**
-     * Result(2097171) for Remove mission: An error of removing mission.
+     * Result(2097166) for Remove mission: An error of removing mission.
      */
     REMOVE_MISSION_FAILED,
     /**
-     * Result(2097172) for All: An error occurs in server.
+     * Result(2097167) for All: An error occurs in server.
      */
     INNER_ERR,
     /**
-     * Result(2097173) for Get recent mission: get recent missions failed
+     * Result(2097168) for Get recent mission: get recent missions failed
      */
     GET_RECENT_MISSIONS_FAILED,
     /**
-     * Result(2097174) for Remove stack: Don't allow to remove stack which has launcher ability.
+     * Result(2097169) for Remove stack: Don't allow to remove stack which has launcher ability.
      */
     REMOVE_STACK_LAUNCHER_DENIED,
     /**
-     * Result(2097178) for ConnectAbility:target ability is not service ability.
+     * Result(2097170) for ConnectAbility:target ability is not service ability.
      */
     TARGET_ABILITY_NOT_SERVICE,
     /**
-     * Result(2097179) for TerminateAbility:target service has a record of connect. It cannot be stopped.
+     * Result(2097171) for TerminateAbility:target service has a record of connect. It cannot be stopped.
      */
     TERMINATE_SERVICE_IS_CONNECTED,
     /**
-     * Result(2097180) for StartAbility:The ability to start is already activing..
+     * Result(2097172) for StartAbility:The ability to start is already activing..
      */
     START_SERVICE_ABILITY_ACTIVING,
     /**
-     * Result(2097181) for move mission to top: An error of moving stack.
+     * Result(2097173) for move mission to top: An error of moving stack.
      */
     MOVE_MISSION_FAILED,
     /**
-     * Result(2097182) for kill process: An error of kill process.
+     * Result(2097174) for kill process: An error of kill process.
      */
     KILL_PROCESS_FAILED,
     /**
-     * Result(2097183) for uninstall app: An error of uninstall app.
+     * Result(2097175) for uninstall app: An error of uninstall app.
      */
     UNINSTALL_APP_FAILED,
     /**
-     * Result(2097184) for terminate ability result: An error of terminate service.
+     * Result(2097176) for terminate ability result: An error of terminate service.
      */
     TERMINATE_ABILITY_RESULT_FAILED,
     /**
-     * Result(2097185) for check permission failed.
+     * Result(2097177) for check permission failed.
      */
     CHECK_PERMISSION_FAILED,
 
     /**
-     * Result(2097208) for no found abilityrecord by caller
+     * Result(2097178) for no found abilityrecord by caller
      */
     NO_FOUND_ABILITY_BY_CALLER,
 
     /**
-     * Result(2097209) for ability visible attribute is false.
+     * Result(2097179) for ability visible attribute is false.
      */
     ABILITY_VISIBLE_FALSE_DENY_REQUEST,
 
     /**
-     * Result(2097210) for caller is not systemapp.
+     * Result(2097180) for caller is not systemapp.
      */
     CALLER_ISNOT_SYSTEMAPP,
 
     /**
-     * Result(2097211) for get bundleName by uid fail.
+     * Result(2097181) for get bundleName by uid fail.
      */
     GET_BUNDLENAME_BY_UID_FAIL,
 
     /**
-     * Result(2097214) for misson not found.
+     * Result(2097182) for misson not found.
      */
     MISSION_NOT_FOUND,
 
     /**
-     * Result(2097215) for get bundle info fail.
+     * Result(2097183) for get bundle info fail.
      */
     GET_BUNDLE_INFO_FAILED,
 
     /**
-     * Result(2097216) for KillProcess: keep alive process can not be killed
+     * Result(2097184) for KillProcess: keep alive process can not be killed
      */
     KILL_PROCESS_KEEP_ALIVE,
 
     /**
-     * Result(2097217) for clear the application data fail.
+     * Result(2097185) for clear the application data fail.
      */
     CLEAR_APPLICATION_DATA_FAIL,
-	
+
 	// for call ability
     /**
-     * Result(2097218) for resolve ability failed, there is no permissions
+     * Result(2097186) for resolve ability failed, there is no permissions
      */
     RESOLVE_CALL_NO_PERMISSIONS,
 
     /**
-     * Result(2097219) for resolve ability failed, target ability not page or singleton
+     * Result(2097187) for resolve ability failed, target ability not page or singleton
      */
     RESOLVE_CALL_ABILITY_TYPE_ERR,
-    
+
     /**
-     * Result(2097220) for resolve ability failed, resolve failed.
+     * Result(2097188) for resolve ability failed, resolve failed.
      */
     RESOLVE_CALL_ABILITY_INNER_ERR,
 
     /**
-     * Result(2097221) for resolve ability failed, resolve failed.
+     * Result(2097189) for resolve ability failed, resolve failed.
      */
     RESOLVE_CALL_ABILITY_VERSION_ERR,
 
     /**
-     * Result(2097222) for release ability failed, release failed.
+     * Result(2097190) for release ability failed, release failed.
      */
     RELEASE_CALL_ABILITY_INNER_ERR,
 
     /**
-     * Result(2097216) for register remote mission listener fail.
+     * Result(2097191) for register remote mission listener fail.
      */
     REGISTER_REMOTE_MISSION_LISTENER_FAIL,
 
     /**
-     * Result(2097217) for unregister remote mission listener fail.
+     * Result(2097192) for unregister remote mission listener fail.
      */
     UNREGISTER_REMOTE_MISSION_LISTENER_FAIL,
 
     /**
-     * Result() for invalid userid.
+     * Result(2097193) for invalid userid.
      */
     INVALID_USERID_VALUE,
 
     /**
-     * Result() for start user test fail.
+     * Result(2097194) for start user test fail.
      */
     START_USER_TEST_FAIL,
 
     /**
-     * Result(2097220) for send usr1 sig to the process of not response fail.
+     * Result(2097195) for send usr1 sig to the process of not response fail.
      */
     SEND_USR1_SIG_FAIL,
 
     /**
-     * Result(2097221) for hidump fail.
+     * Result(2097196) for hidump fail.
      */
     ERR_AAFWK_HIDUMP_ERROR,
 
     /**
-     * Result(2097222) for hidump params are invalid.
+     * Result(2097197) for hidump params are invalid.
      */
     ERR_AAFWK_HIDUMP_INVALID_ARGS,
 };
