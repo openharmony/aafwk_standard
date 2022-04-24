@@ -16,7 +16,7 @@ import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
 
 module_output_path = "ability_runtime/mstabilitymgrservice"
-EVENT_DIR = "//base/notification/ces_standard"
+EVENT_DIR = "//base/notification/common_event_service"
 
 ohos_moduletest("AbilityRecordModuleTest") {
   module_out_path = module_output_path
@@ -121,8 +121,8 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "access_token:libaccesstoken_sdk",
     "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
-    "ces_standard:cesfwk_core",
-    "ces_standard:cesfwk_innerkits",
+    "common_event_service:cesfwk_core",
+    "common_event_service:cesfwk_innerkits",
     "dsoftbus_standard:softbus_client",
     "hicollie_native:libhicollie",
     "hiviewdfx_hilog_native:libhilog",
