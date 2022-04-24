@@ -253,7 +253,7 @@ void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
         return;
     }
 
-    HILOG_INFO("new version ability, window after foreground.");
+    HILOG_INFO("Stage mode ability, window after foreground, notify ability manager service.");
     PacMap restoreData;
     AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_,
         AbilityLifeCycleState::ABILITY_STATE_FOREGROUND_NEW, restoreData);

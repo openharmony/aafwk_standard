@@ -468,7 +468,6 @@ void AbilityRecord::Inactivate()
     // earlier than above actions.
     currentState_ = AbilityState::INACTIVATING;
     lifecycleDeal_->Inactivate(want_, lifeCycleStateInfo_);
-    HILOG_INFO("Inactivate ability end, ability:%{public}s.", abilityInfo_.name.c_str());
 }
 
 void AbilityRecord::MoveToBackground(const Closure &task)

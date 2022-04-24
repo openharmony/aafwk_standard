@@ -200,7 +200,8 @@ void AbilityContextImpl::OnAbilityResult(int requestCode, int resultCode, const 
 bool AbilityContextImpl::ConnectAbility(const AAFwk::Want &want,
                                         const sptr<AbilityConnectCallback> &connectCallback)
 {
-    HILOG_DEBUG("%{public}s begin.", __func__);
+    HILOG_DEBUG("Connect ability begin, ability:%{public}s.",
+        abilityInfo_ == nullptr ? "" : abilityInfo_->name.c_str());
     ErrCode ret =
         ConnectionManager::GetInstance().ConnectAbility(token_, want, connectCallback);
     HILOG_INFO("AbilityContextImpl::ConnectAbility ErrorCode = %{public}d", ret);
@@ -220,13 +221,13 @@ bool AbilityContextImpl::ConnectAbilityWithAccount(const AAFwk::Want &want, int 
 void AbilityContextImpl::DisconnectAbility(const AAFwk::Want &want,
                                            const sptr<AbilityConnectCallback> &connectCallback)
 {
-    HILOG_DEBUG("%{public}s begin.", __func__);
+    HILOG_DEBUG("Disconnect ability begin, caller:%{public}s.",
+        abilityInfo_ == nullptr ? "" : abilityInfo_->name.c_str());
     ErrCode ret =
         ConnectionManager::GetInstance().DisconnectAbility(token_, want.GetElement(), connectCallback);
     if (ret != ERR_OK) {
         HILOG_ERROR("%{public}s end DisconnectAbility error, ret=%{public}d", __func__, ret);
     }
-    HILOG_INFO("%{public}s end DisconnectAbility", __func__);
 }
 
 std::string AbilityContextImpl::GetBundleName() const
