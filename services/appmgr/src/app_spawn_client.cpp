@@ -117,6 +117,45 @@ ErrCode AppSpawnClient::StartProcessImpl(const AppSpawnStartMsg &startMsg, pid_t
     return result;
 }
 
+ErrCode AppSpawnClient::GetRenderProcessTerminationStatus(const AppSpawnStartMsg &startMsg, int &status)
+{
+    if (!socket_) {
+        HILOG_ERROR("socket_ is null!");
+        return ERR_APPEXECFWK_BAD_APPSPAWN_SOCKET;
+    }
+
+    ErrCode result = ERR_OK;
+    // openconnection failed, return fail
+    if (state_ != SpawnConnectionState::STATE_CONNECTED) {
+        result = OpenConnection();
+        if (FAILED(result)) {
+            HILOG_ERROR("connect to appspawn failed!");
+            return result;
+        }
+    }
+    std::unique_ptr<AppSpawnClient, void (*)(AppSpawnClient *)> autoCloseConnection(
+        this, [](AppSpawnClient *client) { client->CloseConnection(); });
+
+    AppSpawnMsgWrapper msgWrapper;
+    if (!msgWrapper.AssembleMsg(startMsg)) {
+        HILOG_ERROR("AssembleMsg failed!");
+        return ERR_APPEXECFWK_ASSEMBLE_START_MSG_FAILED;
+    }
+    if (msgWrapper.IsValid()) {
+        result = socket_->WriteMessage(msgWrapper.GetMsgBuf(), msgWrapper.GetMsgLength());
+        if (FAILED(result)) {
+            HILOG_ERROR("WriteMessage failed!");
+            return result;
+        }
+        result = socket_->ReadMessage(reinterpret_cast<void *>(&status), sizeof(int));
+        if (FAILED(result)) {
+            HILOG_ERROR("ReadMessage failed!");
+            return result;
+        }
+    }
+    return result;
+}
+
 SpawnConnectionState AppSpawnClient::QueryConnectionState() const
 {
     return state_;

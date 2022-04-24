@@ -635,6 +635,37 @@ void AppMgrProxy::AttachRenderProcess(const sptr<IRemoteObject> &renderScheduler
     }
 }
 
+int AppMgrProxy::GetRenderProcessTerminationStatus(pid_t renderPid, int &status)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("WriteInterfaceToken failed");
+        return ERR_FLATTEN_OBJECT;
+    }
+
+    if (!data.WriteInt32(renderPid)) {
+        HILOG_ERROR("write renderPid failed.");
+        return -1;
+    }
+
+    int32_t ret = Remote()->SendRequest(
+        static_cast<uint32_t>(IAppMgr::Message::GET_RENDER_PROCESS_TERMINATION_STATUS), data, reply, option);
+    if (ret != NO_ERROR) {
+        HILOG_WARN("GetRenderProcessTerminationStatus SendRequest is failed, error code: %{public}d", ret);
+        return ret;
+    }
+
+    auto result = reply.ReadInt32();
+    if (result != 0) {
+        HILOG_WARN("GetRenderProcessTerminationStatus failed, result: %{public}d", result);
+        return result;
+    }
+    status = reply.ReadInt32();
+    return 0;
+}
+
 void AppMgrProxy::PostANRTaskByProcessID(const pid_t pid)
 {
     MessageParcel data;

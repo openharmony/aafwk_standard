@@ -208,6 +208,15 @@ public:
     virtual void AttachRenderProcess(const sptr<IRemoteObject> &renderApp) override;
 
     /**
+     * Get render process termination status, called by nweb host.
+     *
+     * @param renderPid, target render pid.
+     * @param status, termination status of the render process.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int GetRenderProcessTerminationStatus(pid_t renderPid, int &status) override;
+
+    /**
      * Post a task to the not response process.
      *
      * @param pid, the not response process id.
