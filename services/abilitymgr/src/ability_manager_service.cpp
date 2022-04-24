@@ -120,6 +120,7 @@ const int32_t GET_PARAMETER_INCORRECT = -9;
 const int32_t GET_PARAMETER_OTHER = -1;
 const int32_t SIZE_10 = 10;
 const bool isRamConstrainedDevice = false;
+const std::string BUNDLE_NAME_KEY = "bundleName";
 const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.arkheaplimit";
 const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
 const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
@@ -196,12 +197,12 @@ AbilityManagerService::~AbilityManagerService()
 void AbilityManagerService::OnStart()
 {
     if (state_ == ServiceRunningState::STATE_RUNNING) {
-        HILOG_INFO("Ability manager service has already started.");
+        HILOG_INFO("AMS has already started.");
         return;
     }
-    HILOG_INFO("Ability manager service starting.");
+    HILOG_INFO("AMS starting.");
     if (!Init()) {
-        HILOG_ERROR("Failed to init service.");
+        HILOG_ERROR("Failed to init AMS.");
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
@@ -210,12 +211,12 @@ void AbilityManagerService::OnStart()
      * so it can't affect the TDD test program */
     instance_ = DelayedSingleton<AbilityManagerService>::GetInstance().get();
     if (instance_ == nullptr) {
-        HILOG_ERROR("OnStart. instance_ == nullptr !");
+        HILOG_ERROR("AMS enter OnStart, but instance_ is nullptr!");
         return;
     }
     bool ret = Publish(instance_);
     if (!ret) {
-        HILOG_ERROR("Init publish failed!");
+        HILOG_ERROR("Publish AMS failed!");
         return;
     }
 #ifdef SUPPORT_GRAPHICS
@@ -228,7 +229,7 @@ void AbilityManagerService::OnStart()
     }
     WindowManager::GetInstance().RegisterFocusChangedListener(focusChangedListener_);
 #endif
-    HILOG_INFO("Ability manager service start success.");
+    HILOG_INFO("AMS start success.");
 }
 
 bool AbilityManagerService::Init()
@@ -269,7 +270,7 @@ bool AbilityManagerService::Init()
 
 void AbilityManagerService::OnStop()
 {
-    HILOG_INFO("Stop Ability manager service.");
+    HILOG_INFO("Stop AMS.");
     eventLoop_.reset();
     handler_.reset();
     state_ = ServiceRunningState::STATE_NOT_START;
@@ -1040,13 +1041,22 @@ int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         return CHECK_PERMISSION_FAILED;
     }
+    MissionInfo missionInfo;
+    if (GetMissionInfo("", missionId, missionInfo) != ERR_OK) {
+        HILOG_ERROR("get local missionInfo failed");
+        return ERR_INVALID_VALUE;
+    }
+    std::string bundleName = missionInfo.want.GetBundle();
+    OHOS::AAFwk::Want want;
+    want.SetParams(wantParams);
+    want.SetParam(BUNDLE_NAME_KEY, bundleName);
     DistributedClient dmsClient;
-    return dmsClient.ContinueMission(srcDeviceId, dstDeviceId, missionId, callBack, wantParams);
+    return dmsClient.ContinueMission(srcDeviceId, dstDeviceId, missionId, callBack, want.GetParams());
 }
 
-int AbilityManagerService::ContinueAbility(const std::string &deviceId, int32_t missionId)
+int AbilityManagerService::ContinueAbility(const std::string &deviceId, int32_t missionId, uint32_t versionCode)
 {
-    HILOG_INFO("ContinueAbility missionId = %{public}d.", missionId);
+    HILOG_INFO("ContinueAbility missionId = %{public}d, version = %{public}u.", missionId, versionCode);
 
     sptr<IRemoteObject> abilityToken = GetAbilityTokenByMissionId(missionId);
     CHECK_POINTER_AND_RETURN(abilityToken, ERR_INVALID_VALUE);
@@ -1054,7 +1064,7 @@ int AbilityManagerService::ContinueAbility(const std::string &deviceId, int32_t 
     auto abilityRecord = Token::GetAbilityRecordByToken(abilityToken);
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
-    abilityRecord->ContinueAbility(deviceId);
+    abilityRecord->ContinueAbility(deviceId, versionCode);
     return ERR_OK;
 }
 

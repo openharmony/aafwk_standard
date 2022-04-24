@@ -67,11 +67,9 @@ constexpr int32_t DELIVERY_TIME = 200;
 constexpr int32_t DISTRIBUTE_TIME = 100;
 constexpr int32_t UNSPECIFIED_USERID = -2;
 
-constexpr char EVENT_KEY_UID[] = "UID";
-constexpr char EVENT_KEY_PID[] = "PID";
-constexpr char EVENT_KEY_MESSAGE[] = "MSG";
 constexpr char EVENT_KEY_PACKAGE_NAME[] = "PACKAGE_NAME";
-constexpr char EVENT_KEY_PROCESS_NAME[] = "PROCESS_NAME";
+constexpr char EVENT_KEY_REASON[] = "REASON";
+constexpr char EVENT_KEY_SUMMARY[] = "SUMMARY";
 }
 
 #define ACEABILITY_LIBRARY_LOADER
@@ -751,6 +749,30 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     resourceManager->UpdateResConfig(*resConfig);
     return true;
 }
+
+static std::string GetNativeStrFromJsTaggedObj(NativeObject* obj, const char* key)
+{
+    if (obj == nullptr) {
+        HILOG_ERROR("Failed to get value from key:%{public}s, Null NativeObject", key);
+        return "";
+    }
+
+    NativeValue* value = obj->GetProperty(key);
+    NativeString* valueStr = AbilityRuntime::ConvertNativeValueTo<NativeString>(value);
+    if (valueStr == nullptr) {
+        HILOG_ERROR("Failed to convert value from key:%{public}s", key);
+        return "";
+    }
+    size_t valueStrBufLength = valueStr->GetLength();
+    size_t valueStrLength = 0;
+    char* valueCStr = new char[valueStrBufLength + 1];
+    valueStr->GetCString(valueCStr, valueStrBufLength + 1, &valueStrLength);
+    std::string ret(valueCStr, valueStrLength);
+    delete []valueCStr;
+    HILOG_DEBUG("GetNativeStrFromJsTaggedObj Success %{public}s:%{public}s", key, ret.c_str());
+    return ret;
+}
+
 /**
  *
  * @brief Launch the application.
@@ -852,60 +874,27 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         }
         auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
         auto bundleName = appInfo.bundleName;
-        auto uid = appInfo.uid;
-        auto processName = processInfo.GetProcessName();
-        auto processPid = processInfo.GetPid();
         wptr<MainThread> weak = this;
-        auto uncaughtTask = [weak, uid, processPid, bundleName, processName](NativeValue* v) {
-            HILOG_INFO("RegisterUncaughtExceptionHandler Begin");
+        auto uncaughtTask = [weak, bundleName](NativeValue* v) {
             NativeObject* obj = AbilityRuntime::ConvertNativeValueTo<NativeObject>(v);
-            NativeValue* message = obj->GetProperty("message");
-            NativeString* messageStr = AbilityRuntime::ConvertNativeValueTo<NativeString>(message);
-            if (messageStr == nullptr) {
-                HILOG_ERROR("messageStr Convert failed");
-                return;
-            }
-            size_t messagebufferLen = messageStr->GetLength();
-            size_t messagestrLen = 0;
-            char* messagecap = new char[messagebufferLen + 1];
-            messageStr->GetCString(messagecap, messagebufferLen + 1, &messagestrLen);
-            HILOG_INFO("messagecap = %{public}s", messagecap);
-            NativeValue* stack = obj->GetProperty("stack");
-            NativeString* stackStr = AbilityRuntime::ConvertNativeValueTo<NativeString>(stack);
-            if (stackStr == nullptr) {
-                HILOG_ERROR("stackStr Convert failed");
-                return;
-            }
-            size_t stackbufferLen = stackStr->GetLength();
-            size_t stackstrLen = 0;
-            char* stackcap = new char[stackbufferLen + 1];
-            stackStr->GetCString(stackcap, stackbufferLen + 1, &stackstrLen);
-            HILOG_INFO("stackcap = %{public}s", stackcap);
+            std::string errorMsg = GetNativeStrFromJsTaggedObj(obj, "message");
+            std::string errorName = GetNativeStrFromJsTaggedObj(obj, "name");
+            std::string errorStack = GetNativeStrFromJsTaggedObj(obj, "stack");
+            std::string summary = "Error message:" + errorMsg + "\nStacktrace:\n" + errorStack;
+            OHOS::HiviewDFX::HiSysEvent::Write(OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK, "JS_ERROR",
+                OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+                EVENT_KEY_PACKAGE_NAME, bundleName,
+                EVENT_KEY_REASON, errorName,
+                EVENT_KEY_SUMMARY, summary);
             auto appThread = weak.promote();
             if (appThread == nullptr) {
                 HILOG_ERROR("appThread is nullptr, HandleLaunchApplication failed.");
                 return;
             }
-            std::string eventType = "JS_EXCEPTION";
-            std::string msgContent;
-            std::string tempMessageStr(messagecap);
-            std::string tempStackStr(stackcap);
-            if (messagecap != nullptr) {
-                delete [] messagecap;
-            }
-            if (stackcap != nullptr) {
-                delete [] stackcap;
-            }
-            msgContent = "  message:" + tempMessageStr + "  Stack:" + tempStackStr;
-            auto ret = OHOS::HiviewDFX::HiSysEvent::Write(OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK, eventType,
-                OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
-                EVENT_KEY_UID, std::to_string(uid),
-                EVENT_KEY_PID, std::to_string(processPid),
-                EVENT_KEY_PACKAGE_NAME, bundleName,
-                EVENT_KEY_PROCESS_NAME, processName,
-                EVENT_KEY_MESSAGE, msgContent);
+            // if app's callback has been registered, let app decide whether exit or not.
+            HILOG_ERROR("\n%{public}s is about to exit due to RuntimeError\nError type:%{public}s\n%{public}s",
+                bundleName.c_str(), errorName.c_str(), summary.c_str());
             appThread->ScheduleProcessSecurityExit();
-            HILOG_INFO("RegisterUncaughtExceptionHandler End ret = %{public}d", ret);
         };
         jsEngine.RegisterUncaughtExceptionHandler(uncaughtTask);
         application_->SetRuntime(std::move(runtime));
@@ -1702,7 +1691,7 @@ bool MainThread::CheckFileType(const std::string &fileName, const std::string &e
 
     auto position = fileName.rfind('.');
     if (position == std::string::npos) {
-        HILOG_ERROR("filename no extension name");
+        HILOG_WARN("filename no extension name");
         return false;
     }
 

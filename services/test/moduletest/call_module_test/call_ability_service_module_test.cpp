@@ -172,7 +172,7 @@ void AbilityManagerServiceTest::TearDown()
 HWTEST_F(AbilityManagerServiceTest, CheckCallPermissions_001, TestSize.Level1)
 {
     abilityRequest_.callerUid = 0;
-    EXPECT_EQ(RESOLVE_CALL_NO_PERMISSIONS, abilityMs_->CheckCallPermissions(abilityRequest_));
+    EXPECT_EQ(RESOLVE_CALL_ABILITY_TYPE_ERR, abilityMs_->CheckCallPermissions(abilityRequest_));
 }
 
 /**

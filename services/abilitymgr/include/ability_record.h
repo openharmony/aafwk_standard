@@ -663,7 +663,7 @@ public:
     bool IsNewVersion();
     void SetLaunchReason(const LaunchReason &reason);
     void SetLastExitReason(const LastExitReason &reason);
-    void ContinueAbility(const std::string& deviceId);
+    void ContinueAbility(const std::string& deviceId, uint32_t versionCode);
     void NotifyContinuationResult(int32_t result);
     std::shared_ptr<MissionList> GetOwnedMissionList() const;
 
