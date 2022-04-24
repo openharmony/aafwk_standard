@@ -121,7 +121,6 @@ HWTEST_F(OnNewWantModuleTest, Startability_001, TestSize.Level1)
     abilityRequest.want = want;
     abilityRequest.abilityInfo = CreateAbilityInfo(abilityName, appName, bundleName, true);
     abilityRequest.appInfo = CreateAppInfo(appName, bundleName);
-    abilityRequest.compatibleVersion = 8;
 
     std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
     abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND_NEW);
@@ -162,7 +161,6 @@ HWTEST_F(OnNewWantModuleTest, Startability_002, TestSize.Level1)
     abilityRequest.want = want;
     abilityRequest.abilityInfo = CreateAbilityInfo(abilityName, appName, bundleName, false);
     abilityRequest.appInfo = CreateAppInfo(appName, bundleName);
-    abilityRequest.compatibleVersion = 8;
 
     std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
     abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND_NEW);
