@@ -134,6 +134,7 @@ ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &token,
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    HILOG_INFO("Terminate ability come.");
     return abms->TerminateAbility(token, resultCode, resultWant);
 }
 
@@ -155,6 +156,7 @@ ErrCode AbilityManagerClient::CloseAbility(const sptr<IRemoteObject> &token, int
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    HILOG_INFO("Close ability come.");
     return abms->CloseAbility(token, resultCode, resultWant);
 }
 
@@ -180,6 +182,7 @@ ErrCode AbilityManagerClient::DisconnectAbility(const sptr<IAbilityConnection> &
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    HILOG_INFO("Disconnect ability begin.");
     return abms->DisconnectAbility(connect);
 }
 

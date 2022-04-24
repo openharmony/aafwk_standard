@@ -60,11 +60,9 @@ void NewAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::Lif
     bool ret = false;
     ret = AbilityTransaction(want, targetState);
     if (ret) {
-        HILOG_INFO("AbilityThread::HandleAbilityTransaction before AbilityManagerClient->AbilityTransitionDone");
+        HILOG_INFO("Handle ability transaction done, notify ability manager service.");
         AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_, targetState.state, GetRestoreData());
-        HILOG_INFO("AbilityThread::HandleAbilityTransaction after AbilityManagerClient->AbilityTransitionDone");
     }
-    HILOG_INFO("NewAbilityImpl::HandleAbilityTransaction end");
 }
 
 /**

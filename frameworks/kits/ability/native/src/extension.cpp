@@ -40,29 +40,29 @@ void Extension::Init(const std::shared_ptr<AppExecFwk::AbilityLocalRecord> &reco
 
 void Extension::OnStart(const AAFwk::Want &want)
 {
-    HILOG_INFO("OnStart begin.");
+    HILOG_INFO("OnStart begin, extension:%{public}s.", abilityInfo_->name.c_str());
     SetLaunchWant(want);
     SetLastRequestWant(want);
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("OnStart end, extension:%{public}s.", abilityInfo_->name.c_str());
 }
 
 void Extension::OnStop()
 {
-    HILOG_INFO("OnStop begin.");
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("OnStop begin, extension:%{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("OnStop end, extension:%{public}s.", abilityInfo_->name.c_str());
 }
 
 sptr<IRemoteObject> Extension::OnConnect(const AAFwk::Want &want)
 {
-    HILOG_INFO("%{public}s begin.", __func__);
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("OnConnect begin, extension:%{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("OnConnect end, extension:%{public}s.", abilityInfo_->name.c_str());
     return nullptr;
 }
 
 void Extension::OnDisconnect(const AAFwk::Want &want)
 {
-    HILOG_INFO("%{public}s begin.", __func__);
-    HILOG_INFO("%{public}s end.", __func__);
+    HILOG_INFO("OnDisconnect begin, extension:%{public}s.", abilityInfo_->name.c_str());
+    HILOG_INFO("OnDisconnect end, extension:%{public}s.", abilityInfo_->name.c_str());
 }
 
 void Extension::OnCommand(const AAFwk::Want &want, bool restart, int startId)

@@ -937,7 +937,7 @@ int AbilityManagerService::IsConnectFreeInstall(
 int AbilityManagerService::DisconnectAbility(const sptr<IAbilityConnection> &connect)
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_DEBUG("Disconnect ability called.");
+    HILOG_DEBUG("Disconnect ability begin.");
     CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
 
@@ -984,7 +984,7 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
     }
     auto type = abilityInfo.type;
     if (type != AppExecFwk::AbilityType::SERVICE && type != AppExecFwk::AbilityType::EXTENSION) {
-        HILOG_ERROR("Connect Ability failed, target Ability is not Service.");
+        HILOG_ERROR("Connect ability failed, target ability is not Service.");
         return TARGET_ABILITY_NOT_SERVICE;
     }
     result = PreLoadAppDataAbilities(abilityInfo.bundleName, validUserId);

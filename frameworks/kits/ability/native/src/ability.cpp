@@ -1653,7 +1653,7 @@ ErrCode Ability::StartAbility(const Want &want)
  */
 ErrCode Ability::TerminateAbility()
 {
-    HILOG_INFO("%{public}s begin, ability is %{public}s.", __func__, abilityInfo_->name.c_str());
+    HILOG_INFO("Terminate ability begin, ability is %{public}s.", abilityInfo_->name.c_str());
     return AbilityContext::TerminateAbility();
 }
 

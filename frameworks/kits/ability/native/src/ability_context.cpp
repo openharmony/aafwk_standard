@@ -105,11 +105,11 @@ ErrCode AbilityContext::TerminateAbility()
 
     switch (info->type) {
         case AppExecFwk::AbilityType::PAGE:
-            HILOG_INFO("%{public}s begin, type is page, ability is %{public}s.", __func__, info->name.c_str());
+            HILOG_INFO("Terminate ability begin, type is page, ability is %{public}s.", info->name.c_str());
             err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, resultCode_, &resultWant_);
             break;
         case AppExecFwk::AbilityType::SERVICE:
-            HILOG_INFO("%{public}s begin, type is service, ability is %{public}s.", __func__, info->name.c_str());
+            HILOG_INFO("Terminate ability begin, type is service, ability is %{public}s.", info->name.c_str());
             err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, -1, nullptr);
             break;
         default:
@@ -194,7 +194,8 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
 
 ErrCode AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
 {
-    HILOG_INFO("Disconnect ability begin.");
+    std::shared_ptr<AbilityInfo> info = GetAbilityInfo();
+    HILOG_INFO("Disconnect ability begin, caller:%{public}s.", info == nullptr ? "" : info->name.c_str());
 
     AppExecFwk::AbilityType type = GetAbilityInfoType();
     if (AppExecFwk::AbilityType::PAGE != type && AppExecFwk::AbilityType::SERVICE != type) {

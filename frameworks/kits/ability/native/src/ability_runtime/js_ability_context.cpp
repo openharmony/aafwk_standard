@@ -501,10 +501,10 @@ NativeValue* JsAbilityContext::OnTerminateSelfWithResult(NativeEngine& engine, N
 
 NativeValue* JsAbilityContext::OnConnectAbility(NativeEngine& engine, NativeCallbackInfo& info)
 {
-    HILOG_INFO("OnConnectAbility is called");
+    HILOG_INFO("Connect ability called.");
     // only support two params
     if (info.argc != ARGC_TWO) {
-        HILOG_ERROR("Not enough params");
+        HILOG_ERROR("Connect ability failed, not enough params.");
         return engine.CreateUndefined();
     }
 
@@ -512,8 +512,7 @@ NativeValue* JsAbilityContext::OnConnectAbility(NativeEngine& engine, NativeCall
     AAFwk::Want want;
     OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
         reinterpret_cast<napi_value>(info.argv[0]), want);
-    HILOG_INFO("%{public}s bundlename:%{public}s abilityname:%{public}s",
-        __func__,
+    HILOG_INFO("Connect ability called, callee:%{public}s.%{public}s.",
         want.GetBundle().c_str(),
         want.GetElement().GetAbilityName().c_str());
 
@@ -536,11 +535,10 @@ NativeValue* JsAbilityContext::OnConnectAbility(NativeEngine& engine, NativeCall
             HILOG_INFO("OnConnectAbility begin");
             auto context = weak.lock();
             if (!context) {
-                HILOG_WARN("context is released");
+                HILOG_WARN("Connect ability failed, context is released.");
                 task.Reject(engine, CreateJsError(engine, 1, "Context is released"));
                 return;
             }
-            HILOG_INFO("context->ConnectAbility connection:%{public}d", (int32_t)connectId);
             if (!context->ConnectAbility(want, connection)) {
                 connection->CallJsFailed(ERROR_CODE_ONE);
             }
@@ -629,7 +627,7 @@ NativeValue* JsAbilityContext::OnDisconnectAbility(NativeEngine& engine, NativeC
     sptr<JSAbilityConnection> connection = nullptr;
     napi_get_value_int64(reinterpret_cast<napi_env>(&engine),
         reinterpret_cast<napi_value>(info.argv[0]), &connectId);
-    HILOG_INFO("OnDisconnectAbility connection:%{public}d", (int32_t)connectId);
+    HILOG_INFO("Disconnect ability begin, connection:%{public}d.", (int32_t)connectId);
     auto item = std::find_if(abilityConnects_.begin(),
         abilityConnects_.end(),
         [&connectId](const std::map<ConnectionKey, sptr<JSAbilityConnection>>::value_type &obj) {
