@@ -819,14 +819,7 @@ void Ability::InitWindow(Rosen::WindowType winType, int32_t displayId, sptr<Rose
         HILOG_ERROR("Ability::InitWindow abilityWindow_ is nullptr");
         return;
     }
-    bool useNewMission = AbilityImpl::IsUseNewMission();
-    if (useNewMission) {
-        abilityWindow_->InitWindow(winType, abilityContext_, sceneListener_, displayId, option);
-    } else {
-        std::shared_ptr<AbilityRuntime::AbilityContext> context = nullptr;
-        sptr<Rosen::IWindowLifeCycle> listener = nullptr;
-        abilityWindow_->InitWindow(winType, context, listener, displayId, option);
-    }
+    abilityWindow_->InitWindow(winType, abilityContext_, sceneListener_, displayId, option);
 }
 
 /**
@@ -902,28 +895,7 @@ void Ability::SetShowOnLockScreen(bool showOnLockScreen)
         window->RemoveWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
     }
 }
-#endif
 
-/**
- * @description: Obtains api version based on ability.
- * @return api version.
- */
-int Ability::GetCompatibleVersion()
-{
-    return compatibleVersion_;
-}
-
-/**
- * @description: Set api version in an ability.
- * @param compatibleVersion api version
- * @return None.
- */
-void Ability::SetCompatibleVersion(int32_t compatibleVersion)
-{
-    compatibleVersion_ = compatibleVersion;
-}
-
-#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Called when a key is lone pressed.
  *

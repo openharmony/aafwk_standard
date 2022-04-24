@@ -359,7 +359,6 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
         HILOG_DEBUG("Make new mission data.");
         targetRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
         targetMission = std::make_shared<Mission>(info.missionInfo.id, targetRecord, missionName, startMethod);
-        targetRecord->SetUseNewMission();
         targetRecord->SetMission(targetMission);
     } else {
         HILOG_DEBUG("Update old mission data.");
@@ -1676,7 +1675,6 @@ std::shared_ptr<MissionList> MissionListManager::GetTargetMissionList(int missio
     }
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    abilityRecord->SetUseNewMission();
     mission = std::make_shared<Mission>(innerMissionInfo.missionInfo.id, abilityRecord, innerMissionInfo.missionName);
     abilityRecord->SetMission(mission);
     std::shared_ptr<MissionList> newMissionList = std::make_shared<MissionList>();

@@ -92,9 +92,8 @@ std::shared_ptr<AbilityRecord> Token::GetAbilityRecord() const
 }
 
 AbilityRecord::AbilityRecord(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,
-    const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode, int32_t apiVersion)
-    : want_(want), abilityInfo_(abilityInfo), applicationInfo_(applicationInfo),
-    requestCode_(requestCode), compatibleVersion_(apiVersion)
+    const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode)
+    : want_(want), abilityInfo_(abilityInfo), applicationInfo_(applicationInfo), requestCode_(requestCode)
 {
     recordId_ = abilityRecordId++;
     auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
@@ -116,14 +115,8 @@ AbilityRecord::~AbilityRecord()
 
 std::shared_ptr<AbilityRecord> AbilityRecord::CreateAbilityRecord(const AbilityRequest &abilityRequest)
 {
-    std::shared_ptr<AbilityRecord> abilityRecord = nullptr;
-    if (abilityRequest.IsNewVersion() && abilityRequest.abilityInfo.type == AbilityType::PAGE) {
-        abilityRecord = std::make_shared<AbilityRecordNew>(abilityRequest.want, abilityRequest.abilityInfo,
-            abilityRequest.appInfo, abilityRequest.requestCode, abilityRequest.compatibleVersion);
-    } else {
-        abilityRecord = std::make_shared<AbilityRecord>(abilityRequest.want, abilityRequest.abilityInfo,
-            abilityRequest.appInfo, abilityRequest.requestCode, abilityRequest.compatibleVersion);
-    }
+    std::shared_ptr<AbilityRecord> abilityRecord = std::make_shared<AbilityRecord>(
+        abilityRequest.want, abilityRequest.abilityInfo, abilityRequest.appInfo, abilityRequest.requestCode);
     CHECK_POINTER_AND_RETURN(abilityRecord, nullptr);
     abilityRecord->SetUid(abilityRequest.uid);
     if (!abilityRecord->Init()) {
@@ -1114,11 +1107,6 @@ void AbilityRecord::ClearFlag()
     appState_ = AppState::END;
 }
 
-bool AbilityRecord::IsNewVersion()
-{
-    return compatibleVersion_ > API_VERSION_7;
-}
-
 void AbilityRecord::SetLaunchReason(const LaunchReason &reason)
 {
     lifeCycleStateInfo_.launchParam.launchReason = reason;
@@ -1145,11 +1133,6 @@ std::shared_ptr<MissionList> AbilityRecord::GetOwnedMissionList() const
 void AbilityRecord::SetMissionList(const std::shared_ptr<MissionList> &missionList)
 {
     missionList_ = missionList;
-}
-
-void AbilityRecord::SetUseNewMission()
-{
-    lifeCycleStateInfo_.useNewMission = true;
 }
 
 void AbilityRecord::SetMission(const std::shared_ptr<Mission> &mission)
@@ -1189,94 +1172,6 @@ void AbilityRecord::SetSpecifiedFlag(const std::string &flag)
 std::string AbilityRecord::GetSpecifiedFlag() const
 {
     return specifiedFlag_;
-}
-
-AbilityRecordNew::AbilityRecordNew(const Want &want, const AppExecFwk::AbilityInfo &abilityInfo,
-    const AppExecFwk::ApplicationInfo &applicationInfo, int requestCode, int32_t apiVersion)
-    : AbilityRecord(want, abilityInfo, applicationInfo, requestCode, apiVersion)
-{
-}
-
-AbilityRecordNew::~AbilityRecordNew()
-{
-}
-
-void AbilityRecordNew::Activate()
-{
-    ForegroundNew();
-}
-
-void AbilityRecordNew::Inactivate()
-{
-    HILOG_INFO("AbilityRecordNew Move to Inactivate.");
-    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (handler == nullptr) {
-        HILOG_ERROR("handler is nullptr or task is nullptr.");
-        return;
-    }
-    SendEvent(AbilityManagerService::INACTIVE_TIMEOUT_MSG, AbilityManagerService::INACTIVE_TIMEOUT);
-
-    auto task = [token = token_]() {
-        HILOG_DEBUG("AbilityRecordNew inactive done.");
-        PacMap restoreData;
-        DelayedSingleton<AbilityManagerService>::GetInstance()->AbilityTransitionDone(token,
-            ABILITY_STATE_INACTIVE, restoreData);
-    };
-    handler->PostTask(task);
-}
-
-void AbilityRecordNew::ForegroundNew()
-{
-    HILOG_INFO("ForegroundingNew.");
-    CHECK_POINTER(lifecycleDeal_);
-
-    SendEvent(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, AbilityManagerService::FOREGROUNDNEW_TIMEOUT);
-
-    // schedule active after updating AbilityState and sending timeout message to avoid ability async callback
-    // earlier than above actions.
-    currentState_ = AbilityState::FOREGROUNDING_NEW;
-    lifecycleDeal_->ForegroundNew(want_, lifeCycleStateInfo_);
-
-    // update ability state to appMgr service when restart
-    if (IsNewWant()) {
-        sptr<Token> preToken = nullptr;
-        if (GetPreAbilityRecord()) {
-            preToken = GetPreAbilityRecord()->GetToken();
-        }
-        DelayedSingleton<AppScheduler>::GetInstance()->AbilityBehaviorAnalysis(token_, preToken, 1, 1, 1);
-    }
-}
-
-void AbilityRecordNew::MoveToBackground(const Closure &task)
-{
-    BackgroundNew(task);
-}
-
-void AbilityRecordNew::BackgroundNew(const Closure &task)
-{
-    HILOG_INFO("Move to backgroundNew.");
-    CHECK_POINTER(lifecycleDeal_);
-    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (handler && task) {
-        if (!want_.GetBoolParam(DEBUG_APP, false)) {
-            g_abilityRecordEventId_++;
-            eventId_ = g_abilityRecordEventId_;
-            // eventId_ is a unique id of the task.
-            handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::BACKGROUNDNEW_TIMEOUT);
-        } else {
-            HILOG_INFO("Is debug mode, no need to handle time out.");
-        }
-    }
-
-    if (!IsTerminating() || IsRestarting()) {
-        // schedule save ability state before moving to background.
-        SaveAbilityState();
-    }
-
-    // schedule background after updating AbilityState and sending timeout message to avoid ability async callback
-    // earlier than above actions.
-    currentState_ = AbilityState::BACKGROUNDING_NEW;
-    lifecycleDeal_->BackgroundNew(want_, lifeCycleStateInfo_);
 }
 
 // new version  --start
@@ -1440,7 +1335,7 @@ void AbilityRecord::DumpSys(std::vector<std::string> &info, bool isClient)
                std::to_string(isWindowAttached_) + "  launcher #" + std::to_string(isLauncherAbility_);
     info.push_back(dumpInfo);
 
-    if (isLauncherRoot_ && IsNewVersion()) {
+    if (isLauncherRoot_ && abilityInfo_.isStageBasedModel) {
         dumpInfo = "        can restart num #" + std::to_string(restartCount_);
         info.push_back(dumpInfo);
     }

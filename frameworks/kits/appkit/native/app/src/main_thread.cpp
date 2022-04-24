@@ -449,8 +449,6 @@ void MainThread::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemo
     if (bundleMgr) {
         BundleInfo bundleInfo;
         bundleMgr->GetBundleInfo(abilityInfo->bundleName, BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo);
-        abilityRecord->SetCompatibleVersion(bundleInfo.compatibleVersion);
-        HILOG_INFO("MainThread::ScheduleLaunchAbility compatibleVersion:%{public}d", bundleInfo.compatibleVersion);
     }
 
     wptr<MainThread> weak = this;
