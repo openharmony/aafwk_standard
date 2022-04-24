@@ -72,7 +72,7 @@ bool AppSpawnMsgWrapper::AssembleMsg(const AppSpawnStartMsg &startMsg)
             HILOG_ERROR("failed to transform renderCmd!");
             return false;
         }
-        msg_->flags = startMsg.coldStart ? AppSpawn::ClientSocket::APPSPAWN_COLD_BOOT : 0;
+        msg_->flags = startMsg.flags;
     } else if (msg_->code == AppSpawn::ClientSocket::AppOperateCode::GET_RENDER_TERMINATION_STATUS) {
         msg_->pid = startMsg.pid;
     } else {

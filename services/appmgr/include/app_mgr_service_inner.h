@@ -545,13 +545,12 @@ private:
      * @param appName, the app name.
      * @param processName, the process name.
      * @param appRecord, the app information.
-     * @param uid, the process uid.
-     * @param bundleName, the app bundleName.
+     * @param appInfo, the process info.
      *
      * @return
      */
-    void StartProcess(const std::string &appName, const std::string &processName, bool coldStart,
-        const std::shared_ptr<AppRunningRecord> &appRecord, const int uid, const std::string &bundleName);
+    void StartProcess(const std::string &appName, const std::string &processName, uint32_t startFlags,
+        const std::shared_ptr<AppRunningRecord> &appRecord, const std::shared_ptr<ApplicationInfo> &appInfo);
 
     /**
      * PushAppFront, Adjust the latest application record to the top level.
@@ -720,6 +719,8 @@ private:
         int32_t callerUid, pid_t callerPid, const int userId);
 
     int VerifyObserverPermission();
+
+    uint32_t BuildStartFlags(const AAFwk::Want &want, const AbilityInfo &abilityInfo);
 
 private:
     /**

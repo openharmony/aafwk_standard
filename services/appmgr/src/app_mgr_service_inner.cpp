@@ -155,9 +155,8 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
             HILOG_ERROR("CreateAppRunningRecord failed, appRecord is nullptr");
             return;
         }
-        bool isColdStart = want == nullptr ? false : want->GetBoolParam("coldStart", false);
-        StartProcess(abilityInfo->applicationName, processName, isColdStart, appRecord,
-            appInfo->uid, appInfo->bundleName);
+        uint32_t startFlags = BuildStartFlags(*want, *abilityInfo); 
+        StartProcess(abilityInfo->applicationName, processName, startFlags, appRecord, appInfo);
     } else {
         StartAbility(token, preToken, abilityInfo, appRecord, hapModuleInfo, want);
     }
@@ -1228,8 +1227,8 @@ void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &
     }
 }
 
-void AppMgrServiceInner::StartProcess(const std::string &appName, const std::string &processName, bool coldStart,
-    const std::shared_ptr<AppRunningRecord> &appRecord, const int uid, const std::string &bundleName)
+void AppMgrServiceInner::StartProcess(const std::string &appName, const std::string &processName, uint32_t startFlags,
+    const std::shared_ptr<AppRunningRecord> &appRecord, const std::shared_ptr<ApplicationInfo> &appInfo)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!remoteClientManager_->GetSpawnClient() || !appRecord) {
@@ -1242,6 +1241,9 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
         HILOG_ERROR("GetBundleManager fail");
         return;
     }
+
+    int uid = appInfo->uid;
+    std::string bundleName = appInfo->bundleName;
 
     auto userId = GetUserIdByUid(uid);
     AppSpawnStartMsg startMsg;
@@ -1268,9 +1270,9 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     startMsg.apl = (*bundleInfoIter).applicationInfo.appPrivilegeLevel;
     startMsg.bundleName = bundleName;
     startMsg.renderParam = RENDER_PARAM;
-    startMsg.coldStart = coldStart;
-    HILOG_DEBUG("Start process, apl is %{public}s, bundleName is %{public}s coldStart is %{public}d.",
-        startMsg.apl.c_str(), bundleName.c_str(), coldStart);
+    startMsg.flags = startFlags;
+    HILOG_DEBUG("Start process, apl is %{public}s, bundleName is %{public}s, startFlags is %{public}d.",
+        startMsg.apl.c_str(), bundleName.c_str(), startFlags);
 
     bundleMgrResult = IN_PROCESS_CALL(bundleMgr_->GetBundleGidsByUid(bundleName, uid, startMsg.gids));
     if (!bundleMgrResult) {
@@ -1633,7 +1635,7 @@ void AppMgrServiceInner::StartEmptyResidentProcess(
         return;
     }
 
-    StartProcess(appInfo->name, processName, false, appRecord, appInfo->uid, appInfo->bundleName);
+    StartProcess(appInfo->name, processName, 0, appRecord, appInfo);
 
     // If it is empty, the startup failed
     if (!appRecord) {
@@ -1989,7 +1991,7 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
     testRecord->userId = userId;
     appRecord->SetUserTestInfo(testRecord);
 
-    StartProcess(appInfo->name, processName, false, appRecord, appInfo->uid, appInfo->bundleName);
+    StartProcess(appInfo->name, processName, 0, appRecord, appInfo);
 
     // If it is empty, the startup failed
     if (!appRecord) {
@@ -2106,8 +2108,8 @@ void AppMgrServiceInner::StartSpecifiedAbility(const AAFwk::Want &want, const Ap
         appRecord->SetEventHandler(eventHandler_);
         appRecord->SendEventForSpecifiedAbility(AMSEventHandler::START_PROCESS_SPECIFIED_ABILITY_TIMEOUT_MSG,
             AMSEventHandler::START_PROCESS_SPECIFIED_ABILITY_TIMEOUT);
-        bool coldStart = want.GetBoolParam("coldStart", false);
-        StartProcess(appInfo->name, processName, coldStart, appRecord, appInfo->uid, appInfo->bundleName);
+        uint32_t startFlags = BuildStartFlags(want, abilityInfo);
+        StartProcess(appInfo->name, processName, startFlags, appRecord, appInfo);
 
         appRecord->SetSpecifiedAbilityFlagAndWant(true, want, hapModuleInfo.moduleName);
         appRecord->AddModules(appInfo, hapModules);
@@ -2546,6 +2548,27 @@ void AppMgrServiceInner::OnRenderRemoteDied(const wptr<IRemoteObject> &remote)
     if (appRunningManager_) {
         appRunningManager_->OnRemoteRenderDied(remote);
     }
+}
+
+void AppMgrServiceInner::OnRenderRemoteDied(const wptr<IRemoteObject> &remote)
+{
+    HILOG_ERROR("On render remote died.");
+    if (appRunningManager_) {
+        appRunningManager_->OnRemoteRenderDied(remote);
+    }
+}
+
+uint32_t AppMgrServiceInner::BuildStartFlags(const AAFwk::Want &want, const AbilityInfo &abilityInfo)
+{
+    uint32_t startFlags = 0x0;
+    if (want.GetBoolParam("coldStart", false)) {
+        startFlags = startFlags | AppSpawn::ClientSocket::APPSPAWN_COLD_BOOT;
+    }
+
+    if (abilityInfo.extensionAbilityType == ExtensionAbilityType::BACKUP) {
+        startFlags = startFlags | (AppSpawn::ClientSocket::APPSPAWN_COLD_BOOT << StartFlags::START_FLAGS_BACKUP);
+    }
+    return startFlags;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
