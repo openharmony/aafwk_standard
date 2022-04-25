@@ -20,6 +20,7 @@
 #define protected public
 #include "system_ability_definition.h"
 #include "sys_mgr_client.h"
+#include "ability_handler.h"
 
 namespace OHOS {
 namespace AppExecFwk {
