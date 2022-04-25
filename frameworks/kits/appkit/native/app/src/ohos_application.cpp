@@ -592,5 +592,10 @@ std::shared_ptr<Configuration> OHOSApplication::GetConfiguration()
 {
     return configuration_;
 }
+
+void OHOSApplication::SetExtensionTypeMap(std::map<int32_t, std::string> map)
+{
+    extensionTypeMap_ = map;
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -25,6 +25,16 @@ Extension *ServiceExtensionModuleLoader::Create(const std::unique_ptr<Runtime>& 
     return ServiceExtension::Create(runtime);
 }
 
+std::map<std::string, std::string> ServiceExtensionModuleLoader::GetParams()
+{
+    std::map<std::string, std::string> params;
+    // type means extension type in ExtensionAbilityType of extension_ability_info.h, 3 means service.
+    params.insert(std::pair<std::string, std::string>("type", "3"));
+    // extension name
+    params.insert(std::pair<std::string, std::string>("name", "ServiceExtension"));
+    return params;
+}
+
 extern "C" __attribute__((visibility("default"))) void* OHOS_EXTENSION_GetExtensionModule()
 {
     return &ServiceExtensionModuleLoader::GetInstance();
