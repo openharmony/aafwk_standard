@@ -37,12 +37,15 @@ struct AppSpawnStartMsg {
     std::string renderParam; // only nweb spawn need this param.
     int32_t pid;
     int32_t code = 0; // 0: DEFAULT; 1: GET_RENDER_TERMINATION_STATUS
-    bool coldStart; // only nweb spawn need this param.
+    uint32_t flags;
 };
 
 using AppSpawnMsg = AppSpawn::ClientSocket::AppProperty;
 
 constexpr auto LEN_PID = sizeof(pid_t);
+struct StartFlags {
+    static const int START_FLAGS_BACKUP = 1;
+};
 
 union AppSpawnPidMsg {
     pid_t pid = 0;
