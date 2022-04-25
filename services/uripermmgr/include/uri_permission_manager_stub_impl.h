@@ -16,19 +16,24 @@
 #ifndef OHOS_AAFWK_URI_PERMISSION_MANAGER_STUB_IMPL_H
 #define OHOS_AAFWK_URI_PERMISSION_MANAGER_STUB_IMPL_H
 
+#include <functional>
 #include <map>
 
+#include "bundlemgr/bundle_mgr_interface.h"
 #include "uri.h"
 #include "uri_permission_manager_stub.h"
 
 namespace OHOS {
 namespace AAFwk {
+using ClearProxyCallback = std::function<void(const wptr<IRemoteObject>&)>;
+
 struct GrantInfo {
     unsigned int flag;
-    int32_t fromTokenId;
-    int32_t targetTokenId;
+    const unsigned int fromTokenId;
+    const unsigned int targetTokenId;
 };
-class UriPermissionManagerStubImpl : public UriPermissionManagerStub {
+class UriPermissionManagerStubImpl : public UriPermissionManagerStub,
+                                     public std::enable_shared_from_this<UriPermissionManagerStubImpl> {
 public:
     UriPermissionManagerStubImpl() = default;
     virtual ~UriPermissionManagerStubImpl() = default;
@@ -42,7 +47,25 @@ public:
     void RemoveUriPermission(const Security::AccessToken::AccessTokenID tokenId) override;
 
 private:
+    sptr<AppExecFwk::IBundleMgr> ConnectBundleManager();
+    int GetCurrentAccountId();
+    void ClearProxy();
+
+    class BMSDeathRecipient : public IRemoteObject::DeathRecipient {
+    public:
+        BMSDeathRecipient(const ClearProxyCallback &proxy) : proxy_(proxy) {}
+        ~BMSDeathRecipient() = default;
+        virtual void OnRemoteDied([[maybe_unused]] const wptr<IRemoteObject>& remote) override;
+
+    private:
+        ClearProxyCallback proxy_;
+    };
+
+private:
     std::map<std::string, std::list<GrantInfo>> uriMap_;
+    std::mutex mutex_;
+    std::mutex bmsMutex_;
+    sptr<AppExecFwk::IBundleMgr> bundleManager_ = nullptr;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
