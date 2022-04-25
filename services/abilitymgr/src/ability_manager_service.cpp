@@ -72,21 +72,10 @@ namespace AAFwk {
 namespace {
 const int32_t MIN_ARGS_SIZE = 1;
 
-const std::string ARGS_ABILITY = "-a";
-const std::string ARGS_MISSION_LIST = "-l";
-const std::string ARGS_ABILITY_BY_ID = "-i";
-const std::string ARGS_EXTENSION = "-e";
-const std::string ARGS_PENDING_WANT = "-p";
-const std::string ARGS_PROCESS = "-r";
-const std::string ARGS_DATA = "-d";
 const std::string ARGS_USER_ID = "-u";
 const std::string ARGS_CLIENT = "-c";
 const std::string ILLEGAL_INFOMATION = "The arguments are illegal and you can enter '-h' for help.";
 
-const std::set<std::string> ONE_ARG_SET { ARGS_ABILITY, ARGS_MISSION_LIST, ARGS_EXTENSION,
-    ARGS_PENDING_WANT, ARGS_PROCESS, ARGS_DATA };
-
-const std::set<std::string> TWO_ARGS_SET { ARGS_ABILITY, ARGS_ABILITY_BY_ID, ARGS_PENDING_WANT };
 #ifndef OS_ACCOUNT_PART_ENABLED
 constexpr static int UID_TRANSFORM_DIVISOR = 200000;
 static void GetOsAccountIdFromUid(int uid, int &osAccountId)
@@ -4656,11 +4645,16 @@ int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
     if (argsSize < MIN_ARGS_SIZE) {
         return ERR_AAFWK_HIDUMP_INVALID_ARGS;
     }
+
     ErrCode errCode = ERR_OK;
     std::string result;
-    errCode = ProcessMultiParam(argsStr, result);
-    if (errCode == ERR_AAFWK_HIDUMP_INVALID_ARGS) {
-        ShowIllealInfomation(result);
+    if (argsStr[0] == "-h") {
+        ShowHelp(result);
+    } else {
+        errCode = ProcessMultiParam(argsStr, result);
+        if (errCode == ERR_AAFWK_HIDUMP_INVALID_ARGS) {
+            ShowIllealInfomation(result);
+        }
     }
 
     int ret = dprintf(fd, "%s\n", result.c_str());
