@@ -264,6 +264,22 @@ public:
 
     virtual std::shared_ptr<Configuration> GetConfiguration();
 
+    void GetExtensionNameByType(int32_t type, std::string &name)
+    {
+        std::map<int32_t, std::string>::iterator it = extensionTypeMap_.find(type);
+        if (it == extensionTypeMap_.end()) {
+            return;
+        }
+        name = it->second;
+    }
+
+    /**
+     * @brief Set extension types.
+     *
+     * @param map The extension types.
+     */
+    void SetExtensionTypeMap(std::map<int32_t, std::string> map);
+
 private:
     std::list<std::shared_ptr<AbilityLifecycleCallbacks>> abilityLifecycleCallbacks_;
     std::list<std::shared_ptr<ElementsCallback>> elementsCallbacks_;
@@ -272,6 +288,7 @@ private:
     std::unordered_map<std::string, std::shared_ptr<AbilityRuntime::AbilityStage>> abilityStages_;
     std::unique_ptr<AbilityRuntime::Runtime> runtime_;
     std::shared_ptr<Configuration> configuration_ = nullptr;
+    std::map<int32_t, std::string> extensionTypeMap_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS
