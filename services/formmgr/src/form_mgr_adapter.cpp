@@ -1476,8 +1476,8 @@ int FormMgrAdapter::RouterEvent(const int64_t formId)
     return ERR_OK;
 }
 
-int FormMgrAdapter::HandleUpdateFormFlag(std::vector<int64_t> formIds,
-    const sptr<IRemoteObject> &callerToken, bool flag, bool isOnlyEnableUpdate)
+ErrCode FormMgrAdapter::HandleUpdateFormFlag(const std::vector<int64_t> &formIds,
+                                             const sptr<IRemoteObject> &callerToken, bool flag, bool isOnlyEnableUpdate)
 {
     HILOG_INFO("%{public}s called.", __func__);
     if (formIds.empty() || callerToken == nullptr) {
@@ -1487,7 +1487,7 @@ int FormMgrAdapter::HandleUpdateFormFlag(std::vector<int64_t> formIds,
     std::vector<int64_t> refreshForms;
     int errCode = FormDataMgr::GetInstance().UpdateHostFormFlag(formIds, callerToken, flag, isOnlyEnableUpdate,
         refreshForms);
-    if (errCode == ERR_OK && refreshForms.size() > 0) {
+    if (errCode == ERR_OK && !refreshForms.empty()) {
         for (const int64_t id : refreshForms) {
             HILOG_INFO("%{public}s, formRecord need refresh: %{public}" PRId64 "", __func__, id);
             Want want;
@@ -1772,8 +1772,8 @@ int32_t FormMgrAdapter::GetCurrentUserId(const int callingUid)
 }
 
 /**
- * @brief Delete the given invalid forms.
- * @param formIds Indicates the ID of the forms to delete.
+ * @brief Delete the invalid forms.
+ * @param formIds Indicates the ID of the valid forms.
  * @param callerToken Caller ability token.
  * @param numFormsDeleted Returns the number of the deleted forms.
  * @return Returns ERR_OK on success, others on failure.
@@ -1924,7 +1924,7 @@ int FormMgrAdapter::AcquireFormState(const Want &want, const sptr<IRemoteObject>
 }
 
 /**
- * @brief Delete the given invalid forms.
+ * @brief Notify the form is visible or not.
  * @param formIds Indicates the ID of the forms.
  * @param isVisible Visible or not.
  * @param callerToken Host client.
@@ -1934,26 +1934,11 @@ int FormMgrAdapter::NotifyFormsVisible(const std::vector<int64_t> &formIds, bool
                                        const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s, isVisible: %{public}d.", __func__, isVisible);
-    FormHostRecord hostRecord;
-    bool hasHostRec = FormDataMgr::GetInstance().GetMatchedHostClient(callerToken, hostRecord);
-    if (!hasHostRec) {
-        HILOG_ERROR("%{public}s failed, cannot find target client.", __func__);
-        return ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF;
-    }
-
-    for (int64_t formId : formIds) {
-        int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
-        if (!hostRecord.Contains(matchedFormId)) {
-            HILOG_ERROR("%{public}s fail, form is not self-owned, form:%{public}" PRId64 ".", __func__, matchedFormId);
-            continue;
-        }
-        FormDataMgr::GetInstance().SetRecordVisible(matchedFormId, isVisible);
-    }
-    return ERR_OK;
+    return FormDataMgr::GetInstance().NotifyFormsVisible(formIds, isVisible, callerToken);
 }
 
 /**
- * @brief Delete the given invalid forms.
+ * @brief Notify the form is enable to be updated or not.
  * @param formIds Indicates the ID of the forms.
  * @param isEnableUpdate enable update or not.
  * @param callerToken Host client.

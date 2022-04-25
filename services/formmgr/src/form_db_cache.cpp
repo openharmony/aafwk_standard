@@ -238,13 +238,7 @@ ErrCode FormDbCache::GetNoHostDBForms(const int uid, std::map<FormIdKey,
         if (dbInfo.Contains(uid)) {
             dbInfo.Remove(uid);
             if (dbInfo.formUserUids.empty()) {
-                FormIdKey formIdKey;
-                formIdKey.bundleName = dbInfo.bundleName;
-                formIdKey.abilityName = dbInfo.abilityName;
-                formIdKey.moduleName = "";
-                formIdKey.formName = "";
-                formIdKey.specificationId = 0;
-                formIdKey.orientation = 0;
+                FormIdKey formIdKey(dbInfo.bundleName, dbInfo.abilityName);
                 auto itIdsSet = noHostFormDBList.find(formIdKey);
                 if (itIdsSet == noHostFormDBList.end()) {
                     std::set<int64_t> formIdsSet;
@@ -341,13 +335,7 @@ void FormDbCache::GetNoHostInvalidDBForms(int32_t userId, int32_t callingUid, st
         HILOG_DEBUG("found invalid form: %{public}" PRId64 "", formId);
         formRecord.formUserUids.erase(iter);
         if (formRecord.formUserUids.empty()) {
-            FormIdKey formIdKey;
-            formIdKey.bundleName = formRecord.bundleName;
-            formIdKey.abilityName = formRecord.abilityName;
-            formIdKey.moduleName = "";
-            formIdKey.formName = "";
-            formIdKey.specificationId = 0;
-            formIdKey.orientation = 0;
+            FormIdKey formIdKey(formRecord.bundleName, formRecord.abilityName);
             auto itIdsSet = noHostDBFormsMap.find(formIdKey);
             if (itIdsSet == noHostDBFormsMap.end()) {
                 std::set<int64_t> formIdsSet;
@@ -385,9 +373,7 @@ void FormDbCache::BatchDeleteNoHostDBForms(int32_t callingUid, std::map<FormIdKe
             FormDBInfo dbInfo;
             int errCode = GetDBRecord(formId, dbInfo);
             if (errCode == ERR_OK) {
-                FormIdKey removableModuleFormIdKey;
-                removableModuleFormIdKey.bundleName = dbInfo.bundleName;
-                removableModuleFormIdKey.moduleName = dbInfo.moduleName;
+                FormIdKey removableModuleFormIdKey(dbInfo.bundleName, dbInfo.moduleName);
                 removableModuleSet.emplace(removableModuleFormIdKey);
                 DeleteFormInfo(formId);
             }
