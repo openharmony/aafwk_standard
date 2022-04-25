@@ -550,7 +550,7 @@ private:
      *
      * @return
      */
-    void StartProcess(const std::string &appName, const std::string &processName, bool coldStart,
+    void StartProcess(const std::string &appName, const std::string &processName, uint32_t startFlags,
         const std::shared_ptr<AppRunningRecord> &appRecord, const int uid, const std::string &bundleName);
 
     /**
