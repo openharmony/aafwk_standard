@@ -13,7 +13,6 @@
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
-import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
 
 module_output_path = "ability_runtime/mstabilitymgrservice"
 
@@ -33,8 +32,6 @@ ohos_moduletest("dump_module_test") {
     "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util/module_test_dump_util.cpp",
     "dump_module_test.cpp",
   ]
-
-  sources += free_install
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",
