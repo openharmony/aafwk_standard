@@ -2552,11 +2552,11 @@ uint32_t AppMgrServiceInner::BuildStartFlags(const AAFwk::Want &want, const Abil
 {
     uint32_t startFlags = 0x0;
     if (want.GetBoolParam("coldStart", false)) {
-        startFlags = startFlags | AppSpawn::ClientSocket::APPSPAWN_COLD_BOOT;
+        startFlags = startFlags | (AppSpawn::ClientSocket::APPSPAWN_COLD_BOOT << StartFlags::COLD_START);
     }
 
     if (abilityInfo.extensionAbilityType == ExtensionAbilityType::BACKUP) {
-        startFlags = startFlags | (AppSpawn::ClientSocket::APPSPAWN_COLD_BOOT << StartFlags::START_FLAGS_BACKUP);
+        startFlags = startFlags | (AppSpawn::ClientSocket::APPSPAWN_COLD_BOOT << StartFlags::BACKUP_EXTENSION);
     }
     return startFlags;
 }

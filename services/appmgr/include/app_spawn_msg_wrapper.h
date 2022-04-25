@@ -44,7 +44,8 @@ using AppSpawnMsg = AppSpawn::ClientSocket::AppProperty;
 
 constexpr auto LEN_PID = sizeof(pid_t);
 struct StartFlags {
-    static const int START_FLAGS_BACKUP = 1;
+    static const int COLD_START = 0;
+    static const int BACKUP_EXTENSION = 1;
 };
 
 union AppSpawnPidMsg {
