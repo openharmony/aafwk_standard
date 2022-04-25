@@ -15,5 +15,5 @@ import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 
 group("common_target") {
-  deps = [ "task_dispatcher:task_dispatcher" ]
+  deps = []
 }

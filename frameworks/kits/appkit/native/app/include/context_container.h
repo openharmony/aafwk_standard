@@ -443,51 +443,6 @@ public:
      */
     int GetMissionId() override;
 
-    /**
-     * @brief Obtains a task dispatcher that is bound to the UI thread.
-     *
-     * @return Returns the task dispatcher that is bound to the UI thread.
-     */
-    std::shared_ptr<TaskDispatcher> GetUITaskDispatcher() override;
-
-    /**
-     * @brief Obtains a task dispatcher that is bound to the application main thread.
-     *
-     * @return Returns the task dispatcher that is bound to the application main thread.
-     */
-    std::shared_ptr<TaskDispatcher> GetMainTaskDispatcher() override;
-
-    /**
-     * @brief Creates a parallel task dispatcher with a specified priority.
-     *
-     * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
-     * @param priority Indicates the priority of all tasks dispatched by the parallel task dispatcher.
-     *
-     * @return Returns a parallel task dispatcher.
-     */
-    std::shared_ptr<TaskDispatcher> CreateParallelTaskDispatcher(
-        const std::string &name, const TaskPriority &priority) override;
-
-    /**
-     * @brief Creates a serial task dispatcher with a specified priority.
-     *
-     * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
-     * @param priority Indicates the priority of all tasks dispatched by the created task dispatcher.
-     *
-     * @return Returns a serial task dispatcher.
-     */
-    std::shared_ptr<TaskDispatcher> CreateSerialTaskDispatcher(
-        const std::string &name, const TaskPriority &priority) override;
-
-    /**
-     * @brief Obtains a global task dispatcher with a specified priority.
-     *
-     * @param priority Indicates the priority of all tasks dispatched by the global task dispatcher.
-     *
-     * @return Returns a global task dispatcher.
-     */
-    std::shared_ptr<TaskDispatcher> GetGlobalTaskDispatcher(const TaskPriority &priority) override;
-
 private:
     std::shared_ptr<Context> baseContext_;
 };

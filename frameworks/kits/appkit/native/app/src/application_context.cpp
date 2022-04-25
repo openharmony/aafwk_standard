@@ -15,7 +15,6 @@
 
 #include "application_context.h"
 #include "hilog_wrapper.h"
-#include "task_dispatcher_context.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -190,94 +189,6 @@ void ApplicationContext::StartAbilities(const std::vector<AAFwk::Want> &wants)
 int ApplicationContext::GetMissionId()
 {
     return -1;
-}
-
-/**
- * @brief Creates a parallel task dispatcher with a specified priority.
- *
- * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
- * @param priority Indicates the priority of all tasks dispatched by the parallel task dispatcher.
- *
- * @return Returns a parallel task dispatcher.
- */
-std::shared_ptr<TaskDispatcher> ApplicationContext::CreateParallelTaskDispatcher(
-    const std::string &name, const TaskPriority &priority)
-{
-    HILOG_INFO("ApplicationContext::CreateParallelTaskDispatcher begin");
-    if (taskDispatcherContext_ == nullptr) {
-        std::lock_guard<std::mutex> lock_l(mutex_);
-        if (taskDispatcherContext_ == nullptr) {
-            taskDispatcherContext_ = std::make_shared<TaskDispatcherContext>();
-            HILOG_INFO("ApplicationContext::CreateParallelTaskDispatcher threadpool create");
-        }
-
-        if (taskDispatcherContext_ == nullptr) {
-            HILOG_ERROR("ApplicationContext::CreateParallelTaskDispatcher taskDispatcherContext_ is nullptr");
-            return nullptr;
-        }
-    }
-
-    std::shared_ptr<TaskDispatcher> task = taskDispatcherContext_->CreateParallelDispatcher(name, priority);
-    HILOG_INFO("ApplicationContext::CreateParallelTaskDispatcher end");
-    return task;
-}
-
-/**
- * @brief Creates a serial task dispatcher with a specified priority.
- *
- * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
- * @param priority Indicates the priority of all tasks dispatched by the created task dispatcher.
- *
- * @return Returns a serial task dispatcher.
- */
-std::shared_ptr<TaskDispatcher> ApplicationContext::CreateSerialTaskDispatcher(
-    const std::string &name, const TaskPriority &priority)
-{
-    HILOG_INFO("ApplicationContext::CreateSerialTaskDispatcher begin");
-    if (taskDispatcherContext_ == nullptr) {
-        std::lock_guard<std::mutex> lock_l(mutex_);
-        if (taskDispatcherContext_ == nullptr) {
-            taskDispatcherContext_ = std::make_shared<TaskDispatcherContext>();
-            HILOG_INFO("ApplicationContext::CreateSerialTaskDispatcher threadpool create");
-        }
-
-        if (taskDispatcherContext_ == nullptr) {
-            HILOG_ERROR("ApplicationContext::CreateSerialTaskDispatcher taskDispatcherContext_ is nullptr");
-            return nullptr;
-        }
-    }
-
-    std::shared_ptr<TaskDispatcher> task = taskDispatcherContext_->CreateSerialDispatcher(name, priority);
-    HILOG_INFO("ApplicationContext::CreateSerialTaskDispatcher end");
-    return task;
-}
-
-/**
- * @brief Obtains a global task dispatcher with a specified priority.
- *
- * @param priority Indicates the priority of all tasks dispatched by the global task dispatcher.
- *
- * @return Returns a global task dispatcher.
- */
-std::shared_ptr<TaskDispatcher> ApplicationContext::GetGlobalTaskDispatcher(const TaskPriority &priority)
-{
-    HILOG_INFO("ApplicationContext::GetGlobalTaskDispatcher begin");
-    if (taskDispatcherContext_ == nullptr) {
-        std::lock_guard<std::mutex> lock_l(mutex_);
-        if (taskDispatcherContext_ == nullptr) {
-            taskDispatcherContext_ = std::make_shared<TaskDispatcherContext>();
-            HILOG_INFO("ApplicationContext::GetGlobalTaskDispatcher threadpool create");
-        }
-
-        if (taskDispatcherContext_ == nullptr) {
-            HILOG_ERROR("ApplicationContext::GetGlobalTaskDispatcher taskDispatcherContext_ is nullptr");
-            return nullptr;
-        }
-    }
-
-    std::shared_ptr<TaskDispatcher> task = taskDispatcherContext_->GetGlobalTaskDispatcher(priority);
-    HILOG_INFO("ApplicationContext::GetGlobalTaskDispatcher end");
-    return task;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

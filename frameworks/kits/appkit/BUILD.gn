@@ -149,7 +149,6 @@ ohos_shared_library("appkit_native") {
   }
   deps = [
     ":appkit_delegator",
-    "${aafwk_path}/common/task_dispatcher:task_dispatcher",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
   ]
@@ -218,7 +217,6 @@ ohos_shared_library("app_context") {
   }
   deps = [
     # "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/common/task_dispatcher:task_dispatcher",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
   ]
 
