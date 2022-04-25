@@ -1222,7 +1222,7 @@ group("unittest") {
   deps = []
 
   deps += [
-    # ":ability_context_test",
+    ":ability_context_test",
 
     # ":ability_impl_test",
     ":ability_lifecycle_executor_test",
