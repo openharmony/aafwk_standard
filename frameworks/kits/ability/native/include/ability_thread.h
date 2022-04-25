@@ -402,11 +402,11 @@ private:
      * @description: Create the abilityname.
      *
      * @param abilityRecord Indicates the abilityRecord.
-     *
+     * @param application Indicates the application.
      * @return Returns the abilityname.
-     *
      */
-    std::string CreateAbilityName(const std::shared_ptr<AbilityLocalRecord> &abilityRecord);
+    std::string CreateAbilityName(const std::shared_ptr<AbilityLocalRecord> &abilityRecord,
+        std::shared_ptr<OHOSApplication> &application);
 
     /**
      * @description: Create and init contextDeal.

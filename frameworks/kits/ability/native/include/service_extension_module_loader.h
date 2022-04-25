@@ -30,6 +30,8 @@ public:
      * @return The Extension instance.
      */
     virtual Extension *Create(const std::unique_ptr<Runtime>& runtime) const override;
+
+    virtual std::map<std::string, std::string> GetParams() override;
 };
 }
 #endif // FOUNDATION_ABILITYRUTIME_SERVICE_EXTENSION_MODULE_LOADER_H

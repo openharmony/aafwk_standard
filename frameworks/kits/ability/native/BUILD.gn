@@ -354,6 +354,7 @@ ohos_shared_library("service_extension_module") {
     "utils_base:utils",
   ]
 
+  relative_install_dir = "extensionability/"
   subsystem_name = "aafwk"
   part_name = "ability_runtime"
 }
