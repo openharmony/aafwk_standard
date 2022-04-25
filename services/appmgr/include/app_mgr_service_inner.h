@@ -545,12 +545,13 @@ private:
      * @param appName, the app name.
      * @param processName, the process name.
      * @param appRecord, the app information.
-     * @param appInfo, the process info.
+     * @param uid, the process uid.
+     * @param bundleName, the app bundleName.
      *
      * @return
      */
-    void StartProcess(const std::string &appName, const std::string &processName, uint32_t startFlags,
-        const std::shared_ptr<AppRunningRecord> &appRecord, const std::shared_ptr<ApplicationInfo> &appInfo);
+    void StartProcess(const std::string &appName, const std::string &processName, bool coldStart,
+        const std::shared_ptr<AppRunningRecord> &appRecord, const int uid, const std::string &bundleName);
 
     /**
      * PushAppFront, Adjust the latest application record to the top level.
