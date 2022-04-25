@@ -24,6 +24,7 @@ ohos_moduletest("dump_module_test") {
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
     "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util/",
     "//foundation/aafwk/standard/services/test/mock/include",
+    "//foundation/windowmanager/utils/include",
   ]
 
   sources = [
