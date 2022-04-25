@@ -156,7 +156,8 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
             return;
         }
         uint32_t startFlags = BuildStartFlags(*want, *abilityInfo); 
-        StartProcess(abilityInfo->applicationName, processName, startFlags, appRecord, appInfo);
+        StartProcess(abilityInfo->applicationName, processName, startFlags, appRecord,
+            appInfo->uid, appInfo->bundleName);
     } else {
         StartAbility(token, preToken, abilityInfo, appRecord, hapModuleInfo, want);
     }
@@ -1227,8 +1228,8 @@ void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &
     }
 }
 
-void AppMgrServiceInner::StartProcess(const std::string &appName, const std::string &processName, uint32_t startFlags,
-    const std::shared_ptr<AppRunningRecord> &appRecord, const std::shared_ptr<ApplicationInfo> &appInfo)
+void AppMgrServiceInner::StartProcess(const std::string &appName, const std::string &processName, bool coldStart,
+    const std::shared_ptr<AppRunningRecord> &appRecord, const int uid, const std::string &bundleName)
 {
     BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!remoteClientManager_->GetSpawnClient() || !appRecord) {
@@ -1241,9 +1242,6 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
         HILOG_ERROR("GetBundleManager fail");
         return;
     }
-
-    int uid = appInfo->uid;
-    std::string bundleName = appInfo->bundleName;
 
     auto userId = GetUserIdByUid(uid);
     AppSpawnStartMsg startMsg;
@@ -1635,7 +1633,7 @@ void AppMgrServiceInner::StartEmptyResidentProcess(
         return;
     }
 
-    StartProcess(appInfo->name, processName, 0, appRecord, appInfo);
+    StartProcess(appInfo->name, processName, 0, appRecord, appInfo->uid, appInfo->bundleName);
 
     // If it is empty, the startup failed
     if (!appRecord) {
@@ -1991,7 +1989,7 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
     testRecord->userId = userId;
     appRecord->SetUserTestInfo(testRecord);
 
-    StartProcess(appInfo->name, processName, 0, appRecord, appInfo);
+    StartProcess(appInfo->name, processName, 0, appRecord, appInfo->uid, appInfo->bundleName);
 
     // If it is empty, the startup failed
     if (!appRecord) {
@@ -2109,7 +2107,7 @@ void AppMgrServiceInner::StartSpecifiedAbility(const AAFwk::Want &want, const Ap
         appRecord->SendEventForSpecifiedAbility(AMSEventHandler::START_PROCESS_SPECIFIED_ABILITY_TIMEOUT_MSG,
             AMSEventHandler::START_PROCESS_SPECIFIED_ABILITY_TIMEOUT);
         uint32_t startFlags = BuildStartFlags(want, abilityInfo);
-        StartProcess(appInfo->name, processName, startFlags, appRecord, appInfo);
+        StartProcess(appInfo->name, processName, startFlags, appRecord, appInfo->uid, appInfo->bundleName);
 
         appRecord->SetSpecifiedAbilityFlagAndWant(true, want, hapModuleInfo.moduleName);
         appRecord->AddModules(appInfo, hapModules);
