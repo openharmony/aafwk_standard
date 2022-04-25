@@ -83,13 +83,6 @@ public:
     virtual int GetColorMode() = 0;
     virtual int GetMissionId() = 0;
     virtual void StartAbilities(const std::vector<AAFwk::Want> &wants) = 0;
-    virtual std::shared_ptr<TaskDispatcher> GetUITaskDispatcher() = 0;
-    virtual std::shared_ptr<TaskDispatcher> GetMainTaskDispatcher() = 0;
-    virtual std::shared_ptr<TaskDispatcher> CreateParallelTaskDispatcher(
-        const std::string &name, const TaskPriority &priority) = 0;
-    virtual std::shared_ptr<TaskDispatcher> CreateSerialTaskDispatcher(
-        const std::string &name, const TaskPriority &priority) = 0;
-    virtual std::shared_ptr<TaskDispatcher> GetGlobalTaskDispatcher(const TaskPriority &priority) = 0;
     friend DataAbilityHelper;
     friend DataShareHelper;
     friend ContinuationConnector;

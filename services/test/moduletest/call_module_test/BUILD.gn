@@ -59,7 +59,6 @@ ohos_moduletest("call_ability_service_module_test") {
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
-    "device_manager_base:devicemanagersdk",
     "dsoftbus_standard:softbus_client",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
