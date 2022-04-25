@@ -123,6 +123,8 @@ group("unittest") {
     "unittest/ams_app_state_callback_test:unittest",
     "unittest/ams_app_workflow_test:unittest",
     "unittest/ams_ipc_interface_test:unittest",
+
+    # "unittest/ams_lmks_client_test:unittest",
     "unittest/ams_mgr_kill_process_test:unittest",
     "unittest/ams_mgr_proxy_test:unittest",
     "unittest/ams_mgr_scheduler_dump_test:unittest",
