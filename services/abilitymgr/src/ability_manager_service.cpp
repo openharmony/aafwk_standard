@@ -546,6 +546,11 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
 
 void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUserId)
 {
+    if ((want.GetFlags() & (Want::FLAG_AUTH_READ_URI_PERMISSION | Want::FLAG_AUTH_WRITE_URI_PERMISSION)) == 0) {
+        HILOG_DEBUG("Do not call uriPermissionMgr.");
+        return;
+    }
+
     HILOG_DEBUG("AbilityManagerService::GrantUriPermission is called.");
     auto bms = GetBundleManager();
     CHECK_POINTER_IS_NULLPTR(bms);
@@ -558,11 +563,8 @@ void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUs
         return;
     }
 
-    if (want.GetFlags() & (Want::FLAG_AUTH_READ_URI_PERMISSION | Want::FLAG_AUTH_WRITE_URI_PERMISSION)) {
-        HILOG_INFO("Want to grant r/w permission of the uri");
-        auto targetTokenId = bundleInfo.applicationInfo.accessTokenId;
-        GrantUriPermission(want, validUserId, targetTokenId);
-    }
+    auto targetTokenId = bundleInfo.applicationInfo.accessTokenId;
+    GrantUriPermission(want, validUserId, targetTokenId);
 }
 
 void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUserId, uint32_t targetTokenId)
@@ -591,13 +593,7 @@ void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUs
         }
 
         Uri uri(str);
-        if (want.GetFlags() & Want::FLAG_AUTH_WRITE_URI_PERMISSION) {
-            IN_PROCESS_CALL_WITHOUT_RET(
-                upmClient->GrantUriPermission(uri, Want::FLAG_AUTH_WRITE_URI_PERMISSION, fromTokenId, targetTokenId));
-        } else {
-            IN_PROCESS_CALL_WITHOUT_RET(
-                upmClient->GrantUriPermission(uri, Want::FLAG_AUTH_READ_URI_PERMISSION, fromTokenId, targetTokenId));
-        }
+        IN_PROCESS_CALL_WITHOUT_RET(upmClient->GrantUriPermission(uri, want.GetFlags(), fromTokenId, targetTokenId));
     }
 }
 
@@ -976,7 +972,7 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
         return result;
     }
 
-    if (!VerifyUriPermisson(abilityRequest, want)) {
+    if (!VerifyUriPermission(abilityRequest, want)) {
         HILOG_ERROR("The uri has not granted.");
         return ERR_INVALID_OPERATION;
     }
@@ -4075,7 +4071,7 @@ bool AbilityManagerService::IsNeedTimeoutForTest(const std::string &abilityName,
     return false;
 }
 
-bool AbilityManagerService::VerifyUriPermisson(const AbilityRequest &abilityRequest, const Want &want)
+bool AbilityManagerService::VerifyUriPermission(const AbilityRequest &abilityRequest, const Want &want)
 {
     if (abilityRequest.abilityInfo.extensionAbilityType != AppExecFwk::ExtensionAbilityType::FILESHARE) {
         HILOG_DEBUG("Only FILESHARE need to Verify uri permission.");
@@ -4088,10 +4084,7 @@ bool AbilityManagerService::VerifyUriPermisson(const AbilityRequest &abilityRequ
     auto uriPermMgrClient = AAFwk::UriPermissionManagerClient::GetInstance();
     for (auto str : uriVec) {
         Uri uri(str);
-        if (uriPermMgrClient->VerifyUriPermission(uri, Want::FLAG_AUTH_WRITE_URI_PERMISSION, targetTokenId)) {
-            return true;
-        }
-        if (uriPermMgrClient->VerifyUriPermission(uri, Want::FLAG_AUTH_READ_URI_PERMISSION, targetTokenId)) {
+        if (uriPermMgrClient->VerifyUriPermission(uri, want.GetFlags(), targetTokenId)) {
             return true;
         }
     }
