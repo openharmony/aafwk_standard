@@ -26,6 +26,7 @@ JS_ERROR:
   MODULE: {type: STRING, desc: module name}
   PACKAGE_NAME: {type: STRING, desc: app package name}
   VERSION: {type: STRING, desc: app version}
+  TYPE: {type: INT32, desc: js crash tpe}
   REASON: {type: STRING, desc: error type}
   PAGE: {type: STRING, desc: current running ability}
   JSVM: {type: STRING, desc: js runtime type}
