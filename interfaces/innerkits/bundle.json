@@ -90,18 +90,6 @@
                     ]
                   },
                   "name": "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri"
-                },
-                {
-                  "header": {
-                    "header_base": "//foundation/aafwk/standard/common/task_dispatcher/include",
-                    "header_files": [
-                      "dispatcher/parallel_task_dispatcher.h",
-                      "dispatcher/task_dispatcher_context.h",
-                      "threading/runnable.h",
-                      "task/task.h"
-                    ]
-                  },
-                  "name": "//foundation/aafwk/standard/common/task_dispatcher:task_dispatcher"
                 }
             ],
             "test": []

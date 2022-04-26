@@ -185,13 +185,4 @@
       <option name="push" value="ams_page_ability_bundle/amsAbilityVisibleTestServiceB.hap -> /system/vendor/" src="res" />
     </preparer>
   </target>
-  <target name="task_dispatcher_test">
-    <depend resource="ams_task_dispatcher/." pushpath="/system/vendor/" findpath="res" presetcmd=""/>
-    <depend resource="../../../../event/common/test/systemtest/common/resource/testconfig/stress/."
-        pushpath="/data/testconfig" findpath="res" presetcmd=""/>
-    <preparer>
-      <option name="push" value="ams_task_dispatcher/taskDispatcherTestA.hap -> /system/vendor/" src="res" />
-      <option name="push" value="ams_task_dispatcher/taskDispatcherTestB.hap -> /system/vendor/" src="res" />
-    </preparer>
-  </target>
 </configuration>

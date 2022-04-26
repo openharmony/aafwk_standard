@@ -20,11 +20,12 @@ group("module_test_dump_util") {
 }
 
 config("module_test_dump_util_config") {
-  include_dirs = [ "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util/" ]
+  include_dirs =
+      [ "${aafwk_path}/services/test/moduletest/module_test_dump_util/" ]
 }
 
 ohos_shared_library("module_test_dump_util_lib") {
-  sources = [ "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util/module_test_dump_util.cpp" ]
+  sources = [ "${aafwk_path}/services/test/moduletest/module_test_dump_util/module_test_dump_util.cpp" ]
 
   configs = [ ":module_test_dump_util_config" ]
 

@@ -602,33 +602,6 @@ void AbilityContext::StartAbilities(const std::vector<AAFwk::Want> &wants)
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-std::shared_ptr<TaskDispatcher> AbilityContext::GetUITaskDispatcher()
-{
-    return ContextContainer::GetUITaskDispatcher();
-}
-
-std::shared_ptr<TaskDispatcher> AbilityContext::GetMainTaskDispatcher()
-{
-    return ContextContainer::GetMainTaskDispatcher();
-}
-
-std::shared_ptr<TaskDispatcher> AbilityContext::CreateParallelTaskDispatcher(
-    const std::string &name, const TaskPriority &priority)
-{
-    return ContextContainer::CreateParallelTaskDispatcher(name, priority);
-}
-
-std::shared_ptr<TaskDispatcher> AbilityContext::CreateSerialTaskDispatcher(
-    const std::string &name, const TaskPriority &priority)
-{
-    return ContextContainer::CreateSerialTaskDispatcher(name, priority);
-}
-
-std::shared_ptr<TaskDispatcher> AbilityContext::GetGlobalTaskDispatcher(const TaskPriority &priority)
-{
-    return ContextContainer::GetGlobalTaskDispatcher(priority);
-}
-
 bool AbilityContext::IsUpdatingConfigurations()
 {
     return ContextContainer::IsUpdatingConfigurations();

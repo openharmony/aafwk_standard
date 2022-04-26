@@ -1000,7 +1000,7 @@ private:
 
     int CheckStaticCfgPermission(AppExecFwk::AbilityInfo &abilityInfo);
     void GrantUriPermission(const Want &want, int32_t validUserId);
-    bool VerifyUriPermisson(const AbilityRequest &abilityRequest, const Want &want);
+    bool VerifyUriPermission(const AbilityRequest &abilityRequest, const Want &want);
 
     bool SetANRMissionByProcessID(int pid);
 

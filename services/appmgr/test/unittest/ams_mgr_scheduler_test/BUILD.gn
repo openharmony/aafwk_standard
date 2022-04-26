@@ -20,15 +20,15 @@ ohos_unittest("AmsMgrSchedulerTest") {
   module_out_path = module_output_path
   cflags_cc = []
   include_dirs = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/want/include",
-    "//foundation/aafwk/standard/services/appmgr/include",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
+    "${aafwk_path}/interfaces/innerkits/base/include",
+    "${aafwk_path}/interfaces/innerkits/uri/include",
+    "${aafwk_path}/interfaces/innerkits/want/include",
+    "${aafwk_path}/services/appmgr/include",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include",
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/account_error/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
   ]
 
   sources = [ "${services_path}/appmgr/src/ams_mgr_scheduler.cpp" ]
@@ -45,9 +45,9 @@ ohos_unittest("AmsMgrSchedulerTest") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/services/appmgr:libams",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/appmgr/test:appmgr_test_source",
-    "//foundation/aafwk/standard/services/appmgr:libams",
   ]
 
   if (os_account_part_enabled) {

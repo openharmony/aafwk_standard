@@ -17,17 +17,17 @@ import("//foundation/aafwk/standard/feature.gni")
 
 config("aakit_mock_config") {
   include_dirs = [
-    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/aakit/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
-    "//foundation/aafwk/standard/services/abilitymgr/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/",
+    "${aafwk_path}/services/abilitymgr/test/mock/libs/aakit/include",
+    "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "${aafwk_path}/interfaces/innerkits/uri/include",
+    "${aafwk_path}/services/abilitymgr/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include",
+    "${aafwk_path}/interfaces/innerkits/app_manager/include",
+    "${aafwk_path}/frameworks/kits/ability/native/include/",
     "include/",
     "//third_party/jsoncpp/include",
-    "//foundation/aafwk/standard/services/common/include/",
+    "${aafwk_path}/services/common/include/",
   ]
 }
 
@@ -43,12 +43,12 @@ ohos_source_set("aakit_mock") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${innerkits_path}/want:want",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]

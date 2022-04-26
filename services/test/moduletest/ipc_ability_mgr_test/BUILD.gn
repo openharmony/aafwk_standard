@@ -24,7 +24,7 @@ ohos_moduletest("IpcAbilityMgrServiceModuleTest") {
 
   configs = [
     "${services_path}/test:aafwk_module_test_config",
-    "//foundation/appexecfwk/standard/common:appexecfwk_common_config",
+    "${appexecfwk_path}/common:appexecfwk_common_config",
     "${aafwk_path}/interfaces/innerkits/app_manager:appmgr_sdk_config",
   ]
   cflags = []
@@ -33,11 +33,11 @@ ohos_moduletest("IpcAbilityMgrServiceModuleTest") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/services/abilitymgr:abilityms",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/jsoncpp:jsoncpp",

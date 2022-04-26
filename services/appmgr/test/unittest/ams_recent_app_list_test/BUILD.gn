@@ -19,8 +19,8 @@ ohos_unittest("AmsRecentAppListTest") {
   module_out_path = module_output_path
   cflags_cc = []
   include_dirs = [
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include/",
-    "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
+    "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/account_error/include",
   ]
@@ -49,16 +49,16 @@ ohos_unittest("AmsRecentAppListTest") {
   configs = [ "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config" ]
 
   deps = [
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
+    "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
   ]
 
   if (os_account_part_enabled) {
