@@ -88,6 +88,8 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/want_sender_proxy.cpp",
     "${services_path}/abilitymgr/src/want_sender_stub.cpp",
     "${services_path}/abilitymgr/src/wants_info.cpp",
+    "src/wms_handler_proxy.cpp",
+    "src/wms_handler_stub.cpp",
   ]
 
   public_configs = [

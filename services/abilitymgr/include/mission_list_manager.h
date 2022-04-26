@@ -29,6 +29,9 @@
 #include "snapshot.h"
 #include "start_options.h"
 #include "want.h"
+#ifdef SUPPORT_GRAPHICS
+#include "window_manager_service_handler.h"
+#endif
 
 namespace OHOS {
 namespace AAFwk {
@@ -431,6 +434,18 @@ private:
     void UpdateMissionSnapshot(const std::shared_ptr<AbilityRecord> &abilityRecord);
 
     void AddUninstallTags(const std::string &bundleName, int32_t uid);
+
+#ifdef SUPPORT_GRAPHICS
+    void NotifyAnimationFromRecentTask(const std::shared_ptr<AbilityRecord> &abilityRecord,
+        const std::shared_ptr<StartOptions> &startOptions, const Want &want) const;
+    void NotifyAnimationFromStartingAbility(const std::shared_ptr<AbilityRecord> &callerAbility,
+        const AbilityRequest &abilityRequest, const std::shared_ptr<AbilityRecord> &targetAbilityRecord) const;
+    void SetShowWhenLocked(const AppExecFwk::AbilityInfo &abilityInfo, sptr<WindowTransitionInfo> &info) const;
+    void SetWindowTransitionInfo(const AppExecFwk::AbilityInfo &abilityInfo, sptr<WindowTransitionInfo> &info,
+        const std::shared_ptr<AbilityRecord> &abilityRecord) const;
+    void SetWindowModeAndDisplayId(sptr<WindowTransitionInfo> &info, const Want &want) const;
+    sptr<IWindowManagerServiceHandler> GetWMSHandler() const;
+#endif
 
 private:
     int userId_;

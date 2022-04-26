@@ -34,6 +34,7 @@ constexpr char EVENT_KEY_PACKAGE_NAME[] = "PACKAGE_NAME";
 constexpr char EVENT_KEY_PROCESS_NAME[] = "PROCESS_NAME";
 constexpr uint32_t NEXTABILITY_TIMEOUT = 1000;         // ms
 constexpr uint64_t NANO_SECOND_PER_SEC = 1000000000; // ns
+const std::string SHOW_ON_LOCK_SCREEN = "ShowOnLockScreen";
 std::string GetCurrentTime()
 {
     struct timespec tn;
@@ -41,7 +42,8 @@ std::string GetCurrentTime()
     uint64_t uTime = static_cast<uint64_t>(tn.tv_sec) * NANO_SECOND_PER_SEC + tn.tv_nsec;
     return std::to_string(uTime);
 }
-}
+} // namespace
+
 MissionListManager::MissionListManager(int userId) : userId_(userId) {}
 
 MissionListManager::~MissionListManager() {}
@@ -183,6 +185,18 @@ int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromL
     if (startOptions != nullptr) {
         targetAbilityRecord->SetWindowMode(startOptions->GetWindowMode());
     }
+
+#ifdef SUPPORT_GRAPHICS
+    InnerMissionInfo innerMissionInfo;
+    int getMission = DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
+        missionId, innerMissionInfo);
+    if (getMission != ERR_OK) {
+        HILOG_ERROR("cannot find mission info from MissionInfoList by missionId: %{public}d", missionId);
+        return MOVE_MISSION_FAILED;
+    }
+    NotifyAnimationFromRecentTask(targetAbilityRecord, startOptions, innerMissionInfo.missionInfo.want);
+#endif
+
     // schedule target ability to foreground.
     targetAbilityRecord->ProcessForegroundAbility();
     HILOG_DEBUG("SetMovingState, missionId: %{public}d", missionId);
@@ -245,6 +259,7 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
         HILOG_ERROR("Failed to get mission or record.");
         return ERR_INVALID_VALUE;
     }
+
     if (abilityRequest.IsContinuation()) {
         targetAbilityRecord->SetLaunchReason(LaunchReason::LAUNCHREASON_CONTINUATION);
     } else {
@@ -258,6 +273,13 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
 
     // 4. move target list to top
     MoveMissionListToTop(targetList);
+
+#ifdef SUPPORT_GRAPHICS
+    auto state = targetAbilityRecord->GetAbilityState();
+    if (state != AbilityState::FOREGROUND_NEW && state != AbilityState::FOREGROUNDING_NEW) {
+        NotifyAnimationFromStartingAbility(callerAbility, abilityRequest, targetAbilityRecord);
+    }
+#endif
 
     // 5. schedule target ability
     if (!currentTopAbility) {
@@ -1901,6 +1923,119 @@ int MissionListManager::SetMissionIcon(const sptr<IRemoteObject> &token, const s
     }
 
     return 0;
+}
+
+void MissionListManager::SetShowWhenLocked(const AppExecFwk::AbilityInfo &abilityInfo,
+    sptr<WindowTransitionInfo> &info) const
+{
+    bool showOnLockScreen = false;
+    std::vector<AppExecFwk::CustomizeData> datas = abilityInfo.metaData.customizeData;
+    for (AppExecFwk::CustomizeData data : datas) {
+        if (data.name == SHOW_ON_LOCK_SCREEN) {
+            showOnLockScreen = true;
+        }
+    }
+    if (showOnLockScreen) {
+        info->isShowWhenLocked_ = true;
+    }
+}
+
+sptr<IWindowManagerServiceHandler> MissionListManager::GetWMSHandler() const
+{
+    auto abilityMgr = DelayedSingleton<AbilityManagerService>::GetInstance();
+    if (!abilityMgr) {
+        HILOG_WARN("%{public}s, Get Ability Manager Service failed.", __func__);
+        return nullptr;
+    }
+    return abilityMgr->GetWMSHandler();
+}
+
+void MissionListManager::SetWindowTransitionInfo(const AppExecFwk::AbilityInfo &abilityInfo,
+    sptr<WindowTransitionInfo> &info, const std::shared_ptr<AbilityRecord> &abilityRecord) const
+{
+    info->abilityName_ = abilityInfo.name;
+    info->bundleName_ = abilityInfo.bundleName;
+    info->abilityToken_ = abilityRecord->GetToken();
+    SetShowWhenLocked(abilityInfo, info);
+}
+
+void MissionListManager::SetWindowModeAndDisplayId(sptr<WindowTransitionInfo> &info, const Want &want) const
+{
+    auto mode = want.GetIntParam(Want::PARAM_RESV_WINDOW_MODE, -1);
+    auto displayId = want.GetIntParam(Want::PARAM_RESV_DISPLAY_ID, -1);
+    if (mode != -1) {
+        info->mode_ = static_cast<uint32_t>(mode);
+    }
+    if (displayId != -1) {
+        info->displayId_ = static_cast<uint64_t>(displayId);
+    }
+}
+
+void MissionListManager::NotifyAnimationFromRecentTask(const std::shared_ptr<AbilityRecord> &abilityRecord,
+    const std::shared_ptr<StartOptions> &startOptions, const Want &want) const
+{
+    auto abilityInfo = abilityRecord->GetAbilityInfo();
+    if (abilityInfo.name == AbilityConfig::GRANT_ABILITY_ABILITY_NAME &&
+        abilityInfo.bundleName == AbilityConfig::GRANT_ABILITY_BUNDLE_NAME) {
+        HILOG_INFO("%{public}s, ignore GrantAbility.", __func__);
+        return;
+    }
+
+    auto windowHandler = GetWMSHandler();
+    if (!windowHandler) {
+        HILOG_WARN("%{public}s, Get WMS handler failed.", __func__);
+        return;
+    }
+
+    sptr<WindowTransitionInfo> toInfo = new WindowTransitionInfo();
+    if (startOptions != nullptr) {
+        toInfo->mode_ = static_cast<uint32_t>(startOptions->GetWindowMode());
+        toInfo->displayId_ = static_cast<uint64_t>(startOptions->GetDisplayID());
+    } else {
+        SetWindowModeAndDisplayId(toInfo, want);
+    }
+    SetWindowTransitionInfo(abilityInfo, toInfo, abilityRecord);
+    sptr<WindowTransitionInfo> fromInfo = new WindowTransitionInfo();
+    windowHandler->NotifyWindowTransition(fromInfo, toInfo);
+}
+
+void MissionListManager::NotifyAnimationFromStartingAbility(const std::shared_ptr<AbilityRecord> &callerAbility,
+    const AbilityRequest &abilityRequest, const std::shared_ptr<AbilityRecord> &targetAbilityRecord) const
+{
+    auto abilityInfo = abilityRequest.abilityInfo;
+    if (abilityInfo.name == AbilityConfig::GRANT_ABILITY_ABILITY_NAME &&
+        abilityInfo.bundleName == AbilityConfig::GRANT_ABILITY_BUNDLE_NAME) {
+        HILOG_INFO("%{public}s, ignore GrantAbility.", __func__);
+        return;
+    }
+
+    auto windowHandler = GetWMSHandler();
+    if (!windowHandler) {
+        HILOG_WARN("%{public}s, Get WMS handler failed.", __func__);
+        return;
+    }
+
+    sptr<WindowTransitionInfo> fromInfo = new WindowTransitionInfo();
+    if (callerAbility) {
+        auto callerAbilityInfo = callerAbility->GetAbilityInfo();
+        SetWindowTransitionInfo(callerAbilityInfo, fromInfo, callerAbility);
+    } else {
+        fromInfo->abilityToken_ = abilityRequest.callerToken;
+    }
+
+    sptr<WindowTransitionInfo> toInfo = new WindowTransitionInfo();
+    auto abilityStartSetting = abilityRequest.startSetting;
+    if (abilityStartSetting) {
+        auto mode = std::stoi(abilityStartSetting->GetProperty(AbilityStartSetting::WINDOW_MODE_KEY));
+        toInfo->mode_ = static_cast<uint32_t>(mode);
+        auto displayId = std::stoi(abilityStartSetting->GetProperty(AbilityStartSetting::WINDOW_DISPLAY_ID_KEY));
+        toInfo->displayId_ = static_cast<uint64_t>(displayId);
+    } else {
+        SetWindowModeAndDisplayId(toInfo, abilityRequest.want);
+    }
+    SetWindowTransitionInfo(abilityInfo, toInfo, targetAbilityRecord);
+
+    windowHandler->NotifyWindowTransition(fromInfo, toInfo);
 }
 #endif
 
