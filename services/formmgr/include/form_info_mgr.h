@@ -23,6 +23,7 @@
 #include "appexecfwk_errors.h"
 #include "bundle_info.h"
 #include "form_info.h"
+#include "form_info_storage.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -40,7 +41,7 @@ class BundleFormInfo {
 public:
     explicit BundleFormInfo(std::string bundleName);
 
-    ErrCode InitFromJson(const std::string &formInfosJson);
+    ErrCode InitFromJson(const std::string &formInfoStoragesJson);
 
     ErrCode Update();
 
@@ -55,7 +56,7 @@ public:
 private:
     std::string bundleName_ {};
     mutable std::shared_timed_mutex formInfosMutex_ {};
-    std::vector<FormInfo> formInfos_ {};
+    std::vector<AAFwk::FormInfoStorage> formInfoStorages_ {};
 };
 
 class FormInfoMgr final : public DelayedRefSingleton<FormInfoMgr> {

@@ -53,6 +53,7 @@ ohos_shared_library("libfms") {
     "src/form_host_callback.cpp",
     "src/form_host_record.cpp",
     "src/form_info_mgr.cpp",
+    "src/form_info_storage.cpp",
     "src/form_info_storage_mgr.cpp",
     "src/form_item_info.cpp",
     "src/form_mgr_adapter.cpp",
