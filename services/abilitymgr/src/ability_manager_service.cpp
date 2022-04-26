@@ -858,11 +858,11 @@ int AbilityManagerService::ConnectAbility(
     std::string uri = abilityWant.GetUri().ToString();
     if (!uri.empty()) {
         // if the want include uri, it may only has uri information. it is probably a datashare extension.
-        HILOG_INFO("%{public}s, called. uri:%{public}s, userId %{public}d", __func__, uri.c_str(), userId);
+        HILOG_INFO("%{public}s called. uri:%{public}s, userId %{public}d", __func__, uri.c_str(), validUserId);
         AppExecFwk::ExtensionAbilityInfo extensionInfo;
         auto bms = GetBundleManager();
         CHECK_POINTER_AND_RETURN(bms, ERR_INVALID_VALUE);
-        bool queryResult = IN_PROCESS_CALL(bms->QueryExtensionAbilityInfoByUri(uri, userId, extensionInfo));
+        bool queryResult = IN_PROCESS_CALL(bms->QueryExtensionAbilityInfoByUri(uri, validUserId, extensionInfo));
         if (!queryResult || extensionInfo.name.empty() || extensionInfo.bundleName.empty()) {
             HILOG_ERROR("Invalid extension ability info.");
             return ERR_INVALID_VALUE;
