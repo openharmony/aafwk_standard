@@ -19,42 +19,42 @@ module_output_path = "form_runtime/formmgrservice"
 ohos_unittest("FmsFormDbRecordTest") {
   module_out_path = module_output_path
 
-  sources = [ "//foundation/aafwk/standard/services/formmgr/test/unittest/fms_form_db_record_test/fms_form_db_record_test.cpp" ]
+  sources = [ "${aafwk_path}/services/formmgr/test/unittest/fms_form_db_record_test/fms_form_db_record_test.cpp" ]
 
   include_dirs = [
     "//third_party/json/include",
-    "//foundation/appexecfwk/standard/common/log/include/",
-    "//foundation/aafwk/standard/services/formmgr/include",
+    "${appexecfwk_path}/common/log/include/",
+    "${aafwk_path}/services/formmgr/include",
 
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include/",
-    "//foundation/aafwk/standard/interfaces/innerkits/form_manager/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include/",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include/",
+    "${aafwk_path}/interfaces/innerkits/form_manager/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
 
-    #"//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
-    "//foundation/distributeddatamgr/distributeddatamgr/interfaces/innerkits/distributeddata/include",
+    #"${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
+    "${distributeddatamgr_path}/distributeddatamgr/interfaces/innerkits/distributeddata/include",
   ]
 
   configs = [
     #"${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:bundlemgr_sdk_config",
-    #"//foundation/appexecfwk/standard/services/formmgr:formmgr_config",
+    #"${appexecfwk_path}/services/formmgr:formmgr_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${services_path}/formmgr:fms_target",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
 
     #"${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//utils/native/base:utils",
   ]
 

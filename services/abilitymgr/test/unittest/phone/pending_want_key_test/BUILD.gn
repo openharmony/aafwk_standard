@@ -20,30 +20,30 @@ ohos_unittest("pending_want_key_test") {
   module_out_path = module_output_path
 
   include_dirs = [
-    "//foundation/aafwk/standard/services/abilitymgr/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "${aafwk_path}/services/abilitymgr/include",
+    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
   ]
 
   sources = [
-    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "${aafwk_path}/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
     "pending_want_key_test.cpp",  # add mock file
   ]
 
   configs = [ "${services_path}/abilitymgr:abilityms_config" ]
 
   deps = [
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
+    "${aafwk_path}/interfaces/innerkits/uri:zuri",
+    "${aafwk_path}/services/abilitymgr:abilityms",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test:abilityms_test_source",
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",

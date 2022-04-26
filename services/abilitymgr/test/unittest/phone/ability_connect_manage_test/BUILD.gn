@@ -21,10 +21,10 @@ ohos_unittest("ability_connect_manage_test") {
 
   sources = [
     # add mock file
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/dummy_data_ability_predicates.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/dummy_result_set.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/src/dummy_values_bucket.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "${aafwk_path}/frameworks/kits/ability/native/src/dummy_data_ability_predicates.cpp",
+    "${aafwk_path}/frameworks/kits/ability/native/src/dummy_result_set.cpp",
+    "${aafwk_path}/frameworks/kits/ability/native/src/dummy_values_bucket.cpp",
+    "${aafwk_path}/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
     "ability_connect_manage_test.cpp",
   ]
 
@@ -37,19 +37,19 @@ ohos_unittest("ability_connect_manage_test") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/services/abilitymgr:abilityms",
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test:abilityms_test_source",
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",
     "//utils/native/base:utils",

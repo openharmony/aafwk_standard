@@ -22,13 +22,13 @@ ohos_unittest("app_scheduler_test") {
 
   include_dirs = [
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "${services_path}/abilitymgr/include",
   ]
 
   #sources = abilityms_files
   sources = [
-    "//foundation/aafwk/standard/services/abilitymgr/src/app_scheduler.cpp",
+    "${aafwk_path}/services/abilitymgr/src/app_scheduler.cpp",
     "app_scheduler_test.cpp",
   ]
   sources += free_install
@@ -41,6 +41,11 @@ ohos_unittest("app_scheduler_test") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
+    "${aafwk_path}/interfaces/innerkits/uri:zuri",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "${innerkits_path}/ability_manager:ability_manager",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test:abilityms_test_source",
@@ -48,11 +53,6 @@ ohos_unittest("app_scheduler_test") {
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",

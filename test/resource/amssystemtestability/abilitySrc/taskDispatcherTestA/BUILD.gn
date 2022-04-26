@@ -29,7 +29,7 @@ config("taskDispatcherTestAConfig") {
     "${common_path}/log/include",
     "${SUBST_TOOLS_DIR}/include",
     "//third_party/jsoncpp/include",
-    "//foundation/appexecfwk/standard/test/systemtest/common/task_dispatcher/include",
+    "${appexecfwk_path}/test/systemtest/common/task_dispatcher/include",
   ]
   defines = [
     "AMS_LOG_TAG = \"taskDispatcherTestA\"",
@@ -45,11 +45,11 @@ ohos_shared_library("taskDispatcherTestA") {
     "${SUBDEMOSYSTEM_DIR}/src/main_ability.cpp",
     "${SUBDEMOSYSTEM_DIR}/src/second_ability.cpp",
     "${SUBDEMOSYSTEM_DIR}/src/test_utils.cpp",
-    "//foundation/appexecfwk/standard/test/systemtest/common/task_dispatcher/src/task_dispatcher_tools.cpp",
+    "${appexecfwk_path}/test/systemtest/common/task_dispatcher/src/task_dispatcher_tools.cpp",
   ]
   configs = [
     ":taskDispatcherTestAConfig",
-    "//foundation/appexecfwk/standard/test/systemtest/common/task_dispatcher:system_test_task_dispatcher_config",
+    "${appexecfwk_path}/test/systemtest/common/task_dispatcher:system_test_task_dispatcher_config",
   ]
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",

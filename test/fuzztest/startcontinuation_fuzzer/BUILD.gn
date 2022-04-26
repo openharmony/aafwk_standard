@@ -22,11 +22,11 @@ module_output_path = "ability_runtime/abilitymgr"
 ohos_fuzztest("StartContinuationFuzzTest") {
   module_out_path = module_output_path
 
-  fuzz_config_file = "//foundation/aafwk/standard/test/fuzztest/startcontinuation_fuzzer"
+  fuzz_config_file = "${aafwk_path}/test/fuzztest/startcontinuation_fuzzer"
 
   include_dirs = [
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include/",
+    "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "${aafwk_path}/frameworks/kits/ability/native/include/",
   ]
 
   cflags = [
@@ -38,14 +38,14 @@ ohos_fuzztest("StartContinuationFuzzTest") {
 
   sources = [ "startcontinuation_fuzzer.cpp" ]
 
-  configs = [ "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager_public_config" ]
+  configs = [ "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager_public_config" ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${aafwk_path}/services/abilitymgr:abilityms",
   ]
 
   external_deps = [

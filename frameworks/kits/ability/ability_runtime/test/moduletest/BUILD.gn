@@ -24,32 +24,32 @@ config("module_private_config") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   include_dirs = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS",
-    #"//foundation/distributedschedule/safwk/services/safwk/include",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS",
+    #"${distributedschedule_path}/safwk/services/safwk/include",
   ]
 }
 
 ohos_moduletest("ability_caller_fw_module_test") {
   module_out_path = module_output_path
   sources = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_ability_manager_client.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_serviceability_manager_service.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_ability_manager_client.cpp",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_serviceability_manager_service.cpp",
+    "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
     "ability_caller_fw_module_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime:ability_context_native",
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]

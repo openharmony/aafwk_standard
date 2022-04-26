@@ -12,24 +12,25 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "ability_runtime/moduletest/application_test/"
 
-#APP_INNERKITS_PATH = "//foundation/appexecfwk/standard/interfaces/innerkits"
-ABILITY_INNERKITS_PATH = "//foundation/aafwk/standard/interfaces/innerkits"
+#APP_INNERKITS_PATH = "${appexecfwk_path}/interfaces/innerkits"
+ABILITY_INNERKITS_PATH = "${aafwk_path}/interfaces/innerkits"
 
 ###############################################################################
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/test/mock/include",
+    "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
+    "${aafwk_path}/interfaces/innerkits/uri/include",
+    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
+    "${aafwk_path}/frameworks/kits/appkit/native/test/mock/include",
 
-    #"//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/test/Mock/include",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
+    #"${aafwk_path}/frameworks/kits/ability/native/test/mock/include",
+    "${aafwk_path}/frameworks/kits/appkit/test/Mock/include",
+    "${aafwk_path}/frameworks/kits/appkit/native/app/include",
 
     #"//foundation/communication/utils/include",
     #"//foundation/communication/ipc/ipc/native/src/core/include",
@@ -45,7 +46,7 @@ config("module_private_config") {
 ohos_moduletest("appexecfwk_appkit_native_app_module_test_first") {
   module_out_path = module_output_path
   sources = [
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
+    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
     "Mock/include/mock_app_thread.cpp",
     "Mock/include/mock_application.cpp",
 
@@ -61,16 +62,16 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_first") {
   }
   deps = [
     "${ABILITY_INNERKITS_PATH}/want:want",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:configuration",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -87,7 +88,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_first") {
 ohos_moduletest("appexecfwk_appkit_native_app_module_test_second") {
   module_out_path = module_output_path
   sources = [
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
+    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
     "Mock/include/mock_app_thread.cpp",
     "Mock/include/mock_application.cpp",
 
@@ -103,16 +104,16 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_second") {
   }
   deps = [
     "${ABILITY_INNERKITS_PATH}/want:want",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:configuration",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -129,7 +130,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_second") {
 ohos_moduletest("appexecfwk_appkit_native_app_module_test_third") {
   module_out_path = module_output_path
   sources = [
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
+    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
     "Mock/include/mock_app_thread.cpp",
     "Mock/include/mock_application.cpp",
 
@@ -145,16 +146,16 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_third") {
   }
   deps = [
     "${ABILITY_INNERKITS_PATH}/want:want",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:configuration",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -171,7 +172,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_third") {
 ohos_moduletest("appexecfwk_appkit_native_app_module_test_fourth") {
   module_out_path = module_output_path
   sources = [
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
+    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/app_mgr_stub.cpp",
     "Mock/include/mock_app_thread.cpp",
     "Mock/include/mock_application.cpp",
 
@@ -187,16 +188,16 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_fourth") {
   }
   deps = [
     "${ABILITY_INNERKITS_PATH}/want:want",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/appexecfwk/standard/common:libappexecfwk_common",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:configuration",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
