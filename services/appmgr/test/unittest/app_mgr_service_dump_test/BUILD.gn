@@ -24,7 +24,7 @@ ohos_unittest("app_mgr_service_dump_test") {
   configs = [ "${aafwk_path}/services/appmgr:appmgr_config" ]
 
   deps = [
-    "//foundation/aafwk/standard/services/appmgr:libams",
+    "${aafwk_path}/services/appmgr:libams",
     "//third_party/googletest:gtest_main",
   ]
 

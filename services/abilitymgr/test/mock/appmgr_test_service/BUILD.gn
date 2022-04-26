@@ -17,23 +17,23 @@ import("//foundation/aafwk/standard/feature.gni")
 
 config("appmgr_test_service_config") {
   include_dirs = [
-    "//foundation/aafwk/standard/services/abilitymgr/test/mock/appmgr_test_service/include/",
-    "//foundation/aafwk/standard/services/abilitymgr/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/aafwk/standard/services/common/include",
-    "//base/notification/common_event_service/frameworks/core/include",
-    "//base/notification/common_event_service/interfaces/innerkits/native/include",
+    "${aafwk_path}/services/abilitymgr/test/mock/appmgr_test_service/include/",
+    "${aafwk_path}/services/abilitymgr/include",
+    "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include",
+    "${aafwk_path}/interfaces/innerkits/app_manager/include",
+    "${aafwk_path}/frameworks/kits/ability/native/include",
+    "${aafwk_path}/services/common/include",
+    "${notification_path}/common_event_service/frameworks/core/include",
+    "${notification_path}/common_event_service/interfaces/innerkits/native/include",
   ]
 }
 
 ohos_source_set("appmgr_test_service") {
   include_dirs = [
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
-    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/aakit/include",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
+    "${aafwk_path}/services/abilitymgr/test/mock/libs/aakit/include",
     "//third_party/jsoncpp/include",
   ]
 
@@ -45,16 +45,16 @@ ohos_source_set("appmgr_test_service") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "${innerkits_path}/want:want",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
 
   if (ability_runtime_graphics) {
-    public_deps = [ "//foundation/graphic/standard:libwmservice" ]
+    public_deps = [ "${graphic_path}:libwmservice" ]
     defines = [ "SUPPORT_GRAPHICS" ]
   }
 

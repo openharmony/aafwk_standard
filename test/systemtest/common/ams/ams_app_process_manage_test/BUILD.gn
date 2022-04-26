@@ -18,17 +18,17 @@ ohos_systemtest("ams_app_process_manage_test") {
   module_out_path = module_output_path
 
   include_dirs = [
-    "//foundation/distributedschedule/safwk/services/safwk/include",
+    "${distributedschedule_path}/safwk/services/safwk/include",
     "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/common",
-    "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/include",
+    "${appexecfwk_path}/test/systemtest/common/ams/tool/include",
     "//third_party/jsoncpp/include",
   ]
 
   sources = [
-    "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/src/event.cpp",
-    "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
-    "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/src/st_ability_util.cpp",
-    "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/src/stoperator.cpp",
+    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/event.cpp",
+    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
+    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/st_ability_util.cpp",
+    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/stoperator.cpp",
     "ams_app_process_manage_test.cpp",
   ]
 
@@ -46,7 +46,7 @@ ohos_systemtest("ams_app_process_manage_test") {
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
@@ -59,7 +59,8 @@ ohos_systemtest("ams_app_process_manage_test") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
-  resource_config_file = "//foundation/appexecfwk/standard/test/resource/mstbundlemgrservice/ohos_test.xml"
+  resource_config_file =
+      "${appexecfwk_path}/test/resource/mstbundlemgrservice/ohos_test.xml"
 }
 
 group("systemtest") {

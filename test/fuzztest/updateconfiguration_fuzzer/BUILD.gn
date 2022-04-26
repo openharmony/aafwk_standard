@@ -22,11 +22,10 @@ module_output_path = "ability_runtime/abilitymgr"
 ohos_fuzztest("UpdateConfigurationFuzzTest") {
   module_out_path = module_output_path
 
-  fuzz_config_file = "//foundation/aafwk/standard/test/fuzztest/updateconfiguration_fuzzer"
+  fuzz_config_file = "${aafwk_path}/test/fuzztest/updateconfiguration_fuzzer"
 
-  include_dirs = [
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager/include",
-  ]
+  include_dirs =
+      [ "${aafwk_path}/interfaces/innerkits/ability_manager/include" ]
 
   cflags = [
     "-g",
@@ -37,13 +36,13 @@ ohos_fuzztest("UpdateConfigurationFuzzTest") {
 
   sources = [ "updateconfiguration_fuzzer.cpp" ]
 
-  configs = [ "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager_public_config" ]
+  configs = [ "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager_public_config" ]
 
   deps = [
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${aafwk_path}/interfaces/innerkits/want:want",
   ]
 
   external_deps = [

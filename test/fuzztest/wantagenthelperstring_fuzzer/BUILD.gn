@@ -22,10 +22,9 @@ module_output_path = "ability_runtime/want"
 ohos_fuzztest("WantAgentHelperStringFuzzTest") {
   module_out_path = module_output_path
 
-  fuzz_config_file = "//foundation/aafwk/standard/test/fuzztest/wantagenthelperstring_fuzzer"
+  fuzz_config_file = "${aafwk_path}/test/fuzztest/wantagenthelperstring_fuzzer"
 
-  include_dirs =
-      [ "//foundation/aafwk/standard/interfaces/innerkits/wantagent/include" ]
+  include_dirs = [ "${aafwk_path}/interfaces/innerkits/wantagent/include" ]
 
   cflags = [
     "-g",
@@ -36,9 +35,7 @@ ohos_fuzztest("WantAgentHelperStringFuzzTest") {
 
   sources = [ "wantagenthelperstring_fuzzer.cpp" ]
 
-  deps = [
-    "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
-  ]
+  deps = [ "${aafwk_path}/frameworks/kits/wantagent:wantagent_innerkits" ]
 
   external_deps = [
     "ability_base:base",

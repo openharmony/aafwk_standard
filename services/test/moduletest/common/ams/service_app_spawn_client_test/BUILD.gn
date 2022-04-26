@@ -25,7 +25,7 @@ ohos_moduletest("AmsServiceAppSpawnClientModuleTest") {
   defines = [ "usleep(time) = MockSleep(time)" ]
 
   sources = [
-    "//foundation/aafwk/standard/services/appmgr/src/system_environment_information.cpp",
+    "${aafwk_path}/services/appmgr/src/system_environment_information.cpp",
     "ams_service_app_spawn_client_module_test.cpp",
   ]
 
@@ -35,7 +35,7 @@ ohos_moduletest("AmsServiceAppSpawnClientModuleTest") {
   ]
 
   if (ability_runtime_graphics) {
-    deps += [ "//base/global/i18n/frameworks/intl:intl_util" ]
+    deps += [ "${global_path}/i18n/frameworks/intl:intl_util" ]
   }
 
   external_deps = [

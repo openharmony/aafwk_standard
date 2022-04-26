@@ -30,18 +30,16 @@ config("ability_manager_public_config") {
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
     "${innerkits_path}/app_manager/include/appmgr",
     "${kits_path}/appkit/native/app/include",
-    "//foundation/distributeddatamgr/appdatamgr/interfaces/inner_api/native/rdb/include",
-    "//foundation/distributeddatamgr/appdatamgr/interfaces/inner_api/native/appdatafwk/include",
-    "//foundation/distributeddatamgr/appdatamgr/interfaces/inner_api/native/dataability/include",
+    "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/rdb/include",
+    "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/appdatafwk/include",
+    "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/dataability/include",
     "${innerkits_path}/dataobs_manager/include",
   ]
 
   defines = [ "ABILITY_COMMAND_FOR_TEST" ]
 
   if (ability_runtime_graphics) {
-    include_dirs += [
-      "//foundation/multimedia/image_standard/interfaces/innerkits/include",
-    ]
+    include_dirs += [ "${multimedia_path}/interfaces/innerkits/include" ]
 
     defines += [ "SUPPORT_GRAPHICS" ]
   }

@@ -21,16 +21,16 @@ ohos_unittest("ability_manager_service_account_test") {
   cflags_cc = []
   include_dirs = [
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
-    "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
+    "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
+    "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
+    "${aafwk_path}/frameworks/kits/ability/native/test/mock/include",
     "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
   ]
 
   sources = [
     # add mock file
-    "//foundation/aafwk/standard/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "${aafwk_path}/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
     "ability_manager_service_account_test.cpp",
   ]
 
@@ -40,6 +40,12 @@ ohos_unittest("ability_manager_service_account_test") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/services/abilitymgr:abilityms",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test:abilityms_test_source",
@@ -47,12 +53,6 @@ ohos_unittest("ability_manager_service_account_test") {
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",
