@@ -272,7 +272,7 @@ ohos_shared_library("abilitykit_native") {
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
     "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
-    "//foundation/ace/napi:ace_napi",
+    "//foundation/arkui/napi:ace_napi",
   ]
 
   if (ability_runtime_graphics) {

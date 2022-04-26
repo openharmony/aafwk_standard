@@ -310,7 +310,7 @@ ohos_shared_library("appkit_delegator") {
     "utils_base:utils",
   ]
 
-  public_deps = [ "//foundation/ace/napi:ace_napi" ]
+  public_deps = [ "//foundation/arkui/napi:ace_napi" ]
 
   if (ability_runtime_graphics) {
     deps += [ "//third_party/icu/icu4c:shared_icuuc" ]

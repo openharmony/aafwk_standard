@@ -110,7 +110,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
     deps += [
       "${global_path}/i18n/frameworks/intl:intl_util",
       "${multimedia_path}/interfaces/innerkits:image_native",
-      "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
+      "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
       "//third_party/libpng:libpng",
     ]
     defines = [ "SUPPORT_GRAPHICS" ]
