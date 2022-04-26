@@ -198,6 +198,8 @@ void SetDisplayOrientationExecuteCallbackWork(napi_env env, void *data);
  * @return The return value from NAPI C++ to JS for the module.
  */
 napi_value NAPI_GetDisplayOrientation(napi_env env, napi_callback_info info);
+
+napi_value NAPI_AbilityLifecycleCallbacks(napi_env env, napi_callback_info info);
 }  // namespace AppExecFwk
 }  // namespace OHOS
 #endif /* OHOS_APPEXECFWK_NAPI_CONTEXT_H */

@@ -33,6 +33,7 @@ ohos_shared_library("featureability") {
     "napi_data_ability_helper.cpp",
     "napi_data_ability_operation.cpp",
     "native_module.cpp",
+    "ability_lifecycle_callbacks_impl.cpp",
   ]
 
   deps = [

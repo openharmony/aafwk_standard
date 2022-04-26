@@ -16,6 +16,7 @@
 #include "js_context_utils.h"
 
 #include "hilog_wrapper.h"
+#include "js_application_context_utils.h"
 #include "js_data_struct_converter.h"
 #include "js_hap_module_info_utils.h"
 #include "js_resource_manager_utils.h"
@@ -295,9 +296,9 @@ NativeValue* JsBaseContext::OnGetApplicationContext(NativeEngine& engine, Native
         HILOG_ERROR("appContext is nullptr");
         return engine.CreateUndefined();
     }
-
+    auto applicatioContext = std::dynamic_pointer_cast<ApplicatioContext>(appContext);
     JsRuntime& jsRuntime = *static_cast<JsRuntime*>(engine.GetJsEngine());
-    NativeValue* value = CreateJsBaseContext(engine, appContext, true);
+    NativeValue* value = CreateJsApplicationContext(engine, applicatioContext, true);
     return jsRuntime.LoadSystemModule("application.Context", &value, 1)->Get();
 }
 } // namespace

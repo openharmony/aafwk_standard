@@ -19,11 +19,13 @@
 #include <uv.h>
 
 #include "../inner/napi_common/napi_common_ability.h"
+#include "ability_lifecycle_callbacks_impl.h"
 #include "ability_process.h"
 #include "directory_ex.h"
 #include "feature_ability_common.h"
 #include "file_ex.h"
 #include "hilog_wrapper.h"
+#include "ohos_application.h"
 #include "securec.h"
 
 using namespace OHOS::AAFwk;
@@ -2583,6 +2585,28 @@ napi_value NAPI_GetDisplayOrientation(napi_env env, napi_callback_info info)
 #endif
 }
 
+napi_value NAPI_AbilityLifecycleCallbacks(napi_env env, napi_callback_info info)
+{
+    HILOG_INFO("%{public}s start.", __func__);
+    std::shared_ptr<AbilityLifecycleCallbacks> callback = std::make_shared<AbilityLifecycleCallbacksImpl>();
+    napi_value global = nullptr;
+    NAPI_CALL(env, napi_get_global(env, &global));
+
+    napi_value abilityObj = nullptr;
+    NAPI_CALL(env, napi_get_named_property(env, global, "ability", &abilityObj));
+
+    Ability *ability = nullptr;
+    NAPI_CALL(env, napi_get_value_external(env, abilityObj, (void **)&ability));
+
+    std::shared_ptr<OHOSApplication> application = ability->GetApplication();
+    if (application == nullptr) {
+        HILOG_ERROR("Ability::GetApplication error. application_ == nullptr.");
+    } else {
+        application->RegisterAbilityLifecycleCallbacks(callback);
+    }
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
 napi_value ContextPermissionInit(napi_env env, napi_value exports)
 {
     HILOG_INFO("Context::ContextPermissionInit called.");
@@ -2614,6 +2638,7 @@ napi_value ContextPermissionInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("setWakeUpScreen", NAPI_SetWakeUpScreen),
         DECLARE_NAPI_FUNCTION("setDisplayOrientation", NAPI_SetDisplayOrientation),
         DECLARE_NAPI_FUNCTION("getDisplayOrientation", NAPI_GetDisplayOrientation),
+        DECLARE_NAPI_FUNCTION("abilityLifecycleCallbacks", NAPI_AbilityLifecycleCallbacks),
     };
 
     NAPI_CALL(env,
