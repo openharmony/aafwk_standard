@@ -39,6 +39,8 @@ ohos_shared_library("libupms") {
     "ability_base:want",
     "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",

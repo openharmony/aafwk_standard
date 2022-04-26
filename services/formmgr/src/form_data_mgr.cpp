@@ -925,13 +925,8 @@ bool FormDataMgr::UpdateHostForm(const int64_t formId, const FormRecord &formRec
     std::lock_guard<std::mutex> lock(formHostRecordMutex_);
     std::vector<FormHostRecord>::iterator itHostRecord;
     for (itHostRecord = clientRecords_.begin(); itHostRecord != clientRecords_.end(); itHostRecord++) {
-        bool enableRefresh = formRecord.isVisible;
-        if (!enableRefresh) {
-            enableRefresh = itHostRecord->IsEnableUpdate(formId);
-        }
-        if (!enableRefresh) {
-            enableRefresh = itHostRecord->IsEnableRefresh(formId);
-        }
+        bool enableRefresh = formRecord.isVisible || itHostRecord->IsEnableUpdate(formId) ||
+                             itHostRecord->IsEnableRefresh(formId);
         HILOG_INFO("formId:%{public}" PRId64 " enableRefresh:%{public}d", formId, enableRefresh);
         if (enableRefresh) {
             // update form
@@ -943,6 +938,68 @@ bool FormDataMgr::UpdateHostForm(const int64_t formId, const FormRecord &formRec
     }
     return isUpdated;
 }
+
+ErrCode FormDataMgr::HandleUpdateHostFormFlag(const std::vector<int64_t> &formIds, bool flag, bool isOnlyEnableUpdate,
+                                              FormHostRecord &formHostRecord, std::vector<int64_t> &refreshForms)
+{
+    for (const int64_t formId : formIds) {
+        if (formId <= 0) {
+            HILOG_WARN("%{public}s, formId %{public}" PRId64 " is less than 0", __func__, formId);
+            continue;
+        }
+
+        int64_t matchedFormId = FindMatchedFormId(formId);
+        if (!formHostRecord.Contains(matchedFormId)) {
+            HILOG_WARN("%{public}s, form %{public}" PRId64 "is not owned by this client, don't need to update flag",
+                __func__, formId);
+            continue;
+        }
+
+        if (isOnlyEnableUpdate) {
+            // new API: this flag is used only to control enable update
+            formHostRecord.SetEnableUpdate(matchedFormId, flag);
+            formHostRecord.SetEnableRefresh(matchedFormId, false);
+        } else {
+            // old API: this flag is used to control enable update and visible update
+            formHostRecord.SetEnableRefresh(matchedFormId, flag);
+        }
+
+        // set disable
+        if (!flag) {
+            HILOG_INFO("%{public}s, flag is disable", __func__);
+            continue;
+        }
+        FormRecord formRecord;
+        if (GetFormRecord(matchedFormId, formRecord)) {
+            if (formRecord.needRefresh) {
+                HILOG_INFO("%{public}s, formRecord need refresh", __func__);
+                refreshForms.emplace_back(matchedFormId);
+                continue;
+            }
+        } else {
+            HILOG_WARN("%{public}s, not exist such form:%{public}" PRId64 "", __func__, matchedFormId);
+            continue;
+        }
+
+        // if set enable flag, should check whether to refresh form
+        if (!formHostRecord.IsNeedRefresh(matchedFormId)) {
+            HILOG_INFO("%{public}s, host need not refresh", __func__);
+            continue;
+        }
+
+        if (IsFormCached(formRecord)) {
+            HILOG_INFO("%{public}s, form cached", __func__);
+            formHostRecord.OnUpdate(matchedFormId, formRecord);
+            formHostRecord.SetNeedRefresh(matchedFormId, false);
+        } else {
+            HILOG_INFO("%{public}s, form no cache", __func__);
+            refreshForms.emplace_back(matchedFormId);
+            continue;
+        }
+    }
+    return ERR_OK;
+}
+
 /**
  * @brief handle update form flag.
  * @param formIDs The id of the forms.
@@ -952,73 +1009,15 @@ bool FormDataMgr::UpdateHostForm(const int64_t formId, const FormRecord &formRec
  * @param refreshForms Refresh forms
  * @return Returns ERR_OK on success, others on failure.
  */
-int32_t FormDataMgr::UpdateHostFormFlag(
-    std::vector<int64_t> formIds,
-    const sptr<IRemoteObject> &callerToken,
-    const bool flag,
-    const bool isOnlyEnableUpdate,
-    std::vector<int64_t> &refreshForms)
+ErrCode FormDataMgr::UpdateHostFormFlag(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken,
+                                        bool flag, bool isOnlyEnableUpdate, std::vector<int64_t> &refreshForms)
 {
     HILOG_INFO("%{public}s start, flag: %{public}d", __func__, flag);
     std::lock_guard<std::mutex> lock(formHostRecordMutex_);
     std::vector<FormHostRecord>::iterator itHostRecord;
     for (itHostRecord = clientRecords_.begin(); itHostRecord != clientRecords_.end(); itHostRecord++) {
         if (callerToken == itHostRecord->GetClientStub()) {
-            for (const int64_t formId : formIds) {
-                if (formId <= 0) {
-                    HILOG_WARN("%{public}s, formId %{public}" PRId64 " is less than 0", __func__, formId);
-                    continue;
-                }
-
-                int64_t matchedFormId = FindMatchedFormId(formId);
-                if (!itHostRecord->Contains(matchedFormId)) {
-                    HILOG_WARN("%{public}s, form %{public}d is not owned by this client, don't need to update flag",
-                        __func__, (int32_t)formId);
-                    continue;
-                }
-
-                if (isOnlyEnableUpdate) {
-                    // new API: this flag is used only to control enable update
-                    itHostRecord->SetEnableUpdate(matchedFormId, flag);
-                    itHostRecord->SetEnableRefresh(matchedFormId, false);
-                } else {
-                    // old API: this flag is used to control enable update and visible update
-                    itHostRecord->SetEnableRefresh(matchedFormId, flag);
-                }
-
-                // set disable
-                if (!flag) {
-                    HILOG_INFO("%{public}s, flag is disable", __func__);
-                    continue;
-                }
-                FormRecord formRecord;
-                if (GetFormRecord(matchedFormId, formRecord)) {
-                    if (formRecord.needRefresh) {
-                        HILOG_INFO("%{public}s, formRecord need refresh", __func__);
-                        refreshForms.emplace_back(matchedFormId);
-                        continue;
-                    }
-                } else {
-                    HILOG_WARN("%{public}s, not exist such form:%{public}" PRId64 "", __func__, matchedFormId);
-                    continue;
-                }
-
-                // if set enable flag, should check whether to refresh form
-                if (!itHostRecord->IsNeedRefresh(matchedFormId)) {
-                    HILOG_INFO("%{public}s, host need not refresh", __func__);
-                    continue;
-                }
-
-                if (IsFormCached(formRecord)) {
-                    HILOG_INFO("%{public}s, form cached", __func__);
-                    itHostRecord->OnUpdate(matchedFormId, formRecord);
-                    itHostRecord->SetNeedRefresh(matchedFormId, false);
-                } else {
-                    HILOG_INFO("%{public}s, form no cache", __func__);
-                    refreshForms.emplace_back(matchedFormId);
-                    continue;
-                }
-            }
+            HandleUpdateHostFormFlag(formIds, flag, isOnlyEnableUpdate, *itHostRecord, refreshForms);
             HILOG_INFO("%{public}s end.", __func__);
             return ERR_OK;
         }
@@ -1086,13 +1085,7 @@ void FormDataMgr::GetNoHostTempForms(
             if (itUid != itFormRecord->second.formUserUids.end()) {
                 itFormRecord->second.formUserUids.erase(itUid);
                 if (itFormRecord->second.formUserUids.empty()) {
-                    FormIdKey formIdKey;
-                    formIdKey.bundleName = itFormRecord->second.bundleName;
-                    formIdKey.abilityName = itFormRecord->second.abilityName;
-                    formIdKey.moduleName = "";
-                    formIdKey.formName = "";
-                    formIdKey.specificationId = 0;
-                    formIdKey.orientation = 0;
+                    FormIdKey formIdKey(itFormRecord->second.bundleName, itFormRecord->second.abilityName);
                     auto itIdsSet = noHostTempFormsMap.find(formIdKey);
                     if (itIdsSet == noHostTempFormsMap.end()) {
                         std::set<int64_t> formIdsSet;
@@ -1220,8 +1213,8 @@ bool FormDataMgr::CreateFormStateRecord(std::string &provider, const FormItemInf
 }
 
 /**
- * @brief Create form state host record.
- * @param FormState form state.
+ * @brief acquire form state callback.
+ * @param state form state.
  * @param provider provider indo.
  * @param want The want of onAcquireFormState.
  * @return Returns true if this function is successfully called; returns false otherwise.
@@ -1238,6 +1231,48 @@ ErrCode FormDataMgr::AcquireFormStateBack(AppExecFwk::FormState state, const std
     iter->second.OnAcquireState(state, want);
     iter->second.CleanResource();
     formStateRecord_.erase(iter);
+    return ERR_OK;
+}
+
+/**
+ * @brief Notify the form is visible or not.
+ * @param formIds Indicates the ID of the forms.
+ * @param isVisible Visible or not.
+ * @param callerToken Host client.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormDataMgr::NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
+                                        const sptr<IRemoteObject> &callerToken)
+{
+    std::vector<int64_t> foundFormIds {};
+    {
+        HILOG_INFO("%{public}s, get the matched form host record by client stub.", __func__);
+        std::lock_guard<std::mutex> lock(formHostRecordMutex_);
+        for (const FormHostRecord &record : clientRecords_) {
+            if (callerToken != record.GetClientStub()) {
+                continue;
+            }
+            for (int64_t formId : formIds) {
+                int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
+                if (!record.Contains(matchedFormId)) {
+                    HILOG_ERROR("%{public}s fail, form is not self-owned, form:%{public}" PRId64 ".", __func__,
+                        matchedFormId);
+                } else {
+                    foundFormIds.push_back(matchedFormId);
+                }
+            }
+            break;
+        }
+    }
+
+    if (foundFormIds.empty()) {
+        HILOG_ERROR("%{public}s failed, no valid forms found.", __func__);
+        return ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF;
+    }
+
+    for (auto matchedFormId : foundFormIds) {
+        SetRecordVisible(matchedFormId, isVisible);
+    }
     return ERR_OK;
 }
 
@@ -1351,13 +1386,7 @@ void FormDataMgr::GetNoHostInvalidTempForms(int32_t userId, int32_t callingUid, 
         HILOG_DEBUG("found invalid form: %{public}" PRId64 "", formId);
         formRecord.formUserUids.erase(iter);
         if (formRecord.formUserUids.empty()) {
-            FormIdKey formIdKey;
-            formIdKey.bundleName = formRecord.bundleName;
-            formIdKey.abilityName = formRecord.abilityName;
-            formIdKey.moduleName = "";
-            formIdKey.formName = "";
-            formIdKey.specificationId = 0;
-            formIdKey.orientation = 0;
+            FormIdKey formIdKey(formRecord.bundleName, formRecord.abilityName);
             auto itIdsSet = noHostTempFormsMap.find(formIdKey);
             if (itIdsSet == noHostTempFormsMap.end()) {
                 std::set<int64_t> formIdsSet;

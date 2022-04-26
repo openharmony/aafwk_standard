@@ -12,9 +12,10 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 IPC_SUBSYSTEM_DIR = "//foundation/communication/ipc"
-IDL_TEST_DIR = "//foundation/aafwk/standard/idl/test/native"
+IDL_TEST_DIR = "${aafwk_path}/idl/test/native"
 
 config("ipc_test_config") {
   include_dirs = [
