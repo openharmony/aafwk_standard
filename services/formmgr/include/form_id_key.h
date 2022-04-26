@@ -22,6 +22,10 @@ namespace OHOS {
 namespace AppExecFwk {
 struct FormIdKey {
 public:
+    FormIdKey(std::string &bundleName, std::string &abilityName)
+        : bundleName(bundleName), moduleName(), abilityName(abilityName), formName(), specificationId(0), orientation(0)
+    {
+    }
 
     std::string bundleName;
     std::string moduleName;

@@ -314,8 +314,8 @@ public:
      * @param refreshForms Refresh forms
      * @return Returns ERR_OK on success, others on failure.
      */
-    int32_t UpdateHostFormFlag(std::vector<int64_t> formIds, const sptr<IRemoteObject> &callerToken,
-    const bool flag, const bool isOnlyEnableUpdate, std::vector<int64_t> &refreshForms);
+    ErrCode UpdateHostFormFlag(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken,
+                               bool flag, bool isOnlyEnableUpdate, std::vector<int64_t> &refreshForms);
     /**
      * @brief Find matched form id.
      * @param formId The form id.
@@ -400,13 +400,23 @@ public:
                                int callingUid);
 
     /**
-     * @brief Create form state host record.
-     * @param FormState form state.
+     * @brief acquire form state callback.
+     * @param state form state.
      * @param provider provider info.
      * @param want The want of onAcquireFormState.
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
     ErrCode AcquireFormStateBack(AppExecFwk::FormState state, const std::string &provider, const AAFwk::Want &want);
+
+    /**
+     * @brief Notify the form is visible or not.
+     * @param formIds Indicates the ID of the forms.
+     * @param isVisible Visible or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
+                               const sptr<IRemoteObject> &callerToken);
 
     /**
      * @brief set form record visible.
@@ -475,6 +485,18 @@ private:
      * @return Returns ERR_OK on success, others on failure.
      */
     bool IsFormCached(const FormRecord record);
+
+    /**
+    * @brief handle update form flag.
+    * @param formIDs The id of the forms.
+    * @param flag form flag.
+    * @param isOnlyEnableUpdate form enable update form flag.
+    * @param formHostRecord form host record.
+    * @param refreshForms Refresh forms
+    * @return Returns ERR_OK on success, others on failure.
+    */
+    ErrCode HandleUpdateHostFormFlag(const std::vector<int64_t> &formIds, bool flag, bool isOnlyEnableUpdate,
+                                     FormHostRecord &formHostRecord, std::vector<int64_t> &refreshForms);
 private:
     mutable std::mutex formRecordMutex_;
     mutable std::mutex formHostRecordMutex_;

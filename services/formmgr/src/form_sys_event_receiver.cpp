@@ -345,9 +345,7 @@ void FormSysEventReceiver::BatchDeleteNoHostDBForms(const int uid, std::map<Form
                 FormDBInfo dbInfo;
                 int errCode = FormDbCache::GetInstance().GetDBRecord(formId, dbInfo);
                 if (errCode == ERR_OK) {
-                    FormIdKey removableModuleFormIdKey;
-                    removableModuleFormIdKey.bundleName = dbInfo.bundleName;
-                    removableModuleFormIdKey.moduleName = dbInfo.moduleName;
+                    FormIdKey removableModuleFormIdKey(dbInfo.bundleName, dbInfo.moduleName);
                     removableModuleSet.emplace(removableModuleFormIdKey);
                     FormDbCache::GetInstance().DeleteFormInfo(formId);
                 }
