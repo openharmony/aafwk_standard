@@ -594,7 +594,7 @@ private:
     int32_t containerScopeId_ = 0;
 #endif
 #ifdef ENABLE_HITRACE
-    OHOS::HiviewDFX::HiTraceId* traceId_;
+    OHOS::HiviewDFX::HiTraceId* traceId_ = nullptr;
 #endif
 };
 
