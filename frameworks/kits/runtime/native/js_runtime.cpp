@@ -29,6 +29,9 @@
 #include "hilog_wrapper.h"
 #include "js_runtime_utils.h"
 
+#ifdef ENABLE_HITRACE
+#include "hitrace/trace.h"
+#endif
 #include "systemcapability.h"
 #include "parameters.h"
 
@@ -538,6 +541,9 @@ public:
 #ifdef SUPPORT_GRAPHICS
         containerScopeId_ = ContainerScope::CurrentId();
 #endif
+#ifdef ENABLE_HITRACE
+        traceId_ = new OHOS::HiviewDFX::HiTraceId(OHOS::HiviewDFX::HiTrace::GetId());
+#endif
     }
 
     ~TimerTask() = default;
@@ -560,6 +566,16 @@ public:
         }
 
         NativeEngine& engine = jsRuntime_.GetNativeEngine();
+#ifdef ENABLE_HITRACE
+        if (traceId_ && traceId_->IsValid()) {
+            OHOS::HiviewDFX::HiTrace::SetId(*traceId_);
+            engine.CallFunction(engine.CreateUndefined(), jsFunction_->Get(), args_.data(), args_.size());
+            OHOS::HiviewDFX::HiTrace::ClearId();
+            delete traceId_;
+            traceId_ = nullptr;
+            return;
+        }
+#endif
         engine.CallFunction(engine.CreateUndefined(), jsFunction_->Get(), args_.data(), args_.size());
     }
 
@@ -576,6 +592,9 @@ private:
     int64_t interval_ = 0;
 #ifdef SUPPORT_GRAPHICS
     int32_t containerScopeId_ = 0;
+#endif
+#ifdef ENABLE_HITRACE
+    OHOS::HiviewDFX::HiTraceId* traceId_;
 #endif
 };
 
