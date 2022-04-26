@@ -21,28 +21,33 @@ ohos_moduletest("dump_module_test") {
 
   include_dirs = [
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
-    "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util/",
-    "//foundation/aafwk/standard/services/test/mock/include",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
+    "${aafwk_path}/services/test/moduletest/module_test_dump_util/",
+    "${aafwk_path}/services/test/mock/include",
   ]
 
   sources = [
+    "${aafwk_path}/services/abilitymgr/src/app_scheduler.cpp",
+    "${aafwk_path}/services/test/moduletest/module_test_dump_util/module_test_dump_util.cpp",
     "${services_path}/abilitymgr/test/unittest/phone/ability_with_applications_test/mock_ability_scheduler.cpp",
-    "//foundation/aafwk/standard/services/abilitymgr/src/app_scheduler.cpp",
-    "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util/module_test_dump_util.cpp",
     "dump_module_test.cpp",
   ]
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",
     "${services_path}/abilitymgr/test/mock:aafwk_mock_config",
-    "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util:module_test_dump_util_config",
+    "${aafwk_path}/services/test/moduletest/module_test_dump_util:module_test_dump_util_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
+    "${aafwk_path}/services/test/moduletest/module_test_dump_util:module_test_dump_util_lib",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "${innerkits_path}/ability_manager:ability_manager",
     "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
@@ -51,11 +56,6 @@ ohos_moduletest("dump_module_test") {
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
-    "//foundation/aafwk/standard/services/test/moduletest/module_test_dump_util:module_test_dump_util_lib",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -63,7 +63,7 @@ ohos_moduletest("dump_module_test") {
 
   if (ability_runtime_graphics) {
     deps += [
-      "//base/global/i18n/frameworks/intl:intl_util",
+      "${global_path}/i18n/frameworks/intl:intl_util",
       "//third_party/libpng:libpng",
     ]
   }

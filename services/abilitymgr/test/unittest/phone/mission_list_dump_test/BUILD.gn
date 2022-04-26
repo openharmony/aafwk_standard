@@ -23,7 +23,7 @@ ohos_unittest("mission_list_dump_test") {
 
   configs = [ "${aafwk_path}/services/abilitymgr:abilityms_config" ]
 
-  deps = [ "//foundation/aafwk/standard/services/abilitymgr:abilityms" ]
+  deps = [ "${aafwk_path}/services/abilitymgr:abilityms" ]
 
   external_deps = [
     "ability_base:want",

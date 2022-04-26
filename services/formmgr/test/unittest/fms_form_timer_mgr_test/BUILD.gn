@@ -22,11 +22,11 @@ ohos_unittest("FmsFormTimerMgrTest") {
   sources = [ "fms_form_timer_mgr_test.cpp" ]
 
   include_dirs = [
-    "//foundation/appexecfwk/standard/common/log/include/",
-    "//foundation/aafwk/standard/services/formmgr/include",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include/",
-    "//foundation/aafwk/standard/interfaces/innerkits/form_manager/include",
+    "${appexecfwk_path}/common/log/include/",
+    "${aafwk_path}/services/formmgr/include",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include/",
+    "${aafwk_path}/interfaces/innerkits/form_manager/include",
     "//base/miscservices/time/interfaces/innerkits/include",
   ]
 
@@ -36,11 +36,11 @@ ohos_unittest("FmsFormTimerMgrTest") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/frameworks/kits/wantagent:wantagent_innerkits",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${notification_path}/common_event_service/frameworks/common:libevent_common",
     "${services_path}/formmgr:fms_target",
     "//base/miscservices/time/services:time_service",
-    "//base/notification/common_event_service/frameworks/common:libevent_common",
-    "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
     "//third_party/googletest:gmock_main",
     "//utils/native/base:utils",
   ]
