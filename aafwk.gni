@@ -14,15 +14,23 @@ import("//foundation/aafwk/standard/feature.gni")
 
 aafwk_path = "//foundation/aafwk/standard"
 appexecfwk_path = "//foundation/appexecfwk/standard"
+multimedia_path = "//foundation/multimedia/image_standard"
+services_path = "//foundation/aafwk/standard/services"
+multimodalinput_path = "//foundation/multimodalinput/input"
+windowmanager_path = "//foundation/windowmanager"
+graphic_path = "//foundation/graphic/standard"
+global_path = "//base/global"
+distributedschedule_path = "//foundation/distributedschedule"
+notification_path = "//base/notification"
+distributeddatamgr_path = "//foundation/distributeddatamgr"
+kits_path = "//foundation/aafwk/standard/frameworks/kits"
 
-services_path = "${aafwk_path}/services"
+innerkits_path = "//foundation/aafwk/standard/interfaces/innerkits"
 
-kits_path = "${aafwk_path}/frameworks/kits"
-
-innerkits_path = "${aafwk_path}/interfaces/innerkits"
+dispatcher_path = "//foundation/aafwk/standard/common/task_dispatcher"
 
 system_test_app_path =
-    "${aafwk_path}/test/resource/amssystemtestability/abilitySrc"
+    "//foundation/aafwk/standard/test/resource/amssystemtestability/abilitySrc"
 
 declare_args() {
   background_task_mgr_continuous_task_enable = true

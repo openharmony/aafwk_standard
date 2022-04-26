@@ -20,14 +20,14 @@ ohos_unittest("AmsAbilityRunningRecordTest") {
   module_out_path = module_output_path
   cflags_cc = []
   include_dirs = [
-    "//foundation/aafwk/standard/interfaces/innerkits/base/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/want/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/inclide",
-    "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
-    "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
-    "//foundation/aafwk/standard/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "${aafwk_path}/interfaces/innerkits/base/include",
+    "${aafwk_path}/interfaces/innerkits/want/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include",
+    "${aafwk_path}/interfaces/innerkits/app_manager/inclide",
+    "${aafwk_path}/interfaces/innerkits/uri/include",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
+    "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
+    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/account_error/include",
   ]
@@ -54,12 +54,12 @@ ohos_unittest("AmsAbilityRunningRecordTest") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/services/appmgr:libams",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/services/appmgr:libams",
   ]
 
   if (os_account_part_enabled) {

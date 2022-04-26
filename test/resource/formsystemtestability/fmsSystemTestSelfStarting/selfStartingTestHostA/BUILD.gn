@@ -28,7 +28,7 @@ config("selfStartingTestHostAConfig") {
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
     "${appexecfwk_path}/services/bundlemgr/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+    "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
     "//third_party/jsoncpp/include",
   ]
   defines = [
@@ -49,14 +49,14 @@ ohos_shared_library("selfStartingTestHostA") {
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/interfaces/innerkits/base:base",
     "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/services/bundlemgr:libbms",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utilsbase",
   ]

@@ -18,7 +18,7 @@ ohos_executable("appspawnclienttest") {
 
   configs = [ ":test_config" ]
 
-  deps = [ "//foundation/aafwk/standard/services/appmgr:libams" ]
+  deps = [ "${aafwk_path}/services/appmgr:libams" ]
   external_deps = [
     "ability_base:base",
     "ability_base:want",
@@ -40,7 +40,7 @@ ohos_executable("appmgrserviceregtest") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "//foundation/aafwk/standard/services/appmgr:libams",
+    "${aafwk_path}/services/appmgr:libams",
     #"startup:appspawn_jni",
   ]
 
@@ -65,11 +65,11 @@ ohos_executable("appmgrserviceregtest") {
 config("test_config") {
   # header file path
   include_dirs = [
-    "//foundation/aafwk/standard/services/appmgr/include",
-    "//foundation/appexecfwk/standard/services/common/include",
+    "${aafwk_path}/services/appmgr/include",
+    "${appexecfwk_path}/services/common/include",
   ]
 
   # enable exception
 
-  configs = [ "//foundation/aafwk/standard/services/appmgr:appmgr_config" ]
+  configs = [ "${aafwk_path}/services/appmgr:appmgr_config" ]
 }

@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "aafwk/base_test"
 
@@ -20,8 +21,7 @@ config("module_private_config") {
   include_dirs = [ "//utils/native/base/include" ]
 }
 
-baseImpl =
-    "//foundation/aafwk/standard/frameworks/kits/base/cpp/src/ohos/aafwk/base"
+baseImpl = "${aafwk_path}/frameworks/kits/base/cpp/src/ohos/aafwk/base"
 
 ohos_unittest("base_test") {
   module_out_path = module_output_path
@@ -42,7 +42,7 @@ ohos_unittest("base_test") {
 
   configs = [
     ":module_private_config",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base_public_config",
+    "${aafwk_path}/interfaces/innerkits/base:base_public_config",
   ]
 
   deps = [

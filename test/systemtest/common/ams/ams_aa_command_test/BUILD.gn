@@ -19,23 +19,23 @@ ohos_systemtest("ams_aa_command_test") {
   module_out_path = module_output_path
 
   include_dirs = [
-    "//foundation/distributedschedule/safwk/services/safwk/include",
-    "//foundation/aafwk/standard/tools/aa/include",
-    "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/include",
-    "//foundation/distributedschedule/safwk/services/safwk/include",
+    "${distributedschedule_path}/safwk/services/safwk/include",
+    "${aafwk_path}/tools/aa/include",
+    "${appexecfwk_path}/test/systemtest/common/ams/tool/include",
+    "${distributedschedule_path}/safwk/services/safwk/include",
     "//third_party/jsoncpp/include",
   ]
 
   sources = [
-    "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/src/event.cpp",
-    "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
-    "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/src/st_ability_util.cpp",
-    "//foundation/appexecfwk/standard/test/systemtest/common/ams/tool/src/stoperator.cpp",
+    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/event.cpp",
+    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
+    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/st_ability_util.cpp",
+    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/stoperator.cpp",
     "ams_aa_command_test.cpp",
   ]
 
   configs = [
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms_config",
+    "${aafwk_path}/services/abilitymgr:abilityms_config",
     "${aafwk_path}/services/appmgr:appmgr_config",
   ]
   cflags = []
@@ -44,11 +44,11 @@ ohos_systemtest("ams_aa_command_test") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/aafwk/standard/services/abilitymgr:abilityms",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${aafwk_path}/services/abilitymgr:abilityms",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",

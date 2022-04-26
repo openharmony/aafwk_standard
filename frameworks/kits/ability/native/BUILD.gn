@@ -72,7 +72,7 @@ config("ability_public_config") {
     "${kits_path}/appkit/native/ability_runtime/context",
     "${innerkits_path}/base/include/ohos/aafwk/base",
     "${innerkits_path}/ability_manager/include/continuation",
-    "//base/global/resmgr_standard/interfaces/innerkits/include",
+    "${global_path}/resmgr_standard/interfaces/innerkits/include",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
   ]
@@ -81,8 +81,8 @@ config("ability_public_config") {
     include_dirs += [
       "${kits_path}/fmskit/native/include",
       "${innerkits_path}/form_manager/include",
-      "//foundation/windowmanager/interfaces/innerkits/wm",
-      "//foundation/windowmanager/interfaces/kits/napi/window_runtime/window_stage_napi",
+      "${windowmanager_path}/interfaces/innerkits/wm",
+      "${windowmanager_path}/interfaces/kits/napi/window_runtime/window_stage_napi",
     ]
     defines = [ "SUPPORT_GRAPHICS" ]
   }
@@ -112,11 +112,11 @@ ohos_shared_library("static_subscriber_ipc") {
 
 ohos_shared_library("abilitykit_native") {
   include_dirs = [
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi//common/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/dataability/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/include",
-    "//foundation/distributeddatamgr/objectstore/interfaces/innerkits/",
+    "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/rdb/include",
+    "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi//common/include",
+    "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/dataability/include",
+    "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/rdb/include",
+    "${distributeddatamgr_path}/objectstore/interfaces/innerkits/",
   ]
 
   sources = [
@@ -176,6 +176,7 @@ ohos_shared_library("abilitykit_native") {
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_start_options.cpp",
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_util.cpp",
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_want.cpp",
+    "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/common/src/js_utils.cpp",
     "${kits_path}/appkit/native/ability_runtime/context/context_impl.cpp",
     "${kits_path}/appkit/native/ability_runtime/datashare_ext_ability_context.cpp",
     "${kits_path}/appkit/native/ability_runtime/extension_context.cpp",
@@ -185,7 +186,6 @@ ohos_shared_library("abilitykit_native") {
     "${kits_path}/appkit/native/app/src/context_container.cpp",
     "${kits_path}/appkit/native/app/src/context_deal.cpp",
     "${kits_path}/appkit/native/app/src/sys_mgr_client.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/common/src/js_utils.cpp",
     "src/continuation/distributed/continuation_handler.cpp",
     "src/continuation/distributed/continuation_manager.cpp",
     "src/continuation/distributed/reverse_continuation_scheduler_primary.cpp",
@@ -205,9 +205,9 @@ ohos_shared_library("abilitykit_native") {
     "src/continuation/remote_register_service/remote_register_service_stub.cpp",
     "src/distributed_ability_runtime/distributed_client.cpp",
 
-    #"//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/napi_rdb_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/dataability/src/napi_data_ability_predicates.cpp",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/js/napi/rdb/src/napi_result_set.cpp",
+    #"${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/rdb/napi_rdb_predicates.cpp",
+    "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/dataability/src/napi_data_ability_predicates.cpp",
+    "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/rdb/src/napi_result_set.cpp",
     "src/ability_runtime/js_ability.cpp",
     "src/ability_runtime/js_ability_context.cpp",
     "src/ability_runtime/js_caller_complex.cpp",
@@ -270,7 +270,7 @@ ohos_shared_library("abilitykit_native") {
 
   public_deps = [
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
     "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
     "//foundation/ace/napi:ace_napi",
   ]
@@ -290,7 +290,7 @@ ohos_shared_library("abilitykit_native") {
       "src/page_ability_impl.cpp",
     ]
     deps += [
-      "//foundation/multimodalinput/input/frameworks/proxy:libmmi-common",
+      "${multimodalinput_path}/frameworks/proxy:libmmi-common",
       "//third_party/icu/icu4c:shared_icuuc",
     ]
 
@@ -302,12 +302,12 @@ ohos_shared_library("abilitykit_native") {
     ]
 
     public_deps += [
-      "//base/global/i18n/frameworks/intl:intl_util",
-      "//foundation/graphic/standard:libwmclient",
-      "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
-      "//foundation/windowmanager/dm:libdm",
-      "//foundation/windowmanager/interfaces/kits/napi/window_runtime:windowstage_kit",
-      "//foundation/windowmanager/wm:libwm",
+      "${global_path}/i18n/frameworks/intl:intl_util",
+      "${graphic_path}:libwmclient",
+      "${multimedia_path}/interfaces/innerkits:image_native",
+      "${windowmanager_path}/dm:libdm",
+      "${windowmanager_path}/interfaces/kits/napi/window_runtime:windowstage_kit",
+      "${windowmanager_path}/wm:libwm",
     ]
   }
   subsystem_name = "aafwk"

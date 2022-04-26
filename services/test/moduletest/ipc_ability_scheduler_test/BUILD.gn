@@ -22,38 +22,38 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
 
   include_dirs = [
     "//third_party/jsoncpp/include",
-    "//foundation/aafwk/standard/interfaces/innerkits/dataobs_manager/include",
+    "${aafwk_path}/interfaces/innerkits/dataobs_manager/include",
   ]
 
   sources = [
+    "${aafwk_path}/frameworks/kits/content/cpp/src/ohos/aafwk/content/pac_map.cpp",
+    "${appexecfwk_path}/common/log/src/app_log_wrapper.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_proxy.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_stub.cpp",
     "${services_path}/abilitymgr/src/caller_info.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/content/cpp/src/ohos/aafwk/content/pac_map.cpp",
-    "//foundation/appexecfwk/standard/common/log/src/app_log_wrapper.cpp",
   ]
 
   sources += [ "ipc_ability_scheduler_module_test.cpp" ]
 
   configs = [
     "${services_path}/test:aafwk_module_test_config",
-    "//foundation/appexecfwk/standard/common:appexecfwk_common_config",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want_public_config",
+    "${appexecfwk_path}/common:appexecfwk_common_config",
+    "${aafwk_path}/interfaces/innerkits/want:want_public_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:dummy_classes",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/jsoncpp:jsoncpp",
