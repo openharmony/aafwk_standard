@@ -27,6 +27,7 @@
 #include "values_bucket.h"
 #include "data_ability_operation.h"
 #include "data_ability_result.h"
+#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -376,6 +377,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_StartAbilityForResult_0100, Function | M
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     AbilityType type = AbilityType::PAGE;
     abilityInfo->type = type;
+    HILOG_INFO("%{public}d", abilityInfo->type);
     std::shared_ptr<OHOSApplication> application = nullptr;
     std::shared_ptr<AbilityHandler> handler = nullptr;
     sptr<IRemoteObject> token = nullptr;
@@ -437,6 +439,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnStart_0100, Function | MediumTest | Le
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     AbilityType type = AbilityType::PAGE;
     abilityInfo->type = type;
+    abilityInfo->isStageBasedModel = true;
     std::shared_ptr<OHOSApplication> application = nullptr;
     std::shared_ptr<AbilityHandler> handler = nullptr;
     sptr<IRemoteObject> token = nullptr;
@@ -449,7 +452,7 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_OnStart_0100, Function | MediumTest | Le
     std::shared_ptr<LifeCycle> lifeCycle = ability_->GetLifecycle();
     LifeCycle::Event lifeCycleState = lifeCycle->GetLifecycleState();
 
-    EXPECT_EQ(AbilityLifecycleExecutor::LifecycleState::INACTIVE, state);
+    EXPECT_EQ(AbilityLifecycleExecutor::LifecycleState::STARTED_NEW, state);
     EXPECT_EQ(LifeCycle::Event::ON_START, lifeCycleState);
 
     GTEST_LOG_(INFO) << "AaFwk_Ability_OnStart_0100 end";
