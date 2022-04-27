@@ -53,12 +53,12 @@ config("appkit_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "native/ability_delegator/include",
-    "//base/global/resmgr_standard/interfaces/innerkits/include",
+    "${global_path}/resmgr_standard/interfaces/innerkits/include",
   ]
 
   if (ability_runtime_graphics) {
     include_dirs += [
-      "//base/global/i18n/frameworks/intl/include",
+      "${global_path}/i18n/frameworks/intl/include",
       "//third_party/icu/icu4c/source/common",
     ]
 
@@ -149,13 +149,12 @@ ohos_shared_library("appkit_native") {
   }
   deps = [
     ":appkit_delegator",
-    "${aafwk_path}/common/task_dispatcher:task_dispatcher",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
   ]
 
   public_deps =
-      [ "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr" ]
+      [ "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr" ]
   external_deps = [
     "ability_base:configuration",
     "ability_base:want",
@@ -185,10 +184,10 @@ ohos_shared_library("appkit_native") {
 
   if (ability_runtime_graphics) {
     deps += [
-      "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
+      "${multimodalinput_path}/frameworks/proxy:libmmi-client",
       "//third_party/icu/icu4c:shared_icuuc",
     ]
-    public_deps += [ "//base/global/i18n/frameworks/intl:intl_util" ]
+    public_deps += [ "${global_path}/i18n/frameworks/intl:intl_util" ]
   }
   part_name = "ability_runtime"
 }
@@ -218,12 +217,11 @@ ohos_shared_library("app_context") {
   }
   deps = [
     # "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/common/task_dispatcher:task_dispatcher",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
   ]
 
   public_deps =
-      [ "//base/global/resmgr_standard/frameworks/resmgr:global_resmgr" ]
+      [ "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr" ]
 
   external_deps = [
     "ability_base:want",
@@ -250,10 +248,10 @@ ohos_shared_library("app_context") {
 
   if (ability_runtime_graphics) {
     deps += [
-      "//foundation/multimodalinput/input/frameworks/proxy:libmmi-client",
+      "${multimodalinput_path}/frameworks/proxy:libmmi-client",
       "//third_party/icu/icu4c:shared_icuuc",
     ]
-    public_deps += [ "//base/global/i18n/frameworks/intl:intl_util" ]
+    public_deps += [ "${global_path}/i18n/frameworks/intl:intl_util" ]
   }
   part_name = "ability_runtime"
 }

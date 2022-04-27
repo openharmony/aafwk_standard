@@ -72,21 +72,10 @@ namespace AAFwk {
 namespace {
 const int32_t MIN_ARGS_SIZE = 1;
 
-const std::string ARGS_ABILITY = "-a";
-const std::string ARGS_MISSION_LIST = "-l";
-const std::string ARGS_ABILITY_BY_ID = "-i";
-const std::string ARGS_EXTENSION = "-e";
-const std::string ARGS_PENDING_WANT = "-p";
-const std::string ARGS_PROCESS = "-r";
-const std::string ARGS_DATA = "-d";
 const std::string ARGS_USER_ID = "-u";
 const std::string ARGS_CLIENT = "-c";
 const std::string ILLEGAL_INFOMATION = "The arguments are illegal and you can enter '-h' for help.";
 
-const std::set<std::string> ONE_ARG_SET { ARGS_ABILITY, ARGS_MISSION_LIST, ARGS_EXTENSION,
-    ARGS_PENDING_WANT, ARGS_PROCESS, ARGS_DATA };
-
-const std::set<std::string> TWO_ARGS_SET { ARGS_ABILITY, ARGS_ABILITY_BY_ID, ARGS_PENDING_WANT };
 #ifndef OS_ACCOUNT_PART_ENABLED
 constexpr static int UID_TRANSFORM_DIVISOR = 200000;
 static void GetOsAccountIdFromUid(int uid, int &osAccountId)
@@ -546,6 +535,11 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
 
 void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUserId)
 {
+    if ((want.GetFlags() & (Want::FLAG_AUTH_READ_URI_PERMISSION | Want::FLAG_AUTH_WRITE_URI_PERMISSION)) == 0) {
+        HILOG_DEBUG("Do not call uriPermissionMgr.");
+        return;
+    }
+
     HILOG_DEBUG("AbilityManagerService::GrantUriPermission is called.");
     auto bms = GetBundleManager();
     CHECK_POINTER_IS_NULLPTR(bms);
@@ -558,11 +552,8 @@ void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUs
         return;
     }
 
-    if (want.GetFlags() & (Want::FLAG_AUTH_READ_URI_PERMISSION | Want::FLAG_AUTH_WRITE_URI_PERMISSION)) {
-        HILOG_INFO("Want to grant r/w permission of the uri");
-        auto targetTokenId = bundleInfo.applicationInfo.accessTokenId;
-        GrantUriPermission(want, validUserId, targetTokenId);
-    }
+    auto targetTokenId = bundleInfo.applicationInfo.accessTokenId;
+    GrantUriPermission(want, validUserId, targetTokenId);
 }
 
 void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUserId, uint32_t targetTokenId)
@@ -591,13 +582,7 @@ void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUs
         }
 
         Uri uri(str);
-        if (want.GetFlags() & Want::FLAG_AUTH_WRITE_URI_PERMISSION) {
-            IN_PROCESS_CALL_WITHOUT_RET(
-                upmClient->GrantUriPermission(uri, Want::FLAG_AUTH_WRITE_URI_PERMISSION, fromTokenId, targetTokenId));
-        } else {
-            IN_PROCESS_CALL_WITHOUT_RET(
-                upmClient->GrantUriPermission(uri, Want::FLAG_AUTH_READ_URI_PERMISSION, fromTokenId, targetTokenId));
-        }
+        IN_PROCESS_CALL_WITHOUT_RET(upmClient->GrantUriPermission(uri, want.GetFlags(), fromTokenId, targetTokenId));
     }
 }
 
@@ -863,11 +848,11 @@ int AbilityManagerService::ConnectAbility(
     std::string uri = abilityWant.GetUri().ToString();
     if (!uri.empty()) {
         // if the want include uri, it may only has uri information. it is probably a datashare extension.
-        HILOG_INFO("%{public}s, called. uri:%{public}s, userId %{public}d", __func__, uri.c_str(), userId);
+        HILOG_INFO("%{public}s called. uri:%{public}s, userId %{public}d", __func__, uri.c_str(), validUserId);
         AppExecFwk::ExtensionAbilityInfo extensionInfo;
         auto bms = GetBundleManager();
         CHECK_POINTER_AND_RETURN(bms, ERR_INVALID_VALUE);
-        bool queryResult = IN_PROCESS_CALL(bms->QueryExtensionAbilityInfoByUri(uri, userId, extensionInfo));
+        bool queryResult = IN_PROCESS_CALL(bms->QueryExtensionAbilityInfoByUri(uri, validUserId, extensionInfo));
         if (!queryResult || extensionInfo.name.empty() || extensionInfo.bundleName.empty()) {
             HILOG_ERROR("Invalid extension ability info.");
             return ERR_INVALID_VALUE;
@@ -976,7 +961,7 @@ int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t u
         return result;
     }
 
-    if (!VerifyUriPermisson(abilityRequest, want)) {
+    if (!VerifyUriPermission(abilityRequest, want)) {
         HILOG_ERROR("The uri has not granted.");
         return ERR_INVALID_OPERATION;
     }
@@ -4075,7 +4060,7 @@ bool AbilityManagerService::IsNeedTimeoutForTest(const std::string &abilityName,
     return false;
 }
 
-bool AbilityManagerService::VerifyUriPermisson(const AbilityRequest &abilityRequest, const Want &want)
+bool AbilityManagerService::VerifyUriPermission(const AbilityRequest &abilityRequest, const Want &want)
 {
     if (abilityRequest.abilityInfo.extensionAbilityType != AppExecFwk::ExtensionAbilityType::FILESHARE) {
         HILOG_DEBUG("Only FILESHARE need to Verify uri permission.");
@@ -4088,10 +4073,7 @@ bool AbilityManagerService::VerifyUriPermisson(const AbilityRequest &abilityRequ
     auto uriPermMgrClient = AAFwk::UriPermissionManagerClient::GetInstance();
     for (auto str : uriVec) {
         Uri uri(str);
-        if (uriPermMgrClient->VerifyUriPermission(uri, Want::FLAG_AUTH_WRITE_URI_PERMISSION, targetTokenId)) {
-            return true;
-        }
-        if (uriPermMgrClient->VerifyUriPermission(uri, Want::FLAG_AUTH_READ_URI_PERMISSION, targetTokenId)) {
+        if (uriPermMgrClient->VerifyUriPermission(uri, want.GetFlags(), targetTokenId)) {
             return true;
         }
     }
@@ -4663,11 +4645,16 @@ int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
     if (argsSize < MIN_ARGS_SIZE) {
         return ERR_AAFWK_HIDUMP_INVALID_ARGS;
     }
+
     ErrCode errCode = ERR_OK;
     std::string result;
-    errCode = ProcessMultiParam(argsStr, result);
-    if (errCode == ERR_AAFWK_HIDUMP_INVALID_ARGS) {
-        ShowIllealInfomation(result);
+    if (argsStr[0] == "-h") {
+        ShowHelp(result);
+    } else {
+        errCode = ProcessMultiParam(argsStr, result);
+        if (errCode == ERR_AAFWK_HIDUMP_INVALID_ARGS) {
+            ShowIllealInfomation(result);
+        }
     }
 
     int ret = dprintf(fd, "%s\n", result.c_str());

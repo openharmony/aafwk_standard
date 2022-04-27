@@ -22,9 +22,9 @@ ohos_systemtest("FmsSelfStartingTest") {
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${appexecfwk_path}/test/systemtest/common/fms/common/include",
     "${appexecfwk_path}/services/formmgr/include",
-    "//base/notification/common_event_service/test/systemtest/common/resource",
-    "//foundation/distributedschedule/safwk/services/safwk/include",
-    "//foundation/distributeddatamgr/distributeddatamgr/interfaces/innerkits/distributeddata/include",
+    "${notification_path}/common_event_service/test/systemtest/common/resource",
+    "${distributedschedule_path}/safwk/services/safwk/include",
+    "${distributeddatamgr_path}/distributeddatamgr/interfaces/innerkits/distributeddata/include",
   ]
 
   sources = [
@@ -46,12 +46,12 @@ ohos_systemtest("FmsSelfStartingTest") {
 
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${aafwk_path}/services/formmgr:libfms",
     "${appexecfwk_path}/common:libappexecfwk_common",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//foundation/distributeddatamgr/distributeddatamgr/interfaces/innerkits/distributeddata:distributeddata_inner",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${distributeddatamgr_path}/distributeddatamgr/interfaces/innerkits/distributeddata:distributeddata_inner",
     "//third_party/googletest:gtest_main",
   ]
 

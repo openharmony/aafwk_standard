@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 module_out_path = "ability_runtime/ability_call_test"
 
@@ -24,24 +25,25 @@ config("module_private_config") {
 ohos_unittest("ability_context_impl_ut_test") {
   module_out_path = module_out_path
 
-  include_dirs = [ "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS" ]
+  include_dirs =
+      [ "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS" ]
 
   sources = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_ability_manager_client.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_serviceability_manager_service.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_ability_manager_client.cpp",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_serviceability_manager_service.cpp",
+    "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
     "ability_context_impl_ut_test.cpp",
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime:ability_context_native",
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -52,8 +54,8 @@ ohos_unittest("caller_call_back_ut_test") {
   sources = [ "caller_call_back_ut_test.cpp" ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime:ability_context_native",
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "//third_party/googletest:gtest_main",
   ]
 }
@@ -61,24 +63,25 @@ ohos_unittest("caller_call_back_ut_test") {
 ohos_unittest("local_call_container_ut_test") {
   module_out_path = module_out_path
 
-  include_dirs = [ "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS" ]
+  include_dirs =
+      [ "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS" ]
 
   sources = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_ability_manager_client.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_serviceability_manager_service.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_ability_manager_client.cpp",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_serviceability_manager_service.cpp",
+    "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
     "local_call_container_ut_test.cpp",
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime:ability_context_native",
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -87,24 +90,25 @@ ohos_unittest("local_call_container_ut_test") {
 ohos_unittest("local_call_record_ut_test") {
   module_out_path = module_out_path
 
-  include_dirs = [ "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS" ]
+  include_dirs =
+      [ "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS" ]
 
   sources = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_ability_manager_client.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_serviceability_manager_service.cpp",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_ability_manager_client.cpp",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime/test/mock/AMS/mock_serviceability_manager_service.cpp",
+    "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
     "local_call_record_ut_test.cpp",
   ]
 
   deps = [
-    "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native:abilitykit_native",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-    "//foundation/aafwk/standard/interfaces/innerkits/ability_manager:ability_manager",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/frameworks/kits/ability/ability_runtime:ability_context_native",
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]

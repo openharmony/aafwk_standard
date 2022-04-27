@@ -20,53 +20,53 @@ ohos_unittest("FmsFormMgrLifecycleUpdateTest") {
   module_out_path = module_output_path
 
   sources = [
-    "//foundation/aafwk/standard/frameworks/kits/fmskit/native/src/form_mgr.cpp",
-    "//foundation/aafwk/standard/services/formmgr/test/mock/src/mock_bundle_manager.cpp",
-    "//foundation/aafwk/standard/services/formmgr/test/mock/src/mock_form_host_client.cpp",
-    "//foundation/aafwk/standard/services/formmgr/test/unittest/fms_form_mgr_lifecycle_update_test/fms_form_mgr_lifecycle_update_test.cpp",
+    "${aafwk_path}/frameworks/kits/fmskit/native/src/form_mgr.cpp",
+    "${aafwk_path}/services/formmgr/test/mock/src/mock_bundle_manager.cpp",
+    "${aafwk_path}/services/formmgr/test/mock/src/mock_form_host_client.cpp",
+    "${aafwk_path}/services/formmgr/test/unittest/fms_form_mgr_lifecycle_update_test/fms_form_mgr_lifecycle_update_test.cpp",
   ]
 
   include_dirs = [
     "//third_party/json/include",
-    "//foundation/appexecfwk/standard/common/log/include/",
-    "//foundation/aafwk/standard/services/formmgr/include",
-    "//foundation/appexecfwk/standard/services/bundlemgr/include",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base/include/",
-    "//foundation/aafwk/standard/interfaces/innerkits/form_manager/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy/include/",
-    "//foundation/distributedschedule/samgr/adapter/interfaces/innerkits/include/",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
-    "//foundation/distributeddatamgr/distributeddatamgr/interfaces/innerkits/distributeddata/include",
-    "//base/notification/common_event_service/cesfwk/kits/native/include",
-    "//foundation/aafwk/standard/services/formmgr/test/mock/include",
-    "//foundation/aafwk/standard/frameworks/kits/fmskit/native/include",
-    "//foundation/aafwk/standard/frameworks/kits/ability/native/include",
-    "//foundation/aafwk/standard/frameworks/kits/appkit/native/app/include",
-    "//base/global/resmgr_standard/interfaces/innerkits/include",
+    "${appexecfwk_path}/common/log/include/",
+    "${aafwk_path}/services/formmgr/include",
+    "${appexecfwk_path}/services/bundlemgr/include",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include/",
+    "${aafwk_path}/interfaces/innerkits/form_manager/include",
+    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
+    "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
+    "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
+    "${distributeddatamgr_path}/distributeddatamgr/interfaces/innerkits/distributeddata/include",
+    "${notification_path}/common_event_service/cesfwk/kits/native/include",
+    "${aafwk_path}/services/formmgr/test/mock/include",
+    "${aafwk_path}/frameworks/kits/fmskit/native/include",
+    "${aafwk_path}/frameworks/kits/ability/native/include",
+    "${aafwk_path}/frameworks/kits/appkit/native/app/include",
+    "${global_path}/resmgr_standard/interfaces/innerkits/include",
   ]
 
   configs = [
     #"${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:bundlemgr_sdk_config",
-    #"//foundation/appexecfwk/standard/services/formmgr:formmgr_config",
+    #"${appexecfwk_path}/services/formmgr:formmgr_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${services_path}/formmgr:fms_target",
-    "//foundation/aafwk/standard/interfaces/innerkits/app_manager:app_manager",
 
     #"${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     #"//base/startup/appspawn_standard:appspawn_socket_client",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "${aafwk_path}/interfaces/innerkits/base:base",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//utils/native/base:utils",
   ]
