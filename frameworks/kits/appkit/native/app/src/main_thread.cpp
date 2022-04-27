@@ -763,7 +763,11 @@ static std::string GetNativeStrFromJsTaggedObj(NativeObject* obj, const char* ke
     }
     size_t valueStrBufLength = valueStr->GetLength();
     size_t valueStrLength = 0;
-    char* valueCStr = new char[valueStrBufLength + 1];
+    char* valueCStr = new (std::nothrow) char[valueStrBufLength + 1];
+    if (valueCStr == nullptr) {
+        HILOG_ERROR("Failed to new valueCStr");
+        return "";
+    }
     valueStr->GetCString(valueCStr, valueStrBufLength + 1, &valueStrLength);
     std::string ret(valueCStr, valueStrLength);
     delete []valueCStr;
