@@ -24,12 +24,12 @@ ohos_moduletest("dump_module_test") {
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "${aafwk_path}/services/test/moduletest/module_test_dump_util/",
     "${aafwk_path}/services/test/mock/include",
+    "//foundation/windowmanager/utils/include",
   ]
 
   sources = [
     "${aafwk_path}/services/abilitymgr/src/app_scheduler.cpp",
     "${aafwk_path}/services/test/moduletest/module_test_dump_util/module_test_dump_util.cpp",
-    "${services_path}/abilitymgr/test/unittest/phone/ability_with_applications_test/mock_ability_scheduler.cpp",
     "dump_module_test.cpp",
   ]
 
@@ -78,5 +78,5 @@ ohos_moduletest("dump_module_test") {
 
 group("moduletest") {
   testonly = true
-  # deps = [ ":dump_module_test" ]
+  deps = [ ":dump_module_test" ]
 }
