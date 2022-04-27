@@ -402,9 +402,18 @@ void AbilityThread::Attach(
 
     currentAbility_.reset(ability);
     token_ = abilityRecord->GetToken();
+    if(!token_) {
+        HILOG_INFO("0: token is NULL");
+    } else {
+        HILOG_INFO("hello world");
+    }
+    
     abilityRecord->SetEventHandler(abilityHandler_);
     abilityRecord->SetEventRunner(runner_);
     abilityRecord->SetAbilityThread(this);
+    if(!token_) {
+        HILOG_INFO("1: token is NULL");
+    }
     std::shared_ptr<Context> abilityObject = currentAbility_;
     std::shared_ptr<ContextDeal> contextDeal = CreateAndInitContextDeal(application, abilityRecord, abilityObject);
     ability->AttachBaseContext(contextDeal);
@@ -412,7 +421,9 @@ void AbilityThread::Attach(
     // new hap requires
     ability->AttachAbilityContext(BuildAbilityContext(abilityRecord->GetAbilityInfo(), application, token_,
         stageContext));
-
+    if(!token_) {
+        HILOG_INFO("2: token is NULL");
+    }
     // 3.new abilityImpl
     abilityImpl_ =
         DelayedSingleton<AbilityImplFactory>::GetInstance()->MakeAbilityImplObject(abilityRecord->GetAbilityInfo());
@@ -421,13 +432,21 @@ void AbilityThread::Attach(
         return;
     }
     abilityImpl_->Init(application, abilityRecord, currentAbility_, abilityHandler_, token_, contextDeal);
+    if(!token_) {
+        HILOG_INFO("3: token is NULL");
+    }
     // 4. ability attach : ipc
     ErrCode err = AbilityManagerClient::GetInstance()->AttachAbilityThread(this, token_);
+    if(!token_) {
+        HILOG_INFO("4: token is NULL");
+    }
     if (err != ERR_OK) {
         HILOG_ERROR("AbilityThread:: attach success failed err = %{public}d", err);
         return;
     }
-
+    if(!token_) {
+        HILOG_INFO("5: token is NULL");
+    }
     HILOG_INFO("AbilityThread::Attach end");
 }
 
