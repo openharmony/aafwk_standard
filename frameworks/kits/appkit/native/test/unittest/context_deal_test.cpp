@@ -114,7 +114,7 @@ HWTEST_F(ContextDealTest, AppExecFwk_ContextDeal_GetBundleCodePath_0100, Functio
     info->codePath = codePath;
     context_->SetApplicationInfo(info);
 
-    EXPECT_STREQ(context_->GetBundleCodePath().c_str(), codePath.c_str());
+    EXPECT_STREQ(context_->GetBundleCodePath().c_str(), "/data/storage/el1/bundle");
 }
 
 /**
