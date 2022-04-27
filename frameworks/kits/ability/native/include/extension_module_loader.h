@@ -37,6 +37,13 @@ public:
      * @return The Extension instance.
      */
     virtual Extension *Create(const std::unique_ptr<Runtime>& runtime) const = 0;
+
+    /**
+     * @brief Get Extension config params.
+     *
+     * @return The Extension config params.
+     */
+    virtual std::map<std::string, std::string> GetParams();
 };
 } // namespace OHOS::AbilityRuntime
 
