@@ -2558,7 +2558,13 @@ bool UnwrapSetDisplayOrientation(napi_env env, size_t argc, napi_value *argv, As
 
     int orientation = 0;
     if (!UnwrapInt32FromJS2(env, argv[PARAM0], orientation)) {
-        HILOG_ERROR("%{public}s called, the first parameter is invalid.", __func__);
+        HILOG_ERROR("%{public}s called, the parameter is invalid.", __func__);
+        return false;
+    }
+
+    int maxRange = 3;
+    if (orientation < 0 || orientation > maxRange) {
+        HILOG_ERROR("%{public}s called, wrong parameter range.", __func__);
         return false;
     }
 

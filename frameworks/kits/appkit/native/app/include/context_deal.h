@@ -606,51 +606,6 @@ public:
     void StartAbilities(const std::vector<AAFwk::Want> &wants) override;
 
     /**
-     * @brief Obtains a task dispatcher that is bound to the UI thread.
-     *
-     * @return Returns the task dispatcher that is bound to the UI thread.
-     */
-    std::shared_ptr<TaskDispatcher> GetUITaskDispatcher() final override;
-
-    /**
-     * @brief Obtains a task dispatcher that is bound to the application main thread.
-     *
-     * @return Returns the task dispatcher that is bound to the application main thread.
-     */
-    std::shared_ptr<TaskDispatcher> GetMainTaskDispatcher() override;
-
-    /**
-     * @brief Creates a parallel task dispatcher with a specified priority.
-     *
-     * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
-     * @param priority Indicates the priority of all tasks dispatched by the parallel task dispatcher.
-     *
-     * @return Returns a parallel task dispatcher.
-     */
-    std::shared_ptr<TaskDispatcher> CreateParallelTaskDispatcher(
-        const std::string &name, const TaskPriority &priority) override;
-
-    /**
-     * @brief Creates a serial task dispatcher with a specified priority.
-     *
-     * @param name Indicates the task dispatcher name. This parameter is used to locate problems.
-     * @param priority Indicates the priority of all tasks dispatched by the created task dispatcher.
-     *
-     * @return Returns a serial task dispatcher.
-     */
-    std::shared_ptr<TaskDispatcher> CreateSerialTaskDispatcher(
-        const std::string &name, const TaskPriority &priority) override;
-
-    /**
-     * @brief Obtains a global task dispatcher with a specified priority.
-     *
-     * @param priority Indicates the priority of all tasks dispatched by the global task dispatcher.
-     *
-     * @return Returns a global task dispatcher.
-     */
-    std::shared_ptr<TaskDispatcher> GetGlobalTaskDispatcher(const TaskPriority &priority) override;
-
-    /**
      * @brief Set EventRunner for main thread.
      *
      * @param runner The EventRunner.
@@ -701,7 +656,6 @@ private:
     std::map<std::string, std::string> pattern_;
     std::map<std::string, std::string> theme_;
     AAFwk::LifeCycleStateInfo lifeCycleStateInfo_;
-    std::shared_ptr<TaskDispatcher> mainTaskDispatcher_;
     std::shared_ptr<EventRunner> mainEventRunner_;
     std::shared_ptr<HapModuleInfo> hapModuleInfoLocal_ = nullptr;
     bool isCreateBySystemApp_ = false;

@@ -83,8 +83,6 @@ public:
     virtual void OnAcquireState(AppExecFwk::FormState state, const AAFwk::Want &want) override;
 
 private:
-
-private:
     Semaphore sem_;
     DISALLOW_COPY_AND_MOVE(MockFormHostClient);
 };

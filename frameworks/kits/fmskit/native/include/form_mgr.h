@@ -248,8 +248,8 @@ public:
     int DistributedDataDeleteForm(const std::string &formId);
 
     /**
-     * @brief Delete the given invalid forms.
-     * @param formIds Indicates the ID of the forms to delete.
+     * @brief Delete the invalid forms.
+     * @param formIds Indicates the ID of the valid forms.
      * @param callerToken Host client.
      * @param numFormsDeleted Returns the number of the deleted forms.
      * @return Returns ERR_OK on success, others on failure.
@@ -267,7 +267,7 @@ public:
     int AcquireFormState(const Want &want, const sptr<IRemoteObject> &callerToken, FormStateInfo &stateInfo);
 
     /**
-     * @brief Delete the given invalid forms.
+     * @brief Notify the form is visible or not.
      * @param formIds Indicates the ID of the forms.
      * @param isVisible Visible or not.
      * @param callerToken Host client.
@@ -276,7 +276,7 @@ public:
     int NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible, const sptr<IRemoteObject> &callerToken);
 
     /**
-     * @brief Delete the given invalid forms.
+     * @brief Notify the form is enable to be updated or not.
      * @param formIds Indicates the ID of the forms.
      * @param isEnableUpdate enable update or not.
      * @param callerToken Host client.

@@ -183,8 +183,8 @@ public:
     virtual int DistributedDataDeleteForm(const std::string &formId) override;
 
     /**
-     * @brief Delete the given invalid forms.
-     * @param formIds Indicates the ID of the forms to delete.
+     * @brief Delete the invalid forms.
+     * @param formIds Indicates the ID of the valid forms.
      * @param callerToken Caller ability token.
      * @param numFormsDeleted Returns the number of the deleted forms.
      * @return Returns ERR_OK on success, others on failure.
@@ -203,7 +203,7 @@ public:
                                  FormStateInfo &stateInfo) override;
 
     /**
-     * @brief Delete the given invalid forms.
+     * @brief Notify the form is visible or not.
      * @param formIds Indicates the ID of the forms.
      * @param isVisible Visible or not.
      * @param callerToken Host client.
@@ -213,7 +213,7 @@ public:
                                    const sptr<IRemoteObject> &callerToken) override;
 
     /**
-     * @brief Delete the given invalid forms.
+     * @brief Notify the form is enable to be updated or not.
      * @param formIds Indicates the ID of the forms.
      * @param isEnableUpdate enable update or not.
      * @param callerToken Host client.
