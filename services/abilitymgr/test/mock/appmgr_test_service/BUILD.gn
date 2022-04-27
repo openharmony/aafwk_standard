@@ -26,6 +26,7 @@ config("appmgr_test_service_config") {
     "${aafwk_path}/services/common/include",
     "${notification_path}/common_event_service/frameworks/core/include",
     "${notification_path}/common_event_service/interfaces/innerkits/native/include",
+    "//foundation/windowmanager/utils/include",
   ]
 }
 
