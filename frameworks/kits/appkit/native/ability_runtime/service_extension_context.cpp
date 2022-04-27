@@ -26,9 +26,8 @@ int ServiceExtensionContext::ILLEGAL_REQUEST_CODE(-1);
 
 ErrCode ServiceExtensionContext::StartAbility(const AAFwk::Want &want) const
 {
-    HILOG_DEBUG("%{public}s begin.", __func__);
+    HILOG_DEBUG("Start ability begin, ability:%{public}s.", want.GetElement().GetAbilityName().c_str());
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, ILLEGAL_REQUEST_CODE);
-    HILOG_DEBUG("%{public}s. End calling StartAbility. ret=%{public}d", __func__, err);
     if (err != ERR_OK) {
         HILOG_ERROR("ServiceContext::StartAbility is failed %{public}d", err);
     }
@@ -37,10 +36,9 @@ ErrCode ServiceExtensionContext::StartAbility(const AAFwk::Want &want) const
 
 ErrCode ServiceExtensionContext::StartAbility(const AAFwk::Want &want, const AAFwk::StartOptions &startOptions) const
 {
-    HILOG_DEBUG("%{public}s begin.", __func__);
+    HILOG_DEBUG("Start ability begin, ability:%{public}s.", want.GetElement().GetAbilityName().c_str());
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, startOptions, token_,
         ILLEGAL_REQUEST_CODE);
-    HILOG_DEBUG("%{public}s. End calling StartAbility. ret=%{public}d", __func__, err);
     if (err != ERR_OK) {
         HILOG_ERROR("ServiceContext::StartAbility is failed %{public}d", err);
     }
@@ -50,7 +48,7 @@ ErrCode ServiceExtensionContext::StartAbility(const AAFwk::Want &want, const AAF
 bool ServiceExtensionContext::ConnectAbility(
     const AAFwk::Want &want, const sptr<AbilityConnectCallback> &connectCallback) const
 {
-    HILOG_INFO("%{public}s begin.", __func__);
+    HILOG_INFO("Connect ability begin, ability:%{public}s.", want.GetElement().GetAbilityName().c_str());
     ErrCode ret =
         ConnectionManager::GetInstance().ConnectAbility(token_, want, connectCallback);
     HILOG_INFO("ServiceExtensionContext::ConnectAbility ErrorCode = %{public}d", ret);
