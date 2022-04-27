@@ -397,6 +397,8 @@ private:
     void LoadAndRegisterExtension(const std::string &libName, const std::string &extensionName,
         const std::unique_ptr<Runtime>& runtime);
 
+    void LoadAllExtensions(const std::string &filePath);
+
     /**
      *
      * @brief Ability Delegator Prepare.
@@ -475,14 +477,7 @@ private:
      */
     void CloseAbilityLibrary();
 
-    /**
-     *
-     * @brief Scan the dir ability library loaded.
-     *
-     * @param dirPath the the path should be scan.
-     *
-     */
-    bool ScanDir(const std::string &dirPath);
+    bool ScanDir(const std::string &dirPath, std::vector<std::string> &files);
 
     /**
      *

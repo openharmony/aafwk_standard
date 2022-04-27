@@ -77,6 +77,8 @@ constexpr char EVENT_KEY_SUMMARY[] = "SUMMARY";
 
 const std::string JSCRASH_TYPE = "3";
 const std::string JSVM_TYPE = "ARK";
+constexpr char EXTENSION_PARAMS_TYPE[] = "type";
+constexpr char EXTENSION_PARAMS_NAME[] = "name";
 }
 
 #define ACEABILITY_LIBRARY_LOADER
@@ -938,8 +940,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             return AbilityRuntime::StaticSubscriberExtension::Create(application->GetRuntime());
         });
 #ifdef __aarch64__
-        LoadAndRegisterExtension("system/lib64/libservice_extension_module.z.so", "ServiceExtension",
-            application_->GetRuntime());
+        LoadAllExtensions("system/lib64/extensionability");
         LoadAndRegisterExtension("system/lib64/libdatashare_ext_ability_module.z.so", "DataShareExtAbility",
             application_->GetRuntime());
         LoadAndRegisterExtension("system/lib64/libworkschedextension.z.so", "WorkSchedulerExtension",
@@ -949,8 +950,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         LoadAndRegisterExtension("system/lib64/libwallpaper_extension_module.z.so", "WallpaperExtension",
             application_->GetRuntime());
 #else
-        LoadAndRegisterExtension("system/lib/libservice_extension_module.z.so", "ServiceExtension",
-            application_->GetRuntime());
+        LoadAllExtensions("system/lib/extensionability");
         LoadAndRegisterExtension("system/lib/libdatashare_ext_ability_module.z.so", "DataShareExtAbility",
             application_->GetRuntime());
         LoadAndRegisterExtension("system/lib/libworkschedextension.z.so", "WorkSchedulerExtension",
@@ -1040,6 +1040,53 @@ void MainThread::LoadAndRegisterExtension(const std::string &libName,
     AbilityLoader::GetInstance().RegisterExtension(extensionName, [application = application_, libName]() {
         return AbilityRuntime::ExtensionModuleLoader::GetLoader(libName.c_str()).Create(application->GetRuntime());
     });
+}
+
+void MainThread::LoadAllExtensions(const std::string &filePath)
+{
+    HILOG_INFO("LoadAllExtensions.filePath:%{public}s", filePath.c_str());
+    if (application_ == nullptr) {
+        HILOG_ERROR("application launch failed");
+        return;
+    }
+    // scan all extensions in path
+    std::vector<std::string> extensionFiles;
+    ScanDir(filePath, extensionFiles);
+    if (extensionFiles.empty()) {
+        HILOG_ERROR("no extension files.");
+        return;
+    }
+    std::map<int32_t, std::string> extensionTypeMap;
+    for (auto file : extensionFiles) {
+        HILOG_INFO("Begin load extension file:%{public}s", file.c_str());
+        std::map<std::string, std::string> params =
+            AbilityRuntime::ExtensionModuleLoader::GetLoader(file.c_str()).GetParams();
+        if (params.empty()) {
+            HILOG_ERROR("no extension params.");
+            continue;
+        }
+        // get extension name and type
+        std::map<std::string, std::string>::iterator it = params.find(EXTENSION_PARAMS_TYPE);
+        if (it == params.end()) {
+            HILOG_ERROR("no extension type.");
+            continue;
+        }
+        int32_t type = std::stoi(it->second);
+
+        it = params.find(EXTENSION_PARAMS_NAME);
+        if (it == params.end()) {
+            HILOG_ERROR("no extension name.");
+            continue;
+        }
+        std::string extensionName = it->second;
+
+        extensionTypeMap.insert(std::pair<int32_t, std::string>(type, extensionName));
+        HILOG_INFO("Success load, extension type: %{public}d, extension name:%{public}s", type, extensionName.c_str());
+        AbilityLoader::GetInstance().RegisterExtension(extensionName, [application = application_, file]() {
+            return AbilityRuntime::ExtensionModuleLoader::GetLoader(file.c_str()).Create(application->GetRuntime());
+        });
+    }
+    application_->SetExtensionTypeMap(extensionTypeMap);
 }
 
 bool MainThread::PrepareAbilityDelegator(const std::shared_ptr<UserTestRecord> &record, bool isStageBased,
@@ -1593,11 +1640,11 @@ void MainThread::LoadAbilityLibrary(const std::vector<std::string> &libraryPaths
     for (size_t index = 0; index < size; index++) {
         std::string libraryPath = libraryPaths[index];
         HILOG_INFO("MainThread::LoadAbilityLibrary Try to scanDir %{public}s", libraryPath.c_str());
-        if (!ScanDir(libraryPath)) {
+        if (!ScanDir(libraryPath, fileEntries_)) {
             HILOG_INFO("MainThread::LoadAbilityLibrary scanDir %{public}s not exits", libraryPath.c_str());
         }
         libraryPath = libraryPath + "/libs";
-        if (!ScanDir(libraryPath)) {
+        if (!ScanDir(libraryPath, fileEntries_)) {
             HILOG_INFO("MainThread::LoadAbilityLibrary scanDir %{public}s not exits", libraryPath.c_str());
         }
     }
@@ -1658,14 +1705,7 @@ void MainThread::CloseAbilityLibrary()
     fileEntries_.clear();
 }
 
-/**
- *
- * @brief Scan the dir ability library loaded.
- *
- * @param dirPath the the path should be scan.
- *
- */
-bool MainThread::ScanDir(const std::string &dirPath)
+bool MainThread::ScanDir(const std::string &dirPath, std::vector<std::string> &files)
 {
     DIR *dirp = opendir(dirPath.c_str());
     if (dirp == nullptr) {
@@ -1685,7 +1725,7 @@ bool MainThread::ScanDir(const std::string &dirPath)
         }
 
         if (CheckFileType(currentName, abilityLibraryType_)) {
-            fileEntries_.emplace_back(dirPath + pathSeparator_ + currentName);
+            files.emplace_back(dirPath + pathSeparator_ + currentName);
         }
     }
 

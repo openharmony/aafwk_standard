@@ -33,6 +33,12 @@ public:
     {
         return nullptr;
     }
+
+    std::map<std::string, std::string> GetParams() override
+    {
+        std::map<std::string, std::string> params;
+        return params;
+    }
 };
 
 DummyExtensionModuleLoader::DummyExtensionModuleLoader() = default;
@@ -78,5 +84,11 @@ ExtensionModuleLoader& ExtensionModuleLoader::GetLoader(const char* sharedLibrar
 Extension *ExtensionModuleLoader::Create(const std::unique_ptr<Runtime>& runtime) const
 {
     return nullptr;
+}
+
+std::map<std::string, std::string> ExtensionModuleLoader::GetParams()
+{
+    std::map<std::string, std::string> params;
+    return params;
 }
 }

@@ -72,19 +72,12 @@ AbilityThread::~AbilityThread()
     DelayedSingleton<AbilityImplFactory>::DestroyInstance();
 }
 
-/**
- * @description: Attach The ability thread to the main process.
- *
- * @param abilityRecord Indicates the abilityRecord.
- *
- * @return Returns the abilityName.
- *
- */
-std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalRecord> &abilityRecord)
+std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalRecord> &abilityRecord,
+    std::shared_ptr<OHOSApplication> &application)
 {
     std::string abilityName;
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("AbilityThread::CreateAbilityName failed,abilityRecord is nullptr");
+    if (abilityRecord == nullptr || application == nullptr) {
+        HILOG_ERROR("AbilityThread::CreateAbilityName failed,abilityRecord or app is nullptr");
         return abilityName;
     }
 
@@ -121,6 +114,11 @@ std::string AbilityThread::CreateAbilityName(const std::shared_ptr<AbilityLocalR
     } else if (abilityInfo->type == AbilityType::DATA) {
         abilityName = ACE_DATA_ABILITY_NAME;
     } else if (abilityInfo->type == AbilityType::EXTENSION) {
+        application->GetExtensionNameByType(static_cast<int32_t>(abilityInfo->extensionAbilityType), abilityName);
+        if (abilityName.length() > 0) {
+            HILOG_INFO("Get extension name by plugin success, name: %{public}s", abilityName.c_str());
+            return abilityName;
+        }
         abilityName = BASE_SERVICE_EXTENSION;
 #ifdef SUPPORT_GRAPHICS
         if (abilityInfo->formEnabled || abilityInfo->extensionAbilityType == ExtensionAbilityType::FORM) {
@@ -207,7 +205,7 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
     }
 
     // 1.new AbilityHandler
-    std::string abilityName = CreateAbilityName(abilityRecord);
+    std::string abilityName = CreateAbilityName(abilityRecord, application);
     if (abilityName == "") {
         HILOG_ERROR("Attach ability failed, abilityInfo is nullptr.");
         return;
@@ -271,7 +269,7 @@ void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &applicatio
     }
 
     // 1.new AbilityHandler
-    std::string abilityName = CreateAbilityName(abilityRecord);
+    std::string abilityName = CreateAbilityName(abilityRecord, application);
     if (abilityName == "") {
         HILOG_ERROR("Attach ability failed, abilityInfo is nullptr.");
         return;
@@ -327,7 +325,7 @@ void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &applicatio
     }
 
     // 1.new AbilityHandler
-    std::string abilityName = CreateAbilityName(abilityRecord);
+    std::string abilityName = CreateAbilityName(abilityRecord, application);
     runner_ = EventRunner::Create(abilityName);
     if (runner_ == nullptr) {
         HILOG_ERROR("AbilityThread::AttachExtension failed,create runner failed");
@@ -383,7 +381,7 @@ void AbilityThread::Attach(
         return;
     }
     // 1.new AbilityHandler
-    std::string abilityName = CreateAbilityName(abilityRecord);
+    std::string abilityName = CreateAbilityName(abilityRecord, application);
     runner_ = EventRunner::Create(abilityName);
     if (runner_ == nullptr) {
         HILOG_ERROR("AbilityThread::ability attach failed,create runner failed");
