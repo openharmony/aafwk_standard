@@ -75,11 +75,8 @@ enum AbilityState_Test {
     INITIAL = 0,
     INACTIVE,
     ACTIVE,
-    BACKGROUND,
-    SUSPENDED,
     INACTIVATING,
     ACTIVATING,
-    MOVING_BACKGROUND,
     TERMINATING,
     ALLSUM,
 };
@@ -87,11 +84,8 @@ static const std::vector<std::string> abilityStateVec = {
     "INITIAL",
     "INACTIVE",
     "ACTIVE",
-    "BACKGROUND",
-    "SUSPENDED",
     "INACTIVATING",
     "ACTIVATING",
-    "MOVING_BACKGROUND",
     "TERMINATING",
 };
 }  // namespace
