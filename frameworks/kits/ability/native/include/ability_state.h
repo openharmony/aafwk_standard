@@ -69,15 +69,8 @@ typedef enum {
      * Active state: An ability is in this state when it is switched to the foreground and is interactive.
      */
     STATE_ACTIVE,
-
-    /**
-     * Background state: An ability is in this state after it returns to the background.
-     */
-    STATE_BACKGROUND,
-    STATE_SUSPENDED,
     STATE_INACTIVATING,
     STATE_ACTIVATING,
-    STATE_MOVING_BACKGROUND,
     STATE_TERMINATING,
 
     /**

@@ -107,8 +107,8 @@ ErrCode AbilityManagerClient::StartAbility(
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    HILOG_INFO("%{public}s come, abilityName=%{public}s, userId=%{public}d.",
-        __func__, want.GetElement().GetAbilityName().c_str(), userId);
+    HILOG_INFO("Start ability come, ability:%{public}s, userId:%{public}d.",
+        want.GetElement().GetAbilityName().c_str(), userId);
     return abms->StartAbility(want, callerToken, userId, requestCode);
 }
 

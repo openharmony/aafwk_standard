@@ -298,8 +298,8 @@ int AbilityManagerService::StartAbility(const Want &want, const sptr<IRemoteObje
         return ret;
     }
 
-    HILOG_INFO("%{public}s come, ability is %{public}s, userId is %{public}d",
-        __func__, want.GetElement().GetAbilityName().c_str(), userId);
+    HILOG_INFO("Start ability come, ability is %{public}s, userId is %{public}d",
+        want.GetElement().GetAbilityName().c_str(), userId);
     if (CheckIfOperateRemote(want)) {
         HILOG_INFO("AbilityManagerService::StartAbility. try to StartRemoteAbility");
         return StartRemoteAbility(want, requestCode);

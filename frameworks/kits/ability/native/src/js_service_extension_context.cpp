@@ -104,8 +104,7 @@ private:
         AAFwk::Want want;
         OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
             reinterpret_cast<napi_value>(info.argv[INDEX_ZERO]), want);
-        HILOG_INFO("%{public}s bundlename:%{public}s abilityname:%{public}s",
-            __func__,
+        HILOG_INFO("Start ability begin, bundle:%{public}s, ability:%{public}s",
             want.GetBundle().c_str(),
             want.GetElement().GetAbilityName().c_str());
         unwrapArgc++;
