@@ -18,7 +18,6 @@
 #include <gtest/gtest.h>
 #include <thread>
 #include "ability_command.h"
-#include "bundle_command.h"
 
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
