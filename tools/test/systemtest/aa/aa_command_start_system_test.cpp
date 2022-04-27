@@ -19,7 +19,6 @@
 #include "ability_command.h"
 #include "ability_manager_client.h"
 #include "ability_manager_interface.h"
-#include "bundle_command.h"
 #include "tool_system_test.h"
 
 using namespace testing::ext;
