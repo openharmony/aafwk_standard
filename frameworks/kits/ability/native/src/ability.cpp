@@ -269,7 +269,7 @@ void Ability::OnStart(const Want &want)
             int32_t width = display->GetWidth();
             int32_t height = display->GetHeight();
             std::shared_ptr<Configuration> configuration = nullptr;
-            if(application_) {
+            if (application_) {
                 configuration = application_->GetConfiguration();
             }
             if (configuration) {
