@@ -85,11 +85,8 @@ enum AbilityState_Test {
     INITIAL = 0,
     INACTIVE,
     ACTIVE,
-    BACKGROUND,
-    SUSPENDED,
     INACTIVATING,
     ACTIVATING,
-    MOVING_BACKGROUND,
     TERMINATING,
     ALLSUM,
 };
@@ -97,11 +94,8 @@ static const std::vector<std::string> abilityStateVec = {
     "INITIAL",
     "INACTIVE",
     "ACTIVE",
-    "BACKGROUND",
-    "SUSPENDED",
     "INACTIVATING",
     "ACTIVATING",
-    "MOVING_BACKGROUND",
     "TERMINATING",
 };
 }  // namespace
@@ -439,7 +433,6 @@ HWTEST_F(AmsAbilityVisibleTest, AMS_ABILITY_VISIBLE_0400, TestSize.Level1)
     EXPECT_EQ(STAbilityUtil::WaitCompleted(event_, abilityName + abilityStateOnBackground, abilityStateCountOne), 0);
 
     ExpectAbilityNumInStack(abilityName, 1);
-    ExpectAbilityCurrentState(abilityName, AbilityState_Test::BACKGROUND, AbilityState_Test::MOVING_BACKGROUND);
     ExpectAbilityCurrentState(abilityName2, AbilityState_Test::ACTIVE, AbilityState_Test::ACTIVATING);
     GTEST_LOG_(INFO) << "AmsAbilityVisibleTest AMS_ABILITY_VISIBLE_0400 end";
 }
@@ -474,7 +467,6 @@ HWTEST_F(AmsAbilityVisibleTest, AMS_ABILITY_VISIBLE_0500, TestSize.Level1)
 
     ExpectAbilityNumInStack(abilityName, 1);
     ExpectAbilityNumInStack(abilityName2, 1);
-    ExpectAbilityCurrentState(abilityName, AbilityState_Test::BACKGROUND, AbilityState_Test::MOVING_BACKGROUND);
     ExpectAbilityCurrentState(abilityName2, AbilityState_Test::ACTIVE, AbilityState_Test::ACTIVATING);
     GTEST_LOG_(INFO) << "AmsAbilityVisibleTest AMS_ABILITY_VISIBLE_0500 end";
 }
@@ -541,7 +533,6 @@ HWTEST_F(AmsAbilityVisibleTest, AMS_ABILITY_VISIBLE_0700, TestSize.Level1)
 
     ExpectAbilityNumInStack(abilityName, 1);
     ExpectAbilityNumInStack(abilityName2, 1);
-    ExpectAbilityCurrentState(abilityName, AbilityState_Test::BACKGROUND, AbilityState_Test::MOVING_BACKGROUND);
     ExpectAbilityCurrentState(abilityName2, AbilityState_Test::ACTIVE, AbilityState_Test::ACTIVATING);
     GTEST_LOG_(INFO) << "AmsAbilityVisibleTest AMS_ABILITY_VISIBLE_0700 end";
 }
@@ -769,7 +760,6 @@ HWTEST_F(AmsAbilityVisibleTest, AMS_ABILITY_VISIBLE_1400, TestSize.Level1)
 
     ExpectAbilityNumInStack(abilityName, 1);
     ExpectAbilityNumInStack(abilityName2, 1);
-    ExpectAbilityCurrentState(abilityName, AbilityState_Test::BACKGROUND, AbilityState_Test::MOVING_BACKGROUND);
     ExpectAbilityCurrentState(abilityName2, AbilityState_Test::ACTIVE, AbilityState_Test::ACTIVATING);
     int eventCode = -1;
     STAbilityUtil::PublishEvent(terminateAbility, eventCode, abilityName2);
@@ -812,7 +802,6 @@ HWTEST_F(AmsAbilityVisibleTest, AMS_ABILITY_VISIBLE_1500, TestSize.Level1)
 
     ExpectAbilityNumInStack(abilityName, 1);
     ExpectAbilityNumInStack(abilityName2, 1);
-    ExpectAbilityCurrentState(abilityName, AbilityState_Test::BACKGROUND, AbilityState_Test::MOVING_BACKGROUND);
     ExpectAbilityCurrentState(abilityName2, AbilityState_Test::ACTIVE, AbilityState_Test::ACTIVATING);
 
     int eventCode = -1;
@@ -1111,7 +1100,6 @@ HWTEST_F(AmsAbilityVisibleTest, AMS_ABILITY_VISIBLE_2200, TestSize.Level1)
     EXPECT_EQ(STAbilityUtil::WaitCompleted(event_, abilityName + abilityStateOnBackground, abilityStateCountOne), 0);
 
     ExpectAbilityNumInStack(abilityName, 1);
-    ExpectAbilityCurrentState(abilityName, AbilityState_Test::BACKGROUND, AbilityState_Test::MOVING_BACKGROUND);
     ExpectAbilityCurrentState(abilityName2, AbilityState_Test::ACTIVE, AbilityState_Test::ACTIVATING);
 
     GTEST_LOG_(INFO) << "AmsAbilityVisibleTest AMS_ABILITY_VISIBLE_2200 end";

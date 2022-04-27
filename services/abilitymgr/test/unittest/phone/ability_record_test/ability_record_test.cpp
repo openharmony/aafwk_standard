@@ -114,8 +114,6 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_UpdateLifeState, TestSize.Level1)
     EXPECT_EQ(abilityRecord_->GetAbilityState(), OHOS::AAFwk::AbilityState::ACTIVATING);
     abilityRecord_->Inactivate();
     EXPECT_EQ(abilityRecord_->GetAbilityState(), OHOS::AAFwk::AbilityState::INACTIVATING);
-    abilityRecord_->MoveToBackground(nullptr);
-    EXPECT_EQ(abilityRecord_->GetAbilityState(), OHOS::AAFwk::AbilityState::MOVING_BACKGROUND);
 }
 
 /*
@@ -168,11 +166,6 @@ HWTEST_P(AbilityRecordTest, AaFwk_AbilityMS_SetGetAbilityState, TestSize.Level1)
     abilityRecord_->SetAbilityState(state);
     EXPECT_EQ(static_cast<int>(state), static_cast<int>(abilityRecord_->GetAbilityState()));
 }
-
-INSTANTIATE_TEST_CASE_P(AbilityRecordTestCaseP, AbilityRecordTest,
-    testing::Values(OHOS::AAFwk::AbilityState::INITIAL, OHOS::AAFwk::AbilityState::INACTIVE,
-        OHOS::AAFwk::AbilityState::ACTIVE, OHOS::AAFwk::AbilityState::BACKGROUND,
-        OHOS::AAFwk::AbilityState::SUSPENDED));
 
 /*
  * Feature: AbilityRecord
@@ -335,16 +328,10 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_ConvertAbilityState, TestSize.Level1
     EXPECT_EQ(abilityRecord_->ConvertAbilityState(abilityRecord_->GetAbilityState()), "INACTIVE");
     abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVE);
     EXPECT_EQ(abilityRecord_->ConvertAbilityState(abilityRecord_->GetAbilityState()), "ACTIVE");
-    abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::BACKGROUND);
-    EXPECT_EQ(abilityRecord_->ConvertAbilityState(abilityRecord_->GetAbilityState()), "BACKGROUND");
-    abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::SUSPENDED);
-    EXPECT_EQ(abilityRecord_->ConvertAbilityState(abilityRecord_->GetAbilityState()), "SUSPENDED");
     abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::INACTIVATING);
     EXPECT_EQ(abilityRecord_->ConvertAbilityState(abilityRecord_->GetAbilityState()), "INACTIVATING");
     abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::ACTIVATING);
     EXPECT_EQ(abilityRecord_->ConvertAbilityState(abilityRecord_->GetAbilityState()), "ACTIVATING");
-    abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::MOVING_BACKGROUND);
-    EXPECT_EQ(abilityRecord_->ConvertAbilityState(abilityRecord_->GetAbilityState()), "MOVING_BACKGROUND");
     abilityRecord_->SetAbilityState(OHOS::AAFwk::AbilityState::TERMINATING);
     EXPECT_EQ(abilityRecord_->ConvertAbilityState(abilityRecord_->GetAbilityState()), "TERMINATING");
 }
@@ -399,29 +386,6 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Inactivate, TestSize.Level1)
     abilityRecord_->lifecycleDeal_ = std::make_unique<LifecycleDeal>();
     abilityRecord_->Inactivate();
     EXPECT_EQ(abilityRecord_->currentState_, OHOS::AAFwk::AbilityState::INACTIVATING);
-}
-
-/*
- * Feature: AbilityRecord
- * Function: MoveToBackground
- * SubFunction: MoveToBackground
- * FunctionPoints: NA
- * EnvConditions: NA
- * CaseDescription: Verify lifecycleDeal_ is nullptr cause MoveToBackground is not call
- */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_MoveToBackground, TestSize.Level1)
-{
-    abilityRecord_->lifecycleDeal_ = nullptr;
-    abilityRecord_->currentState_ = OHOS::AAFwk::AbilityState::INITIAL;
-    abilityRecord_->MoveToBackground([]() {
-
-    });
-    EXPECT_EQ(abilityRecord_->currentState_, OHOS::AAFwk::AbilityState::INITIAL);
-    abilityRecord_->lifecycleDeal_ = std::make_unique<LifecycleDeal>();
-    abilityRecord_->MoveToBackground([]() {
-
-    });
-    EXPECT_EQ(abilityRecord_->currentState_, OHOS::AAFwk::AbilityState::MOVING_BACKGROUND);
 }
 
 /*

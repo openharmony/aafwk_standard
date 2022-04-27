@@ -30,12 +30,9 @@ enum AbilityState {
     INITIAL = 0,
     INACTIVE,
     ACTIVE,
-    BACKGROUND,
-    SUSPENDED,
-    INACTIVATING,
+    INACTIVATING = 5,
     ACTIVATING,
-    MOVING_BACKGROUND,
-    TERMINATING,
+    TERMINATING = 8,
 
     /**
      * State for api > 7.
