@@ -74,6 +74,8 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+    void OnStartAms();
+    void OnStopAms();
 
 public:
     std::shared_ptr<AbilityManagerService> abilityMgrServ_ {nullptr};
@@ -93,10 +95,7 @@ void StartOptionDisplayIdTest::TearDownTestCase()
 void StartOptionDisplayIdTest::SetUp()
 {
     abilityMgrServ_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
-    abilityMgrServ_->OnStart();
-    WaitUntilTaskFinished();
-
-    abilityMgrServ_->StartUser(USER_ID_U100);
+    OnStartAms();
     auto missionListMgr = abilityMgrServ_->GetListManagerByUserId(USER_ID_U100);
     if (!missionListMgr) {
         return;
@@ -110,8 +109,57 @@ void StartOptionDisplayIdTest::SetUp()
 
 void StartOptionDisplayIdTest::TearDown()
 {
-    abilityMgrServ_->OnStop();
+    OnStopAms();
     OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+}
+
+void StartOptionDisplayIdTest::OnStartAms()
+{
+    if (abilityMgrServ_) {
+        if (abilityMgrServ_->state_ == ServiceRunningState::STATE_RUNNING) {
+            return;
+        }
+
+        abilityMgrServ_->state_ = ServiceRunningState::STATE_RUNNING;
+
+        abilityMgrServ_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
+        EXPECT_TRUE(abilityMgrServ_->eventLoop_);
+
+        abilityMgrServ_->handler_ = std::make_shared<AbilityEventHandler>(abilityMgrServ_->eventLoop_, abilityMgrServ_);
+        EXPECT_TRUE(abilityMgrServ_->handler_);
+
+        // init user controller.
+        abilityMgrServ_->userController_ = std::make_shared<UserController>();
+        EXPECT_TRUE(abilityMgrServ_->userController_);
+        abilityMgrServ_->userController_->Init();
+        int userId = USER_ID_U100;
+        abilityMgrServ_->userController_->SetCurrentUserId(userId);
+        abilityMgrServ_->InitConnectManager(userId, true);
+        abilityMgrServ_->InitDataAbilityManager(userId, true);
+        abilityMgrServ_->InitPendWantManager(userId, true);
+        abilityMgrServ_->systemDataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        EXPECT_TRUE(abilityMgrServ_->systemDataAbilityManager_);
+
+        abilityMgrServ_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+        EXPECT_TRUE(abilityMgrServ_->amsConfigResolver_);
+        abilityMgrServ_->amsConfigResolver_->Parse();
+
+        abilityMgrServ_->InitMissionListManager(userId, true);
+        abilityMgrServ_->connectManager_->SetEventHandler(abilityMgrServ_->handler_);
+        abilityMgrServ_->eventLoop_->Run();
+
+        WaitUntilTaskFinished();
+        return;
+    }
+
+    GTEST_LOG_(INFO) << "OnStart fail";
+}
+
+void StartOptionDisplayIdTest::OnStopAms()
+{
+    abilityMgrServ_->eventLoop_.reset();
+    abilityMgrServ_->handler_.reset();
+    abilityMgrServ_->state_ = ServiceRunningState::STATE_NOT_START;
 }
 
 /*
