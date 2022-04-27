@@ -45,7 +45,6 @@ group("napi_packages") {
     "${aafwk_path}/interfaces/kits/napi/aafwk/particleAbility:particleability",
     "${aafwk_path}/interfaces/kits/napi/aafwk/service_extension_ability:serviceextensionability_napi",
     "${aafwk_path}/interfaces/kits/napi/aafwk/service_extension_context:serviceextensioncontext_napi",
-    "${aafwk_path}/interfaces/kits/napi/aafwk/serviceextension:serviceextension_napi",
     "${aafwk_path}/interfaces/kits/napi/aafwk/static_subscriber_extension:staticsubscriberextensionability_napi",
     "${aafwk_path}/interfaces/kits/napi/aafwk/static_subscriber_extension_context:staticsubscriberextensioncontext_napi",
     "${aafwk_path}/interfaces/kits/napi/aafwk/uri_permission:uripermissionmanager_napi",
