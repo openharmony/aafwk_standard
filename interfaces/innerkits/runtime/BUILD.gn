@@ -73,15 +73,20 @@ ohos_shared_library("runtime") {
   ]
 
   if (is_standard_system) {
-    external_deps += [ "startup_l2:syspara" ]
+    defines = [ "ENABLE_HITRACE" ]
+    external_deps += [
+      "hitrace_native:libhitrace",
+      "startup_l2:syspara",
+    ]
   } else {
     external_deps += [ "startup:syspara" ]
   }
 
   if (ability_runtime_graphics) {
-    deps +=
-        [ "//foundation/ace/ace_engine/frameworks/core:ace_container_scope" ]
-    external_deps += [ "ace_engine_standard:ace_uicontent" ]
+    external_deps += [
+      "ace_engine_standard:ace_uicontent",
+      "napi:ace_container_scope",
+    ]
   }
 
   subsystem_name = "aafwk"

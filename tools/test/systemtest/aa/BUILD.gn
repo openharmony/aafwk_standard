@@ -20,7 +20,6 @@ config("tools_aa_test_config") {
   include_dirs = [
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
     "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
-    "${appexecfwk_path}/tools/bm/include",
     "//base/security/appverify/interfaces/innerkits/appverify/include",
   ]
 }

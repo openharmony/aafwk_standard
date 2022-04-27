@@ -17,7 +17,6 @@
 
 #include <thread>
 #include "ability_command.h"
-#include "bundle_command.h"
 #include "tool_system_test.h"
 
 using namespace testing::ext;
