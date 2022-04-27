@@ -25,11 +25,7 @@ config("appmgr_config") {
 }
 
 group("ams_target") {
-  deps = [
-    ":libams",
-    #"examples:appmgrserviceregtest",
-    #"examples:appspawnclienttest",
-  ]
+  deps = [ ":libams" ]
 }
 
 ohos_shared_library("libams") {
