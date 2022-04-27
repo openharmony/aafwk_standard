@@ -72,6 +72,7 @@ ohos_moduletest("ability_moduletest") {
     "${aafwk_path}/services/abilitymgr/src/want_sender_info.cpp",
     "${aafwk_path}/services/abilitymgr/src/wants_info.cpp",
     "moduletest/cpp/abilitytest/ability_test.cpp",
+    "//foundation/aafwk/standard/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
   ]
 
   configs = [
@@ -330,8 +331,7 @@ group("moduletest") {
     deps += [
       ":ability_conetxt_test",
       ":ability_thread_call_request_module_test",
-
-      # ":ability_moduletest",
+      ":ability_moduletest",
       ":data_ability_helper_module_test",
       ":data_ability_operation_moduletest",
     ]
