@@ -137,7 +137,7 @@ ohos_source_set("abilityms_test_source") {
       "${global_path}/i18n/frameworks/intl:intl_util",
       "${graphic_path}:libwmservice",
       "${multimedia_path}/interfaces/innerkits:image_native",
-      "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
+      "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
     ]
   }
 
