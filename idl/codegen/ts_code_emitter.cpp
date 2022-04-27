@@ -723,8 +723,11 @@ void TsCodeEmitter::EmitWriteArrayVariable(const String& parcelName, const std::
                 name.c_str());
             stringBuilder.Append(prefix).AppendFormat("%s.writeInt(%sArray.length);\n", parcelName.string(),
                 name.c_str());
-            stringBuilder.Append(prefix).AppendFormat("%s.writeSequenceableArray(%s);\n", parcelName.string(),
+            stringBuilder.Append(prefix).AppendFormat("for (let index = 0; index < %sArray.length; index++) {\n",
                 name.c_str());
+            stringBuilder.Append(prefix).Append(TAB).AppendFormat("%s.writeSequenceable(%s[index]);\n",
+                parcelName.string(), name.c_str());
+            stringBuilder.Append(prefix).AppendFormat("}\n");
         }
             break;
         default:
@@ -852,11 +855,13 @@ void TsCodeEmitter::EmitReadArrayVariable(const String& parcelName, const std::s
             stringBuilder.Append(prefix).AppendFormat("let %s:Array<%s> = [];\n", name.c_str(), typeName.string());
             stringBuilder.Append(prefix).AppendFormat("for (let index = 0; index < %sSize; index++) {\n",
                 name.c_str());
-            stringBuilder.Append(prefix).Append(TAB).AppendFormat("%s.push(new %s());\n", name.c_str(),
-                typeName.string());
-            stringBuilder.Append(prefix).AppendFormat("}\n");
-            stringBuilder.Append(prefix).AppendFormat("%s.readSequenceableArray(%s);\n", parcelName.string(),
+            stringBuilder.Append(prefix).Append(TAB).AppendFormat("let %sValue = new %s();\n",
+                name.c_str(), typeName.string());
+            stringBuilder.Append(prefix).Append(TAB).AppendFormat("%s.readSequenceable(%sValue);\n",
+                parcelName.string(), name.c_str());
+            stringBuilder.Append(prefix).Append(TAB).AppendFormat("%s.push(%sValue);\n", name.c_str(),
                 name.c_str());
+            stringBuilder.Append(prefix).AppendFormat("}\n");
         }
             break;
         default:
@@ -912,12 +917,15 @@ void TsCodeEmitter::EmitReadOutArrayVariable(const String& parcelName, const std
             String typeName = EmitType(mt).EndsWith("]") ?
                 (EmitType(mt).Substring(0, EmitType(mt).GetLength() - 2)) : EmitType(mt);
             stringBuilder.Append(prefix).AppendFormat("let %s:Array<%s> = [];\n", name.c_str(), typeName.string());
-            stringBuilder.Append(prefix).AppendFormat("for (let index = 0; index < %sSize; index++) {\n", name.c_str());
-            stringBuilder.Append(prefix).Append(TAB).AppendFormat("%s.push(new %s());\n", name.c_str(),
-                typeName.string());
-            stringBuilder.Append(prefix).AppendFormat("}\n");
-            stringBuilder.Append(prefix).AppendFormat("%s.readSequenceableArray(%s);\n", parcelName.string(),
+            stringBuilder.Append(prefix).AppendFormat("for (let index = 0; index < %sSize; index++) {\n",
                 name.c_str());
+            stringBuilder.Append(prefix).Append(TAB).AppendFormat("let %sValue = new %s();\n",
+                name.c_str(), typeName.string());
+            stringBuilder.Append(prefix).Append(TAB).AppendFormat("%s.readSequenceable(%sValue);\n",
+                parcelName.string(), name.c_str());
+            stringBuilder.Append(prefix).Append(TAB).AppendFormat("%s.push(%sValue);\n", name.c_str(),
+                name.c_str());
+            stringBuilder.Append(prefix).AppendFormat("}\n");
         }
             break;
         default:
