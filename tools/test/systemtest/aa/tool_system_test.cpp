@@ -22,6 +22,9 @@
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
 
+const std::string STRING_INSTALL_BUNDLE_OK = "install bundle successfully.";
+const std::string STRING_INSTALL_BUNDLE_NG = "error: failed to install bundle.";
+
 std::string ToolSystemTest::ExecuteCommand(const std::string &command)
 {
     std::string result = "";
