@@ -210,7 +210,6 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0100, TestSize.Level1)
         .uid = uid,
         .apl = test_apl,
         .isSystemApp = false,
-
     };
     EXPECT_NE(pendingManager_, nullptr);
     EXPECT_NE(pendingManager_->GetWantSender(callingUid, params, wantSenderInfo, nullptr), nullptr);
