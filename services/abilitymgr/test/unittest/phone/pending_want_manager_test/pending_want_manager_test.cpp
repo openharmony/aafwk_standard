@@ -95,6 +95,7 @@ public:
 public:
     std::shared_ptr<PendingWantManager> pendingManager_ {nullptr};
     std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
+    std::string test_apl = "";
 };
 
 int PendingWantManagerTest::CancelReceiver::performReceiveCount = 0;
@@ -205,8 +206,13 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0100, TestSize.Level1)
     int32_t uid = 0;
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
+    PendingWantManager::Params params {
+        .uid = uid,
+        .apl = test_apl,
+        .isSystemApp = false,
+    };
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_NE(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
+    EXPECT_NE(pendingManager_->GetWantSender(callingUid, params, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
@@ -220,8 +226,13 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0300, TestSize.Level1)
     int32_t uid = 0;
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
+    PendingWantManager::Params params {
+        .uid = uid,
+        .apl = test_apl,
+        .isSystemApp = false,
+    };
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_EQ(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
+    EXPECT_NE(pendingManager_->GetWantSender(callingUid, params, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
@@ -235,8 +246,13 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0400, TestSize.Level1)
     int32_t uid = 1;
     WantSenderInfo wantSenderInfo;
     pendingManager_ = std::make_shared<PendingWantManager>();
+    PendingWantManager::Params params {
+        .uid = uid,
+        .apl = test_apl,
+        .isSystemApp = false,
+    };
     EXPECT_NE(pendingManager_, nullptr);
-    EXPECT_NE(pendingManager_->GetWantSender(callingUid, uid, false, wantSenderInfo, nullptr), nullptr);
+    EXPECT_NE(pendingManager_->GetWantSender(callingUid, params, wantSenderInfo, nullptr), nullptr);
 }
 
 /*
@@ -810,7 +826,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_3100, TestSize.Level1)
         pendingManager_->GetWantSenderLocked(1, 1, wantSenderInfo.userId, wantSenderInfo, nullptr)->AsObject());
     EXPECT_NE(pendingRecord, nullptr);
     pendingManager_->RegisterCancelListener(pendingRecord, cance);
-    pendingManager_->CancelWantSender(0, 0, false, pendingRecord);
+    pendingManager_->CancelWantSender("", false, pendingRecord);
     EXPECT_TRUE(CancelReceiver::sendCount == 100);
     EXPECT_TRUE((int)pendingManager_->wantRecords_.size() == 0);
 }

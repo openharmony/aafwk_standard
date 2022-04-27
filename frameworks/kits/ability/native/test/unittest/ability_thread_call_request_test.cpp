@@ -18,6 +18,7 @@
 #define private public
 #include "ability_thread.h"
 #define protected public
+#include "ability_handler.h"
 #include "system_ability_definition.h"
 #include "sys_mgr_client.h"
 

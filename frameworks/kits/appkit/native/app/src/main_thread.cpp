@@ -68,8 +68,15 @@ constexpr int32_t DISTRIBUTE_TIME = 100;
 constexpr int32_t UNSPECIFIED_USERID = -2;
 
 constexpr char EVENT_KEY_PACKAGE_NAME[] = "PACKAGE_NAME";
+constexpr char EVENT_KEY_VERSION[] = "VERSION";
+constexpr char EVENT_KEY_TYPE[] = "TYPE";
+constexpr char EVENT_KEY_HAPPEN_TIME[] = "HAPPEN_TIME";
 constexpr char EVENT_KEY_REASON[] = "REASON";
+constexpr char EVENT_KEY_JSVM[] = "JSVM";
 constexpr char EVENT_KEY_SUMMARY[] = "SUMMARY";
+
+const std::string JSCRASH_TYPE = "3";
+const std::string JSVM_TYPE = "ARK";
 }
 
 #define ACEABILITY_LIBRARY_LOADER
@@ -763,7 +770,11 @@ static std::string GetNativeStrFromJsTaggedObj(NativeObject* obj, const char* ke
     }
     size_t valueStrBufLength = valueStr->GetLength();
     size_t valueStrLength = 0;
-    char* valueCStr = new char[valueStrBufLength + 1];
+    char* valueCStr = new (std::nothrow) char[valueStrBufLength + 1];
+    if (valueCStr == nullptr) {
+        HILOG_ERROR("Failed to new valueCStr");
+        return "";
+    }
     valueStr->GetCString(valueCStr, valueStrBufLength + 1, &valueStrLength);
     std::string ret(valueCStr, valueStrLength);
     delete []valueCStr;
@@ -872,17 +883,35 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
         }
         auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
         auto bundleName = appInfo.bundleName;
+        auto versionCode = appInfo.versionCode;
         wptr<MainThread> weak = this;
-        auto uncaughtTask = [weak, bundleName](NativeValue* v) {
+        auto uncaughtTask = [weak, bundleName, versionCode](NativeValue* v) {
             NativeObject* obj = AbilityRuntime::ConvertNativeValueTo<NativeObject>(v);
             std::string errorMsg = GetNativeStrFromJsTaggedObj(obj, "message");
             std::string errorName = GetNativeStrFromJsTaggedObj(obj, "name");
             std::string errorStack = GetNativeStrFromJsTaggedObj(obj, "stack");
             std::string summary = "Error message:" + errorMsg + "\nStacktrace:\n" + errorStack;
+            time_t timet;
+            struct tm *localUTC;
+            struct timeval gtime;
+            time(&timet);
+            localUTC = gmtime(&timet);
+            gettimeofday(&gtime, NULL);
+            std::string loacalUTCTime = std::to_string(localUTC->tm_year + 1900)
+                + "/" + std::to_string(localUTC->tm_mon + 1)
+                + "/" + std::to_string(localUTC->tm_mday)
+                + " " + std::to_string(localUTC->tm_hour)
+                + "-" + std::to_string(localUTC->tm_min)
+                + "-" + std::to_string(localUTC->tm_sec)
+                + "." + std::to_string(gtime.tv_usec/1000);
             OHOS::HiviewDFX::HiSysEvent::Write(OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK, "JS_ERROR",
                 OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
                 EVENT_KEY_PACKAGE_NAME, bundleName,
+                EVENT_KEY_VERSION, std::to_string(versionCode),
+                EVENT_KEY_TYPE, JSCRASH_TYPE,
+                EVENT_KEY_HAPPEN_TIME, loacalUTCTime,
                 EVENT_KEY_REASON, errorName,
+                EVENT_KEY_JSVM, JSVM_TYPE,
                 EVENT_KEY_SUMMARY, summary);
             auto appThread = weak.promote();
             if (appThread == nullptr) {
