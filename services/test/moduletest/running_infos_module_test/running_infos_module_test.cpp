@@ -138,7 +138,7 @@ void RunningInfosModuleTest::OnStartAms()
         abilityMgrServ_->eventLoop_->Run();
         auto topAbility = abilityMgrServ_->GetListManagerByUserId(MOCK_MAIN_USER_ID)->GetCurrentTopAbilityLocked();
         if (topAbility) {
-            topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+            topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
         }
         WaitUntilTaskFinished();
         return;
@@ -289,7 +289,7 @@ HWTEST_F(RunningInfosModuleTest, GetAbilityRunningInfos_004, TestSize.Level1)
 
     auto topAbility = abilityMgrServ_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_TRUE(topAbility);
-    topAbility->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    topAbility->SetAbilityState(AbilityState::FOREGROUND);
 
     std::string abilityName2 = "MusicAbilityOther";
     std::string bundleName2 = "com.ix.hiMusicOther";
@@ -306,7 +306,7 @@ HWTEST_F(RunningInfosModuleTest, GetAbilityRunningInfos_004, TestSize.Level1)
         EXPECT_TRUE(infos[0].ability.GetAbilityName() == abilityName2);
         EXPECT_TRUE(infos[0].abilityState == static_cast<int>(AbilityState::INITIAL));
         EXPECT_TRUE(infos[1].ability.GetAbilityName() == abilityName);
-        EXPECT_TRUE(infos[1].abilityState == static_cast<int>(AbilityState::FOREGROUND_NEW));
+        EXPECT_TRUE(infos[1].abilityState == static_cast<int>(AbilityState::FOREGROUND));
     }
 }
 
@@ -365,7 +365,7 @@ HWTEST_F(RunningInfosModuleTest, GetAbilityRunningInfos_006, TestSize.Level1)
 
     auto topAbility = abilityMgrServ_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_TRUE(topAbility);
-    topAbility->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    topAbility->SetAbilityState(AbilityState::FOREGROUND);
 
     std::string abilityName2 = "com.ohos.launcher.MainAbilityOther";
     std::string bundleName2 = "com.ohos.launcherOther";
@@ -382,7 +382,7 @@ HWTEST_F(RunningInfosModuleTest, GetAbilityRunningInfos_006, TestSize.Level1)
         EXPECT_TRUE(infos[0].ability.GetAbilityName() == abilityName2);
         EXPECT_TRUE(infos[0].abilityState == static_cast<int>(AbilityState::INITIAL));
         EXPECT_TRUE(infos[1].ability.GetAbilityName() == abilityName);
-        EXPECT_TRUE(infos[1].abilityState == static_cast<int>(AbilityState::FOREGROUND_NEW));
+        EXPECT_TRUE(infos[1].abilityState == static_cast<int>(AbilityState::FOREGROUND));
     }
 }
 

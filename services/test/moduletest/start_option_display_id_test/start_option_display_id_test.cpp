@@ -103,7 +103,7 @@ void StartOptionDisplayIdTest::SetUp()
 
     auto topAbility = missionListMgr->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
 }
 

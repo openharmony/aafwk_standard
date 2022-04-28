@@ -17,7 +17,6 @@
 
 #include "ability_impl.h"
 #include "ability.h"
-#include "ability_state.h"
 #include "context_deal.h"
 #include "hilog_wrapper.h"
 #include "mock_ability_token.h"

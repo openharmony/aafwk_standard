@@ -110,7 +110,7 @@ void RunningInfosTest::OnStartAms()
         WaitUntilTaskFinished();
         auto topAbility = abilityMs_->GetListManagerByUserId(MOCK_MAIN_USER_ID)->GetCurrentTopAbilityLocked();
         if (topAbility) {
-            topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+            topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
         }
         return;
     }
@@ -244,7 +244,7 @@ HWTEST_F(RunningInfosTest, GetAbilityRunningInfos_004, TestSize.Level1)
 
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_TRUE(topAbility);
-    topAbility->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    topAbility->SetAbilityState(AbilityState::FOREGROUND);
 
     ElementName element2("device", "com.ix.hiMusicOther", "MusicAbilityOther");
     want.SetElement(element2);
@@ -260,7 +260,7 @@ HWTEST_F(RunningInfosTest, GetAbilityRunningInfos_004, TestSize.Level1)
         EXPECT_TRUE(infos[0].ability.GetAbilityName() == element2.GetAbilityName());
         EXPECT_TRUE(infos[0].abilityState == static_cast<int>(AbilityState::INITIAL));
         EXPECT_TRUE(infos[1].ability.GetAbilityName() == element.GetAbilityName());
-        EXPECT_TRUE(infos[1].abilityState == static_cast<int>(AbilityState::FOREGROUND_NEW));
+        EXPECT_TRUE(infos[1].abilityState == static_cast<int>(AbilityState::FOREGROUND));
     }
 }
 
@@ -315,7 +315,7 @@ HWTEST_F(RunningInfosTest, GetAbilityRunningInfos_006, TestSize.Level1)
 
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_TRUE(topAbility);
-    topAbility->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    topAbility->SetAbilityState(AbilityState::FOREGROUND);
 
     ElementName element2("device", "com.ohos.launcherOther", "com.ohos.launcher.MainAbilityOther");
     want.SetElement(element2);
@@ -331,7 +331,7 @@ HWTEST_F(RunningInfosTest, GetAbilityRunningInfos_006, TestSize.Level1)
         EXPECT_TRUE(infos[0].ability.GetAbilityName() == element2.GetAbilityName());
         EXPECT_TRUE(infos[0].abilityState == static_cast<int>(AbilityState::INITIAL));
         EXPECT_TRUE(infos[1].ability.GetAbilityName() == element.GetAbilityName());
-        EXPECT_TRUE(infos[1].abilityState == static_cast<int>(AbilityState::FOREGROUND_NEW));
+        EXPECT_TRUE(infos[1].abilityState == static_cast<int>(AbilityState::FOREGROUND));
     }
 }
 
@@ -578,7 +578,7 @@ HWTEST_F(RunningInfosTest, MissionGetAbilityRunningInfos_002, TestSize.Level1)
 
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_TRUE(topAbility);
-    topAbility->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    topAbility->SetAbilityState(AbilityState::FOREGROUND);
 
     ElementName element2("device", "com.ix.hiMusicOther", "MusicAbilityOther");
     want.SetElement(element2);
@@ -594,7 +594,7 @@ HWTEST_F(RunningInfosTest, MissionGetAbilityRunningInfos_002, TestSize.Level1)
         EXPECT_TRUE(infos[0].ability.GetAbilityName() == element2.GetAbilityName());
         EXPECT_TRUE(infos[0].abilityState == static_cast<int>(AbilityState::INITIAL));
         EXPECT_TRUE(infos[1].ability.GetAbilityName() == element.GetAbilityName());
-        EXPECT_TRUE(infos[1].abilityState == static_cast<int>(AbilityState::FOREGROUND_NEW));
+        EXPECT_TRUE(infos[1].abilityState == static_cast<int>(AbilityState::FOREGROUND));
     }
 }
 

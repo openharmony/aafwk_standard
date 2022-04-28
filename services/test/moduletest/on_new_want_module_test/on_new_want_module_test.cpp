@@ -123,7 +123,7 @@ HWTEST_F(OnNewWantModuleTest, Startability_001, TestSize.Level1)
     abilityRequest.appInfo = CreateAppInfo(appName, bundleName);
 
     std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND_NEW);
+    abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND);
 
     std::string missionName =
         AbilityUtil::ConvertBundleNameSingleton(abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
@@ -163,7 +163,7 @@ HWTEST_F(OnNewWantModuleTest, Startability_002, TestSize.Level1)
     abilityRequest.appInfo = CreateAppInfo(appName, bundleName);
 
     std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND_NEW);
+    abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND);
 
     std::string missionName =
         AbilityUtil::ConvertBundleNameSingleton(abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
