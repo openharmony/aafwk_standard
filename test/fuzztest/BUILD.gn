@@ -21,7 +21,8 @@ group("fuzztest") {
     "finishusertest_fuzzer:fuzztest",
     "getwantsender_fuzzer:fuzztest",
     "setmissionlabel_fuzzer:fuzztest",
-    "startability_fuzzer:fuzztest",
+
+    #"startability_fuzzer:fuzztest",
     "startcontinuation_fuzzer:fuzztest",
     "stopserviceability_fuzzer:fuzztest",
     "updateconfiguration_fuzzer:fuzztest",
