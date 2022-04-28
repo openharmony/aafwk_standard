@@ -27,7 +27,6 @@
 #include "values_bucket.h"
 #include "data_ability_operation.h"
 #include "data_ability_result.h"
-#include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -377,7 +376,6 @@ HWTEST_F(AbilityBaseTest, AaFwk_Ability_StartAbilityForResult_0100, Function | M
     std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
     AbilityType type = AbilityType::PAGE;
     abilityInfo->type = type;
-    HILOG_INFO("%{public}d", abilityInfo->type);
     std::shared_ptr<OHOSApplication> application = nullptr;
     std::shared_ptr<AbilityHandler> handler = nullptr;
     sptr<IRemoteObject> token = nullptr;
