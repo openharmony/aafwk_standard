@@ -70,6 +70,31 @@ const std::string KEY_BUNDLE_NAME = "bundleName";
 const std::string DEVICE_ID = "ohos-phone1";
 const std::string DEF_LABEL1 = "PermissionFormRequireGrant";
 
+template<typename F>
+static void WaitUntilTaskCalled(const F &f, const std::shared_ptr<EventHandler> &handler, std::atomic<bool> &taskCalled)
+{
+    const uint32_t maxRetryCount = 1000;
+    const uint32_t sleepTime = 1000;
+    uint32_t count = 0;
+    if (handler->PostTask(f)) {
+        while (!taskCalled.load()) {
+            ++count;
+            // if delay more than 1 second, break
+            if (count >= maxRetryCount) {
+                break;
+            }
+            usleep(sleepTime);
+        }
+    }
+}
+
+static void WaitUntilTaskDone(const std::shared_ptr<EventHandler> &handler)
+{
+    std::atomic<bool> taskCalled(false);
+    auto f = [&taskCalled]() { taskCalled.store(true); };
+    WaitUntilTaskCalled(f, handler, taskCalled);
+}
+
 class FmsFormSysEventReceiverTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -198,7 +223,10 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_001, TestSize.Level0)
     EventFwk::CommonEventData eventData;
     eventData.SetWant(want);
     FormSysEventReceiver testCase;
+    auto handler = std::make_shared<EventHandler>(EventRunner::Create());
+    testCase.SetEventHandler(handler);
     testCase.OnReceiveEvent(eventData);
+    WaitUntilTaskDone(handler);
     FormDbCache::GetInstance().GetAllFormInfo(allFormInfo);
     FormDBInfo tempFormDBInfo;
     EXPECT_EQ(ERR_APPEXECFWK_FORM_NOT_EXIST_ID, FormDbCache::GetInstance().GetDBRecord(formId, tempFormDBInfo));
@@ -231,7 +259,10 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_002, TestSize.Level0)
     CreateFormRecordAndFormInfo(bundle, formId, callingUid);
 
     FormSysEventReceiver testCase;
+    auto handler = std::make_shared<EventHandler>(EventRunner::Create());
+    testCase.SetEventHandler(handler);
     testCase.OnReceiveEvent(eventData);
+    WaitUntilTaskDone(handler);
 
     FormRecord tempFormRecord;
     ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
@@ -267,7 +298,10 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_003, TestSize.Level0)
     ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
 
     FormSysEventReceiver testCase;
+    auto handler = std::make_shared<EventHandler>(EventRunner::Create());
+    testCase.SetEventHandler(handler);
     testCase.OnReceiveEvent(eventData);
+    WaitUntilTaskDone(handler);
 
     ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
 
@@ -297,7 +331,10 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_004, TestSize.Level0)
     want.SetBundle(bundle);
     want.SetParam(KEY_UID, callingUid);
     FormSysEventReceiver testCase;
+    auto handler = std::make_shared<EventHandler>(EventRunner::Create());
+    testCase.SetEventHandler(handler);
     testCase.OnReceiveEvent(eventData);
+    WaitUntilTaskDone(handler);
 
     GTEST_LOG_(INFO) << "fms_form_sys_event_receiver_test_004 end";
 }
@@ -324,7 +361,10 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_005, TestSize.Level0)
     CreateEventData(bundle, formId, callingUid, actionType, eventData);
 
     FormSysEventReceiver testCase;
+    auto handler = std::make_shared<EventHandler>(EventRunner::Create());
+    testCase.SetEventHandler(handler);
     testCase.OnReceiveEvent(eventData);
+    WaitUntilTaskDone(handler);
 
     GTEST_LOG_(INFO) << "fms_form_sys_event_receiver_test_005 end";
 }
@@ -372,7 +412,10 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_006, TestSize.Level0)
     ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
 
     FormSysEventReceiver testCase;
+    auto handler = std::make_shared<EventHandler>(EventRunner::Create());
+    testCase.SetEventHandler(handler);
     testCase.OnReceiveEvent(eventData);
+    WaitUntilTaskDone(handler);
 
     ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
 
@@ -407,9 +450,12 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_007, TestSize.Level0)
     ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
 
     FormSysEventReceiver testCase;
+    auto handler = std::make_shared<EventHandler>(EventRunner::Create());
+    testCase.SetEventHandler(handler);
     testCase.OnReceiveEvent(eventData);
+    WaitUntilTaskDone(handler);
 
-    ASSERT_FALSE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
+    ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
 
     ClearFormRecord(formId);
 
@@ -458,7 +504,10 @@ HWTEST_F(FmsFormSysEventReceiverTest, OnReceiveEvent_008, TestSize.Level0)
     ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
 
     FormSysEventReceiver testCase;
+    auto handler = std::make_shared<EventHandler>(EventRunner::Create());
+    testCase.SetEventHandler(handler);
     testCase.OnReceiveEvent(eventData);
+    WaitUntilTaskDone(handler);
 
     ASSERT_TRUE(FormDataMgr::GetInstance().GetFormRecord(formId, tempFormRecord));
 
