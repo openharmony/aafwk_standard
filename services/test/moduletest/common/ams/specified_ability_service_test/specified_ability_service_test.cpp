@@ -195,7 +195,7 @@ HWTEST_F(SpecifiedAbilityServiceTest, OnAcceptWantResponse_001, TestSize.Level1)
     abilityRequest.appInfo = CreateAppInfo(appName, bundleName);
 
     std::shared_ptr<AbilityRecord> abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND_NEW);
+    abilityRecord->SetAbilityState(OHOS::AAFwk::AbilityState::FOREGROUND);
 
     abilityMgrServ_->InitMissionListManager(11, true);
     Want want;

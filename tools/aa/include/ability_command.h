@@ -99,7 +99,7 @@ const std::string HELP_MSG_TEST =
 const std::string HELP_MSG_FORCE_STOP = "usage: aa force-stop <bundle-name>\n";
 const std::string HELP_MSG_BLOCK_ABILITY = "usage: aa block-ability <abilityrecordid>\n";
 const std::string HELP_MSG_FORCE_TIMEOUT =
-    "usage: aa force-timeout <ability-name> <INITIAL|INACTIVE|COMMAND|FOREGROUND_NEW|BACKGROUND_NEW|TERMINATING>\n"
+    "usage: aa force-timeout <ability-name> <INITIAL|INACTIVE|COMMAND|FOREGROUND|BACKGROUND|TERMINATING>\n"
     "usage: aa force-timeout clean.";
 const std::string HELP_MSG_FORCE_TIMEOUT_CLEAN = "clean";
 
