@@ -56,7 +56,6 @@
           "sub_component": [
             "//foundation/aafwk/standard/services:services_target",
             "//foundation/aafwk/standard/interfaces/innerkits:innerkits_target",
-            "//foundation/aafwk/standard/frameworks/kits/ability/native:datashare_ext_ability_module",
             "//foundation/aafwk/standard/frameworks/kits/ability/native:static_subscriber_ipc",
             "//foundation/aafwk/standard/frameworks/kits/ability/native:service_extension_module",
             "//foundation/aafwk/standard/sa_profile:aafwk_sa_profile",
@@ -159,7 +158,6 @@
           "test": [
             "//foundation/aafwk/standard/frameworks/kits/content/cpp/test:unittest",
             "//foundation/aafwk/standard/frameworks/kits/ability/native/test:unittest",
-            "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/dataShare/test:unittest",
             "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/moduletest:moduletest",
             "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/unittest:unittest",
             "//foundation/aafwk/standard/frameworks/kits/test:moduletest",
