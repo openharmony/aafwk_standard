@@ -37,10 +37,10 @@ enum AbilityState {
     /**
      * State for api > 7.
      */
-    FOREGROUND_NEW,
-    BACKGROUND_NEW,
-    FOREGROUNDING_NEW,
-    BACKGROUNDING_NEW,
+    FOREGROUND,
+    BACKGROUND,
+    FOREGROUNDING,
+    BACKGROUNDING,
 };
 
 /**

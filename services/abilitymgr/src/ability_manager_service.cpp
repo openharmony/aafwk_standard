@@ -3987,8 +3987,8 @@ int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, c
     }
     if (state != AbilityRecord::ConvertAbilityState(AbilityState::INITIAL) &&
         state != AbilityRecord::ConvertAbilityState(AbilityState::INACTIVE) &&
-        state != AbilityRecord::ConvertAbilityState(AbilityState::FOREGROUND_NEW) &&
-        state != AbilityRecord::ConvertAbilityState(AbilityState::BACKGROUND_NEW) &&
+        state != AbilityRecord::ConvertAbilityState(AbilityState::FOREGROUND) &&
+        state != AbilityRecord::ConvertAbilityState(AbilityState::BACKGROUND) &&
         state != AbilityRecord::ConvertAbilityState(AbilityState::TERMINATING) &&
         state != std::string("COMMAND")) {
         HILOG_ERROR("lifecycle state is invalid.");
