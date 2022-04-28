@@ -16,7 +16,6 @@
 #include <gtest/gtest.h>
 #include <functional>
 #include "ability_thread.h"
-#include "ability_state.h"
 #include "ability_loader.h"
 #include "ability_impl_factory.h"
 #include "ability_impl.h"

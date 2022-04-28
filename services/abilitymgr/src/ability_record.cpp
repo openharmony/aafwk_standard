@@ -41,16 +41,13 @@ const std::map<AbilityState, std::string> AbilityRecord::stateToStrMap = {
     std::map<AbilityState, std::string>::value_type(INITIAL, "INITIAL"),
     std::map<AbilityState, std::string>::value_type(INACTIVE, "INACTIVE"),
     std::map<AbilityState, std::string>::value_type(ACTIVE, "ACTIVE"),
-    std::map<AbilityState, std::string>::value_type(BACKGROUND, "BACKGROUND"),
-    std::map<AbilityState, std::string>::value_type(SUSPENDED, "SUSPENDED"),
     std::map<AbilityState, std::string>::value_type(INACTIVATING, "INACTIVATING"),
     std::map<AbilityState, std::string>::value_type(ACTIVATING, "ACTIVATING"),
-    std::map<AbilityState, std::string>::value_type(MOVING_BACKGROUND, "MOVING_BACKGROUND"),
     std::map<AbilityState, std::string>::value_type(TERMINATING, "TERMINATING"),
-    std::map<AbilityState, std::string>::value_type(FOREGROUND_NEW, "FOREGROUND_NEW"),
-    std::map<AbilityState, std::string>::value_type(BACKGROUND_NEW, "BACKGROUND_NEW"),
-    std::map<AbilityState, std::string>::value_type(FOREGROUNDING_NEW, "FOREGROUNDING_NEW"),
-    std::map<AbilityState, std::string>::value_type(BACKGROUNDING_NEW, "BACKGROUNDING_NEW"),
+    std::map<AbilityState, std::string>::value_type(FOREGROUND, "FOREGROUND"),
+    std::map<AbilityState, std::string>::value_type(BACKGROUND, "BACKGROUND"),
+    std::map<AbilityState, std::string>::value_type(FOREGROUNDING, "FOREGROUNDING"),
+    std::map<AbilityState, std::string>::value_type(BACKGROUNDING, "BACKGROUNDING"),
 };
 const std::map<AppState, std::string> AbilityRecord::appStateToStrMap_ = {
     std::map<AppState, std::string>::value_type(AppState::BEGIN, "BEGIN"),
@@ -65,10 +62,8 @@ const std::map<AbilityLifeCycleState, AbilityState> AbilityRecord::convertStateM
     std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_INITIAL, INITIAL),
     std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_INACTIVE, INACTIVE),
     std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_ACTIVE, ACTIVE),
-    std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_BACKGROUND, BACKGROUND),
-    std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_SUSPENDED, SUSPENDED),
-    std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_FOREGROUND_NEW, FOREGROUND_NEW),
-    std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_BACKGROUND_NEW, BACKGROUND_NEW),
+    std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_FOREGROUND_NEW, FOREGROUND),
+    std::map<AbilityLifeCycleState, AbilityState>::value_type(ABILITY_STATE_BACKGROUND_NEW, BACKGROUND),
 };
 #ifndef OS_ACCOUNT_PART_ENABLED
 const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
@@ -208,7 +203,7 @@ void AbilityRecord::ForegroundAbility(uint32_t sceneFlag)
 
     // schedule active after updating AbilityState and sending timeout message to avoid ability async callback
     // earlier than above actions.
-    currentState_ = AbilityState::FOREGROUNDING_NEW;
+    currentState_ = AbilityState::FOREGROUNDING;
     lifeCycleStateInfo_.sceneFlag = sceneFlag;
     lifecycleDeal_->ForegroundNew(want_, lifeCycleStateInfo_);
     lifeCycleStateInfo_.sceneFlag = 0;
@@ -230,7 +225,7 @@ void AbilityRecord::ProcessForegroundAbility(uint32_t sceneFlag)
     HILOG_DEBUG("ability record: %{public}s", element.c_str());
 
     if (isReady_) {
-        if (IsAbilityState(AbilityState::BACKGROUND_NEW)) {
+        if (IsAbilityState(AbilityState::BACKGROUND)) {
             // background to activte state
             HILOG_DEBUG("MoveToForground, %{public}s", element.c_str());
             lifeCycleStateInfo_.sceneFlagBak = sceneFlag;
@@ -271,7 +266,7 @@ void AbilityRecord::BackgroundAbility(const Closure &task)
 
     // schedule background after updating AbilityState and sending timeout message to avoid ability async callback
     // earlier than above actions.
-    currentState_ = AbilityState::BACKGROUNDING_NEW;
+    currentState_ = AbilityState::BACKGROUNDING;
     lifecycleDeal_->BackgroundNew(want_, lifeCycleStateInfo_);
 }
 
@@ -298,13 +293,13 @@ AbilityState AbilityRecord::GetAbilityState() const
 
 bool AbilityRecord::IsForeground() const
 {
-    return currentState_ == AbilityState::FOREGROUND_NEW || currentState_ == AbilityState::FOREGROUNDING_NEW;
+    return currentState_ == AbilityState::FOREGROUND || currentState_ == AbilityState::FOREGROUNDING;
 }
 
 void AbilityRecord::SetAbilityState(AbilityState state)
 {
     currentState_ = state;
-    if (state == AbilityState::FOREGROUND_NEW || state == AbilityState::ACTIVE) {
+    if (state == AbilityState::FOREGROUND || state == AbilityState::ACTIVE) {
         SetRestarting(false);
     }
 }
@@ -461,33 +456,6 @@ void AbilityRecord::Inactivate()
     // earlier than above actions.
     currentState_ = AbilityState::INACTIVATING;
     lifecycleDeal_->Inactivate(want_, lifeCycleStateInfo_);
-}
-
-void AbilityRecord::MoveToBackground(const Closure &task)
-{
-    HILOG_INFO("Move to background.");
-    CHECK_POINTER(lifecycleDeal_);
-    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    if (handler && task) {
-        if (!want_.GetBoolParam(DEBUG_APP, false)) {
-            g_abilityRecordEventId_++;
-            eventId_ = g_abilityRecordEventId_;
-            // eventId_ is a unique id of the task.
-            handler->PostTask(task, std::to_string(eventId_), AbilityManagerService::BACKGROUND_TIMEOUT);
-        } else {
-            HILOG_INFO("Is debug mode, no need to handle time out.");
-        }
-    }
-
-    if (!IsTerminating() || IsRestarting()) {
-        // schedule save ability state before moving to background.
-        SaveAbilityState();
-    }
-
-    // schedule background after updating AbilityState and sending timeout message to avoid ability async callback
-    // earlier than above actions.
-    currentState_ = AbilityState::MOVING_BACKGROUND;
-    lifecycleDeal_->MoveToBackground(want_, lifeCycleStateInfo_);
 }
 
 void AbilityRecord::Terminate(const Closure &task)
@@ -1026,8 +994,8 @@ bool AbilityRecord::IsAbilityState(const AbilityState &state) const
 bool AbilityRecord::IsActiveState() const
 {
     return (IsAbilityState(AbilityState::ACTIVE) || IsAbilityState(AbilityState::ACTIVATING) ||
-            IsAbilityState(AbilityState::INITIAL) || IsAbilityState(AbilityState::FOREGROUND_NEW) ||
-            IsAbilityState(AbilityState::FOREGROUNDING_NEW));
+            IsAbilityState(AbilityState::INITIAL) || IsAbilityState(AbilityState::FOREGROUND) ||
+            IsAbilityState(AbilityState::FOREGROUNDING));
 }
 
 void AbilityRecord::SendEvent(uint32_t msg, uint32_t timeOut)

@@ -17,7 +17,6 @@
 
 #include "ability.h"
 #include "ability_impl.h"
-#include "ability_state.h"
 #include "abs_shared_result_set.h"
 #include "hilog_wrapper.h"
 #include "context_deal.h"

@@ -17,7 +17,6 @@
 #define FOUNDATION_APPEXECFWK_OHOS_ABILITY_IMPL_H
 
 #include "ability.h"
-#include "ability_state.h"
 #include "iability_lifecycle_callback.h"
 #include "context.h"
 #include "application_impl.h"

@@ -298,8 +298,8 @@ int AbilityManagerService::StartAbility(const Want &want, const sptr<IRemoteObje
         return ret;
     }
 
-    HILOG_INFO("%{public}s come, ability is %{public}s, userId is %{public}d",
-        __func__, want.GetElement().GetAbilityName().c_str(), userId);
+    HILOG_INFO("Start ability come, ability is %{public}s, userId is %{public}d",
+        want.GetElement().GetAbilityName().c_str(), userId);
     if (CheckIfOperateRemote(want)) {
         HILOG_INFO("AbilityManagerService::StartAbility. try to StartRemoteAbility");
         return StartRemoteAbility(want, requestCode);
@@ -3987,8 +3987,8 @@ int AbilityManagerService::ForceTimeoutForTest(const std::string &abilityName, c
     }
     if (state != AbilityRecord::ConvertAbilityState(AbilityState::INITIAL) &&
         state != AbilityRecord::ConvertAbilityState(AbilityState::INACTIVE) &&
-        state != AbilityRecord::ConvertAbilityState(AbilityState::FOREGROUND_NEW) &&
-        state != AbilityRecord::ConvertAbilityState(AbilityState::BACKGROUND_NEW) &&
+        state != AbilityRecord::ConvertAbilityState(AbilityState::FOREGROUND) &&
+        state != AbilityRecord::ConvertAbilityState(AbilityState::BACKGROUND) &&
         state != AbilityRecord::ConvertAbilityState(AbilityState::TERMINATING) &&
         state != std::string("COMMAND")) {
         HILOG_ERROR("lifecycle state is invalid.");

@@ -16,7 +16,7 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "ability_runtime/mstabilitymgrservice"
 
-ohos_moduletest("start_option_display_id_test") {
+ohos_moduletest("start_option_module_test") {
   module_out_path = module_output_path
 
   include_dirs = [
@@ -65,5 +65,5 @@ ohos_moduletest("start_option_display_id_test") {
 group("moduletest") {
   testonly = true
 
-  deps = [ ":start_option_display_id_test" ]
+  deps = [ ":start_option_module_test" ]
 }

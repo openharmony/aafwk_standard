@@ -524,7 +524,6 @@ HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_006, TestSize.Leve
  * CaseDescription: launcher OnInactive done and starts new ability success. verify new AbilityRecord.
  * 1. Launcher oninactive done and is INACTIVE.
  * 2. new ability is ACTIVE.
- * 3. Launcher is transferred from INACTIVE to MOVING_BACKGROUND when new ability started.
  */
 HWTEST_F(LifecycleTest, AAFWK_AbilityMS_startAbilityLifeCycle_007, TestSize.Level1)
 {

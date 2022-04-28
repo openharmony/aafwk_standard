@@ -14,7 +14,6 @@
  */
 
 #include <gtest/gtest.h>
-#include "ability_state.h"
 #include "mock_page_ability.h"
 #include "mock_ability_lifecycle_callbacks.h"
 #include "mock_ability_token.h"
