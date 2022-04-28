@@ -129,7 +129,7 @@ ohos_shared_library("configuration") {
 
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
-    "resmgr_standard:global_resmgr",
+    "resource_management:global_resmgr",
     "utils_base:utils",
   ]
 

@@ -72,7 +72,7 @@ config("ability_public_config") {
     "${kits_path}/appkit/native/ability_runtime/context",
     "${innerkits_path}/base/include/ohos/aafwk/base",
     "${innerkits_path}/ability_manager/include/continuation",
-    "${global_path}/resmgr_standard/interfaces/innerkits/include",
+    "${global_path}/resource_management/interfaces/innerkits/include",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
   ]
@@ -247,7 +247,7 @@ ohos_shared_library("abilitykit_native") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
-    "resmgr_standard:global_resmgr",
+    "resource_management:global_resmgr",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
@@ -270,7 +270,7 @@ ohos_shared_library("abilitykit_native") {
 
   public_deps = [
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
     "//foundation/arkui/napi:ace_napi",
   ]
