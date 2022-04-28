@@ -216,13 +216,6 @@ public:
      */
     virtual int GetRenderProcessTerminationStatus(pid_t renderPid, int &status) override;
 
-    /**
-     * Post a task to the not response process.
-     *
-     * @param pid, the not response process id.
-     */
-    virtual void PostANRTaskByProcessID(const pid_t pid) override;
-
     #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block app service.
