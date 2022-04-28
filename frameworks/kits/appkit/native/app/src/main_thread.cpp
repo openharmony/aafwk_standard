@@ -62,6 +62,7 @@ namespace OHOS {
 namespace AppExecFwk {
 using namespace OHOS::AbilityRuntime::Constants;
 std::shared_ptr<OHOSApplication> MainThread::applicationForAnr_ = nullptr;
+std::shared_ptr<std::thread> MainThread::handleANRThread_ = nullptr;
 namespace {
 constexpr int32_t DELIVERY_TIME = 200;
 constexpr int32_t DISTRIBUTE_TIME = 100;
@@ -1489,13 +1490,19 @@ void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::sha
     HILOG_INFO("MainThread:Init end.");
 }
 
-void MainThread::ScheduleANRProcess()
+void MainThread::HandleSignal(int signal)
 {
-    HILOG_INFO("MainThread::ScheduleANRProcess called begin");
-    if (handleANRThread_ == nullptr) {
-        handleANRThread_ = std::make_shared<std::thread>(&MainThread::HandleScheduleANRProcess, this);
+    switch (signal) {
+        case SIGUSR1:
+            HILOG_INFO("MainThread::ScheduleANRProcess called begin");
+            if (handleANRThread_ == nullptr) {
+                handleANRThread_ = std::make_shared<std::thread>(&MainThread::HandleScheduleANRProcess);
+            }
+            break;
+        default:
+            HILOG_INFO("Signal:%{public}d need not to handle.", signal);
+            break;
     }
-    HILOG_INFO("MainThread::ScheduleANRProcess called end.");
 }
 
 void MainThread::HandleScheduleANRProcess()
@@ -1507,7 +1514,7 @@ void MainThread::HandleScheduleANRProcess()
         HILOG_ERROR("MainThread::HandleScheduleANRProcess request file eescriptor failed");
         return;
     }
-    if (applicationForAnr_->GetRuntime() != nullptr) {
+    if (applicationForAnr_ != nullptr && applicationForAnr_->GetRuntime() != nullptr) {
         mainThreadStackInfo = applicationForAnr_->GetRuntime()->BuildNativeAndJsBackStackTrace();
         if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) !=
           (ssize_t)mainThreadStackInfo.size()) {
@@ -1547,13 +1554,11 @@ void MainThread::Start()
         return;
     }
 
-    APP_LOGI("MainThread::main Register sig handle start");
     struct sigaction sigAct;
     sigemptyset(&sigAct.sa_mask);
     sigAct.sa_flags = 0;
-    sigAct.sa_handler = &MainThread::ScheduleANRProcess;
+    sigAct.sa_handler = &MainThread::HandleSignal;
     sigaction(SIGUSR1, &sigAct, NULL);
-    APP_LOGI("MainThread::main Register sig handle end");
 
     thread->Init(runner, runnerWatchDog);
 
