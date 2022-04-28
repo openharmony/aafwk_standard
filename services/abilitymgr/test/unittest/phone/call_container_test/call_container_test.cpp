@@ -124,7 +124,7 @@ void CallContainerTest::OnStartAms()
         abilityMgrServ_->eventLoop_->Run();
         auto topAbility = abilityMgrServ_->GetListManagerByUserId(MOCK_MAIN_USER_ID)->GetCurrentTopAbilityLocked();
         if (topAbility) {
-            topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+            topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
         }
         WaitUntilTaskFinished();
         return;
