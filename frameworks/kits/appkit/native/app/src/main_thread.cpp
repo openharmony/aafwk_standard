@@ -1507,7 +1507,6 @@ void MainThread::HandleScheduleANRProcess()
         HILOG_ERROR("MainThread::HandleScheduleANRProcess request file eescriptor failed");
         return;
     }
-    HILOG_INFO("MainThread:HandleScheduleANRProcess RequestFileDescriptor end.");
     if (applicationForAnr_->GetRuntime() != nullptr) {
         mainThreadStackInfo = applicationForAnr_->GetRuntime()->BuildNativeAndJsBackStackTrace();
         if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) !=
@@ -1515,24 +1514,17 @@ void MainThread::HandleScheduleANRProcess()
             HILOG_ERROR("MainThread::HandleScheduleANRProcess write main thread stack info failed");
         }
     }
-    HILOG_INFO("HandleScheduleANRProcess write main thread stack info size: %{public}d",
-        (int32_t)mainThreadStackInfo.size());
-    HILOG_INFO("MainThread:HandleScheduleANRProcess BuildNativeAndJsBackStackTrace end.");
     OHOS::HiviewDFX::DfxDumpCatcher dumplog;
     std::string proStackInfo;
     if (dumplog.DumpCatch(getpid(), 0, proStackInfo) == false) {
         HILOG_ERROR("MainThread::HandleScheduleANRProcess get process stack info failed");
     }
-    HILOG_INFO("MainThread:HandleScheduleANRProcess DumpCatch end.");
     if (write(rFD, proStackInfo.c_str(), proStackInfo.size()) != (ssize_t)proStackInfo.size()) {
         HILOG_ERROR("MainThread::HandleScheduleANRProcess write process stack info failed");
     }
-    HILOG_INFO("HandleScheduleANRProcess DumpCatch write process stack info size: %{public}d",
-        (int32_t)proStackInfo.size());
     if (rFD != -1) {
         close(rFD);
     }
-    HILOG_INFO("MainThread:HandleScheduleANRProcess end.");
 }
 
 void MainThread::Start()
@@ -1554,6 +1546,14 @@ void MainThread::Start()
         HILOG_ERROR("MainThread::static failed. new MainThread failed");
         return;
     }
+
+    APP_LOGI("MainThread::main Register sig handle start");
+    struct sigaction sigAct;
+    sigemptyset(&sigAct.sa_mask);
+    sigAct.sa_flags = 0;
+    sigAct.sa_handler = &MainThread::ScheduleANRProcess;
+    sigaction(SIGUSR1, &sigAct, NULL);
+    APP_LOGI("MainThread::main Register sig handle end");
 
     thread->Init(runner, runnerWatchDog);
 

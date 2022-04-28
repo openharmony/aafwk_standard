@@ -230,13 +230,6 @@ public:
      */
     virtual int GetRenderProcessTerminationStatus(pid_t renderPid, int &status) = 0;
 
-    /**
-     * Post a task to the not response process.
-     *
-     * @param pid, the not response process id.
-     */
-    virtual void PostANRTaskByProcessID(const pid_t pid) = 0;
-
     enum class Message {
         APP_ATTACH_APPLICATION = 0,
         APP_APPLICATION_FOREGROUNDED,
@@ -262,7 +255,6 @@ public:
         START_RENDER_PROCESS,
         ATTACH_RENDER_PROCESS,
         GET_RENDER_PROCESS_TERMINATION_STATUS,
-        POST_ANR_TASK_BY_PID,
     };
 };
 }  // namespace AppExecFwk
