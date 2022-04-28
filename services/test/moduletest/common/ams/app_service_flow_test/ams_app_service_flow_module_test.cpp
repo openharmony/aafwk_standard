@@ -693,7 +693,7 @@ HWTEST_F(AmsAppServiceFlowModuleTest, ServiceFlow_ScreenOnAndOff_001, TestSize.L
         ApplicationState::APP_STATE_BACKGROUND);
 
     EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleForegroundApplication()).Times(CYCLE_NUMBER + 1);
-    EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(CYCLE_NUMBER + 1);
+    EXPECT_CALL(*(testAppA.mockAppScheduler_), ScheduleBackgroundApplication()).Times(CYCLE_NUMBER + 2);
 
     for (uint32_t i = 0; i < CYCLE_NUMBER; i++) {
         // simulate press ScreenOn key

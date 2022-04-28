@@ -331,19 +331,10 @@ HWTEST_F(DataAbilityRecordTest, AaFwk_DataAbilityRecord_OnTransitionDone_003, Te
     abilityState_ = ACTIVE;
     EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_INVALID_STATE);
 
-    abilityState_ = BACKGROUND;
-    EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_INVALID_STATE);
-
-    abilityState_ = SUSPENDED;
-    EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_INVALID_STATE);
-
     abilityState_ = INACTIVATING;
     EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_INVALID_STATE);
 
     abilityState_ = ACTIVATING;
-    EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_INVALID_STATE);
-
-    abilityState_ = MOVING_BACKGROUND;
     EXPECT_EQ(dataAbilityRecord->OnTransitionDone(abilityState_), ERR_INVALID_STATE);
 
     abilityState_ = TERMINATING;

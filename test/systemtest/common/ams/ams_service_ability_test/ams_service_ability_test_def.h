@@ -44,11 +44,8 @@ enum AbilityState_Test {
     INITIAL = 0,
     INACTIVE,
     ACTIVE,
-    BACKGROUND,
-    SUSPENDED,
     INACTIVATING,
     ACTIVATING,
-    MOVING_BACKGROUND,
     TERMINATING,
     USER_DEFINE,
 };

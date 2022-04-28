@@ -23,7 +23,6 @@
 #include "ability_impl.h"
 #include "ability_impl_factory.h"
 #include "ability_loader.h"
-#include "ability_state.h"
 #include "abs_shared_result_set.h"
 #include "application_impl.h"
 #include "bytrace.h"
@@ -277,14 +276,14 @@ void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &applicatio
     HILOG_INFO("Attach extension begin, extension:%{public}s.", abilityRecord->GetAbilityInfo()->name.c_str());
     abilityHandler_ = std::make_shared<AbilityHandler>(mainRunner, this);
     if (abilityHandler_ == nullptr) {
-        HILOG_ERROR("Attach extension begin, abilityHandler_ is nullptr");
+        HILOG_ERROR("Attach extension failed, abilityHandler_ is nullptr");
         return;
     }
 
     // 2.new ability
     auto extension = AbilityLoader::GetInstance().GetExtensionByName(abilityName);
     if (extension == nullptr) {
-        HILOG_ERROR("Attach extension begin, load ability failed");
+        HILOG_ERROR("Attach extension failed, load ability failed");
         return;
     }
 
@@ -295,7 +294,7 @@ void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &applicatio
     abilityRecord->SetAbilityThread(this);
     extensionImpl_ = std::make_shared<AbilityRuntime::ExtensionImpl>();
     if (extensionImpl_ == nullptr) {
-        HILOG_ERROR("Attach extension begin, extensionImpl_ == nullptr");
+        HILOG_ERROR("Attach extension failed, extensionImpl_ == nullptr");
         return;
     }
     // 3.new init
@@ -303,7 +302,7 @@ void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &applicatio
     // 4.ipc attach init
     ErrCode err = AbilityManagerClient::GetInstance()->AttachAbilityThread(this, token_);
     if (err != ERR_OK) {
-        HILOG_ERROR("Attach extension begin, err = %{public}d", err);
+        HILOG_ERROR("Attach extension failed, err = %{public}d", err);
         return;
     }
 }

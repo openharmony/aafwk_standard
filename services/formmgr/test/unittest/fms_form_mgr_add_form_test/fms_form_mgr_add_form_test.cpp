@@ -63,6 +63,7 @@ const int32_t PARAM_FORM_DIMENSION_VALUE = 1;
 
 const std::string DEVICE_ID = "ohos-phone1";
 const std::string DEF_LABEL1 = "PermissionFormRequireGrant";
+const int32_t USER_ID = 100;
 
 class FmsFormMgrAddFormTest : public testing::Test {
 public:
@@ -106,7 +107,7 @@ void FmsFormMgrAddFormTest::CreateProviderData()
 {
     std::unordered_map<std::string, std::shared_ptr<BundleFormInfo>> bundleFormInfoMap;
     std::shared_ptr<BundleFormInfo> bundleFormInfo = std::make_shared<BundleFormInfo>(FORM_PROVIDER_BUNDLE_NAME);
-    std::vector<FormInfo> formInfos;
+    std::vector<FormInfoStorage> formInfoStorages;
     FormInfo formInfo;
     formInfo.bundleName = FORM_PROVIDER_BUNDLE_NAME;
     formInfo.abilityName = FORM_PROVIDER_ABILITY_NAME;
@@ -119,8 +120,10 @@ void FmsFormMgrAddFormTest::CreateProviderData()
     formInfo.formVisibleNotify = true;
     formInfo.supportDimensions = {1, 2};
     formInfo.defaultDimension = 1;
-    formInfos.emplace_back(formInfo);
-    bundleFormInfo->formInfos_ = formInfos;
+    FormInfoStorage formInfoStorage;
+    formInfoStorage.userId = USER_ID;
+    formInfoStorage.formInfo = formInfo;
+    bundleFormInfo->formInfoStorages_.emplace_back(formInfoStorage);
     bundleFormInfoMap.emplace(FORM_PROVIDER_BUNDLE_NAME, bundleFormInfo);
 
     FormInfoMgr::GetInstance().bundleFormInfoMap_ = bundleFormInfoMap;
@@ -602,7 +605,10 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_009, TestSize.Level0)
     formInfo1.abilityName = FORM_PROVIDER_ABILITY_NAME;
     formInfo1.bundleName = FORM_PROVIDER_BUNDLE_NAME;
     formInfo1.supportDimensions.push_back(PARAM_FORM_DIMENSION_VALUE);
-    FormInfoMgr::GetInstance().bundleFormInfoMap_[FORM_PROVIDER_BUNDLE_NAME]->formInfos_.push_back(formInfo1);
+    FormInfoStorage formInfoStor;
+    formInfoStor.userId = USER_ID;
+    formInfoStor.formInfo = formInfo1;
+    FormInfoMgr::GetInstance().bundleFormInfoMap_[FORM_PROVIDER_BUNDLE_NAME]->formInfoStorages_.push_back(formInfoStor);
 
     FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1, callingUid);
     retFormRec.updateAtHour = 1;
