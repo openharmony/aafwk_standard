@@ -539,13 +539,6 @@ public:
     ErrCode RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler);
 
     /**
-     * @brief Register the window handler
-     * @param handler window handler
-     * @return ErrCode Returns ERR_OK on success, others on failure.
-     */
-    ErrCode RegisterWindowHandler(const sptr<IWindowHandler>& handler);
-
-    /**
      * Set mission label of this ability.
      *
      * @param abilityToken Indidate token of ability.
@@ -564,6 +557,13 @@ public:
      */
     ErrCode SetMissionIcon(const sptr<IRemoteObject> &abilityToken,
         const std::shared_ptr<OHOS::Media::PixelMap> &icon);
+
+    /**
+     * @brief Register the WMS handler
+     * @param handler WMS handler
+     * @return ErrCode Returns ERR_OK on success, others on failure.
+     */
+    ErrCode RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler);
 #endif
 
     /**
