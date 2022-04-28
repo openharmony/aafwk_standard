@@ -78,8 +78,6 @@ AppMgrStub::AppMgrStub()
         &AppMgrStub::HandleAttachRenderProcess;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::GET_RENDER_PROCESS_TERMINATION_STATUS)] =
         &AppMgrStub::HandleGetRenderProcessTerminationStatus;
-    memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::POST_ANR_TASK_BY_PID)] =
-        &AppMgrStub::HandlePostANRTaskByProcessID;
 #ifdef ABILITY_COMMAND_FOR_TEST
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::BLOCK_APP_SERVICE)] =
         &AppMgrStub::HandleBlockAppServiceDone;
@@ -408,13 +406,6 @@ int32_t AppMgrStub::HandleGetRenderProcessTerminationStatus(MessageParcel &data,
         return ERR_INVALID_VALUE;
     }
     return result;
-}
-
-int32_t AppMgrStub::HandlePostANRTaskByProcessID(MessageParcel &data, MessageParcel &reply)
-{
-    auto pid = data.ReadInt32();
-    PostANRTaskByProcessID(pid);
-    return NO_ERROR;
 }
 
 #ifdef ABILITY_COMMAND_FOR_TEST

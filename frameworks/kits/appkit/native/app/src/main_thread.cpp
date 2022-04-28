@@ -62,6 +62,7 @@ namespace OHOS {
 namespace AppExecFwk {
 using namespace OHOS::AbilityRuntime::Constants;
 std::shared_ptr<OHOSApplication> MainThread::applicationForAnr_ = nullptr;
+std::shared_ptr<std::thread> MainThread::handleANRThread_ = nullptr;
 namespace {
 constexpr int32_t DELIVERY_TIME = 200;
 constexpr int32_t DISTRIBUTE_TIME = 100;
@@ -1489,13 +1490,19 @@ void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::sha
     HILOG_INFO("MainThread:Init end.");
 }
 
-void MainThread::ScheduleANRProcess()
+void MainThread::HandleSignal(int signal)
 {
-    HILOG_INFO("MainThread::ScheduleANRProcess called begin");
-    if (handleANRThread_ == nullptr) {
-        handleANRThread_ = std::make_shared<std::thread>(&MainThread::HandleScheduleANRProcess, this);
+    switch (signal) {
+        case SIGUSR1:
+            HILOG_INFO("MainThread::ScheduleANRProcess called begin");
+            if (handleANRThread_ == nullptr) {
+                handleANRThread_ = std::make_shared<std::thread>(&MainThread::HandleScheduleANRProcess);
+            }
+            break;
+        default:
+            HILOG_INFO("Signal:%{public}d need not to handle.", signal);
+            break;
     }
-    HILOG_INFO("MainThread::ScheduleANRProcess called end.");
 }
 
 void MainThread::HandleScheduleANRProcess()
@@ -1507,32 +1514,24 @@ void MainThread::HandleScheduleANRProcess()
         HILOG_ERROR("MainThread::HandleScheduleANRProcess request file eescriptor failed");
         return;
     }
-    HILOG_INFO("MainThread:HandleScheduleANRProcess RequestFileDescriptor end.");
-    if (applicationForAnr_->GetRuntime() != nullptr) {
+    if (applicationForAnr_ != nullptr && applicationForAnr_->GetRuntime() != nullptr) {
         mainThreadStackInfo = applicationForAnr_->GetRuntime()->BuildNativeAndJsBackStackTrace();
         if (write(rFD, mainThreadStackInfo.c_str(), mainThreadStackInfo.size()) !=
           (ssize_t)mainThreadStackInfo.size()) {
             HILOG_ERROR("MainThread::HandleScheduleANRProcess write main thread stack info failed");
         }
     }
-    HILOG_INFO("HandleScheduleANRProcess write main thread stack info size: %{public}d",
-        (int32_t)mainThreadStackInfo.size());
-    HILOG_INFO("MainThread:HandleScheduleANRProcess BuildNativeAndJsBackStackTrace end.");
     OHOS::HiviewDFX::DfxDumpCatcher dumplog;
     std::string proStackInfo;
     if (dumplog.DumpCatch(getpid(), 0, proStackInfo) == false) {
         HILOG_ERROR("MainThread::HandleScheduleANRProcess get process stack info failed");
     }
-    HILOG_INFO("MainThread:HandleScheduleANRProcess DumpCatch end.");
     if (write(rFD, proStackInfo.c_str(), proStackInfo.size()) != (ssize_t)proStackInfo.size()) {
         HILOG_ERROR("MainThread::HandleScheduleANRProcess write process stack info failed");
     }
-    HILOG_INFO("HandleScheduleANRProcess DumpCatch write process stack info size: %{public}d",
-        (int32_t)proStackInfo.size());
     if (rFD != -1) {
         close(rFD);
     }
-    HILOG_INFO("MainThread:HandleScheduleANRProcess end.");
 }
 
 void MainThread::Start()
@@ -1554,6 +1553,12 @@ void MainThread::Start()
         HILOG_ERROR("MainThread::static failed. new MainThread failed");
         return;
     }
+
+    struct sigaction sigAct;
+    sigemptyset(&sigAct.sa_mask);
+    sigAct.sa_flags = 0;
+    sigAct.sa_handler = &MainThread::HandleSignal;
+    sigaction(SIGUSR1, &sigAct, NULL);
 
     thread->Init(runner, runnerWatchDog);
 

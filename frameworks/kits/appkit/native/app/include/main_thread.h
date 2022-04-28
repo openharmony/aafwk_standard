@@ -210,13 +210,6 @@ public:
 
     void ScheduleAcceptWant(const AAFwk::Want &want, const std::string &moduleName) override;
 
-    /**
-     *
-     * @brief The handle of application not response process.
-     *
-     */
-    void ScheduleANRProcess() override;
-
 private:
     /**
      *
@@ -416,7 +409,8 @@ private:
      * @param sigMessage Recieve the sig message.
      *
      */
-    void HandleScheduleANRProcess();
+    static void HandleScheduleANRProcess();
+    static void HandleSignal(int signal);
 
     class MainHandler : public EventHandler {
     public:
@@ -445,7 +439,6 @@ private:
     std::shared_ptr<ApplicationImpl> applicationImpl_ = nullptr;
     std::shared_ptr<MainHandler> mainHandler_ = nullptr;
     std::shared_ptr<WatchDog> watchDogHandler_ = nullptr;
-    std::shared_ptr<std::thread> handleANRThread_ = nullptr;
     std::shared_ptr<AbilityRecordMgr> abilityRecordMgr_ = nullptr;
     MainThreadState mainThreadState_ = MainThreadState::INIT;
     sptr<IAppMgr> appMgr_ = nullptr;  // appMgrService Handler
@@ -453,6 +446,7 @@ private:
     std::string aceApplicationName_ = "AceApplication";
     std::string pathSeparator_ = "/";
     std::string abilityLibraryType_ = ".so";
+    static std::shared_ptr<std::thread> handleANRThread_;
     static std::shared_ptr<OHOSApplication> applicationForAnr_;
 
 #ifdef ABILITY_LIBRARY_LOADER
