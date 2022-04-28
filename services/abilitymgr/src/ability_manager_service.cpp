@@ -3693,7 +3693,10 @@ int AbilityManagerService::SendANRProcessID(int pid)
         HILOG_ERROR("Set app not response mission record failed");
     }
     handler_->PostTask(timeoutTask, "TIME_OUT_TASK", anrTimeOut);
-    appScheduler_->PostANRTaskByProcessID(pid);
+    if (kill(pid, SIGUSR1) != ERR_OK) {
+        HILOG_ERROR("Send singal SIGUSR1 error.");
+        return SEND_USR1_SIG_FAIL;
+    }
     return ERR_OK;
 }
 

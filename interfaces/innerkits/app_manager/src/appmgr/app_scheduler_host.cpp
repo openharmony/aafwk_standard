@@ -50,8 +50,6 @@ AppSchedulerHost::AppSchedulerHost()
         &AppSchedulerHost::HandleScheduleAbilityStage;
     memberFuncMap_[static_cast<uint32_t>(IAppScheduler::Message::SCHEDULE_ACCEPT_WANT)] =
         &AppSchedulerHost::HandleScheduleAcceptWant;
-    memberFuncMap_[static_cast<uint32_t>(IAppScheduler::Message::SCHEDULE_ANR_PROCESS)] =
-        &AppSchedulerHost::HandleScheduleANRProcess;
 }
 
 AppSchedulerHost::~AppSchedulerHost()
@@ -216,13 +214,6 @@ int32_t AppSchedulerHost::HandleScheduleAcceptWant(MessageParcel &data, MessageP
     auto moduleName = data.ReadString();
     ScheduleAcceptWant(*want, moduleName);
     delete want;
-    return NO_ERROR;
-}
-
-int32_t AppSchedulerHost::HandleScheduleANRProcess(MessageParcel &data, MessageParcel &reply)
-{
-    BYTRACE(BYTRACE_TAG_APP);
-    ScheduleANRProcess();
     return NO_ERROR;
 }
 }  // namespace AppExecFwk
