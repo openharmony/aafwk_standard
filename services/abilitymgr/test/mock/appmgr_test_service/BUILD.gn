@@ -24,8 +24,6 @@ config("appmgr_test_service_config") {
     "${aafwk_path}/interfaces/innerkits/app_manager/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/services/common/include",
-    "${notification_path}/common_event_service/frameworks/core/include",
-    "${notification_path}/common_event_service/interfaces/innerkits/native/include",
     "//foundation/windowmanager/utils/include",
   ]
 }
@@ -61,6 +59,7 @@ ohos_source_set("appmgr_test_service") {
 
   external_deps = [
     "bundle_framework:appexecfwk_core",
+    "common_event_service:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

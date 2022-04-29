@@ -38,7 +38,6 @@ ohos_unittest("FmsFormMgrNotifyInvisibleFormsTest") {
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
     "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
     "${appexecfwk_innerkits_path}/libeventhandler/include",
-    "${notification_path}/common_event_service/cesfwk/kits/native/include",
     "${aafwk_path}/services/formmgr/test/mock/include",
     "${aafwk_path}/frameworks/kits/fmskit/native/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
