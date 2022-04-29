@@ -898,7 +898,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             struct tm *localUTC;
             struct timeval gtime;
             time(&timet);
-            localUTC = gmtime_r(&timet);
+            gmtime_r(&timet, localUTC);
             gettimeofday(&gtime, NULL);
             std::string loacalUTCTime = std::to_string(localUTC->tm_year + 1900)
                 + "/" + std::to_string(localUTC->tm_mon + 1)
