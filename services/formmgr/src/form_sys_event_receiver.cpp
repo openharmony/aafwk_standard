@@ -70,14 +70,15 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
         auto task = [this, want, bundleName]() {
             HILOG_INFO("%{public}s, bundle changed, bundleName: %{public}s", __func__, bundleName.c_str());
             int userId = want.GetIntParam(KEY_USER_ID, 0);
-            HandleBundleFormInfoChanged(bundleName);
+            HandleBundleFormInfoChanged(bundleName, userId);
             HandleProviderUpdated(bundleName, userId);
         };
         eventHandler_->PostTask(task);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED) {
-        auto task = [this, bundleName]() {
+        auto task = [this, want, bundleName]() {
             HILOG_INFO("%{public}s, bundle removed, bundleName: %{public}s", __func__, bundleName.c_str());
-            HandleBundleFormInfoRemoved(bundleName);
+            int32_t userId = want.GetIntParam(KEY_USER_ID, 0);
+            HandleBundleFormInfoRemoved(bundleName, userId);
             HandleProviderRemoved(bundleName);
         };
         eventHandler_->PostTask(task);
@@ -239,14 +240,14 @@ bool FormSysEventReceiver::ProviderFormUpdated(const int64_t formId,
     return false;
 }
 
-void FormSysEventReceiver::HandleBundleFormInfoChanged(const std::string &bundleName)
+void FormSysEventReceiver::HandleBundleFormInfoChanged(const std::string &bundleName, int32_t userId)
 {
-    FormInfoMgr::GetInstance().Update(bundleName);
+    FormInfoMgr::GetInstance().Update(bundleName, userId);
 }
 
-void FormSysEventReceiver::HandleBundleFormInfoRemoved(const std::string &bundleName)
+void FormSysEventReceiver::HandleBundleFormInfoRemoved(const std::string &bundleName, int32_t userId)
 {
-    FormInfoMgr::GetInstance().Remove(bundleName);
+    FormInfoMgr::GetInstance().Remove(bundleName, userId);
 }
 
 void FormSysEventReceiver::HandleBundleDataCleared(const std::string &bundleName, const int uid)

@@ -120,7 +120,7 @@ void FmsFormMgrDeathCallbackTest::CreateProviderData()
     formInfo.defaultDimension = 1;
     FormInfoStorage formInfoStorage;
     formInfoStorage.userId = USER_ID;
-    formInfoStorage.formInfo = formInfo;
+    formInfoStorage.formInfos.push_back(formInfo);
     bundleFormInfo->formInfoStorages_.emplace_back(formInfoStorage);
     bundleFormInfoMap.emplace(FORM_PROVIDER_BUNDLE_NAME, bundleFormInfo);
 
