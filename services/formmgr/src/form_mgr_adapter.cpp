@@ -1947,8 +1947,7 @@ int FormMgrAdapter::NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds,
                                             const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s, isEnableUpdate: %{public}d.", __func__, isEnableUpdate);
-    HandleUpdateFormFlag(formIds, callerToken, isEnableUpdate, true);
-    return ERR_OK;
+    return HandleUpdateFormFlag(formIds, callerToken, isEnableUpdate, true);
 }
 
 /**
