@@ -38,17 +38,9 @@ public:
     {}
     virtual ~BundleMgrProxy()
     {}
-    MOCK_METHOD3(
-        CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
-    MOCK_METHOD3(RequestPermissionFromUser,
-        bool(const std::string &bundleName, const std::string &permission, const int userId));
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &));
-    MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD2(RegisterPermissionsChanged,
-        bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD2(QueryAbilityInfosByUri, bool(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(RemoveClonedBundle, bool(const std::string &bundleName, const int32_t uid));
     MOCK_METHOD1(BundleClone, bool(const std::string &bundleName));
@@ -142,20 +134,7 @@ public:
         return 0;
     };
 
-    virtual int CheckPermission(const std::string &bundleName, const std::string &permission) override
-    {
-        return 0;
-    };
     virtual bool GetPermissionDef(const std::string &permissionName, PermissionDef &permissionDef) override
-    {
-        return true;
-    };
-    virtual bool GetAllPermissionGroupDefs(std::vector<PermissionDef> &permissionDefs) override
-    {
-        return true;
-    };
-    virtual bool GetAppsGrantedPermissions(
-        const std::vector<std::string> &permissions, std::vector<std::string> &appNames) override
     {
         return true;
     };
@@ -212,11 +191,6 @@ public:
         return true;
     }
 
-    virtual int CheckPermissionByUid(
-        const std::string &bundleName, const std::string &permission, const int userId) override
-    {
-        return 0;
-    }
     virtual bool GetDistributedBundleInfo(const std::string &networkId, const std::string &bundleName,
         DistributedBundleInfo &distributedBundleInfo)
     {
@@ -234,25 +208,14 @@ class BundleMgrService : public BundleMgrStub {
 public:
     MOCK_METHOD2(GetUidByBundleName, int(const std::string &bundleName, const int userId));
     MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
-    MOCK_METHOD2(CheckPermission, int(const std::string &bundleName, const std::string &permission));
     MOCK_METHOD2(CleanBundleDataFiles, bool(const std::string &bundleName, const int userId));
-    MOCK_METHOD3(CanRequestPermission,
-        bool(const std::string &bundleName, const std::string &permissionName, const int userId));
-    MOCK_METHOD3(RequestPermissionFromUser,
-        bool(const std::string &bundleName, const std::string &permission, const int userId));
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &));
-    MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD2(RegisterPermissionsChanged,
-        bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD2(QueryAbilityInfosByUri, bool(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(RemoveClonedBundle, bool(const std::string &bundleName, const int32_t uid));
     MOCK_METHOD1(BundleClone, bool(const std::string &bundleName));
     MOCK_METHOD1(CheckBundleNameInAllowList, bool(const std::string &bundleName));
-    MOCK_METHOD3(CheckPermissionByUid,
-        int(const std::string &bundleName, const std::string &permission, const int userId));
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
     bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) override;
 
@@ -309,15 +272,6 @@ public:
     };
     // checks whether a specified bundle has been granted a specific permission.
     virtual bool GetPermissionDef(const std::string &permissionName, PermissionDef &permissionDef) override
-    {
-        return true;
-    };
-    virtual bool GetAllPermissionGroupDefs(std::vector<PermissionDef> &permissionDefs) override
-    {
-        return true;
-    };
-    virtual bool GetAppsGrantedPermissions(
-        const std::vector<std::string> &permissions, std::vector<std::string> &appNames) override
     {
         return true;
     };
