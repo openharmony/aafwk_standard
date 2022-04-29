@@ -279,17 +279,11 @@ public:
     MOCK_METHOD3(GetHapModuleInfo, bool(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo));
     MOCK_METHOD2(GetLaunchWantForBundle, bool(const std::string &bundleName, Want &want));
     MOCK_METHOD2(CheckPublicKeys, int(const std::string &firstBundleName, const std::string &secondBundleName));
-    MOCK_METHOD2(CheckPermission, int(const std::string &bundleName, const std::string &permission));
     MOCK_METHOD2(GetPermissionDef, bool(const std::string &permissionName, PermissionDef &permissionDef));
-    MOCK_METHOD1(GetAllPermissionGroupDefs, bool(std::vector<PermissionDef> &permissionDefs));
-    MOCK_METHOD2(GetAppsGrantedPermissions,
-        bool(const std::vector<std::string> &permissions, std::vector<std::string> &appNames));
     MOCK_METHOD1(HasSystemCapability, bool(const std::string &capName));
     MOCK_METHOD1(GetSystemAvailableCapabilities, bool(std::vector<std::string> &systemCaps));
     MOCK_METHOD0(IsSafeMode, bool());
     MOCK_METHOD2(CleanBundleDataFiles, bool(const std::string &bundleName, const int userId));
-    MOCK_METHOD3(RequestPermissionFromUser,
-        bool(const std::string &bundleName, const std::string &permission, const int userId));
     MOCK_METHOD1(RegisterBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
     MOCK_METHOD1(ClearBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
     MOCK_METHOD0(UnregisterBundleStatusCallback, bool());
@@ -304,12 +298,6 @@ public:
     MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(QueryAbilityInfosForClone, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &abilityInfo));
-    MOCK_METHOD3(
-        CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
-    MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD2(RegisterPermissionsChanged,
-        bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD1(GetAllFormsInfo, bool(std::vector<FormInfo> &formInfos));
     MOCK_METHOD2(GetFormsInfoByApp, bool(const std::string &bundleName, std::vector<FormInfo> &formInfos));
     MOCK_METHOD3(GetFormsInfoByModule,
@@ -360,17 +348,11 @@ public:
     MOCK_METHOD3(GetHapModuleInfo, bool(const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo));
     MOCK_METHOD2(GetLaunchWantForBundle, bool(const std::string &bundleName, Want &want));
     MOCK_METHOD2(CheckPublicKeys, int(const std::string &firstBundleName, const std::string &secondBundleName));
-    MOCK_METHOD2(CheckPermission, int(const std::string &bundleName, const std::string &permission));
     MOCK_METHOD2(GetPermissionDef, bool(const std::string &permissionName, PermissionDef &permissionDef));
-    MOCK_METHOD1(GetAllPermissionGroupDefs, bool(std::vector<PermissionDef> &permissionDefs));
-    MOCK_METHOD2(GetAppsGrantedPermissions,
-        bool(const std::vector<std::string> &permissions, std::vector<std::string> &appNames));
     MOCK_METHOD1(HasSystemCapability, bool(const std::string &capName));
     MOCK_METHOD1(GetSystemAvailableCapabilities, bool(std::vector<std::string> &systemCaps));
     MOCK_METHOD0(IsSafeMode, bool());
     MOCK_METHOD2(CleanBundleDataFiles, bool(const std::string &bundleName, const int userId));
-    MOCK_METHOD3(RequestPermissionFromUser,
-        bool(const std::string &bundleName, const std::string &permission, const int userId));
     MOCK_METHOD1(RegisterBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &bundleStatusCallback));
     MOCK_METHOD1(ClearBundleStatusCallback, bool(const sptr<IBundleStatusCallback> &));
     MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
@@ -381,12 +363,6 @@ public:
     MOCK_METHOD2(QueryAbilityInfos, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD2(QueryAbilityInfosForClone, bool(const Want &want, std::vector<AbilityInfo> &abilityInfos));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &abilityInfo));
-    MOCK_METHOD3(
-        CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
-    MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD2(RegisterPermissionsChanged,
-        bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     MOCK_METHOD2(GetModuleUsageRecords, bool(const int32_t number, std::vector<ModuleUsageRecord> &moduleUsageRecords));
     MOCK_METHOD1(GetAllFormsInfo, bool(std::vector<FormInfo> &formInfos));
     MOCK_METHOD2(GetFormsInfoByApp, bool(const std::string &bundleName, std::vector<FormInfo> &formInfos));
@@ -402,11 +378,6 @@ public:
         return true;
     }
     virtual bool QueryAbilityInfosByUri(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos) override
-    {
-        return true;
-    }
-    virtual int CheckPermissionByUid(
-        const std::string &bundleName, const std::string &permission, const int userId) override
     {
         return true;
     }

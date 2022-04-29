@@ -72,11 +72,7 @@ public:
         const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override;
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want) override;
     virtual int CheckPublicKeys(const std::string &firstBundleName, const std::string &secondBundleName) override;
-    virtual int CheckPermission(const std::string &bundleName, const std::string &permission) override;
     virtual bool GetPermissionDef(const std::string &permissionName, PermissionDef &permissionDef) override;
-    virtual bool GetAllPermissionGroupDefs(std::vector<PermissionDef> &permissionDefs) override;
-    virtual bool GetAppsGrantedPermissions(
-        const std::vector<std::string> &permissions, std::vector<std::string> &appNames) override;
     virtual bool HasSystemCapability(const std::string &capName) override;
     virtual bool GetSystemAvailableCapabilities(std::vector<std::string> &systemCaps) override;
     virtual bool IsSafeMode() override;
@@ -88,14 +84,6 @@ public:
         const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result) override;
     virtual bool IsApplicationEnabled(const std::string &bundleName) override;
     virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) override;
-    virtual bool CanRequestPermission(
-        const std::string &bundleName, const std::string &permissionName, const int userId) override;
-    virtual bool RequestPermissionFromUser(
-        const std::string &bundleName, const std::string &permission, const int userId) override;
-    virtual bool RegisterAllPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) override;
-    virtual bool RegisterPermissionsChanged(
-        const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback) override;
-    virtual bool UnregisterPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) override;
     virtual bool GetAllFormsInfo(std::vector<FormInfo> &formInfos) override;
     virtual bool GetFormsInfoByApp(const std::string &bundleName, std::vector<FormInfo> &formInfos) override;
     virtual bool GetFormsInfoByModule(
@@ -155,11 +143,7 @@ public:
         const AbilityInfo &abilityInfo, int32_t userId, HapModuleInfo &hapModuleInfo) override;
     virtual bool GetLaunchWantForBundle(const std::string &bundleName, Want &want) override;
     virtual int CheckPublicKeys(const std::string &firstBundleName, const std::string &secondBundleName) override;
-    virtual int CheckPermission(const std::string &bundleName, const std::string &permission) override;
     virtual bool GetPermissionDef(const std::string &permissionName, PermissionDef &permissionDef) override;
-    virtual bool GetAllPermissionGroupDefs(std::vector<PermissionDef> &permissionDefs) override;
-    virtual bool GetAppsGrantedPermissions(
-        const std::vector<std::string> &permissions, std::vector<std::string> &appNames) override;
     virtual bool HasSystemCapability(const std::string &capName) override;
     virtual bool GetSystemAvailableCapabilities(std::vector<std::string> &systemCaps) override;
     virtual bool IsSafeMode() override;
@@ -171,14 +155,6 @@ public:
         const DumpFlag flag, const std::string &bundleName, int32_t userId, std::string &result) override;
     virtual bool IsApplicationEnabled(const std::string &bundleName) override;
     virtual bool IsAbilityEnabled(const AbilityInfo &abilityInfo) override;
-    virtual bool CanRequestPermission(
-        const std::string &bundleName, const std::string &permissionName, const int userId) override;
-    virtual bool RequestPermissionFromUser(
-        const std::string &bundleName, const std::string &permission, const int userId) override;
-    virtual bool RegisterAllPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) override;
-    virtual bool RegisterPermissionsChanged(
-        const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback) override;
-    virtual bool UnregisterPermissionsChanged(const sptr<OnPermissionChangedCallback> &callback) override;
     virtual bool GetAllFormsInfo(std::vector<FormInfo> &formInfos) override;
     virtual bool GetFormsInfoByApp(const std::string &bundleName, std::vector<FormInfo> &formInfos) override;
     virtual bool GetFormsInfoByModule(
@@ -195,11 +171,6 @@ public:
         return true;
     }
     virtual bool QueryAbilityInfosByUri(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos) override
-    {
-        return true;
-    }
-    virtual int CheckPermissionByUid(
-        const std::string &bundleName, const std::string &permission, const int userId) override
     {
         return true;
     }
