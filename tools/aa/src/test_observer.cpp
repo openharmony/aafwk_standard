@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,17 +15,19 @@
 
 #include "test_observer.h"
 
+#include <cinttypes>
 #include <iostream>
-#include <thread>
 #include <unistd.h>
 
 #include "hilog_wrapper.h"
+#include "shell_command_executor.h"
 #include "system_time.h"
+
+using namespace std::chrono_literals;
 
 namespace OHOS {
 namespace AAFwk {
-TestObserver::TestObserver()
-    : isFinished_(false)
+TestObserver::TestObserver() : isFinished_(false)
 {}
 
 TestObserver::~TestObserver()
@@ -47,28 +49,15 @@ void TestObserver::TestFinished(const std::string &msg, const int &resultCode)
 
 ShellCommandResult TestObserver::ExecuteShellCommand(const std::string &cmd, const int64_t timeoutSec)
 {
-    HILOG_INFO("enter");
-    ShellCommandResult result;
-    if (cmd.empty()) {
-        return result;
-    }
-    FILE *file = popen(cmd.c_str(), "r");
-    if (!file) {
-        return result;
+    HILOG_INFO("enter, cmd : \"%{public}s\", timeoutSec : %{public}" PRId64, cmd.data(), timeoutSec);
+
+    auto cmdExecutor = std::make_shared<ShellCommandExecutor>(cmd, timeoutSec);
+    if (!cmdExecutor) {
+        HILOG_ERROR("Failed to create ShellCommandExecutor intance");
+        return {};
     }
 
-    int64_t timeout = (timeoutSec <= 0) ? SHELL_COMMAND_TIMEOUT_MAX : timeoutSec;
-    std::this_thread::sleep_for(std::chrono::seconds(timeout));
-
-    char commandResult[1024] = {0};
-    while ((fgets(commandResult, sizeof(commandResult), file)) != nullptr) {
-        result.stdResult.append(commandResult);
-        std::cout << commandResult;
-    }
-    result.exitCode = pclose(file);
-    file = nullptr;
-
-    return result;
+    return cmdExecutor->WaitWorkDone();
 }
 
 bool TestObserver::WaitForFinish(const int64_t &timeoutMs)
