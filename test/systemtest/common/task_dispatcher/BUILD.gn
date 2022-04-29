@@ -43,7 +43,6 @@ ohos_systemtest("task_dispatcher_test") {
     "${appexecfwk_path}/test/systemtest/common/task_dispatcher/include",
     "//third_party/jsoncpp/include",
     "${appexecfwk_path}/test/systemtest/common/ams/tool/include",
-    "${notification_path}/common_event_service/test/systemtest/common/resource",
   ]
 
   sources = [

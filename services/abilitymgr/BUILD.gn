@@ -15,7 +15,6 @@ import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
 import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
-EVENT_DIR = "${notification_path}/common_event_service/"
 
 group("abilityms_target") {
   deps = [
@@ -27,8 +26,6 @@ group("abilityms_target") {
 config("abilityms_config") {
   include_dirs = [
     "include/",
-    "${EVENT_DIR}/frameworks/core/include",
-    "${EVENT_DIR}/interfaces/innerkits/native/include",
     "${innerkits_path}/ability_manager/include",
     "${innerkits_path}/app_manager/include",
     "${innerkits_path}/base/include",
