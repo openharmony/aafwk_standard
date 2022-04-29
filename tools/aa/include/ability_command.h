@@ -100,7 +100,8 @@ const std::string HELP_MSG_TEST =
     "                  [-s testType <test-testType>]\n"
     "                  [-s timeout <test-timeout>]\n"
     "                  [-s <any-key> <any-value>]\n"
-    "                  [-w <wait-time>]\n";
+    "                  [-w <wait-time>]\n"
+    "                  [-D]\n";
 
 const std::string HELP_MSG_FORCE_STOP = "usage: aa force-stop <bundle-name>\n";
 const std::string HELP_MSG_FORCE_TIMEOUT =
@@ -139,6 +140,8 @@ const int TIME_RATE_MS = 1000;
 
 const int NUMBER_TWO = 2;
 const int NUMBER_ONE = 1;
+
+const std::string DEBUG_VALUE = "true";
 }  // namespace
 
 class AbilityManagerShellCommand : public ShellCommand {
@@ -168,7 +171,7 @@ private:
     ErrCode RunAsTestCommand();
     bool IsTestCommandIntegrity(const std::map<std::string, std::string> &params);
     ErrCode TestCommandError(const std::string &info);
-    ErrCode StartUserTest(const std::map<std::string, std::string> &params);
+    ErrCode StartUserTest(const std::map<std::string, std::string> &params, const bool isDebug);
 };
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -24,6 +24,9 @@ const std::string AbilityDelegatorArgs::KEY_TEST_RUNNER_CLASS {"-s unittest"};
 const std::string AbilityDelegatorArgs::KEY_TEST_CASE {"-s class"};
 const std::string AbilityDelegatorArgs::KEY_TEST_WAIT_TIMEOUT {"-w"};
 
+const std::string AbilityDelegatorArgs::KEY_TEST_DEBUG {"-D"};
+const std::string AbilityDelegatorArgs::VALUE_TEST_DEBUG {"true"};
+
 AbilityDelegatorArgs::AbilityDelegatorArgs()
 {}
 
@@ -39,11 +42,6 @@ AbilityDelegatorArgs::AbilityDelegatorArgs(const AAFwk::Want &want)
 
 AbilityDelegatorArgs::~AbilityDelegatorArgs()
 {}
-
-void AbilityDelegatorArgs::SetTestBundleName(const std::string &bundleName)
-{
-    bundleName_ = bundleName;
-}
 
 std::string AbilityDelegatorArgs::GetTestBundleName() const
 {
@@ -70,14 +68,19 @@ std::string AbilityDelegatorArgs::GetTestCaseName() const
     return GetParamValue(AbilityDelegatorArgs::KEY_TEST_CASE);
 }
 
-void AbilityDelegatorArgs::SetTestParam(const std::map<std::string, std::string> &params)
-{
-    params_ = params;
-}
-
 std::map<std::string, std::string> AbilityDelegatorArgs::GetTestParam() const
 {
     return params_;
+}
+
+bool AbilityDelegatorArgs::FindDebugFlag()
+{
+    auto pos = params_.find(KEY_TEST_DEBUG);
+    if (pos == params_.end()) {
+        return false;
+    }
+
+    return !pos->second.compare(VALUE_TEST_DEBUG);
 }
 
 std::string AbilityDelegatorArgs::GetParamValue(const std::string &key) const
