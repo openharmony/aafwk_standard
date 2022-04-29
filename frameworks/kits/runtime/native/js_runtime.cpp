@@ -546,15 +546,7 @@ public:
 #endif
     }
 
-    ~TimerTask()
-    {
-#ifdef ENABLE_HITRACE
-        if (traceId_) {
-            delete traceId_;
-            traceId_ = nullptr;
-        }
-#endif
-    }
+    ~TimerTask() = default;
 
     void operator()()
     {
