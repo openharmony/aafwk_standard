@@ -47,6 +47,7 @@ struct AppStateData : public Parcelable {
     static AppStateData *Unmarshalling(Parcel &parcel);
 
     std::string bundleName;
+    int32_t pid = -1;
     int32_t uid = 0;
     int32_t state = 0;
 };
