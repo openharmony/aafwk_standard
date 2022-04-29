@@ -25,7 +25,7 @@ config("fmsSystemTestHostNormalConfig") {
     "${aafwk_path}/services/abilitymgr/include",
     "${aafwk_path}/services/common/include",
     "${appexecfwk_path}/common/log/include",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
+    "${appexecfwk_innerkits_path}/libeventhandler/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
     "${appexecfwk_path}/services/bundlemgr/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
