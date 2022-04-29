@@ -91,6 +91,9 @@ private:
     std::shared_ptr<ADelegatorAbilityProperty> DoesPropertyExist(const sptr<IRemoteObject> &token);
 
 private:
+    static constexpr size_t INFORMATION_MAX_LENGTH {1000};
+
+private:
     std::shared_ptr<AbilityRuntime::Context> appContext_;
     std::unique_ptr<TestRunner> testRunner_;
     sptr<IRemoteObject> observer_;
