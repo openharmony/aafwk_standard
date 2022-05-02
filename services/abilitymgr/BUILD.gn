@@ -24,12 +24,6 @@ group("abilityms_target") {
   ]
 }
 
-group("unittest") {
-  testonly = true
-
-  deps = [ "test:unittest" ]
-}
-
 config("abilityms_config") {
   include_dirs = [
     "include/",
@@ -82,7 +76,6 @@ config("abilityms_config") {
 
 ohos_shared_library("abilityms") {
   sources = abilityms_files
-  sources += free_install
   sources += [ "src/sa_mgr_client.cpp" ]
   cflags_cc = []
   configs = [ ":abilityms_config" ]

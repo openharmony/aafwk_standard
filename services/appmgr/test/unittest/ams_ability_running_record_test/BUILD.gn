@@ -55,7 +55,7 @@ ohos_unittest("AmsAbilityRunningRecordTest") {
   deps = [
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/services/appmgr:libams",
+    "${aafwk_path}/services/appmgr:libappms",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
