@@ -108,11 +108,8 @@ const int32_t APP_MEMORY_SIZE = 512;
 const int32_t GET_PARAMETER_INCORRECT = -9;
 const int32_t GET_PARAMETER_OTHER = -1;
 const int32_t SIZE_10 = 10;
-const bool isRamConstrainedDevice = false;
 const std::string BUNDLE_NAME_KEY = "bundleName";
-const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.arkheaplimit";
-const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
-const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
+const std::string DM_PKG_NAME = "ohos.distributedhardware.devicemanager";
 const std::string ACTION_CHOOSE = "ohos.want.action.select";
 const std::u16string DMS_FREE_INSTALL_CALLBACK_TOKEN = u"ohos.DistributedSchedule.IDmsFreeInstallCallback";
 constexpr uint32_t IDmsFreeInstallCallback_ON_FREE_INSTALL_DONE = 0;
@@ -696,7 +693,7 @@ bool AbilityManagerService::CheckIfOperateRemote(const Want &want)
 bool AbilityManagerService::GetLocalDeviceId(std::string& localDeviceId)
 {
     auto localNode = std::make_unique<NodeBasicInfo>();
-    int32_t errCode = GetLocalNodeDeviceInfo(PKG_NAME.c_str(), localNode.get());
+    int32_t errCode = GetLocalNodeDeviceInfo(DM_PKG_NAME.c_str(), localNode.get());
     if (errCode != ERR_OK) {
         HILOG_ERROR("AbilityManagerService::GetLocalNodeDeviceInfo errCode = %{public}d", errCode);
         return false;
@@ -2952,7 +2949,7 @@ void AbilityManagerService::ConnectBmsService()
 
 bool AbilityManagerService::CheckCallerIsSystemAppByIpc()
 {
-    HILOG_DEBUG("%{public}s begin", __func__);
+    HILOG_DEBUG("%{public}s", __func__);
     auto bms = GetBundleManager();
     CHECK_POINTER_RETURN_BOOL(bms);
     int32_t callerUid = IPCSkeleton::GetCallingUid();
@@ -3033,9 +3030,9 @@ bool AbilityManagerService::IsRamConstrainedDevice()
         if (value) {
             return true;
         }
-        return isRamConstrainedDevice;
+        return false;
     }
-    return isRamConstrainedDevice;
+    return false;
 }
 
 int AbilityManagerService::GetMissionSaveTime() const

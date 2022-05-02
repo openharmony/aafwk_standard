@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,7 @@
     <process>foundation</process>
     <systemability>
         <name>501</name>
-        <libpath>/system/lib64/libams.z.so</libpath>
+        <libpath>/system/lib64/libappms.z.so</libpath>
         <!--<depend></depend> --> <!-- Declare the name of system abilities which the system ability depends on, Note that one dependency uses 1 line. If there are dependencies, it needs to check if all those dependencies are available in service manager before starting the system ability. -->
         <!--<depend-time-out></depend-time-out> --> <!-- Check all dependencies are available before the timeout period ended. The MAX_DEPENDENCY_TIMEOUT is 60s. -->
         <run-on-create>true</run-on-create>
