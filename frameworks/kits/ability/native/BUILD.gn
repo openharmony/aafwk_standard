@@ -158,10 +158,6 @@ ohos_shared_library("abilitykit_native") {
     "src/service_extension.cpp",
     "src/static_subscriber_extension.cpp",
     "src/static_subscriber_stub_imp.cpp",
-
-    # "${aafwk_path}/interfaces/kits/napi/aafwk/featureAbility/feature_ability.cpp",
-    # "${aafwk_path}/interfaces/kits/napi/aafwk/featureAbility/napi_context.cpp",
-    # "${aafwk_path}/interfaces/kits/napi/aafwk/featureAbility/napi_data_ability_helper.cpp",
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_ability.cpp",
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_configuration.cpp",
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_start_options.cpp",
@@ -194,8 +190,6 @@ ohos_shared_library("abilitykit_native") {
     "src/continuation/remote_register_service/remote_register_service_proxy.cpp",
     "src/continuation/remote_register_service/remote_register_service_stub.cpp",
     "src/distributed_ability_runtime/distributed_client.cpp",
-
-    #"${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/rdb/napi_rdb_predicates.cpp",
     "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/dataability/src/napi_data_ability_predicates.cpp",
     "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/rdb/src/napi_result_set.cpp",
     "src/ability_runtime/js_ability.cpp",
