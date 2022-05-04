@@ -1850,6 +1850,12 @@ void MissionListManager::BackToLauncher()
         HILOG_WARN("no root launcher ability, no need back to launcher.");
         return;
     }
+
+    if (launcherRootAbility->GetAbilityInfo().bundleName != AbilityConfig::LAUNCHER_BUNDLE_NAME) {
+        HILOG_WARN("not launcher mission, no need back to launcher.");
+        return;
+    }
+
     auto launcherRootMission = launcherRootAbility->GetMission();
     if (!launcherRootMission) {
         HILOG_WARN("no root launcher mission, no need back to launcher.");
