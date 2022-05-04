@@ -3544,7 +3544,6 @@ void AbilityManagerService::StartUserApps(int32_t userId, bool isBoot)
     if (currentMissionListManager_ && currentMissionListManager_->IsStarted()) {
         HILOG_INFO("missionListManager ResumeManager");
         currentMissionListManager_->ResumeManager();
-        return;
     }
     StartSystemAbilityByUser(userId, isBoot);
 }
