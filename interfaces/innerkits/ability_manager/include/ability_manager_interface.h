@@ -22,28 +22,28 @@
 #include <iremote_broker.h>
 
 #include "ability_connect_callback_interface.h"
+#include "ability_running_info.h"
 #include "ability_scheduler_interface.h"
 #include "ability_start_setting.h"
-#include "foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr/configuration.h"
-#include "mission_snapshot.h"
-#include "ability_running_info.h"
 #include "extension_running_info.h"
-#include "uri.h"
-#include "want.h"
-#include "want_sender_info.h"
-#include "sender_info.h"
-#include "want_sender_interface.h"
-#include "want_receiver_interface.h"
-#include "system_memory_attr.h"
-#include "system_memory_attr.h"
+#include "foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr/configuration.h"
+#include "iability_controller.h"
 #include "mission_listener_interface.h"
 #include "mission_info.h"
+#include "mission_snapshot.h"
+#include "remote_mission_listener_interface.h"
+#include "running_process_info.h"
+#include "sender_info.h"
 #include "snapshot.h"
 #include "start_options.h"
 #include "stop_user_callback.h"
-#include "running_process_info.h"
-#include "remote_mission_listener_interface.h"
-#include "iability_controller.h"
+#include "system_memory_attr.h"
+#include "want.h"
+#include "want_receiver_interface.h"
+#include "want_sender_info.h"
+#include "want_sender_interface.h"
+#include "uri.h"
+#include "window_manager_service_handler.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -433,6 +433,8 @@ public:
 #ifdef SUPPORT_GRAPHICS
     virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
         const std::shared_ptr<OHOS::Media::PixelMap> &icon) = 0;
+
+    virtual int RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler) = 0;
 #endif
 
     virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) = 0;
@@ -546,8 +548,6 @@ public:
      * @return Returns -1 if do not find mission, otherwise return mission id.
      */
     virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) = 0;
-
-    virtual int RegisterWindowHandler(const sptr<IWindowHandler>& handler) = 0;
 
     #ifdef ABILITY_COMMAND_FOR_TEST
     /**
@@ -879,7 +879,7 @@ public:
         DUMPSYS_STATE = 2002,
         FORCE_TIMEOUT,
 
-        REGISTER_WINDOW_HANDLER = 2500,
+        REGISTER_WMS_HANDLER = 2500,
 
         GET_TOP_ABILITY = 3000,
         FREE_INSTALL_ABILITY_FROM_REMOTE = 3001,

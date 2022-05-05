@@ -23,7 +23,15 @@ namespace OHOS {
 namespace AAFwk {
 struct FormInfoStorage {
     int32_t userId = -1;
-    AppExecFwk::FormInfo formInfo;
+    std::vector<AppExecFwk::FormInfo> formInfos;
+
+    FormInfoStorage() = default;
+    FormInfoStorage(int32_t userId, std::vector<AppExecFwk::FormInfo> &formInfos);
+    ~FormInfoStorage() = default;
+
+    void GetAllFormsInfo(int32_t userId, std::vector<AppExecFwk::FormInfo> &formInfos) const;
+    void GetFormsInfoByModule(int32_t userId, const std::string &moduleName,
+        std::vector<AppExecFwk::FormInfo> &formInfos) const;
 };
 
 void to_json(nlohmann::json &jsonObject, const FormInfoStorage &formInfoStorage);

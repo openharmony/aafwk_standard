@@ -19,7 +19,7 @@ config("appmgr_sdk_config") {
     "include/appmgr",
     "${kits_path}/ability/native/include",
     "${innerkits_path}/ability_manager/include",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
+    "${appexecfwk_innerkits_path}/appexecfwk_base/include",
   ]
   defines = [ "ABILITY_COMMAND_FOR_TEST" ]
 }

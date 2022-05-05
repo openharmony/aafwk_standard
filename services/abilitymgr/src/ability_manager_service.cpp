@@ -3270,6 +3270,23 @@ int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token,
 
     return missionListManager->SetMissionIcon(token, icon);
 }
+
+int AbilityManagerService::RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler> &handler)
+{
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return CHECK_PERMISSION_FAILED;
+    }
+    wmsHandler_ = handler;
+    HILOG_DEBUG("%{public}s: WMS handler registered successfully.", __func__);
+    return ERR_OK;
+}
+
+sptr<IWindowManagerServiceHandler> AbilityManagerService::GetWMSHandler() const
+{
+    return wmsHandler_;
+}
 #endif
 
 int AbilityManagerService::StartUser(int userId)
@@ -3330,6 +3347,9 @@ int AbilityManagerService::GetAbilityRunningInfos(std::vector<AbilityRunningInfo
 {
     HILOG_DEBUG("Get running ability infos.");
     auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyRunningInfoPerm();
+    if (!currentMissionListManager_ || !connectManager_ || !dataAbilityManager_) {
+        return ERR_INVALID_VALUE;
+    }
 
     currentMissionListManager_->GetAbilityRunningInfos(info, isPerm);
     connectManager_->GetAbilityRunningInfos(info, isPerm);
@@ -3342,6 +3362,9 @@ int AbilityManagerService::GetExtensionRunningInfos(int upperLimit, std::vector<
 {
     HILOG_DEBUG("Get extension infos, upperLimit : %{public}d", upperLimit);
     auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyRunningInfoPerm();
+    if (!connectManager_) {
+        return ERR_INVALID_VALUE;
+    }
 
     connectManager_->GetExtensionRunningInfos(upperLimit, info, GetUserId(), isPerm);
     return ERR_OK;
@@ -3382,18 +3405,6 @@ int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>&
     }
     currentMissionListManager_->RegisterSnapshotHandler(handler);
     HILOG_INFO("snapshot: AbilityManagerService register snapshot handler success.");
-    return ERR_OK;
-}
-
-int AbilityManagerService::RegisterWindowHandler(const sptr<IWindowHandler> &handler)
-{
-    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
-    if (!isSaCall) {
-        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
-        return 0;
-    }
-    windowHandler_ = handler;
-    HILOG_INFO("window: AbilityManagerService register windows handler success.");
     return ERR_OK;
 }
 
@@ -3541,7 +3552,6 @@ void AbilityManagerService::StartUserApps(int32_t userId, bool isBoot)
     if (currentMissionListManager_ && currentMissionListManager_->IsStarted()) {
         HILOG_INFO("missionListManager ResumeManager");
         currentMissionListManager_->ResumeManager();
-        return;
     }
     StartSystemAbilityByUser(userId, isBoot);
 }

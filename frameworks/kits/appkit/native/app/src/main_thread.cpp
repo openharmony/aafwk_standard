@@ -895,17 +895,17 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             std::string errorStack = GetNativeStrFromJsTaggedObj(obj, "stack");
             std::string summary = "Error message:" + errorMsg + "\nStacktrace:\n" + errorStack;
             time_t timet;
-            struct tm *localUTC;
+            struct tm localUTC;
             struct timeval gtime;
             time(&timet);
-            localUTC = gmtime(&timet);
+            gmtime_r(&timet, &localUTC);
             gettimeofday(&gtime, NULL);
-            std::string loacalUTCTime = std::to_string(localUTC->tm_year + 1900)
-                + "/" + std::to_string(localUTC->tm_mon + 1)
-                + "/" + std::to_string(localUTC->tm_mday)
-                + " " + std::to_string(localUTC->tm_hour)
-                + "-" + std::to_string(localUTC->tm_min)
-                + "-" + std::to_string(localUTC->tm_sec)
+            std::string loacalUTCTime = std::to_string(localUTC.tm_year + 1900)
+                + "/" + std::to_string(localUTC.tm_mon + 1)
+                + "/" + std::to_string(localUTC.tm_mday)
+                + " " + std::to_string(localUTC.tm_hour)
+                + "-" + std::to_string(localUTC.tm_min)
+                + "-" + std::to_string(localUTC.tm_sec)
                 + "." + std::to_string(gtime.tv_usec/1000);
             OHOS::HiviewDFX::HiSysEvent::Write(OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK, "JS_ERROR",
                 OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
@@ -1510,7 +1510,7 @@ void MainThread::HandleScheduleANRProcess()
     HILOG_INFO("MainThread:HandleScheduleANRProcess start.");
     int rFD = -1;
     std::string mainThreadStackInfo;
-    if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::CPP_STACKTRACE))) < 0) {
+    if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::JS_STACKTRACE))) < 0) {
         HILOG_ERROR("MainThread::HandleScheduleANRProcess request file eescriptor failed");
         return;
     }
