@@ -138,8 +138,10 @@ void AbilityManagerStub::ThirdStepInit()
     requestFuncMap_[GET_MISSION_ID_BY_ABILITY_TOKEN] = &AbilityManagerStub::GetMissionIdByTokenInner;
     requestFuncMap_[GET_TOP_ABILITY] = &AbilityManagerStub::GetTopAbilityInner;
     requestFuncMap_[SET_MISSION_ICON] = &AbilityManagerStub::SetMissionIconInner;
-    requestFuncMap_[REGISTER_WINDOW_HANDLER] = &AbilityManagerStub::RegisterWindowHandlerInner;
     requestFuncMap_[DUMP_ABILITY_INFO_DONE] = &AbilityManagerStub::DumpAbilityInfoDoneInner;
+#ifdef SUPPORT_GRAPHICS
+    requestFuncMap_[REGISTER_WMS_HANDLER] = &AbilityManagerStub::RegisterWindowManagerServiceHandlerInner;
+#endif
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -1182,17 +1184,17 @@ int AbilityManagerStub::RegisterSnapshotHandlerInner(MessageParcel &data, Messag
     return result;
 }
 
-int AbilityManagerStub::RegisterWindowHandlerInner(MessageParcel &data, MessageParcel &reply)
+#ifdef SUPPORT_GRAPHICS
+int AbilityManagerStub::RegisterWindowManagerServiceHandlerInner(MessageParcel &data, MessageParcel &reply)
 {
-    sptr<IWindowHandler> handler = iface_cast<IWindowHandler>(data.ReadRemoteObject());
+    sptr<IWindowManagerServiceHandler> handler = iface_cast<IWindowManagerServiceHandler>(data.ReadRemoteObject());
     if (handler == nullptr) {
-        HILOG_ERROR("window: AbilityManagerStub read window handler failed!");
+        HILOG_ERROR("%{public}s read WMS handler failed!", __func__);
         return ERR_NULL_OBJECT;
     }
-    int32_t result = RegisterWindowHandler(handler);
-    HILOG_INFO("window: AbilityManagerStub register window handler result = %{public}d", result);
-    return result;
+    return RegisterWindowManagerServiceHandler(handler);
 }
+#endif
 
 int AbilityManagerStub::GetMissionSnapshotInfoInner(MessageParcel &data, MessageParcel &reply)
 {
