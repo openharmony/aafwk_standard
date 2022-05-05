@@ -117,7 +117,7 @@ ohos_shared_library("abilityms") {
 
   if (os_account_part_enabled) {
     cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
-    external_deps += [ "os_account_standard:os_account_innerkits" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
   }
 
   if (ability_runtime_graphics) {
