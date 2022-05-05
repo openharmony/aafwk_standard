@@ -25,7 +25,7 @@ ohos_moduletest("AmsIpcAmsmgrModuleTest") {
     "${aafwk_path}/interfaces/innerkits/want/include",
     "${aafwk_path}/services/appmgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include",
+    "${appexecfwk_innerkits_path}/appexecfwk_core/include",
     "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
   ]
   sources = [ "ams_ipc_ams_mgr_module_test.cpp" ]

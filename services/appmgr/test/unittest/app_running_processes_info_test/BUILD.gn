@@ -22,7 +22,7 @@ ohos_unittest("AppRunningProcessesInfoTest") {
   include_dirs = [
     "${aafwk_path}/interfaces/innerkits/base/include",
     "${aafwk_path}/interfaces/innerkits/want/include",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include",
+    "${appexecfwk_innerkits_path}/appexecfwk_core/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
@@ -51,7 +51,7 @@ ohos_unittest("AppRunningProcessesInfoTest") {
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/services/appmgr:libappms",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
+    "${appexecfwk_innerkits_path}/appexecfwk_core:appexecfwk_core",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
