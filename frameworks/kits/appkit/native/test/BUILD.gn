@@ -380,5 +380,15 @@ group("unittest") {
     ":context_deal_test",
     ":watchdog_test",
   ]
+
+  deps += [ "unittest/ability_delegator:unittest" ]
+}
+
+group("moduletest") {
+  testonly = true
+
+  deps = []
+
+  deps += [ "moduletest/ability_delegator:moduletest" ]
 }
 ###############################################################################

@@ -41,7 +41,7 @@ private:
 
     ErrCode ParseStartAbilityArgsFromCmd(Want& want, StartOptions& startoptions);
     ErrCode ParseStopServiceArgsFromCmd(Want& want);
-    ErrCode ParseTestArgsFromCmd(std::map<std::string, std::string>& params, bool isDebug);
+    ErrCode ParseTestArgsFromCmd(std::map<std::string, std::string>& params);
 
     std::shared_ptr<AbilityManagerShellCommand> aaShellCmd_;
 };
