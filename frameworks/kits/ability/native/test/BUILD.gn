@@ -205,41 +205,6 @@ ohos_unittest("ability_lifecycle_executor_test") {
   }
 }
 
-ohos_unittest("ability_context_for_task_dispacher_test") {
-  module_out_path = module_output_path
-  sources = [ "unittest/ability_context_for_task_dispacher_test.cpp" ]
-
-  include_dirs =
-      [ "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include" ]
-
-  configs = [ ":module_ability_context_config" ]
-
-  deps = [
-    "${INNERKITS_PATH}/want:want",
-    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
-    "${aafwk_path}/frameworks/kits/appkit:app_context",
-    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
-    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-  ]
-
-  if (ability_runtime_graphics) {
-    external_deps += [ "input:libmmi-client" ]
-  }
-}
-
 ohos_unittest("ability_context_interface_test") {
   module_out_path = module_output_path
   sources = [
