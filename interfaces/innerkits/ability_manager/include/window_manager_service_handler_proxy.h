@@ -30,6 +30,8 @@ public:
     virtual void NotifyWindowTransition(sptr<AbilityTransitionInfo> fromInfo,
         sptr<AbilityTransitionInfo> toInfo) override;
 
+    virtual int32_t GetFocusWindow(sptr<IRemoteObject>& abilityToken) override;
+
 private:
     static inline BrokerDelegator<WindowManagerServiceHandlerProxy> delegator_;
 };

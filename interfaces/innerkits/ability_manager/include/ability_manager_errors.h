@@ -16,6 +16,8 @@
 #ifndef OHOS_AAFWK_ABILITY_MANAGER_ERRORS_H
 #define OHOS_AAFWK_ABILITY_MANAGER_ERRORS_H
 
+#include <map>
+
 #include "errors.h"
 
 namespace OHOS {
@@ -242,6 +244,11 @@ enum {
      * Result(2097197) for hidump params are invalid.
      */
     ERR_AAFWK_HIDUMP_INVALID_ARGS,
+
+    /**
+     * Result(2097198) for parcel fail.
+     */
+    ERR_AAFWK_PARCEL_FAIL,
 };
 
 enum {
