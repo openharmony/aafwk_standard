@@ -269,13 +269,6 @@ public:
      */
     virtual int GetRenderProcessTerminationStatus(pid_t renderPid, int &status);
 
-    /**
-     * Post a task to the not response process.
-     *
-     * @param pid, the not response process id.
-     */
-    virtual void PostANRTaskByProcessID(const pid_t pid);
-
 private:
     void SetServiceManager(std::unique_ptr<AppServiceManager> serviceMgr);
     /**

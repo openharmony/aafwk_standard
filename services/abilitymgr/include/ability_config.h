@@ -63,6 +63,9 @@ const std::string SCREEN_LOCK_ABILITY_NAME = "com.ohos.screenlock.ServiceExtAbil
 const std::string SCREEN_LOCK_BUNDLE_NAME = "com.ohos.screenlock";
 
 const std::string PARAMS_STREAM = "ability.params.stream";
+
+const std::string GRANT_ABILITY_BUNDLE_NAME = "com.ohos.permissionmanager";
+const std::string GRANT_ABILITY_ABILITY_NAME = "com.ohos.permissionmanager.GrantAbility";
 }  // namespace AbilityConfig
 }  // namespace AAFwk
 }  // namespace OHOS
