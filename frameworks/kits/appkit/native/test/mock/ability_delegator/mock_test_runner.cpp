@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,14 +13,25 @@
  * limitations under the License.
  */
 
-#include "main_thread.h"
+#include "mock_test_runner.h"
 #include "hilog_wrapper.h"
 
-using namespace OHOS;
-using namespace OHOS::AppExecFwk;
+namespace OHOS {
+namespace AppExecFwk {
+bool MockTestRunner::prepareFlag_ = false;
+bool MockTestRunner::runFlag_ = false;
 
-int main(const int argc, const char *argv[])
+void MockTestRunner::Prepare()
 {
-    MainThread::Start();
-    return 0;
+    HILOG_INFO("enter");
+    prepareFlag_ = true;
 }
+
+void MockTestRunner::Run()
+{
+    HILOG_INFO("enter");
+    runFlag_ = true;
+}
+} // namespace AppExecFwk
+} // namespace OHOS
+

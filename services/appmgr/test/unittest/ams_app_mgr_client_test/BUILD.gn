@@ -60,6 +60,7 @@ ohos_unittest("AmsAppMgrClientTest") {
 
   external_deps = [
     "bundle_framework:appexecfwk_core",
+    "common_event_service:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

@@ -52,7 +52,7 @@ ohos_unittest("AmsAppRunningRecordTest") {
   deps = [
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/services/appmgr:libams",
+    "${aafwk_path}/services/appmgr:libappms",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
@@ -69,6 +69,7 @@ ohos_unittest("AmsAppRunningRecordTest") {
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_core",
     "bytrace_standard:bytrace_core",
+    "common_event_service:cesfwk_innerkits",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

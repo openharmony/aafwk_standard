@@ -31,7 +31,7 @@ ohos_shared_library("abilitymanager") {
   deps = [
     "${kits_path}/appkit:appkit_native",
     "${services_path}/abilitymgr:abilityms",
-    "${services_path}/appmgr:libams",
+    "${services_path}/appmgr:libappms",
   ]
 
   external_deps = [
@@ -42,6 +42,7 @@ ohos_shared_library("abilitymanager") {
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

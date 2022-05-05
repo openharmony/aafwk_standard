@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,20 +25,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-namespace {
-const std::string STRING_DEVICE = "device";
-const std::string STRING_ABILITY_NAME = "ability";
-const std::string STRING_ABILITY_NAME_INVALID = "invalid_ability";
-const std::string STRING_BUNDLE_NAME = "bundle";
-const std::string STRING_BUNDLE_NAME_INVALID = "invalid_bundle";
-const std::string STRING_RECORD_ID = "1024";
-const std::string STRING_RECORD_ID_INVALID = "2048";
-const std::string STRING_STATE_ON = "on";
-const std::string STRING_STATE_ON_INVALID = "invalid_on";
-const std::string STRING_STATE_OFF = "off";
-const std::string STRING_STATE_OFF_INVALID = "invalid_off";
-}  // namespace
-
 class MockAbilityManagerStub : public AbilityManagerStub {
 public:
     int StartAbility(const Want &want, int32_t userId = DEFAULT_INVAL_VALUE, int requestCode = -1);

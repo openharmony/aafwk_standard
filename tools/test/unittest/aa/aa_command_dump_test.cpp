@@ -88,7 +88,7 @@ HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_0100, Function | MediumTest | Level1
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_NO_OPTION + "\n" + HELP_MSG_DUMP);
+    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_NO_OPTION + "\n" + HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -107,7 +107,7 @@ HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_0200, Function | MediumTest | Level1
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_NO_OPTION + "\n" + HELP_MSG_DUMP);
+    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_NO_OPTION + "\n" + HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -126,7 +126,7 @@ HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_0300, Function | MediumTest | Level1
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_DUMP);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -145,7 +145,7 @@ HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_0400, Function | MediumTest | Level1
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_DUMP);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -164,7 +164,7 @@ HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_0500, Function | MediumTest | Level1
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_DUMP);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -183,7 +183,7 @@ HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_0600, Function | MediumTest | Level1
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_DUMP);
+    EXPECT_EQ(cmd.ExecCommand(), "error: unknown option.\n" + HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -202,7 +202,7 @@ HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_0700, Function | MediumTest | Level1
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_DUMP);
+    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -221,7 +221,7 @@ HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_0800, Function | MediumTest | Level1
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_DUMP);
+    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -262,80 +262,3 @@ HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_1000, Function | MediumTest | Level1
     EXPECT_EQ(cmd.ExecCommand(), "");
 }
 
-/**
- * @tc.number: Aa_Command_Dump_1100
- * @tc.name: ExecCommand
- * @tc.desc: Verify the "aa dump -s" command.
- */
-HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_1100, Function | MediumTest | Level1)
-{
-    char *argv[] = {
-        (char *)TOOL_NAME.c_str(),
-        (char *)cmd_.c_str(),
-        (char *)"-s",
-        (char *)"",
-    };
-    int argc = sizeof(argv) / sizeof(argv[0]) - 1;
-
-    AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: option requires a value.\n" + HELP_MSG_DUMP);
-}
-
-/**
- * @tc.number: Aa_Command_Dump_1200
- * @tc.name: ExecCommand
- * @tc.desc: Verify the "aa dump -s <number>" command.
- */
-HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_1200, Function | MediumTest | Level1)
-{
-    char *argv[] = {
-        (char *)TOOL_NAME.c_str(),
-        (char *)cmd_.c_str(),
-        (char *)"-s",
-        (char *)STRING_STACK_NUMBER.c_str(),
-        (char *)"",
-    };
-    int argc = sizeof(argv) / sizeof(argv[0]) - 1;
-
-    AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), STRING_STACK_NUMBER + "\n");
-}
-
-/**
- * @tc.number: Aa_Command_Dump_1300
- * @tc.name: ExecCommand
- * @tc.desc: Verify the "aa dump -m" command.
- */
-HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_1300, Function | MediumTest | Level1)
-{
-    char *argv[] = {
-        (char *)TOOL_NAME.c_str(),
-        (char *)cmd_.c_str(),
-        (char *)"-m",
-        (char *)"",
-    };
-    int argc = sizeof(argv) / sizeof(argv[0]) - 1;
-
-    AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), "error: option requires a value.\n" + HELP_MSG_DUMP);
-}
-
-/**
- * @tc.number: Aa_Command_Dump_1400
- * @tc.name: ExecCommand
- * @tc.desc: Verify the "aa dump -m <number>" command.
- */
-HWTEST_F(AaCommandDumpTest, Aa_Command_Dump_1400, Function | MediumTest | Level1)
-{
-    char *argv[] = {
-        (char *)TOOL_NAME.c_str(),
-        (char *)cmd_.c_str(),
-        (char *)"-m",
-        (char *)STRING_MISSION_NUMBER.c_str(),
-        (char *)"",
-    };
-    int argc = sizeof(argv) / sizeof(argv[0]) - 1;
-
-    AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), STRING_MISSION_NUMBER + "\n");
-}

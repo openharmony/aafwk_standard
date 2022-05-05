@@ -28,6 +28,20 @@ using namespace testing::ext;
 using namespace OHOS;
 using namespace OHOS::AAFwk;
 
+namespace {
+const std::string STRING_DEVICE = "device";
+const std::string STRING_ABILITY_NAME = "ability";
+const std::string STRING_ABILITY_NAME_INVALID = "invalid_ability";
+const std::string STRING_BUNDLE_NAME = "bundle";
+const std::string STRING_BUNDLE_NAME_INVALID = "invalid_bundle";
+const std::string STRING_RECORD_ID = "1024";
+const std::string STRING_RECORD_ID_INVALID = "2048";
+const std::string STRING_STATE_ON = "on";
+const std::string STRING_STATE_ON_INVALID = "invalid_on";
+const std::string STRING_STATE_OFF = "off";
+const std::string STRING_STATE_OFF_INVALID = "invalid_off";
+}  // namespace
+
 class AaCommandStartTest : public ::testing::Test {
 public:
     static void SetUpTestCase();

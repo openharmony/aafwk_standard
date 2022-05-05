@@ -226,7 +226,6 @@ ErrCode FormInfoStorageMgr::UpdateBundleFormInfos(const std::string &bundleName,
             return ERR_APPEXECFWK_FORM_COMMON_CODE;
         }
     }
-
     DistributedKv::Key key(bundleName);
     DistributedKv::Status status;
     std::lock_guard<std::mutex> lock(kvStorePtrMutex_);

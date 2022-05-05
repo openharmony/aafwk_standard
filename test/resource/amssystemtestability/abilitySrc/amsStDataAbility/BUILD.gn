@@ -14,7 +14,6 @@
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 SUBDEMOSYSTEM_DIR = "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/amsStDataAbility"
-EVENT_DIR = "${notification_path}/common_event_service/cesfwk"
 
 config("verify_act_ability_config") {
   visibility = [ ":*" ]
@@ -29,7 +28,6 @@ config("verify_act_ability_config") {
     "${aafwk_path}/services/abilitymgr/include",
     "${aafwk_path}/services/common/include",
     "${appexecfwk_path}/common/log/include",
-    "${EVENT_DIR}/kits/native/include",
   ]
   defines = [
     "AMS_LOG_TAG = \"amsStDataAbility\"",
@@ -58,12 +56,11 @@ ohos_shared_library("amsStDataAbility") {
     "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/services/bundlemgr:libbms",
-    "${notification_path}/common_event_service/frameworks/native:cesfwk_innerkits",
-    "${notification_path}/common_event_service/interfaces/kits/napi/common_event:commonevent",
     "//utils/native/base:utilsbase",
   ]
   external_deps = [
     "bundle_framework:appexecfwk_core",
+    "common_event_service:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",

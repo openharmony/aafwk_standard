@@ -587,21 +587,22 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
             }
             case '?': {
                 if (!isfirstCommand) {
-                    result = OHOS::ERR_INVALID_VALUE;
+                    HILOG_INFO("'aa %{public}s' with an unknown option.", cmd_.c_str());
+                    std::string unknownOption = "";
+                    std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
+                    resultReceiver_.append(unknownOptionMsg);
                     resultReceiver_.append(HELP_MSG_DUMPSYS);
+                    result = OHOS::ERR_INVALID_VALUE;
                     return result;
                 }
                 break;
             }
             default: {
-                if (strcmp(argv_[optind], cmd_.c_str()) == 0) {
-                    // 'aa dumpsys' with no option: aa dumpsys
-                    // 'aa dumpsys' with a wrong argument: aa dumpsys xxx
-                    HILOG_INFO("'aa dumpsys' with no option.");
-
-                    resultReceiver_.append(HELP_MSG_NO_OPTION + "\n");
-                    result = OHOS::ERR_INVALID_VALUE;
-                }
+                HILOG_INFO("'aa %{public}s' with an unknown option.", cmd_.c_str());
+                std::string unknownOption = "";
+                std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
+                resultReceiver_.append(unknownOptionMsg);
+                result = OHOS::ERR_INVALID_VALUE;
                 break;
             }
         }
@@ -919,7 +920,6 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
     HILOG_INFO("enter");
     std::map<std::string, std::string> params;
 
-    auto isDebug {false};
     for (int i = USER_TEST_COMMAND_START_INDEX; i < argc_; i++) {
         HILOG_INFO("argv_[%{public}d]: %{public}s", i, argv_[i]);
         std::string opt = argv_[i];
@@ -953,7 +953,6 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
             std::string argValue = argv_[++i];
             params[opt + " " + argKey] = argValue;
         } else if (opt == "-D") {
-            isDebug = true;
             params[opt] = DEBUG_VALUE;
         } else if (opt.at(0) == '-') {
             return TestCommandError("error: unknown option: " + opt + "\n");
@@ -964,7 +963,7 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
         return OHOS::ERR_INVALID_VALUE;
     }
 
-    return StartUserTest(params, isDebug);
+    return StartUserTest(params);
 }
 
 bool AbilityManagerShellCommand::IsTestCommandIntegrity(const std::map<std::string, std::string> &params)
@@ -989,18 +988,19 @@ ErrCode AbilityManagerShellCommand::TestCommandError(const std::string &info)
     return OHOS::ERR_INVALID_VALUE;
 }
 
-ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, std::string> &params, const bool isDebug)
+ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, std::string> &params)
 {
-    HILOG_INFO("enter, isDebug : %{public}s", (isDebug ? "true" : "false"));
+    HILOG_INFO("enter");
 
     Want want;
     for (auto param : params) {
         want.SetParam(param.first, param.second);
     }
 
-    if (isDebug) {
+    auto dPos = params.find("-D");
+    if (dPos != params.end() && dPos->second.compare(DEBUG_VALUE) == 0) {
         HILOG_INFO("Set Debug to want");
-        want.SetParam("debugApp", isDebug);
+        want.SetParam("debugApp", true);
     }
 
     sptr<TestObserver> observer = new (std::nothrow) TestObserver();

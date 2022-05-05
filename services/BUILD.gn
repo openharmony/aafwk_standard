@@ -12,10 +12,10 @@
 # limitations under the License.
 import("//foundation/aafwk/standard/feature.gni")
 
-group("services_target") {
+group("ams_services_target") {
   deps = [
     "abilitymgr:abilityms_target",
-    "appmgr:ams_target",
+    "appmgr:appms_target",
     "common:perm_verification",
     "dataobsmgr:dataobsms",
     "uripermmgr:libupms",
@@ -26,13 +26,4 @@ group("fms_services_target") {
   if (ability_runtime_graphics) {
     deps = [ "formmgr:fms_target" ]
   }
-}
-
-group("unittest") {
-  testonly = true
-
-  deps = [
-    "abilitymgr:unittest",
-    "dataobsmgr:unittest",
-  ]
 }
