@@ -25,7 +25,7 @@ ohos_unittest("data_ability_manager_test") {
     "${services_path}/abilitymgr/test/mock/libs/ability_scheduler_mock",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
 
-    # "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
+    # "${appexecfwk_innerkits_path}/appexecfwk_base/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/services/common/include",
@@ -56,8 +56,8 @@ ohos_unittest("data_ability_manager_test") {
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/common:perm_verification",
 
-    #"${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    #"${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",

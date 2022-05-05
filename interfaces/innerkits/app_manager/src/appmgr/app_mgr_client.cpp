@@ -525,17 +525,6 @@ int AppMgrClient::GetRenderProcessTerminationStatus(pid_t renderPid, int &status
     return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
 }
 
-void AppMgrClient::PostANRTaskByProcessID(const pid_t pid)
-{
-    sptr<IAppMgr> service = iface_cast<IAppMgr>(mgrHolder_->GetRemoteObject());
-    if (service == nullptr) {
-        HILOG_ERROR("service is nullptr");
-        return;
-    }
-
-    service->PostANRTaskByProcessID(pid);
-}
-
 sptr<IRemoteObject> AppMgrClient::GetRemoteObject()
 {
     return mgrHolder_->GetRemoteObject();
