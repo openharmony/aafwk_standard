@@ -20,7 +20,7 @@ config("ability_command_config") {
     "${innerkits_path}/app_manager/include/appmgr",
     "${innerkits_path}/uri/include",
     "${services_path}/abilitymgr/include",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
+    "${appexecfwk_innerkits_path}/appexecfwk_base/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "//third_party/jsoncpp/include",
   ]

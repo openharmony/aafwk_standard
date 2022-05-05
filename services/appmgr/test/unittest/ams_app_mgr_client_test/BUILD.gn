@@ -27,7 +27,7 @@ ohos_unittest("AmsAppMgrClientTest") {
   sources += [ "ams_app_mgr_client_test.cpp" ]
 
   include_dirs = [
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include/",
+    "${appexecfwk_innerkits_path}/libeventhandler/include/",
     "${aafwk_path}/interfaces/innerkits/want/include/",
     "${aafwk_path}/interfaces/innerkits/base/include/",
     "${aafwk_path}/interfaces/innerkits/uri/include",
