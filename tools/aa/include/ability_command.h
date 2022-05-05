@@ -150,7 +150,7 @@ public:
 
     ErrCode CreateMessageMap() override;
     bool IsTestCommandIntegrity(const std::map<std::string, std::string> &params);
-    ErrCode StartUserTest(const std::map<std::string, std::string> &params, const bool isDebug);
+    ErrCode StartUserTest(const std::map<std::string, std::string> &params);
 
 private:
     ErrCode CreateCommandMap() override;

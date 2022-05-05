@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,11 +18,16 @@
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
 
+namespace {
+const std::string STRING_ABILITY_NAME_INVALID = "invalid_ability";
+const std::string STRING_BUNDLE_NAME_INVALID = "invalid_bundle";
+}  // namespace
+
 int MockAbilityManagerStub::StartAbility(const Want &want, int32_t userId, int requestCode)
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
 
-    ElementName element = want.GetElement();
+    AppExecFwk::ElementName element = want.GetElement();
 
     std::string abilityName = element.GetAbilityName();
     HILOG_INFO("abilityName: %{public}s", abilityName.c_str());
@@ -67,7 +72,7 @@ int MockAbilityManagerStub::StopServiceAbility(const Want &want, int32_t userId)
 {
     HILOG_INFO("[%{public}s(%{public}s)] enter", __FILE__, __FUNCTION__);
 
-    ElementName element = want.GetElement();
+    AppExecFwk::ElementName element = want.GetElement();
 
     std::string abilityName = element.GetAbilityName();
     HILOG_INFO("abilityName: %{public}s", abilityName.c_str());

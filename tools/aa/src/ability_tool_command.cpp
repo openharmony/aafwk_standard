@@ -83,6 +83,18 @@ const std::string ABILITY_TOOL_HELP_MSG_NO_BUNDLE_NAME_OPTION = "error: --bundle
 const std::string ABILITY_TOOL_HELP_MSG_WINDOW_MODE_INVALID = "error: --options windowMode <value> with invalid param";
 const std::string ABILITY_TOOL_HELP_MSG_LACK_VALUE = "error: lack of value of key";
 const std::string ABILITY_TOOL_HELP_MSG_ONLY_NUM = "error: current option only support number";
+
+const std::string shortOptionsForTest = "hb:o:p:m:w:D";
+const struct option longOptionsForTest[] = {
+    {"help", no_argument, nullptr, 'h'},
+    {"bundle", required_argument, nullptr, 'b'},
+    {"options", required_argument, nullptr, 'o'},
+    {"package-name", required_argument, nullptr, 'p'},
+    {"module-name", required_argument, nullptr, 'm'},
+    {"watchdog", required_argument, nullptr, 'w'},
+    {"debug", no_argument, nullptr, 'D'},
+    {nullptr, 0, nullptr, 0},
+};
 } // namespace
 
 AbilityToolCommand::AbilityToolCommand(int argc, char *argv[]) : ShellCommand(argc, argv, ABILITY_TOOL_NAME)
@@ -203,9 +215,8 @@ ErrCode AbilityToolCommand::RunAsForceStop()
 ErrCode AbilityToolCommand::RunAsTestCommand()
 {
     std::map<std::string, std::string> params;
-    bool isDebug = false;
 
-    ErrCode result = ParseTestArgsFromCmd(params, isDebug);
+    ErrCode result = ParseTestArgsFromCmd(params);
     if (result != OHOS::ERR_OK) {
         resultReceiver_.append(ABILITY_TOOL_HELP_MSG_TEST);
         return result;
@@ -222,7 +233,7 @@ ErrCode AbilityToolCommand::RunAsTestCommand()
         resultReceiver_.append(ABILITY_TOOL_HELP_MSG_TEST);
         return OHOS::ERR_INVALID_VALUE;
     }
-    return aaShellCmd_.get()->StartUserTest(params, isDebug);
+    return aaShellCmd_.get()->StartUserTest(params);
 }
 
 ErrCode AbilityToolCommand::ParseStartAbilityArgsFromCmd(Want& want, StartOptions& startoptions)
@@ -398,27 +409,16 @@ ErrCode AbilityToolCommand::ParseStopServiceArgsFromCmd(Want& want)
     return OHOS::ERR_OK;
 }
 
-ErrCode AbilityToolCommand::ParseTestArgsFromCmd(std::map<std::string, std::string>& params, bool isDebug)
+ErrCode AbilityToolCommand::ParseTestArgsFromCmd(std::map<std::string, std::string>& params)
 {
     std::string paramKey;
     std::string paramValue;
     std::smatch sm;
     int option = -1;
     int index = 0;
-    const std::string shortOptions = "hb:o:p:m:w:D";
-    const struct option longOptions[] = {
-        {"help", no_argument, nullptr, 'h'},
-        {"bundle", required_argument, nullptr, 'b'},
-        {"options", required_argument, nullptr, 'o'},
-        {"package-name", required_argument, nullptr, 'p'},
-        {"module-name", required_argument, nullptr, 'm'},
-        {"watchdog", required_argument, nullptr, 'w'},
-        {"debug", no_argument, nullptr, 'D'},
-        {nullptr, 0, nullptr, 0},
-    };
 
     // Parameter parse with conversion
-    while ((option = getopt_long(argc_, argv_, shortOptions.c_str(), longOptions, &index)) != EOF) {
+    while ((option = getopt_long(argc_, argv_, shortOptionsForTest.c_str(), longOptionsForTest, &index)) != EOF) {
         HILOG_INFO("option: %{public}d, optopt: %{public}d, optind: %{public}d", option, optopt, optind);
         switch (option) {
             case 'h':
@@ -453,7 +453,6 @@ ErrCode AbilityToolCommand::ParseTestArgsFromCmd(std::map<std::string, std::stri
                 params["-w"] = paramValue;
                 break;
             case 'D':
-                isDebug = true;
                 params["-D"] = "true";
                 break;
             default:

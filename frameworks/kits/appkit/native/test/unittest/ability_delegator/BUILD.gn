@@ -1,0 +1,246 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
+module_output_path = "ability_delegator/"
+
+ability_delegator_mock_sources = [
+  "${aafwk_path}/frameworks/kits/appkit/native/test/mock/ability_delegator/mock_ability_delegator_stub.cpp",
+  "${aafwk_path}/frameworks/kits/appkit/native/test/mock/ability_delegator/mock_iability_monitor.cpp",
+  "${aafwk_path}/frameworks/kits/appkit/native/test/mock/ability_delegator/mock_test_observer_stub.cpp",
+  "${aafwk_path}/frameworks/kits/appkit/native/test/mock/ability_delegator/mock_test_runner.cpp",
+  "${aafwk_path}/tools/aa/src/test_observer.cpp",
+  "${aafwk_path}/tools/aa/src/test_observer_stub.cpp",
+]
+
+###############################################################################
+config("unittest_include_dir") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/include/",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_delegator/include/runner_runtime/",
+    "${aafwk_path}/tools/aa/include",
+
+    "${aafwk_path}/frameworks/kits/appkit/native/test/mock/ability_delegator",
+    "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "//third_party/googletest/googlemock/include",
+    "${aafwk_path}/services/abilitymgr/include",
+    "${aafwk_path}/frameworks/kits/appkit/native/",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context/",
+    "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/app/",
+    "${aafwk_path}/interfaces/innerkits/runtime/include/",
+    "//utils/native/base/include",
+  ]
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+  defines = [
+    "APP_LOG_TAG = \"ApplicationUnitTest\"",
+    "LOG_DOMAIN = 0xD001151",
+  ]
+}
+
+ohos_unittest("shell_cmd_result_unittest") {
+  module_out_path = module_output_path
+  sources = [ "shell_cmd_result_test.cpp" ]
+
+  configs = [ ":unittest_include_dir" ]
+  configs += [ "${aafwk_path}/services/common:common_config" ]
+
+  deps = [
+    "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+}
+
+ohos_unittest("ability_delegator_args_unittest") {
+  module_out_path = module_output_path
+  sources = [ "ability_delegator_args_test.cpp" ]
+
+  configs = [ ":unittest_include_dir" ]
+  configs += [ "${aafwk_path}/services/common:common_config" ]
+
+  deps = [
+    "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+}
+
+ohos_unittest("iability_monitor_unittest") {
+  module_out_path = module_output_path
+
+  sources = [ "iability_monitor_test.cpp" ]
+  sources += ability_delegator_mock_sources
+
+  configs = [ ":unittest_include_dir" ]
+  configs += [ "${aafwk_path}/services/common:common_config" ]
+
+  deps = [
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "ability_runtime:ability_manager",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
+ohos_unittest("ability_delegator_unittest") {
+  module_out_path = module_output_path
+
+  sources = [ "ability_delegator_test.cpp" ]
+  sources += ability_delegator_mock_sources
+
+  configs = [ ":unittest_include_dir" ]
+  configs += [ "${aafwk_path}/services/common:common_config" ]
+
+  deps = [
+    "${aafwk_path}/frameworks/kits/appkit:app_context",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${aafwk_path}/services/abilitymgr:abilityms",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "ability_runtime:ability_manager",
+    "ability_runtime:runtime",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
+ohos_unittest("delegator_thread_unittest") {
+  module_out_path = module_output_path
+
+  sources = [ "delegator_thread_test.cpp" ]
+
+  configs = [ ":unittest_include_dir" ]
+  configs += [ "${aafwk_path}/services/common:common_config" ]
+
+  deps = [
+    "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
+ohos_unittest("ability_delegator_registry_unittest") {
+  module_out_path = module_output_path
+
+  sources = [ "ability_delegator_registry_test.cpp" ]
+  sources += ability_delegator_mock_sources
+
+  configs = [ ":unittest_include_dir" ]
+  configs += [ "${aafwk_path}/services/common:common_config" ]
+
+  deps = [
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:app_context",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${aafwk_path}/services/abilitymgr:abilityms",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "ability_runtime:ability_manager",
+    "ability_runtime:runtime",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
+}
+
+ohos_unittest("js_test_runner_unittest") {
+  module_out_path = module_output_path
+
+  sources = [ "js_test_runner_test.cpp" ]
+  sources += ability_delegator_mock_sources
+
+  configs = [ ":unittest_include_dir" ]
+  configs += [
+    "${aafwk_path}/services/common:common_config",
+    "//ark/js_runtime:ark_jsruntime_public_config",
+  ]
+
+  deps = [
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${aafwk_path}/frameworks/kits/appkit:app_context",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
+    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
+    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${aafwk_path}/services/abilitymgr:abilityms",
+    "//ark/js_runtime:libark_jsruntime",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "ability_base:configuration",
+    "ability_runtime:ability_manager",
+    "ability_runtime:runtime",
+    "bundle_framework:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+    "init:libbegetutil",
+  ]
+}
+
+###############################################################################
+
+group("unittest") {
+  testonly = true
+  deps = []
+
+  deps += [
+    ":ability_delegator_args_unittest",
+    ":ability_delegator_registry_unittest",
+    ":ability_delegator_unittest",
+    ":delegator_thread_unittest",
+    ":iability_monitor_unittest",
+    ":js_test_runner_unittest",
+    ":shell_cmd_result_unittest",
+  ]
+}
+###############################################################################
