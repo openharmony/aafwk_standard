@@ -25,7 +25,7 @@ ohos_unittest("AmsServiceEventDriveTest") {
     "//utils/native/base/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
     "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
+    "${appexecfwk_innerkits_path}/appexecfwk_base/include",
     "${aafwk_path}/services/appmgr/src",
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/account_error/include",
