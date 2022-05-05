@@ -60,9 +60,12 @@ int MockFormSupplyCallback::OnEventHandle(const Want& want)
  * OnAcquireStateResult
  *
  * @param state Form state
+ * @param provider provider info.
+ * @param wantArg The want of onAcquireFormState.
  * @param want input data
  */
-int MockFormSupplyCallback::OnAcquireStateResult(FormState state, const Want &want)
+int MockFormSupplyCallback::OnAcquireStateResult(FormState state, const std::string &provider, const Want &wantArg,
+                                                 const Want &want)
 {
     HILOG_INFO("MockFormSupplyCallback::OnAcquireStateResult called.");
     return 1;

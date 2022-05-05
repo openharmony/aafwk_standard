@@ -62,6 +62,7 @@ const int32_t PARAM_FORM_DIMENSION_VALUE = 1;
 
 const std::string DEVICE_ID = "ohos-phone1";
 const std::string DEF_LABEL1 = "PermissionFormRequireGrant";
+const int32_t USER_ID = 100;
 
 class FmsFormMgrAddFormTest : public testing::Test {
 public:
@@ -580,7 +581,10 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_009, TestSize.Level0)
     formInfo1.abilityName = FORM_PROVIDER_ABILITY_NAME;
     formInfo1.bundleName = FORM_PROVIDER_BUNDLE_NAME;
     formInfo1.supportDimensions.push_back(PARAM_FORM_DIMENSION_VALUE);
-    FormInfoMgr::GetInstance().bundleFormInfoMap_[FORM_PROVIDER_BUNDLE_NAME]->formInfos_.push_back(formInfo1);
+    FormInfoStorage formInfoStor;
+    formInfoStor.userId = USER_ID;
+    formInfoStor.formInfos.push_back(formInfo1);
+    FormInfoMgr::GetInstance().bundleFormInfoMap_[FORM_PROVIDER_BUNDLE_NAME]->formInfoStorages_.push_back(formInfoStor);
 
     FormRecord retFormRec = FormDataMgr::GetInstance().AllotFormRecord(record1, callingUid);
     retFormRec.updateAtHour = 1;

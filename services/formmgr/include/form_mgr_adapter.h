@@ -214,8 +214,8 @@ public:
     int DistributedDataDeleteForm(const std::string &formId);
 
     /**
-     * @brief Delete the given invalid forms.
-     * @param formIds Indicates the ID of the forms to delete.
+     * @brief Delete the invalid forms.
+     * @param formIds Indicates the ID of the valid forms.
      * @param callerToken Caller ability token.
      * @param numFormsDeleted Returns the number of the deleted forms.
      * @return Returns ERR_OK on success, others on failure.
@@ -231,6 +231,25 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int AcquireFormState(const Want &want, const sptr<IRemoteObject> &callerToken, FormStateInfo &stateInfo);
+
+    /**
+     * @brief Notify the form is visible or not.
+     * @param formIds Indicates the ID of the forms.
+     * @param isVisible Visible or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible, const sptr<IRemoteObject> &callerToken);
+
+    /**
+     * @brief Notify the form is enable to be updated or not.
+     * @param formIds Indicates the ID of the forms.
+     * @param isEnableUpdate enable update or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate,
+                                const sptr<IRemoteObject> &callerToken);
 
     /**
       * @brief Get All FormsInfo.
@@ -255,6 +274,14 @@ public:
      * @return Returns ERR_OK on success, others on failure.
      */
     int GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos);
+
+    /**
+     * @brief Update action string for router event.
+     * @param formId Indicates the unique id of form.
+     * @param action Indicates the origin action string.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int UpdateRouterAction(const int64_t formId, std::string &action);
 private:
     /**
      * @brief Get form configure info.
@@ -421,10 +448,11 @@ private:
      * @param formIDs The id of the forms.
      * @param callerToken Caller ability token.
      * @param flag form flag.
+     * @param isOnlyEnableUpdate form enable update form flag.
      * @return Returns ERR_OK on success, others on failure.
      */
-    int HandleUpdateFormFlag(const std::vector<int64_t> formIds,
-    const sptr<IRemoteObject> &callerToken, const bool flag);
+    ErrCode HandleUpdateFormFlag(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken,
+                                 bool flag, bool isOnlyEnableUpdate);
 
     /**
      * @brief handle update form flag.
@@ -509,6 +537,17 @@ private:
      * @return Returns user ID.
      */
     int32_t GetCurrentUserId(const int callingUid);
+
+    /**
+     * @brief AcquireFormState want check.
+     * @param bundleName The bundle name of the form.
+     * @param abilityName The ability name of the form.
+     * @param want The want of the form.
+     * @param provider the provider info.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode AcquireFormStateCheck(const std::string &bundleName, const std::string &abilityName, const Want &want,
+                                  std::string &provider);
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

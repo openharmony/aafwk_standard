@@ -22,6 +22,7 @@
 #include "form_host_callback.h"
 #include "form_item_info.h"
 #include "form_record.h"
+#include "form_state_info.h"
 #include "hilog_wrapper.h"
 #include "iremote_object.h"
 
@@ -71,9 +72,23 @@ public:
     /**
      * @brief Refresh enable or not.
      * @param formId The Id of the form.
-     * @return true on enbale, false on disable..
+     * @return true on enbale, false on disable.
      */
     bool IsEnableRefresh(int64_t formId) const;
+
+    /**
+     * @brief Set Update enable flag.
+     * @param formId The Id of the form.
+     * @param flag True for enbale, false for disable.
+     */
+    void SetEnableUpdate(int64_t formId, bool flag);
+
+    /**
+     * @brief update enable or not.
+     * @param formId The Id of the form.
+     * @return true on enbale, false on disable.
+     */
+    bool IsEnableUpdate(int64_t formId) const;
 
     /**
      * @brief Set need refresh enable flag.
@@ -84,7 +99,7 @@ public:
     /**
      * @brief Need Refresh enable or not.
      * @param formId The Id of the form.
-     * @return true on enbale, false on disable..
+     * @return true on enbale, false on disable.
      */
     bool IsNeedRefresh(int64_t formId) const;
 
@@ -108,6 +123,13 @@ public:
      * @param record Form record.
      */
     void OnFormUninstalled(std::vector<int64_t> &formIds);
+    /**
+     * Send form state message to form host.
+     *
+     * @param state The form state.
+     * @param want The want of onAcquireFormState.
+     */
+    void OnAcquireState(AppExecFwk::FormState state, const AAFwk::Want &want);
 
     /**
      * @brief Release resource.
@@ -175,6 +197,7 @@ private:
     std::shared_ptr<FormHostCallback>  clientImpl_ = nullptr;
     sptr<IRemoteObject::DeathRecipient> deathRecipient_ = nullptr;
     std::unordered_map<int64_t, bool> forms_;
+    std::unordered_map<int64_t, bool> enableUpdateMap_;
     std::unordered_map<int64_t, bool> needRefresh_;
     std::string hostBundleName_ = "";
 

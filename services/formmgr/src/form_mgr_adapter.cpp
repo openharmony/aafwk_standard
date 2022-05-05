@@ -365,11 +365,7 @@ ErrCode FormMgrAdapter::HandleDeleteFormCache(FormRecord &dbRecord, const int ui
 
     HILOG_DEBUG("%{public}s, dbRecord.formUserUids size: %{public}zu", __func__, dbRecord.formUserUids.size());
     FormBmsHelper::GetInstance().NotifyModuleNotRemovable(dbRecord.bundleName, dbRecord.moduleName);
-    if (!FormDataMgr::GetInstance().DeleteFormUserUid(formId, uid)) {
-        HILOG_ERROR("%{public}s, failed to remove form user uid", __func__);
-        return ERR_APPEXECFWK_FORM_COMMON_CODE;
-    }
-
+    FormDataMgr::GetInstance().DeleteFormUserUid(formId, uid);
     return result;
 }
 
@@ -472,7 +468,7 @@ int FormMgrAdapter::RequestForm(const int64_t formId, const sptr<IRemoteObject> 
     int callingUid = IPCSkeleton::GetCallingUid();
     int32_t userId = GetCurrentUserId(callingUid);
     reqWant.SetParam(Constants::PARAM_FORM_USER_ID, userId);
-    return FormProviderMgr::GetInstance().RefreshForm(matchedFormId, reqWant);
+    return FormProviderMgr::GetInstance().RefreshForm(matchedFormId, reqWant, true);
 }
 
 /**
@@ -829,7 +825,7 @@ ErrCode FormMgrAdapter::AddExistFormRecord(const FormItemInfo &info, const sptr<
 
     FormRecord newRecord(record);
 
-    if (newRecord.needRefresh) {
+    if (newRecord.needRefresh || !FormCacheMgr::GetInstance().IsExist(newRecord.formId)) {
         newRecord.isInited = false;
         FormDataMgr::GetInstance().SetFormCacheInited(formId, false);
         // acquire formInfo from provider
@@ -849,8 +845,10 @@ ErrCode FormMgrAdapter::AddExistFormRecord(const FormItemInfo &info, const sptr<
 
     // create form info for js
     std::string cacheData;
-    if (FormCacheMgr::GetInstance().GetData(formId, cacheData)) {
+    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageMap;
+    if (FormCacheMgr::GetInstance().GetData(formId, cacheData, imageMap)) {
         formInfo.formData = cacheData;
+        formInfo.formProviderData.SetImageDataMap(imageMap);
     }
     FormDataMgr::GetInstance().CreateFormInfo(formId, record, formInfo);
 
@@ -1363,7 +1361,7 @@ bool FormMgrAdapter::IsUpdateValid(const int64_t formId, const std::string &bund
 int FormMgrAdapter::EnableUpdateForm(const std::vector<int64_t> formIDs, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("enableUpdateForm");
-    return HandleUpdateFormFlag(formIDs, callerToken, true);
+    return HandleUpdateFormFlag(formIDs, callerToken, true, false);
 }
 
 /**
@@ -1375,7 +1373,7 @@ int FormMgrAdapter::EnableUpdateForm(const std::vector<int64_t> formIDs, const s
 int FormMgrAdapter::DisableUpdateForm(const std::vector<int64_t> formIDs, const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("disableUpdateForm");
-    return HandleUpdateFormFlag(formIDs, callerToken, false);
+    return HandleUpdateFormFlag(formIDs, callerToken, false, false);
 }
 
 /**
@@ -1427,8 +1425,8 @@ int FormMgrAdapter::MessageEvent(const int64_t formId, const Want &want, const s
     return FormProviderMgr::GetInstance().MessageEvent(matchedFormId, record, want);
 }
 
-int FormMgrAdapter::HandleUpdateFormFlag(std::vector<int64_t> formIds,
-    const sptr<IRemoteObject> &callerToken, bool flag)
+ErrCode FormMgrAdapter::HandleUpdateFormFlag(const std::vector<int64_t> &formIds,
+                                             const sptr<IRemoteObject> &callerToken, bool flag, bool isOnlyEnableUpdate)
 {
     HILOG_INFO("%{public}s called.", __func__);
     if (formIds.empty() || callerToken == nullptr) {
@@ -1436,15 +1434,16 @@ int FormMgrAdapter::HandleUpdateFormFlag(std::vector<int64_t> formIds,
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
     std::vector<int64_t> refreshForms;
-    int errCode =  FormDataMgr::GetInstance().UpdateHostFormFlag(formIds, callerToken, flag, refreshForms);
-    if (errCode == ERR_OK && refreshForms.size() > 0) {
+    int errCode = FormDataMgr::GetInstance().UpdateHostFormFlag(formIds, callerToken, flag, isOnlyEnableUpdate,
+        refreshForms);
+    if (errCode == ERR_OK && !refreshForms.empty()) {
         for (const int64_t id : refreshForms) {
             HILOG_INFO("%{public}s, formRecord need refresh: %{public}" PRId64 "", __func__, id);
             Want want;
             int callingUid = IPCSkeleton::GetCallingUid();
             int32_t userId = GetCurrentUserId(callingUid);
             want.SetParam(Constants::PARAM_FORM_USER_ID, userId);
-            FormProviderMgr::GetInstance().RefreshForm(id, want);
+            FormProviderMgr::GetInstance().RefreshForm(id, want, false);
         }
     }
     return errCode;
@@ -1644,9 +1643,11 @@ bool FormMgrAdapter::UpdateProviderInfoToHost(const int64_t matchedFormId, const
     // If the form need refrsh flag is true and form visibleType is FORM_VISIBLE, refresh the form host.
     if (formRecord.needRefresh && formVisibleType == Constants::FORM_VISIBLE) {
         std::string cacheData;
+        std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageMap;
         // If the form has business cache, refresh the form host.
-        if (FormCacheMgr::GetInstance().GetData(matchedFormId, cacheData)) {
+        if (FormCacheMgr::GetInstance().GetData(matchedFormId, cacheData, imageMap)) {
             formRecord.formProviderInfo.SetFormDataString(cacheData);
+            formRecord.formProviderInfo.SetImageDataMap(imageMap);
             formHostRecord.OnUpdate(matchedFormId, formRecord);
         }
     }
@@ -1720,8 +1721,8 @@ int32_t FormMgrAdapter::GetCurrentUserId(const int callingUid)
 }
 
 /**
- * @brief Delete the given invalid forms.
- * @param formIds Indicates the ID of the forms to delete.
+ * @brief Delete the invalid forms.
+ * @param formIds Indicates the ID of the valid forms.
  * @param callerToken Caller ability token.
  * @param numFormsDeleted Returns the number of the deleted forms.
  * @return Returns ERR_OK on success, others on failure.
@@ -1734,39 +1735,97 @@ int FormMgrAdapter::DeleteInvalidForms(const std::vector<int64_t> &formIds, cons
         HILOG_ERROR("%{public}s, deleteForm invalid param", __func__);
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
-    numFormsDeleted = 0;
 
+    std::set<int64_t> matchedFormIds {};
     for (int64_t formId: formIds) {
-        HILOG_DEBUG("check formId: %{public}" PRId64 "", formId);
-        if (formId <= 0) {
-            continue;
-        }
         int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
-        if (FormDataMgr::GetInstance().ExistTempForm(matchedFormId)) {
-            HILOG_INFO("delete temp form, formId: %{public}" PRId64 "", formId);
-            int ret = HandleDeleteTempForm(matchedFormId, callerToken);
-            if (ret == ERR_OK) {
-                numFormsDeleted++;
-            } else {
-                HILOG_ERROR("failed to delete the temp form, formId: %{public}" PRId64 "", formId);
+        matchedFormIds.emplace(matchedFormId);
+        HILOG_DEBUG("valid formId, matchedFormIds: %{public}" PRId64 "", formId);
+    }
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+
+    std::map<int64_t, bool> removedFormsMap {};
+    int32_t userId = GetCurrentUserId(callingUid);
+
+    // delete invalid DB form record
+    FormDbCache::GetInstance().DeleteInvalidDBForms(userId, callingUid, matchedFormIds, removedFormsMap);
+    // delete invalid temp form record
+    FormDataMgr::GetInstance().DeleteInvalidTempForms(userId, callingUid, matchedFormIds, removedFormsMap);
+
+    if (!removedFormsMap.empty()) {
+        FormDataMgr::GetInstance().ClearHostDataByInvalidForms(callingUid, removedFormsMap);
+        // delete forms timer
+        for (const auto &removedForm: removedFormsMap) {
+            if (removedForm.second) {
+                FormTimerMgr::GetInstance().RemoveFormTimer(removedForm.first);
             }
-            continue;
-        }
-
-        if (!FormDataMgr::GetInstance().ExistFormRecord(matchedFormId)) {
-            HILOG_ERROR("%{public}s, not exist such form:%{public}" PRId64 "", __func__, matchedFormId);
-            continue;
-        }
-
-        HILOG_INFO("delete form, formId: %{public}" PRId64 "", formId);
-        int ret = HandleDeleteForm(matchedFormId, callerToken);
-        if (ret == ERR_OK) {
-            numFormsDeleted++;
-        } else {
-            HILOG_ERROR("failed to delete the form, formId: %{public}" PRId64 "", formId);
         }
     }
+
+    numFormsDeleted = (int32_t) removedFormsMap.size();
     HILOG_INFO("%{public}s done, %{public}d forms deleted.", __func__, numFormsDeleted);
+    return ERR_OK;
+}
+
+/**
+ * @brief AcquireFormState want check.
+ * @param bundleName The bundle name of the form.
+ * @param abilityName The ability name of the form.
+ * @param want The want of the form.
+ * @param provider the provider info.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormMgrAdapter::AcquireFormStateCheck(const std::string &bundleName, const std::string &abilityName,
+                                              const Want &want, std::string &provider)
+{
+    if (bundleName.empty()) {
+        HILOG_ERROR("%{public}s error, bundleName is empty.", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+    if (abilityName.empty()) {
+        HILOG_ERROR("%{public}s error, abilityName is empty.", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    std::string moduleName = want.GetStringParam(AppExecFwk::Constants::PARAM_MODULE_NAME_KEY);
+    std::string formName = want.GetStringParam(AppExecFwk::Constants::PARAM_FORM_NAME_KEY);
+    int32_t dimensionId = want.GetIntParam(AppExecFwk::Constants::PARAM_FORM_DIMENSION_KEY, 1);
+
+    if (moduleName.empty()) {
+        HILOG_ERROR("%{public}s error, moduleName is empty.", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+    if (formName.empty()) {
+        HILOG_ERROR("%{public}s error, formName is empty.", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    std::vector<FormInfo> formInfos {};
+    ErrCode errCode = FormInfoMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
+    if (errCode != ERR_OK) {
+        HILOG_ERROR("%{public}s error, failed to get forms info.", __func__);
+        return errCode;
+    }
+
+    bool found = false;
+    for (auto &formInfo: formInfos) {
+        if ((formInfo.abilityName == abilityName) && (formInfo.name == formName) &&
+            (IsDimensionValid(formInfo, dimensionId))) {
+            found = true;
+            HILOG_INFO("%{public}s form info found.", __func__);
+            break;
+        }
+    }
+    if (!found) {
+        HILOG_INFO("failed to find match form info.");
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    const std::string doubleColon = "::";
+    provider.append(bundleName).append(doubleColon).append(abilityName).append(doubleColon)
+        .append(moduleName).append(doubleColon).append(formName).append(doubleColon)
+        .append(std::to_string(dimensionId)).append(doubleColon).append(std::to_string(callingUid));
     return ERR_OK;
 }
 
@@ -1787,17 +1846,19 @@ int FormMgrAdapter::AcquireFormState(const Want &want, const sptr<IRemoteObject>
     std::string bundleName = want.GetElement().GetBundleName();
     std::string abilityName = want.GetElement().GetAbilityName();
 
-    if (bundleName.empty()) {
-        HILOG_ERROR("%{public}s error, bundleName is empty.", __func__);
-        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
-    }
-    if (abilityName.empty()) {
-        HILOG_ERROR("%{public}s error, abilityName is empty.", __func__);
-        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    std::string provider;
+    ErrCode errCode = AcquireFormStateCheck(bundleName, abilityName, want, provider);
+    if (errCode != ERR_OK) {
+        return errCode;
     }
 
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    FormItemInfo info;
+    FormDataMgr::GetInstance().CreateFormStateRecord(provider, info, callerToken, callingUid);
+
     HILOG_DEBUG("bundleName:%{public}s, abilityName:%{public}s", bundleName.c_str(), abilityName.c_str());
-    sptr<IAbilityConnection> acquireFormStateConnection = new FormAcquireStateConnection(bundleName, abilityName, want);
+    sptr<IAbilityConnection> acquireFormStateConnection = new FormAcquireStateConnection(bundleName, abilityName, want,
+        provider);
 
     Want targetWant;
     targetWant.AddFlags(Want::FLAG_ABILITY_FORM_ENABLED);
@@ -1809,6 +1870,34 @@ int FormMgrAdapter::AcquireFormState(const Want &want, const sptr<IRemoteObject>
     }
     stateInfo.state = FormState::DEFAULT;
     return ERR_OK;
+}
+
+/**
+ * @brief Notify the form is visible or not.
+ * @param formIds Indicates the ID of the forms.
+ * @param isVisible Visible or not.
+ * @param callerToken Host client.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
+                                       const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s, isVisible: %{public}d.", __func__, isVisible);
+    return FormDataMgr::GetInstance().NotifyFormsVisible(formIds, isVisible, callerToken);
+}
+
+/**
+ * @brief Notify the form is enable to be updated or not.
+ * @param formIds Indicates the ID of the forms.
+ * @param isEnableUpdate enable update or not.
+ * @param callerToken Host client.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate,
+                                            const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s, isEnableUpdate: %{public}d.", __func__, isEnableUpdate);
+    return HandleUpdateFormFlag(formIds, callerToken, isEnableUpdate, true);
 }
 
 /**
@@ -1843,6 +1932,53 @@ int FormMgrAdapter::GetFormsInfoByModule(std::string &bundleName, std::string &m
                                          std::vector<FormInfo> &formInfos)
 {
     return FormInfoMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
+}
+
+/**
+ * @brief Update action string for router event.
+ * @param formId Indicates the unique id of form.
+ * @param action Indicates the origin action string.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrAdapter::UpdateRouterAction(const int64_t formId, std::string &action)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    if (formId <= 0) {
+        HILOG_ERROR("%{public}s form formId or bundleName is invalid", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
+    FormRecord record;
+    bool bGetRecord = FormDataMgr::GetInstance().GetFormRecord(matchedFormId, record);
+    if (!bGetRecord) {
+        HILOG_ERROR("%{public}s fail, not exist such form:%{public}" PRId64 "", __func__, matchedFormId);
+        return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
+    }
+
+    sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+    if (iBundleMgr == nullptr) {
+        HILOG_ERROR("%{public}s fail, failed to get IBundleMgr.", __func__);
+        return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
+    }
+
+    if (CheckIsSystemAppByBundleName(iBundleMgr, record.bundleName)) {
+        return ERR_OK;
+    }
+
+    if (action.empty()) {
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    nlohmann::json actionObject = nlohmann::json::parse(action, nullptr, false);
+    if (actionObject.is_discarded()) {
+        HILOG_ERROR("failed to parse jsonDataString: %{public}s.", action.c_str());
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    actionObject["bundleName"] = record.bundleName;
+    action = actionObject.dump();
+    return ERR_OK;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

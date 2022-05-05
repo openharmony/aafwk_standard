@@ -195,7 +195,7 @@ HWTEST_F(FmsFormProviderMgrTest, RefreshForm_001, TestSize.Level0)
     int64_t formId = 0x1145aaaa00001200;
     Want want;
     int callingUid {0};
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_NOT_EXIST_ID, FormProviderMgr::GetInstance().RefreshForm(formId, want));
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_NOT_EXIST_ID, FormProviderMgr::GetInstance().RefreshForm(formId, want, true));
     FormItemInfo record;
     record.SetFormId(formId);
     record.SetModuleName(PARAM_FORM_NAME);
@@ -229,7 +229,7 @@ HWTEST_F(FmsFormProviderMgrTest, RefreshForm_002, TestSize.Level0)
     FormRecord realFormRecord = FormDataMgr::GetInstance().AllotFormRecord(record, callingUid);
     FormItemInfo info;
     FormDataMgr::GetInstance().AllotFormHostRecord(info, token_, formId, callingUid);
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_PROVIDER_DEL_FAIL, FormProviderMgr::GetInstance().RefreshForm(formId, want));
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_PROVIDER_DEL_FAIL, FormProviderMgr::GetInstance().RefreshForm(formId, want, true));
     GTEST_LOG_(INFO) << "fms_form_mgr_provider_test_005 end";
 }
 }

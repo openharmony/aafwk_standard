@@ -186,6 +186,20 @@ private:
      */
     int32_t HandleAcquireFormState(MessageParcel &data, MessageParcel &reply);
     /**
+     * @brief Handle NotifyFormsVisible message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t HandleNotifyFormsVisible(MessageParcel &data, MessageParcel &reply);
+    /**
+     * @brief Handle NotifyFormsEnableUpdate message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t HandleNotifyFormsEnableUpdate(MessageParcel &data, MessageParcel &reply);
+    /**
      * @brief Handle GetAllFormsInfo message.
      * @param data input param.
      * @param reply output param.
@@ -206,6 +220,14 @@ private:
      * @return Returns ERR_OK on success, others on failure.
      */
     int32_t HandleGetFormsInfoByModule(MessageParcel &data, MessageParcel &reply);
+
+    /**
+     * @brief Update action string for router event.
+     * @param formId Indicates the unique id of form.
+     * @param action Indicates the origin action string.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t HandleUpdateRouterAction(MessageParcel &data, MessageParcel &reply);
 private:
     using FormMgrFunc = int32_t (FormMgrStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, FormMgrFunc> memberFuncMap_;

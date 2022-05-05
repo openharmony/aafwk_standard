@@ -28,6 +28,7 @@
 namespace OHOS {
 namespace AppExecFwk {
 const std::string JSON_EMPTY_STRING = "{}";
+const std::string JSON_IMAGES_STRING = "formImages";
 
 /**
  * @brief Constructor.
@@ -46,6 +47,7 @@ FormProviderData::FormProviderData()
 FormProviderData::FormProviderData(nlohmann::json &jsonData)
 {
     jsonFormProviderData_ = jsonData;
+    ParseImagesData();
 }
 
 /**
@@ -65,6 +67,7 @@ FormProviderData::FormProviderData(std::string jsonDataString)
         return;
     }
     jsonFormProviderData_ = jsonObject;
+    ParseImagesData();
 }
 
 /**
@@ -123,8 +126,9 @@ void FormProviderData::AddImageData(std::string picName, char *data, int32_t siz
  */
 void FormProviderData::AddImageData(std::string picName, int fd)
 {
-    HILOG_INFO("%{public}s called", __func__);
+    HILOG_INFO("%{public}s called. fd is %{public}d", __func__, fd);
     if (fd < 0) {
+        HILOG_ERROR("fd is invalid.");
         return;
     }
 
@@ -144,6 +148,25 @@ void FormProviderData::AddImageData(std::string picName, int fd)
     }
     AddImageData(picName, data, size);
     HILOG_INFO("%{public}s called end.", __func__);
+}
+
+void FormProviderData::ParseImagesData()
+{
+    if (jsonFormProviderData_ == nullptr) {
+        HILOG_ERROR("Form provider json data is nullptr.");
+        return;
+    }
+    if (!jsonFormProviderData_.contains(JSON_IMAGES_STRING)) {
+        return;
+    }
+    nlohmann::json jsonImages = jsonFormProviderData_.at(JSON_IMAGES_STRING);
+    for (auto iter = jsonImages.begin(); iter != jsonImages.end(); iter++) {
+        if (iter->is_number_integer()) {
+            AddImageData(iter.key(), iter.value());
+        } else {
+            HILOG_ERROR("fd is not number integer.");
+        }
+    }
 }
 
 /**
@@ -227,6 +250,11 @@ void FormProviderData::SetImageDataState(int32_t imageDataState)
 void FormProviderData::SetImageDataMap(std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap)
 {
     imageDataMap_ = imageDataMap;
+    if (!imageDataMap.empty()) {
+        imageDataState_ = IMAGE_DATA_STATE_ADDED;
+    } else {
+        imageDataState_ = IMAGE_DATA_STATE_NO_OPERATION;
+    }
 }
 
 /**
@@ -259,7 +287,8 @@ bool FormProviderData::ReadFromParcel(Parcel &parcel)
 
                 int32_t len = parcel.ReadInt32();
                 std::pair<sptr<Ashmem>, int32_t> imageDataRecord = std::make_pair(ashmem, len);
-                imageDataMap_.emplace(Str16ToStr8(parcel.ReadString16()), imageDataRecord);
+                auto picName = Str16ToStr8(parcel.ReadString16());
+                imageDataMap_[picName] = imageDataRecord;
             }
             break;
         }

@@ -30,6 +30,7 @@
 #include "form_item_info.h"
 #include "form_js_info.h"
 #include "form_record.h"
+#include "form_state_info.h"
 #include "iremote_object.h"
 
 namespace OHOS {
@@ -185,6 +186,12 @@ public:
      */
     bool IsEnableRefresh(int64_t formId);
     /**
+     * @brief update enable or not.
+     * @param formId The Id of the form.
+     * @return true on enbale, false on disable.
+     */
+    bool IsEnableUpdate(int64_t formId);
+    /**
      * @brief Check calling uid is valid.
      * @param formUserUids The form user uids.
      * @return Returns true if this user uid is valid; returns false otherwise.
@@ -303,11 +310,12 @@ public:
      * @param formIDs The id of the forms.
      * @param callerToken Caller ability token.
      * @param flag form flag.
+     * @param isOnlyEnableUpdate form enable update form flag.
      * @param refreshForms Refresh forms
      * @return Returns ERR_OK on success, others on failure.
      */
-    int32_t UpdateHostFormFlag(std::vector<int64_t> formIds, const sptr<IRemoteObject> &callerToken,
-    const bool flag, std::vector<int64_t> &refreshForms);
+    ErrCode UpdateHostFormFlag(const std::vector<int64_t> &formIds, const sptr<IRemoteObject> &callerToken,
+                               bool flag, bool isOnlyEnableUpdate, std::vector<int64_t> &refreshForms);
     /**
      * @brief Find matched form id.
      * @param formId The form id.
@@ -329,13 +337,6 @@ public:
         std::map<int64_t, bool> &foundFormsMap);
 
     /**
-     * @brief Update form for host clients.
-     * @param formId The Id of the form.
-     * @param formProviderInfo FormProviderInfo object
-     */
-    void UpdateFormProviderInfo(const int64_t formId, const FormProviderInfo &formProviderInfo);
-
-    /**
      * @brief delete forms by userId.
      *
      * @param userId user ID.
@@ -346,6 +347,84 @@ public:
     * @brief Clear form records for st limit value test.
     */
     void ClearFormRecords();
+
+    /**
+     * @brief handle get no host invalid temp forms.
+     * @param userId User ID.
+     * @param callingUid The UID of the proxy.
+     * @param matchedFormIds The set of the valid forms.
+     * @param noHostTempFormsMap The map of the no host forms.
+     * @param foundFormsMap The map of the found forms.
+     */
+    void GetNoHostInvalidTempForms(int32_t userId, int32_t callingUid, std::set<int64_t> &matchedFormIds,
+                                   std::map<FormIdKey, std::set<int64_t>> &noHostTempFormsMap,
+                                   std::map<int64_t, bool> &foundFormsMap);
+
+    /**
+     * @brief handle delete no host temp forms.
+     * @param callingUid The UID of the proxy.
+     * @param noHostTempFormsMap The map of the no host forms.
+     * @param foundFormsMap The map of the found forms.
+     */
+    void BatchDeleteNoHostTempForms(int32_t callingUid, std::map<FormIdKey, std::set<int64_t>> &noHostTempFormsMap,
+                                    std::map<int64_t, bool> &foundFormsMap);
+
+    /**
+     * @brief delete invalid temp forms.
+     * @param userId User ID.
+     * @param callingUid The UID of the proxy.
+     * @param matchedFormIds The set of the valid forms.
+     * @param removedFormsMap The map of the removed invalid forms.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t DeleteInvalidTempForms(int32_t userId, int32_t callingUid, std::set<int64_t> &matchedFormIds,
+                                   std::map<int64_t, bool> &removedFormsMap);
+
+    /**
+     * @brief clear host data by invalid forms.
+     * @param callingUid The UID of the proxy.
+     * @param removedFormsMap The map of the removed invalid forms.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    int32_t ClearHostDataByInvalidForms(int32_t callingUid, std::map<int64_t, bool> &removedFormsMap);
+
+    /**
+     * @brief Create form state host record.
+     * @param provider The provider of the form state
+     * @param info The form item info.
+     * @param callerToken The UID of the proxy.
+     * @param callingUid The UID of the proxy.
+     * @return Returns true if this function is successfully called; returns false otherwise.
+     */
+    bool CreateFormStateRecord(std::string &provider, const FormItemInfo &info, const sptr<IRemoteObject> &callerToken,
+                               int callingUid);
+
+    /**
+     * @brief acquire form state callback.
+     * @param state form state.
+     * @param provider provider info.
+     * @param want The want of onAcquireFormState.
+     * @return Returns true if this function is successfully called; returns false otherwise.
+     */
+    ErrCode AcquireFormStateBack(AppExecFwk::FormState state, const std::string &provider, const AAFwk::Want &want);
+
+    /**
+     * @brief Notify the form is visible or not.
+     * @param formIds Indicates the ID of the forms.
+     * @param isVisible Visible or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
+                               const sptr<IRemoteObject> &callerToken);
+
+    /**
+     * @brief set form record visible.
+     * @param matchedFormId form id.
+     * @param isVisible is visible.
+     * @return Returns true if this function is successfully called; returns false otherwise.
+     */
+    ErrCode SetRecordVisible(int64_t matchedFormId, bool isVisible);
 private:
     /**
      * @brief Create form record.
@@ -406,13 +485,27 @@ private:
      * @return Returns ERR_OK on success, others on failure.
      */
     bool IsFormCached(const FormRecord record);
+
+    /**
+    * @brief handle update form flag.
+    * @param formIDs The id of the forms.
+    * @param flag form flag.
+    * @param isOnlyEnableUpdate form enable update form flag.
+    * @param formHostRecord form host record.
+    * @param refreshForms Refresh forms
+    * @return Returns ERR_OK on success, others on failure.
+    */
+    ErrCode HandleUpdateHostFormFlag(const std::vector<int64_t> &formIds, bool flag, bool isOnlyEnableUpdate,
+                                     FormHostRecord &formHostRecord, std::vector<int64_t> &refreshForms);
 private:
     mutable std::mutex formRecordMutex_;
     mutable std::mutex formHostRecordMutex_;
     mutable std::mutex formTempMutex_;
+    mutable std::mutex formStateRecordMutex_;
     std::map<int64_t, FormRecord> formRecords_;
     std::vector<FormHostRecord> clientRecords_;
     std::vector<int64_t> tempForms_;
+    std::map<std::string, FormHostRecord> formStateRecord_;
     int64_t udidHash_;
 };
 }  // namespace AppExecFwk

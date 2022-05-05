@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -11,36 +11,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#import("//build/config/ohos/rules.gni")
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
-ohos_shared_library("formhost_napi") {
-  include_dirs = [
-    "./",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
-  ]
+
+ohos_shared_library("forminfo_napi") {
+  include_dirs = []
 
   sources = [
-    "napi_form_host.cpp",
-    "native_module.cpp",
+    "form_info_module.cpp",
+    "js_form_info.cpp",
   ]
 
-  deps = [
-    "${aafwk_path}/frameworks/kits/fmskit:fmskit_native",
-    "${aafwk_path}/interfaces/kits/napi/aafwk/formUtil:formutil_napi",
-    "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
-    "${kits_path}/appkit:appkit_native",
-  ]
+  configs = [ "${services_path}/common:common_config" ]
+
+  deps = []
 
   external_deps = [
-    "ability_base:base",
     "ability_base:want",
-    "ability_runtime:ability_manager",
-    "ability_runtime:abilitykit_native",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_base",
+    "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
     "napi:ace_napi",
+    "utils_base:utils",
   ]
 
   relative_install_dir = "module/application"

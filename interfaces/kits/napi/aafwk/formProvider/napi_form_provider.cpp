@@ -132,52 +132,6 @@ static std::string GetStringByProp(napi_env env, napi_value value, const std::st
     return result;
 }
 
-static bool UnwrapRawImageDataMap(napi_env env, napi_value value, std::map<std::string, int>& rawImageDataMap)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    bool propExist = false;
-    napi_value param = nullptr;
-    napi_valuetype valueType = napi_undefined;
-    napi_has_named_property(env, value, "image", &propExist);
-    if (!propExist) {
-        HILOG_ERROR("%{public}s, prop[image] not exist.", __func__);
-        return false;
-    }
-    napi_get_named_property(env, value, "image", &param);
-    if (param == nullptr) {
-        HILOG_ERROR("%{public}s, prop[image] get failed.", __func__);
-        return false;
-    }
-    napi_typeof(env, param, &valueType);
-    if (valueType != napi_object) {
-        HILOG_ERROR("%{public}s, prop[image]] is not napi_object.", __func__);
-        return false;
-    }
-    napi_valuetype jsValueType = napi_undefined;
-    napi_value jsProNameList = nullptr;
-    uint32_t jsProCount = 0;
-    NAPI_CALL_BASE(env, napi_get_property_names(env, param, &jsProNameList), false);
-    NAPI_CALL_BASE(env, napi_get_array_length(env, jsProNameList, &jsProCount), false);
-    HILOG_INFO("%{public}s called. Property size=%{public}d.", __func__, jsProCount);
-    napi_value jsProName = nullptr;
-    napi_value jsProValue = nullptr;
-    for (uint32_t index = 0; index < jsProCount; index++) {
-        NAPI_CALL_BASE(env, napi_get_element(env, jsProNameList, index, &jsProName), false);
-        std::string strProName = GetStringFromNAPI(env, jsProName);
-        HILOG_INFO("%{public}s called. Property name=%{public}s.", __func__, strProName.c_str());
-        NAPI_CALL_BASE(env, napi_get_named_property(env, param, strProName.c_str(), &jsProValue), false);
-        NAPI_CALL_BASE(env, napi_typeof(env, jsProValue, &jsValueType), false);
-        int natValue = 0;
-        if (napi_get_value_int32(env, param, &natValue) != napi_ok) {
-            HILOG_INFO("%{public}s Property:%{public}s get value failed.", __func__, strProName.c_str());
-            continue;
-        }
-        rawImageDataMap.emplace(strProName, natValue);
-        HILOG_INFO("%{public}s called. Property value=%{public}d.", __func__, natValue);
-    }
-    return true;
-}
-
 /**
  * @brief  Call native kit function: SetFormNextRefreshTime
  *
@@ -499,12 +453,7 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
     std::string formDataStr = GetStringByProp(env, argv[1], "data");
     HILOG_INFO("%{public}s %{public}s - %{public}s.", __func__, strFormId.c_str(), formDataStr.c_str());
     formProviderData->SetDataString(formDataStr);
-    std::map<std::string, int> rawImageDataMap;
-    UnwrapRawImageDataMap(env, argv[1], rawImageDataMap);
-    HILOG_INFO("%{public}s Image number is %{public}zu", __func__, rawImageDataMap.size());
-    for (const auto& entry : rawImageDataMap) {
-        formProviderData->AddImageData(entry.first, entry.second);
-    }
+    formProviderData->ParseImagesData();
 
     AsyncUpdateFormCallbackInfo *asyncCallbackInfo = new
         AsyncUpdateFormCallbackInfo {
