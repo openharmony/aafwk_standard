@@ -75,7 +75,7 @@ JsTestRunner::~JsTestRunner() = default;
 bool JsTestRunner::Initialize()
 {
     if (isFaJsModel_) {
-        if (jsRuntime_.RunScript("/system/etc/strip.native.min.abc") == false) {
+        if (!jsRuntime_.RunScript("/system/etc/strip.native.min.abc")) {
             HILOG_ERROR("RunScript err");
             return false;
         }
@@ -86,7 +86,7 @@ bool JsTestRunner::Initialize()
             HILOG_ERROR("mgmtResult init error");
             return false;
         }
-        if (jsRuntime_.RunSendboxScript(srcPath_) == false) {
+        if (!jsRuntime_.RunSandboxScript(srcPath_)) {
             HILOG_ERROR("RunScript srcPath_ err");
             return false;
         }

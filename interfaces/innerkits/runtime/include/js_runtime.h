@@ -59,7 +59,7 @@ public:
     std::string BuildNativeAndJsBackStackTrace() override;
 
     virtual bool RunScript(const std::string& path);
-    virtual bool RunSendboxScript(const std::string& path);
+    virtual bool RunSandboxScript(const std::string& path);
 
 protected:
     JsRuntime() = default;
