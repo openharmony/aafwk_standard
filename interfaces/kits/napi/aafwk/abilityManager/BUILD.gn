@@ -31,7 +31,7 @@ ohos_shared_library("abilitymanager") {
   deps = [
     "${kits_path}/appkit:appkit_native",
     "${services_path}/abilitymgr:abilityms",
-    "${services_path}/appmgr:libams",
+    "${services_path}/appmgr:libappms",
   ]
 
   external_deps = [

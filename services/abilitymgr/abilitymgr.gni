@@ -76,12 +76,11 @@ abilityms_files = [
   #multi user
   "src/user_controller.cpp",
   "src/user_event_handler.cpp",
-]
 
-free_install = [
-  "${services_path}/abilitymgr/src/atomic_service_status_callback_proxy.cpp",
-  "${services_path}/abilitymgr/src/atomic_service_status_callback_stub.cpp",
-  "${services_path}/abilitymgr/src/atomic_service_status_callback.cpp",
+  #free_install
+  "src/atomic_service_status_callback_proxy.cpp",
+  "src/atomic_service_status_callback_stub.cpp",
+  "src/atomic_service_status_callback.cpp",
 ]
 
 if (ability_runtime_graphics) {

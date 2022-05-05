@@ -24,11 +24,11 @@ config("appmgr_config") {
   ]
 }
 
-group("ams_target") {
-  deps = [ ":libams" ]
+group("appms_target") {
+  deps = [ ":libappms" ]
 }
 
-ohos_shared_library("libams") {
+ohos_shared_library("libappms") {
   sources = [
     "src/ability_running_record.cpp",
     "src/ams_mgr_scheduler.cpp",

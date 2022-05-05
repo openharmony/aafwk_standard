@@ -27,7 +27,7 @@ ohos_unittest("AmsMgrStubTest") {
   sources = [ "ams_mgr_stub_test.cpp" ]
 
   deps = [
-    "${aafwk_path}/services/appmgr:libams",
+    "${aafwk_path}/services/appmgr:libappms",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
