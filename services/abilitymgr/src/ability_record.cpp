@@ -23,7 +23,7 @@
 #include "ability_scheduler_stub.h"
 #include "ability_util.h"
 #include "bundle_mgr_client.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "errors.h"
 #include "hilog_wrapper.h"
 #ifdef OS_ACCOUNT_PART_ENABLED

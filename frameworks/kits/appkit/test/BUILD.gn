@@ -79,7 +79,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_first") {
 
   external_deps = [
     "bundle_framework:appexecfwk_core",
-    "bytrace_standard:bytrace_core",
+    "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
@@ -121,7 +121,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_second") {
 
   external_deps = [
     "bundle_framework:appexecfwk_core",
-    "bytrace_standard:bytrace_core",
+    "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
@@ -163,7 +163,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_third") {
 
   external_deps = [
     "bundle_framework:appexecfwk_core",
-    "bytrace_standard:bytrace_core",
+    "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
@@ -205,7 +205,7 @@ ohos_moduletest("appexecfwk_appkit_native_app_module_test_fourth") {
 
   external_deps = [
     "bundle_framework:appexecfwk_core",
-    "bytrace_standard:bytrace_core",
+    "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

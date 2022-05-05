@@ -16,7 +16,7 @@
 #include "app_state_callback_host.h"
 
 #include "appexecfwk_errors.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "hilog_wrapper.h"
 #include "ipc_types.h"
 #include "iremote_object.h"
