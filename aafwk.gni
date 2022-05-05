@@ -24,10 +24,8 @@ distributedschedule_path = "//foundation/distributedschedule"
 notification_path = "//base/notification"
 distributeddatamgr_path = "//foundation/distributeddatamgr"
 kits_path = "//foundation/aafwk/standard/frameworks/kits"
-
 innerkits_path = "//foundation/aafwk/standard/interfaces/innerkits"
-
-dispatcher_path = "//foundation/aafwk/standard/common/task_dispatcher"
+appexecfwk_innerkits_path = "${appexecfwk_path}/interfaces/innerkits"
 
 system_test_app_path =
     "//foundation/aafwk/standard/test/resource/amssystemtestability/abilitySrc"

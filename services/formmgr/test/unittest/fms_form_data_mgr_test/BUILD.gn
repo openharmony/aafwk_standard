@@ -29,19 +29,19 @@ ohos_unittest("FmsFormDataMgrTest") {
     "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
 
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include/",
+    "${appexecfwk_innerkits_path}/appexecfwk_base/include/",
     "${aafwk_path}/interfaces/innerkits/form_manager/include",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr/",
+    "${appexecfwk_innerkits_path}/appexecfwk_core/include/bundlemgr/",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
 
     #"${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
+    "${appexecfwk_innerkits_path}/libeventhandler/include",
     "${aafwk_path}/services/formmgr/test/mock/include",
     "//foundation/appexecfwk/appexecfwk_lite/interfaces/kits/bundle_lite",
   ]
 
   configs = [
-    #"${appexecfwk_path}/interfaces/innerkits/appexecfwk_core:bundlemgr_sdk_config",
+    #"${appexecfwk_innerkits_path}/appexecfwk_core:bundlemgr_sdk_config",
     #"${appexecfwk_path}/services/formmgr:formmgr_config",
   ]
   cflags = []
@@ -50,8 +50,8 @@ ohos_unittest("FmsFormDataMgrTest") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
+    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
     "${services_path}/formmgr:fms_target",
 
     #"${libs_path}/libeventhandler:libeventhandler_target",

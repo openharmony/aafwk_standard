@@ -1,4 +1,5 @@
-/*
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
  * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,26 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-
-#ifndef FOUNDATION_APPEXECFWK_SERVICES_APPMGR_INCLUDE_START_VIA_ASAN_H
-#define FOUNDATION_APPEXECFWK_SERVICES_APPMGR_INCLUDE_START_VIA_ASAN_H
-
-#include <string>
-
-#include "singleton.h"
-
-#include "app_spawn_client.h"
-
-namespace OHOS {
-namespace AppExecFwk {
-class StartViaAsan {
-    DECLARE_DELAYED_SINGLETON(StartViaAsan);
-
-public:
-    bool IsAsanVersion(const std::string &appName) const;
-    void GetAsanStartMsg(AppSpawnStartMsg &startMsg) const;
-};
-}  // namespace AppExecFwk
-}  // namespace OHOS
-#endif  // FOUNDATION_APPEXECFWK_SERVICES_APPMGR_INCLUDE_START_VIA_ASAN_H
+ -->
+<configuration ver="2.0">
+    <target name="BenchmarkTestForFormManager">
+        <preparer>
+            <option name="push" value="form_test_bundle/formTestWidget1.hap -> /data/test/formTestWidget1.hap"
+                    src="res"/>
+            <option name="shell" value="bm install -r -p /data/test/formTestWidget1.hap"/>
+        </preparer>
+    </target>
+</configuration>

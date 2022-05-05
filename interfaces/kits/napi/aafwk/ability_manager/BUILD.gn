@@ -47,7 +47,7 @@ ohos_shared_library("abilitymanager_napi") {
     "ipc:ipc_core",
     "ipc_js:rpc",
     "napi:ace_napi",
-    "resmgr_standard:global_resmgr",
+    "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",

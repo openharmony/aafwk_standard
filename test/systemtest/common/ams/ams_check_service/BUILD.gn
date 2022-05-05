@@ -19,7 +19,7 @@ module_output_path = "appexecfwk_standard/ams/"
 config("ams_check_service_config") {
   include_dirs = [
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/bundlemgr",
+    "${appexecfwk_innerkits_path}/appexecfwk_core/include/bundlemgr",
     "${aafwk_path}/interfaces/innerkits/want/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
     "${aafwk_path}/frameworks/kits/ability/native/include",
@@ -39,7 +39,6 @@ ohos_systemtest("ams_check_service") {
   include_dirs = [
     "${distributedschedule_path}/safwk/services/safwk/include",
     "${appexecfwk_path}/test/systemtest/common/ams/tool/include",
-    "${notification_path}/common_event_service/test/systemtest/common/resource",
   ]
 
   sources = [
@@ -69,8 +68,8 @@ ohos_systemtest("ams_check_service") {
     "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${aafwk_path}/services/abilitymgr:abilityms",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
