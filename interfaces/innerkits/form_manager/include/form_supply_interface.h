@@ -55,10 +55,13 @@ public:
     /**
      * @brief Accept form state from form provider.
      * @param state Form state.
+     * @param provider provider info.
+     * @param wantArg The want of onAcquireFormState.
      * @param want input data.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int OnAcquireStateResult(FormState state, const Want &want) = 0;
+    virtual int OnAcquireStateResult(FormState state, const std::string &provider, const Want &wantArg,
+                                     const Want &want) = 0;
 
     enum class Message {
         // ipc id 1-1000 for kit

@@ -19,6 +19,7 @@
 #include <singleton.h>
 #include "form_provider_info.h"
 #include "form_record.h"
+#include "form_state_info.h"
 #include "want.h"
 
 namespace OHOS {
@@ -58,22 +59,23 @@ public:
     ErrCode UpdateForm(const int64_t formId, FormRecord &formRecord, const FormProviderData &formProviderData);
     /**
      * @brief Refresh form.
-     * 
+     *
      * @param formId The form id.
      * @param want The want of the form to request.
+     * @param isVisibleToFresh The form is visible to fresh.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode RefreshForm(const int64_t formId, const Want &want);
+    ErrCode RefreshForm(const int64_t formId, const Want &want, bool isVisibleToFresh);
     /**
      * @brief Connect ams for refresh form
-     * 
+     *
      * @param formId The form id.
      * @param record Form data.
      * @param want The want of the form.
      * @param isTimerRefresh The flag of timer refresh.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode ConnectAmsForRefresh(const int64_t formId, const FormRecord &record, const Want &want, 
+    ErrCode ConnectAmsForRefresh(const int64_t formId, const FormRecord &record, const Want &want,
     const bool isTimerRefresh);
     /**
      * @brief Notify provider form delete.
@@ -89,14 +91,16 @@ public:
      * @param formIds form id list.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode NotifyProviderFormsBatchDelete(const std::string &bundleName, const std::string &abilityName, 
+    ErrCode NotifyProviderFormsBatchDelete(const std::string &bundleName, const std::string &abilityName,
     const std::set<int64_t> &formIds);
     /**
      * @brief Acquire form state.
-     * @param want Want.
+     * @param state form state.
+     * @param provider provider info.
+     * @param wantArg The want of onAcquireFormState.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode AcquireFormState(const Want &want);
+    ErrCode AcquireFormStateBack(FormState state, const std::string& provider, const Want &wantArg);
     /**
      * @brief Process js message event.
      * @param formId Indicates the unique id of form.
@@ -106,10 +110,12 @@ public:
      */
     int MessageEvent(const int64_t formId, const FormRecord &record, const Want &want);
 private:
+    bool IsNeedToFresh(FormRecord &record, int64_t formId, bool isVisibleToFresh);
+
     FormRecord GetFormAbilityInfo(const FormRecord &record) const;
     /**
      * @brief Increase the timer refresh count.
-     * 
+     *
      * @param formId The form id.
      */
     void IncreaseTimerRefreshCount(const int64_t formId);

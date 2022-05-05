@@ -86,6 +86,12 @@ public:
     void AddImageData(std::string picName, int fd);
 
     /**
+     * @brief Parse images in jsonFormProviderData_. The images data is in the format of
+     * {"images": {"key": fd, "key": fd}}
+     */
+    void ParseImagesData();
+
+    /**
      * @brief Removes data of an image with the specified {@code picName} from this {@code FormProviderData} instance.
      * @param picName Indicates the name of the image to remove.
      */

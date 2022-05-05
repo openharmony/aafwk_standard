@@ -41,6 +41,7 @@ public:
     std::string formName = "";
     int32_t specification;
     bool isEnableUpdate = false;
+    bool isVisible = false;
     long updateDuration = false;
     int updateAtHour = -1;
     int updateAtMin = -1;

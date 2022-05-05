@@ -18,6 +18,7 @@
 
 #include "common_event_subscriber.h"
 #include "common_event_subscribe_info.h"
+#include "event_handler.h"
 #include "form_id_key.h"
 #include "form_info.h"
 #include "form_record.h"
@@ -39,12 +40,21 @@ public:
      * @param eventData Common event data.
      */
     virtual void OnReceiveEvent(const EventFwk::CommonEventData &eventData) override;
+
+    /**
+     * @brief SetEventHandler.
+     * @param handler event handler
+     */
+    inline void SetEventHandler(const std::shared_ptr<AppExecFwk::EventHandler> &handler)
+    {
+        eventHandler_ = handler;
+    }
 private:
     void HandleProviderUpdated(const std::string &bundleName, const int userId);
     bool ProviderFormUpdated(const int64_t formId, const FormRecord &formRecord,
     const std::vector<FormInfo> &targetForms);
-    void HandleBundleFormInfoChanged(const std::string &bundleName);
-    void HandleBundleFormInfoRemoved(const std::string &bundleName);
+    void HandleBundleFormInfoChanged(const std::string &bundleName, int32_t userId);
+    void HandleBundleFormInfoRemoved(const std::string &bundleName, int32_t userId);
     void HandleProviderRemoved(const std::string &bundleName);
     void HandleBundleDataCleared(const std::string &bundleName, const int uid);
     void HandleFormHostDataCleared(const int uid);
@@ -66,6 +76,8 @@ private:
     void GetTimerCfg(const bool updateEnabled, const int updateDuration, const std::string &configUpdateAt,
     FormTimerCfg &cfg);
     void HandleTimerUpdate(const int64_t formId, const FormRecord &record, const FormTimerCfg &timerCfg);
+private:
+    std::shared_ptr<AppExecFwk::EventHandler> eventHandler_ = nullptr;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

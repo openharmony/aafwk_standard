@@ -131,14 +131,23 @@ int FormSupplyStub::HandleOnEventHandle(MessageParcel &data, MessageParcel &repl
  */
 int FormSupplyStub::HandleOnAcquireStateResult(MessageParcel &data, MessageParcel &reply)
 {
+    auto state = (FormState) data.ReadInt32();
+    std::string provider = data.ReadString();
+    std::unique_ptr<Want> wantArg(data.ReadParcelable<Want>());
+    if (!wantArg) {
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
+        reply.WriteInt32(ERR_APPEXECFWK_PARCEL_ERROR);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
     std::unique_ptr<Want> want(data.ReadParcelable<Want>());
     if (!want) {
         HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
         reply.WriteInt32(ERR_APPEXECFWK_PARCEL_ERROR);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    auto state = (FormState) data.ReadInt32();
-    int32_t result = OnAcquireStateResult(state, *want);
+
+    int32_t result = OnAcquireStateResult(state, provider, *wantArg, *want);
     reply.WriteInt32(result);
     return result;
 }

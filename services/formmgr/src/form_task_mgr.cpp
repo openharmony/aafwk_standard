@@ -227,17 +227,19 @@ void FormTaskMgr::PostFormEventTask(const int64_t formId, const std::string &mes
 /**
 * @brief Post acquire state to form provider.
 * @param wantArg The want of onAcquireFormState.
+* @param provider The provider info.
 * @param want The want of the request.
 * @param remoteObject Form provider proxy object.
 */
-void FormTaskMgr::PostAcquireStateTask(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &remoteObject)
+void FormTaskMgr::PostAcquireStateTask(const Want &wantArg, const std::string &provider, const Want &want,
+                                       const sptr<IRemoteObject> &remoteObject)
 {
     if (eventHandler_ == nullptr) {
         HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
         return;
     }
     std::function<void()> acquireStateFunc = std::bind(&FormTaskMgr::AcquireState,
-        this, wantArg, want, remoteObject);
+        this, wantArg, provider, want, remoteObject);
     eventHandler_->PostTask(acquireStateFunc, FORM_TASK_DELAY_TIME);
 }
 
@@ -256,6 +258,26 @@ void FormTaskMgr::PostUninstallTaskToHost(const std::vector<int64_t> &formIds, c
     std::function<void()> uninstallFunc = std::bind(&FormTaskMgr::FormUninstall,
         this, formIds, remoteObject);
     eventHandler_->PostTask(uninstallFunc, FORM_TASK_DELAY_TIME);
+    HILOG_INFO("%{public}s end", __func__);
+}
+
+/**
+* @brief Post acquire form state message to form host(task).
+* @param state The form state.
+* @param want The want of onAcquireFormState.
+* @param remoteObject Form provider proxy object.
+*/
+void FormTaskMgr::PostAcquireStateTaskToHost(AppExecFwk::FormState state, const AAFwk::Want &want,
+                                             const sptr<IRemoteObject> &remoteObject)
+{
+    HILOG_INFO("%{public}s start", __func__);
+    if (eventHandler_ == nullptr) {
+        HILOG_ERROR("%{public}s fail, eventhandler invalidate.", __func__);
+        return;
+    }
+    std::function<void()> acquireStateFunc = std::bind(&FormTaskMgr::AcquireStateBack,
+        this, state, want, remoteObject);
+    eventHandler_->PostTask(acquireStateFunc, FORM_TASK_DELAY_TIME);
     HILOG_INFO("%{public}s end", __func__);
 }
 
@@ -482,10 +504,12 @@ void FormTaskMgr::FireFormEvent(const int64_t formId, const std::string &message
 /**
  * @brief Acquire form state to form provider.
  * @param wantArg The want of onAcquireFormState.
+ * @param provider The provider info.
  * @param want The want of the request.
  * @param remoteObject Form provider proxy object.
  */
-void FormTaskMgr::AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &remoteObject)
+void FormTaskMgr::AcquireState(const Want &wantArg, const std::string &provider, const Want &want,
+                               const sptr<IRemoteObject> &remoteObject)
 {
     HILOG_INFO("%{public}s start", __func__);
     long connectId = want.GetLongParam(Constants::FORM_CONNECT_ID, 0);
@@ -496,7 +520,7 @@ void FormTaskMgr::AcquireState(const Want &wantArg, const Want &want, const sptr
         return;
     }
 
-    int error = formProviderProxy->AcquireState(wantArg, want, FormSupplyCallback::GetInstance());
+    int error = formProviderProxy->AcquireState(wantArg, provider, want, FormSupplyCallback::GetInstance());
     if (error != ERR_OK) {
         FormSupplyCallback::GetInstance()->RemoveConnection(connectId);
         HILOG_ERROR("%{public}s, Failed to acquire form state to form provider", __func__);
@@ -520,6 +544,27 @@ void FormTaskMgr::FormUninstall(const std::vector<int64_t> &formIds,
     }
 
     remoteFormHost->OnUninstall(formIds);
+
+    HILOG_INFO("%{public}s end", __func__);
+}
+
+/**
+ * @brief Handle acquire state.
+ * @param state the form state.
+ * @param want The want of onAcquireFormState.
+ * @param remoteObject Form provider proxy object.
+ */
+void FormTaskMgr::AcquireStateBack(AppExecFwk::FormState state, const AAFwk::Want &want,
+                                   const sptr<IRemoteObject> &remoteObject)
+{
+    HILOG_INFO("%{public}s start", __func__);
+    sptr<IFormHost> remoteFormHost = iface_cast<IFormHost>(remoteObject);
+    if (remoteFormHost == nullptr) {
+        HILOG_ERROR("%{public}s fail, Failed to get form host proxy.", __func__);
+        return;
+    }
+
+    remoteFormHost->OnAcquireState(state, want);
 
     HILOG_INFO("%{public}s end", __func__);
 }

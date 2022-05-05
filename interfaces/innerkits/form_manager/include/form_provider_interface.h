@@ -106,11 +106,13 @@ public:
     /**
      * @brief Acquire form state to form provider.
      * @param wantArg The want of onAcquireFormState.
+     * @param provider The provider info.
      * @param want The want of the request.
      * @param callerToken Form provider proxy object.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken) = 0;
+    virtual int AcquireState(const Want &wantArg, const std::string &provider, const Want &want,
+                             const sptr<IRemoteObject> &callerToken) = 0;
 
     enum class Message {
         // ipc id 1-1000 for kit

@@ -59,5 +59,11 @@ void  MockFormHostClient::OnUninstall(const std::vector<int64_t> &formIds)
     HILOG_DEBUG("MockFormHostClient OnUnInstall");
     PostVoid();
 }
+
+void MockFormHostClient::OnAcquireState(AppExecFwk::FormState state, const AAFwk::Want &want)
+{
+    HILOG_DEBUG("MockFormHostClient OnAcquireState");
+    PostVoid();
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -49,9 +49,12 @@ public:
      * OnAcquireStateResult
      *
      * @param state Form state
+     * @param provider provider info.
+     * @param wantArg The want of onAcquireFormState.
      * @param want input data
      */
-    virtual int OnAcquireStateResult(FormState state, const Want &want) override;
+    virtual int OnAcquireStateResult(FormState state, const std::string &provider, const Want &wantArg,
+                                     const Want &want) override;
 
 private:
     static std::mutex mutex;

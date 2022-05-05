@@ -44,15 +44,15 @@ DECLARE_DELAYED_REF_SINGLETON(FormInfoStorageMgr)
 public:
     DISALLOW_COPY_AND_MOVE(FormInfoStorageMgr);
 
-    ErrCode LoadFormInfos(std::vector<std::pair<std::string, std::string>> &formInfos);
+    ErrCode LoadFormInfos(std::vector<std::pair<std::string, std::string>> &formInfoStorages);
 
-    ErrCode GetBundleFormInfos(const std::string &bundleName, std::string &formInfos);
+    ErrCode GetBundleFormInfos(const std::string &bundleName, std::string &formInfoStorages);
 
-    ErrCode SaveBundleFormInfos(const std::string &bundleName, const std::string &formInfos);
+    ErrCode SaveBundleFormInfos(const std::string &bundleName, const std::string &formInfoStorages);
 
     ErrCode RemoveBundleFormInfos(const std::string &bundleName);
 
-    ErrCode UpdateBundleFormInfos(const std::string &bundleName, const std::string &formInfos);
+    ErrCode UpdateBundleFormInfos(const std::string &bundleName, const std::string &formInfoStorages);
 
     bool ResetKvStore();
 

@@ -351,11 +351,13 @@ int FormProviderProxy::FireFormEvent(
 /**
  * @brief Acquire form state to form provider.
  * @param wantArg The want of onAcquireFormState.
+ * @param provider The provider info.
  * @param want The want of the request.
  * @param callerToken Form provider proxy object.
  * @return Returns ERR_OK on success, others on failure.
  */
-int FormProviderProxy::AcquireState(const Want &wantArg, const Want &want, const sptr<IRemoteObject> &callerToken)
+int FormProviderProxy::AcquireState(const Want &wantArg, const std::string &provider, const Want &want,
+                                    const sptr<IRemoteObject> &callerToken)
 {
     int error;
     MessageParcel data;
@@ -369,6 +371,10 @@ int FormProviderProxy::AcquireState(const Want &wantArg, const Want &want, const
 
     if (!data.WriteParcelable(&wantArg)) {
         HILOG_ERROR("%{public}s, failed to write wantArg", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteString(provider)) {
+        HILOG_ERROR("%{public}s, failed to write provider", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
     if (!data.WriteParcelable(&want)) {

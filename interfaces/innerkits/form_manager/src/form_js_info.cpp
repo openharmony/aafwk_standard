@@ -151,12 +151,12 @@ bool FormJsInfo::WriteImageData(Parcel &parcel) const
                 HILOG_INFO("%{public}s unexpected image number %{public}zu", __func__, size);
                 break;
             }
-            auto messageParcel = static_cast<MessageParcel*>(&parcel);
             for (auto entry : sharedImageMap) {
+                auto messageParcel = static_cast<MessageParcel*>(&parcel);
                 if (!messageParcel->WriteAshmem(entry.second.first)) {
                     return false;
                 }
-                if (parcel.WriteString16(Str8ToStr16(entry.first))) {
+                if (!parcel.WriteString16(Str8ToStr16(entry.first))) {
                     return false;
                 }
             }
@@ -188,14 +188,14 @@ void FormJsInfo::ReadImageData(Parcel &parcel)
                 HILOG_WARN("%{public}s unexpected image number %{public}d", __func__, size);
                 break;
             }
-            auto messageParcel = static_cast<MessageParcel*>(&parcel);
             for (auto i = 0; i < size; i++) {
+                auto messageParcel = static_cast<MessageParcel*>(&parcel);
                 auto fd = messageParcel->ReadFileDescriptor();
                 auto len = parcel.ReadInt32();
                 auto picName = Str16ToStr8(parcel.ReadString16());
                 HILOG_INFO("picName: %{public}s, fd: %{public}d, size: %{public}d", picName.c_str(), fd, len);
                 std::pair<int, int32_t> imageDataPair = std::make_pair(fd, len);
-                imageDataMap.emplace(picName, imageDataPair);
+                imageDataMap[picName] = imageDataPair;
             }
             break;
         }
