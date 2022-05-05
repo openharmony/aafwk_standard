@@ -47,7 +47,6 @@ ohos_unittest("data_ability_manager_test") {
   }
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
     "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${innerkits_path}/ability_manager:ability_manager",
     "${innerkits_path}/want:want",
