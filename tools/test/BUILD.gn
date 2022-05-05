@@ -23,10 +23,12 @@ group("moduletest") {
   testonly = true
 
   deps = [ "moduletest/aa:moduletest" ]
+  deps += [ "moduletest/ability_delegator:moduletest" ]
 }
 
 group("unittest") {
   testonly = true
 
   deps = [ "unittest/aa:unittest" ]
+  deps += [ "unittest/ability_delegator:unittest" ]
 }
