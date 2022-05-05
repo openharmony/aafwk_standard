@@ -179,56 +179,6 @@ ohos_unittest("context_container_test") {
   ]
 }
 
-ohos_unittest("application_context_for_task_dispacher_test") {
-  module_out_path = module_output_path
-  sources = [ "unittest/application_context_for_task_dispacher_test.cpp" ]
-
-  configs = [ ":module_context_config" ]
-
-  deps = [
-    "${ABILITY_INNERKITS_PATH}/want:want",
-    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${appexecfwk_path}/common:libappexecfwk_common",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
-    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-  ]
-}
-
-ohos_unittest("context_deal_for_task_dispacher_test") {
-  module_out_path = module_output_path
-  sources = [ "unittest/context_deal_for_task_dispacher_test.cpp" ]
-
-  configs = [ ":module_context_config" ]
-
-  deps = [
-    "${ABILITY_INNERKITS_PATH}/want:want",
-    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${appexecfwk_path}/common:libappexecfwk_common",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
-    "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-  ]
-}
-
 ohos_unittest("context_deal_test") {
   module_out_path = module_output_path
   sources = [

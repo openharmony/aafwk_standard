@@ -278,7 +278,7 @@ public:
      *
      * @return Returns the bundle name of the current ability.
      */
-    std::string GetBundleName() override;
+    std::string GetBundleName() const override;
 
     /**
      * @brief Obtains the path of the OHOS Ability Package (HAP} containing this ability.
@@ -613,6 +613,13 @@ public:
     void SetRunner(const std::shared_ptr<EventRunner> &runner);
 
     /**
+     * @brief Obtains the application base directory on the device's internal storage.
+     *
+     * @return Returns the application base directory.
+     */
+    std::string GetBaseDir() const;
+
+    /**
      * @brief Obtains the lifecycle state info.
      *
      * @return Returns the lifecycle state info.
@@ -625,12 +632,18 @@ public:
     static const std::string CONTEXT_DEAL_Files;
     static const std::string CONTEXT_DEAL_NO_BACKUP_Files;
     static const std::string CONTEXT_DEAL_DIRNAME;
-    static const std::string CONTEXT_FILE_SEPARATOR;
     static const std::string CONTEXT_DISTRIBUTED_BASE_BEFORE;
     static const std::string CONTEXT_DISTRIBUTED_BASE_MIDDLE;
     static const std::string CONTEXT_DISTRIBUTED;
     static const std::string CONTEXT_DATA_STORAGE;
     static const std::string CONTEXT_ELS[];
+    static const std::string CONTEXT_DEAL_DATA_APP;
+    static const std::string CONTEXT_DEAL_BASE;
+    static const std::string CONTEXT_DEAL_DATABASE;
+    static const std::string CONTEXT_DEAL_PREFERENCES;
+    static const std::string CONTEXT_DEAL_DISTRIBUTEDFILES;
+    static const std::string CONTEXT_DEAL_CACHE;
+    static const std::string CONTEXT_DEAL_DATA;
     static const int EL_DEFAULT = 1;
     int flags_ = 0x00000000;
 
