@@ -587,21 +587,22 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
             }
             case '?': {
                 if (!isfirstCommand) {
-                    result = OHOS::ERR_INVALID_VALUE;
+                    HILOG_INFO("'aa %{public}s' with an unknown option.", cmd_.c_str());
+                    std::string unknownOption = "";
+                    std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
+                    resultReceiver_.append(unknownOptionMsg);
                     resultReceiver_.append(HELP_MSG_DUMPSYS);
+                    result = OHOS::ERR_INVALID_VALUE;
                     return result;
                 }
                 break;
             }
             default: {
-                if (strcmp(argv_[optind], cmd_.c_str()) == 0) {
-                    // 'aa dumpsys' with no option: aa dumpsys
-                    // 'aa dumpsys' with a wrong argument: aa dumpsys xxx
-                    HILOG_INFO("'aa dumpsys' with no option.");
-
-                    resultReceiver_.append(HELP_MSG_NO_OPTION + "\n");
-                    result = OHOS::ERR_INVALID_VALUE;
-                }
+                HILOG_INFO("'aa %{public}s' with an unknown option.", cmd_.c_str());
+                std::string unknownOption = "";
+                std::string unknownOptionMsg = GetUnknownOptionMsg(unknownOption);
+                resultReceiver_.append(unknownOptionMsg);
+                result = OHOS::ERR_INVALID_VALUE;
                 break;
             }
         }
