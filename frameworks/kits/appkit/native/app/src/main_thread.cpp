@@ -1510,7 +1510,7 @@ void MainThread::HandleScheduleANRProcess()
     HILOG_INFO("MainThread:HandleScheduleANRProcess start.");
     int rFD = -1;
     std::string mainThreadStackInfo;
-    if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::CPP_STACKTRACE))) < 0) {
+    if ((rFD = RequestFileDescriptor(int32_t(FaultLoggerType::JS_STACKTRACE))) < 0) {
         HILOG_ERROR("MainThread::HandleScheduleANRProcess request file eescriptor failed");
         return;
     }
