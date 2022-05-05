@@ -920,7 +920,6 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
     HILOG_INFO("enter");
     std::map<std::string, std::string> params;
 
-    auto isDebug {false};
     for (int i = USER_TEST_COMMAND_START_INDEX; i < argc_; i++) {
         HILOG_INFO("argv_[%{public}d]: %{public}s", i, argv_[i]);
         std::string opt = argv_[i];
@@ -954,7 +953,6 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
             std::string argValue = argv_[++i];
             params[opt + " " + argKey] = argValue;
         } else if (opt == "-D") {
-            isDebug = true;
             params[opt] = DEBUG_VALUE;
         } else if (opt.at(0) == '-') {
             return TestCommandError("error: unknown option: " + opt + "\n");
@@ -965,7 +963,7 @@ ErrCode AbilityManagerShellCommand::RunAsTestCommand()
         return OHOS::ERR_INVALID_VALUE;
     }
 
-    return StartUserTest(params, isDebug);
+    return StartUserTest(params);
 }
 
 bool AbilityManagerShellCommand::IsTestCommandIntegrity(const std::map<std::string, std::string> &params)
@@ -990,18 +988,19 @@ ErrCode AbilityManagerShellCommand::TestCommandError(const std::string &info)
     return OHOS::ERR_INVALID_VALUE;
 }
 
-ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, std::string> &params, const bool isDebug)
+ErrCode AbilityManagerShellCommand::StartUserTest(const std::map<std::string, std::string> &params)
 {
-    HILOG_INFO("enter, isDebug : %{public}s", (isDebug ? "true" : "false"));
+    HILOG_INFO("enter");
 
     Want want;
     for (auto param : params) {
         want.SetParam(param.first, param.second);
     }
 
-    if (isDebug) {
+    auto dPos = params.find("-D");
+    if (dPos != params.end() && dPos->second.compare(DEBUG_VALUE) == 0) {
         HILOG_INFO("Set Debug to want");
-        want.SetParam("debugApp", isDebug);
+        want.SetParam("debugApp", true);
     }
 
     sptr<TestObserver> observer = new (std::nothrow) TestObserver();
