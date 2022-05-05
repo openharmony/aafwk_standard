@@ -21,7 +21,8 @@ namespace OHOS {
 namespace AppExecFwk {
 bool AppStateData::Marshalling(Parcel &parcel) const
 {
-    return (parcel.WriteString(bundleName) && parcel.WriteInt32(uid) && parcel.WriteInt32(state));
+    return (parcel.WriteString(bundleName) && parcel.WriteInt32(uid) && parcel.WriteInt32(state)
+        && parcel.WriteInt32(pid));
 }
 
 bool AppStateData::ReadFromParcel(Parcel &parcel)
@@ -29,6 +30,7 @@ bool AppStateData::ReadFromParcel(Parcel &parcel)
     bundleName = parcel.ReadString();
     uid = parcel.ReadInt32();
     state = parcel.ReadInt32();
+    pid = parcel.ReadInt32();
 
     return true;
 }

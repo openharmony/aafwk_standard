@@ -452,26 +452,6 @@ int32_t AppMgrService::GetRenderProcessTerminationStatus(pid_t renderPid, int &s
     return appMgrServiceInner_->GetRenderProcessTerminationStatus(renderPid, status);
 }
 
-void AppMgrService::PostANRTaskByProcessID(const pid_t pid)
-{
-    HILOG_DEBUG("PostANRTaskByProcessID called.");
-    if (!IsReady()) {
-        HILOG_ERROR("AttachRenderProcess failed, not ready.");
-        return;
-    }
-    auto appRecord = appMgrServiceInner_->GetAppRunningRecordByPid(pid);
-    if (!appRecord) {
-        HILOG_ERROR("no such appRecord");
-        return;
-    }
-    auto object = appRecord->GetApplicationClient();
-    if (!object) {
-        HILOG_ERROR("GetApplicationClient failed.");
-        return;
-    }
-    object->ScheduleANRProcess();
-}
-
 #ifdef ABILITY_COMMAND_FOR_TEST
 int AppMgrService::BlockAppService()
 {

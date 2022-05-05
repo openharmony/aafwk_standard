@@ -39,7 +39,11 @@ public:
     struct Parameter {
         bool operator< (const Parameter &para) const
         {
-            return this->attr_ < para.attr_;
+            if (this->attr_ == ATTR_IN) {
+                return this->attr_ < para.attr_;
+            } else {
+                return false;
+            }
         }
         std::string name_;
         std::string type_;

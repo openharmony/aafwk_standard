@@ -666,30 +666,6 @@ int AppMgrProxy::GetRenderProcessTerminationStatus(pid_t renderPid, int &status)
     return 0;
 }
 
-void AppMgrProxy::PostANRTaskByProcessID(const pid_t pid)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option(MessageOption::TF_SYNC);
-    if (!WriteInterfaceToken(data)) {
-        return;
-    }
-    if (!data.WriteInt32(pid)) {
-        HILOG_ERROR("parcel WriteInt32 failed");
-        return;
-    }
-    sptr<IRemoteObject> remote = Remote();
-    if (remote == nullptr) {
-        HILOG_ERROR("Remote() is NULL");
-        return;
-    }
-    int32_t ret =
-        remote->SendRequest(static_cast<uint32_t>(IAppMgr::Message::POST_ANR_TASK_BY_PID), data, reply, option);
-    if (ret != NO_ERROR) {
-        HILOG_WARN("SendRequest is failed, error code: %{public}d", ret);
-    }
-}
-
 #ifdef ABILITY_COMMAND_FOR_TEST
 int AppMgrProxy::BlockAppService()
 {

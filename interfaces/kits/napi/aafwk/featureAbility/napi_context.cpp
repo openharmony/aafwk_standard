@@ -343,23 +343,17 @@ bool UnwrapRequestPermissionsFromUser(
     HILOG_INFO("%{public}s called, argc=%{public}zu", __func__, argc);
 
     const size_t argcMax = 3;
-    if (argc != argcMax) {
+    if (argc > argcMax || argc < argcMax - 1) {
         HILOG_INFO("%{public}s called, parameters is invalid", __func__);
         return false;
     }
 
-    CallbackInfo* aceCallbackInfoPermission = new CallbackInfo();
-    aceCallbackInfoPermission->env = env;
-    napi_valuetype valuetype = napi_undefined;
-    napi_typeof(env, argv[PARAM2], &valuetype);
-    if (valuetype != napi_function) {
-        HILOG_INFO("%{public}s called, parameters is invalid", __func__);
-        delete aceCallbackInfoPermission;
-        aceCallbackInfoPermission = nullptr;
-        return false;
+    if (argc == argcMax) {
+        if (!CreateAsyncCallback(env, argv[PARAM2], asyncCallbackInfo)) {
+            HILOG_DEBUG("%{public}s called, the third parameter is invalid.", __func__);
+            return false;
+        }
     }
-    napi_create_reference(env, argv[PARAM2], 1, &(aceCallbackInfoPermission->callback));
-    asyncCallbackInfo->aceCallback = aceCallbackInfoPermission;
 
     std::vector<std::string> permissionList;
     if (!UnwrapArrayStringFromJS(env, argv[PARAM0], permissionList)) {
@@ -388,7 +382,6 @@ void RequestPermissionsFromUserExecuteCallbackWork(napi_env env, void *data)
     }
 
     asyncCallbackInfo->error_code = NAPI_ERR_NO_ERROR;
-    asyncCallbackInfo->native_data.data_type = NVT_NONE;
     if (asyncCallbackInfo->ability == nullptr) {
         asyncCallbackInfo->error_code = NAPI_ERR_ACE_ABILITY;
         return;
@@ -403,37 +396,7 @@ void RequestPermissionsFromUserExecuteCallbackWork(napi_env env, void *data)
     }
 
     AbilityProcess::GetInstance()->RequestPermissionsFromUser(
-        asyncCallbackInfo->ability, permissionParam, *asyncCallbackInfo->aceCallback);
-    asyncCallbackInfo->native_data.data_type = NVT_INT32;
-    asyncCallbackInfo->native_data.int32_value = 1;
-}
-
-void RequestPermissionsFromUserExecutePromiseWork(napi_env env, void *data)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    AsyncJSCallbackInfo *asyncCallbackInfo = static_cast<AsyncJSCallbackInfo *>(data);
-    if (asyncCallbackInfo == nullptr) {
-        HILOG_INFO("%{public}s called. asyncCallbackInfo is null", __func__);
-        return;
-    }
-
-    asyncCallbackInfo->error_code = NAPI_ERR_NO_ERROR;
-    asyncCallbackInfo->native_data.data_type = NVT_NONE;
-    if (asyncCallbackInfo->ability == nullptr) {
-        asyncCallbackInfo->error_code = NAPI_ERR_ACE_ABILITY;
-        return;
-    }
-
-    CallAbilityPermissionParam permissionParam;
-    permissionParam.requestCode = asyncCallbackInfo->param.paramArgs.GetIntValue("requestCode");
-    asyncCallbackInfo->param.paramArgs.GetStringValueArray("permissionList", permissionParam.permission_list);
-    if (permissionParam.permission_list.size() == 0) {
-        asyncCallbackInfo->error_code = NAPI_ERR_PARAM_INVALID;
-        return;
-    }
-
-    AbilityProcess::GetInstance()->RequestPermissionsFromUser(
-        asyncCallbackInfo->ability, permissionParam, *asyncCallbackInfo->aceCallback);
+        asyncCallbackInfo->ability, permissionParam, asyncCallbackInfo->cbInfo);
 }
 
 void RequestPermissionsFromUserCompleteAsyncCallbackWork(napi_env env, napi_status status, void *data)
@@ -446,7 +409,7 @@ void RequestPermissionsFromUserCompleteAsyncCallbackWork(napi_env env, napi_stat
         return;
     }
 
-    if (asyncCallbackInfo->error_code != NAPI_ERR_NO_ERROR && asyncCallbackInfo->aceCallback != nullptr) {
+    if (asyncCallbackInfo->error_code != NAPI_ERR_NO_ERROR) {
         napi_value callback = 0;
         napi_value undefined = 0;
         napi_get_undefined(env, &undefined);
@@ -456,13 +419,12 @@ void RequestPermissionsFromUserCompleteAsyncCallbackWork(napi_env env, napi_stat
         revParam[PARAM0] = GetCallbackErrorValue(env, asyncCallbackInfo->error_code);
         revParam[PARAM1] = WrapVoidToJS(env);
 
-        if (asyncCallbackInfo->aceCallback->callback != nullptr) {
-            napi_get_reference_value(env, asyncCallbackInfo->aceCallback->callback, &callback);
+        if (asyncCallbackInfo->cbInfo.callback != nullptr) {
+            napi_get_reference_value(env, asyncCallbackInfo->cbInfo.callback, &callback);
             napi_call_function(env, undefined, callback, ARGS_TWO, revParam, &callResult);
-            napi_delete_reference(env, asyncCallbackInfo->aceCallback->callback);
-
-            asyncCallbackInfo->aceCallback->callback = nullptr;
-            asyncCallbackInfo->aceCallback->env = nullptr;
+            napi_delete_reference(env, asyncCallbackInfo->cbInfo.callback);
+        } else if (asyncCallbackInfo->cbInfo.deferred != nullptr) {
+            napi_reject_deferred(env, asyncCallbackInfo->cbInfo.deferred, revParam[PARAM0]);
         }
     }
 
@@ -474,7 +436,7 @@ void RequestPermissionsFromUserCompleteAsyncCallbackWork(napi_env env, napi_stat
 napi_value NAPI_RequestPermissionsFromUserWrap(
     napi_env env, napi_callback_info info, AsyncJSCallbackInfo *asyncCallbackInfo)
 {
-    HILOG_INFO("%{public}s called.", __func__);
+    HILOG_DEBUG("%{public}s called.", __func__);
     size_t argc = ARGS_MAX_COUNT;
     napi_value args[ARGS_MAX_COUNT] = {nullptr};
     napi_value jsthis = 0;
@@ -483,16 +445,41 @@ napi_value NAPI_RequestPermissionsFromUserWrap(
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, &jsthis, &data));
 
     if (!UnwrapRequestPermissionsFromUser(env, argc, args, asyncCallbackInfo)) {
-        HILOG_INFO("%{public}s called. Invoke UnwrapRequestPermissionsFromUser failed.", __func__);
+        HILOG_ERROR("%{public}s called. Invoke UnwrapRequestPermissionsFromUser failed.", __func__);
         return nullptr;
     }
 
     AsyncParamEx asyncParamEx;
-    asyncParamEx.resource = "NAPI_RequestPermissionsFromUserCallback";
-    asyncParamEx.execute = RequestPermissionsFromUserExecuteCallbackWork;
-    asyncParamEx.complete = RequestPermissionsFromUserCompleteAsyncCallbackWork;
+    if (asyncCallbackInfo->cbInfo.callback != nullptr) {
+        HILOG_DEBUG("%{public}s called. asyncCallback.", __func__);
+        asyncParamEx.resource = "NAPI_RequestPermissionsFromUserCallback";
+        asyncParamEx.execute = RequestPermissionsFromUserExecuteCallbackWork;
+        asyncParamEx.complete = RequestPermissionsFromUserCompleteAsyncCallbackWork;
 
-    return ExecuteAsyncCallbackWork(env, asyncCallbackInfo, &asyncParamEx);
+        return ExecuteAsyncCallbackWork(env, asyncCallbackInfo, &asyncParamEx);
+    } else {
+        HILOG_DEBUG("%{public}s called. promise.", __func__);
+        napi_deferred deferred = 0;
+        napi_value promise = 0;
+        NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+        asyncCallbackInfo->cbInfo.deferred = deferred;
+
+        napi_value resourceName = 0;
+        NAPI_CALL(env, napi_create_string_latin1(env, "NAPI_RequestPermissionsFromUserPromise",
+            NAPI_AUTO_LENGTH, &resourceName));
+        NAPI_CALL(env,
+            napi_create_async_work(env,
+                nullptr,
+                resourceName,
+                RequestPermissionsFromUserExecuteCallbackWork,
+                RequestPermissionsFromUserCompleteAsyncCallbackWork,
+                (void *)asyncCallbackInfo,
+                &asyncCallbackInfo->asyncWork));
+
+        NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
+
+        return promise;
+    }
 }
 
 napi_value NAPI_RequestPermissionsFromUser(napi_env env, napi_callback_info info)
@@ -507,15 +494,6 @@ napi_value NAPI_RequestPermissionsFromUser(napi_env env, napi_callback_info info
 
     napi_value rev = NAPI_RequestPermissionsFromUserWrap(env, info, asyncCallbackInfo);
     if (rev == nullptr) {
-        if (asyncCallbackInfo->aceCallback != nullptr) {
-            if (asyncCallbackInfo->aceCallback->callback != nullptr && asyncCallbackInfo->aceCallback->env != nullptr) {
-                napi_delete_reference(asyncCallbackInfo->aceCallback->env, asyncCallbackInfo->aceCallback->callback);
-            }
-            asyncCallbackInfo->aceCallback->env = nullptr;
-            asyncCallbackInfo->aceCallback->callback = nullptr;
-            delete asyncCallbackInfo->aceCallback;
-            asyncCallbackInfo->aceCallback = nullptr;
-        }
         FreeAsyncJSCallbackInfo(&asyncCallbackInfo);
         rev = WrapVoidToJS(env);
     }
@@ -580,13 +558,14 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
                 return;
             }
 
-            napi_value result[ARGS_ONE] = {0};
-            napi_create_object(onRequestPermissionCB->cb.env, &result[PARAM0]);
+            napi_value result[ARGS_TWO] = {0};
+            result[PARAM0] = GetCallbackErrorValue(onRequestPermissionCB->cb.env, 0);
+            napi_create_object(onRequestPermissionCB->cb.env, &result[PARAM1]);
 
             // create requestCode
             napi_value jsValue = 0;
             napi_create_int32(onRequestPermissionCB->cb.env, onRequestPermissionCB->requestCode, &jsValue);
-            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM0], "requestCode", jsValue);
+            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM1], "requestCode", jsValue);
 
             // create permissions
             napi_value perValue = 0;
@@ -600,7 +579,7 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
                     &perValue);
                 napi_set_element(onRequestPermissionCB->cb.env, perArray, i, perValue);
             }
-            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM0], "permissions", perArray);
+            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM1], "permissions", perArray);
 
             // create grantResults
             napi_value grantArray;
@@ -610,21 +589,29 @@ void CallOnRequestPermissionsFromUserResult(int requestCode, const std::vector<s
                 napi_create_int32(onRequestPermissionCB->cb.env, onRequestPermissionCB->grantResults[j], &perValue);
                 napi_set_element(onRequestPermissionCB->cb.env, grantArray, j, perValue);
             }
-            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM0], "authResults", grantArray);
+            napi_set_named_property(onRequestPermissionCB->cb.env, result[PARAM1], "authResults", grantArray);
 
             // call CB function
-            napi_value callback = 0;
-            napi_value undefined = 0;
-            napi_get_undefined(onRequestPermissionCB->cb.env, &undefined);
-
-            napi_value callResult = 0;
-            napi_get_reference_value(onRequestPermissionCB->cb.env, onRequestPermissionCB->cb.callback, &callback);
-            napi_call_function(
-                onRequestPermissionCB->cb.env, undefined, callback, ARGS_ONE, &result[PARAM0], &callResult);
-
             if (onRequestPermissionCB->cb.callback != nullptr) {
-                napi_delete_reference(onRequestPermissionCB->cb.env, onRequestPermissionCB->cb.callback);
+                HILOG_DEBUG("%{public}s call callback function.", __func__);
+                napi_value callback = 0;
+                napi_value undefined = 0;
+                napi_get_undefined(onRequestPermissionCB->cb.env, &undefined);
+
+                napi_value callResult = 0;
+                napi_get_reference_value(onRequestPermissionCB->cb.env, onRequestPermissionCB->cb.callback, &callback);
+                napi_call_function(
+                    onRequestPermissionCB->cb.env, undefined, callback, ARGS_TWO, &result[PARAM0], &callResult);
+
+                if (onRequestPermissionCB->cb.callback != nullptr) {
+                    napi_delete_reference(onRequestPermissionCB->cb.env, onRequestPermissionCB->cb.callback);
+                }
+            } else if (onRequestPermissionCB->cb.deferred != nullptr) { // call promise function
+                HILOG_DEBUG("%{public}s call promise function.", __func__);
+                napi_resolve_deferred(onRequestPermissionCB->cb.env, onRequestPermissionCB->cb.deferred,
+                    result[PARAM1]);
             }
+
             if (onRequestPermissionCB != nullptr) {
                 delete onRequestPermissionCB;
                 onRequestPermissionCB = nullptr;
