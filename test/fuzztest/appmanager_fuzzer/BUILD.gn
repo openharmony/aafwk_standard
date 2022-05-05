@@ -42,7 +42,7 @@ ohos_fuzztest("AppManagerFuzzTest") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/interfaces/innerkits/base:base",
     "${aafwk_path}/interfaces/innerkits/want:want",
-    "${services_path}/appmgr:libams",
+    "${services_path}/appmgr:libappms",
   ]
 
   external_deps = [

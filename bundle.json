@@ -54,7 +54,7 @@
         },
         "build": {
           "sub_component": [
-            "//foundation/aafwk/standard/services:services_target",
+            "//foundation/aafwk/standard/services:ams_services_target",
             "//foundation/aafwk/standard/interfaces/innerkits:innerkits_target",
             "//foundation/aafwk/standard/frameworks/kits/ability/native:static_subscriber_ipc",
             "//foundation/aafwk/standard/frameworks/kits/ability/native:service_extension_module",
@@ -63,7 +63,6 @@
             "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime:ability_context_native",
             "//foundation/aafwk/standard/frameworks/kits/appkit:app_context",
             "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-            "//foundation/aafwk/standard/frameworks/kits/appkit:appexec",
             "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits"
           ],
           "inner_kits": [
@@ -162,11 +161,12 @@
             "//foundation/aafwk/standard/frameworks/kits/ability/ability_runtime/test/unittest:unittest",
             "//foundation/aafwk/standard/frameworks/kits/test:moduletest",
             "//foundation/aafwk/standard/services/test:moduletest",
-            "//foundation/aafwk/standard/services:unittest",
+            "//foundation/aafwk/standard/services/abilitymgr/test:unittest",
+	    "//foundation/aafwk/standard/services/dataobsmgr/test:unittest",
+	    "//foundation/aafwk/standard/services/appmgr/test:unittest",
             "//foundation/aafwk/standard/frameworks/kits/appkit/native/test:unittest",
             "//foundation/aafwk/standard/frameworks/kits/appkit/test:moduletest",
             "//foundation/aafwk/standard/frameworks/kits/wantagent/test/:unittest",
-            "//foundation/aafwk/standard/services/appmgr/test:unittest",
             "//foundation/aafwk/standard/test/benchmarktest:benchmarktest",
             "//foundation/aafwk/standard/test/fuzztest:fuzztest"
           ]
