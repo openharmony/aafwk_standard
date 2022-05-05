@@ -20,7 +20,7 @@
 #include "ability_record.h"
 #include "ability_util.h"
 #include "appmgr/app_mgr_constants.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {

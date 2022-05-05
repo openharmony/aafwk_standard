@@ -26,7 +26,7 @@
 #ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
 #include "background_task_mgr_helper.h"
 #endif
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "configuration_convertor.h"
 #include "connection_manager.h"
 #include "context_impl.h"
