@@ -910,8 +910,14 @@ void AbilityConnectManager::AddConnectDeathRecipient(const sptr<IAbilityConnecti
         HILOG_ERROR("This death recipient has been added.");
         return;
     } else {
-        sptr<IRemoteObject::DeathRecipient> deathRecipient = new AbilityConnectCallbackRecipient(
-            std::bind(&AbilityConnectManager::OnCallBackDied, this, std::placeholders::_1));
+        std::weak_ptr<AbilityConnectManager> thisWeakPtr(shared_from_this());
+        sptr<IRemoteObject::DeathRecipient> deathRecipient =
+            new AbilityConnectCallbackRecipient([thisWeakPtr](const wptr<IRemoteObject> &remote) {
+                auto abilityConnectManager = thisWeakPtr.lock();
+                if (abilityConnectManager) {
+                    abilityConnectManager->OnCallBackDied(remote);
+                }
+            });
         connect->AsObject()->AddDeathRecipient(deathRecipient);
         recipientMap_.emplace(connect->AsObject(), deathRecipient);
     }

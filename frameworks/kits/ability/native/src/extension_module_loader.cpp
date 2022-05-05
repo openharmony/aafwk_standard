@@ -77,8 +77,7 @@ ExtensionModuleLoader& GetExtensionModuleLoader(const char* sharedLibrary)
 
 ExtensionModuleLoader& ExtensionModuleLoader::GetLoader(const char* sharedLibrary)
 {
-    static ExtensionModuleLoader& instance = GetExtensionModuleLoader(sharedLibrary);
-    return instance;
+    return GetExtensionModuleLoader(sharedLibrary);
 }
 
 Extension *ExtensionModuleLoader::Create(const std::unique_ptr<Runtime>& runtime) const

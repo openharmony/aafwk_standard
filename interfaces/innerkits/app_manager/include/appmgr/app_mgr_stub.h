@@ -78,7 +78,6 @@ private:
     int32_t HandleStartRenderProcess(MessageParcel &data, MessageParcel &reply);
     int32_t HandleAttachRenderProcess(MessageParcel &data, MessageParcel &reply);
     int32_t HandleGetRenderProcessTerminationStatus(MessageParcel &data, MessageParcel &reply);
-    int32_t HandlePostANRTaskByProcessID(MessageParcel &data, MessageParcel &reply);
 #ifdef ABILITY_COMMAND_FOR_TEST
     int32_t HandleBlockAppServiceDone(MessageParcel &data, MessageParcel &reply);
 #endif

@@ -1145,6 +1145,7 @@ AppStateData AppMgrServiceInner::WrapAppStateData(const std::shared_ptr<AppRunni
     const ApplicationState state)
 {
     AppStateData appStateData;
+    appStateData.pid = appRecord->GetPriorityObject()->GetPid();
     appStateData.bundleName = appRecord->GetBundleName();
     appStateData.state = static_cast<int32_t>(state);
     appStateData.uid = appRecord->GetUid();
