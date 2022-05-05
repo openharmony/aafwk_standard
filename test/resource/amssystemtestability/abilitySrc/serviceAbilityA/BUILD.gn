@@ -39,7 +39,6 @@ ohos_shared_library("serviceAbilityA") {
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${appexecfwk_path}/common:libappexecfwk_common",
-    "${notification_path}/common_event_service/frameworks/native:cesfwk_innerkits",
   ]
   external_deps = [
     "ability_base:want",
@@ -47,6 +46,7 @@ ohos_shared_library("serviceAbilityA") {
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "common_event_service:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
