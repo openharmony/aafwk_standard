@@ -39,7 +39,6 @@ ohos_unittest("want_sender_proxy_test") {
   }
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
     "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",

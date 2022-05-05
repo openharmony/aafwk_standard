@@ -26,7 +26,6 @@
 #include "ability_manager_interface.h"
 #include "dummy_component_container.h"
 #include "dummy_values_bucket.h"
-#include "dummy_data_ability_predicates.h"
 #include "dummy_result_set.h"
 #ifdef SUPPORT_GRAPHICS
 #include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/i_input_event_consumer.h"
