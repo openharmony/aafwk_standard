@@ -43,7 +43,6 @@ ohos_unittest("ability_manager_proxy_test") {
   }
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
     "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${services_path}/abilitymgr/test:abilityms_test_source",
