@@ -30,7 +30,7 @@
               "napi",
               "native_appdatamgr",
               "time_native",
-              "os_account_standard",
+              "os_account",
               "power_manager_native",
               "safwk",
               "samgr_standard",
