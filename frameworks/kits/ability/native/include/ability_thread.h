@@ -28,7 +28,6 @@
 #include "pac_map.h"
 #include "ohos/aafwk/base/ipc_singleton.h"
 #include "dummy_values_bucket.h"
-#include "dummy_data_ability_predicates.h"
 #include "dummy_result_set.h"
 
 namespace OHOS {

@@ -143,7 +143,6 @@ ohos_shared_library("abilitykit_native") {
     "src/extension_impl.cpp",
     "src/extension_module_loader.cpp",
 
-    #"src/dummy_data_ability_predicates.cpp",
     #"src/dummy_result_set.cpp",
     #"src/dummy_values_bucket.cpp",
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_ability.cpp",
@@ -294,28 +293,6 @@ ohos_shared_library("abilitykit_native") {
       "${windowmanager_path}/wm:libwm",
     ]
   }
-  subsystem_name = "aafwk"
-  part_name = "ability_runtime"
-}
-
-ohos_shared_library("dummy_classes") {
-  sources = [
-    "src/dummy_data_ability_predicates_discard.cpp",
-    "src/dummy_result_set_discard.cpp",
-  ]
-
-  configs = [ ":ability_config" ]
-  public_configs = [ ":ability_public_config" ]
-
-  deps = []
-
-  external_deps = [
-    "ability_base:want",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "utils_base:utils",
-  ]
-
   subsystem_name = "aafwk"
   part_name = "ability_runtime"
 }
