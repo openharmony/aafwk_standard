@@ -1873,7 +1873,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_UpdateHostFormFlag_001, TestSize
 
     std::vector<int64_t> refreshForms;
 
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_INVALID_PARAM, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, false,
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF, formDataMgr_.UpdateHostFormFlag(formIds, token_, flag, false,
         refreshForms));
 
     GTEST_LOG_(INFO) << "FmsFormDataMgrTest_UpdateHostFormFlag_001 end";
