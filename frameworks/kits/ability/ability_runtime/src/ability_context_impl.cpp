@@ -19,7 +19,7 @@
 
 #include "ability_manager_client.h"
 #include "accesstoken_kit.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "connection_manager.h"
 #include "hilog_wrapper.h"
 #include "permission_list_state.h"

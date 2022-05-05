@@ -15,7 +15,7 @@
 
 #include "app_running_record.h"
 #include "app_mgr_service_inner.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {

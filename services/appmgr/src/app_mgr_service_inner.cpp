@@ -28,7 +28,7 @@
 
 #include "app_process_data.h"
 #include "bundle_constants.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "common_event.h"
 #include "common_event_manager.h"
 #include "common_event_support.h"

@@ -33,7 +33,7 @@
 #include "ability_info.h"
 #include "ability_manager_errors.h"
 #include "ability_util.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "bundle_mgr_client.h"
 #ifdef SUPPORT_GRAPHICS
 #include "display_manager.h"

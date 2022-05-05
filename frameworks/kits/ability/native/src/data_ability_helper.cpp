@@ -18,7 +18,7 @@
 #include "ability_scheduler_interface.h"
 #include "ability_thread.h"
 #include "abs_shared_result_set.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "data_ability_observer_interface.h"
 #include "data_ability_operation.h"
 #include "data_ability_predicates.h"

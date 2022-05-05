@@ -16,7 +16,7 @@
 #include "js_service_extension.h"
 
 #include "ability_info.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "hilog_wrapper.h"
 #include "js_extension_context.h"
 #include "js_runtime.h"
