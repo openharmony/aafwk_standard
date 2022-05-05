@@ -17,7 +17,7 @@
 
 #include "ability_manager_client.h"
 #include "ability_local_record.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "extension_context.h"
 #include "hilog_wrapper.h"
 

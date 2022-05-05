@@ -78,7 +78,6 @@ ohos_shared_library("abilityms") {
   configs = [ ":abilityms_config" ]
   deps = [
     "${innerkits_path}/uri_permission:uri_permission_mgr",
-    "${kits_path}/ability/native:dummy_classes",
     "${services_path}/common:perm_verification",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
   ]
@@ -94,13 +93,13 @@ ohos_shared_library("abilityms") {
     "access_token:libaccesstoken_sdk",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
-    "bytrace_standard:bytrace_core",
     "common_event_service:cesfwk_core",
     "common_event_service:cesfwk_innerkits",
     "dsoftbus_standard:softbus_client",
     "eventhandler:libeventhandler",
     "hicollie_native:libhicollie",
     "hisysevent_native:libhisysevent",
+    "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_dataability",

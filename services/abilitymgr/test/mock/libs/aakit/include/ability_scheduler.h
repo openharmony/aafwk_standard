@@ -19,7 +19,6 @@
 #include "ability_scheduler_stub.h"
 #include "ability_record.h"
 #include "dummy_values_bucket.h"
-#include "dummy_data_ability_predicates.h"
 #include "dummy_result_set.h"
 
 namespace OHOS {

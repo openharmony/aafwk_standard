@@ -15,7 +15,7 @@
 
 #include "ability_impl.h"
 
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "data_ability_predicates.h"
 #include "hilog_wrapper.h"
 #include "values_bucket.h"

@@ -42,7 +42,6 @@ ohos_systemtest("ams_data_ability_test") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${aafwk_path}/interfaces/innerkits/want:want",

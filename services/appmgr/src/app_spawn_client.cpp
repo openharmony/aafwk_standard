@@ -15,7 +15,7 @@
 
 #include "app_spawn_client.h"
 
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
