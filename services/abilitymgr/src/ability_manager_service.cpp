@@ -108,11 +108,8 @@ const int32_t APP_MEMORY_SIZE = 512;
 const int32_t GET_PARAMETER_INCORRECT = -9;
 const int32_t GET_PARAMETER_OTHER = -1;
 const int32_t SIZE_10 = 10;
-const bool isRamConstrainedDevice = false;
 const std::string BUNDLE_NAME_KEY = "bundleName";
-const std::string APP_MEMORY_MAX_SIZE_PARAMETER = "const.product.arkheaplimit";
-const std::string RAM_CONSTRAINED_DEVICE_SIGN = "const.product.islowram";
-const std::string PKG_NAME = "ohos.distributedhardware.devicemanager";
+const std::string DM_PKG_NAME = "ohos.distributedhardware.devicemanager";
 const std::string ACTION_CHOOSE = "ohos.want.action.select";
 const std::u16string DMS_FREE_INSTALL_CALLBACK_TOKEN = u"ohos.DistributedSchedule.IDmsFreeInstallCallback";
 constexpr uint32_t IDmsFreeInstallCallback_ON_FREE_INSTALL_DONE = 0;
@@ -696,7 +693,7 @@ bool AbilityManagerService::CheckIfOperateRemote(const Want &want)
 bool AbilityManagerService::GetLocalDeviceId(std::string& localDeviceId)
 {
     auto localNode = std::make_unique<NodeBasicInfo>();
-    int32_t errCode = GetLocalNodeDeviceInfo(PKG_NAME.c_str(), localNode.get());
+    int32_t errCode = GetLocalNodeDeviceInfo(DM_PKG_NAME.c_str(), localNode.get());
     if (errCode != ERR_OK) {
         HILOG_ERROR("AbilityManagerService::GetLocalNodeDeviceInfo errCode = %{public}d", errCode);
         return false;
@@ -2952,7 +2949,7 @@ void AbilityManagerService::ConnectBmsService()
 
 bool AbilityManagerService::CheckCallerIsSystemAppByIpc()
 {
-    HILOG_DEBUG("%{public}s begin", __func__);
+    HILOG_DEBUG("%{public}s", __func__);
     auto bms = GetBundleManager();
     CHECK_POINTER_RETURN_BOOL(bms);
     int32_t callerUid = IPCSkeleton::GetCallingUid();
@@ -3033,9 +3030,9 @@ bool AbilityManagerService::IsRamConstrainedDevice()
         if (value) {
             return true;
         }
-        return isRamConstrainedDevice;
+        return false;
     }
-    return isRamConstrainedDevice;
+    return false;
 }
 
 int AbilityManagerService::GetMissionSaveTime() const
@@ -3273,6 +3270,23 @@ int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token,
 
     return missionListManager->SetMissionIcon(token, icon);
 }
+
+int AbilityManagerService::RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler> &handler)
+{
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return CHECK_PERMISSION_FAILED;
+    }
+    wmsHandler_ = handler;
+    HILOG_DEBUG("%{public}s: WMS handler registered successfully.", __func__);
+    return ERR_OK;
+}
+
+sptr<IWindowManagerServiceHandler> AbilityManagerService::GetWMSHandler() const
+{
+    return wmsHandler_;
+}
 #endif
 
 int AbilityManagerService::StartUser(int userId)
@@ -3333,6 +3347,9 @@ int AbilityManagerService::GetAbilityRunningInfos(std::vector<AbilityRunningInfo
 {
     HILOG_DEBUG("Get running ability infos.");
     auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyRunningInfoPerm();
+    if (!currentMissionListManager_ || !connectManager_ || !dataAbilityManager_) {
+        return ERR_INVALID_VALUE;
+    }
 
     currentMissionListManager_->GetAbilityRunningInfos(info, isPerm);
     connectManager_->GetAbilityRunningInfos(info, isPerm);
@@ -3345,6 +3362,9 @@ int AbilityManagerService::GetExtensionRunningInfos(int upperLimit, std::vector<
 {
     HILOG_DEBUG("Get extension infos, upperLimit : %{public}d", upperLimit);
     auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyRunningInfoPerm();
+    if (!connectManager_) {
+        return ERR_INVALID_VALUE;
+    }
 
     connectManager_->GetExtensionRunningInfos(upperLimit, info, GetUserId(), isPerm);
     return ERR_OK;
@@ -3385,18 +3405,6 @@ int AbilityManagerService::RegisterSnapshotHandler(const sptr<ISnapshotHandler>&
     }
     currentMissionListManager_->RegisterSnapshotHandler(handler);
     HILOG_INFO("snapshot: AbilityManagerService register snapshot handler success.");
-    return ERR_OK;
-}
-
-int AbilityManagerService::RegisterWindowHandler(const sptr<IWindowHandler> &handler)
-{
-    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
-    if (!isSaCall) {
-        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
-        return 0;
-    }
-    windowHandler_ = handler;
-    HILOG_INFO("window: AbilityManagerService register windows handler success.");
     return ERR_OK;
 }
 

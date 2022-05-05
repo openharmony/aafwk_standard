@@ -16,8 +16,6 @@ import("//foundation/aafwk/standard/aafwk.gni")
 import("//foundation/aafwk/standard/feature.gni")
 import("//foundation/aafwk/standard/services/abilitymgr/abilitymgr.gni")
 
-EVENT_DIR = "${notification_path}/common_event_service/"
-
 ohos_source_set("abilityms_test_source") {
   cflags_cc = []
   sources = [
@@ -64,9 +62,7 @@ ohos_source_set("abilityms_test_source") {
   ]
 
   include_dirs = [
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include/",
-    "${EVENT_DIR}/frameworks/core/include",
-    "${EVENT_DIR}/interfaces/innerkits/native/include",
+    "${appexecfwk_innerkits_path}/appexecfwk_core/include/",
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
@@ -99,8 +95,8 @@ ohos_source_set("abilityms_test_source") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${innerkits_path}/base:base",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${innerkits_path}/want:want",
@@ -156,7 +152,7 @@ ohos_source_set("abilityms_test_source") {
     "native_appdatamgr:native_appdatafwk",
     "native_appdatamgr:native_dataability",
     "native_appdatamgr:native_rdb",
-    "resmgr_standard:global_resmgr",
+    "resource_management:global_resmgr",
   ]
 
   if (ability_runtime_graphics) {

@@ -25,7 +25,7 @@ ohos_unittest("FmsFormTimerMgrTest") {
     "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include/",
+    "${appexecfwk_innerkits_path}/appexecfwk_base/include/",
     "${aafwk_path}/interfaces/innerkits/form_manager/include",
     "//base/miscservices/time/interfaces/innerkits/include",
   ]
@@ -38,7 +38,6 @@ ohos_unittest("FmsFormTimerMgrTest") {
   deps = [
     "${aafwk_path}/frameworks/kits/wantagent:wantagent_innerkits",
     "${appexecfwk_path}/common:libappexecfwk_common",
-    "${notification_path}/common_event_service/frameworks/common:libevent_common",
     "${services_path}/formmgr:fms_target",
     "//base/miscservices/time/services:time_service",
     "//third_party/googletest:gmock_main",

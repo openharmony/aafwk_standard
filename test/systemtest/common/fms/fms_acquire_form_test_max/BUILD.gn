@@ -21,7 +21,6 @@ ohos_systemtest("FmsAcquireFormTestMax") {
   include_dirs = [
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${appexecfwk_path}/test/systemtest/common/fms/common/include",
-    "${notification_path}/common_event_service/test/systemtest/common/resource",
     "${distributedschedule_path}/safwk/services/safwk/include",
   ]
 
@@ -45,8 +44,8 @@ ohos_systemtest("FmsAcquireFormTestMax") {
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/services/abilitymgr:abilityms",
+    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "//third_party/googletest:gtest_main",
   ]
 

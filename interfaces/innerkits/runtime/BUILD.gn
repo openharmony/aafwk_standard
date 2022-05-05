@@ -68,7 +68,7 @@ ohos_shared_library("runtime") {
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
     "napi:ace_napi",
-    "resmgr_standard:global_resmgr",
+    "resource_management:global_resmgr",
     "utils_base:utils",
   ]
 

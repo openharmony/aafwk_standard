@@ -20,12 +20,10 @@ config("appmgr_test_service_config") {
     "${aafwk_path}/services/abilitymgr/test/mock/appmgr_test_service/include/",
     "${aafwk_path}/services/abilitymgr/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_core/include",
+    "${appexecfwk_innerkits_path}/appexecfwk_core/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/services/common/include",
-    "${notification_path}/common_event_service/frameworks/core/include",
-    "${notification_path}/common_event_service/interfaces/innerkits/native/include",
     "//foundation/windowmanager/utils/include",
   ]
 }
@@ -47,8 +45,8 @@ ohos_source_set("appmgr_test_service") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
+    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${innerkits_path}/want:want",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
@@ -61,6 +59,7 @@ ohos_source_set("appmgr_test_service") {
 
   external_deps = [
     "bundle_framework:appexecfwk_core",
+    "common_event_service:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

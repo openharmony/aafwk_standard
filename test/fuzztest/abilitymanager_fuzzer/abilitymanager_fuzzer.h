@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,14 +13,9 @@
  * limitations under the License.
  */
 
-#include "main_thread.h"
-#include "hilog_wrapper.h"
+#ifndef TEST_FUZZTEST_ABILITYMANAGER_FUZZER_ABILITYMANAGER_FUZZER_H
+#define TEST_FUZZTEST_ABILITYMANAGER_FUZZER_ABILITYMANAGER_FUZZER_H
 
-using namespace OHOS;
-using namespace OHOS::AppExecFwk;
+#define FUZZ_PROJECT_NAME "abilitymanager_fuzzer"
 
-int main(const int argc, const char *argv[])
-{
-    MainThread::Start();
-    return 0;
-}
+#endif // TEST_FUZZTEST_ABILITYMANAGER_FUZZER_ABILITYMANAGER_FUZZER_H

@@ -19,7 +19,7 @@ config("appmgr_sdk_config") {
     "include/appmgr",
     "${kits_path}/ability/native/include",
     "${innerkits_path}/ability_manager/include",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base/include",
+    "${appexecfwk_innerkits_path}/appexecfwk_base/include",
   ]
   defines = [ "ABILITY_COMMAND_FOR_TEST" ]
 }
@@ -129,7 +129,7 @@ ohos_shared_library("configuration") {
 
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
-    "resmgr_standard:global_resmgr",
+    "resource_management:global_resmgr",
     "utils_base:utils",
   ]
 
