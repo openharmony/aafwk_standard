@@ -17,7 +17,7 @@
 
 #include <cstdint>
 
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "hilog_wrapper.h"
 #include "js_context_utils.h"
 #include "js_data_struct_converter.h"

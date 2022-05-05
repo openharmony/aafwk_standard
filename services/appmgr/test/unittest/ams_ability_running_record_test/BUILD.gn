@@ -71,9 +71,9 @@ ohos_unittest("AmsAbilityRunningRecordTest") {
     "access_token:libaccesstoken_sdk",
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_core",
-    "bytrace_standard:bytrace_core",
     "common_event_service:cesfwk_innerkits",
     "hisysevent_native:libhisysevent",
+    "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

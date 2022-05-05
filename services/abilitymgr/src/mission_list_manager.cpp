@@ -18,7 +18,7 @@
 #include "ability_manager_errors.h"
 #include "ability_manager_service.h"
 #include "ability_util.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "errors.h"
 #include "hilog_wrapper.h"
 #include "mission_info_mgr.h"
