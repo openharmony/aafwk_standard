@@ -3350,6 +3350,9 @@ int AbilityManagerService::GetAbilityRunningInfos(std::vector<AbilityRunningInfo
 {
     HILOG_DEBUG("Get running ability infos.");
     auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyRunningInfoPerm();
+    if (!currentMissionListManager_ || !connectManager_ || !dataAbilityManager_) {
+        return ERR_INVALID_VALUE;
+    }
 
     currentMissionListManager_->GetAbilityRunningInfos(info, isPerm);
     connectManager_->GetAbilityRunningInfos(info, isPerm);
@@ -3362,6 +3365,9 @@ int AbilityManagerService::GetExtensionRunningInfos(int upperLimit, std::vector<
 {
     HILOG_DEBUG("Get extension infos, upperLimit : %{public}d", upperLimit);
     auto isPerm = AAFwk::PermissionVerification::GetInstance()->VerifyRunningInfoPerm();
+    if (!connectManager_) {
+        return ERR_INVALID_VALUE;
+    }
 
     connectManager_->GetExtensionRunningInfos(upperLimit, info, GetUserId(), isPerm);
     return ERR_OK;
