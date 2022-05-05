@@ -91,7 +91,6 @@ ohos_shared_library("distributedmissionmanager") {
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
-    "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "ipc_js:rpc",
     "napi:ace_napi",

@@ -273,7 +273,7 @@ std::string AbilityContext::GetBundleCodePath()
     return ContextContainer::GetBundleCodePath();
 }
 
-std::string AbilityContext::GetBundleName()
+std::string AbilityContext::GetBundleName() const
 {
     return ContextContainer::GetBundleName();
 }

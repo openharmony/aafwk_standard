@@ -115,7 +115,6 @@ ohos_shared_library("abilitykit_native") {
     "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/rdb/include",
     "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi//common/include",
     "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/dataability/include",
-    "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/rdb/include",
     "${distributeddatamgr_path}/objectstore/interfaces/innerkits/",
   ]
 
