@@ -733,7 +733,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_001, TestSize.Level1)
     EXPECT_TRUE(lauList->GetAbilityRecordByToken(launcher->GetToken()) != nullptr);
 
     // test root launcher foreground timeout.
-    launcher->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    launcher->SetAbilityState(AbilityState::FOREGROUNDING);
     abilityMs_->HandleForegroundNewTimeOut(launcher->eventId_);
     EXPECT_TRUE(curListManager->GetAbilityRecordByToken(launcher->GetToken()) != nullptr);
     auto topAbility = curListManager->GetCurrentTopAbilityLocked();
@@ -785,7 +785,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_002, TestSize.Level1)
     commonLauncher->SetMissionList(lauList);
     commonLauncher->eventId_ = AbilityRecord::g_abilityRecordEventId_++;
     lauList->AddMissionToTop(commonMissionLauncher);
-    commonLauncher->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonLauncher->SetAbilityState(AbilityState::FOREGROUNDING);
     EXPECT_TRUE(lauList->GetAbilityRecordByToken(commonLauncher->GetToken()) != nullptr);
 
     // test common launcher foreground timeout.
@@ -853,7 +853,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_003, TestSize.Level1)
     commonLauncher->AddCallerRecord(caller->GetToken(), -1);
     missionList->AddMissionToTop(commonMissionLauncher);
     curListManager->MoveMissionListToTop(missionList);
-    commonLauncher->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonLauncher->SetAbilityState(AbilityState::FOREGROUNDING);
     EXPECT_TRUE(curListManager->GetAbilityRecordByToken(commonLauncher->GetToken()) != nullptr);
     // test common launcher foreground timeout.
     abilityMs_->HandleForegroundNewTimeOut(commonLauncher->eventId_);
@@ -917,7 +917,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_004, TestSize.Level1)
     commonLauncher->AddCallerRecord(caller->GetToken(), -1);
     missionList->AddMissionToTop(commonMissionLauncher);
     curListManager->MoveMissionListToTop(missionList);
-    commonLauncher->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonLauncher->SetAbilityState(AbilityState::FOREGROUNDING);
     EXPECT_TRUE(curListManager->GetAbilityRecordByToken(commonLauncher->GetToken()) != nullptr);
 
     // test common launcher foreground timeout.
@@ -984,7 +984,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_005, TestSize.Level1)
     commonLauncher->AddCallerRecord(caller->GetToken(), -1);
     missionList->AddMissionToTop(commonMissionLauncher);
     curListManager->MoveMissionListToTop(missionList);
-    commonLauncher->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonLauncher->SetAbilityState(AbilityState::FOREGROUNDING);
     EXPECT_TRUE(curListManager->GetAbilityRecordByToken(commonLauncher->GetToken()) != nullptr);
 
     // test common launcher foreground timeout.
@@ -1051,7 +1051,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_006, TestSize.Level1)
     commonAbility->AddCallerRecord(caller->GetToken(), -1);
     missionList->AddMissionToTop(commonMissionLauncher);
     curListManager->MoveMissionListToTop(missionList);
-    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
     EXPECT_TRUE(curListManager->GetAbilityRecordByToken(commonAbility->GetToken()) != nullptr);
 
     // test common ability foreground timeout.
@@ -1109,7 +1109,7 @@ HWTEST_F(AbilityTimeoutTest, HandleForgroundNewTimeout_007, TestSize.Level1)
     commonLauncher->eventId_ = AbilityRecord::g_abilityRecordEventId_++;
     missionList->AddMissionToTop(commonMissionLauncher);
     curListManager->MoveMissionListToTop(missionList);
-    commonLauncher->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonLauncher->SetAbilityState(AbilityState::FOREGROUNDING);
     EXPECT_TRUE(curListManager->GetAbilityRecordByToken(commonLauncher->GetToken()) != nullptr);
 
     // test common launcher foreground timeout.

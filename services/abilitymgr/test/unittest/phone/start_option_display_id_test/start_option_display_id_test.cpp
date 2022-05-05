@@ -74,6 +74,8 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+    void OnStartAms();
+    void OnStopAms();
 
 public:
     std::shared_ptr<AbilityManagerService> abilityMs_ {nullptr};
@@ -93,10 +95,8 @@ void StartOptionDisplayIdTest::TearDownTestCase()
 void StartOptionDisplayIdTest::SetUp()
 {
     abilityMs_ = OHOS::DelayedSingleton<AbilityManagerService>::GetInstance();
-    abilityMs_->OnStart();
-    WaitUntilTaskFinished();
+    OnStartAms();
 
-    abilityMs_->StartUser(USER_ID_U100);
     auto missionListMgr = abilityMs_->GetListManagerByUserId(USER_ID_U100);
     if (!missionListMgr) {
         return;
@@ -104,14 +104,63 @@ void StartOptionDisplayIdTest::SetUp()
 
     auto topAbility = missionListMgr->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
 }
 
 void StartOptionDisplayIdTest::TearDown()
 {
-    abilityMs_->OnStop();
+    OnStopAms();
     OHOS::DelayedSingleton<AbilityManagerService>::DestroyInstance();
+}
+
+void StartOptionDisplayIdTest::OnStartAms()
+{
+    if (abilityMs_) {
+        if (abilityMs_->state_ == ServiceRunningState::STATE_RUNNING) {
+            return;
+        }
+
+        abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
+
+        abilityMs_->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
+        EXPECT_TRUE(abilityMs_->eventLoop_);
+
+        abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
+        EXPECT_TRUE(abilityMs_->handler_);
+
+        // init user controller.
+        abilityMs_->userController_ = std::make_shared<UserController>();
+        EXPECT_TRUE(abilityMs_->userController_);
+        abilityMs_->userController_->Init();
+        int userId = USER_ID_U100;
+        abilityMs_->userController_->SetCurrentUserId(userId);
+        abilityMs_->InitConnectManager(userId, true);
+        abilityMs_->InitDataAbilityManager(userId, true);
+        abilityMs_->InitPendWantManager(userId, true);
+        abilityMs_->systemDataAbilityManager_ = std::make_shared<DataAbilityManager>();
+        EXPECT_TRUE(abilityMs_->systemDataAbilityManager_);
+
+        abilityMs_->amsConfigResolver_ = std::make_shared<AmsConfigurationParameter>();
+        EXPECT_TRUE(abilityMs_->amsConfigResolver_);
+        abilityMs_->amsConfigResolver_->Parse();
+
+        abilityMs_->InitMissionListManager(userId, true);
+        abilityMs_->connectManager_->SetEventHandler(abilityMs_->handler_);
+        abilityMs_->eventLoop_->Run();
+
+        WaitUntilTaskFinished();
+        return;
+    }
+
+    GTEST_LOG_(INFO) << "OnStart fail";
+}
+
+void StartOptionDisplayIdTest::OnStopAms()
+{
+    abilityMs_->eventLoop_.reset();
+    abilityMs_->handler_.reset();
+    abilityMs_->state_ = ServiceRunningState::STATE_NOT_START;
 }
 
 /*

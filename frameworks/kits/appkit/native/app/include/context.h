@@ -29,6 +29,9 @@
 #include "mission_information.h"
 
 namespace OHOS {
+namespace DataShare {
+class DataShareHelper;
+}
 namespace AppExecFwk {
 using Want = OHOS::AAFwk::Want;
 using AbilityStartSetting = AAFwk::AbilityStartSetting;
@@ -53,7 +56,6 @@ constexpr int INVALID_RESOURCE_VALUE = -1;  // GetColor() Failed return Value
 constexpr int DEFAULT_ACCOUNT_ID = -1;
 
 class DataAbilityHelper;
-class DataShareHelper;
 class ContinuationConnector;
 class IAbilityManager;
 class EventRunner;
@@ -605,7 +607,7 @@ public:
     virtual bool PrintDrawnCompleted() = 0;
 
     friend DataAbilityHelper;
-    friend DataShareHelper;
+    friend OHOS::DataShare::DataShareHelper;
     friend ContinuationConnector;
 
 protected:

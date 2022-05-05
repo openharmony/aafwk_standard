@@ -252,7 +252,7 @@ HWTEST_F(AbilityRecordModuleTest, TerminateAbility_001, TestSize.Level3)
 /*
  * Feature: AbilityRecord
  * Function: Scheduler
- * SubFunction: Activate/Inactivate/MoveToBackground/Terminate/ConnectAbility/DisconnectAbility/SendResult
+ * SubFunction: Activate/Inactivate/Terminate/ConnectAbility/DisconnectAbility/SendResult
  * FunctionPoints: Check scheduler work flow.
  * CaseDescription: Change ability state and check if the work flow reachs the 'AbilityScheduler' mocker.
  */
@@ -299,7 +299,6 @@ HWTEST_F(AbilityRecordModuleTest, AbilityScheduler_001, TestSize.Level3)
         EXPECT_TRUE(testResult);
         EXPECT_EQ(abilityRecord->GetAbilityState(), INACTIVATING);
 
-        // MoveToBackground
         testResult = false;
         auto mockBackgroundHandler = [&](const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo) {
             testResult = (lifeCycleStateInfo.state == AbilityLifeCycleState::ABILITY_STATE_BACKGROUND);
@@ -307,10 +306,6 @@ HWTEST_F(AbilityRecordModuleTest, AbilityScheduler_001, TestSize.Level3)
         EXPECT_CALL(*mockAbilityScheduerStub, ScheduleAbilityTransaction(_, _))
             .Times(1)
             .WillOnce(Invoke(mockBackgroundHandler));
-
-        abilityRecord->MoveToBackground([] {});
-        EXPECT_TRUE(testResult);
-        EXPECT_EQ(abilityRecord->GetAbilityState(), MOVING_BACKGROUND);
 
         // Terminate
         EXPECT_CALL(*mockAbilityScheduerStub, ScheduleAbilityTransaction(_, _)).Times(1);
@@ -551,20 +546,11 @@ HWTEST_F(AbilityRecordModuleTest, ConvertAbilityState_001, TestSize.Level1)
     result = AbilityRecord::ConvertAbilityState(ACTIVE);
     EXPECT_EQ(result, "ACTIVE");
 
-    result = AbilityRecord::ConvertAbilityState(BACKGROUND);
-    EXPECT_EQ(result, "BACKGROUND");
-
-    result = AbilityRecord::ConvertAbilityState(SUSPENDED);
-    EXPECT_EQ(result, "SUSPENDED");
-
     result = AbilityRecord::ConvertAbilityState(INACTIVATING);
     EXPECT_EQ(result, "INACTIVATING");
 
     result = AbilityRecord::ConvertAbilityState(ACTIVATING);
     EXPECT_EQ(result, "ACTIVATING");
-
-    result = AbilityRecord::ConvertAbilityState(MOVING_BACKGROUND);
-    EXPECT_EQ(result, "MOVING_BACKGROUND");
 
     result = AbilityRecord::ConvertAbilityState(TERMINATING);
     EXPECT_EQ(result, "TERMINATING");
@@ -589,12 +575,6 @@ HWTEST_F(AbilityRecordModuleTest, ConvertLifeCycle_001, TestSize.Level1)
 
     result = AbilityRecord::ConvertLifeCycleToAbilityState(ABILITY_STATE_ACTIVE);
     EXPECT_EQ(result, ACTIVE);
-
-    result = AbilityRecord::ConvertLifeCycleToAbilityState(ABILITY_STATE_BACKGROUND);
-    EXPECT_EQ(result, BACKGROUND);
-
-    result = AbilityRecord::ConvertLifeCycleToAbilityState(ABILITY_STATE_SUSPENDED);
-    EXPECT_EQ(result, SUSPENDED);
 
     result = AbilityRecord::ConvertLifeCycleToAbilityState(static_cast<AbilityLifeCycleState>(-1));
     EXPECT_EQ(result, -1);

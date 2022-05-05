@@ -74,7 +74,7 @@ FormInfoStorageMgr::~FormInfoStorageMgr()
     dataManager_.CloseKvStore(appId_, kvStorePtr_);
 }
 
-ErrCode FormInfoStorageMgr::LoadFormInfos(std::vector<std::pair<std::string, std::string>> &formInfos)
+ErrCode FormInfoStorageMgr::LoadFormInfos(std::vector<std::pair<std::string, std::string>> &formInfoStorages)
 {
     HILOG_INFO("FormInfoStorageMgr load all form infos");
     {
@@ -99,13 +99,13 @@ ErrCode FormInfoStorageMgr::LoadFormInfos(std::vector<std::pair<std::string, std
     }
 
     for (const auto &item: allEntries) {
-        formInfos.emplace_back(item.key.ToString(), item.value.ToString());
+        formInfoStorages.emplace_back(item.key.ToString(), item.value.ToString());
     }
 
     return ERR_OK;
 }
 
-ErrCode FormInfoStorageMgr::GetBundleFormInfos(const std::string &bundleName, std::string &formInfos)
+ErrCode FormInfoStorageMgr::GetBundleFormInfos(const std::string &bundleName, std::string &formInfoStorages)
 {
     if (bundleName.empty()) {
         HILOG_ERROR("bundleName is empty.");
@@ -139,11 +139,11 @@ ErrCode FormInfoStorageMgr::GetBundleFormInfos(const std::string &bundleName, st
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
 
-    formInfos = allEntries.front().value.ToString();
+    formInfoStorages = allEntries.front().value.ToString();
     return ERR_OK;
 }
 
-ErrCode FormInfoStorageMgr::SaveBundleFormInfos(const std::string &bundleName, const std::string &formInfos)
+ErrCode FormInfoStorageMgr::SaveBundleFormInfos(const std::string &bundleName, const std::string &formInfoStorages)
 {
     if (bundleName.empty()) {
         HILOG_ERROR("bundleName is empty.");
@@ -160,7 +160,7 @@ ErrCode FormInfoStorageMgr::SaveBundleFormInfos(const std::string &bundleName, c
     }
 
     DistributedKv::Key key(bundleName);
-    DistributedKv::Value value(formInfos);
+    DistributedKv::Value value(formInfoStorages);
     DistributedKv::Status status;
     {
         std::lock_guard<std::mutex> lock(kvStorePtrMutex_);
@@ -171,7 +171,7 @@ ErrCode FormInfoStorageMgr::SaveBundleFormInfos(const std::string &bundleName, c
         }
     }
     if (status != DistributedKv::Status::SUCCESS) {
-        HILOG_ERROR("save formInfos to kvStore error: %{public}d", status);
+        HILOG_ERROR("save formInfoStorages to kvStore error: %{public}d", status);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
     return ERR_OK;
@@ -205,13 +205,13 @@ ErrCode FormInfoStorageMgr::RemoveBundleFormInfos(const std::string &bundleName)
     }
 
     if (status != DistributedKv::Status::SUCCESS) {
-        HILOG_ERROR("remove formInfos from kvStore error: %{public}d", status);
+        HILOG_ERROR("remove formInfoStorages from kvStore error: %{public}d", status);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
     return ERR_OK;
 }
 
-ErrCode FormInfoStorageMgr::UpdateBundleFormInfos(const std::string &bundleName, const std::string &formInfos)
+ErrCode FormInfoStorageMgr::UpdateBundleFormInfos(const std::string &bundleName, const std::string &formInfoStorages)
 {
     if (bundleName.empty()) {
         HILOG_ERROR("bundleName is empty.");
@@ -236,18 +236,18 @@ ErrCode FormInfoStorageMgr::UpdateBundleFormInfos(const std::string &bundleName,
         HILOG_WARN("distribute database ipc error and try to call again, result = %{public}d", status);
     }
     if (status != DistributedKv::Status::SUCCESS && status != DistributedKv::Status::KEY_NOT_FOUND) {
-        HILOG_ERROR("update formInfos to kvStore error: %{public}d", status);
+        HILOG_ERROR("update formInfoStorages to kvStore error: %{public}d", status);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
 
-    DistributedKv::Value value(formInfos);
+    DistributedKv::Value value(formInfoStorages);
     status = kvStorePtr_->Put(key, value);
     if (status == DistributedKv::Status::IPC_ERROR) {
         status = kvStorePtr_->Put(key, value);
         HILOG_WARN("distribute database ipc error and try to call again, result = %{public}d", status);
     }
     if (status != DistributedKv::Status::SUCCESS) {
-        HILOG_ERROR("update formInfos to kvStore error: %{public}d", status);
+        HILOG_ERROR("update formInfoStorages to kvStore error: %{public}d", status);
         return ERR_APPEXECFWK_FORM_COMMON_CODE;
     }
     return ERR_OK;
