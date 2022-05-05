@@ -1651,7 +1651,6 @@ protected:
         std::weak_ptr<Ability> ability_;
     };
 
-
     /**
      * @brief override Rosen::DisplayManager::IDisplayListener virtual callback function
      *
