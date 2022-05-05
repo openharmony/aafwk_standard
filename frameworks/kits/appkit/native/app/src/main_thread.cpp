@@ -25,7 +25,7 @@
 #include "ability_thread.h"
 #include "app_loader.h"
 #include "application_env_impl.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "configuration_convertor.h"
 #include "context_deal.h"
 #include "context_impl.h"

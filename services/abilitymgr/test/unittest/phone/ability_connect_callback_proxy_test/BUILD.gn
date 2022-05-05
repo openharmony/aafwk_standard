@@ -39,7 +39,6 @@ ohos_unittest("ability_connect_callback_proxy_test") {
   }
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",

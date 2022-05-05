@@ -14,7 +14,7 @@
  */
 
 #include "app_lifecycle_deal.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {

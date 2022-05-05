@@ -16,7 +16,7 @@
 #include "app_scheduler_host.h"
 #include "ability_info.h"
 #include "appexecfwk_errors.h"
-#include "bytrace.h"
+#include "hitrace_meter.h"
 #include "hilog_wrapper.h"
 #include "ipc_types.h"
 

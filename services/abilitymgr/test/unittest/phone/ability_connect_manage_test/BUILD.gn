@@ -21,7 +21,6 @@ ohos_unittest("ability_connect_manage_test") {
 
   sources = [
     # add mock file
-    "${aafwk_path}/frameworks/kits/ability/native/src/dummy_data_ability_predicates.cpp",
     "${aafwk_path}/frameworks/kits/ability/native/src/dummy_result_set.cpp",
     "${aafwk_path}/frameworks/kits/ability/native/src/dummy_values_bucket.cpp",
     "${aafwk_path}/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",

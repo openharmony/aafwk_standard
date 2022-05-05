@@ -39,7 +39,6 @@ ohos_unittest("ability_connect_callback_stub_test") {
   }
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/frameworks/kits/ability/native:dummy_classes",
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
