@@ -43,7 +43,7 @@ ohos_unittest("FmsFormMgrNotifyInvisibleFormsTest") {
     "${aafwk_path}/frameworks/kits/fmskit/native/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
-    "${global_path}/resmgr_standard/interfaces/innerkits/include",
+    "${global_path}/resource_management/interfaces/innerkits/include",
     "${distributeddatamgr_path}/distributeddatamgr/interfaces/innerkits/distributeddata/include",
   ]
 

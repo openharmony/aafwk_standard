@@ -53,7 +53,7 @@ config("appkit_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "native/ability_delegator/include",
-    "${global_path}/resmgr_standard/interfaces/innerkits/include",
+    "${global_path}/resource_management/interfaces/innerkits/include",
   ]
 
   if (ability_runtime_graphics) {
@@ -115,7 +115,7 @@ ohos_shared_library("appkit_native") {
   ]
 
   public_deps =
-      [ "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr" ]
+      [ "${global_path}/resource_management/frameworks/resmgr:global_resmgr" ]
   external_deps = [
     "ability_base:configuration",
     "ability_base:want",
@@ -182,7 +182,7 @@ ohos_shared_library("app_context") {
   ]
 
   public_deps =
-      [ "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr" ]
+      [ "${global_path}/resource_management/frameworks/resmgr:global_resmgr" ]
 
   external_deps = [
     "ability_base:want",
@@ -196,7 +196,7 @@ ohos_shared_library("app_context") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
-    "resmgr_standard:resmgr_napi_core",
+    "resource_management:resmgr_napi_core",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]

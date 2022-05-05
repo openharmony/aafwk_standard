@@ -22,7 +22,7 @@ ohos_shared_library("configurationconstant_napi") {
 
   external_deps = [
     "napi:ace_napi",
-    "resmgr_standard:global_resmgr",
+    "resource_management:global_resmgr",
     "utils_base:utils",
   ]
 
