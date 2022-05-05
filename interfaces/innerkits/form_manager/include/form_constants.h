@@ -30,6 +30,8 @@ namespace Constants {
     const std::string PARAM_FORM_DIMENSION_KEY = "ohos.extra.param.key.form_dimension";
     const std::string PARAM_MESSAGE_KEY = "ohos.extra.param.key.message";
     const std::string PARAM_FORM_TEMPORARY_KEY = "ohos.extra.param.key.form_temporary";
+    const std::string PARAM_FORM_WIDTH_KEY = "ohos.extra.param.key.form_width";
+    const std::string PARAM_FORM_HEIGHT_KEY = "ohos.extra.param.key.form_height";
     const int32_t ONE_HOST_MAX_FORM_SIZE = 256;
     const std::string RECREATE_FORM_KEY = "ohos.extra.param.key.recreate";
     const std::string PARAM_FORM_CUSTOMIZE_KEY = "ohos.extra.param.key.form_customize";
