@@ -407,6 +407,8 @@ public:
 #ifdef SUPPORT_GRAPHICS
     virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
         const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
+
+    virtual int RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler) override;
 #endif
 
     virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) override;
@@ -438,8 +440,6 @@ public:
     virtual bool IsRunningInStabilityTest() override;
 
     virtual int RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler) override;
-
-    virtual int RegisterWindowHandler(const sptr<IWindowHandler>& handler) override;
 
     virtual int GetMissionSnapshot(const std::string& deviceId, int32_t missionId, MissionSnapshot& snapshot) override;
 
