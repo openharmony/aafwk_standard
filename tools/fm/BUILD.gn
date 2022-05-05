@@ -21,7 +21,7 @@ config("tools_fm_config") {
     "${aafwk_path}/services/common/include",
     "${aafwk_path}/tools/aa/include",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/interfaces/innerkits/libeventhandler/include",
+    "${appexecfwk_innerkits_path}/libeventhandler/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "//utils/native/base/include",
     "include",

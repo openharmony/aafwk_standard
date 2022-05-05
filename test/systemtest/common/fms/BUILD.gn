@@ -22,7 +22,7 @@ config("form_manager_test_config") {
 
   configs = [
     "${aafwk_path}/frameworks/kits/ability/native:ability_config",
-    "${appexecfwk_path}/interfaces/innerkits/appexecfwk_base:appexecfwk_base_sdk_config",
+    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base_sdk_config",
   ]
 }
 
