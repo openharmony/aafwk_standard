@@ -16,6 +16,7 @@
 #ifdef SUPPORT_GRAPHICS
 #include "window_manager_service_handler_proxy.h"
 
+#include "ability_manager_errors.h"
 #include "hilog_wrapper.h"
 #include "parcel.h"
 
@@ -42,11 +43,34 @@ void WindowManagerServiceHandlerProxy::NotifyWindowTransition(sptr<AbilityTransi
         return;
     }
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     int error = Remote()->SendRequest(WMSCmd::ON_NOTIFY_WINDOW_TRANSITION, data, reply, option);
     if (error != ERR_OK) {
-        HILOG_ERROR("SendRequest fial, error: %{public}d", error);
+        HILOG_ERROR("SendRequest fail, error: %{public}d", error);
     }
+}
+
+int32_t WindowManagerServiceHandlerProxy::GetFocusWindow(sptr<IRemoteObject>& abilityToken)
+{
+    HILOG_DEBUG("%{public}s is called.", __func__);
+    MessageParcel data;
+    if (!data.WriteInterfaceToken(IWindowManagerServiceHandler::GetDescriptor())) {
+        HILOG_ERROR("Write interface token failed.");
+        return ERR_AAFWK_PARCEL_FAIL;
+    }
+
+    MessageParcel reply;
+    MessageOption option;
+    int error = Remote()->SendRequest(WMSCmd::ON_GET_FOCUS_ABILITY, data, reply, option);
+    if (error != ERR_OK) {
+        HILOG_ERROR("SendRequest fail, error: %{public}d", error);
+        return ERR_AAFWK_PARCEL_FAIL;
+    }
+    auto ret = reply.ReadInt32();
+    if (ret == 0 && reply.ReadBool()) {
+        abilityToken = reply.ReadObject<IRemoteObject>();
+    }
+    return ret;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

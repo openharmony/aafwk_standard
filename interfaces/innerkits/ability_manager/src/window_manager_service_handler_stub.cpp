@@ -16,6 +16,7 @@
 #ifdef SUPPORT_GRAPHICS
 #include "window_manager_service_handler_stub.h"
 
+#include "ability_manager_errors.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
@@ -25,24 +26,52 @@ int WindowManagerServiceHandlerStub::OnRemoteRequest(
 {
     if (data.ReadInterfaceToken() != IWindowManagerServiceHandler::GetDescriptor()) {
         HILOG_ERROR("InterfaceToken not equal IWindowManagerServiceHandler's descriptor.");
-        return ERR_INVALID_VALUE;
+        return ERR_AAFWK_PARCEL_FAIL;
     }
     ErrCode errCode = ERR_OK;
     switch (code) {
         case WMSCmd::ON_NOTIFY_WINDOW_TRANSITION : {
             sptr<AbilityTransitionInfo> fromInfo(data.ReadParcelable<AbilityTransitionInfo>());
             if (!fromInfo) {
-                errCode = ERR_DEAD_OBJECT;
+                errCode = ERR_AAFWK_PARCEL_FAIL;
                 HILOG_ERROR("To read fromInfo failed.");
                 break;
             }
             sptr<AbilityTransitionInfo> toInfo(data.ReadParcelable<AbilityTransitionInfo>());
             if (!toInfo) {
-                errCode = ERR_DEAD_OBJECT;
+                errCode = ERR_AAFWK_PARCEL_FAIL;
                 HILOG_ERROR("To read toInfo failed.");
                 break;
             }
             NotifyWindowTransition(fromInfo, toInfo);
+            break;
+        }
+        case WMSCmd::ON_GET_FOCUS_ABILITY : {
+            sptr<IRemoteObject> abilityToken = nullptr;
+            int32_t ret = GetFocusWindow(abilityToken);
+            if (!reply.WriteInt32(ret)) {
+                errCode = ERR_AAFWK_PARCEL_FAIL;
+                HILOG_ERROR("To write result failed.");
+                break;
+            }
+            if (abilityToken) {
+                if (!reply.WriteBool(true)) {
+                    errCode = ERR_AAFWK_PARCEL_FAIL;
+                    HILOG_ERROR("To write true failed.");
+                    break;
+                }
+                if (!reply.WriteObject(abilityToken)) {
+                    errCode = ERR_AAFWK_PARCEL_FAIL;
+                    HILOG_ERROR("To write abilityToken failed.");
+                    break;
+                }
+            } else {
+                if (!reply.WriteBool(false)) {
+                    errCode = ERR_AAFWK_PARCEL_FAIL;
+                    HILOG_ERROR("To write false failed.");
+                    break;
+                }
+            }
             break;
         }
         default:

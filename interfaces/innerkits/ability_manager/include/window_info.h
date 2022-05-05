@@ -46,8 +46,17 @@ struct AbilityTransitionInfo : public Parcelable {
             return false;
         }
 
-        if (!parcel.WriteObject(abilityToken_)) {
-            return false;
+        if (!abilityToken_) {
+            if (!parcel.WriteBool(false)) {
+                return false;
+            }
+        } else {
+            if (!parcel.WriteBool(true)) {
+                return false;
+            }
+            if (!parcel.WriteObject(abilityToken_)) {
+                return false;
+            }
         }
 
         if (!parcel.WriteUint64(displayId_)) {
@@ -67,7 +76,9 @@ struct AbilityTransitionInfo : public Parcelable {
         info->bundleName_ = parcel.ReadString();
         info->abilityName_ = parcel.ReadString();
         info->mode_ = parcel.ReadUint32();
-        info->abilityToken_ = parcel.ReadObject<IRemoteObject>();
+        if (parcel.ReadBool()) {
+            info->abilityToken_ = parcel.ReadObject<IRemoteObject>();
+        }
         info->displayId_ = parcel.ReadUint64();
         info->isShowWhenLocked_ = parcel.ReadBool();
         return info;
