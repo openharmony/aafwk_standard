@@ -155,7 +155,7 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
             HILOG_ERROR("CreateAppRunningRecord failed, appRecord is nullptr");
             return;
         }
-        uint32_t startFlags = BuildStartFlags(*want, *abilityInfo);
+        uint32_t startFlags = (want == nullptr) ? 0 : BuildStartFlags(*want, *abilityInfo);
         StartProcess(abilityInfo->applicationName, processName, startFlags, appRecord,
             appInfo->uid, appInfo->bundleName);
     } else {
@@ -1145,6 +1145,7 @@ AppStateData AppMgrServiceInner::WrapAppStateData(const std::shared_ptr<AppRunni
     const ApplicationState state)
 {
     AppStateData appStateData;
+    appStateData.pid = appRecord->GetPriorityObject()->GetPid();
     appStateData.bundleName = appRecord->GetBundleName();
     appStateData.state = static_cast<int32_t>(state);
     appStateData.uid = appRecord->GetUid();

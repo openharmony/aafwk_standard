@@ -1023,7 +1023,7 @@ ErrCode FormDataMgr::UpdateHostFormFlag(const std::vector<int64_t> &formIds, con
         }
     }
     HILOG_ERROR("%{public}s, can't find target client", __func__);
-    return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    return ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF;
 }
 /**
  * @brief Find matched form id.
@@ -1244,6 +1244,11 @@ ErrCode FormDataMgr::AcquireFormStateBack(AppExecFwk::FormState state, const std
 ErrCode FormDataMgr::NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
                                         const sptr<IRemoteObject> &callerToken)
 {
+    if (formIds.empty() || callerToken == nullptr) {
+        HILOG_ERROR("%{public}s failed, formIds empty.", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
     std::vector<int64_t> foundFormIds {};
     {
         HILOG_INFO("%{public}s, get the matched form host record by client stub.", __func__);

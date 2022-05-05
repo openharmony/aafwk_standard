@@ -129,7 +129,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_StartAbility_001, TestSize.Le
     abilityMs_->StartUser(USER_ID_U100);
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -141,7 +141,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_StartAbility_001, TestSize.Le
     abilityMs_->StartUser(new_user_id_);
     topAbility = abilityMs_->GetListManagerByUserId(new_user_id_)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
 
     result = abilityMs_->StartAbility(want, new_user_id_);
@@ -164,7 +164,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_StartAbility_002, TestSize.Le
     GTEST_LOG_(INFO) << "AbilityManagerServiceAccountTest Account_StartAbility_002 start";
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiworld", "WorldService");
@@ -176,7 +176,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_StartAbility_002, TestSize.Le
     topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     sptr<IRemoteObject> token = nullptr;
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
         token = topAbility->GetToken();
     }
 
@@ -203,7 +203,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_StartAbility_003, TestSize.Le
     // default user
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiMusic", "hiMusic");
@@ -215,7 +215,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_StartAbility_003, TestSize.Le
     abilityMs_->StartUser(new_user_id_);
     topAbility = abilityMs_->GetListManagerByUserId(new_user_id_)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     result = abilityMs_->StartAbility(want, abilityStartSetting, nullptr, new_user_id_, -1);
     WaitUntilTaskFinished();
@@ -239,7 +239,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_StartAbility_004, TestSize.Le
     // default user
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiMusic", "hiMusic");
@@ -251,7 +251,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_StartAbility_004, TestSize.Le
     abilityMs_->StartUser(new_user_id_);
     topAbility = abilityMs_->GetListManagerByUserId(new_user_id_)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     result = abilityMs_->StartAbility(want, abilityStartOptions, nullptr, new_user_id_, -1);
     WaitUntilTaskFinished();
@@ -403,7 +403,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_StartAbility_011, TestSize.Le
     abilityMs_->StartUser(USER_ID_U100);
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("device", "ohos.samples.clock", "ohos.samples.clock.default");
@@ -427,7 +427,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_TerminateAbility_001, TestSiz
     GTEST_LOG_(INFO) << "AbilityManagerServiceAccountTest Account_TerminateAbility_001 start";
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -778,7 +778,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_ScheduleConnectAbilityDone_00
     GTEST_LOG_(INFO) << "AbilityManagerServiceAccountTest Account_ScheduleConnectAbilityDone_002 start";
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -860,7 +860,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_ScheduleConnectAbilityDone_00
     abilityMs_->StartUser(new_user_id_);
     auto topAbility = abilityMs_->GetListManagerByUserId(new_user_id_)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -940,7 +940,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_ScheduleDisconnectAbilityDone
     GTEST_LOG_(INFO) << "AbilityManagerServiceAccountTest Account_ScheduleDisconnectAbilityDone_002 start";
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -978,7 +978,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_ScheduleDisconnectAbilityDone
     abilityMs_->StartUser(new_user_id_);
     auto topAbility = abilityMs_->GetListManagerByUserId(new_user_id_)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -1058,7 +1058,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_ScheduleCommandAbilityDone_00
     GTEST_LOG_(INFO) << "AbilityManagerServiceAccountTest Account_ScheduleCommandAbilityDone_002 start";
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -1140,7 +1140,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_ScheduleCommandAbilityDone_00
     abilityMs_->StartUser(new_user_id_);
     auto topAbility = abilityMs_->GetListManagerByUserId(new_user_id_)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -1323,7 +1323,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_MinimizeAbility_001, TestSize
     // default user
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -1336,7 +1336,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_MinimizeAbility_001, TestSize
 
     sptr<IRemoteObject> token = nullptr;
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
         token = topAbility->GetToken();
     }
     auto resultFunction = abilityMs_->MinimizeAbility(token, true);
@@ -1357,7 +1357,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_AttachAbilityThread_001, Test
     // default user
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -1389,7 +1389,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_OnAbilityRequestDone_001, Tes
     // default user
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -1403,7 +1403,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_OnAbilityRequestDone_001, Tes
         token = topAbility->GetToken();
     }
     abilityMs_->OnAbilityRequestDone(token, 2);
-    EXPECT_EQ(topAbility->GetAbilityState(), OHOS::AAFwk::AbilityState::FOREGROUNDING_NEW);
+    EXPECT_EQ(topAbility->GetAbilityState(), OHOS::AAFwk::AbilityState::FOREGROUNDING);
     GTEST_LOG_(INFO) << "AbilityManagerServiceAccountTest Account_OnAbilityRequestDone_001 end";
 }
 
@@ -1420,7 +1420,7 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_KillProcess_001, TestSize.Lev
     // default user
     auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
     if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
+        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND);
     }
     Want want;
     ElementName element("", "com.ix.hiAccount", "AccountTest");
@@ -1431,40 +1431,6 @@ HWTEST_F(AbilityManagerServiceAccountTest, Account_KillProcess_001, TestSize.Lev
     auto resultFunction = abilityMs_->KillProcess("bundle");
     EXPECT_EQ(ERR_OK, resultFunction);
     GTEST_LOG_(INFO) << "AbilityManagerServiceAccountTest Account_KillProcess_001 end";
-}
-
-/*
- * Feature: AbilityManagerService
- * Function: AbilityTransitionDone
- * SubFunction: NA
- * FunctionPoints: AbilityManagerService StartAbility
- * EnvConditions: NA
- * CaseDescription: AbilityTransitionDone failed due to empty token or scheduler
- */
-HWTEST_F(AbilityManagerServiceAccountTest, Account_AbilityTransitionDone_001, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AbilityManagerServiceAccountTest Account_AbilityTransitionDone_001 start";
-    auto topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
-    if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUND_NEW);
-    }
-    Want want;
-    ElementName element("", "com.ix.hiAccount", "AccountTest");
-    want.SetElement(element);
-    auto result = abilityMs_->StartAbility(want, USER_ID_U100, -1);
-    WaitUntilTaskFinished();
-    EXPECT_EQ(OHOS::ERR_OK, result);
-    topAbility = abilityMs_->GetListManagerByUserId(USER_ID_U100)->GetCurrentTopAbilityLocked();
-
-    sptr<IRemoteObject> token = nullptr;
-    if (topAbility) {
-        topAbility->SetAbilityState(AAFwk::AbilityState::FOREGROUNDING_NEW);
-        token = topAbility->GetToken();
-    }
-    PacMap saveData;
-    auto res1 = abilityMs_->AbilityTransitionDone(token, ABILITY_STATE_FOREGROUND_NEW, saveData);
-    EXPECT_EQ(OHOS::ERR_OK, res1);
-    GTEST_LOG_(INFO) << "AbilityManagerServiceAccountTest Account_AbilityTransitionDone_001 end";
 }
 
 /*

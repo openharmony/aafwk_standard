@@ -342,7 +342,7 @@ HWTEST_F(AbilityTimeoutModuleTest, OnAbilityDied_001, TestSize.Level1)
     GTEST_LOG_(INFO) << "currentmanager userId" << abilityMs_->currentMissionListManager_->userId_;
 
     // died rootlauncher ability
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
     abilityMs_->OnAbilityDied(rootLauncher);
 
     EXPECT_TRUE(lauList->GetAbilityRecordByToken(rootLauncher->GetToken()) != nullptr);
@@ -377,13 +377,13 @@ HWTEST_F(AbilityTimeoutModuleTest, OnAbilityDied_002, TestSize.Level1)
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common ability to abilityMs
     auto commonAbility = CreateCommonAbility();
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    topAbility->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    topAbility->SetAbilityState(AbilityState::FOREGROUND);
     
     // died rootlauncher ability
     abilityMs_->OnAbilityDied(rootLauncher);
@@ -424,7 +424,7 @@ HWTEST_F(AbilityTimeoutModuleTest, OnAbilityDied_003, TestSize.Level1)
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
 
     // died rootlauncher ability
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
     int i = 0;
     while (i < rootLauncher->restratMax_) {
         abilityMs_->OnAbilityDied(rootLauncher);
@@ -491,7 +491,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_002, TestSize.Level1)
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common ability to abilityMs
     auto commonAbility = CreateCommonAbility();
@@ -528,13 +528,13 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_003, TestSize.Level1)
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common ability to abilityMs as caller
     auto callerAbility = CreateCommonAbility();
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, callerAbility);
-    callerAbility->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    callerAbility->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common ability to abilityMs
     auto commonAbility = CreateCommonAbility();
@@ -572,13 +572,13 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_004, TestSize.Level1)
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add launcher ability to abilityMs as caller
     auto callerAbility = CreateLauncherAbility();
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, callerAbility);
-    callerAbility->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    callerAbility->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common ability to abilityMs
     auto commonAbility = CreateCommonAbility();
@@ -616,7 +616,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_005, TestSize.Level1)
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add service ability to abilityMs as caller
     auto callerAbility = CreateServiceAbility();
@@ -658,7 +658,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_006, TestSize.Level1)
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add extension ability to abilityMs as caller
     auto callerAbility = CreateExtensionAbility();
@@ -700,7 +700,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_007, TestSize.Level1)
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common laucher ability to abilityMs
     auto commonLauncherAbility = CreateLauncherAbility();
@@ -738,7 +738,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_001, TestSize.Leve
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUNDING);
     
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(rootLauncher->eventId_);
@@ -769,13 +769,13 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_002, TestSize.Leve
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common ability to abilityMs
     auto commonAbility = CreateCommonAbility();
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
     
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonAbility->eventId_);
@@ -807,20 +807,20 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_003, TestSize.Leve
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common ability to abilityMs as caller
     auto callerAbility = CreateCommonAbility();
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, callerAbility);
-    callerAbility->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    callerAbility->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common ability to abilityMs
     auto commonAbility = CreateCommonAbility();
     commonAbility->AddCallerRecord(callerAbility->GetToken(), -1);
     topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
     
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonAbility->eventId_);
@@ -852,20 +852,20 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_004, TestSize.Leve
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add launcher ability to abilityMs as caller
     auto callerAbility = CreateLauncherAbility();
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, callerAbility);
-    callerAbility->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    callerAbility->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common ability to abilityMs
     auto commonAbility = CreateCommonAbility();
     commonAbility->AddCallerRecord(callerAbility->GetToken(), -1);
     topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
     
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonAbility->eventId_);
@@ -897,7 +897,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_005, TestSize.Leve
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add service ability to abilityMs as caller
     auto callerAbility = CreateServiceAbility();
@@ -908,7 +908,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_005, TestSize.Leve
     auto currentList = abilityMs_->currentMissionListManager_->currentMissionLists_;
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
     
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonAbility->eventId_);
@@ -940,7 +940,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_006, TestSize.Leve
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add extension ability to abilityMs as caller
     auto callerAbility = CreateExtensionAbility();
@@ -951,7 +951,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_006, TestSize.Leve
     auto currentList = abilityMs_->currentMissionListManager_->currentMissionLists_;
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
     
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonAbility->eventId_);
@@ -983,13 +983,13 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_007, TestSize.Leve
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    rootLauncher->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    rootLauncher->SetAbilityState(AbilityState::FOREGROUND);
 
     // add common laucher ability to abilityMs
     auto commonLauncherAbility = CreateLauncherAbility();
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonLauncherAbility);
-    commonLauncherAbility->SetAbilityState(AbilityState::FOREGROUNDING_NEW);
+    commonLauncherAbility->SetAbilityState(AbilityState::FOREGROUNDING);
     
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonLauncherAbility->eventId_);

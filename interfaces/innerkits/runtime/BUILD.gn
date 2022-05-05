@@ -53,7 +53,7 @@ ohos_shared_library("runtime") {
 
   deps = [
     "//ark/js_runtime:libark_jsruntime",
-    "//foundation/ace/napi:ace_napi_ark",
+    "//foundation/arkui/napi:ace_napi_ark",
   ]
 
   external_deps = [

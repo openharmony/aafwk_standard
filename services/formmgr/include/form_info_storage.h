@@ -13,20 +13,21 @@
  * limitations under the License.
  */
 
-#ifndef ABILITY_RUNTIME_JS_DATASHARE_EXT_ABILITY_CONTEXT_H
-#define ABILITY_RUNTIME_JS_DATASHARE_EXT_ABILITY_CONTEXT_H
+#ifndef FOUNDATION_AAFWK_SERVICES_FORMMGR_INCLUDE_FORM_INFO_STORAGE_H
+#define FOUNDATION_AAFWK_SERVICES_FORMMGR_INCLUDE_FORM_INFO_STORAGE_H
 
-#include <memory>
-
-#include "ability_connect_callback.h"
-#include "datashare_ext_ability_context.h"
-#include "native_engine/native_engine.h"
-#include "native_engine/native_value.h"
+#include "form_info.h"
+#include "nlohmann/json.hpp"
 
 namespace OHOS {
-namespace AbilityRuntime {
-NativeValue* CreateJsDataShareExtAbilityContext(NativeEngine& engine,
-    std::shared_ptr<DataShareExtAbilityContext> context);
-} // namespace AbilityRuntime
+namespace AAFwk {
+struct FormInfoStorage {
+    int32_t userId = -1;
+    AppExecFwk::FormInfo formInfo;
+};
+
+void to_json(nlohmann::json &jsonObject, const FormInfoStorage &formInfoStorage);
+void from_json(const nlohmann::json &jsonObject, FormInfoStorage &formInfoStorage);
+} // namespace AAFwk
 } // namespace OHOS
-#endif // ABILITY_RUNTIME_JS_DATASHARE_EXT_ABILITY_CONTEXT_H
+#endif // FOUNDATION_AAFWK_SERVICES_FORMMGR_INCLUDE_FORM_INFO_STORAGE_H

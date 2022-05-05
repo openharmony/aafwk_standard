@@ -139,13 +139,6 @@ ohos_shared_library("abilitykit_native") {
     "src/data_ability_operation_builder.cpp",
     "src/data_ability_result.cpp",
     "src/data_uri_utils.cpp",
-    "src/datashare_connection.cpp",
-    "src/datashare_ext_ability.cpp",
-    "src/datashare_helper.cpp",
-    "src/datashare_proxy.cpp",
-    "src/datashare_stub.cpp",
-    "src/datashare_stub_impl.cpp",
-    "src/datashare_uv_queue.cpp",
     "src/extension.cpp",
     "src/extension_impl.cpp",
     "src/extension_module_loader.cpp",
@@ -155,8 +148,6 @@ ohos_shared_library("abilitykit_native") {
     #"src/dummy_values_bucket.cpp",
     "${services_path}/abilitymgr/src/ability_start_setting.cpp",
     "${services_path}/abilitymgr/src/launch_param.cpp",
-    "src/js_datashare_ext_ability.cpp",
-    "src/js_datashare_ext_ability_context.cpp",
     "src/js_service_extension.cpp",
     "src/js_service_extension_context.cpp",
     "src/js_static_subscriber_extension.cpp",
@@ -178,7 +169,6 @@ ohos_shared_library("abilitykit_native") {
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common/napi_common_want.cpp",
     "${distributeddatamgr_path}/appdatamgr/frameworks/js/napi/common/src/js_utils.cpp",
     "${kits_path}/appkit/native/ability_runtime/context/context_impl.cpp",
-    "${kits_path}/appkit/native/ability_runtime/datashare_ext_ability_context.cpp",
     "${kits_path}/appkit/native/ability_runtime/extension_context.cpp",
     "${kits_path}/appkit/native/ability_runtime/service_extension_context.cpp",
     "${kits_path}/appkit/native/ability_runtime/static_subscriber_extension_context.cpp",
@@ -272,7 +262,7 @@ ohos_shared_library("abilitykit_native") {
     "${appexecfwk_path}/interfaces/innerkits/libeventhandler:libeventhandler",
     "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
     "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
-    "//foundation/ace/napi:ace_napi",
+    "//foundation/arkui/napi:ace_napi",
   ]
 
   if (ability_runtime_graphics) {
@@ -355,28 +345,6 @@ ohos_shared_library("service_extension_module") {
   ]
 
   relative_install_dir = "extensionability/"
-  subsystem_name = "aafwk"
-  part_name = "ability_runtime"
-}
-
-ohos_shared_library("datashare_ext_ability_module") {
-  include_dirs = [ "include" ]
-
-  sources = [ "src/datashare_ext_ability_module_loader.cpp" ]
-
-  configs = [ ":ability_config" ]
-  public_configs = [ ":ability_public_config" ]
-
-  deps = [ ":abilitykit_native" ]
-
-  external_deps = [
-    "ability_base:want",
-    "ability_runtime:runtime",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "utils_base:utils",
-  ]
-
   subsystem_name = "aafwk"
   part_name = "ability_runtime"
 }

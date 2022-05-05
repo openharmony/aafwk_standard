@@ -70,7 +70,7 @@ int MissionListManager::StartAbility(const AbilityRequest &abilityRequest)
         auto state = currentTopAbility->GetAbilityState();
         HILOG_DEBUG("current top: %{public}s, state: %{public}s",
             element.c_str(), AbilityRecord::ConvertAbilityState(state).c_str());
-        if (state == FOREGROUNDING_NEW) {
+        if (state == FOREGROUNDING) {
             HILOG_INFO("Top ability is foregrounding, so enqueue ability for waiting.");
             EnqueueWaittingAbility(abilityRequest);
             return START_ABILITY_WAITING;
@@ -215,7 +215,7 @@ void MissionListManager::StartWaittingAbility()
     auto topAbility = GetCurrentTopAbilityLocked();
     CHECK_POINTER(topAbility);
 
-    if (!topAbility->IsAbilityState(FOREGROUND_NEW)) {
+    if (!topAbility->IsAbilityState(FOREGROUND)) {
         HILOG_INFO("Top ability is not foreground new, must return for start waiting again.");
         return;
     }
@@ -576,8 +576,8 @@ int MissionListManager::MinimizeAbilityLocked(const std::shared_ptr<AbilityRecor
     }
     HILOG_INFO("%{public}s called, ability:%{public}s.", __func__, abilityRecord->GetAbilityInfo().name.c_str());
 
-    if (!abilityRecord->IsAbilityState(AbilityState::FOREGROUND_NEW) &&
-        !abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
+    if (!abilityRecord->IsAbilityState(AbilityState::FOREGROUND) &&
+        !abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING)) {
         HILOG_ERROR("Minimize ability fail, ability state is invalid, not foregroundnew or foregerounding_new.");
         return ERR_OK;
     }
@@ -774,7 +774,7 @@ int MissionListManager::AbilityTransactionDone(const sptr<IRemoteObject> &token,
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_INFO("ability: %{public}s, state: %{public}s", element.c_str(), abilityState.c_str());
 
-    if (targetState == AbilityState::BACKGROUND_NEW) {
+    if (targetState == AbilityState::BACKGROUND) {
         abilityRecord->SaveAbilityState(saveData);
     }
 
@@ -787,10 +787,10 @@ int MissionListManager::DispatchState(const std::shared_ptr<AbilityRecord> &abil
         case AbilityState::INITIAL: {
             return DispatchTerminate(abilityRecord);
         }
-        case AbilityState::BACKGROUND_NEW: {
+        case AbilityState::BACKGROUND: {
             return DispatchBackground(abilityRecord);
         }
-        case AbilityState::FOREGROUND_NEW: {
+        case AbilityState::FOREGROUND: {
             return DispatchForegroundNew(abilityRecord);
         }
         default: {
@@ -806,9 +806,9 @@ int MissionListManager::DispatchForegroundNew(const std::shared_ptr<AbilityRecor
     CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
-    if (!abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
+    if (!abilityRecord->IsAbilityState(AbilityState::FOREGROUNDING)) {
         HILOG_ERROR("DispatchForegroundNew Ability transition life state error. expect %{public}d, actual %{public}d",
-            AbilityState::FOREGROUNDING_NEW,
+            AbilityState::FOREGROUNDING,
             abilityRecord->GetAbilityState());
         return ERR_INVALID_VALUE;
     }
@@ -832,7 +832,7 @@ void MissionListManager::CompleteForegroundNew(const std::shared_ptr<AbilityReco
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_INFO("ability: %{public}s", element.c_str());
 
-    abilityRecord->SetAbilityState(AbilityState::FOREGROUND_NEW);
+    abilityRecord->SetAbilityState(AbilityState::FOREGROUND);
 
     DelayedSingleton<AbilityManagerService>::GetInstance()->NotifyBmsAbilityLifeStatus(
         abilityRecord->GetAbilityInfo().bundleName,
@@ -885,7 +885,7 @@ int MissionListManager::DispatchBackground(const std::shared_ptr<AbilityRecord> 
     CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
-    if (!abilityRecord->IsAbilityState(AbilityState::BACKGROUNDING_NEW)) {
+    if (!abilityRecord->IsAbilityState(AbilityState::BACKGROUNDING)) {
         HILOG_ERROR("Ability transition life state error. actual %{public}d", abilityRecord->GetAbilityState());
         return ERR_INVALID_VALUE;
     }
@@ -902,12 +902,12 @@ int MissionListManager::DispatchBackground(const std::shared_ptr<AbilityRecord> 
 void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
-    if (abilityRecord->GetAbilityState() != AbilityState::BACKGROUNDING_NEW) {
+    if (abilityRecord->GetAbilityState() != AbilityState::BACKGROUNDING) {
         HILOG_ERROR("Ability state is %{public}d, it can't complete background.", abilityRecord->GetAbilityState());
         return;
     }
 
-    abilityRecord->SetAbilityState(AbilityState::BACKGROUND_NEW);
+    abilityRecord->SetAbilityState(AbilityState::BACKGROUND);
     // send application state to AppMS.
     // notify AppMS to update application state.
     DelayedSingleton<AppScheduler>::GetInstance()->MoveToBackground(abilityRecord->GetToken());
@@ -921,7 +921,7 @@ void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord>
     // them.
     auto self(shared_from_this());
     for (auto terminateAbility : terminateAbilityList_) {
-        if (terminateAbility->GetAbilityState() == AbilityState::BACKGROUND_NEW) {
+        if (terminateAbility->GetAbilityState() == AbilityState::BACKGROUND) {
             auto timeoutTask = [terminateAbility, self]() {
                 HILOG_WARN("Disconnect ability terminate timeout.");
                 self->PrintTimeOutLog(terminateAbility, AbilityManagerService::TERMINATE_TIMEOUT_MSG);
@@ -999,7 +999,7 @@ int MissionListManager::TerminateAbilityLocked(const std::shared_ptr<AbilityReco
     abilityRecord->SendResultToCallers();
 
     // 1. if the ability was foregorund, first should find wether there is other ability foregorund
-    if (abilityRecord->IsAbilityState(FOREGROUND_NEW) || abilityRecord->IsAbilityState(FOREGROUNDING_NEW)) {
+    if (abilityRecord->IsAbilityState(FOREGROUND) || abilityRecord->IsAbilityState(FOREGROUNDING)) {
         HILOG_DEBUG("current ability is active");
         if (abilityRecord->GetNextAbilityRecord()) {
             abilityRecord->GetNextAbilityRecord()->ProcessForegroundAbility();
@@ -1009,10 +1009,10 @@ int MissionListManager::TerminateAbilityLocked(const std::shared_ptr<AbilityReco
         return ERR_OK;
     }
 
-    // 2. if the ability was BACKGROUNDING_NEW, waiting for completeBackgroundNew
+    // 2. if the ability was BACKGROUNDING, waiting for completeBackgroundNew
 
     // 3. ability on background, schedule to terminate.
-    if (abilityRecord->GetAbilityState() == AbilityState::BACKGROUND_NEW) {
+    if (abilityRecord->GetAbilityState() == AbilityState::BACKGROUND) {
         auto self(shared_from_this());
         auto task = [abilityRecord, self]() {
             HILOG_WARN("Disconnect ability terminate timeout.");
@@ -1056,7 +1056,7 @@ void MissionListManager::RemoveTerminatingAbility(const std::shared_ptr<AbilityR
     // 1. clear old
     abilityRecord->SetNextAbilityRecord(nullptr);
     // 2. if the ability to terminate is background, just background
-    if (!(abilityRecord->IsAbilityState(FOREGROUND_NEW) || abilityRecord->IsAbilityState(FOREGROUNDING_NEW))) {
+    if (!(abilityRecord->IsAbilityState(FOREGROUND) || abilityRecord->IsAbilityState(FOREGROUNDING))) {
         HILOG_DEBUG("Ability state is %{public}d, just return.", abilityRecord->GetAbilityState());
         return;
     }
@@ -1434,7 +1434,7 @@ void MissionListManager::HandleForgroundNewTimeout(const std::shared_ptr<Ability
         ability->GetMission()->SetMovingState(false);
     }
 
-    if (!ability->IsAbilityState(AbilityState::FOREGROUNDING_NEW)) {
+    if (!ability->IsAbilityState(AbilityState::FOREGROUNDING)) {
         HILOG_ERROR("this ability is not forgrounding state.");
         return;
     }
@@ -1506,7 +1506,7 @@ void MissionListManager::BackToCaller(const std::shared_ptr<AbilityRecord> &call
 
     // caller is already the top ability and foregroundnew.
     auto topAbility = GetCurrentTopAbilityLocked();
-    if (callerAbility == topAbility && topAbility->IsAbilityState(AbilityState::FOREGROUND_NEW)) {
+    if (callerAbility == topAbility && topAbility->IsAbilityState(AbilityState::FOREGROUND)) {
         HILOG_DEBUG("caller is already the top ability and foregroundnew.");
         return;
     }
@@ -1764,7 +1764,7 @@ void MissionListManager::HandleLauncherDied(std::shared_ptr<AbilityRecord> abili
         return;
     }
 
-    bool isForeground = ability->IsAbilityState(FOREGROUND_NEW) || ability->IsAbilityState(FOREGROUNDING_NEW);
+    bool isForeground = ability->IsAbilityState(FOREGROUND) || ability->IsAbilityState(FOREGROUNDING);
     if (ability->IsLauncherRoot()) {
         HILOG_INFO("launcher root Ability died, state: INITIAL, %{public}d", __LINE__);
         ability->SetAbilityState(AbilityState::INITIAL);
@@ -1796,8 +1796,8 @@ void MissionListManager::HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecor
 
     std::shared_ptr<AbilityRecord> launcherRoot = launcherList_->GetLauncherRoot();
     bool isLauncherActive = (launcherRoot &&
-        (launcherRoot->IsAbilityState(FOREGROUND_NEW) || launcherRoot->IsAbilityState(FOREGROUNDING_NEW)));
-    bool isForeground = ability->IsAbilityState(FOREGROUND_NEW) || ability->IsAbilityState(FOREGROUNDING_NEW);
+        (launcherRoot->IsAbilityState(FOREGROUND) || launcherRoot->IsAbilityState(FOREGROUNDING)));
+    bool isForeground = ability->IsAbilityState(FOREGROUND) || ability->IsAbilityState(FOREGROUNDING);
 
     // remove from mission list.
     missionList->RemoveMission(mission);
@@ -1850,6 +1850,12 @@ void MissionListManager::BackToLauncher()
         HILOG_WARN("no root launcher ability, no need back to launcher.");
         return;
     }
+
+    if (launcherRootAbility->GetAbilityInfo().bundleName != AbilityConfig::LAUNCHER_BUNDLE_NAME) {
+        HILOG_WARN("not launcher mission, no need back to launcher.");
+        return;
+    }
+
     auto launcherRootMission = launcherRootAbility->GetMission();
     if (!launcherRootMission) {
         HILOG_WARN("no root launcher mission, no need back to launcher.");
@@ -2282,7 +2288,7 @@ bool MissionListManager::GetMissionSnapshot(int32_t missionId, const sptr<IRemot
     {
         std::lock_guard<std::recursive_mutex> guard(managerLock_);
         auto abilityRecord = GetAbilityRecordByToken(abilityToken);
-        if (abilityRecord && abilityRecord->IsAbilityState(FOREGROUND_NEW)) {
+        if (abilityRecord && abilityRecord->IsAbilityState(FOREGROUND)) {
             forceSnapshot = true;
         }
     }
