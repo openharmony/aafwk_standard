@@ -32,7 +32,7 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace AAFwk {
-class AbilityRecordTest : public testing::TestWithParam<OHOS::AAFwk::AbilityState> {
+class AbilityRecordTestCall : public testing::TestWithParam<OHOS::AAFwk::AbilityState> {
 public:
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
@@ -45,16 +45,16 @@ public:
     static constexpr unsigned int CHANGE_CONFIG_LOCALE = 0x00000001;
 };
 
-void AbilityRecordTest::SetUpTestCase(void)
+void AbilityRecordTestCall::SetUpTestCase(void)
 {
     OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->OnStart();
 }
-void AbilityRecordTest::TearDownTestCase(void)
+void AbilityRecordTestCall::TearDownTestCase(void)
 {
     OHOS::DelayedSingleton<AbilityManagerService>::GetInstance()->OnStop();
 }
 
-void AbilityRecordTest::SetUp(void)
+void AbilityRecordTestCall::SetUp(void)
 {
     OHOS::AppExecFwk::AbilityInfo abilityInfo;
     OHOS::AppExecFwk::ApplicationInfo applicationInfo;
@@ -65,7 +65,7 @@ void AbilityRecordTest::SetUp(void)
     abilityRecord_->Init();
 }
 
-void AbilityRecordTest::TearDown(void)
+void AbilityRecordTestCall::TearDown(void)
 {
     abilityRecord_.reset();
     abilityResult_.reset();
@@ -95,7 +95,7 @@ bool IsTestAbilityExist2(const std::string &data)
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRequest could through IsCallType INVALID_TYPE
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsCallType_001, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_IsCallType_001, TestSize.Level1)
 {
     EXPECT_EQ(abilityRequest_->IsCallType(AbilityCallType::INVALID_TYPE), true);
 }
@@ -108,7 +108,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsCallType_001, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRequest could through IsCallType CALL_REQUEST_TYPE
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsCallType_002, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_IsCallType_002, TestSize.Level1)
 {
     abilityRequest_->callType = AbilityCallType::CALL_REQUEST_TYPE;
     EXPECT_EQ(abilityRequest_->IsCallType(AbilityCallType::CALL_REQUEST_TYPE), true);
@@ -123,7 +123,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsCallType_002, TestSize.Level1)
  * CaseDescription: Verify create one abilityRecord could through Resolve
  * ResolveResultType::NG_INNER_ERROR
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Resolve_001, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_Resolve_001, TestSize.Level1)
 {
     AbilityRequest abilityRequest;
     EXPECT_EQ(abilityRecord_->Resolve(abilityRequest), ResolveResultType::NG_INNER_ERROR);
@@ -138,7 +138,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Resolve_001, TestSize.Level1)
  * CaseDescription: Verify create one abilityRequest could through Resolve
  * ResolveResultType::NG_INNER_ERROR
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Resolve_002, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_Resolve_002, TestSize.Level1)
 {
     AbilityRequest abilityRequest;
     abilityRequest.callType = AbilityCallType::CALL_REQUEST_TYPE;
@@ -154,7 +154,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Resolve_002, TestSize.Level1)
  * CaseDescription: Verify create one abilityRequest could through Resolve
  * ResolveResultType::NG_INNER_ERROR
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Resolve_003, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_Resolve_003, TestSize.Level1)
 {
     AbilityRequest abilityRequest;
     abilityRequest.connect = new AbilityConnectCallback();
@@ -170,7 +170,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Resolve_003, TestSize.Level1)
  * CaseDescription: Verify create one abilityRequest could through Resolve
  * ResolveResultType::OK_HAS_REMOTE_OBJ
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Resolve_004, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_Resolve_004, TestSize.Level1)
 {
     AbilityRequest abilityRequest;
     abilityRequest.callerUid = 1;
@@ -207,7 +207,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Resolve_004, TestSize.Level1)
  * CaseDescription: Verify create one abilityRequest could through Resolve
  * ResolveResultType::OK_NO_REMOTE_OBJ
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Resolve_005, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_Resolve_005, TestSize.Level1)
 {
     AbilityRequest abilityRequest;
     abilityRequest.callType = AbilityCallType::CALL_REQUEST_TYPE;
@@ -223,7 +223,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Resolve_005, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through Release false
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Release_001, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_Release_001, TestSize.Level1)
 {
     sptr<IAbilityConnection> connect = new AbilityConnectCallback();
     EXPECT_EQ(abilityRecord_->Release(connect), false);
@@ -237,7 +237,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Release_001, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through Release false
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Release_002, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_Release_002, TestSize.Level1)
 {
     sptr<IAbilityConnection> connect = new AbilityConnectCallback();
     AbilityRequest abilityRequest;
@@ -260,7 +260,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_Release_002, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through IsStartedByCall false
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsStartedByCall_001, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_IsStartedByCall_001, TestSize.Level1)
 {
     EXPECT_EQ(abilityRecord_->IsStartedByCall(), false);
 }
@@ -273,7 +273,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsStartedByCall_001, TestSize.Level1
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through IsStartedByCall true
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetStartedByCall_001, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_SetStartedByCall_001, TestSize.Level1)
 {
     abilityRecord_->SetStartedByCall(true);
     EXPECT_EQ(abilityRecord_->IsStartedByCall(), true);
@@ -287,7 +287,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetStartedByCall_001, TestSize.Level
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through Release success
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_CallRequest_001, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_CallRequest_001, TestSize.Level1)
 {
     class AbilitySchedulerMockFunction : public AbilitySchedulerMock
     {
@@ -317,7 +317,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_CallRequest_001, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through Release success
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_CallRequest_002, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_CallRequest_002, TestSize.Level1)
 {
     OHOS::sptr<AbilitySchedulerMock> scheduler = new AbilitySchedulerMock();
     abilityRecord_->lifecycleDeal_ = std::make_unique<LifecycleDeal>();
@@ -339,7 +339,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_CallRequest_002, TestSize.Level1)
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through IsStartToBackground false
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsStartToBackground_001, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_IsStartToBackground_001, TestSize.Level1)
 {
     EXPECT_EQ(abilityRecord_->IsStartToBackground(), false);
 }
@@ -352,7 +352,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsStartToBackground_001, TestSize.Le
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through SetStartToBackground success
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetStartToBackground_002, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_SetStartToBackground_002, TestSize.Level1)
 {
     abilityRecord_->SetStartToBackground(true);
     EXPECT_EQ(abilityRecord_->IsStartToBackground(), true);
@@ -368,7 +368,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetStartToBackground_002, TestSize.L
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through SetSpecifiedFlag success
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetSpecifiedFlag_001, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_SetSpecifiedFlag_001, TestSize.Level1)
 {
     const std::string specifiedFlag= "flag";
     abilityRecord_->SetSpecifiedFlag(specifiedFlag);
@@ -383,7 +383,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_SetSpecifiedFlag_001, TestSize.Level
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through GetSpecifiedFlag success
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetSpecifiedFlag_002, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_GetSpecifiedFlag_002, TestSize.Level1)
 {
     EXPECT_EQ(std::string(), abilityRecord_->GetSpecifiedFlag());
 }
@@ -396,7 +396,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_GetSpecifiedFlag_002, TestSize.Level
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through SetSpecifiedFlag false
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsNeedToCallRequest_001, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_IsNeedToCallRequest_001, TestSize.Level1)
 {
     EXPECT_EQ(false, abilityRecord_->IsNeedToCallRequest());
 }
@@ -409,7 +409,7 @@ HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsNeedToCallRequest_001, TestSize.Le
  * EnvConditions: NA
  * CaseDescription: Verify create one abilityRecord could through GetSpecifiedFlag success
  */
-HWTEST_F(AbilityRecordTest, AaFwk_AbilityMS_IsNeedToCallRequest_002, TestSize.Level1)
+HWTEST_F(AbilityRecordTestCall, AaFwk_AbilityMS_IsNeedToCallRequest_002, TestSize.Level1)
 {
     AbilityRequest abilityRequest;
     abilityRequest.callerUid = 1;

@@ -72,6 +72,7 @@ ohos_unittest("FmsFormProviderMgrTest") {
     "access_token:libaccesstoken_sdk",
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_core",
+    "common_event_service:cesfwk_innerkits",
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

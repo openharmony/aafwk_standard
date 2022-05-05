@@ -40,7 +40,7 @@ ohos_unittest("AmsMgrKillProcessTest") {
   deps = [
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/services/appmgr:libams",
+    "${aafwk_path}/services/appmgr:libappms",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",

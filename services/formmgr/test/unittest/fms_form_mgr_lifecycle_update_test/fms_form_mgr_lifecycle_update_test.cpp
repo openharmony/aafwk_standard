@@ -133,7 +133,8 @@ HWTEST_F(FmsFormMgrLifecycleUpdateTest, FmsFormMgrLifecycleUpdateTest_LifecycleU
 
     int32_t updateType = OHOS::AppExecFwk::FormMgrService::ENABLE_FORM_UPDATE;
 
-    EXPECT_EQ(ERR_APPEXECFWK_FORM_INVALID_PARAM, FormMgr::GetInstance().LifecycleUpdate(formIds, token_, updateType));
+    EXPECT_EQ(ERR_APPEXECFWK_FORM_OPERATION_NOT_SELF,
+        FormMgr::GetInstance().LifecycleUpdate(formIds, token_, updateType));
 
     GTEST_LOG_(INFO) << "FmsFormMgrLifecycleUpdateTest_LifecycleUpdate_003 end";
 }

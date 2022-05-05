@@ -43,6 +43,7 @@ constexpr size_t ARGC_ONE = 1;
 constexpr size_t ARGC_TWO = 2;
 constexpr size_t ARGC_THREE = 3;
 constexpr int32_t ERROR_CODE_ONE = 1;
+constexpr int32_t ERR_NOTOK = -1;
 
 class StartAbilityByCallParameters {
 public:
@@ -772,20 +773,25 @@ NativeValue* JsAbilityContext::OnRestoreWindowStage(NativeEngine& engine, Native
 NativeValue* JsAbilityContext::OnSetMissionLabel(NativeEngine& engine, NativeCallbackInfo& info)
 {
     HILOG_INFO("OnSetMissionLabel is called, argc = %{public}d", static_cast<int>(info.argc));
-
     if (info.argc < ARGC_ONE) {
         HILOG_ERROR("OnSetMissionLabel, Not enough params");
         return engine.CreateUndefined();
     }
 
+    int32_t errorCode = 0;
     std::string label;
     if (!ConvertFromJsValue(engine, info.argv[0], label)) {
         HILOG_ERROR("OnSetMissionLabel, parse label failed.");
-        return engine.CreateUndefined();
+        errorCode = ERR_NOTOK;
     }
 
     AsyncTask::CompleteCallback complete =
-        [weak = context_, label](NativeEngine& engine, AsyncTask& task, int32_t status) {
+        [weak = context_, label, errorCode](NativeEngine& engine, AsyncTask& task, int32_t status) {
+            if (errorCode != 0) {
+                task.Reject(engine, CreateJsError(engine, errorCode, "Invalidate params."));
+                return;
+            }
+
             auto context = weak.lock();
             if (!context) {
                 HILOG_WARN("context is released");
@@ -817,15 +823,21 @@ NativeValue* JsAbilityContext::OnSetMissionIcon(NativeEngine& engine, NativeCall
         return engine.CreateUndefined();
     }
 
+    int32_t errorCode = 0;
     auto icon = OHOS::Media::PixelMapNapi::GetPixelMap(reinterpret_cast<napi_env>(&engine),
         reinterpret_cast<napi_value>(info.argv[0]));
     if (!icon) {
         HILOG_ERROR("OnSetMissionIcon, parse icon failed.");
-        return engine.CreateUndefined();
+        errorCode = ERR_NOTOK;
     }
 
     AsyncTask::CompleteCallback complete =
-        [weak = context_, icon](NativeEngine& engine, AsyncTask& task, int32_t status) {
+        [weak = context_, icon, errorCode](NativeEngine& engine, AsyncTask& task, int32_t status) {
+            if (errorCode != 0) {
+                task.Reject(engine, CreateJsError(engine, errorCode, "Invalidate params."));
+                return;
+            }
+
             auto context = weak.lock();
             if (!context) {
                 HILOG_WARN("context is released when set mission icon");

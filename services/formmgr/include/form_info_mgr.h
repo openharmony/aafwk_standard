@@ -29,7 +29,8 @@ namespace OHOS {
 namespace AppExecFwk {
 class FormInfoHelper {
 public:
-    static ErrCode LoadFormConfigInfoByBundleName(const std::string &bundleName, std::vector<FormInfo> &formInfos);
+    static ErrCode LoadFormConfigInfoByBundleName(const std::string &bundleName, std::vector<FormInfo> &formInfos,
+        int32_t userId);
 
 private:
     static ErrCode LoadAbilityFormConfigInfo(const BundleInfo &bundleInfo, std::vector<FormInfo> &formInfos);
@@ -43,9 +44,9 @@ public:
 
     ErrCode InitFromJson(const std::string &formInfoStoragesJson);
 
-    ErrCode Update();
+    ErrCode Update(int32_t userId);
 
-    ErrCode Remove();
+    ErrCode Remove(int32_t userId);
 
     bool Empty();
 
@@ -67,9 +68,9 @@ public:
 
     ErrCode Start();
 
-    ErrCode Update(const std::string &bundleName);
+    ErrCode Update(const std::string &bundleNamef, int32_t userId);
 
-    ErrCode Remove(const std::string &bundleName);
+    ErrCode Remove(const std::string &bundleName, int32_t userId);
 
     ErrCode GetAllFormsInfo(std::vector<FormInfo> &formInfos);
 

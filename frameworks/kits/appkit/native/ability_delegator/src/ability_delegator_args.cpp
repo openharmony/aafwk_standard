@@ -33,7 +33,12 @@ AbilityDelegatorArgs::AbilityDelegatorArgs()
 AbilityDelegatorArgs::AbilityDelegatorArgs(const AAFwk::Want &want)
 {
     bundleName_ = want.GetStringParam(AbilityDelegatorArgs::KEY_TEST_BUNDLE_NAME);
-    auto wantParams = want.GetParams();
+
+    auto wantParams(want.GetParams());
+    if (wantParams.HasParam("debugApp")) {
+        wantParams.Remove("debugApp");
+    }
+
     std::set<std::string> keys = wantParams.KeySet();
     for (auto key : keys) {
         params_[key] = want.GetStringParam(key);

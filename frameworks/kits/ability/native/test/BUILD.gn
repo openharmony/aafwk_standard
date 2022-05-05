@@ -76,7 +76,7 @@ config("module_ability_context_config") {
     "${aafwk_path}/interfaces/innerkits/base/include",
     "//third_party/libuv/include",
     "${aafwk_path}/interfaces/innerkits/base/include/ohos/aafwk/base",
-    "${global_path}/resmgr_standard/interfaces/innerkits/include",
+    "${global_path}/resource_management/interfaces/innerkits/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -113,7 +113,7 @@ ohos_unittest("ability_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -155,7 +155,7 @@ ohos_unittest("ability_lifecycle_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -190,7 +190,7 @@ ohos_unittest("ability_lifecycle_executor_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -225,7 +225,7 @@ ohos_unittest("ability_context_interface_test") {
     "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -305,7 +305,7 @@ ohos_unittest("page_ability_impl_test") {
       "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
       "${appexecfwk_path}/common:libappexecfwk_common",
       "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-      "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+      "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
       "${multimodalinput_path}/frameworks/proxy:libmmi-common",
       "//third_party/googletest:gtest_main",
       "//utils/native/base:utils",
@@ -339,7 +339,7 @@ ohos_unittest("service_ability_impl_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -374,7 +374,7 @@ ohos_unittest("scene_created_test") {
       "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
       "${appexecfwk_path}/common:libappexecfwk_common",
       "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-      "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+      "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
       "//third_party/googletest:gtest_main",
       "//utils/native/base:utils",
     ]
@@ -440,7 +440,7 @@ ohos_unittest("data_ability_operation_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -481,7 +481,7 @@ ohos_unittest("ability_impl_active_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -521,7 +521,7 @@ ohos_unittest("ability_impl_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -578,7 +578,7 @@ ohos_unittest("ability_thread_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -657,7 +657,7 @@ ohos_unittest("form_provider_client_test") {
       "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
       "${appexecfwk_path}/common:libappexecfwk_common",
       "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-      "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+      "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
       "${graphic_path}:libwmclient",
       "//third_party/googletest:gtest_main",
       "//utils/native/base:utils",
@@ -703,7 +703,7 @@ ohos_unittest("data_ability_impl_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -758,7 +758,7 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -813,7 +813,7 @@ ohos_unittest("data_ability_impl_file_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -870,7 +870,7 @@ ohos_unittest("ability_thread_dataability_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -987,7 +987,7 @@ ohos_unittest("ability_permission_test") {
     "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -1103,7 +1103,7 @@ ohos_unittest("form_host_client_test") {
       "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
       "${appexecfwk_path}/common:libappexecfwk_common",
       "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-      "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+      "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
       "${graphic_path}:libwmclient",
       "//third_party/googletest:gmock_main",
       "//third_party/googletest:gtest_main",
@@ -1146,7 +1146,7 @@ ohos_unittest("continuation_test") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${global_path}/resmgr_standard/frameworks/resmgr:global_resmgr",
+    "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -1173,20 +1173,17 @@ group("unittest") {
 
   deps += [
     ":ability_context_test",
-
-    # ":ability_impl_test",
+    ":ability_impl_test",
     ":ability_lifecycle_executor_test",
     ":ability_lifecycle_test",
     ":ability_permission_test",
-
-    # ":ability_test",
+    ":ability_test",
     ":ability_thread_call_request_test",
     ":ability_thread_dataability_test",
 
-    # ":ability_thread_test",
+    #":ability_thread_test",
     ":continuation_test",
-
-    # ":data_ability_helper_test",
+    ":data_ability_helper_test",
     ":data_ability_impl_file_secondpart_test",
     ":data_ability_impl_file_test",
     ":data_ability_impl_test",

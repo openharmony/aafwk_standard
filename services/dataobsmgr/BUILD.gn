@@ -19,12 +19,6 @@ group("dataobsms_target") {
   deps = [ ":dataobsms" ]
 }
 
-group("unittest") {
-  testonly = true
-
-  deps = [ "test:unittest" ]
-}
-
 config("dataobsms_config") {
   include_dirs = [
     "include/",
