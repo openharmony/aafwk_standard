@@ -191,7 +191,14 @@ ErrCode AbilityDelegator::StartAbility(const AAFwk::Want &want)
 {
     HILOG_INFO("Enter");
 
-    return AbilityManagerClient::GetInstance()->StartAbility(want);
+    auto realWant(want);
+    auto delegatorArgs = AbilityDelegatorRegistry::GetArguments();
+    if (delegatorArgs && delegatorArgs->FindDebugFlag()) {
+        HILOG_INFO("Set Debug to the want which used for starting the ability");
+        realWant.SetParam("debugApp", true);
+    }
+
+    return AbilityManagerClient::GetInstance()->StartAbility(realWant);
 }
 
 bool AbilityDelegator::DoAbilityForeground(const sptr<IRemoteObject> &token)
@@ -251,14 +258,22 @@ std::unique_ptr<ShellCmdResult> AbilityDelegator::ExecuteShellCommand(const std:
 
 void AbilityDelegator::Print(const std::string &msg)
 {
-    HILOG_INFO("message to print : %{public}s", msg.data());
+    HILOG_INFO("Enter");
+
     auto testObserver = iface_cast<ITestObserver>(observer_);
     if (!testObserver) {
         HILOG_WARN("Invalid testObserver");
         return;
     }
 
-    testObserver->TestStatus(msg, 0);
+    auto realMsg(msg);
+    if (realMsg.length() > INFORMATION_MAX_LENGTH) {
+        HILOG_WARN("Too long message");
+        realMsg.resize(INFORMATION_MAX_LENGTH);
+    }
+    HILOG_INFO("message to print : %{public}s", realMsg.data());
+
+    testObserver->TestStatus(realMsg, 0);
 }
 
 void AbilityDelegator::PostPerformStart(const std::shared_ptr<ADelegatorAbilityProperty> &ability)
@@ -544,10 +559,16 @@ void AbilityDelegator::FinishUserTest(const std::string &msg, const int32_t resu
         return;
     }
 
+    auto realMsg(msg);
+    if (realMsg.length() > INFORMATION_MAX_LENGTH) {
+        HILOG_WARN("Too long message");
+        realMsg.resize(INFORMATION_MAX_LENGTH);
+    }
+
     const auto &bundleName = delegatorArgs->GetTestBundleName();
-    auto err = AAFwk::AbilityManagerClient::GetInstance()->FinishUserTest(msg, resultCode, bundleName);
+    auto err = AAFwk::AbilityManagerClient::GetInstance()->FinishUserTest(realMsg, resultCode, bundleName);
     if (err) {
-        HILOG_ERROR("MainThread::FinishUserTest is failed %{public}d", err);
+        HILOG_ERROR("Failed to call FinishUserTest : %{public}d", err);
     }
 }
 }  // namespace AppExecFwk

@@ -1961,9 +1961,13 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
     auto appInfo = std::make_shared<ApplicationInfo>(info.applicationInfo);
     auto appRecord = appRunningManager_->CreateAppRunningRecord(appInfo, processName, info);
     if (!appRecord) {
-        HILOG_ERROR("start process [%{public}s] failed!", processName.c_str());
+        HILOG_ERROR("Failed to start process [%{public}s]!", processName.c_str());
         return ERR_INVALID_VALUE;
     }
+
+    auto isDebug = want.GetBoolParam("debugApp", false);
+    HILOG_INFO("Set Debug : %{public}s", (isDebug ? "true" : "false"));
+    appRecord->SetDebugApp(isDebug);
 
     std::shared_ptr<UserTestRecord> testRecord = std::make_shared<UserTestRecord>();
     if (!testRecord) {
@@ -1980,7 +1984,7 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
 
     // If it is empty, the startup failed
     if (!appRecord) {
-        HILOG_ERROR("start process [%{public}s] failed!", processName.c_str());
+        HILOG_ERROR("Failed to start process [%{public}s]!", processName.c_str());
         return ERR_INVALID_VALUE;
     }
 

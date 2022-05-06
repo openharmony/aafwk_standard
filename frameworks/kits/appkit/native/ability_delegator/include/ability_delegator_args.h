@@ -32,13 +32,15 @@ public:
     static const std::string KEY_TEST_CASE;
     static const std::string KEY_TEST_WAIT_TIMEOUT;
 
+    static const std::string KEY_TEST_DEBUG;
+    static const std::string VALUE_TEST_DEBUG;
+
 public:
     AbilityDelegatorArgs();
     explicit AbilityDelegatorArgs(const AAFwk::Want &want);
 
     ~AbilityDelegatorArgs();
 
-    void SetTestBundleName(const std::string &bundleName);
     std::string GetTestBundleName() const;
 
     std::string GetTestPackageName() const;
@@ -46,8 +48,9 @@ public:
     std::string GetTestRunnerClassName() const;
     std::string GetTestCaseName() const;
 
-    void SetTestParam(const std::map<std::string, std::string> &params);
     std::map<std::string, std::string> GetTestParam() const;
+
+    bool FindDebugFlag();
 
 private:
     std::string GetParamValue(const std::string &key) const;
