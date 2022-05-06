@@ -3003,6 +3003,56 @@ ErrCode Ability::AcquireFormState(const Want &want, FormStateInfo &stateInfo)
 }
 
 /**
+ * @brief Notify the forms is visible to FMS.
+ *
+ * @param formIds Indicates the ID of the forms.
+ * @param isVisible Visible or not.
+ * @return Returns true if the request is successfully initiated; returns false otherwise.
+ */
+ErrCode Ability::NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+
+    if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
+        HILOG_ERROR("%{public}s error, form is in recover status, can't do action on form.", __func__);
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
+    }
+
+    // NotifyFormsVisible request to fms
+    int resultCode = FormMgr::GetInstance().NotifyFormsVisible(formIds, isVisible, FormHostClient::GetInstance());
+    if (resultCode != ERR_OK) {
+        HILOG_ERROR("%{public}s error, failed to NotifyFormsVisible, error code is %{public}d.", __func__, resultCode);
+    }
+    return resultCode;
+}
+
+/**
+ * @brief Notify the forms is enable update to FMS.
+ *
+ * @param formIds Indicates the ID of the forms.
+ * @param isEnableUpdate enable update or not.
+ * @return Returns true if the request is successfully initiated; returns false otherwise.
+ */
+ErrCode Ability::NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+
+    if (FormMgr::GetRecoverStatus() == Constants::IN_RECOVERING) {
+        HILOG_ERROR("%{public}s error, form is in recover status, can't do action on form.", __func__);
+        return ERR_APPEXECFWK_FORM_SERVER_STATUS_ERR;
+    }
+
+    // NotifyFormsEnableUpdate request to fms
+    int resultCode = FormMgr::GetInstance().NotifyFormsEnableUpdate(formIds, isEnableUpdate,
+        FormHostClient::GetInstance());
+    if (resultCode != ERR_OK) {
+        HILOG_ERROR("%{public}s error, failed to NotifyFormsEnableUpdate, error code is %{public}d.", __func__,
+            resultCode);
+    }
+    return resultCode;
+}
+
+/**
  * @brief Get All FormsInfo.
  *
  * @param formInfos Return the forms' information of all forms provided.

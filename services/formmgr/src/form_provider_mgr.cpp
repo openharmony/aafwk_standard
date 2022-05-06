@@ -71,7 +71,7 @@ ErrCode FormProviderMgr::AcquireForm(const int64_t formId, const FormProviderInf
             }
         } else {
             Want want;
-            RefreshForm(formId, want);
+            RefreshForm(formId, want, true);
         }
         return ERR_OK;
     }
@@ -87,9 +87,12 @@ ErrCode FormProviderMgr::AcquireForm(const int64_t formId, const FormProviderInf
     // we do not cache when data size is over 1k
     std::string jsonData = formProviderInfo.GetFormDataString(); // get json data
     HILOG_DEBUG("%{public}s , jsonData is %{public}s.",  __func__, jsonData.c_str());
+
+    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap = formProviderInfo.GetImageDataMap();
     if (jsonData.size() <= Constants::MAX_FORM_DATA_SIZE) {
         HILOG_WARN("%{public}s, acquire js card, cache the card", __func__);
-        FormCacheMgr::GetInstance().AddData(formId, formProviderInfo.GetFormDataString());
+        FormCacheMgr::GetInstance().AddData(formId, formProviderInfo.GetFormDataString(),
+            formProviderInfo.GetImageDataMap());
     }
     return ERR_OK;
 }
@@ -99,9 +102,10 @@ ErrCode FormProviderMgr::AcquireForm(const int64_t formId, const FormProviderInf
  *
  * @param formId The form id.
  * @param want The want of the form to request.
+ * @param isVisibleToFresh The form is visible to fresh.
  * @return Returns ERR_OK on success, others on failure.
  */
-ErrCode FormProviderMgr::RefreshForm(const int64_t formId, const Want &want)
+ErrCode FormProviderMgr::RefreshForm(const int64_t formId, const Want &want, bool isVisibleToFresh)
 {
     HILOG_INFO("%{public}s called, formId:%{public}" PRId64 ".", __func__, formId);
     FormRecord record;
@@ -135,7 +139,7 @@ ErrCode FormProviderMgr::RefreshForm(const int64_t formId, const Want &want)
         return ERR_OK;
     }
 
-    bool needRefresh = FormDataMgr::GetInstance().IsEnableRefresh(formId);
+    bool needRefresh = IsNeedToFresh(record, formId, isVisibleToFresh);
     if (!needRefresh) {
         FormDataMgr::GetInstance().SetNeedRefresh(formId, true);
         HILOG_ERROR("%{public}s fail, no one needReresh, set refresh flag, do not refresh now", __func__);
@@ -315,14 +319,15 @@ ErrCode FormProviderMgr::UpdateForm(const int64_t formId,
             formRecord.formProviderInfo.SetUpgradeFlg(false);
         }
     }
-    // update formProviderInfo to formRecord
-    FormDataMgr::GetInstance().UpdateFormProviderInfo(formId, formRecord.formProviderInfo);
     // check if cache data size is less than 1k or not
     std::string jsonData = formRecord.formProviderInfo.GetFormDataString(); // get json data
     HILOG_DEBUG("%{public}s screenOn:%{public}d jsonData:%{public}s.", __func__, screenOnFlag, jsonData.c_str());
+
+    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap = formProviderData.GetImageDataMap();
+    // check if cache data size is less than 1k or not
     if (jsonData.size() <= Constants::MAX_FORM_DATA_SIZE) {
         HILOG_INFO("%{public}s, updateJsForm, data is less than 1k, cache data.", __func__);
-        FormCacheMgr::GetInstance().AddData(formId, jsonData);
+        FormCacheMgr::GetInstance().AddData(formId, jsonData, formProviderData.GetImageDataMap());
     } else {
         FormCacheMgr::GetInstance().DeleteData(formId);
     }
@@ -380,6 +385,39 @@ void FormProviderMgr::IncreaseTimerRefreshCount(const int64_t formId)
         FormTimerMgr::GetInstance().IncreaseRefreshCount(formId);
     }
 }
+
+/**
+ * @brief Acquire form state.
+ * @param state form state.
+ * @param provider provider info.
+ * @param wantArg The want of onAcquireFormState.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormProviderMgr::AcquireFormStateBack(FormState state, const std::string& provider, const Want &wantArg)
+{
+    HILOG_DEBUG("AcquireFormState start: %{public}d, provider: %{public}s", state, provider.c_str());
+    FormDataMgr::GetInstance().AcquireFormStateBack(state, provider, wantArg);
+    return ERR_OK;
+}
+
+bool FormProviderMgr::IsNeedToFresh(FormRecord &record, int64_t formId, bool isVisibleToFresh)
+{
+    bool isEnableRefresh = FormDataMgr::GetInstance().IsEnableRefresh(formId);
+    HILOG_DEBUG("isEnableRefresh is %{public}d", isEnableRefresh);
+    if (isEnableRefresh) {
+        return true;
+    }
+
+    HILOG_DEBUG("isVisibleToFresh is %{public}d, record.isVisible is %{public}d", isVisibleToFresh, record.isVisible);
+    if (isVisibleToFresh) {
+        return record.isVisible;
+    }
+
+    bool isEnableUpdate = FormDataMgr::GetInstance().IsEnableUpdate(formId);
+    HILOG_DEBUG("isEnableUpdate is %{public}d", isEnableUpdate);
+    return isEnableUpdate;
+}
+
 FormRecord FormProviderMgr::GetFormAbilityInfo(const FormRecord &record) const
 {
     FormRecord newRecord;

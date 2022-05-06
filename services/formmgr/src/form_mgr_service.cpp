@@ -399,10 +399,11 @@ ErrCode FormMgrService::Init()
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_ABILITY_UPDATED);
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_DATA_CLEARED);
-        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_UID_REMOVED);
+        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_USER_REMOVED);
         // init TimerReceiver
         EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
         formSysEventReceiver_ = std::make_shared<FormSysEventReceiver>(subscribeInfo);
+        formSysEventReceiver_->SetEventHandler(handler_);
         EventFwk::CommonEventManager::SubscribeCommonEvent(formSysEventReceiver_);
     }
     FormDbCache::GetInstance().Start();
@@ -464,8 +465,8 @@ int FormMgrService::DistributedDataDeleteForm(const std::string &formId)
 }
 
 /**
- * @brief Delete the given invalid forms.
- * @param formIds Indicates the ID of the forms to delete.
+ * @brief Delete the invalid forms.
+ * @param formIds Indicates the ID of the valid forms.
  * @param callerToken Caller ability token.
  * @param numFormsDeleted Returns the number of the deleted forms.
  * @return Returns ERR_OK on success, others on failure.
@@ -494,10 +495,48 @@ int FormMgrService::AcquireFormState(const Want &want, const sptr<IRemoteObject>
     HILOG_INFO("%{public}s called.", __func__);
     ErrCode ret = CheckFormPermission();
     if (ret != ERR_OK) {
-        HILOG_ERROR("%{public}s fail, delete form permission denied", __func__);
+        HILOG_ERROR("%{public}s fail, acquire form state permission denied", __func__);
         return ret;
     }
     return FormMgrAdapter::GetInstance().AcquireFormState(want, callerToken, stateInfo);
+}
+
+/**
+ * @brief Notify the form is visible or not.
+ * @param formIds Indicates the ID of the forms.
+ * @param isVisible Visible or not.
+ * @param callerToken Host client.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrService::NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
+                                       const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
+        HILOG_ERROR("%{public}s fail, notify form visible permission denied", __func__);
+        return ret;
+    }
+    return FormMgrAdapter::GetInstance().NotifyFormsVisible(formIds, isVisible, callerToken);
+}
+
+/**
+ * @brief Notify the form is enable to be updated or not.
+ * @param formIds Indicates the ID of the forms.
+ * @param isEnableUpdate enable update or not.
+ * @param callerToken Host client.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrService::NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate,
+                                            const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    ErrCode ret = CheckFormPermission();
+    if (ret != ERR_OK) {
+        HILOG_ERROR("%{public}s fail, notify form enable update permission denied", __func__);
+        return ret;
+    }
+    return FormMgrAdapter::GetInstance().NotifyFormsEnableUpdate(formIds, isEnableUpdate, callerToken);
 }
 
 /**
@@ -535,6 +574,18 @@ int FormMgrService::GetFormsInfoByModule(std::string &bundleName, std::string &m
 {
     HILOG_INFO("%{public}s called.", __func__);
     return FormMgrAdapter::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
+}
+
+/**
+ * @brief Update action string for router event.
+ * @param formId Indicates the unique id of form.
+ * @param action Indicates the origin action string.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int FormMgrService::UpdateRouterAction(const int64_t formId, std::string &action)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    return FormMgrAdapter::GetInstance().UpdateRouterAction(formId, action);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

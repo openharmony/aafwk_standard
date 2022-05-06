@@ -176,8 +176,8 @@ public:
     virtual int DistributedDataDeleteForm(const std::string &formId) override;
 
     /**
-     * @brief Delete the given invalid forms.
-     * @param formIds Indicates the ID of the forms to delete.
+     * @brief Delete the invalid forms.
+     * @param formIds Indicates the ID of the valid forms.
      * @param callerToken Caller ability token.
      * @param numFormsDeleted Returns the number of the deleted forms.
      * @return Returns ERR_OK on success, others on failure.
@@ -194,6 +194,26 @@ public:
      */
     virtual int AcquireFormState(const Want &want, const sptr<IRemoteObject> &callerToken,
                                  FormStateInfo &stateInfo) override;
+
+    /**
+     * @brief Notify the form is visible or not.
+     * @param formIds Indicates the ID of the forms.
+     * @param isVisible Visible or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible,
+                                   const sptr<IRemoteObject> &callerToken) override;
+
+    /**
+     * @brief Notify the form is enable to be updated or not.
+     * @param formIds Indicates the ID of the forms.
+     * @param isEnableUpdate enable update or not.
+     * @param callerToken Host client.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate,
+                                        const sptr<IRemoteObject> &callerToken) override;
 
     /**
      * @brief Get All FormsInfo.
@@ -219,6 +239,14 @@ public:
      */
     virtual int GetFormsInfoByModule(std::string &bundleName, std::string &moduleName,
                                      std::vector<FormInfo> &formInfos) override;
+
+    /**
+     * @brief Update action string for router event.
+     * @param formId Indicates the unique id of form.
+     * @param action Indicates the origin action string.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int UpdateRouterAction(const int64_t formId, std::string &action) override;
 private:
     template<typename T>
     int GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos);

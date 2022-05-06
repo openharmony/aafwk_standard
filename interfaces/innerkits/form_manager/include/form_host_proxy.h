@@ -17,6 +17,7 @@
 #define FOUNDATION_APPEXECFWK_INTERFACES_INNERKITS_APPEXECFWK_CORE_INCLUDE_FORMMGR_FORM_HOST_PROXY_H
 
 #include "form_host_interface.h"
+#include "form_state_info.h"
 #include "hilog_wrapper.h"
 #include "iremote_proxy.h"
 
@@ -50,6 +51,13 @@ public:
      * @param formIds The Id list of the forms.
      */
     virtual void OnUninstall(const std::vector<int64_t> &formIds) override;
+
+    /**
+     * @brief Form provider is acquire state
+     * @param state The form state.
+     * @param want The form want.
+     */
+    virtual void OnAcquireState(FormState state, const AAFwk::Want &want) override;
 
 private:
     template <typename T>
