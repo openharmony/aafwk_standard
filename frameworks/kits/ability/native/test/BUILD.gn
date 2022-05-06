@@ -1172,8 +1172,7 @@ group("unittest") {
     ":ability_test",
     ":ability_thread_call_request_test",
     ":ability_thread_dataability_test",
-
-    #":ability_thread_test",
+    ":ability_thread_test",
     ":continuation_test",
     ":data_ability_helper_test",
     ":data_ability_impl_file_secondpart_test",
