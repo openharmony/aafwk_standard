@@ -174,9 +174,10 @@ public:
     /**
      * @brief Process js router event.
      * @param formId Indicates the unique id of form.
+     * @param want the want of the ability to start.
      * @return Returns true if execute success, false otherwise.
      */
-    int RouterEvent(const int64_t formId);
+    int RouterEvent(const int64_t formId, Want &want);
 
     /**
      * @brief Acquire form data from form provider.
