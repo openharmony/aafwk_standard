@@ -59,6 +59,7 @@ class DataAbilityHelper;
 class ContinuationConnector;
 class IAbilityManager;
 class EventRunner;
+class MediaDataHelper;
 class Context {
 public:
     Context() = default;
@@ -609,6 +610,7 @@ public:
     friend DataAbilityHelper;
     friend OHOS::DataShare::DataShareHelper;
     friend ContinuationConnector;
+    friend MediaDataHelper;
 
 protected:
     virtual sptr<IRemoteObject> GetToken() = 0;
