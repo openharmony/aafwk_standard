@@ -3709,6 +3709,81 @@ void Ability::RequsetFocus(const Want &want)
     }
     abilityWindow_->OnPostAbilityForeground(sceneFlag_);
 }
+
+void Ability::SetWakeUpScreen(bool wakeUp)
+{
+    HILOG_INFO("SetWakeUpScreen wakeUp:%{public}d.", wakeUp);
+    if (abilityWindow_ == nullptr) {
+        HILOG_ERROR("SetWakeUpScreen error. abilityWindow_ == nullptr.");
+        return;
+    }
+    HILOG_DEBUG("FA mode");
+    auto window = abilityWindow_->GetWindow();
+    if (window == nullptr) {
+        HILOG_ERROR("window nullptr.");
+        return;
+    }
+    window->SetTurnScreenOn(wakeUp);
+}
+
+void Ability::SetDisplayOrientation(int orientation)
+{
+    HILOG_DEBUG("%{public}s called, orientation: %{public}d", __func__, orientation);
+    if (abilityWindow_ == nullptr) {
+        HILOG_ERROR("Ability::SetDisplayOrientation error. abilityWindow_ == nullptr.");
+        return;
+    }
+    HILOG_DEBUG("FA mode");
+    auto window = abilityWindow_->GetWindow();
+    if (window == nullptr) {
+        HILOG_ERROR("window is nullptr.");
+        return;
+    }
+    if (orientation == static_cast<int>(DisplayOrientation::FOLLOWRECENT)) {
+        int defualtOrientation = 0;
+        if (setWant_) {
+            orientation = setWant_->GetIntParam("ohos.aafwk.Orientation", defualtOrientation);
+        } else {
+            orientation = defualtOrientation;
+        }
+    }
+    if (orientation == static_cast<int>(DisplayOrientation::LANDSCAPE)) {
+        HILOG_DEBUG("%{public}s, to set LANDSCAPE", __func__);
+        window->SetRequestedOrientation(Rosen::Orientation::HORIZONTAL);
+    } else if (orientation == static_cast<int>(DisplayOrientation::PORTRAIT)) {
+        HILOG_DEBUG("%{public}s, to set PORTRAIT", __func__);
+        window->SetRequestedOrientation(Rosen::Orientation::VERTICAL);
+    } else {
+        HILOG_DEBUG("%{public}s, to set UNSPECIFIED", __func__);
+        window->SetRequestedOrientation(Rosen::Orientation::UNSPECIFIED);
+    }
+}
+
+int Ability::GetDisplayOrientation()
+{
+    HILOG_DEBUG("%{public}s called.", __func__);
+    if (abilityWindow_ == nullptr) {
+        HILOG_ERROR("Ability::GetDisplayOrientation error. abilityWindow_ == nullptr.");
+        return 0;
+    }
+    HILOG_DEBUG("FA mode");
+    auto window = abilityWindow_->GetWindow();
+    if (window == nullptr) {
+        HILOG_ERROR("window is nullptr.");
+        return 0;
+    }
+    auto orientation = window->GetRequestedOrientation();
+    if (orientation == Rosen::Orientation::HORIZONTAL) {
+        HILOG_DEBUG("%{public}s, get window orientation: LANDSCAPE", __func__);
+        return static_cast<int>(DisplayOrientation::LANDSCAPE);
+    }
+    if (orientation == Rosen::Orientation::VERTICAL) {
+        HILOG_DEBUG("%{public}s, get window orientation: PORTRAIT", __func__);
+        return static_cast<int>(DisplayOrientation::PORTRAIT);
+    }
+    HILOG_DEBUG("%{public}s, get window orientation: UNSPECIFIED", __func__);
+    return 0;
+}
 #endif
 }  // namespace AppExecFwk
 }  // namespace OHOS
