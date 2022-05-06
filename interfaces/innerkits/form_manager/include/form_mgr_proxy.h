@@ -152,9 +152,10 @@ public:
     /**
      * @brief Process js router event.
      * @param formId Indicates the unique id of form.
+     * @param want the want of the ability to start.
      * @return Returns true if execute success, false otherwise.
      */
-    virtual int RouterEvent(const int64_t formId) override;
+    virtual int RouterEvent(const int64_t formId, Want &want) override;
 
     /**
      * @brief Batch add forms to form records for st limit value test.

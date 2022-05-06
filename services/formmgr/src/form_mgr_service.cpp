@@ -312,9 +312,10 @@ int FormMgrService::MessageEvent(const int64_t formId, const Want &want, const s
 /**
  * @brief Process js router event.
  * @param formId Indicates the unique id of form.
+ * @param want the want of the ability to start.
  * @return Returns true if execute success, false otherwise.
  */
-int FormMgrService::RouterEvent(const int64_t formId)
+int FormMgrService::RouterEvent(const int64_t formId, Want &want)
 {
     HILOG_INFO("%{public}s called.", __func__);
     ErrCode ret = CheckFormPermission();
@@ -322,7 +323,7 @@ int FormMgrService::RouterEvent(const int64_t formId)
         HILOG_ERROR("%{public}s fail, request form permission denied", __func__);
         return ret;
     }
-    return FormMgrAdapter::GetInstance().RouterEvent(formId);
+    return FormMgrAdapter::GetInstance().RouterEvent(formId, want);
 }
 
 /**
