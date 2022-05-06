@@ -514,7 +514,7 @@ bool JsRuntime::RunScript(const std::string& path)
     return nativeEngine_->RunScript(path.c_str()) != nullptr;
 }
 
-bool JsRuntime::RunSendboxScript(const std::string& path)
+bool JsRuntime::RunSandboxScript(const std::string& path)
 {
     std::string fileName;
     if (!MakeFilePath(codePath_, path, fileName)) {
