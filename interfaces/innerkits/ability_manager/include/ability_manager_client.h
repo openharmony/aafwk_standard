@@ -84,6 +84,13 @@ public:
     ErrCode ScheduleCommandAbilityDone(const sptr<IRemoteObject> &token);
 
     /**
+     * Get top ability.
+     *
+     * @return Returns front desk focus ability elementName.
+     */
+    AppExecFwk::ElementName GetTopAbility();
+
+    /**
      * AddWindowInfo, add windowToken to AbilityRecord.
      *
      * @param token, the token of the ability.
