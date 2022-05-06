@@ -48,6 +48,9 @@ config("ability_config") {
     "AMS_LOG_TAG = \"Ability\"",
     "AMS_LOG_DOMAIN = 0xD002200",
   ]
+  if (target_cpu == "arm64") {
+    defines += [ "_ARM64_" ]
+  }
 
   if (ability_runtime_graphics) {
     include_dirs += [ "${innerkits_path}/form_manager/include" ]
