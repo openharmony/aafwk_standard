@@ -591,7 +591,7 @@ ohos_unittest("ability_thread_test") {
   defines = []
   if (os_account_part_enabled) {
     defines += [ "OS_ACCOUNT_PART_ENABLED" ]
-    external_deps += [ "os_account_standard:os_account_innerkits" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
   }
 
   if (ability_runtime_graphics) {
@@ -715,7 +715,7 @@ ohos_unittest("data_ability_impl_test") {
   defines = []
   if (os_account_part_enabled) {
     defines += [ "OS_ACCOUNT_PART_ENABLED" ]
-    external_deps += [ "os_account_standard:os_account_innerkits" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
   }
 
   if (ability_runtime_graphics) {
@@ -769,7 +769,7 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
   defines = []
   if (os_account_part_enabled) {
     defines += [ "OS_ACCOUNT_PART_ENABLED" ]
-    external_deps += [ "os_account_standard:os_account_innerkits" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
   }
 
   if (ability_runtime_graphics) {
@@ -823,7 +823,7 @@ ohos_unittest("data_ability_impl_file_test") {
   defines = []
   if (os_account_part_enabled) {
     defines += [ "OS_ACCOUNT_PART_ENABLED" ]
-    external_deps += [ "os_account_standard:os_account_innerkits" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
   }
 
   if (ability_runtime_graphics) {
@@ -879,7 +879,7 @@ ohos_unittest("ability_thread_dataability_test") {
   defines = []
   if (os_account_part_enabled) {
     defines += [ "OS_ACCOUNT_PART_ENABLED" ]
-    external_deps += [ "os_account_standard:os_account_innerkits" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
   }
 
   if (ability_runtime_graphics) {

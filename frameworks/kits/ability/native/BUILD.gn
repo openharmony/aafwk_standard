@@ -237,7 +237,7 @@ ohos_shared_library("abilitykit_native") {
   defines = []
   if (os_account_part_enabled) {
     defines += [ "OS_ACCOUNT_PART_ENABLED" ]
-    external_deps += [ "os_account_standard:os_account_innerkits" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
   }
 
   if (background_task_mgr_continuous_task_enable) {
