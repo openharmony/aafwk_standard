@@ -428,6 +428,21 @@ bool JsRuntime::RunScript(const std::string& path)
     return nativeEngine_->RunScript(path.c_str()) != nullptr;
 }
 
+bool JsRuntime::RunSandboxScript(const std::string& path)
+{
+    std::string fileName;
+    if (!MakeFilePath(codePath_, path, fileName)) {
+        HILOG_ERROR("Failed to make module file path: %{private}s", path.c_str());
+        return false;
+    }
+
+    if (!RunScript(fileName)) {
+        HILOG_ERROR("Failed to run script: %{public}s", fileName.c_str());
+        return false;
+    }
+    return true;
+}
+
 using OHOS::Ace::ContainerScope;
 class TimerTask final {
 public:
