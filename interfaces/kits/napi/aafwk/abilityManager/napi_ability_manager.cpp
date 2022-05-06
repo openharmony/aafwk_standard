@@ -443,7 +443,11 @@ auto NAPI_KillProcessesByBundleNamePromiseCompleteCallback = [](napi_env env, na
     AsyncKillProcessCallbackInfo *async_callback_info = (AsyncKillProcessCallbackInfo *)data;
     napi_value result = nullptr;
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result);
-    napi_resolve_deferred(async_callback_info->env, async_callback_info->deferred, result);
+    if (async_callback_info->result == ERR_OK) {
+        napi_resolve_deferred(async_callback_info->env, async_callback_info->deferred, result);
+    } else {
+        napi_reject_deferred(async_callback_info->env, async_callback_info->deferred, result);
+    }
     napi_delete_async_work(env, async_callback_info->asyncWork);
     delete async_callback_info;
 };
@@ -567,7 +571,11 @@ auto NAPI_ClearUpApplicationDataPromiseCompleteCallback = [](napi_env env, napi_
     AsyncClearUpApplicationDataCallbackInfo *async_callback_info = (AsyncClearUpApplicationDataCallbackInfo *)data;
     napi_value result = nullptr;
     napi_create_int32(async_callback_info->env, async_callback_info->result, &result);
-    napi_resolve_deferred(async_callback_info->env, async_callback_info->deferred, result);
+    if (async_callback_info->result == ERR_OK) {
+        napi_resolve_deferred(async_callback_info->env, async_callback_info->deferred, result);
+    } else {
+        napi_reject_deferred(async_callback_info->env, async_callback_info->deferred, result);
+    }
     napi_delete_async_work(env, async_callback_info->asyncWork);
     delete async_callback_info;
 };
@@ -834,7 +842,7 @@ static void GetSystemMemoryAttrPromiseComplete(napi_env env, napi_status status,
     HILOG_INFO("%{public}s,  main event thread complete end.", __func__);
 }
 
-static napi_value GetSystemMemoryAttrPromiss(napi_env env)
+static napi_value GetSystemMemoryAttrPromise(napi_env env)
 {
     napi_value resourceName = nullptr;
     napi_async_work asyncWork = nullptr;
@@ -912,7 +920,7 @@ napi_value NAPI_GetSystemMemoryAttr(napi_env env, napi_callback_info info)
 
     if (argc == 0) {
         // promise
-        ret = GetSystemMemoryAttrPromiss(env);
+        ret = GetSystemMemoryAttrPromise(env);
     } else if (argc == 1) {
         // async
         ret = GetSystemMemoryAttrAsync(env, args);

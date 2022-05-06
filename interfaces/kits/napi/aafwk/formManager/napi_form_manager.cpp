@@ -703,7 +703,11 @@ napi_value NAPI_DeleteForm(napi_env env, napi_callback_info info)
 
                 napi_value result;
                 InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
@@ -767,7 +771,11 @@ napi_async_complete_callback NAPI_ReleaseFormPromiseComplete = [](napi_env env, 
 
     napi_value result;
     InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+    if (asyncCallbackInfo->result == ERR_OK) {
+        napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+    } else {
+        napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+    }
     napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
     delete asyncCallbackInfo;
 };
@@ -1115,7 +1123,11 @@ napi_value NAPI_RequestForm(napi_env env, napi_callback_info info)
 
                 napi_value result;
                 InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
@@ -1323,7 +1335,11 @@ napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info)
 
                 napi_value result;
                 InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
@@ -1532,7 +1548,11 @@ napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info)
 
                 napi_value result;
                 InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
@@ -1705,7 +1725,11 @@ napi_value NAPI_CastTempForm(napi_env env, napi_callback_info info)
 
                 napi_value result;
                 InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
@@ -1903,7 +1927,11 @@ napi_value NAPI_NotifyVisibleForms(napi_env env, napi_callback_info info)
 
                 napi_value result;
                 InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
@@ -2101,7 +2129,11 @@ napi_value NAPI_NotifyInvisibleForms(napi_env env, napi_callback_info info)
 
                 napi_value result;
                 InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
@@ -2298,7 +2330,11 @@ napi_value NAPI_EnableFormsUpdate(napi_env env, napi_callback_info info)
 
                 napi_value result;
                 InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
@@ -2496,7 +2532,11 @@ napi_value NAPI_DisableFormsUpdate(napi_env env, napi_callback_info info)
 
                 napi_value result;
                 InnerCreateRetMsg(env, asyncCallbackInfo->result, &result);
-                napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                if (asyncCallbackInfo->result == ERR_OK) {
+                    napi_resolve_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                } else {
+                    napi_reject_deferred(asyncCallbackInfo->env, asyncCallbackInfo->deferred, result);
+                }
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
             },
@@ -3553,7 +3593,7 @@ napi_async_complete_callback NAPI_GetFormsInfoPromiseComplete = [](napi_env env,
         napi_value getFormsInfoResult;
         InnerCreateRetMsg(env, asyncCallbackInfo->result, &getFormsInfoResult);
 
-        napi_resolve_deferred(
+        napi_reject_deferred(
             asyncCallbackInfo->env,
             asyncCallbackInfo->deferred,
             getFormsInfoResult);

@@ -2699,7 +2699,7 @@ napi_value CallPromise(napi_env env, DAHelperCallCB *callCB)
             nullptr,
             resourceName,
             CallExecuteCB,
-            InsertPromiseCompleteCB,
+            CallPromiseCompleteCB,
             (void *)callCB,
             &callCB->cbBase.asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callCB->cbBase.asyncWork));
