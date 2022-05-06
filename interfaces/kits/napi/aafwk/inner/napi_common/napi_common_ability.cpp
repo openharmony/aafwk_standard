@@ -59,7 +59,10 @@ bool CheckAbilityType(AbilityType typeInAbility, AbilityType typeWant)
     HILOG_INFO("%{public}s called.", __func__);
     switch (typeWant) {
         case AbilityType::PAGE:
-            return typeInAbility == AbilityType::PAGE;
+            if (typeInAbility == AbilityType::PAGE || typeInAbility == AbilityType::DATA) {
+                return true;
+            }
+            return false;
         default:
             return typeInAbility != AbilityType::PAGE;
     }
