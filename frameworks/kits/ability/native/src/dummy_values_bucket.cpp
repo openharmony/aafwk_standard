@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-#include "dummy_values_bucket.h"
 #include "hilog_wrapper.h"
 #include "string_ex.h"
 
