@@ -305,6 +305,7 @@ ohos_shared_library("abilitykit_native") {
     external_deps += [
       "form_runtime:fmskit_native",
       "form_runtime:form_manager",
+      "multimedia_image_standard:image",
       "multimodalinput_base:libmmi-client",
     ]
 

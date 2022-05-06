@@ -28,6 +28,7 @@ MissionListenerStub::MissionListenerStub()
     vecMemberFunc_[ON_MISSION_DESTROYED] = &MissionListenerStub::OnMissionDestroyedInner;
     vecMemberFunc_[ON_MISSION_SNAPSHOT_CHANGED] = &MissionListenerStub::OnMissionSnapshotChangedInner;
     vecMemberFunc_[ON_MISSION_MOVED_TO_FRONT] = &MissionListenerStub::OnMissionMovedToFrontInner;
+    vecMemberFunc_[ON_MISSION_ICON_UPDATED] = &MissionListenerStub::OnMissionIconUpdatedInner;
 }
 
 int MissionListenerStub::OnMissionCreatedInner(MessageParcel &data, MessageParcel &reply)
@@ -56,6 +57,19 @@ int MissionListenerStub::OnMissionMovedToFrontInner(MessageParcel &data, Message
     auto missionId = data.ReadInt32();
     OnMissionMovedToFront(missionId);
     return NO_ERROR;
+}
+
+int MissionListenerStub::OnMissionIconUpdatedInner(MessageParcel &data, MessageParcel &reply)
+{
+#ifdef SUPPORT_GRAPHICS
+    auto missionId = data.ReadInt32();
+    std::shared_ptr<Media::PixelMap> icon(data.ReadParcelable<Media::PixelMap>());
+    OnMissionIconUpdated(missionId, icon);
+    return NO_ERROR;
+#else
+    HILOG_ERROR("do not support OnMissionIconUpdated");
+    return ERR_INVALID_STATE;
+#endif
 }
 
 int MissionListenerStub::OnRemoteRequest(
