@@ -1862,6 +1862,29 @@ int MissionListManager::SetMissionLabel(const sptr<IRemoteObject> &token, const 
     return DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionLabel(missionId, label);
 }
 
+#ifdef SUPPORT_GRAPHICS
+int MissionListManager::SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon)
+{
+    if (!token) {
+        HILOG_INFO("SetMissionIcon token is nullptr.");
+        return -1;
+    }
+
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    auto missionId = GetMissionIdByAbilityToken(token);
+    if (missionId <= 0) {
+        HILOG_INFO("SetMissionIcon find mission failed.");
+        return -1;
+    }
+
+    if (listenerController_) {
+        listenerController_->NotifyMissionIconChanged(missionId, icon);
+    }
+
+    return 0;
+}
+#endif
+
 void MissionListManager::Dump(std::vector<std::string> &info)
 {
     std::lock_guard<std::recursive_mutex> guard(managerLock_);

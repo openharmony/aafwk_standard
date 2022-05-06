@@ -82,11 +82,31 @@ public:
      */
     void NotifyMissionMovedToFront(int32_t missionId);
 
+#ifdef SUPPORT_GRAPHICS
+    /**
+     * notify listeners that mission icon has changed.
+     *
+     * @param missionId target mission id.
+     * @param icon mission icon.
+     */
+    void NotifyMissionIconChanged(int32_t missionId, const std::shared_ptr<OHOS::Media::PixelMap> &icon);
+#endif
+
     void HandleUnInstallApp(const std::list<int32_t> &missions);
 
 private:
-    void NotifyListeners(int32_t missionId, IMissionListener::MissionListenerCmd cmd);
     void OnListenerDied(const wptr<IRemoteObject> &remote);
+
+    template<typename F, typename... Args>
+    void CallListeners(F func, Args&&... args)
+    {
+        std::lock_guard<std::recursive_mutex> guard(listenerLock_);
+        for (auto listener : missionListeners_) {
+            if (listener) {
+                (listener->*func)(std::forward<Args>(args)...);
+            }
+        }
+    }
 
     class ListenerDeathRecipient : public IRemoteObject::DeathRecipient {
     public:
@@ -104,9 +124,6 @@ private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
     std::vector<sptr<IMissionListener>> missionListeners_;
     sptr<IRemoteObject::DeathRecipient> listenerDeathRecipient_;
-
-    using ListenerFun = void (IMissionListener::*)(int);
-    std::unordered_map<uint32_t, ListenerFun> listenerFunMap_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

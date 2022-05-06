@@ -52,6 +52,10 @@ public:
     static NativeValue* RestoreWindowStage(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* SetMissionLabel(NativeEngine* engine, NativeCallbackInfo* info);
 
+#ifdef SUPPORT_GRAPHICS
+    static NativeValue* SetMissionIcon(NativeEngine* engine, NativeCallbackInfo* info);
+#endif
+
     static void ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,
         const std::shared_ptr<AppExecFwk::Configuration> &config);
 
@@ -74,6 +78,10 @@ private:
     NativeValue* OnRequestPermissionsFromUser(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnRestoreWindowStage(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnSetMissionLabel(NativeEngine& engine, NativeCallbackInfo& info);
+
+#ifdef SUPPORT_GRAPHICS
+    NativeValue* OnSetMissionIcon(NativeEngine& engine, NativeCallbackInfo& info);
+#endif
 
     static bool UnWrapWant(NativeEngine& engine, NativeValue* argv, AAFwk::Want& want);
     static NativeValue* WrapWant(NativeEngine& engine, const AAFwk::Want& want);
