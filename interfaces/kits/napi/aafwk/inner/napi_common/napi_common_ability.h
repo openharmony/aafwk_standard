@@ -72,6 +72,21 @@ napi_value NAPI_PrintDrawnCompletedCommon(napi_env env, napi_callback_info info,
 napi_value NAPI_GetAppTypeCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
 
 /**
+ * @brief Get the display orientation of the main window.
+ *
+ * @param env The environment that the Node-API call is invoked under.
+ * @param info The callback info passed into the callback function.
+ *
+ * @return The return value from NAPI C++ to JS for the module.
+ */
+#ifdef SUPPORT_GRAPHICS
+napi_value NAPI_GetDisplayOrientationCommon(napi_env env, napi_callback_info info, AbilityType abilityType);
+bool UnwrapParamGetDisplayOrientationWrap(napi_env env, size_t argc, napi_value *argv,
+    AsyncJSCallbackInfo *asyncCallbackInfo);
+void GetDisplayOrientationExecuteCallback(napi_env env, void *data);
+#endif
+
+/**
  * @brief Obtains information about the current ability.
  *
  * @param env The environment that the Node-API call is invoked under.

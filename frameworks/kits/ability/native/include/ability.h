@@ -454,6 +454,27 @@ public:
      * @return Returns true if this ability currently has window focus; returns false otherwise.
      */
     bool HasWindowFocus();
+
+    /**
+     * @brief When the ability starts, set whether to wake up the screen.
+     *
+     * @param wakeUp Set true to wake up, false to not wake up.
+     */
+    void SetWakeUpScreen(bool wakeUp);
+
+    /**
+     * @brief Set the display orientation of the main window.
+     *
+     * @param orientation Indicates the display orientation of the window.
+     */
+    void SetDisplayOrientation(int orientation);
+
+    /**
+     * @brief Get the display orientation of the main window.
+     *
+     * @return Returns the display orientation of the window.
+     */
+    int GetDisplayOrientation() override;
 #endif
 
     /**
