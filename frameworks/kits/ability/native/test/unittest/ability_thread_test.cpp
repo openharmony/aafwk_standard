@@ -101,7 +101,7 @@ HWTEST_F(AbilityThreadTest, AaFwk_AbilityThread_DumpAbilityInfo_0100, Function |
         std::vector<std::string> info;
         abilitythread->DumpAbilityInfo(params, info);
 
-        EXPECT_NE(info.size(), 0);
+        EXPECT_EQ(info.size(), 0);
 
         GTEST_LOG_(INFO) << "info:";
         for (auto item : info) {
