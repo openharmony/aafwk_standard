@@ -256,6 +256,13 @@ public:
     virtual int TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId) override;
 
     /**
+     * Get top ability.
+     *
+     * @return Returns front desk focus ability elementName.
+     */
+    virtual AppExecFwk::ElementName GetTopAbility() override;
+
+    /**
      * Destroys this Service ability by Want.
      *
      * @param want, Special want for service type's ability.

@@ -151,6 +151,7 @@ void AbilityManagerStub::ThirdStepInit()
     requestFuncMap_[DO_ABILITY_FOREGROUND] = &AbilityManagerStub::DoAbilityForegroundInner;
     requestFuncMap_[DO_ABILITY_BACKGROUND] = &AbilityManagerStub::DoAbilityBackgroundInner;
     requestFuncMap_[GET_MISSION_ID_BY_ABILITY_TOKEN] = &AbilityManagerStub::GetMissionIdByTokenInner;
+    requestFuncMap_[GET_TOP_ABILITY] = &AbilityManagerStub::GetTopAbilityInner;
     requestFuncMap_[SET_MISSION_ICON] = &AbilityManagerStub::SetMissionIconInner;
 }
 
@@ -173,6 +174,16 @@ int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Mess
     }
     HILOG_WARN("default case, need check.");
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+}
+
+int AbilityManagerStub::GetTopAbilityInner(MessageParcel &data, MessageParcel &reply)
+{
+    AppExecFwk::ElementName result = GetTopAbility();
+    if (result.GetDeviceID().empty()) {
+        HILOG_DEBUG("GetTopAbilityInner is nullptr");
+    }
+    reply.WriteParcelable(&result);
+    return NO_ERROR;
 }
 
 int AbilityManagerStub::TerminateAbilityInner(MessageParcel &data, MessageParcel &reply)

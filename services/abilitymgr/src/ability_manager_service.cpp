@@ -56,6 +56,9 @@
 #include "uri_permission_manager_client.h"
 #include "xcollie/watchdog.h"
 #include "parameter.h"
+#ifdef SUPPORT_GRAPHICS
+#include "window_focus_controller.h"
+#endif
 
 using OHOS::AppExecFwk::ElementName;
 using OHOS::Security::AccessToken::AccessTokenKit;
@@ -63,6 +66,7 @@ using OHOS::Security::AccessToken::AccessTokenKit;
 namespace OHOS {
 namespace AAFwk {
 using namespace std::chrono;
+using namespace std::chrono_literals;
 const bool CONCURRENCY_MODE_FALSE = false;
 const int32_t MAIN_USER_ID = 100;
 const int32_t U0_USER_ID = 0;
@@ -172,6 +176,14 @@ void AbilityManagerService::OnStart()
         return;
     }
 
+#ifdef SUPPORT_GRAPHICS
+    auto windowsInstance = WindowFocusController::GetInstance();
+    if (windowsInstance) {
+        windowsInstance->SubscribeWindowFocus();
+    } else {
+        HILOG_ERROR("OnStart. windowsInstance == nullptr !");
+    }
+#endif
     HILOG_INFO("Ability manager service start success.");
 }
 
@@ -4732,6 +4744,32 @@ int AbilityManagerService::VerifyAccountPermission(int32_t userId)
     }
     HILOG_ERROR("%{public}s: Permission verification failed", __func__);
     return CHECK_PERMISSION_FAILED;
+}
+
+AppExecFwk::ElementName AbilityManagerService::GetTopAbility()
+{
+    HILOG_DEBUG("%{public}s start.", __func__);
+    AppExecFwk::ElementName elementName = {};
+#ifdef SUPPORT_GRAPHICS
+    auto windowsInstance = WindowFocusController::GetInstance();
+    if (windowsInstance) {
+        windowsInstance->GetTopAbility(elementName);
+    } else {
+        HILOG_ERROR("OnStart. windowsInstance == nullptr !");
+    }
+    auto bundleName = elementName.GetBundleName();
+    auto abilityName = elementName.GetAbilityName();
+    HILOG_DEBUG("BundleName is %{public}s, AbilityName is %{public}s", bundleName.c_str(), abilityName.c_str());
+    bool isDeviceEmpty = elementName.GetDeviceID().empty();
+    std::string localDeviceId;
+    bool hasLocalDeviceId = GetLocalDeviceId(localDeviceId);
+    if (isDeviceEmpty && hasLocalDeviceId) {
+        elementName.SetDeviceID(localDeviceId);
+        HILOG_DEBUG("%{public}s DeviceId %{public}s .", __func__, elementName.GetDeviceID().c_str());
+    }
+    HILOG_DEBUG("%{public}s end.", __func__);
+#endif
+    return elementName;
 }
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -101,5 +101,6 @@ if (ability_runtime_graphics) {
     "src/remote_mission_listener_stub.cpp",
     "src/mission_list_manager.cpp",
     "src/mission_list.cpp",
+    "src/window_focus_controller.cpp",
   ]
 }
