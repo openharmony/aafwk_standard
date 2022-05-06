@@ -941,10 +941,10 @@ private:
      */
     void InitU0User();
     /**
-     * starting lanucher ability.
+     * start highest priority ability.
      *
      */
-    bool StartingLauncherAbility(bool isBoot);
+    void StartHighestPriorityAbility(bool isBoot);
     /**
      * starting settings data ability.
      *
