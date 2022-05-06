@@ -902,7 +902,11 @@ void CallOnAbilityResult(int requestCode, int resultCode, const Want &resultData
             } else {
                 // promise
                 HILOG_INFO("CallOnAbilityResult, promise");
-                napi_resolve_deferred(onAbilityCB->cb.env, onAbilityCB->cb.deferred, result[PARAM1]);
+                if (onAbilityCB->resultCode == ERR_OK) {
+                    napi_resolve_deferred(onAbilityCB->cb.env, onAbilityCB->cb.deferred, result[PARAM1]);
+                } else {
+                    napi_reject_deferred(onAbilityCB->cb.env, onAbilityCB->cb.deferred, result[PARAM1]);
+                }
                 HILOG_INFO("CallOnAbilityResult, promise end");
             }
 
