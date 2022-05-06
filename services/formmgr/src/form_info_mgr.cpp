@@ -20,6 +20,7 @@
 #include "bundle_mgr_client.h"
 #include "extension_form_profile.h"
 #include "form_bms_helper.h"
+#include "form_info_storage.h"
 #include "form_info_storage_mgr.h"
 #include "form_util.h"
 #include "hilog_wrapper.h"
@@ -34,7 +35,8 @@ namespace {
 const std::string FORM_METADATA_NAME = "ohos.extension.form";
 } // namespace
 
-ErrCode FormInfoHelper::LoadFormConfigInfoByBundleName(const std::string &bundleName, std::vector<FormInfo> &formInfos)
+ErrCode FormInfoHelper::LoadFormConfigInfoByBundleName(const std::string &bundleName, std::vector<FormInfo> &formInfos,
+    int32_t userId)
 {
     if (bundleName.empty()) {
         HILOG_ERROR("bundleName is invalid");
@@ -48,8 +50,7 @@ ErrCode FormInfoHelper::LoadFormConfigInfoByBundleName(const std::string &bundle
     }
 
     BundleInfo bundleInfo;
-    if (!IN_PROCESS_CALL(iBundleMgr->GetBundleInfo(bundleName, GET_BUNDLE_WITH_EXTENSION_INFO,
-        bundleInfo, FormUtil::GetCurrentAccountId()))) {
+    if (!IN_PROCESS_CALL(iBundleMgr->GetBundleInfo(bundleName, GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo, userId))) {
         HILOG_ERROR("failed to get bundle info.");
         return ERR_APPEXECFWK_FORM_GET_INFO_FAILED;
     }
@@ -129,58 +130,100 @@ BundleFormInfo::BundleFormInfo(std::string bundleName) : bundleName_(std::move(b
 {
 }
 
-ErrCode BundleFormInfo::InitFromJson(const std::string &formInfosJson)
+ErrCode BundleFormInfo::InitFromJson(const std::string &formInfoStoragesJson)
 {
-    nlohmann::json jsonObject = nlohmann::json::parse(formInfosJson, nullptr, false);
+    nlohmann::json jsonObject = nlohmann::json::parse(formInfoStoragesJson, nullptr, false);
     if (jsonObject.is_discarded()) {
         HILOG_ERROR("bad profile");
         return ERR_APPEXECFWK_PARSE_BAD_PROFILE;
     }
     std::unique_lock<std::shared_timed_mutex> guard(formInfosMutex_);
-    formInfos_ = jsonObject.get<std::vector<FormInfo>>();
+    std::vector<AAFwk::FormInfoStorage> formInfoStorages = jsonObject.get<std::vector<AAFwk::FormInfoStorage>>();
+    for (const auto &item : formInfoStorages) {
+        formInfoStorages_.push_back(item);
+    }
     return ERR_OK;
 }
 
-ErrCode BundleFormInfo::Update()
+ErrCode BundleFormInfo::Update(int32_t userId)
 {
+    HILOG_INFO("Update form infos, userId is %{public}d.", userId);
     std::unique_lock<std::shared_timed_mutex> guard(formInfosMutex_);
-    ErrCode errCode = FormInfoHelper::LoadFormConfigInfoByBundleName(bundleName_, formInfos_);
+    std::vector<FormInfo> formInfos;
+    ErrCode errCode = FormInfoHelper::LoadFormConfigInfoByBundleName(bundleName_, formInfos, userId);
     if (errCode != ERR_OK) {
         return errCode;
     }
-    if (formInfos_.empty()) {
+
+    for (auto item = formInfoStorages_.begin(); item != formInfoStorages_.end();) {
+        if (item->userId == userId) {
+            item = formInfoStorages_.erase(item);
+        } else {
+            ++item;
+        }
+    }
+
+    if (!formInfos.empty()) {
+        AAFwk::FormInfoStorage formInfoStorage(userId, formInfos);
+        formInfoStorages_.push_back(formInfoStorage);
+    }
+
+    if (formInfoStorages_.empty()) {
+        HILOG_INFO("form info Storages is empty.");
         return ERR_OK;
     }
 
-    nlohmann::json jsonObject = formInfos_;
+    nlohmann::json jsonObject = formInfoStorages_;
     if (jsonObject.is_discarded()) {
         HILOG_ERROR("bad form infos.");
         return ERR_APPEXECFWK_PARSE_BAD_PROFILE;
     }
-    std::string formInfoStr = jsonObject.dump(Constants::DUMP_INDENT);
-    errCode = FormInfoStorageMgr::GetInstance().UpdateBundleFormInfos(bundleName_, formInfoStr);
+    std::string formInfoStoragesStr = jsonObject.dump(Constants::DUMP_INDENT);
+    errCode = FormInfoStorageMgr::GetInstance().UpdateBundleFormInfos(bundleName_, formInfoStoragesStr);
     return errCode;
 }
 
-ErrCode BundleFormInfo::Remove()
+ErrCode BundleFormInfo::Remove(int32_t userId)
 {
+    HILOG_INFO("Remove form infos, userId is %{public}d.", userId);
     std::unique_lock<std::shared_timed_mutex> guard(formInfosMutex_);
-    formInfos_.clear();
-    ErrCode errCode = FormInfoStorageMgr::GetInstance().RemoveBundleFormInfos(bundleName_);
+    for (auto item = formInfoStorages_.begin(); item != formInfoStorages_.end();) {
+        if (item->userId == userId) {
+            item = formInfoStorages_.erase(item);
+        } else {
+            ++item;
+        }
+    }
+
+    ErrCode errCode;
+    if (formInfoStorages_.empty()) {
+        errCode = FormInfoStorageMgr::GetInstance().RemoveBundleFormInfos(bundleName_);
+    } else {
+        nlohmann::json jsonObject = formInfoStorages_;
+        if (jsonObject.is_discarded()) {
+            HILOG_ERROR("bad form infos.");
+            return ERR_APPEXECFWK_PARSE_BAD_PROFILE;
+        }
+        std::string formInfoStoragesStr = jsonObject.dump(Constants::DUMP_INDENT);
+        errCode = FormInfoStorageMgr::GetInstance().UpdateBundleFormInfos(bundleName_, formInfoStoragesStr);
+    }
+
     return errCode;
 }
 
 bool BundleFormInfo::Empty()
 {
     std::shared_lock<std::shared_timed_mutex> guard(formInfosMutex_);
-    return formInfos_.empty();
+    return formInfoStorages_.empty();
 }
 
 ErrCode BundleFormInfo::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
 {
+    HILOG_INFO("%{public}s begin.",  __func__);
     std::shared_lock<std::shared_timed_mutex> guard(formInfosMutex_);
-    for (const auto &formInfo: formInfos_) {
-        formInfos.push_back(formInfo);
+    int32_t userId = FormUtil::GetCurrentAccountId();
+    for (const auto &item : formInfoStorages_) {
+        item.GetAllFormsInfo(userId, formInfos);
     }
     return ERR_OK;
 }
@@ -188,10 +231,9 @@ ErrCode BundleFormInfo::GetAllFormsInfo(std::vector<FormInfo> &formInfos)
 ErrCode BundleFormInfo::GetFormsInfoByModule(const std::string &moduleName, std::vector<FormInfo> &formInfos)
 {
     std::shared_lock<std::shared_timed_mutex> guard(formInfosMutex_);
-    for (const auto &formInfo: formInfos_) {
-        if (formInfo.moduleName == moduleName) {
-            formInfos.push_back(formInfo);
-        }
+    int32_t userId = FormUtil::GetCurrentAccountId();
+    for (const auto &item : formInfoStorages_) {
+        item.GetFormsInfoByModule(userId, moduleName, formInfos);
     }
     return ERR_OK;
 }
@@ -205,19 +247,19 @@ FormInfoMgr::~FormInfoMgr() = default;
 
 ErrCode FormInfoMgr::Start()
 {
-    std::vector<std::pair<std::string, std::string>> formInfos;
-    ErrCode errCode = FormInfoStorageMgr::GetInstance().LoadFormInfos(formInfos);
+    std::vector<std::pair<std::string, std::string>> formInfoStorages;
+    ErrCode errCode = FormInfoStorageMgr::GetInstance().LoadFormInfos(formInfoStorages);
     if (errCode != ERR_OK) {
         HILOG_ERROR("LoadFormData failed.");
         return errCode;
     }
 
     std::unique_lock<std::shared_timed_mutex> guard(bundleFormInfoMapMutex_);
-    for (const auto &item: formInfos) {
+    for (const auto &item: formInfoStorages) {
         const std::string &bundleName = item.first;
-        const std::string &formInfosJson = item.second;
+        const std::string &formInfoStoragesJson = item.second;
         auto bundleFormInfoPtr = std::make_shared<BundleFormInfo>(bundleName);
-        errCode = bundleFormInfoPtr->InitFromJson(formInfosJson);
+        errCode = bundleFormInfoPtr->InitFromJson(formInfoStoragesJson);
         if (errCode != ERR_OK) {
             continue;
         }
@@ -228,15 +270,22 @@ ErrCode FormInfoMgr::Start()
     return ERR_OK;
 }
 
-ErrCode FormInfoMgr::Update(const std::string &bundleName)
+ErrCode FormInfoMgr::Update(const std::string &bundleName, int32_t userId)
 {
     if (bundleName.empty()) {
         HILOG_ERROR("bundleName is empty.");
         return ERR_APPEXECFWK_FORM_INVALID_PARAM;
     }
 
-    auto bundleFormInfoPtr = std::make_shared<BundleFormInfo>(bundleName);
-    ErrCode errCode = bundleFormInfoPtr->Update();
+    std::shared_ptr<BundleFormInfo> bundleFormInfoPtr;
+    auto search = bundleFormInfoMap_.find(bundleName);
+    if (search != bundleFormInfoMap_.end()) {
+        bundleFormInfoPtr = search->second;
+    } else {
+        bundleFormInfoPtr = std::make_shared<BundleFormInfo>(bundleName);
+    }
+
+    ErrCode errCode = bundleFormInfoPtr->Update(userId);
     if (errCode != ERR_OK) {
         return errCode;
     }
@@ -252,7 +301,7 @@ ErrCode FormInfoMgr::Update(const std::string &bundleName)
     return ERR_OK;
 }
 
-ErrCode FormInfoMgr::Remove(const std::string &bundleName)
+ErrCode FormInfoMgr::Remove(const std::string &bundleName, int32_t userId)
 {
     if (bundleName.empty()) {
         HILOG_ERROR("bundleName is empty.");
@@ -268,9 +317,12 @@ ErrCode FormInfoMgr::Remove(const std::string &bundleName)
 
     ErrCode errCode = ERR_OK;
     if (bundleFormInfoIter->second != nullptr) {
-        errCode = bundleFormInfoIter->second->Remove();
+        errCode = bundleFormInfoIter->second->Remove(userId);
     }
-    bundleFormInfoMap_.erase(bundleFormInfoIter);
+
+    if (bundleFormInfoIter->second->Empty()) {
+        bundleFormInfoMap_.erase(bundleFormInfoIter);
+    }
     HILOG_ERROR("remove forms info success, bundleName=%{public}s.", bundleName.c_str());
     return errCode;
 }

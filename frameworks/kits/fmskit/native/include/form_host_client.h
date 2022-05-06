@@ -23,6 +23,7 @@
 #include <set>
 #include "form_callback_interface.h"
 #include "form_host_stub.h"
+#include "form_state_info.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -69,6 +70,24 @@ public:
     bool ContainsForm(int64_t formId);
 
     /**
+     * @brief Add form state.
+     *
+     * @param formStateCallback the host's form state callback.
+     * @param want the want of acquiring form state.
+     * @return Returns true if contains form; returns false otherwise.
+     */
+    bool AddFormState(std::shared_ptr<FormStateCallbackInterface> &formStateCallback, const AAFwk::Want &want);
+
+    using UninstallCallback = void (*)(const std::vector<int64_t> &formIds);
+    /**
+     * @brief register form uninstall function.
+     *
+     * @param callback the form uninstall callback.
+     * @return Returns true if contains form; returns false otherwise.
+     */
+    bool RegisterUninstallCallback(UninstallCallback callback);
+
+    /**
      * @brief Request to give back a form.
      *
      * @param formJsInfo Form js info.
@@ -92,11 +111,21 @@ public:
      */
     virtual void OnUninstall(const std::vector<int64_t> &formIds);
 
+    /**
+     * @brief Acquire the form state
+     * @param state The form state.
+     */
+    virtual void OnAcquireState(FormState state, const AAFwk::Want &want);
+
 private:
     static std::mutex instanceMutex_;
     static sptr<FormHostClient> instance_;
     mutable std::mutex callbackMutex_;
+    mutable std::mutex formStateCallbackMutex_;
+    mutable std::mutex uninstallCallbackMutex_;
     std::map<int64_t, std::set<std::shared_ptr<FormCallbackInterface>>> formCallbackMap_;
+    std::map<std::string, std::set<std::shared_ptr<FormStateCallbackInterface>>> formStateCallbackMap_;
+    UninstallCallback uninstallCallback_ = nullptr;
 
     DISALLOW_COPY_AND_MOVE(FormHostClient);
 };

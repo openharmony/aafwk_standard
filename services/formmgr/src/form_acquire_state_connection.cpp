@@ -28,8 +28,8 @@
 namespace OHOS {
 namespace AppExecFwk {
 FormAcquireStateConnection::FormAcquireStateConnection(const std::string &bundleName, const std::string &abilityName,
-                                                       const Want &want)
-    : want_(want)
+                                                       const Want &want, std::string &provider)
+    : want_(want), provider_(provider)
 {
     SetProviderKey(bundleName, abilityName);
 }
@@ -52,7 +52,7 @@ void FormAcquireStateConnection::OnAbilityConnectDone(
     FormSupplyCallback::GetInstance()->AddConnection(this);
     Want want;
     want.SetParam(Constants::FORM_CONNECT_ID, this->GetConnectId());
-    FormTaskMgr::GetInstance().PostAcquireStateTask(want_, want, remoteObject);
+    FormTaskMgr::GetInstance().PostAcquireStateTask(want_, provider_, want, remoteObject);
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS

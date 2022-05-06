@@ -1340,9 +1340,9 @@ public:
     bool CheckFMSReady();
 
     /**
-     * @brief Delete the given invalid forms.
+     * @brief Delete the invalid forms.
      *
-     * @param formIds Indicates the ID of the forms to delete.
+     * @param formIds Indicates the ID of the valid forms.
      * @param numFormsDeleted Returns the number of the deleted forms.
      * @return Returns true if the request is successfully initiated; returns false otherwise.
      */
@@ -1356,6 +1356,24 @@ public:
      * @return Returns true if the request is successfully initiated; returns false otherwise.
      */
     ErrCode AcquireFormState(const Want &want, FormStateInfo &stateInfo);
+
+    /**
+     * @brief Notify the forms is visible to FMS.
+     *
+     * @param formIds Indicates the ID of the forms.
+     * @param isVisible Visible or not.
+     * @return Returns true if the request is successfully initiated; returns false otherwise.
+     */
+    ErrCode NotifyFormsVisible(const std::vector<int64_t> &formIds, bool isVisible);
+
+    /**
+     * @brief Notify the forms is enable update to FMS.
+     *
+     * @param formIds Indicates the ID of the forms.
+     * @param isEnableUpdate enable update or not.
+     * @return Returns true if the request is successfully initiated; returns false otherwise.
+     */
+    ErrCode NotifyFormsEnableUpdate(const std::vector<int64_t> &formIds, bool isEnableUpdate);
 
     /**
      * @brief Get All FormsInfo.

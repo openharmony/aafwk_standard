@@ -104,6 +104,44 @@ void  FormHostProxy::OnUninstall(const std::vector<int64_t> &formIds)
     }
 }
 
+/**
+ * @brief Form provider is acquire state
+ * @param state The form state.
+ * @param want The form want.
+ */
+void FormHostProxy::OnAcquireState(FormState state, const AAFwk::Want &want)
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
+        return;
+    }
+
+    if (!data.WriteInt32((int32_t) state)) {
+        HILOG_ERROR("%{public}s, failed to write state", __func__);
+        return;
+    }
+
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("%{public}s, failed to write want", __func__);
+        return;
+    }
+
+    error = Remote()->SendRequest(
+        static_cast<uint32_t>(IFormHost::Message::FORM_HOST_ON_ACQUIRE_FORM_STATE),
+        data,
+        reply,
+        option);
+    if (error != ERR_OK) {
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+    }
+}
+
+
 template<typename T>
 int  FormHostProxy::GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos)
 {
