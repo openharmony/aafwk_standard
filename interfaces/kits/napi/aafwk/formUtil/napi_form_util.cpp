@@ -38,28 +38,6 @@ constexpr int REF_COUNT = 1;
 constexpr int DECIMAL_VALUE = 10;
 constexpr int BASE_NUMBER = 9;
 constexpr int CALLBACK_FLG = 1;
-static constexpr int32_t ERR_COMMON = 1;
-static constexpr int32_t ERR_PERMISSION_DENY = 2;
-static constexpr int32_t ERR_GET_INFO_FAILED = 4;
-static constexpr int32_t ERR_GET_BUNDLE_FAILED = 5;
-static constexpr int32_t ERR_GET_LAYOUT_FAILED = 6;
-static constexpr int32_t ERR_ADD_INVALID_PARAM = 7;
-static constexpr int32_t ERR_CFG_NOT_MATCH_ID = 8;
-static constexpr int32_t ERR_NOT_EXIST_ID = 9;
-static constexpr int32_t ERR_BIND_PROVIDER_FAILED = 10;
-static constexpr int32_t ERR_MAX_SYSTEM_FORMS = 11;
-static constexpr int32_t ERR_MAX_INSTANCES_PER_FORM = 12;
-static constexpr int32_t ERR_OPERATION_FORM_NOT_SELF = 13;
-static constexpr int32_t ERR_PROVIDER_DEL_FAIL = 14;
-static constexpr int32_t ERR_MAX_FORMS_PER_CLIENT = 15;
-static constexpr int32_t ERR_MAX_SYSTEM_TEMP_FORMS = 16;
-static constexpr int32_t ERR_FORM_NO_SUCH_MODULE = 17;
-static constexpr int32_t ERR_FORM_NO_SUCH_ABILITY = 18;
-static constexpr int32_t ERR_FORM_NO_SUCH_DIMENSION = 19;
-static constexpr int32_t ERR_FORM_FA_NOT_INSTALLED = 20;
-static constexpr int32_t ERR_SYSTEM_RESPONSES_FAILED = 30;
-static constexpr int32_t ERR_FORM_DUPLICATE_ADDED = 31;
-static constexpr int32_t ERR_IN_RECOVERY = 36;
 const std::map<int32_t, int32_t> ERROR_CODE_MAP = {
     { ERR_OK,                                        ERR_OK },
     { ERR_APPEXECFWK_FORM_COMMON_CODE,               ERR_COMMON },
@@ -262,10 +240,10 @@ void InnerCreateCallbackRetMsg(napi_env env, int32_t code, napi_value* result)
     napi_create_int32(env, retCode, &errCode);
     napi_set_named_property(env, error, "code", errCode);
 
-    // create error msg
+    // create error message
     napi_value errMsg = nullptr;
     napi_create_string_utf8(env, retMsg.c_str(), NAPI_AUTO_LENGTH, &errMsg);
-    napi_set_named_property(env, error, "msg", errMsg);
+    napi_set_named_property(env, error, "message", errMsg);
 
     result[0] = error;
     napi_get_undefined(env, &result[1]);
@@ -299,10 +277,10 @@ void InnerCreatePromiseRetMsg(napi_env env, int32_t code, napi_value* result)
     napi_create_int32(env, retCode, &errCode);
     napi_set_named_property(env, errInfo, "code", errCode);
 
-    // create error msg
+    // create error message
     napi_value errMsg = nullptr;
     napi_create_string_utf8(env, retMsg.c_str(), NAPI_AUTO_LENGTH, &errMsg);
-    napi_set_named_property(env, errInfo, "msg", errMsg);
+    napi_set_named_property(env, errInfo, "message", errMsg);
 
     *result = errInfo;
     HILOG_DEBUG("%{public}s, end.", __func__);
