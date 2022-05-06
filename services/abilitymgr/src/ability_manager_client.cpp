@@ -964,8 +964,11 @@ ErrCode AbilityManagerClient::SetMissionLabel(const sptr<IRemoteObject> &token, 
 ErrCode AbilityManagerClient::SetMissionIcon(
     const sptr<IRemoteObject> &abilityToken, const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {
-    auto abms = GetAbilityManager();
-    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    auto abms = iface_cast<IAbilityManager>(remoteObject_);
+    if (abms == nullptr) {
+        return ABILITY_SERVICE_NOT_CONNECTED;
+    }
     return abms->SetMissionIcon(abilityToken, icon);
 }
 
