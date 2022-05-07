@@ -76,6 +76,8 @@ public:
     ErrCode StartAbilityWithAccount(
         const AAFwk::Want &want, int accountId, const AAFwk::StartOptions &startOptions) const;
 
+    ErrCode StartServiceExtensionAbility(const AAFwk::Want &want, int32_t userId = -1) const;
+
     /**
      * @brief Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
      *
