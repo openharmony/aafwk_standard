@@ -31,7 +31,7 @@ public:
 
     IINTERFACE_DECL();
 
-    bool Equals(IObject &other) override; /* [in] */
+    bool Equals(IObject &other) override;
 
     static sptr<IRemoteObjectWrap> Box(sptr<IRemoteObject> remoteObject);
 
