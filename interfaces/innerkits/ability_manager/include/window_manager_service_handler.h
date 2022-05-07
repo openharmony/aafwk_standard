@@ -32,9 +32,14 @@ public:
 
     virtual void NotifyWindowTransition(sptr<AbilityTransitionInfo> fromInfo, sptr<AbilityTransitionInfo> toInfo) = 0;
 
+    virtual int32_t GetFocusWindow(sptr<IRemoteObject>& abilityToken) = 0;
+
     enum WMSCmd {
         // ipc id for NotifyWindowTransition
         ON_NOTIFY_WINDOW_TRANSITION,
+
+        // ipc id for GetFocusWindow
+        ON_GET_FOCUS_ABILITY,
     };
 };
 } // namespace AAFwk
