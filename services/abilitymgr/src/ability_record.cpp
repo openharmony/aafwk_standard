@@ -635,8 +635,7 @@ void AbilityRecord::AddCallerRecord(const sptr<IRemoteObject> &callerToken, int 
     lifeCycleStateInfo_.caller.deviceId = abilityRecord->GetAbilityInfo().deviceId;
     lifeCycleStateInfo_.caller.bundleName = abilityRecord->GetAbilityInfo().bundleName;
     lifeCycleStateInfo_.caller.abilityName = abilityRecord->GetAbilityInfo().name;
-    HILOG_INFO("caller %{public}s, %{public}s, %{public}s",
-        abilityRecord->GetAbilityInfo().deviceId.c_str(),
+    HILOG_INFO("caller %{public}s, %{public}s",
         abilityRecord->GetAbilityInfo().bundleName.c_str(),
         abilityRecord->GetAbilityInfo().name.c_str());
 }
@@ -873,33 +872,6 @@ void AbilityRecord::DumpService(std::vector<std::string> &info, std::vector<std:
     DumpClientInfo(info, params, isClient);
 }
 
-void AbilityRecord::GetAbilityRecordInfo(AbilityRecordInfo &recordInfo)
-{
-    recordInfo.elementName = want_.GetElement().GetURI();
-    recordInfo.id = recordId_;
-    recordInfo.appName = abilityInfo_.applicationName;
-    recordInfo.mainName = abilityInfo_.name;
-    recordInfo.abilityType = static_cast<int32_t>(abilityInfo_.type);
-
-    std::shared_ptr<AbilityRecord> preAbility = GetPreAbilityRecord();
-    if (preAbility) {
-        recordInfo.previousAppName = preAbility->GetAbilityInfo().applicationName;
-        recordInfo.previousMainName = preAbility->GetAbilityInfo().name;
-    }
-
-    std::shared_ptr<AbilityRecord> nextAbility = GetNextAbilityRecord();
-    if (nextAbility) {
-        recordInfo.nextAppName = nextAbility->GetAbilityInfo().applicationName;
-        recordInfo.nextMainName = nextAbility->GetAbilityInfo().name;
-    }
-
-    recordInfo.state = static_cast<AbilityState>(currentState_);
-    recordInfo.startTime = std::to_string(startTime_);
-    recordInfo.ready = isReady_;
-    recordInfo.windowAttached = isWindowAttached_;
-    recordInfo.lanucher = isLauncherAbility_;
-}
-
 void AbilityRecord::OnSchedulerDied(const wptr<IRemoteObject> &remote)
 {
     HILOG_WARN("On scheduler died.");
@@ -1062,17 +1034,6 @@ void AbilityRecord::SetAppState(const AppState &state)
 AppState AbilityRecord::GetAppState() const
 {
     return appState_;
-}
-
-void AbilityRecord::ClearFlag()
-{
-    isRestarting_ = false;
-    isUninstall_ = false;
-    isTerminating_ = false;
-    preAbilityRecord_.reset();
-    nextAbilityRecord_.reset();
-    startTime_ = 0;
-    appState_ = AppState::END;
 }
 
 void AbilityRecord::SetLaunchReason(const LaunchReason &reason)

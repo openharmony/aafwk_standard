@@ -17,7 +17,7 @@
 
 #include <cstdint>
 
-#include "ability_record_info.h"
+#include "ability_state.h"
 #include "hilog_wrapper.h"
 #include "napi_common_want.h"
 #include "napi_remote_object.h"

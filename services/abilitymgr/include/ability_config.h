@@ -22,7 +22,6 @@ namespace OHOS {
 namespace AAFwk {
 namespace AbilityConfig {
 const std::string NAME_ABILITY_MGR_SERVICE = "AbilityManagerService";
-const std::string NAME_BUNDLE_MGR_SERVICE = "BundleMgrService";
 const std::string SCHEME_DATA_ABILITY = "dataability";
 const std::string SYSTEM_UI_BUNDLE_NAME = "com.ohos.systemui";
 const std::string SYSTEM_UI_STATUS_BAR = "com.ohos.systemui.statusbar.ServiceExtAbility";

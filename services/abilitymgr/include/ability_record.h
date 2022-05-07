@@ -31,7 +31,7 @@
 #endif
 #include "app_scheduler.h"
 #include "application_info.h"
-#include "ability_record_info.h"
+#include "ability_state.h"
 #include "bundlemgr/bundle_mgr_interface.h"
 #include "call_container.h"
 #include "lifecycle_deal.h"
@@ -601,12 +601,6 @@ public:
     void DumpService(std::vector<std::string> &info, std::vector<std::string> &params, bool isClient = false) const;
 
     /**
-     * get ability record info.
-     *
-     */
-    void GetAbilityRecordInfo(AbilityRecordInfo &recordInfo);
-
-    /**
      * set aconnect remote object.
      *
      */
@@ -644,8 +638,6 @@ public:
     bool IsRestarting() const;
     void SetAppState(const AppState &state);
     AppState GetAppState() const;
-
-    void ClearFlag();
 
     void SetLaunchReason(const LaunchReason &reason);
     void SetLastExitReason(const LastExitReason &reason);
