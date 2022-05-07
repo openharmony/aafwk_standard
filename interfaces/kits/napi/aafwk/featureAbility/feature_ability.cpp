@@ -872,7 +872,15 @@ void CallOnAbilityResult(int requestCode, int resultCode, const Want &resultData
         [](uv_work_t *work, int status) {
             HILOG_INFO("CallOnAbilityResult, uv_queue_work");
             // JS Thread
+            if (work == nullptr) {
+                HILOG_ERROR("%{public}s, uv_queue_work work == nullptr.", __func__);
+                return;
+            }
             OnAbilityCallback *onAbilityCB = static_cast<OnAbilityCallback *>(work->data);
+            if (onAbilityCB == nullptr) {
+                HILOG_ERROR("%{public}s, uv_queue_work onAbilityCB == nullptr.", __func__);
+                return;
+            }
             napi_value result[ARGS_TWO] = {0};
             result[PARAM0] = GetCallbackErrorValue(onAbilityCB->cb.env, onAbilityCB->cb.errCode);
 
