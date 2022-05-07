@@ -910,14 +910,10 @@ void CallOnAbilityResult(int requestCode, int resultCode, const Want &resultData
                 HILOG_INFO("CallOnAbilityResult, promise end");
             }
 
-            if (onAbilityCB != nullptr) {
-                delete onAbilityCB;
-                onAbilityCB = nullptr;
-            }
-            if (work != nullptr) {
-                delete work;
-                work = nullptr;
-            }
+            delete onAbilityCB;
+            onAbilityCB = nullptr;
+            delete work;
+            work = nullptr;
             HILOG_INFO("CallOnAbilityResult, uv_queue_work end");
         });
 
