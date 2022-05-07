@@ -27,8 +27,8 @@
 #include "ohos/aafwk/base/short_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
-#include "ohos/aafwk/content/want_params_wrapper.h"
 #include "ohos/aafwk/base/remote_object_wrapper.h"
+#include "ohos/aafwk/content/want_params_wrapper.h"
 #include "napi_remote_object.h"
 
 namespace OHOS {
