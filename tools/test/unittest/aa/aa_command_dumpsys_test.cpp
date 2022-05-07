@@ -30,6 +30,7 @@ using namespace OHOS::AAFwk;
 
 namespace {
 const std::string STRING_USER_ID = "100";
+const std::string UNKNOWN_OPTION_MSG = "error: unknown option.\n";
 }  // namespace
 
 class AaCommandDumpsysTest : public ::testing::Test {
@@ -128,7 +129,7 @@ HWTEST_F(AaCommandDumpsysTest, Aa_Command_Dumpsys_0300, Function | MediumTest | 
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_DUMPSYS);
+    EXPECT_EQ(cmd.ExecCommand(), UNKNOWN_OPTION_MSG + HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -148,7 +149,7 @@ HWTEST_F(AaCommandDumpsysTest, Aa_Command_Dumpsys_0400, Function | MediumTest | 
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_DUMPSYS);
+    EXPECT_EQ(cmd.ExecCommand(), UNKNOWN_OPTION_MSG + HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -168,7 +169,7 @@ HWTEST_F(AaCommandDumpsysTest, Aa_Command_Dumpsys_0500, Function | MediumTest | 
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_DUMPSYS);
+    EXPECT_EQ(cmd.ExecCommand(), UNKNOWN_OPTION_MSG + HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -188,7 +189,7 @@ HWTEST_F(AaCommandDumpsysTest, Aa_Command_Dumpsys_0600, Function | MediumTest | 
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_DUMPSYS);
+    EXPECT_EQ(cmd.ExecCommand(), UNKNOWN_OPTION_MSG + HELP_MSG_DUMPSYS);
 }
 
 /**
@@ -328,7 +329,7 @@ HWTEST_F(AaCommandDumpsysTest, Aa_Command_Dumpsys_1300, Function | MediumTest | 
     int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
     AbilityManagerShellCommand cmd(argc, argv);
-    EXPECT_EQ(cmd.ExecCommand(), HELP_MSG_DUMPSYS);
+    EXPECT_EQ(cmd.ExecCommand(), UNKNOWN_OPTION_MSG + HELP_MSG_DUMPSYS);
 }
 
 /**

@@ -278,7 +278,7 @@ HWTEST_F(ContextContainerTest, AppExecFwk_ContextContainer_GetCodeCacheDir_0100,
     contextDeal_->SetApplicationInfo(info);
     context_->AttachBaseContext(contextDeal_);
     std::string dirCompare = "CodeCacheDir/code_cache";
-    EXPECT_STREQ(context_->GetCodeCacheDir().c_str(), dirCompare.c_str());
+    EXPECT_STREQ(context_->GetCodeCacheDir().c_str(), "/data/storage/el2/base/data/code_cache");
 }
 
 /**
@@ -306,7 +306,7 @@ HWTEST_F(ContextContainerTest, AppExecFwk_ContextContainer_GetCacheDir_0100, Fun
     contextDeal_->SetApplicationInfo(info);
     context_->AttachBaseContext(contextDeal_);
 
-    EXPECT_STREQ(context_->GetCacheDir().c_str(), dir.c_str());
+    EXPECT_STREQ(context_->GetCacheDir().c_str(), "/data/storage/el2/base/cache");
 }
 
 /**
@@ -334,7 +334,7 @@ HWTEST_F(ContextContainerTest, AppExecFwk_ContextContainer_GetDatabaseDir_0100, 
     contextDeal_->SetApplicationInfo(info);
     context_->AttachBaseContext(contextDeal_);
 
-    EXPECT_STREQ(context_->GetDatabaseDir().c_str(), dir.c_str());
+    EXPECT_STREQ(context_->GetDatabaseDir().c_str(), "/data/storage/el2/database");
 }
 
 /**
@@ -362,7 +362,7 @@ HWTEST_F(ContextContainerTest, AppExecFwk_ContextContainer_GetDataDir_0100, Func
     contextDeal_->SetApplicationInfo(info);
     context_->AttachBaseContext(contextDeal_);
 
-    EXPECT_STREQ(context_->GetDataDir().c_str(), dir.c_str());
+    EXPECT_STREQ(context_->GetDataDir().c_str(), "/data/storage/el2/base/data");
 }
 
 /**
@@ -423,7 +423,7 @@ HWTEST_F(ContextContainerTest, AppExecFwk_ContextContainer_GetFilesDir_0100, Fun
     contextDeal_->SetApplicationInfo(info);
     context_->AttachBaseContext(contextDeal_);
     std::string dirCompare = "codePath/files";
-    EXPECT_STREQ(context_->GetFilesDir().c_str(), dirCompare.c_str());
+    EXPECT_STREQ(context_->GetFilesDir().c_str(), "/data/storage/el2/base/files");
 }
 
 /**
