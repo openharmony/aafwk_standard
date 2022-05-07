@@ -27,9 +27,9 @@
 #include "ohos/aafwk/base/short_wrapper.h"
 #include "ohos/aafwk/base/string_wrapper.h"
 #include "ohos/aafwk/base/zchar_wrapper.h"
+#include "ohos/aafwk/base/remote_object_wrapper.h"
 #include "ohos/aafwk/content/array_wrapper.h"
 #include "ohos/aafwk/content/want_params_wrapper.h"
-#include "ohos/aafwk/base/remote_object_wrapper.h"
 #include "parcel.h"
 #include "securec.h"
 #include "string_ex.h"
@@ -683,29 +683,6 @@ bool WantParams::DoMarshalling(Parcel &parcel) const
  */
 bool WantParams::Marshalling(Parcel &parcel) const
 {
-    /* MessageParcel tempParcel;
-    if (!DoMarshalling(tempParcel)) {
-        return false;
-    }
-
-    int size = static_cast<int>(tempParcel.GetDataSize());
-    if (!parcel.WriteInt32(size)) {
-        return false;
-    }
-    const uint8_t *buffer = tempParcel.ReadUnpadBuffer(size);
-    if (buffer == nullptr) {
-        return false;
-    }
-
-    // Corresponding to Parcel#writeByteArray() in Java.
-    if (!parcel.WriteInt32(size)) {
-        return false;
-    }
-    if (!parcel.WriteBuffer(buffer, size)) {
-        return false;
-    }
-
-    return true; */
     return DoMarshalling(parcel);
 }
 
@@ -1446,36 +1423,6 @@ bool WantParams::ReadFromParcel(Parcel &parcel)
  */
 WantParams *WantParams::Unmarshalling(Parcel &parcel)
 {
-    /* int32_t bufferSize;
-    if (!parcel.ReadInt32(bufferSize)) {
-        ABILITYBASE_LOGI("%{public}s read bufferSize fail.", __func__);
-        return nullptr;
-    }
-
-    // Corresponding to Parcel#writeByteArray() in Java.
-    int32_t length;
-    if (!parcel.ReadInt32(length)) {
-        ABILITYBASE_LOGI("%{public}s read length fail.", __func__);
-        return nullptr;
-    }
-    const uint8_t *dataInBytes = parcel.ReadUnpadBuffer(bufferSize);
-    if (dataInBytes == nullptr) {
-        ABILITYBASE_LOGI("%{public}s read buffer fail.", __func__);
-        return nullptr;
-    }
-
-    Parcel tempParcel;
-    if (!tempParcel.WriteBuffer(dataInBytes, bufferSize)) {
-        ABILITYBASE_LOGI("%{public}s tempParcel.WriteBuffer fail.", __func__);
-        return nullptr;
-    }
-
-    WantParams *wantParams = new (std::nothrow) WantParams();
-    if (wantParams != nullptr && !wantParams->ReadFromParcel(tempParcel)) {
-        delete wantParams;
-        wantParams = nullptr;
-    }
-    return wantParams; */
     WantParams *wantParams = new (std::nothrow) WantParams();
     if (!wantParams->ReadFromParcel(parcel)) {
         delete wantParams;
