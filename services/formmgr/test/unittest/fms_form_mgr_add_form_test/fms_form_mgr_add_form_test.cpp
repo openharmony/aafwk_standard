@@ -155,7 +155,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_001, TestSize.Level0)
     FormDataMgr::GetInstance().ClearFormRecords();
     std::vector<FormDBInfo> oldFormDBInfos;
     FormDbCache::GetInstance().GetAllFormInfo(oldFormDBInfos);
-    FormDbCache::GetInstance().DeleteFormInfoByBundleName(FORM_PROVIDER_BUNDLE_NAME, oldFormDBInfos);
+    FormDbCache::GetInstance().DeleteFormInfoByBundleName(FORM_PROVIDER_BUNDLE_NAME, USER_ID, oldFormDBInfos);
 
     // add form
     EXPECT_EQ(ERR_OK, FormMgr::GetInstance().AddForm(0L, want, token_, formJsInfo));
@@ -524,7 +524,7 @@ HWTEST_F(FmsFormMgrAddFormTest, AddForm_008, TestSize.Level0)
     FormDataMgr::GetInstance().tempForms_.clear();
     std::vector<FormDBInfo> oldFormDBInfos;
     FormDbCache::GetInstance().GetAllFormInfo(oldFormDBInfos);
-    FormDbCache::GetInstance().DeleteFormInfoByBundleName(FORM_PROVIDER_BUNDLE_NAME, oldFormDBInfos);
+    FormDbCache::GetInstance().DeleteFormInfoByBundleName(FORM_PROVIDER_BUNDLE_NAME, USER_ID, oldFormDBInfos);
 
     int64_t formId = 0x0ab5bc5f00000000;
     int callingUid {0}, tempCount = 0;
