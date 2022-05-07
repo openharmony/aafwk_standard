@@ -21,6 +21,7 @@
 #undef private
 #undef protected
 
+#include "ability_config.h"
 #include "app_process_data.h"
 #include "system_ability_definition.h"
 #include "ability_manager_errors.h"
@@ -165,7 +166,7 @@ void AbilityTimeoutModuleTest::MockOnStart()
     abilityMs_->SwitchManagers(MOCK_U0_USER_ID, false);
 
     abilityMs_->userController_->SetCurrentUserId(MOCK_MAIN_USER_ID);
-    
+
     abilityMs_->state_ = ServiceRunningState::STATE_RUNNING;
     abilityMs_->iBundleManager_ = new BundleMgrService();
     abilityMs_->eventLoop_->Run();
@@ -208,10 +209,10 @@ std::shared_ptr<AbilityRecord> AbilityTimeoutModuleTest::CreateRootLauncher()
     auto lauList = abilityMs_->currentMissionListManager_->launcherList_;
     AbilityRequest abilityRequest;
     abilityRequest.abilityInfo.type = AbilityType::PAGE;
-    abilityRequest.abilityInfo.name = "com.ix.hiworld.MainAbility";
-    abilityRequest.abilityInfo.bundleName = "com.ix.hiworld";
+    abilityRequest.abilityInfo.name = AbilityConfig::LAUNCHER_ABILITY_NAME;
+    abilityRequest.abilityInfo.bundleName = AbilityConfig::LAUNCHER_BUNDLE_NAME;
     abilityRequest.appInfo.isLauncherApp = true;
-    abilityRequest.appInfo.name = "com.ix.hiworld";
+    abilityRequest.appInfo.name = AbilityConfig::LAUNCHER_BUNDLE_NAME;
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
     auto mission = std::make_shared<Mission>(MOCK_MISSION_ID++, abilityRecord, abilityRequest.abilityInfo.bundleName);
     abilityRecord->SetMission(mission);
@@ -261,7 +262,6 @@ std::shared_ptr<AbilityRecord> AbilityTimeoutModuleTest::CreateServiceAbility()
     abilityRequest.appInfo.isLauncherApp = false;
     abilityRequest.appInfo.name = "com.ix.Common";
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
-    
     return abilityRecord;
 }
 
@@ -384,7 +384,7 @@ HWTEST_F(AbilityTimeoutModuleTest, OnAbilityDied_002, TestSize.Level1)
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
     topAbility->SetAbilityState(AbilityState::FOREGROUND);
-    
+
     // died rootlauncher ability
     abilityMs_->OnAbilityDied(rootLauncher);
     WaitUntilTaskFinishedByTimer();
@@ -454,14 +454,14 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_001, TestSize.Level1)
     auto curListManager = abilityMs_->currentMissionListManager_;
     auto lauList = abilityMs_->currentMissionListManager_->launcherList_;
     EXPECT_TRUE(lauList != nullptr);
-    
+
 
     // add rootlauncher to abilityMs.
     auto ability = CreateRootLauncher();
     auto rootLauncher = lauList->GetTopAbility();
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleLoadTimeOut(rootLauncher->eventId_);
     EXPECT_TRUE(curListManager->GetAbilityRecordByToken(rootLauncher->GetToken()) != nullptr);
@@ -497,7 +497,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_002, TestSize.Level1)
     auto commonAbility = CreateCommonAbility();
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleLoadTimeOut(commonAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -541,7 +541,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_003, TestSize.Level1)
     commonAbility->AddCallerRecord(callerAbility->GetToken(), -1);
     topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleLoadTimeOut(commonAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -585,7 +585,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_004, TestSize.Level1)
     commonAbility->AddCallerRecord(callerAbility->GetToken(), -1);
     topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleLoadTimeOut(commonAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -627,7 +627,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_005, TestSize.Level1)
     auto currentList = abilityMs_->currentMissionListManager_->currentMissionLists_;
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleLoadTimeOut(commonAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -669,7 +669,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_006, TestSize.Level1)
     auto currentList = abilityMs_->currentMissionListManager_->currentMissionLists_;
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleLoadTimeOut(commonAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -706,7 +706,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleLoadTimeOut_007, TestSize.Level1)
     auto commonLauncherAbility = CreateLauncherAbility();
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonLauncherAbility);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleLoadTimeOut(commonLauncherAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -731,7 +731,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_001, TestSize.Leve
     auto curListManager = abilityMs_->currentMissionListManager_;
     auto lauList = abilityMs_->currentMissionListManager_->launcherList_;
     EXPECT_TRUE(lauList != nullptr);
-    
+
 
     // add rootlauncher to abilityMs.
     auto ability = CreateRootLauncher();
@@ -739,7 +739,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_001, TestSize.Leve
     EXPECT_EQ(rootLauncher, ability);
     EXPECT_TRUE(rootLauncher->IsLauncherRoot());
     rootLauncher->SetAbilityState(AbilityState::FOREGROUNDING);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(rootLauncher->eventId_);
     EXPECT_TRUE(curListManager->GetAbilityRecordByToken(rootLauncher->GetToken()) != nullptr);
@@ -776,7 +776,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_002, TestSize.Leve
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
     commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -821,7 +821,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_003, TestSize.Leve
     topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
     commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -866,7 +866,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_004, TestSize.Leve
     topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
     commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -909,7 +909,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_005, TestSize.Leve
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
     commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -952,7 +952,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_006, TestSize.Leve
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonAbility);
     commonAbility->SetAbilityState(AbilityState::FOREGROUNDING);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
@@ -990,7 +990,7 @@ HWTEST_F(AbilityTimeoutModuleTest, HandleForegroundNewTimeOut_007, TestSize.Leve
     auto topAbility = abilityMs_->currentMissionListManager_->GetCurrentTopAbilityLocked();
     EXPECT_EQ(topAbility, commonLauncherAbility);
     commonLauncherAbility->SetAbilityState(AbilityState::FOREGROUNDING);
-    
+
     // rootlauncher load timeout
     abilityMs_->HandleForegroundNewTimeOut(commonLauncherAbility->eventId_);
     WaitUntilTaskFinishedByTimer();
