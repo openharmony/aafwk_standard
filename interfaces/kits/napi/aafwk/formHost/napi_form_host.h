@@ -131,7 +131,7 @@ struct AsyncAcquireFormStateCallbackInfo {
     napi_ref callback;
     OHOS::AAFwk::Want want;
     OHOS::AppExecFwk::FormStateInfo stateInfo;
-    int32_t callbackType;
+    int32_t callbackType = 0;
     int result;
 };
 
