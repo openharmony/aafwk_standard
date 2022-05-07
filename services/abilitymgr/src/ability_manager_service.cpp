@@ -530,6 +530,86 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     return missionListManager->StartAbility(abilityRequest);
 }
 
+int AbilityManagerService::CheckStartExtensionAbility(const Want &want, AbilityRequest &abilityRequest,
+    int32_t validUserId, AppExecFwk::ExtensionAbilityType extensionType)
+{
+    auto abilityInfo = abilityRequest.abilityInfo;
+    auto result = CheckStaticCfgPermission(abilityInfo);
+    if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
+        HILOG_ERROR("CheckStaticCfgPermission error, result is %{public}d.", result);
+        return result;
+    }
+    GrantUriPermission(want, validUserId);
+    result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
+    if (result != ERR_OK) {
+        HILOG_ERROR("JudgeAbilityVisibleControl error, result is %{public}d.", result);
+        return result;
+    }
+
+    auto type = abilityInfo.type;
+    if (type != AppExecFwk::AbilityType::EXTENSION) {
+        HILOG_ERROR("Not extension ability, not allowed.");
+        return ERR_INVALID_VALUE;
+    }
+
+    if (extensionType != AppExecFwk::ExtensionAbilityType::UNSPECIFIED &&
+        extensionType != abilityInfo.extensionAbilityType) {
+        HILOG_ERROR("Extension ability type not match, set type: %{public}d, real type: %{public}d",
+            static_cast<int32_t>(extensionType), static_cast<int32_t>(abilityInfo.extensionAbilityType));
+        return ERR_INVALID_VALUE;
+    }
+
+    UpdateCallerInfo(abilityRequest.want);
+    return ERR_OK;
+}
+
+int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
+    int32_t userId, AppExecFwk::ExtensionAbilityType extensionType)
+{
+    HILOG_INFO("Start extension ability come, bundlename: %{public}s, ability is %{public}s, userId is %{public}d",
+        want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), userId);
+    if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
+        HILOG_ERROR("%{public}s: Permission verification failed.", __func__);
+        return CHECK_PERMISSION_FAILED;
+    }
+
+    if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
+        HILOG_ERROR("%{public}s VerificationAllToken failed.", __func__);
+        return ERR_INVALID_VALUE;
+    }
+    int32_t validUserId = GetValidUserId(userId);
+    if (!JudgeMultiUserConcurrency(validUserId)) {
+        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
+        return ERR_INVALID_VALUE;
+    }
+
+    AbilityRequest abilityRequest;
+    auto result = GenerateExtensionAbilityRequest(want, abilityRequest, callerToken, validUserId);
+    if (result != ERR_OK) {
+        HILOG_ERROR("Generate ability request local error.");
+        return result;
+    }
+
+    auto abilityInfo = abilityRequest.abilityInfo;
+    validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
+    HILOG_DEBUG("userId is : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
+
+    result = CheckStartExtensionAbility(want, abilityRequest, validUserId, extensionType);
+    if (result != ERR_OK) {
+        HILOG_ERROR("CheckStartExtensionAbility error.");
+        return result;
+    }
+
+    auto connectManager = GetConnectManagerByUserId(validUserId);
+    if (!connectManager) {
+        HILOG_ERROR("connectManager is nullptr. userId=%{public}d", validUserId);
+        return ERR_INVALID_VALUE;
+    }
+    HILOG_INFO("Start extension begin, name is %{public}s.", abilityInfo.name.c_str());
+    return connectManager->StartAbility(abilityRequest);
+}
+
 void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUserId)
 {
     if ((want.GetFlags() & (Want::FLAG_AUTH_READ_URI_PERMISSION | Want::FLAG_AUTH_WRITE_URI_PERMISSION)) == 0) {
@@ -2406,6 +2486,53 @@ int AbilityManagerService::GenerateAbilityRequest(
         HILOG_INFO("Stage mode, abilityInfo SERVICE type reset EXTENSION.");
         request.abilityInfo.type = AppExecFwk::AbilityType::EXTENSION;
     }
+
+    if (request.abilityInfo.applicationInfo.name.empty() || request.abilityInfo.applicationInfo.bundleName.empty()) {
+        HILOG_ERROR("Get app info failed.");
+        return RESOLVE_APP_ERR;
+    }
+    request.appInfo = request.abilityInfo.applicationInfo;
+    request.uid = request.appInfo.uid;
+    HILOG_DEBUG("GenerateAbilityRequest end, app name: %{public}s, bundle name: %{public}s, uid: %{public}d.",
+        request.appInfo.name.c_str(), request.appInfo.bundleName.c_str(), request.uid);
+
+    return ERR_OK;
+}
+
+int AbilityManagerService::GenerateExtensionAbilityRequest(
+    const Want &want, AbilityRequest &request, const sptr<IRemoteObject> &callerToken, int32_t userId)
+{
+    request.want = want;
+    request.callerToken = callerToken;
+    request.startSetting = nullptr;
+
+    auto bms = GetBundleManager();
+    CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
+
+    auto abilityInfoFlag = (AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION |
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_PERMISSION |
+        AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_METADATA);
+    HILOG_DEBUG("QueryExtensionAbilityInfo from bms, userId is %{public}d.", userId);
+    // try to find extension
+    std::vector<AppExecFwk::ExtensionAbilityInfo> extensionInfos;
+    IN_PROCESS_CALL_WITHOUT_RET(bms->QueryExtensionAbilityInfos(want, abilityInfoFlag, userId, extensionInfos));
+    if (extensionInfos.size() <= 0) {
+        HILOG_ERROR("GenerateAbilityRequest error. Get extension info failed.");
+        return RESOLVE_ABILITY_ERR;
+    }
+
+    AppExecFwk::ExtensionAbilityInfo extensionInfo = extensionInfos.front();
+    if (extensionInfo.bundleName.empty() || extensionInfo.name.empty()) {
+        HILOG_ERROR("extensionInfo empty.");
+        return RESOLVE_ABILITY_ERR;
+    }
+    HILOG_DEBUG("Extension ability info found, name=%{public}s.",
+        extensionInfo.name.c_str());
+    // For compatibility translates to AbilityInfo
+    InitAbilityInfoFromExtension(extensionInfo, request.abilityInfo);
+
+    HILOG_DEBUG("QueryAbilityInfo success, ability name: %{public}s, is stage mode: %{public}d.",
+        request.abilityInfo.name.c_str(), request.abilityInfo.isStageBasedModel);
 
     if (request.abilityInfo.applicationInfo.name.empty() || request.abilityInfo.applicationInfo.bundleName.empty()) {
         HILOG_ERROR("Get app info failed.");

@@ -130,6 +130,16 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, const StartOptions 
     return abms->StartAbility(want, startOptions, callerToken, userId, requestCode);
 }
 
+ErrCode AbilityManagerClient::StartExtensionAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
+    int32_t userId, AppExecFwk::ExtensionAbilityType extensionType)
+{
+    auto abms = GetAbilityManager();
+    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    HILOG_INFO("%{public}s come, bundleName=%{public}s, abilityName=%{public}s, userId=%{public}d.",
+        __func__, want.GetElement().GetAbilityName().c_str(), want.GetElement().GetBundleName().c_str(), userId);
+    return abms->StartExtensionAbility(want, callerToken, userId, extensionType);
+}
+
 ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
 {
     auto abms = GetAbilityManager();
