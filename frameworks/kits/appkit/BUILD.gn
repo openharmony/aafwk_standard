@@ -42,6 +42,9 @@ config("appkit_config") {
     "AMS_LOG_TAG = \"AppkitNative\"",
     "AMS_LOG_DOMAIN = 0xD001150",
   ]
+  if (target_cpu == "arm64") {
+    defines += [ "_ARM64_" ]
+  }
 
   include_dirs = [
     "${aafwk_path}/frameworks/kits/ability/native/include",
