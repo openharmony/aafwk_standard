@@ -97,7 +97,6 @@ class Ability : public IAbilityEvent,
                 public AbilityContext,
 #ifdef SUPPORT_GRAPHICS
                 public FormCallbackInterface,
-                public OHOS::Rosen::IDisplayMoveListener,
 #endif
                 public IAbilityContinuation,
                 public IAbilityCallback,
@@ -1646,7 +1645,6 @@ protected:
                 sptr->OnChange(displayId);
             }
         }
-        
     private:
         std::weak_ptr<Ability> ability_;
     };
@@ -1660,13 +1658,31 @@ protected:
     void OnDestroy(Rosen::DisplayId displayId);
     void OnChange(Rosen::DisplayId displayId);
 
+    class AbilityDisplayMoveListener : public OHOS::Rosen::IDisplayMoveListener {
+    public:
+        AbilityDisplayMoveListener(const std::weak_ptr<Ability>& ability)
+        {
+            ability_ = ability;
+        }
+
+        void OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to) override
+        {
+            auto sptr = ability_.lock();
+            if (sptr != nullptr) {
+                sptr->OnDisplayMove(from, to);
+            }
+        }
+    private:
+        std::weak_ptr<Ability> ability_;
+    };
+
     /**
      * @brief override Rosen::IDisplayMoveListener virtual callback function
      *
      * @param from the displayId before display move
      * @param to the displayId after display move
      */
-    void OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to) override;
+    void OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to);
 #endif
 protected:
     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;
@@ -1676,6 +1692,7 @@ protected:
     std::shared_ptr<Rosen::WindowScene> scene_ = nullptr;
     sptr<Rosen::IWindowLifeCycle> sceneListener_ = nullptr;
     sptr<AbilityDisplayListener> abilityDisplayListener_ = nullptr;
+    sptr<Rosen::IDisplayMoveListener> abilityDisplayMoveListener_ = nullptr;
 #endif
 private:
     std::shared_ptr<NativeRdb::DataAbilityPredicates> ParsePredictionArgsReference(
