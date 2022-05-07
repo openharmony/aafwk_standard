@@ -557,8 +557,9 @@ void JsAbility::DoOnForeground(const Want &want)
     auto window = scene_->GetMainWindow();
     if (window) {
         HILOG_INFO("Call RegisterDisplayMoveListener, windowId: %{public}d", window->GetWindowId());
-        OHOS::sptr<OHOS::Rosen::IDisplayMoveListener> displayMoveListener(this);
-        window->RegisterDisplayMoveListener(displayMoveListener);
+        std::weak_ptr<Ability> weakAbility = shared_from_this();
+        abilityDisplayMoveListener_ = new AbilityDisplayMoveListener(weakAbility);
+        window->RegisterDisplayMoveListener(abilityDisplayMoveListener_);
     }
 
     HILOG_INFO("%{public}s begin scene_->GoForeground, sceneFlag_:%{public}d.", __func__, Ability::sceneFlag_);
