@@ -68,6 +68,7 @@ ohos_shared_library("want") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "utils_base:utils",
+    "ipc:ipc_core",
   ]
 
   configs = [ ":want_config" ]
