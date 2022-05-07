@@ -1834,6 +1834,12 @@ void MissionListManager::BackToLauncher()
 
     auto launcherRootAbility = launcherList_->GetLauncherRoot();
     CHECK_POINTER_LOG(launcherRootAbility, "There is no root launcher ability, back to launcher failed.");
+
+    if (launcherRootAbility->GetAbilityInfo().bundleName != AbilityConfig::LAUNCHER_BUNDLE_NAME) {
+        HILOG_WARN("not launcher mission, no need back to launcher.");
+        return;
+    }
+
     auto launcherRootMission = launcherRootAbility->GetMission();
     CHECK_POINTER_LOG(launcherRootMission, "There is no root launcher mission, back to launcher failed.");
 
