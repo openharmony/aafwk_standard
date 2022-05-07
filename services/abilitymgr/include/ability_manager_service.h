@@ -32,9 +32,6 @@
 #include "bundlemgr/bundle_mgr_interface.h"
 #include "bundle_constants.h"
 #include "data_ability_manager.h"
-#ifdef SUPPORT_GRAPHICS
-#include "foundation/windowmanager/interfaces/innerkits/wm/window_manager.h"
-#endif
 #include "hilog_wrapper.h"
 #include "iremote_object.h"
 #include "mission_list_manager.h"
@@ -50,9 +47,6 @@ namespace AAFwk {
 enum class ServiceRunningState { STATE_NOT_START, STATE_RUNNING };
 const int32_t BASE_USER_RANGE = 200000;
 using OHOS::AppExecFwk::IAbilityController;
-#ifdef SUPPORT_GRAPHICS
-using namespace OHOS::Rosen;
-#endif
 
 class PendingWantManager;
 /**
@@ -718,14 +712,6 @@ public:
 
     virtual AppExecFwk::ElementName GetTopAbility() override;
 
-#ifdef SUPPORT_GRAPHICS
-    class FocusChangedListener : public Rosen::IFocusChangedListener {
-    public:
-        void OnFocused(const sptr<Rosen::FocusChangeInfo> &focusChangeInfo) override;
-        void OnUnfocused(const sptr<Rosen::FocusChangeInfo> &focusChangeInfo) override;
-    };
-#endif
-
     /**
      * AtomicServiceStatusCallback OnInstallFinished callback.
      *
@@ -1052,10 +1038,6 @@ private:
     std::multimap<std::string, std::string> timeoutMap_;
 
     static sptr<AbilityManagerService> instance_;
-#ifdef SUPPORT_GRAPHICS
-    sptr<Rosen::FocusChangeInfo> focusChangeInfo_;
-    sptr<Rosen::IFocusChangedListener> focusChangedListener_;
-#endif
     struct FreeInstallInfo {
         Want want;
         int32_t userId = DEFAULT_INVAL_VALUE;
