@@ -48,7 +48,6 @@ group("moduletest") {
     "moduletest/app_mgr_client_test:moduletest",
     "moduletest/call_module_test:moduletest",
     "moduletest/common/ams:moduletest",
-    "moduletest/dump_module_test:moduletest",
     "moduletest/ipc_ability_connect_test:moduletest",
     "moduletest/ipc_ability_mgr_test:moduletest",
     "moduletest/ipc_ability_scheduler_test:moduletest",
