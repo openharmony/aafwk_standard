@@ -46,7 +46,7 @@ ohos_shared_library("base") {
   ]
   configs = [ ":base_config" ]
   public_configs = [ ":base_public_config" ]
-  external_deps = [ "utils_base:utils", "hiviewdfx_hilog_native:libhilog", "ipc:ipc_core"]
+  external_deps = [ "utils_base:utils", "ipc:ipc_core"]
 
   subsystem_name = "aafwk"
   part_name = "ability_base"
