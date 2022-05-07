@@ -44,8 +44,7 @@ void LifecycleDeal::Activate(const Want &want, LifeCycleStateInfo &stateInfo)
     HILOG_INFO("Activate.");
     auto abilityScheduler = GetScheduler();
     CHECK_POINTER(abilityScheduler);
-    HILOG_INFO("caller %{public}s, %{public}s, %{public}s",
-        stateInfo.caller.deviceId.c_str(),
+    HILOG_INFO("caller %{public}s, %{public}s",
         stateInfo.caller.bundleName.c_str(),
         stateInfo.caller.abilityName.c_str());
     stateInfo.state = AbilityLifeCycleState::ABILITY_STATE_ACTIVE;
@@ -132,8 +131,7 @@ void LifecycleDeal::ForegroundNew(const Want &want, LifeCycleStateInfo &stateInf
     HILOG_INFO("ForegroundNew.");
     auto abilityScheduler = GetScheduler();
     CHECK_POINTER(abilityScheduler);
-    HILOG_INFO("caller %{public}s, %{public}s, %{public}s",
-        stateInfo.caller.deviceId.c_str(),
+    HILOG_INFO("caller %{public}s, %{public}s",
         stateInfo.caller.bundleName.c_str(),
         stateInfo.caller.abilityName.c_str());
     stateInfo.state = AbilityLifeCycleState::ABILITY_STATE_FOREGROUND_NEW;
@@ -145,8 +143,7 @@ void LifecycleDeal::BackgroundNew(const Want &want, LifeCycleStateInfo &stateInf
     HILOG_INFO("Start move ability to background.");
     auto abilityScheduler = GetScheduler();
     CHECK_POINTER(abilityScheduler);
-    HILOG_INFO("caller %{public}s, %{public}s, %{public}s",
-        stateInfo.caller.deviceId.c_str(),
+    HILOG_INFO("caller %{public}s, %{public}s",
         stateInfo.caller.bundleName.c_str(),
         stateInfo.caller.abilityName.c_str());
     stateInfo.state = AbilityLifeCycleState::ABILITY_STATE_BACKGROUND_NEW;

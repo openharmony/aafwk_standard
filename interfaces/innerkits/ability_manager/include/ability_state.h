@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef OHOS_AAFWK_INTERFACES_INNERKITS_ABILITY_RECORD_INFO_H
-#define OHOS_AAFWK_INTERFACES_INNERKITS_ABILITY_RECORD_INFO_H
+#ifndef OHOS_AAFWK_INTERFACES_INNERKITS_ABILITY_STATE_H
+#define OHOS_AAFWK_INTERFACES_INNERKITS_ABILITY_STATE_H
 
 #include <string>
 
@@ -42,31 +42,6 @@ enum AbilityState {
     FOREGROUNDING,
     BACKGROUNDING,
 };
-
-/**
- * @struct AbilityRecordInfo
- * AbilityRecordInfo is used to save information about ability record.
- */
-struct AbilityRecordInfo : public Parcelable {
-    int32_t id = -1;
-    std::string elementName;
-    std::string appName;
-    std::string mainName;
-    int32_t abilityType = 1;  // Page=1,Service=2,Data=3
-    std::string previousAppName;
-    std::string previousMainName;
-    std::string nextAppName;
-    std::string nextMainName;
-    AbilityState state = AbilityState::INITIAL;
-    std::string startTime;
-    bool ready = false;
-    bool windowAttached = false;
-    bool lanucher = false;
-
-    bool ReadFromParcel(Parcel &parcel);
-    virtual bool Marshalling(Parcel &parcel) const override;
-    static AbilityRecordInfo *Unmarshalling(Parcel &parcel);
-};
 }  // namespace AAFwk
 }  // namespace OHOS
-#endif  // OHOS_AAFWK_INTERFACES_INNERKITS_ABILITY_RECORD_INFO_H
+#endif  // OHOS_AAFWK_INTERFACES_INNERKITS_ABILITY_STATE_H

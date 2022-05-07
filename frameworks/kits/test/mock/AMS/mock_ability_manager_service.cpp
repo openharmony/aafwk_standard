@@ -50,9 +50,6 @@ int MockAbilityManagerService::StartAbility(const Want &want, int32_t userId, in
         case AbilityLifeCycleState::ABILITY_STATE_BACKGROUND:
             curstate_ = AbilityLifeCycleState::ABILITY_STATE_BACKGROUND;
             break;
-        case AbilityLifeCycleState::ABILITY_STATE_SUSPENDED:
-            curstate_ = AbilityLifeCycleState::ABILITY_STATE_SUSPENDED;
-            break;
         default:
             break;
     }

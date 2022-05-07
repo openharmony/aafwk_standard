@@ -36,7 +36,6 @@ ohos_moduletest("running_infos_module_test") {
     "${aafwk_path}/services/abilitymgr/src/ability_manager_service.cpp",
     "${aafwk_path}/services/abilitymgr/src/ability_manager_stub.cpp",
     "${aafwk_path}/services/abilitymgr/src/ability_record.cpp",
-    "${aafwk_path}/services/abilitymgr/src/ability_record_info.cpp",
     "${aafwk_path}/services/abilitymgr/src/ability_scheduler_proxy.cpp",
     "${aafwk_path}/services/abilitymgr/src/ability_scheduler_stub.cpp",
     "${aafwk_path}/services/abilitymgr/src/ability_token_stub.cpp",
