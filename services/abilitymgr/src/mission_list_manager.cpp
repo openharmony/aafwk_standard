@@ -194,7 +194,18 @@ int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromL
         HILOG_ERROR("cannot find mission info from MissionInfoList by missionId: %{public}d", missionId);
         return MOVE_MISSION_FAILED;
     }
-    NotifyAnimationFromRecentTask(targetAbilityRecord, startOptions, innerMissionInfo.missionInfo.want);
+
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
+    auto self(weak_from_this());
+    auto want = innerMissionInfo.missionInfo.want;
+    auto task = [self, targetAbilityRecord, startOptions, want] {
+        auto mgr = self.lock();
+        if (mgr) {
+            mgr->NotifyAnimationFromRecentTask(targetAbilityRecord, startOptions, want);
+        }
+    };
+    handler->PostTask(task);
 #endif
 
     // schedule target ability to foreground.
@@ -277,7 +288,16 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
 #ifdef SUPPORT_GRAPHICS
     auto state = targetAbilityRecord->GetAbilityState();
     if (state != AbilityState::FOREGROUND && state != AbilityState::FOREGROUNDING) {
-        NotifyAnimationFromStartingAbility(callerAbility, abilityRequest, targetAbilityRecord);
+        auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+        CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
+        auto self(weak_from_this());
+        auto task = [self, callerAbility, abilityRequest, targetAbilityRecord] {
+            auto mgr = self.lock();
+            if (mgr) {
+                mgr->NotifyAnimationFromStartingAbility(callerAbility, abilityRequest, targetAbilityRecord);
+            }
+        };
+        handler->PostTask(task);
     }
 #endif
 
