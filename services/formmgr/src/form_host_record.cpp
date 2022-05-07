@@ -72,7 +72,7 @@ void FormHostRecord::SetEnableRefresh(int64_t formId, bool flag)
 /**
  * @brief Refresh enable or not.
  * @param formId The Id of the form.
- * @return true on enable, false on disable..
+ * @return true on enable, false on disable.
  */
 bool FormHostRecord::IsEnableRefresh(int64_t formId) const
 {
@@ -85,7 +85,7 @@ bool FormHostRecord::IsEnableRefresh(int64_t formId) const
 /**
  * @brief Set Update enable flag.
  * @param formId The Id of the form.
- * @param flag True for enbale, false for disable.
+ * @param flag True for enable, false for disable.
  */
 void FormHostRecord::SetEnableUpdate(int64_t formId, bool flag)
 {
@@ -99,7 +99,7 @@ void FormHostRecord::SetEnableUpdate(int64_t formId, bool flag)
 /**
  * @brief update enable or not.
  * @param formId The Id of the form.
- * @return true on enbale, false on disable..
+ * @return true on enable, false on disable.
  */
 bool FormHostRecord::IsEnableUpdate(int64_t formId) const
 {
@@ -121,7 +121,7 @@ void FormHostRecord::SetNeedRefresh(int64_t formId, bool flag)
 /**
  * @brief Need Refresh enable or not.
  * @param formId The Id of the form.
- * @return true on enable, false on disable..
+ * @return true on enable, false on disable.
  */
 bool FormHostRecord::IsNeedRefresh(int64_t formId) const
 {
