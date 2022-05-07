@@ -19,7 +19,7 @@ namespace OHOS {
 namespace AAFwk {
 IINTERFACE_IMPL_1(RemoteObjectWrap, Object, IRemoteObjectWrap);
 
-RemoteObjectWrap::RemoteObjectWrap(sptr<IRemoteObject> remoteObject) : remoteObject_(remoteObject){}
+RemoteObjectWrap::RemoteObjectWrap(sptr<IRemoteObject> remoteObject) : remoteObject_(remoteObject) {}
 
 bool RemoteObjectWrap::Equals(IObject &other)
 {
