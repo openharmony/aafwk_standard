@@ -254,8 +254,9 @@ void Ability::OnStart(const Want &want)
                 auto windowId = window->GetWindowId();
                 if (winType == Rosen::WindowType::WINDOW_TYPE_APP_MAIN_WINDOW) {
                     HILOG_INFO("Call RegisterDisplayMoveListener, windowId: %{public}d", windowId);
-                    OHOS::sptr<OHOS::Rosen::IDisplayMoveListener> displayMoveListener(this);
-                    window->RegisterDisplayMoveListener(displayMoveListener);
+                    std::weak_ptr<Ability> weakAbility = shared_from_this();
+                    abilityDisplayMoveListener_ = new AbilityDisplayMoveListener(weakAbility);
+                    window->RegisterDisplayMoveListener(abilityDisplayMoveListener_);
                 }
             }
             HILOG_INFO("%{public}s end abilityWindow_->OnPostAbilityStart.", __func__);
