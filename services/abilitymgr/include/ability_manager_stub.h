@@ -178,6 +178,8 @@ private:
 
     using RequestFuncType = int (AbilityManagerStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
+
+    int GetTopAbilityInner(MessageParcel &data, MessageParcel &reply);
 };
 }  // namespace AAFwk
 }  // namespace OHOS

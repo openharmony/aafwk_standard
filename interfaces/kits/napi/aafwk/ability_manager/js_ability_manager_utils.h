@@ -15,6 +15,7 @@
 
 #include "ability_running_info.h"
 #include "extension_running_info.h"
+#include "element_name.h"
 #include "native_engine/native_engine.h"
 
 #ifndef OHOS_APPEXECFWK_RUNTIME_APP_MANAGER_UTILS_H
@@ -29,6 +30,7 @@ NativeValue* CreateJsExtensionRunningInfoArray(
 NativeValue* CreateJsAbilityRunningInfo(NativeEngine &engine, const AAFwk::AbilityRunningInfo &info);
 NativeValue* CreateJsExtensionRunningInfo(NativeEngine &engine, const AAFwk::ExtensionRunningInfo &info);
 NativeValue *AbilityStateInit(NativeEngine *engine);
+NativeValue* CreateJsElementName(NativeEngine &engine, const AppExecFwk::ElementName &elementName);
 }  // namespace AbilityRuntime
 }  // namespace OHOS
 #endif // OHOS_APPEXECFWK_RUNTIME_APP_MANAGER_UTILS_H
