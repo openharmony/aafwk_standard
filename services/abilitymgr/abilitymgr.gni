@@ -35,7 +35,6 @@ abilityms_files = [
   "src/lifecycle_state_info.cpp",
   "src/ability_running_info.cpp",
   "src/extension_running_info.cpp",
-  "src/ability_record_info.cpp",
   "src/caller_info.cpp",
   "src/sender_info.cpp",
   "src/wants_info.cpp",

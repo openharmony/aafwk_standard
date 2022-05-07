@@ -657,7 +657,7 @@ void UvWorkNotifyMissionChanged(uv_work_t *work, int status)
 
 void NAPIRemoteMissionListener::NotifyMissionsChanged(const std::string& deviceId)
 {
-    HILOG_INFO("%{public}s, called. deviceId = %{public}s", __func__, deviceId.c_str());
+    HILOG_INFO("%{public}s, called.", __func__);
     uv_loop_s *loop = nullptr;
 
     napi_get_uv_event_loop(env_, &loop);

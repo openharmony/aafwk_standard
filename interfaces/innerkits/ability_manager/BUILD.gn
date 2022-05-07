@@ -61,7 +61,6 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr/src/ability_manager_client.cpp",
     "${services_path}/abilitymgr/src/ability_manager_proxy.cpp",
     "${services_path}/abilitymgr/src/ability_manager_stub.cpp",
-    "${services_path}/abilitymgr/src/ability_record_info.cpp",
     "${services_path}/abilitymgr/src/ability_running_info.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_proxy.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_stub.cpp",

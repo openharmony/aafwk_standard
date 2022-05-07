@@ -1019,38 +1019,5 @@ HWTEST_F(AbilityTerminateTest, AaFwk_DataAbility_Start_0400, Function | MediumTe
     }
     GTEST_LOG_(INFO) << "AaFwk_DataAbility_Start_0400";
 }
-
-/**
- * @tc.number: AaFwk_DataAbility_Start_0500
- * @tc.name: DataAbilityHelper
- * @tc.desc: The AbilityManager could not receive the suspended state from abilitythread for dataability.
- *           When the dataability change its lifecycle state to suspended.
- */
-HWTEST_F(AbilityTerminateTest, AaFwk_DataAbility_Start_0500, Function | MediumTest | Level1)
-{
-    GTEST_LOG_(INFO) << "AaFwk_DataAbility_Start_0500";
-
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    sptr<IRemoteObject> abilityToken = sptr<IRemoteObject>(new AbilityThread());
-    EXPECT_NE(abilityToken, nullptr);
-    if (abilityToken != nullptr) {
-        std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-        abilityInfo->type = AppExecFwk::AbilityType::DATA;
-        abilityInfo->name = "DemoAbility";
-        std::shared_ptr<AbilityLocalRecord> abilityRecord =
-            std::make_shared<AbilityLocalRecord>(abilityInfo, abilityToken);
-
-        AbilityThread::AbilityThreadMain(application, abilityRecord, nullptr);
-
-        sptr<IRemoteObject> remoteObject_ =
-            OHOS::DelayedSingleton<AppExecFwk::SysMrgClient>::GetInstance()->GetSystemAbility(ABILITY_MGR_SERVICE_ID);
-        sptr<AAFwk::IAbilityManager> abms = iface_cast<AAFwk::IAbilityManager>(remoteObject_);
-        Want want;
-        abms->StartAbility(want, AbilityLifeCycleState::ABILITY_STATE_SUSPENDED);
-
-        usleep(AbilityBaseTest::TEST_WAIT_TIME);
-    }
-    GTEST_LOG_(INFO) << "AaFwk_DataAbility_Start_0500";
-}
 }  // namespace AppExecFwk
 }  // namespace OHOS

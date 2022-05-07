@@ -21,7 +21,7 @@
 #include "user_controller.h"
 #undef private
 #undef protected
-#include "ability_record_info.h"
+#include "ability_state.h"
 #include "app_process_data.h"
 #include "system_ability_definition.h"
 #include "ability_manager_errors.h"

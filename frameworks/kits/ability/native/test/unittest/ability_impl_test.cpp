@@ -327,45 +327,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Start_001, TestSize.Level1)
 
 /*
  * Feature: AbilityImpl
- * Function: Start
- * SubFunction: NA
- * FunctionPoints: Start
- * EnvConditions: NA
- * CaseDescription: Test the abnormal behavior of the AbilityImpl::Start
- */
-HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Start_002, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Start_002 start";
-
-    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->name = "pageAbility";
-    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
-    EXPECT_NE(token, nullptr);
-    if (token != nullptr) {
-        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
-        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
-        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
-        EXPECT_NE(abilityThread, nullptr);
-        if (abilityThread != nullptr) {
-            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
-            std::shared_ptr<Ability> ability = nullptr;
-            std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
-            mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-
-            Want want;
-            mockAbilityimpl->ImplStart(want);
-
-            mockAbilityimpl->SetlifecycleState(AAFwk::ABILITY_STATE_SUSPENDED);
-            EXPECT_EQ(AAFwk::ABILITY_STATE_SUSPENDED, mockAbilityimpl->GetCurrentState());
-        }
-    }
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Start_002 end";
-}
-
-/*
- * Feature: AbilityImpl
  * Function: Stop
  * SubFunction: NA
  * FunctionPoints: Stop
@@ -406,43 +367,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Stop_001, TestSize.Level1)
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Stop_001 end";
-}
-
-/*
- * Feature: AbilityImpl
- * Function: Stop
- * SubFunction: NA
- * FunctionPoints: Stop
- * EnvConditions: NA
- * CaseDescription: Test the abnormal behavior of the AbilityImpl::Stop
- */
-HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Stop_002, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Stop_002 start";
-    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->name = "pageAbility";
-    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
-    EXPECT_NE(token, nullptr);
-    if (token != nullptr) {
-        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
-        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
-        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
-        EXPECT_NE(abilityThread, nullptr);
-        if (abilityThread != nullptr) {
-            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
-            std::shared_ptr<Ability> ability = nullptr;
-            std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
-            mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-
-            mockAbilityimpl->ImplStop();
-            mockAbilityimpl->SetlifecycleState(AAFwk::ABILITY_STATE_SUSPENDED);
-
-            EXPECT_EQ(AAFwk::ABILITY_STATE_SUSPENDED, mockAbilityimpl->GetCurrentState());
-        }
-    }
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Stop_002 end";
 }
 
 /*
@@ -492,41 +416,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Active_001, TestSize.Level1)
 
 /*
  * Feature: AbilityImpl
- * Function: Active
- * SubFunction: NA
- * FunctionPoints: Active
- * EnvConditions: NA
- * CaseDescription: Test the abnormal behavior of the AbilityImpl::Active
- */
-HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Active_002, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Active_002 start";
-    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->name = "pageAbility";
-    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
-    EXPECT_NE(token, nullptr);
-    if (token != nullptr) {
-        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
-        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
-        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
-        EXPECT_NE(abilityThread, nullptr);
-        if (abilityThread != nullptr) {
-            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
-            std::shared_ptr<Ability> ability = nullptr;
-            std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
-            mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-            mockAbilityimpl->ImplActive();
-            mockAbilityimpl->SetlifecycleState(AAFwk::ABILITY_STATE_SUSPENDED);
-            EXPECT_EQ(AAFwk::ABILITY_STATE_SUSPENDED, mockAbilityimpl->GetCurrentState());
-        }
-    }
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Active_002 end";
-}
-
-/*
- * Feature: AbilityImpl
  * Function: Inactive
  * SubFunction: NA
  * FunctionPoints: Inactive
@@ -572,41 +461,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Inactive_001, TestSize.Level1)
 
 /*
  * Feature: AbilityImpl
- * Function: Inactive
- * SubFunction: NA
- * FunctionPoints: Inactive
- * EnvConditions: NA
- * CaseDescription: Test the abnormal behavior of the AbilityImpl::Inactive
- */
-HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Inactive_002, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Inactive_002 start";
-    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->name = "pageAbility";
-    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
-    EXPECT_NE(token, nullptr);
-    if (token != nullptr) {
-        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
-        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
-        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
-        EXPECT_NE(abilityThread, nullptr);
-        if (abilityThread != nullptr) {
-            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
-            std::shared_ptr<Ability> ability = nullptr;
-            std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
-            mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-            mockAbilityimpl->ImplInactive();
-            mockAbilityimpl->SetlifecycleState(AAFwk::ABILITY_STATE_SUSPENDED);
-            EXPECT_EQ(AAFwk::ABILITY_STATE_SUSPENDED, mockAbilityimpl->GetCurrentState());
-        }
-    }
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Inactive_002 end";
-}
-
-/*
- * Feature: AbilityImpl
  * Function: Foreground
  * SubFunction: NA
  * FunctionPoints: Foreground
@@ -644,42 +498,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Foreground_001, TestSize.Level1)
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Foreground_001 end";
-}
-
-/*
- * Feature: AbilityImpl
- * Function: Foreground
- * SubFunction: NA
- * FunctionPoints: Foreground
- * EnvConditions: NA
- * CaseDescription: Test the abnormal behavior of the AbilityImpl::Foreground
- */
-HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Foreground_002, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Foreground_002 start";
-    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->name = "pageAbility";
-    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
-    EXPECT_NE(token, nullptr);
-    if (token != nullptr) {
-        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
-        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
-        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
-        EXPECT_NE(abilityThread, nullptr);
-        if (abilityThread != nullptr) {
-            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
-            std::shared_ptr<Ability> ability = nullptr;
-            std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
-            mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-            Want want;
-            mockAbilityimpl->ImplForeground(want);
-            mockAbilityimpl->SetlifecycleState(AAFwk::ABILITY_STATE_SUSPENDED);
-            EXPECT_EQ(AAFwk::ABILITY_STATE_SUSPENDED, mockAbilityimpl->GetCurrentState());
-        }
-    }
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Foreground_002 end";
 }
 
 /*
@@ -725,43 +543,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Background_001, TestSize.Level1)
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Background_001 end";
-}
-
-/*
- * Feature: AbilityImpl
- * Function: Background
- * SubFunction: NA
- * FunctionPoints: Background
- * EnvConditions: NA
- * CaseDescription: Test the abnormal behavior of the AbilityImpl::Background
- */
-HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_Background_002, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Background_002 start";
-    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->name = "pageAbility";
-    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
-    EXPECT_NE(token, nullptr);
-    if (token != nullptr) {
-        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
-        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
-        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
-        EXPECT_NE(abilityThread, nullptr);
-        if (abilityThread != nullptr) {
-            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
-            std::shared_ptr<Ability> ability = nullptr;
-            std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
-            mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-
-            mockAbilityimpl->ImplBackground();
-            mockAbilityimpl->SetlifecycleState(AAFwk::ABILITY_STATE_SUSPENDED);
-
-            EXPECT_EQ(AAFwk::ABILITY_STATE_SUSPENDED, mockAbilityimpl->GetCurrentState());
-        }
-    }
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_Background_002 end";
 }
 
 /*
@@ -1335,43 +1116,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_ConnectAbility_001, TestSize.Level1)
 
 /*
  * Feature: AbilityImpl
- * Function: ConnectAbility
- * SubFunction: NA
- * FunctionPoints: ConnectAbility
- * EnvConditions: NA
- * CaseDescription: Test the abnormal behavior of the AbilityImpl::ConnectAbility
- */
-HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_ConnectAbility_002, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ConnectAbility_002 start";
-    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->name = "pageAbility";
-    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
-    EXPECT_NE(token, nullptr);
-    if (token != nullptr) {
-        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
-        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
-        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
-        EXPECT_NE(abilityThread, nullptr);
-        if (abilityThread != nullptr) {
-            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
-            std::shared_ptr<Ability> ability = nullptr;
-            std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
-            mockAbilityimpl->Init(application, record, ability, handler, token, contextDeal);
-            Want want;
-            mockAbilityimpl->ConnectAbility(want);
-            mockAbilityimpl->SetlifecycleState(AAFwk::ABILITY_STATE_SUSPENDED);
-
-            EXPECT_EQ(AAFwk::ABILITY_STATE_SUSPENDED, mockAbilityimpl->GetCurrentState());
-        }
-    }
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ConnectAbility_002 end";
-}
-
-/*
- * Feature: AbilityImpl
  * Function: CommandAbility
  * SubFunction: NA
  * FunctionPoints: CommandAbility
@@ -1412,45 +1156,6 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_CommandAbility_001, TestSize.Level1)
         }
     }
     GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_CommandAbility_001 end";
-}
-
-/*
- * Feature: AbilityImpl
- * Function: CommandAbility
- * SubFunction: NA
- * FunctionPoints: CommandAbility
- * EnvConditions: NA
- * CaseDescription: Test the abnormal behavior of the AbilityImpl::CommandAbility
- */
-HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_CommandAbility_002, TestSize.Level1)
-{
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_CommandAbility_002 start";
-    std::shared_ptr<MockAbilityimpl> mockAbilityimpl = std::make_shared<MockAbilityimpl>();
-    std::shared_ptr<OHOSApplication> application = std::make_shared<OHOSApplication>();
-
-    std::shared_ptr<AbilityInfo> abilityInfo = std::make_shared<AbilityInfo>();
-    abilityInfo->name = "pageAbility";
-    sptr<IRemoteObject> token = sptr<IRemoteObject>(new (std::nothrow) MockAbilityToken());
-    EXPECT_NE(token, nullptr);
-    if (token != nullptr) {
-        std::shared_ptr<AbilityLocalRecord> record = std::make_shared<AbilityLocalRecord>(abilityInfo, token);
-        std::shared_ptr<EventRunner> eventRunner = EventRunner::Create(abilityInfo->name);
-        sptr<AbilityThread> abilityThread = sptr<AbilityThread>(new (std::nothrow) AbilityThread());
-        EXPECT_NE(abilityThread, nullptr);
-        if (abilityThread != nullptr) {
-            std::shared_ptr<AbilityHandler> handler = std::make_shared<AbilityHandler>(eventRunner, abilityThread);
-            std::shared_ptr<Ability> ability = nullptr;
-            std::shared_ptr<ContextDeal> contextDeal = std::make_shared<ContextDeal>();
-            AbilityImpl_->Init(application, record, ability, handler, token, contextDeal);
-            Want want;
-            bool restart = true;
-            int startId = 1;
-            AbilityImpl_->CommandAbility(want, restart, startId);
-            mockAbilityimpl->SetlifecycleState(AAFwk::ABILITY_STATE_SUSPENDED);
-            EXPECT_EQ(AAFwk::ABILITY_STATE_SUSPENDED, mockAbilityimpl->MockGetCurrentState());
-        }
-    }
-    GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_CommandAbility_002 end";
 }
 
 /*
