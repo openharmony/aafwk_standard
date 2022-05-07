@@ -172,7 +172,7 @@ HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_GetCacheDir_0100, Function | M
     deal->SetApplicationInfo(info);
     context_->AttachBaseContext(deal);
 
-    EXPECT_STREQ(dir.c_str(), context_->GetCacheDir().c_str());
+    EXPECT_STREQ("/data/storage/el2/base/cache", context_->GetCacheDir().c_str());
 }
 
 /**
@@ -189,7 +189,7 @@ HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_GetCodeCacheDir_0100, Function
     deal->SetApplicationInfo(info);
     context_->AttachBaseContext(deal);
     std::string dirCompare = "CacheDir/code_cache";
-    EXPECT_STREQ(dirCompare.c_str(), context_->GetCodeCacheDir().c_str());
+    EXPECT_STREQ("/data/storage/el2/base/data/code_cache", context_->GetCodeCacheDir().c_str());
 }
 
 /**
@@ -206,7 +206,7 @@ HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_GetDatabaseDir_0100, Function 
     deal->SetApplicationInfo(info);
     context_->AttachBaseContext(deal);
 
-    EXPECT_STREQ(dir.c_str(), context_->GetDatabaseDir().c_str());
+    EXPECT_STREQ("/data/storage/el2/database", context_->GetDatabaseDir().c_str());
 }
 
 /**
@@ -223,7 +223,7 @@ HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_GetDataDir_0100, Function | Me
     deal->SetApplicationInfo(info);
     context_->AttachBaseContext(deal);
 
-    EXPECT_STREQ(dir.c_str(), context_->GetDataDir().c_str());
+    EXPECT_STREQ("/data/storage/el2/base/data", context_->GetDataDir().c_str());
 }
 
 /**

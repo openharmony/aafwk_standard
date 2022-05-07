@@ -171,7 +171,7 @@ HWTEST_F(ContextDealTest, AppExecFwk_ContextDeal_GetCodeCacheDir_0100, Function 
     context_->SetApplicationInfo(info);
     dir = dir + "/" + "code_cache";
 
-    EXPECT_STREQ(context_->GetCodeCacheDir().c_str(), dir.c_str());
+    EXPECT_STREQ(context_->GetCodeCacheDir().c_str(), "/data/storage/el2/base/data/code_cache");
 }
 
 /**
@@ -186,7 +186,7 @@ HWTEST_F(ContextDealTest, AppExecFwk_ContextDeal_GetCacheDir_0100, Function | Me
     info->cacheDir = dir;
     context_->SetApplicationInfo(info);
 
-    EXPECT_STREQ(context_->GetCacheDir().c_str(), dir.c_str());
+    EXPECT_STREQ(context_->GetCacheDir().c_str(), "/data/storage/el2/base/cache");
 }
 
 /**
@@ -201,7 +201,7 @@ HWTEST_F(ContextDealTest, AppExecFwk_ContextDeal_GetDatabaseDir_0100, Function |
     info->dataBaseDir = dir;
     context_->SetApplicationInfo(info);
 
-    EXPECT_STREQ(context_->GetDatabaseDir().c_str(), dir.c_str());
+    EXPECT_STREQ(context_->GetDatabaseDir().c_str(), "/data/storage/el2/database");
 }
 
 /**
@@ -217,7 +217,7 @@ HWTEST_F(ContextDealTest, AppExecFwk_ContextDeal_GetFilesDir_0100, Function | Me
     context_->SetApplicationInfo(info);
     dir = dir + "/" + "files";
 
-    EXPECT_STREQ(context_->GetFilesDir().c_str(), dir.c_str());
+    EXPECT_STREQ(context_->GetFilesDir().c_str(), "/data/storage/el2/base/files");
 }
 
 /**
@@ -232,7 +232,7 @@ HWTEST_F(ContextDealTest, AppExecFwk_ContextDeal_GetDataDir_0100, Function | Med
     info->dataDir = dir;
     context_->SetApplicationInfo(info);
 
-    EXPECT_STREQ(context_->GetDataDir().c_str(), dir.c_str());
+    EXPECT_STREQ(context_->GetDataDir().c_str(), "/data/storage/el2/base/data");
 }
 
 /**

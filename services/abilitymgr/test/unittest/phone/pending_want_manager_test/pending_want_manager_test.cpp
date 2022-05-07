@@ -205,6 +205,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0100, TestSize.Level1)
     int32_t callingUid = 0;
     int32_t uid = 0;
     WantSenderInfo wantSenderInfo;
+    wantSenderInfo.flags = 0;
     pendingManager_ = std::make_shared<PendingWantManager>();
     PendingWantManager::Params params {
         .uid = uid,
@@ -225,6 +226,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0300, TestSize.Level1)
     int32_t callingUid = 1;
     int32_t uid = 0;
     WantSenderInfo wantSenderInfo;
+    wantSenderInfo.flags = 0;
     pendingManager_ = std::make_shared<PendingWantManager>();
     PendingWantManager::Params params {
         .uid = uid,
@@ -245,6 +247,7 @@ HWTEST_F(PendingWantManagerTest, PendingWantManagerTest_0400, TestSize.Level1)
     int32_t callingUid = 1;
     int32_t uid = 1;
     WantSenderInfo wantSenderInfo;
+    wantSenderInfo.flags = 0;
     pendingManager_ = std::make_shared<PendingWantManager>();
     PendingWantManager::Params params {
         .uid = uid,
