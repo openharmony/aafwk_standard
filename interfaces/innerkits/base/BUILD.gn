@@ -42,10 +42,11 @@ ohos_shared_library("base") {
     "${baseImpl}/string_wrapper.cpp",
     "${baseImpl}/user_object_wrapper.cpp",
     "${baseImpl}/zchar_wrapper.cpp",
+    "${baseImpl}/remote_object_wrapper.cpp",
   ]
   configs = [ ":base_config" ]
   public_configs = [ ":base_public_config" ]
-  external_deps = [ "utils_base:utils" ]
+  external_deps = [ "utils_base:utils", "hiviewdfx_hilog_native:libhilog", "ipc:ipc_core"]
 
   subsystem_name = "aafwk"
   part_name = "ability_base"
