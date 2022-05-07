@@ -27,7 +27,7 @@
 #include "ability_manager_errors.h"
 #include "ability_connect_callback_stub.h"
 #include "ability_scheduler.h"
-#include "ability_record_info.h"
+#include "ability_state.h"
 
 using namespace testing::ext;
 using namespace OHOS::AppExecFwk;

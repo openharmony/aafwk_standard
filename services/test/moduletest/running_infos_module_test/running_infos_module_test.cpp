@@ -28,7 +28,7 @@
 #include "mock_ability_scheduler.h"
 #include "mock_app_mgr_client.h"
 #include "mock_bundle_mgr.h"
-#include "ability_record_info.h"
+#include "ability_state.h"
 #include "ability_manager_errors.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"

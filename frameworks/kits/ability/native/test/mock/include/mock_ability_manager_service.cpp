@@ -52,10 +52,6 @@ int MockAbilityManagerService::StartAbility(const Want &want, int32_t userId, in
         case RequestCode::E_STATE_BACKGROUND:
             state = AbilityLifeCycleState::ABILITY_STATE_BACKGROUND;
             break;
-        // Test code, representing the life cycle: ABILITY_STATE_SUSPENDED
-        case RequestCode::E_STATE_SUSPENDED:
-            state = AbilityLifeCycleState::ABILITY_STATE_SUSPENDED;
-            break;
         default:
             break;
     }
