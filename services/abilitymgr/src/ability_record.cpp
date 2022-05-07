@@ -171,7 +171,7 @@ int AbilityRecord::LoadAbility()
         return ERR_INVALID_VALUE;
     }
 
-    if (isLauncherRoot_ && isRestarting_ && IsLauncherAbility() && (restartCount_ <= 0)) {
+    if (!CanRestartRootLauncher()) {
         HILOG_ERROR("Root launcher restart is out of max count.");
         return ERR_INVALID_VALUE;
     }
@@ -192,6 +192,15 @@ int AbilityRecord::LoadAbility()
     }
     return DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
         token_, callerToken_, abilityInfo_, applicationInfo_, want_);
+}
+
+bool AbilityRecord::CanRestartRootLauncher()
+{
+    if (isLauncherRoot_ && isRestarting_ && IsLauncherAbility() && (restartCount_ <= 0)) {
+        HILOG_ERROR("Root launcher restart is out of max count.");
+        return false;
+    }
+    return true;
 }
 
 void AbilityRecord::ForegroundAbility(uint32_t sceneFlag)
@@ -1029,8 +1038,12 @@ void AbilityRecord::DumpService(std::vector<std::string> &info, bool isClient) c
     info.emplace_back("      bundle name [" + GetAbilityInfo().bundleName + "]");
     info.emplace_back("      ability type [SERVICE]");
     info.emplace_back("      app state #" + AbilityRecord::ConvertAppState(appState_));
-    info.emplace_back("      Connections: " + std::to_string(connRecordList_.size()));
 
+    if (isLauncherRoot_) {
+        info.emplace_back("      can restart num #" + std::to_string(restartCount_));
+    }
+
+    info.emplace_back("      Connections: " + std::to_string(connRecordList_.size()));
     for (auto &&conn : connRecordList_) {
         if (conn) {
             conn->Dump(info);
@@ -1257,11 +1270,28 @@ bool AbilityRecord::GetPowerState() const
 void AbilityRecord::SetRestarting(const bool isRestart)
 {
     isRestarting_ = isRestart;
+    HILOG_DEBUG("SetRestarting: %{public}d", isRestarting_);
 
     if (isLauncherRoot_ && IsLauncherAbility()) {
         restartCount_ = isRestart ? (--restartCount_) : restratMax_;
         HILOG_INFO("root launcher restart count: %{public}d", restartCount_);
     }
+}
+
+void AbilityRecord::SetRestarting(const bool isRestart, int32_t canReStartCount)
+{
+    isRestarting_ = isRestart;
+    HILOG_DEBUG("SetRestarting: %{public}d, restart count: %{public}d", isRestarting_, canReStartCount);
+
+    if (isLauncherRoot_ && IsLauncherAbility()) {
+        restartCount_ = isRestart ? canReStartCount : restratMax_;
+        HILOG_INFO("root launcher restart count: %{public}d", restartCount_);
+    }
+}
+
+int32_t AbilityRecord::GetRestartCount() const
+{
+    return restartCount_;
 }
 
 bool AbilityRecord::IsRestarting() const

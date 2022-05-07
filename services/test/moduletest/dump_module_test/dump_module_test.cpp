@@ -125,7 +125,7 @@ void DumpModuleTest::OnStartAms()
         EXPECT_TRUE(g_abilityMs->eventLoop_);
 
         g_abilityMs->handler_ = std::make_shared<AbilityEventHandler>(g_abilityMs->eventLoop_, g_abilityMs);
-        g_abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>();
+        g_abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         g_abilityMs->connectManagers_.emplace(0, g_abilityMs->connectManager_);
         EXPECT_TRUE(g_abilityMs->handler_);
         EXPECT_TRUE(g_abilityMs->connectManager_);

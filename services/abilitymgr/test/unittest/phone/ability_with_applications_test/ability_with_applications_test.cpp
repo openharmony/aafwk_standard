@@ -93,7 +93,7 @@ void AbilityWithApplicationsTest::OnStartabilityAms()
         EXPECT_TRUE(abilityMs_->eventLoop_);
 
         abilityMs_->handler_ = std::make_shared<AbilityEventHandler>(abilityMs_->eventLoop_, abilityMs_);
-        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs_->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         abilityMs_->connectManagers_.emplace(0, abilityMs_->connectManager_);
         EXPECT_TRUE(abilityMs_->handler_);
         EXPECT_TRUE(abilityMs_->connectManager_);
