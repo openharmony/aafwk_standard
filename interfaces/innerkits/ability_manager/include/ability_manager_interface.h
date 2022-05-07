@@ -132,6 +132,11 @@ public:
         return false;
     }
 
+    virtual AppExecFwk::ElementName GetTopAbility()
+    {
+        return {};
+    }
+
     /**
      * TerminateAbility, terminate the special ability.
      *
@@ -995,8 +1000,10 @@ public:
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)
         DUMP_STATE = 2001,
-		DUMPSYS_STATE = 2002,
+        DUMPSYS_STATE = 2002,
         FORCE_TIMEOUT,
+
+        GET_TOP_ABILITY = 3000,
     };
 };
 }  // namespace AAFwk

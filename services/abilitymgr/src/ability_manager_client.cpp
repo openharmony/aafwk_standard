@@ -1005,5 +1005,12 @@ ErrCode AbilityManagerClient::SendANRProcessID(int pid)
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->SendANRProcessID(pid);
 }
+
+AppExecFwk::ElementName AbilityManagerClient::GetTopAbility()
+{
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, {});
+    sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->GetTopAbility();
+}
 }  // namespace AAFwk
 }  // namespace AAFwk

@@ -130,6 +130,7 @@ ohos_shared_library("abilityms") {
       "//base/global/i18n_standard/frameworks/intl:intl_util",
       "//foundation/ace/ace_engine/interfaces/innerkits/ui_service_manager:ui_service_mgr",
       "//foundation/multimedia/image_standard/interfaces/innerkits:image_native",
+      "//foundation/windowmanager/utils:libwmutil",
       "//third_party/libpng:libpng",
     ]
     public_deps = [ "//foundation/graphic/standard:libwmservice" ]
