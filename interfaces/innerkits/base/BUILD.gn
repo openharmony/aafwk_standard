@@ -38,15 +38,18 @@ ohos_shared_library("base") {
     "${baseImpl}/float_wrapper.cpp",
     "${baseImpl}/int_wrapper.cpp",
     "${baseImpl}/long_wrapper.cpp",
+    "${baseImpl}/remote_object_wrapper.cpp",
     "${baseImpl}/short_wrapper.cpp",
     "${baseImpl}/string_wrapper.cpp",
     "${baseImpl}/user_object_wrapper.cpp",
     "${baseImpl}/zchar_wrapper.cpp",
-    "${baseImpl}/remote_object_wrapper.cpp",
   ]
   configs = [ ":base_config" ]
   public_configs = [ ":base_public_config" ]
-  external_deps = [ "utils_base:utils", "ipc:ipc_core"]
+  external_deps = [
+    "ipc:ipc_core",
+    "utils_base:utils",
+  ]
 
   subsystem_name = "aafwk"
   part_name = "ability_base"
