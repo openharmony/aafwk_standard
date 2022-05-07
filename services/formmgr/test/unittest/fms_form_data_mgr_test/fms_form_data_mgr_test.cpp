@@ -1642,7 +1642,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_CleanRemovedTempFormRecords_001,
     // create tempForms_
     formDataMgr_.tempForms_.emplace_back(formId);
 
-    formDataMgr_.CleanRemovedTempFormRecords(bundleName, removedForms);
+    formDataMgr_.CleanRemovedTempFormRecords(bundleName, Constants::DEFAULT_USER_ID, removedForms);
     EXPECT_EQ(true, formDataMgr_.formRecords_.empty());
     EXPECT_EQ(true, formDataMgr_.tempForms_.empty());
 
@@ -1681,7 +1681,7 @@ HWTEST_F(FmsFormDataMgrTest, FmsFormDataMgrTest_CleanRemovedTempFormRecords_002,
     // create tempForms_
     formDataMgr_.tempForms_.emplace_back(formId);
 
-    formDataMgr_.CleanRemovedTempFormRecords(bundleName, removedForms);
+    formDataMgr_.CleanRemovedTempFormRecords(bundleName, Constants::DEFAULT_USER_ID, removedForms);
     EXPECT_EQ(false, formDataMgr_.formRecords_.empty());
     EXPECT_EQ(false, formDataMgr_.tempForms_.empty());
 
