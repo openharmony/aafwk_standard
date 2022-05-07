@@ -53,7 +53,7 @@ config("appkit_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "native/ability_delegator/include",
-    "${global_path}/resource_management/interfaces/innerkits/include",
+    "${global_path}/resource_management/interfaces/inner_api/include",
   ]
 
   if (ability_runtime_graphics) {
