@@ -29,7 +29,7 @@ namespace AppExecFwk {
 const std::string REMOTE_OBJECT = "RemoteObject";
 const std::string TYPE_PROPERTY = "type";
 const std::string VALUE_PROPERTY = "value";
-const int PROPERTIES_SIZE= 2;
+const int PROPERTIES_SIZE = 2;
 EXTERN_C_START
 
 napi_value WrapElementName(napi_env env, const ElementName &elementName);
@@ -41,6 +41,8 @@ bool BlackListFilter(const std::string &strProName);
 
 napi_value WrapWant(napi_env env, const Want &want);
 bool UnwrapWant(napi_env env, napi_value param, Want &want);
+
+void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std::string strProName, uint32_t jsProCount, AAFwk::WantParams &wantParams);
 
 bool IsRemoteObject(napi_env env, napi_value param, std::string strProName, uint32_t jsProCount);
 

@@ -848,23 +848,7 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
                 break;
             }
             case napi_object: {
-                if (IsRemoteObject(env, param, strProName, jsProCount)) {
-                    sptr<IRemoteObject> remoteObject = NAPI_ohos_rpc_getNativeRemoteObject(env, jsProValue);
-                    if (remoteObject == nullptr) {
-                        HILOG_ERROR("%{public}s called, transfer to remoteObject fail", __func__);
-                    }
-                    auto remoteObjectWrap = AAFwk::RemoteObjectWrap::Box(remoteObject);
-                    wantParams.SetParam(strProName, remoteObjectWrap);
-                } else {
-                    bool isArray = false;
-                    if (napi_is_array(env, jsProValue, &isArray) == napi_ok) {
-                        if (isArray) {
-                            InnerUnwrapWantParamsArray(env, strProName, jsProValue, wantParams);
-                        } else {
-                            InnerUnwrapWantParams(env, strProName, jsProValue, wantParams);
-                        }
-                    }
-                }
+                HandleNapiObject(env, param, jsProValue, strProName, jsProCount, wantParams);
                 break;
             }
             default:
@@ -873,6 +857,27 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
     }
 
     return true;
+}
+
+void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std::string strProName, uint32_t jsProCount, AAFwk::WantParams &wantParams)
+{
+    if (IsRemoteObject(env, param, strProName, jsProCount)) {
+        sptr<IRemoteObject> remoteObject = NAPI_ohos_rpc_getNativeRemoteObject(env, jsProValue);
+        if (remoteObject == nullptr) {
+            HILOG_ERROR("%{public}s called, transfer to remoteObject fail", __func__);
+        }
+        auto remoteObjectWrap = AAFwk::RemoteObjectWrap::Box(remoteObject);
+        wantParams.SetParam(strProName, remoteObjectWrap);
+    } else {
+        bool isArray = false;
+        if (napi_is_array(env, jsProValue, &isArray) == napi_ok) {
+            if (isArray) {
+                InnerUnwrapWantParamsArray(env, strProName, jsProValue, wantParams);
+            } else {
+                InnerUnwrapWantParams(env, strProName, jsProValue, wantParams);
+            }
+        }
+    }
 }
 
 bool IsRemoteObject(napi_env env, napi_value param, std::string strProName, uint32_t jsProCount)
