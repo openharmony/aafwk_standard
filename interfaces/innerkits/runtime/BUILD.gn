@@ -13,7 +13,6 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
-import("//foundation/aafwk/standard/feature.gni")
 
 config("runtime_config") {
   visibility = [ ":*" ]
