@@ -76,7 +76,7 @@ config("module_ability_context_config") {
     "${aafwk_path}/interfaces/innerkits/base/include",
     "//third_party/libuv/include",
     "${aafwk_path}/interfaces/innerkits/base/include/ohos/aafwk/base",
-    "${global_path}/resource_management/interfaces/innerkits/include",
+    "${global_path}/resource_management/interfaces/inner_api/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
