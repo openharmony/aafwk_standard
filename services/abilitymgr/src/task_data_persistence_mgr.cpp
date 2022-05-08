@@ -44,6 +44,7 @@ bool TaskDataPersistenceMgr::Init(int userId)
         CHECK_POINTER_RETURN_BOOL(handler_);
     }
 
+    std::lock_guard<std::mutex> lock(mutex_);
     if (missionDataStorageMgr_.find(userId) == missionDataStorageMgr_.end()) {
         currentMissionDataStorage_ = std::make_shared<MissionDataStorage>(userId);
         missionDataStorageMgr_.insert(std::make_pair(userId, currentMissionDataStorage_));
@@ -59,6 +60,7 @@ bool TaskDataPersistenceMgr::Init(int userId)
 
 bool TaskDataPersistenceMgr::LoadAllMissionInfo(std::list<InnerMissionInfo> &missionInfoList)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!currentMissionDataStorage_) {
         HILOG_ERROR("currentMissionDataStorage_ is nullptr");
         return false;
@@ -69,30 +71,43 @@ bool TaskDataPersistenceMgr::LoadAllMissionInfo(std::list<InnerMissionInfo> &mis
 
 bool TaskDataPersistenceMgr::SaveMissionInfo(const InnerMissionInfo &missionInfo)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!handler_ || !currentMissionDataStorage_) {
         HILOG_ERROR("handler_ or currentMissionDataStorage_ is nullptr");
         return false;
     }
 
-    std::function<void()> SaveMissionInfoFunc = std::bind(&MissionDataStorage::SaveMissionInfo,
-        currentMissionDataStorage_, missionInfo);
+    std::weak_ptr<MissionDataStorage> weakPtr(currentMissionDataStorage_);
+    std::function<void()> SaveMissionInfoFunc = [weakPtr, missionInfo]() {
+        auto missionDataStorage = weakPtr.lock();
+        if (missionDataStorage) {
+            missionDataStorage->SaveMissionInfo(missionInfo);
+        }
+    };
     return handler_->PostTask(SaveMissionInfoFunc, SAVE_MISSION_INFO);
 }
 
 bool TaskDataPersistenceMgr::DeleteMissionInfo(int missionId)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!handler_ || !currentMissionDataStorage_) {
         HILOG_ERROR("handler_ or currentMissionDataStorage_ is nullptr");
         return false;
     }
 
-    std::function<void()> DeleteMissionInfoFunc = std::bind(&MissionDataStorage::DeleteMissionInfo,
-        currentMissionDataStorage_, missionId);
+    std::weak_ptr<MissionDataStorage> weakPtr(currentMissionDataStorage_);
+    std::function<void()> DeleteMissionInfoFunc = [weakPtr, missionId]() {
+        auto missionDataStorage = weakPtr.lock();
+        if (missionDataStorage) {
+            missionDataStorage->DeleteMissionInfo(missionId);
+        }
+    };
     return handler_->PostTask(DeleteMissionInfoFunc, DELETE_MISSION_INFO);
 }
 
 bool TaskDataPersistenceMgr::RemoveUserDir(int32_t userId)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (currentUserId_ == userId) {
         HILOG_ERROR("can not removed current user dir");
         return false;
@@ -108,17 +123,25 @@ bool TaskDataPersistenceMgr::RemoveUserDir(int32_t userId)
 
 bool TaskDataPersistenceMgr::SaveMissionSnapshot(int missionId, const MissionSnapshot& snapshot)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!handler_ || !currentMissionDataStorage_) {
         HILOG_ERROR("snapshot: handler_ or currentMissionDataStorage_ is nullptr");
         return false;
     }
-    std::function<void()> SaveMissionSnapshotFunc = std::bind(&MissionDataStorage::SaveMissionSnapshot,
-        currentMissionDataStorage_, missionId, snapshot);
+
+    std::weak_ptr<MissionDataStorage> weakPtr(currentMissionDataStorage_);
+    std::function<void()> SaveMissionSnapshotFunc = [weakPtr, missionId, snapshot]() {
+        auto missionDataStorage = weakPtr.lock();
+        if (missionDataStorage) {
+            missionDataStorage->SaveMissionSnapshot(missionId, snapshot);
+        }
+    };
     return handler_->PostTask(SaveMissionSnapshotFunc, SAVE_MISSION_SNAPSHOT);
 }
 
 bool TaskDataPersistenceMgr::GetMissionSnapshot(int missionId, MissionSnapshot& snapshot)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!currentMissionDataStorage_) {
         HILOG_ERROR("snapshot: currentMissionDataStorage_ is nullptr");
         return false;

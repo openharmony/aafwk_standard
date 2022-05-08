@@ -144,14 +144,12 @@ int MissionListManager::GetMissionInfos(int32_t numMax, std::vector<MissionInfo>
         return ERR_INVALID_VALUE;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(managerLock_);
     return DelayedSingleton<MissionInfoMgr>::GetInstance()->GetMissionInfos(numMax, missionInfos);
 }
 
 int MissionListManager::GetMissionInfo(int32_t missionId, MissionInfo &missionInfo)
 {
     HILOG_INFO("Get mission info by id:%{public}d.", missionId);
-    std::lock_guard<std::recursive_mutex> guard(managerLock_);
     return DelayedSingleton<MissionInfoMgr>::GetInstance()->GetMissionInfoById(missionId, missionInfo);
 }
 
@@ -1919,7 +1917,6 @@ int MissionListManager::SetMissionLabel(const sptr<IRemoteObject> &token, const 
         return -1;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(managerLock_);
     auto missionId = GetMissionIdByAbilityToken(token);
     if (missionId <= 0) {
         HILOG_INFO("SetMissionLabel find mission failed.");
@@ -2184,7 +2181,6 @@ void MissionListManager::DumpMissionList(std::vector<std::string> &info, bool is
 
 void MissionListManager::DumpMissionInfos(std::vector<std::string> &info)
 {
-    std::lock_guard<std::recursive_mutex> guard(managerLock_);
     std::string dumpInfo = "User ID #" + std::to_string(userId_);
     info.push_back(dumpInfo);
     DelayedSingleton<MissionInfoMgr>::GetInstance()->Dump(info);
@@ -2192,7 +2188,6 @@ void MissionListManager::DumpMissionInfos(std::vector<std::string> &info)
 
 void MissionListManager::DumpMission(int missionId, std::vector<std::string> &info)
 {
-    std::lock_guard<std::recursive_mutex> guard(managerLock_);
     std::string dumpInfo = "User ID #" + std::to_string(userId_);
     info.push_back(dumpInfo);
     InnerMissionInfo innerMissionInfo;

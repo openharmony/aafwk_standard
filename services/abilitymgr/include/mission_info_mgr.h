@@ -175,6 +175,7 @@ private:
     std::list<InnerMissionInfo> missionInfoList_;
     std::shared_ptr<TaskDataPersistenceMgr> taskDataPersistenceMgr_;
     sptr<ISnapshotHandler> snapshotHandler_;
+    mutable std::recursive_mutex mutex_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

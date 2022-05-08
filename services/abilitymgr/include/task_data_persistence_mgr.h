@@ -90,6 +90,7 @@ private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
     int32_t currentUserId_ = -1;
+    std::mutex mutex_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
