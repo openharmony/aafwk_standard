@@ -10,7 +10,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import("//foundation/aafwk/standard/feature.gni")
 
 aafwk_path = "//foundation/aafwk/standard"
 appexecfwk_path = "//foundation/appexecfwk/standard"
@@ -26,17 +25,24 @@ distributeddatamgr_path = "//foundation/distributeddatamgr"
 kits_path = "//foundation/aafwk/standard/frameworks/kits"
 innerkits_path = "//foundation/aafwk/standard/interfaces/innerkits"
 appexecfwk_innerkits_path = "${appexecfwk_path}/interfaces/innerkits"
-
+ans_core_path = "//base/notification/ans_standard/frameworks/ans/core"
 system_test_app_path =
     "//foundation/aafwk/standard/test/resource/amssystemtestability/abilitySrc"
 
 declare_args() {
   background_task_mgr_continuous_task_enable = true
   distributed_data_object_enable = true
+  ability_runtime_graphics = true
+  ability_runtime_power = true
 
-  if ((defined(global_parts_info) &&
-       !defined(global_parts_info.resourceschedule_background_task_mgr)) ||
-      !ability_runtime_graphics) {
+  if (!defined(global_parts_info) ||
+      defined(global_parts_info.account_os_account)) {
+    os_account_part_enabled = true
+  } else {
+    os_account_part_enabled = false
+  }
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.resourceschedule_background_task_mgr)) {
     background_task_mgr_continuous_task_enable = false
   }
 
