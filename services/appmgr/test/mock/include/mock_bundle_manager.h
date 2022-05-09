@@ -428,6 +428,15 @@ public:
     {
         return true;
     }
+
+    virtual bool ImplicitQueryInfoByPriority(const Want &want, int32_t flags, int32_t userId,
+        AbilityInfo &abilityInfo, ExtensionAbilityInfo &extensionInfo) override
+    {
+        abilityInfo.name = "MainAbility";
+        abilityInfo.bundleName = "com.ohos.launcher";
+        return true;
+    }
+
     BundleMgrService();
     virtual ~BundleMgrService() {}
     void MakingPackageData();

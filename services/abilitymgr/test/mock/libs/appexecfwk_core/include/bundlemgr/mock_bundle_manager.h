@@ -315,6 +315,14 @@ public:
     MOCK_METHOD3(GetFormsInfoByModule,
         bool(const std::string &bundleName, const std::string &moduleName, std::vector<FormInfo> &formInfos));
     MOCK_METHOD2(GetShortcutInfos, bool(const std::string &bundleName, std::vector<ShortcutInfo> &shortcutInfos));
+
+    virtual bool ImplicitQueryInfoByPriority(const Want &want, int32_t flags, int32_t userId,
+        AbilityInfo &abilityInfo, ExtensionAbilityInfo &extensionInfo) override
+    {
+        abilityInfo.name = "MainAbility";
+        abilityInfo.bundleName = "com.ohos.launcher";
+        return true;
+    }
 };
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
