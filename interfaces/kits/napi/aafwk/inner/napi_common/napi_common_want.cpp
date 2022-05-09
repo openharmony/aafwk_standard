@@ -859,9 +859,9 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
     return true;
 }
 
-void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std::string strProName, uint32_t jsProCount, AAFwk::WantParams &wantParams)
+void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std::string strProName, AAFwk::WantParams &wantParams)
 {
-    if (IsRemoteObject(env, param, strProName, jsProCount)) {
+    if (IsRemoteObject(env, param, strProName)) {
         sptr<IRemoteObject> remoteObject = NAPI_ohos_rpc_getNativeRemoteObject(env, jsProValue);
         if (remoteObject == nullptr) {
             HILOG_ERROR("%{public}s called, transfer to remoteObject fail", __func__);
@@ -880,15 +880,10 @@ void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std
     }
 }
 
-bool IsRemoteObject(napi_env env, napi_value param, std::string strProName, uint32_t jsProCount)
+bool IsRemoteObject(napi_env env, napi_value param, std::string strProName)
 {
     if (strProName != VALUE_PROPERTY) {
         HILOG_INFO("%{public}s called, proName is not value.", __func__);
-        return false;
-    }
-
-    if (jsProCount != PROPERTIES_SIZE) {
-        HILOG_INFO("%{public}s called, proSize is not tow.", __func__);
         return false;
     }
 
