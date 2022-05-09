@@ -11,10 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//base/notification/ans_standard/notification.gni")
 import("//build/ohos.gni")
 import("//build/test.gni")
-import("//foundation/aafwk/standard/feature.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "ans_standard/wantagent"
 
@@ -54,7 +53,7 @@ ohos_unittest("want_agent_info_test") {
   ]
 
   if (ability_runtime_graphics) {
-    deps += [ "${core_path}:ans_core" ]
+    deps += [ "${ans_core_path}:ans_core" ]
   }
 }
 

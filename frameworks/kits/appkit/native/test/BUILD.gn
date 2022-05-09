@@ -13,7 +13,6 @@
 
 import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
-import("//foundation/aafwk/standard/feature.gni")
 module_output_path = "ability_runtime/application_test"
 
 #APP_INNERKITS_PATH = "${appexecfwk_innerkits_path}"

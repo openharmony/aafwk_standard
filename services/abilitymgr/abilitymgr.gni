@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//foundation/aafwk/standard/aafwk.gni")
-import("//foundation/aafwk/standard/feature.gni")
 
 abilityms_files = [
   "src/ability_connect_manager.cpp",
