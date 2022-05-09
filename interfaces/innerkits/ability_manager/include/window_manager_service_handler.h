@@ -18,6 +18,7 @@
 
 #ifdef SUPPORT_GRAPHICS
 #include "iremote_broker.h"
+#include "pixel_map.h"
 #include "window_info.h"
 
 namespace OHOS {
@@ -34,15 +35,30 @@ public:
 
     virtual int32_t GetFocusWindow(sptr<IRemoteObject>& abilityToken) = 0;
 
+    virtual void StartingWindow(sptr<AbilityTransitionInfo> info, sptr<Media::PixelMap> pixelMap, uint32_t bgColor) = 0;
+
+    virtual void StartingWindow(sptr<AbilityTransitionInfo> info, sptr<Media::PixelMap> pixelMap) = 0;
+
+    virtual void CancelStartingWindow(sptr<IRemoteObject> abilityToken) = 0;
+
     enum WMSCmd {
         // ipc id for NotifyWindowTransition
         ON_NOTIFY_WINDOW_TRANSITION,
 
         // ipc id for GetFocusWindow
         ON_GET_FOCUS_ABILITY,
+
+        // ipc id for Cold StartingWindow
+        ON_COLD_STARTING_WINDOW,
+
+        // ipc id for Hot StartingWindow
+        ON_HOT_STARTING_WINDOW,
+
+        // ipc id for CancelStartingWindow
+        ON_CANCLE_STARTING_WINDOW,
     };
 };
-} // namespace AAFwk
-} // namespace OHOS
+}  // namespace AAFwk
+}  // namespace OHOS
 #endif
-#endif // OHOS_AAFWK_WMS_HANDLER_H
+#endif  // OHOS_AAFWK_WMS_HANDLER_H
