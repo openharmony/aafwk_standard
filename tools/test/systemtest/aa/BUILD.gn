@@ -18,8 +18,8 @@ module_output_path = "ability_tools/tools"
 
 config("tools_aa_test_config") {
   include_dirs = [
-    "${appexecfwk_innerkits_path}/appexecfwk_base/include",
-    "${appexecfwk_innerkits_path}/appexecfwk_core/include/bundlemgr",
+    "${appexecfwk_inner_api_path}/appexecfwk_base/include",
+    "${appexecfwk_inner_api_path}/appexecfwk_core/include/bundlemgr",
     "//base/security/appverify/interfaces/innerkits/appverify/include",
   ]
 }

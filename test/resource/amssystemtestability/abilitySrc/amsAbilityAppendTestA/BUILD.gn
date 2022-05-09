@@ -55,7 +55,7 @@ ohos_shared_library("amsAbilityAppendTestA") {
     "${common_path}:libappexecfwk_common",
     "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/dataability:native_dataability",
     "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/rdb:native_rdb",
-    "${innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${services_path}/bundlemgr:libbms",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utilsbase",

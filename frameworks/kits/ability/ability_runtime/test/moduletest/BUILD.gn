@@ -46,7 +46,7 @@ ohos_moduletest("ability_caller_fw_module_test") {
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/base:base",
     "${aafwk_path}/interfaces/innerkits/want:want",
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
