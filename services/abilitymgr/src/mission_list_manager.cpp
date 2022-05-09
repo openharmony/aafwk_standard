@@ -624,12 +624,6 @@ int MissionListManager::MinimizeAbilityLocked(const std::shared_ptr<AbilityRecor
         return ERR_OK;
     }
 
-    auto topAbility = GetCurrentTopAbilityLocked();
-    if (!fromUser && abilityRecord == topAbility) {
-        HILOG_ERROR("Minimize ability fail, top ability refuse to background when not from user.");
-        return ERR_INVALID_OPERATION;
-    }
-
     abilityRecord->SetMinimizeReason(fromUser);
     MoveToBackgroundTask(abilityRecord);
     UpdateMissionTimeStamp(abilityRecord);
