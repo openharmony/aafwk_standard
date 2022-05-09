@@ -330,6 +330,16 @@ public:
      * @return true : attached ,false: not attached
      */
     bool IsWindowAttached() const;
+
+    inline bool IsStartingWindow() const
+    {
+        return isStartingWindow_;
+    }
+
+    inline void SetStartingWindow(bool isStartingWindow)
+    {
+        isStartingWindow_ = isStartingWindow;
+    }
 #endif
 
     /**
@@ -763,6 +773,10 @@ private:
     mutable std::condition_variable dumpCondition_;
     mutable bool isDumpWaiting_ = false;
     std::vector<std::string> dumpInfos_;
+
+#ifdef SUPPORT_GRAPHICS
+    bool isStartingWindow_ = false;
+#endif
 };
 }  // namespace AAFwk
 }  // namespace OHOS

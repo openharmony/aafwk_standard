@@ -735,6 +735,13 @@ ErrCode AbilityManagerClient::RegisterWindowManagerServiceHandler(const sptr<IWi
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->RegisterWindowManagerServiceHandler(handler);
 }
+
+void AbilityManagerClient::CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken)
+{
+    auto abms = GetAbilityManager();
+    CHECK_POINTER_RETURN(abms);
+    abms->CompleteFirstFrameDrawing(abilityToken);
+}
 #endif
 
 ErrCode AbilityManagerClient::DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag)

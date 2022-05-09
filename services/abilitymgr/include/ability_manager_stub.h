@@ -155,6 +155,7 @@ private:
 
 #ifdef SUPPORT_GRAPHICS
     int RegisterWindowManagerServiceHandlerInner(MessageParcel &data, MessageParcel &reply);
+    int CompleteFirstFrameDrawingInner(MessageParcel &data, MessageParcel &reply);
 #endif
 
     #ifdef ABILITY_COMMAND_FOR_TEST

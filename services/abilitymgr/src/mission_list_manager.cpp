@@ -21,8 +21,12 @@
 #include "hitrace_meter.h"
 #include "errors.h"
 #include "hilog_wrapper.h"
-#include "mission_info_mgr.h"
 #include "hisysevent.h"
+#include "mission_info_mgr.h"
+#ifdef SUPPORT_GRAPHICS
+#include "image_source.h"
+#include "in_process_call_wrapper.h"
+#endif
 
 namespace OHOS {
 namespace AAFwk {
@@ -165,7 +169,8 @@ int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromL
     HILOG_INFO("move mission to front:%{public}d.", missionId);
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
     std::shared_ptr<Mission> mission;
-    auto targetMissionList = GetTargetMissionList(missionId, mission);
+    bool isCold = false;
+    auto targetMissionList = GetTargetMissionList(missionId, mission, isCold);
     if (!targetMissionList || !mission) {
         HILOG_ERROR("get target mission list failed, missionId: %{public}d", missionId);
         return MOVE_MISSION_FAILED;
@@ -185,25 +190,7 @@ int MissionListManager::MoveMissionToFront(int32_t missionId, bool isCallerFromL
     }
 
 #ifdef SUPPORT_GRAPHICS
-    InnerMissionInfo innerMissionInfo;
-    int getMission = DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
-        missionId, innerMissionInfo);
-    if (getMission != ERR_OK) {
-        HILOG_ERROR("cannot find mission info from MissionInfoList by missionId: %{public}d", missionId);
-        return MOVE_MISSION_FAILED;
-    }
-
-    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-    CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
-    auto self(weak_from_this());
-    auto want = innerMissionInfo.missionInfo.want;
-    auto task = [self, targetAbilityRecord, startOptions, want] {
-        auto mgr = self.lock();
-        if (mgr) {
-            mgr->NotifyAnimationFromRecentTask(targetAbilityRecord, startOptions, want);
-        }
-    };
-    handler->PostTask(task);
+    NotifyStartingWindow(isCold, targetAbilityRecord, startOptions, missionId);
 #endif
 
     // schedule target ability to foreground.
@@ -263,7 +250,8 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
     // 2. get target mission
     std::shared_ptr<AbilityRecord> targetAbilityRecord;
     std::shared_ptr<Mission> targetMission;
-    GetTargetMissionAndAbility(abilityRequest, targetMission, targetAbilityRecord);
+    bool isCold = false;
+    GetTargetMissionAndAbility(abilityRequest, targetMission, targetAbilityRecord, isCold);
     if (!targetMission || !targetAbilityRecord) {
         HILOG_ERROR("Failed to get mission or record.");
         return ERR_INVALID_VALUE;
@@ -284,19 +272,7 @@ int MissionListManager::StartAbilityLocked(const std::shared_ptr<AbilityRecord> 
     MoveMissionListToTop(targetList);
 
 #ifdef SUPPORT_GRAPHICS
-    auto state = targetAbilityRecord->GetAbilityState();
-    if (state != AbilityState::FOREGROUND && state != AbilityState::FOREGROUNDING) {
-        auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
-        CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
-        auto self(weak_from_this());
-        auto task = [self, callerAbility, abilityRequest, targetAbilityRecord] {
-            auto mgr = self.lock();
-            if (mgr) {
-                mgr->NotifyAnimationFromStartingAbility(callerAbility, abilityRequest, targetAbilityRecord);
-            }
-        };
-        handler->PostTask(task);
-    }
+    NotifyStartingWindow(isCold, targetMission, targetAbilityRecord, abilityRequest, callerAbility);
 #endif
 
     // 5. schedule target ability
@@ -338,8 +314,7 @@ static bool CallTypeFilter(int32_t callType)
 }
 
 void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilityRequest,
-    std::shared_ptr<Mission> &targetMission,
-    std::shared_ptr<AbilityRecord> &targetRecord)
+    std::shared_ptr<Mission> &targetMission, std::shared_ptr<AbilityRecord> &targetRecord, bool &isCold)
 {
     auto startMethod = CallType2StartMethod(abilityRequest.callType);
     HILOG_DEBUG("GetTargetMissionAndAbility called startMethod is %{public}d.", startMethod);
@@ -398,6 +373,7 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
     if (targetMission == nullptr) {
         HILOG_DEBUG("Make new mission data.");
         targetRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
+        isCold = true;
         targetMission = std::make_shared<Mission>(info.missionInfo.id, targetRecord, missionName, startMethod);
         targetRecord->SetMission(targetMission);
     } else {
@@ -653,6 +629,9 @@ int MissionListManager::AttachAbilityThread(const sptr<IAbilityScheduler> &sched
         DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
     handler->RemoveEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, abilityRecord->GetEventId());
+#ifdef SUPPORT_GRAPHICS
+    abilityRecord->SetStartingWindow(false);
+#endif
 
     abilityRecord->SetScheduler(scheduler);
 
@@ -861,6 +840,9 @@ void MissionListManager::CompleteForegroundNew(const std::shared_ptr<AbilityReco
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
 
     CHECK_POINTER(abilityRecord);
+#ifdef SUPPORT_GRAPHICS
+    abilityRecord->SetStartingWindow(false);
+#endif
     // ability do not save window mode
     abilityRecord->RemoveWindowMode();
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
@@ -1422,6 +1404,13 @@ void MissionListManager::OnTimeOut(uint32_t msgId, int64_t eventId)
         return;
     }
     HILOG_DEBUG("Ability timeout ,msg:%{public}d,name:%{public}s", msgId, abilityRecord->GetAbilityInfo().name.c_str());
+
+#ifdef SUPPORT_GRAPHICS
+    if (abilityRecord->IsStartingWindow()) {
+        CancelStartingWindow(abilityRecord->GetToken());
+    }
+#endif
+
     PrintTimeOutLog(abilityRecord, msgId);
     switch (msgId) {
         case AbilityManagerService::LOAD_TIMEOUT_MSG:
@@ -1645,6 +1634,12 @@ void MissionListManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRec
 
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
 
+#ifdef SUPPORT_GRAPHICS
+    if (abilityRecord->IsStartingWindow()) {
+        CancelStartingWindow(abilityRecord->GetToken());
+    }
+#endif
+
     if (abilityRecord->IsLauncherRoot() && currentUserId != userId_) {
         HILOG_INFO("launcher root Ability died, state: INITIAL, %{public}d", __LINE__);
         abilityRecord->SetAbilityState(AbilityState::INITIAL);
@@ -1655,7 +1650,8 @@ void MissionListManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRec
     HandleAbilityDied(abilityRecord);
 }
 
-std::shared_ptr<MissionList> MissionListManager::GetTargetMissionList(int missionId, std::shared_ptr<Mission> &mission)
+std::shared_ptr<MissionList> MissionListManager::GetTargetMissionList(int missionId, std::shared_ptr<Mission> &mission,
+    bool &isCold)
 {
     mission = GetMissionById(missionId);
     if (mission) {
@@ -1709,6 +1705,7 @@ std::shared_ptr<MissionList> MissionListManager::GetTargetMissionList(int missio
     }
 
     auto abilityRecord = AbilityRecord::CreateAbilityRecord(abilityRequest);
+    isCold = true;
     mission = std::make_shared<Mission>(innerMissionInfo.missionInfo.id, abilityRecord, innerMissionInfo.missionName);
     abilityRecord->SetMission(mission);
     std::shared_ptr<MissionList> newMissionList = std::make_shared<MissionList>();
@@ -1968,11 +1965,10 @@ sptr<IWindowManagerServiceHandler> MissionListManager::GetWMSHandler() const
 }
 
 void MissionListManager::SetAbilityTransitionInfo(const AppExecFwk::AbilityInfo &abilityInfo,
-    sptr<AbilityTransitionInfo> &info, const std::shared_ptr<AbilityRecord> &abilityRecord) const
+    sptr<AbilityTransitionInfo> &info) const
 {
     info->abilityName_ = abilityInfo.name;
     info->bundleName_ = abilityInfo.bundleName;
-    info->abilityToken_ = abilityRecord->GetToken();
     SetShowWhenLocked(abilityInfo, info);
 }
 
@@ -2004,14 +2000,8 @@ void MissionListManager::NotifyAnimationFromRecentTask(const std::shared_ptr<Abi
         return;
     }
 
-    sptr<AbilityTransitionInfo> toInfo = new AbilityTransitionInfo();
-    if (startOptions != nullptr) {
-        toInfo->mode_ = static_cast<uint32_t>(startOptions->GetWindowMode());
-        toInfo->displayId_ = static_cast<uint64_t>(startOptions->GetDisplayID());
-    } else {
-        SetWindowModeAndDisplayId(toInfo, want);
-    }
-    SetAbilityTransitionInfo(abilityInfo, toInfo, abilityRecord);
+    auto toInfo = CreateAbilityTransitionInfo(abilityRecord, startOptions, want);
+    SetAbilityTransitionInfo(abilityInfo, toInfo);
     sptr<AbilityTransitionInfo> fromInfo = new AbilityTransitionInfo();
     fromInfo->isRecent_ = true;
     windowHandler->NotifyWindowTransition(fromInfo, toInfo);
@@ -2036,24 +2026,285 @@ void MissionListManager::NotifyAnimationFromStartingAbility(const std::shared_pt
     sptr<AbilityTransitionInfo> fromInfo = new AbilityTransitionInfo();
     if (callerAbility) {
         auto callerAbilityInfo = callerAbility->GetAbilityInfo();
-        SetAbilityTransitionInfo(callerAbilityInfo, fromInfo, callerAbility);
+        SetAbilityTransitionInfo(callerAbilityInfo, fromInfo);
+        fromInfo->abilityToken_ = callerAbility->GetToken();
     } else {
         fromInfo->abilityToken_ = abilityRequest.callerToken;
     }
 
-    sptr<AbilityTransitionInfo> toInfo = new AbilityTransitionInfo();
+    auto toInfo = CreateAbilityTransitionInfo(abilityRequest, targetAbilityRecord);
+    SetAbilityTransitionInfo(abilityInfo, toInfo);
+
+    windowHandler->NotifyWindowTransition(fromInfo, toInfo);
+}
+
+std::shared_ptr<Global::Resource::ResourceManager> MissionListManager::CreateResourceManager(
+    const AppExecFwk::AbilityInfo &abilityInfo) const
+{
+    std::shared_ptr<Global::Resource::ResourceManager> resourceMgr(Global::Resource::CreateResourceManager());
+    if (!resourceMgr->AddResource(abilityInfo.resourcePath.c_str())) {
+        HILOG_WARN("%{public}s AddResource failed.", __func__);
+    }
+
+    std::unique_ptr<Global::Resource::ResConfig> resConfig(Global::Resource::CreateResConfig());
+    resConfig->SetLocaleInfo("zh", "Hans", "CN");
+    resourceMgr->UpdateResConfig(*resConfig);
+    return resourceMgr;
+}
+
+sptr<Media::PixelMap> MissionListManager::GetPixelMap(const uint32_t windowIconId,
+    std::shared_ptr<Global::Resource::ResourceManager> resourceMgr) const
+{
+    std::string iconPath;
+    auto iconPathErrval = resourceMgr->GetMediaById(windowIconId, iconPath);
+    if (iconPathErrval != OHOS::Global::Resource::RState::SUCCESS) {
+        HILOG_ERROR("GetMediaById iconPath failed");
+        return nullptr;
+    }
+    HILOG_DEBUG("GetMediaById iconPath: %{private}s", iconPath.c_str());
+
+    uint32_t errorCode = 0;
+    Media::SourceOptions opts;
+    auto imageSource = Media::ImageSource::CreateImageSource(iconPath, opts, errorCode);
+    if (errorCode != 0) {
+        HILOG_ERROR("Failed to create image source path %{private}s err %{public}d", iconPath.c_str(), errorCode);
+        return nullptr;
+    }
+
+    Media::DecodeOptions decodeOpts;
+    auto pixelMapPtr = imageSource->CreatePixelMap(decodeOpts, errorCode);
+    if (errorCode != 0) {
+        HILOG_ERROR("Failed to create pixelmap path %{private}s err %{public}d", iconPath.c_str(), errorCode);
+        return nullptr;
+    }
+    HILOG_DEBUG("%{public}s OUT.", __func__);
+    return sptr<Media::PixelMap>(pixelMapPtr.release());
+}
+
+sptr<AbilityTransitionInfo> MissionListManager::CreateAbilityTransitionInfo(
+    const std::shared_ptr<AbilityRecord> &abilityRecord, const std::shared_ptr<StartOptions> &startOptions,
+    const Want &want) const
+{
+    sptr<AbilityTransitionInfo> info = new AbilityTransitionInfo();
+    if (startOptions != nullptr) {
+        info->mode_ = static_cast<uint32_t>(startOptions->GetWindowMode());
+        info->displayId_ = static_cast<uint64_t>(startOptions->GetDisplayID());
+    } else {
+        SetWindowModeAndDisplayId(info, want);
+    }
+    info->abilityToken_ = abilityRecord->GetToken();
+    return info;
+}
+
+sptr<AbilityTransitionInfo> MissionListManager::CreateAbilityTransitionInfo(const AbilityRequest &abilityRequest,
+    const std::shared_ptr<AbilityRecord> &abilityRecord) const
+{
+    sptr<AbilityTransitionInfo> info = new AbilityTransitionInfo();
     auto abilityStartSetting = abilityRequest.startSetting;
     if (abilityStartSetting) {
         auto mode = std::stoi(abilityStartSetting->GetProperty(AbilityStartSetting::WINDOW_MODE_KEY));
-        toInfo->mode_ = static_cast<uint32_t>(mode);
+        info->mode_ = static_cast<uint32_t>(mode);
         auto displayId = std::stoi(abilityStartSetting->GetProperty(AbilityStartSetting::WINDOW_DISPLAY_ID_KEY));
-        toInfo->displayId_ = static_cast<uint64_t>(displayId);
+        info->displayId_ = static_cast<uint64_t>(displayId);
     } else {
-        SetWindowModeAndDisplayId(toInfo, abilityRequest.want);
+        SetWindowModeAndDisplayId(info, abilityRequest.want);
     }
-    SetAbilityTransitionInfo(abilityInfo, toInfo, targetAbilityRecord);
+    info->abilityToken_ = abilityRecord->GetToken();
+    return info;
+}
 
-    windowHandler->NotifyWindowTransition(fromInfo, toInfo);
+void MissionListManager::NotifyStartingWindow(bool isCold, const std::shared_ptr<AbilityRecord> &targetAbilityRecord,
+    std::shared_ptr<StartOptions> &startOptions, int32_t missionId)
+{
+    InnerMissionInfo innerMissionInfo;
+    int getMission = DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
+        missionId, innerMissionInfo);
+    if (getMission != ERR_OK) {
+        HILOG_ERROR("cannot find mission info from MissionInfoList by missionId: %{public}d", missionId);
+        return;
+    }
+
+    auto want = innerMissionInfo.missionInfo.want;
+    auto self(weak_from_this());
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    if (handler == nullptr) {
+        return;
+    }
+
+    targetAbilityRecord->SetStartingWindow(true);
+    if (isCold) {
+        auto task = [self, targetAbilityRecord, startOptions, want] {
+            auto mgr = self.lock();
+            if (mgr) {
+                AbilityRequest abilityRequest;
+                mgr->StartingWindowCold(targetAbilityRecord, startOptions, want, abilityRequest);
+                mgr->NotifyAnimationFromRecentTask(targetAbilityRecord, startOptions, want);
+            }
+        };
+        handler->PostTask(task, 0);
+    } else {
+        auto task = [self, targetAbilityRecord, startOptions, want, missionId] {
+            auto mgr = self.lock();
+            if (mgr) {
+                AbilityRequest abilityRequest;
+                mgr->StartingWindowHot(targetAbilityRecord, startOptions, want, abilityRequest, missionId);
+                mgr->NotifyAnimationFromRecentTask(targetAbilityRecord, startOptions, want);
+            }
+        };
+        handler->PostTask(task, 0);
+    }
+}
+
+void MissionListManager::NotifyStartingWindow(bool isCold, const std::shared_ptr<Mission> &targetMission,
+    const std::shared_ptr<AbilityRecord> &targetAbilityRecord, const AbilityRequest &abilityRequest,
+    const std::shared_ptr<AbilityRecord> &callerAbility)
+{
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    if (handler == nullptr) {
+        HILOG_ERROR("Fail to get AbilityEventHandler.");
+        return;
+    }
+
+    auto self(weak_from_this());
+    targetAbilityRecord->SetStartingWindow(true);
+    if (isCold) {
+        auto task = [self, targetAbilityRecord, abilityRequest] {
+            auto mgr = self.lock();
+            if (mgr) {
+                std::shared_ptr<StartOptions> startOptions = nullptr;
+                Want want;
+                mgr->StartingWindowCold(targetAbilityRecord, startOptions, want, abilityRequest);
+            }
+        };
+        handler->PostTask(task, 0);
+    } else {
+        auto missionId = targetMission->GetMissionId();
+        auto task = [self, targetAbilityRecord, abilityRequest, missionId] {
+            auto mgr = self.lock();
+            if (mgr) {
+                std::shared_ptr<StartOptions> startOptions = nullptr;
+                Want want;
+                mgr->StartingWindowHot(targetAbilityRecord, startOptions, want, abilityRequest, missionId);
+            }
+        };
+        handler->PostTask(task, 0);
+    }
+
+    auto state = targetAbilityRecord->GetAbilityState();
+    if (state != AbilityState::FOREGROUND && state != AbilityState::FOREGROUNDING) {
+        auto task = [self, callerAbility, abilityRequest, targetAbilityRecord] {
+            auto mgr = self.lock();
+            if (mgr) {
+                mgr->NotifyAnimationFromStartingAbility(callerAbility, abilityRequest, targetAbilityRecord);
+            }
+        };
+        handler->PostTask(task, 0);
+    }
+}
+
+void MissionListManager::StartingWindowCold(const std::shared_ptr<AbilityRecord> &abilityRecord,
+    const std::shared_ptr<StartOptions> &startOptions, const Want &want, const AbilityRequest &abilityRequest) const
+{
+    auto abilityInfo = abilityRecord->GetAbilityInfo();
+    if (abilityInfo.name == AbilityConfig::GRANT_ABILITY_ABILITY_NAME &&
+        abilityInfo.bundleName == AbilityConfig::GRANT_ABILITY_BUNDLE_NAME) {
+        HILOG_INFO("%{public}s, ignore GrantAbility.", __func__);
+        return;
+    }
+
+    auto windowHandler = GetWMSHandler();
+    if (!windowHandler) {
+        HILOG_WARN("%{public}s, Get WMS handler failed.", __func__);
+        return;
+    }
+
+    auto resourceMgr = CreateResourceManager(abilityInfo);
+    if (!resourceMgr) {
+        HILOG_WARN("%{public}s, Get resourceMgr failed.", __func__);
+        return;
+    }
+
+    auto windowIconId = static_cast<uint32_t>(abilityInfo.startWindowIconId);
+    auto pixelMap = GetPixelMap(windowIconId, resourceMgr);
+
+    uint32_t bgColor = 0;
+    auto colorId = static_cast<uint32_t>(abilityInfo.startWindowBackgroundId);
+    auto colorErrval = resourceMgr->GetColorById(colorId, bgColor);
+    if (colorErrval != OHOS::Global::Resource::RState::SUCCESS) {
+        HILOG_WARN("%{public}s. Failed to GetColorById.", __func__);
+        bgColor = 0xffffffff;
+    }
+    HILOG_DEBUG("%{public}s colorId is %{public}u, bgColor is %{public}u.", __func__, colorId, bgColor);
+
+    sptr<AbilityTransitionInfo> info;
+    if (startOptions) {
+        info = CreateAbilityTransitionInfo(abilityRecord, startOptions, want);
+    } else {
+        info = CreateAbilityTransitionInfo(abilityRequest, abilityRecord);
+    }
+
+    windowHandler->StartingWindow(info, pixelMap, bgColor);
+}
+
+void MissionListManager::StartingWindowHot(const std::shared_ptr<AbilityRecord> &abilityRecord,
+    const std::shared_ptr<StartOptions> &startOptions, const Want &want, const AbilityRequest &abilityRequest,
+    int32_t missionId) const
+{
+    auto abilityInfo = abilityRecord->GetAbilityInfo();
+    if (abilityInfo.name == AbilityConfig::GRANT_ABILITY_ABILITY_NAME &&
+        abilityInfo.bundleName == AbilityConfig::GRANT_ABILITY_BUNDLE_NAME) {
+        HILOG_INFO("%{public}s, ignore GrantAbility.", __func__);
+        return;
+    }
+
+    auto windowHandler = GetWMSHandler();
+    if (!windowHandler) {
+        HILOG_WARN("%{public}s, Get WMS handler failed.", __func__);
+        return;
+    }
+
+    sptr<AbilityTransitionInfo> info;
+    if (startOptions) {
+        info = CreateAbilityTransitionInfo(abilityRecord, startOptions, want);
+    } else {
+        info = CreateAbilityTransitionInfo(abilityRequest, abilityRecord);
+    }
+    auto pixelMap = DelayedSingleton<MissionInfoMgr>::GetInstance()->GetSnapshot(missionId);
+    if (!pixelMap) {
+        HILOG_WARN("%{public}s, Get snapshot failed.", __func__);
+        return;
+    }
+
+    windowHandler->StartingWindow(info, pixelMap);
+}
+
+void MissionListManager::CancelStartingWindow(sptr<IRemoteObject> abilityToken) const
+{
+    auto windowHandler = GetWMSHandler();
+    if (!windowHandler) {
+        HILOG_WARN("%{public}s, Get WMS handler failed.", __func__);
+        return;
+    }
+
+    windowHandler->CancelStartingWindow(abilityToken);
+}
+
+void MissionListManager::CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken) const
+{
+    if (!abilityToken) {
+        HILOG_WARN("%{public}s ability token is nullptr.", __func__);
+        return;
+    }
+
+    std::lock_guard<std::recursive_mutex> guard(managerLock_);
+    auto abilityRecord = GetAbilityRecordByToken(abilityToken);
+    if (!abilityRecord) {
+        HILOG_WARN("%{public}s get AbilityRecord by token failed.", __func__);
+        return;
+    }
+    if (listenerController_) {
+        listenerController_->NotifyMissionCreated(abilityRecord->GetMissionId());
+    }
 }
 #endif
 
@@ -2221,7 +2472,8 @@ int MissionListManager::CallAbilityLocked(const AbilityRequest &abilityRequest)
     // Get target mission and ability record.
     std::shared_ptr<AbilityRecord> targetAbilityRecord;
     std::shared_ptr<Mission> targetMission;
-    GetTargetMissionAndAbility(abilityRequest, targetMission, targetAbilityRecord);
+    bool isCold = false;
+    GetTargetMissionAndAbility(abilityRequest, targetMission, targetAbilityRecord, isCold);
     if (!targetMission || !targetAbilityRecord) {
         HILOG_ERROR("Failed to get mission or record.");
         return ERR_INVALID_VALUE;

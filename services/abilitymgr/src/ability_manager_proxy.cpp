@@ -1827,6 +1827,36 @@ int AbilityManagerProxy::RegisterWindowManagerServiceHandler(const sptr<IWindowM
     }
     return reply.ReadInt32();
 }
+
+void AbilityManagerProxy::CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken)
+{
+    MessageParcel data;
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s: write interface token failed.", __func__);
+        return;
+    }
+    if (!abilityToken) {
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("Write false failed.");
+            return;
+        }
+    } else {
+        if (!data.WriteBool(true)) {
+            HILOG_ERROR("Write true failed.");
+            return;
+        }
+        if (!data.WriteObject(abilityToken)) {
+            HILOG_ERROR("Write abilityToken failed.");
+            return;
+        }
+    }
+    MessageOption option;
+    MessageParcel reply;
+    auto error = Remote()->SendRequest(IAbilityManager::COMPLETEFIRSTFRAMEDRAWING, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("%{public}s: send request error: %{public}d", __func__, error);
+    }
+}
 #endif
 
 int AbilityManagerProxy::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info)
