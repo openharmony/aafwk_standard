@@ -53,7 +53,7 @@ ohos_shared_library("amsKitSystemTestB") {
     "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${common_path}:libappexecfwk_common",
-    "${innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${services_path}/bundlemgr:libbms",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utilsbase",

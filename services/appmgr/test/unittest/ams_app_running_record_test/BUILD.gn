@@ -23,7 +23,7 @@ ohos_unittest("AmsAppRunningRecordTest") {
     "${aafwk_path}/interfaces/innerkits/base/include",
     "${aafwk_path}/interfaces/innerkits/uri/include",
     "${aafwk_path}/interfaces/innerkits/want/include",
-    "${appexecfwk_innerkits_path}/appexecfwk_core/include",
+    "${appexecfwk_inner_api_path}/appexecfwk_core/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",

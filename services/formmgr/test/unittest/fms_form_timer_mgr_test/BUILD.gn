@@ -25,7 +25,7 @@ ohos_unittest("FmsFormTimerMgrTest") {
     "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
-    "${appexecfwk_innerkits_path}/appexecfwk_base/include/",
+    "${appexecfwk_inner_api_path}/appexecfwk_base/include/",
     "${aafwk_path}/interfaces/innerkits/form_manager/include",
     "//base/miscservices/time/interfaces/innerkits/include",
   ]
