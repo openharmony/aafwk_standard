@@ -574,11 +574,19 @@ public:
         const std::shared_ptr<OHOS::Media::PixelMap> &icon);
 
     /**
-     * @brief Register the WMS handler
-     * @param handler WMS handler
+     * Register the WindowManagerService handler
+     *
+     * @param handler Indidate handler of WindowManagerService.
      * @return ErrCode Returns ERR_OK on success, others on failure.
      */
     ErrCode RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler);
+
+    /**
+     * WindowManager notification AbilityManager after the first frame is drawn.
+     *
+     * @param abilityToken Indidate token of ability.
+     */
+    void CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken);
 #endif
 
     /**

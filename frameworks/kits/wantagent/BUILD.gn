@@ -65,12 +65,17 @@ ohos_shared_library("wantagent_innerkits") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "resource_management:global_resmgr",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
 
   if (is_double_framework) {
     cflags = [ "-DCONFIG_DUAL_FRAMEWORK" ]
+  }
+
+  if (ability_runtime_graphics) {
+    external_deps += [ "multimedia_image_standard:image_native" ]
   }
 
   subsystem_name = "aafwk"

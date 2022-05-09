@@ -76,6 +76,15 @@ public:
      */
     bool SaveMissionSnapshot(int missionId, const MissionSnapshot& snapshot);
 
+#ifdef SUPPORT_GRAPHICS
+    /**
+     * @brief Get the Snapshot object
+     * @param missionId Indicates this mission id.
+     * @return Returns PixelMap of snapshot.
+     */
+    sptr<Media::PixelMap> GetSnapshot(int missionId) const;
+#endif
+
     /**
      * @brief Get the mission snapshot object
      * @param missionId id of mission
