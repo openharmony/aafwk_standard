@@ -16,6 +16,7 @@
 #include <cinttypes>
 #include <regex>
 
+#include "ability_manager_errors.h"
 #include "appexecfwk_errors.h"
 #include "bundle_active_client.h"
 #include "form_acquire_connection.h"
@@ -1447,9 +1448,10 @@ int FormMgrAdapter::MessageEvent(const int64_t formId, const Want &want, const s
 /**
  * @brief Process js router event.
  * @param formId Indicates the unique id of form.
+ * @param want the want of the ability to start.
  * @return Returns true if execute success, false otherwise.
  */
-int FormMgrAdapter::RouterEvent(const int64_t formId)
+int FormMgrAdapter::RouterEvent(const int64_t formId, Want &want)
 {
     HILOG_INFO("%{public}s called.", __func__);
     if (formId <= 0) {
@@ -1465,8 +1467,27 @@ int FormMgrAdapter::RouterEvent(const int64_t formId)
         return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
     }
 
+    sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+    if (iBundleMgr == nullptr) {
+        HILOG_ERROR("%{public}s fail, failed to get IBundleMgr.", __func__);
+        return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
+    }
+
+    if (record.bundleName != want.GetBundle()) {
+        if (!CheckIsSystemAppByBundleName(iBundleMgr, record.bundleName)) {
+            HILOG_WARN("Only system apps can launch the ability of the other apps.");
+            want.SetBundle(record.bundleName);
+        }
+    }
+
+    int32_t result = FormAmsHelper::GetInstance().GetAbilityManager()->StartAbility(want);
+    if (result != ERR_OK && result != START_ABILITY_WAITING) {
+        HILOG_ERROR("Failed to StartAbility, result: %{public}d.", result);
+        return result;
+    }
+
     if (!FormDataMgr::GetInstance().ExistTempForm(matchedFormId)) {
-        int callingUid = IPCSkeleton::GetCallingUid();
+        int32_t callingUid = IPCSkeleton::GetCallingUid();
         int32_t userId = GetCurrentUserId(callingUid);
         DeviceUsageStats::BundleActiveEvent event(record.bundleName, record.moduleName, record.formName,
             record.specification, record.formId, DeviceUsageStats::BundleActiveEvent::FORM_IS_CLICKED);
