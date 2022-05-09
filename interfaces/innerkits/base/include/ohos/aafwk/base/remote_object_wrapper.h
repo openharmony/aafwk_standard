@@ -17,7 +17,7 @@
 #define OHOS_AAFWK_REMOTE_OBJECT_WRAP_H
 
 #include "ohos/aafwk/base/base_object.h"
-#include "iremote_object.h"
+#include "foundation/communication/ipc/interfaces/innerkits/ipc_core/include/iremote_object.h"
 #include "refbase.h"
 
 namespace OHOS {
