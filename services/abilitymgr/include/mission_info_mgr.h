@@ -142,6 +142,15 @@ public:
     bool UpdateMissionSnapshot(int32_t missionId, const sptr<IRemoteObject>& abilityToken,
         MissionSnapshot& missionSnapshot) const;
 
+#ifdef SUPPORT_GRAPHICS
+    /**
+     * @brief Get the Snapshot object
+     * @param missionId Indicates this mission id.
+     * @return Returns PixelMap of snapshot.
+     */
+    sptr<Media::PixelMap> GetSnapshot(int32_t missionId) const;
+#endif
+
     /**
      * @brief get the mission snapshot object
      * @param missionId mission id
