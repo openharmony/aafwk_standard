@@ -31,6 +31,7 @@ struct AbilityTransitionInfo : public Parcelable {
     sptr<IRemoteObject> abilityToken_ = nullptr;
     uint64_t displayId_ = 0;
     bool isShowWhenLocked_ = false;
+    bool isRecent_ = false;
 
     virtual bool Marshalling(Parcel& parcel) const override
     {
@@ -67,6 +68,10 @@ struct AbilityTransitionInfo : public Parcelable {
             return false;
         }
 
+        if (!parcel.WriteBool(isRecent_)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -81,6 +86,7 @@ struct AbilityTransitionInfo : public Parcelable {
         }
         info->displayId_ = parcel.ReadUint64();
         info->isShowWhenLocked_ = parcel.ReadBool();
+        info->isRecent_ = parcel.ReadBool();
         return info;
     }
 };
