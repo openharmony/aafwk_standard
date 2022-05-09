@@ -520,9 +520,10 @@ int FormMgrProxy::MessageEvent(const int64_t formId, const Want &want, const spt
 /**
  * @brief Process js router event.
  * @param formId Indicates the unique id of form.
+ * @param want the want of the ability to start.
  * @return Returns true if execute success, false otherwise.
  */
-int FormMgrProxy::RouterEvent(const int64_t formId)
+int FormMgrProxy::RouterEvent(const int64_t formId, Want &want)
 {
     MessageParcel data;
     if (!WriteInterfaceToken(data)) {
@@ -531,6 +532,10 @@ int FormMgrProxy::RouterEvent(const int64_t formId)
     }
     if (!data.WriteInt64(formId)) {
         HILOG_ERROR("%{public}s, failed to write formId", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
