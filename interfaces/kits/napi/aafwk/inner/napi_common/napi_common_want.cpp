@@ -848,7 +848,7 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
                 break;
             }
             case napi_object: {
-                HandleNapiObject(env, param, jsProValue, strProName, jsProCount, wantParams);
+                HandleNapiObject(env, param, jsProValue, strProName, wantParams);
                 break;
             }
             default:
@@ -859,7 +859,8 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
     return true;
 }
 
-void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std::string strProName, AAFwk::WantParams &wantParams)
+void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std::string strProName,
+    AAFwk::WantParams &wantParams)
 {
     if (IsRemoteObject(env, param, strProName)) {
         sptr<IRemoteObject> remoteObject = NAPI_ohos_rpc_getNativeRemoteObject(env, jsProValue);

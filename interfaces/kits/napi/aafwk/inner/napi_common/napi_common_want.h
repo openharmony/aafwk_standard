@@ -42,9 +42,10 @@ bool BlackListFilter(const std::string &strProName);
 napi_value WrapWant(napi_env env, const Want &want);
 bool UnwrapWant(napi_env env, napi_value param, Want &want);
 
-void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std::string strProName, uint32_t jsProCount, AAFwk::WantParams &wantParams);
+void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std::string strProName,
+    AAFwk::WantParams &wantParams);
 
-bool IsRemoteObject(napi_env env, napi_value param, std::string strProName, uint32_t jsProCount);
+bool IsRemoteObject(napi_env env, napi_value param, std::string strProName);
 
 EXTERN_C_END
 }  // namespace AppExecFwk
