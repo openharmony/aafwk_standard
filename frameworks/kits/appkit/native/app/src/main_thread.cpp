@@ -920,7 +920,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             HILOG_ERROR("OHOSApplication::OHOSApplication: Failed to create runtime");
             return;
         }
-        
+        auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
         auto bundleName = appInfo.bundleName;
         auto versionCode = appInfo.versionCode;
         wptr<MainThread> weak = this;
