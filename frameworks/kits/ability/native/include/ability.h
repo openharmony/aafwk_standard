@@ -1682,6 +1682,7 @@ private:
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
 #ifdef SUPPORT_GRAPHICS
     bool bWindowFocus_ = false;
+    bool showOnLockScreen_ = false;
 #endif
     int compatibleVersion_ = 0;
 
