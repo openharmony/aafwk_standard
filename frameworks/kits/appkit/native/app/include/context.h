@@ -678,14 +678,6 @@ public:
     virtual bool SetMissionInformation(const MissionInformation &missionInformation) = 0;
 
     /**
-     * set lock screen
-     *
-     * @param isAllow Whether to allow lock screen.
-     *
-     */
-    virtual void SetShowOnLockScreen(bool isAllow) = 0;
-
-    /**
      * @brief Checks whether the configuration of this ability is changing.
      *
      * @return Returns true if the configuration of this ability is changing and false otherwise.
