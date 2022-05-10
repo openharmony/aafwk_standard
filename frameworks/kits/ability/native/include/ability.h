@@ -448,6 +448,8 @@ public:
      */
     std::shared_ptr<Rosen::WindowScene> GetScene();
 
+    void SetShowOnLockScreen(bool showOnLockScreen);
+
     /**
      * @brief Checks whether the main window of this ability has window focus.
      *
