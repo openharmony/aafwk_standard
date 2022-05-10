@@ -19,8 +19,8 @@ config("appmgr_test_config") {
     "${services_path}/appmgr:appmgr_config",
     "${aafwk_path}/interfaces/innerkits/app_manager:appmgr_sdk_config",
     "${aafwk_path}/services/test:services_mock_ams_config",
-    "${appexecfwk_innerkits_path}/appexecfwk_core:bundlemgr_sdk_config",
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base_sdk_config",
+    "${appexecfwk_inner_api_path}/appexecfwk_core:bundlemgr_sdk_config",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base_sdk_config",
   ]
 
   defines = [
@@ -57,17 +57,17 @@ ohos_source_set("appmgr_test_source") {
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/render_scheduler_host.cpp",
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/render_scheduler_proxy.cpp",
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/running_process_info.cpp",
-    "${appexecfwk_innerkits_path}/appexecfwk_base/src/ability_info.cpp",
-    "${appexecfwk_innerkits_path}/appexecfwk_base/src/application_info.cpp",
-    "${appexecfwk_innerkits_path}/appexecfwk_base/src/bundle_info.cpp",
-    "${appexecfwk_innerkits_path}/appexecfwk_base/src/bundle_user_info.cpp",
+    "${appexecfwk_inner_api_path}/appexecfwk_base/src/ability_info.cpp",
+    "${appexecfwk_inner_api_path}/appexecfwk_base/src/application_info.cpp",
+    "${appexecfwk_inner_api_path}/appexecfwk_base/src/bundle_info.cpp",
+    "${appexecfwk_inner_api_path}/appexecfwk_base/src/bundle_user_info.cpp",
   ]
 
   include_dirs = [
     "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
     "//third_party/json/include",
     "${aafwk_path}/services/appmgr/include/lmks",
-    "${appexecfwk_innerkits_path}/appexecfwk_core/include",
+    "${appexecfwk_inner_api_path}/appexecfwk_core/include",
   ]
 
   public_configs = [
@@ -89,7 +89,7 @@ ohos_source_set("appmgr_test_source") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/interfaces/innerkits/base:base",
     "${aafwk_path}/interfaces/innerkits/want:want",
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${services_path}/common:perm_verification",
   ]

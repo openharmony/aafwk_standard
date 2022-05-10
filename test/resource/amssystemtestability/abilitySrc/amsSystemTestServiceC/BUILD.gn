@@ -42,7 +42,7 @@ ohos_shared_library("amsSystemTestServiceC") {
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/interfaces/innerkits/want:want",
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/services/bundlemgr:libbms",
     "//third_party/jsoncpp:jsoncpp",
