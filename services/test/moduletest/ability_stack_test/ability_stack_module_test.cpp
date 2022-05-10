@@ -78,7 +78,7 @@ void AbilityStackModuleTest::OnStartabilityMs(std::shared_ptr<AbilityManagerServ
         abilityMs->eventLoop_ = AppExecFwk::EventRunner::Create(AbilityConfig::NAME_ABILITY_MGR_SERVICE);
         EXPECT_TRUE(abilityMs->eventLoop_);
         abilityMs->handler_ = std::make_shared<AbilityEventHandler>(abilityMs->eventLoop_, abilityMs);
-        abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>();
+        abilityMs->connectManager_ = std::make_shared<AbilityConnectManager>(0);
         abilityMs->connectManagers_.emplace(0, abilityMs->connectManager_);
         EXPECT_TRUE(abilityMs->handler_);
         EXPECT_TRUE(abilityMs->connectManager_);

@@ -67,11 +67,16 @@ constexpr int32_t DELIVERY_TIME = 200;
 constexpr int32_t DISTRIBUTE_TIME = 100;
 constexpr int32_t UNSPECIFIED_USERID = -2;
 
-constexpr char EVENT_KEY_UID[] = "UID";
-constexpr char EVENT_KEY_PID[] = "PID";
-constexpr char EVENT_KEY_MESSAGE[] = "MSG";
 constexpr char EVENT_KEY_PACKAGE_NAME[] = "PACKAGE_NAME";
-constexpr char EVENT_KEY_PROCESS_NAME[] = "PROCESS_NAME";
+constexpr char EVENT_KEY_VERSION[] = "VERSION";
+constexpr char EVENT_KEY_TYPE[] = "TYPE";
+constexpr char EVENT_KEY_HAPPEN_TIME[] = "HAPPEN_TIME";
+constexpr char EVENT_KEY_REASON[] = "REASON";
+constexpr char EVENT_KEY_JSVM[] = "JSVM";
+constexpr char EVENT_KEY_SUMMARY[] = "SUMMARY";
+
+const std::string JSCRASH_TYPE = "3";
+const std::string JSVM_TYPE = "ARK";
 }
 
 #define ACEABILITY_LIBRARY_LOADER
@@ -788,6 +793,30 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     HILOG_INFO("MainThread::handleLaunchApplication. End calling UpdateResConfig.");
     return true;
 }
+
+static std::string GetNativeStrFromJsTaggedObj(NativeObject* obj, const char* key)
+{
+    if (obj == nullptr) {
+        HILOG_ERROR("Failed to get value from key:%{public}s, Null NativeObject", key);
+        return "";
+    }
+
+    NativeValue* value = obj->GetProperty(key);
+    NativeString* valueStr = AbilityRuntime::ConvertNativeValueTo<NativeString>(value);
+    if (valueStr == nullptr) {
+        HILOG_ERROR("Failed to convert value from key:%{public}s", key);
+        return "";
+    }
+    size_t valueStrBufLength = valueStr->GetLength();
+    size_t valueStrLength = 0;
+    char* valueCStr = new char[valueStrBufLength + 1];
+    valueStr->GetCString(valueCStr, valueStrBufLength + 1, &valueStrLength);
+    std::string ret(valueCStr, valueStrLength);
+    delete []valueCStr;
+    HILOG_DEBUG("GetNativeStrFromJsTaggedObj Success %{public}s:%{public}s", key, ret.c_str());
+    return ret;
+}
+
 /**
  *
  * @brief Launch the application.
@@ -891,64 +920,49 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             HILOG_ERROR("OHOSApplication::OHOSApplication: Failed to create runtime");
             return;
         }
-        // auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
+        auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
         auto bundleName = appInfo.bundleName;
-        auto uid = appInfo.uid;
-        auto processName = processInfo.GetProcessName();
-        auto processPid = processInfo.GetPid();
+        auto versionCode = appInfo.versionCode;
         wptr<MainThread> weak = this;
-        auto uncaughtTask = [weak, uid, processPid, bundleName, processName](NativeValue* v) {
-            HILOG_INFO("RegisterUncaughtExceptionHandler Begin");
+        auto uncaughtTask = [weak, bundleName, versionCode](NativeValue* v) {
             NativeObject* obj = AbilityRuntime::ConvertNativeValueTo<NativeObject>(v);
-            NativeValue* message = obj->GetProperty("message");
-            NativeString* messageStr = AbilityRuntime::ConvertNativeValueTo<NativeString>(message);
-            if (messageStr == nullptr) {
-                HILOG_ERROR("messageStr Convert failed");
-                return;
-            }
-            size_t messagebufferLen = messageStr->GetLength();
-            size_t messagestrLen = 0;
-            char* messagecap = new char[messagebufferLen + 1];
-            messageStr->GetCString(messagecap, messagebufferLen + 1, &messagestrLen);
-            HILOG_INFO("messagecap = %{public}s", messagecap);
-            NativeValue* stack = obj->GetProperty("stack");
-            NativeString* stackStr = AbilityRuntime::ConvertNativeValueTo<NativeString>(stack);
-            if (stackStr == nullptr) {
-                HILOG_ERROR("stackStr Convert failed");
-                return;
-            }
-            size_t stackbufferLen = stackStr->GetLength();
-            size_t stackstrLen = 0;
-            char* stackcap = new char[stackbufferLen + 1];
-            stackStr->GetCString(stackcap, stackbufferLen + 1, &stackstrLen);
-            HILOG_INFO("stackcap = %{public}s", stackcap);
+            std::string errorMsg = GetNativeStrFromJsTaggedObj(obj, "message");
+            std::string errorName = GetNativeStrFromJsTaggedObj(obj, "name");
+            std::string errorStack = GetNativeStrFromJsTaggedObj(obj, "stack");
+            std::string summary = "Error message:" + errorMsg + "\nStacktrace:\n" + errorStack;
+            time_t timet;
+            struct tm localUTC;
+            struct timeval gtime;
+            time(&timet);
+            gmtime_r(&timet, &localUTC);
+            gettimeofday(&gtime, NULL);
+            std::string loacalUTCTime = std::to_string(localUTC.tm_year + 1900)
+                + "/" + std::to_string(localUTC.tm_mon + 1)
+                + "/" + std::to_string(localUTC.tm_mday)
+                + " " + std::to_string(localUTC.tm_hour)
+                + "-" + std::to_string(localUTC.tm_min)
+                + "-" + std::to_string(localUTC.tm_sec)
+                + "." + std::to_string(gtime.tv_usec/1000);
+            OHOS::HiviewDFX::HiSysEvent::Write(OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK, "JS_ERROR",
+                OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+                EVENT_KEY_PACKAGE_NAME, bundleName,
+                EVENT_KEY_VERSION, std::to_string(versionCode),
+                EVENT_KEY_TYPE, JSCRASH_TYPE,
+                EVENT_KEY_HAPPEN_TIME, loacalUTCTime,
+                EVENT_KEY_REASON, errorName,
+                EVENT_KEY_JSVM, JSVM_TYPE,
+                EVENT_KEY_SUMMARY, summary);
             auto appThread = weak.promote();
             if (appThread == nullptr) {
                 HILOG_ERROR("appThread is nullptr, HandleLaunchApplication failed.");
                 return;
             }
-            std::string eventType = "JS_EXCEPTION";
-            std::string msgContent;
-            std::string tempMessageStr(messagecap);
-            std::string tempStackStr(stackcap);
-            if (messagecap != nullptr) {
-                delete [] messagecap;
-            }
-            if (stackcap != nullptr) {
-                delete [] stackcap;
-            }
-            msgContent = "  message:" + tempMessageStr + "  Stack:" + tempStackStr;
-            auto ret = OHOS::HiviewDFX::HiSysEvent::Write(OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK, eventType,
-                OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
-                EVENT_KEY_UID, std::to_string(uid),
-                EVENT_KEY_PID, std::to_string(processPid),
-                EVENT_KEY_PACKAGE_NAME, bundleName,
-                EVENT_KEY_PROCESS_NAME, processName,
-                EVENT_KEY_MESSAGE, msgContent);
+            // if app's callback has been registered, let app decide whether exit or not.
+            HILOG_ERROR("\n%{public}s is about to exit due to RuntimeError\nError type:%{public}s\n%{public}s",
+                bundleName.c_str(), errorName.c_str(), summary.c_str());
             appThread->ScheduleProcessSecurityExit();
-            HILOG_INFO("RegisterUncaughtExceptionHandler End ret = %{public}d", ret);
         };
-        // jsEngine.RegisterUncaughtExceptionHandler(uncaughtTask);
+        jsEngine.RegisterUncaughtExceptionHandler(uncaughtTask);
         application_->SetRuntime(std::move(runtime));
 
         AbilityLoader::GetInstance().RegisterAbility("Ability", [application = application_]() {
