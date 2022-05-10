@@ -448,6 +448,8 @@ public:
      */
     std::shared_ptr<Rosen::WindowScene> GetScene();
 
+    void SetShowOnLockScreen(bool showOnLockScreen);
+
     /**
      * @brief Checks whether the main window of this ability has window focus.
      *
@@ -1682,6 +1684,7 @@ private:
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
 #ifdef SUPPORT_GRAPHICS
     bool bWindowFocus_ = false;
+    bool showOnLockScreen_ = false;
 #endif
     int compatibleVersion_ = 0;
 

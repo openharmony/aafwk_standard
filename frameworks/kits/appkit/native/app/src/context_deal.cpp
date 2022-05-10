@@ -1420,24 +1420,5 @@ bool ContextDeal::SetMissionInformation(const MissionInformation &missionInforma
 {
     return false;
 }
-
-/**
- * set lock screen
- *
- * @param isAllow Whether to allow lock screen.
- *
- */
-void ContextDeal::SetShowOnLockScreen(bool isAllow)
-{
-    auto abilityManagerClient = AAFwk::AbilityManagerClient::GetInstance();
-    if (abilityManagerClient == nullptr) {
-        HILOG_ERROR("ContextDeal::SetShowOnLockScreen abilityManagerClient is nullptr");
-        return;
-    }
-    ErrCode errval = abilityManagerClient->SetShowOnLockScreen(isAllow);
-    if (errval != ERR_OK) {
-        HILOG_ERROR("ContextDeal::SetShowOnLockScreen SetShowOnLockScreen retval is ERROR(%d)", errval);
-    }
-}
 }  // namespace AppExecFwk
 }  // namespace OHOS

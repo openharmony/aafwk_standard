@@ -659,14 +659,6 @@ public:
      */
     bool SetMissionInformation(const MissionInformation &missionInformation) override;
 
-    /**
-     * set lock screen white list
-     *
-     * @param isAllow Whether to allow lock screen.
-     *
-     */
-    void SetShowOnLockScreen(bool isAllow) override;
-
     friend DataAbilityHelper;
     friend DataShareHelper;
     static int ABILITY_CONTEXT_DEFAULT_REQUEST_CODE;
