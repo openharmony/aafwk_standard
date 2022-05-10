@@ -32,6 +32,13 @@ public:
 
     virtual int32_t GetFocusWindow(sptr<IRemoteObject>& abilityToken) override;
 
+    virtual void StartingWindow(sptr<AbilityTransitionInfo> info, sptr<Media::PixelMap> pixelMap,
+        uint32_t bgColor) override;
+
+    virtual void StartingWindow(sptr<AbilityTransitionInfo> info, sptr<Media::PixelMap> pixelMap) override;
+
+    virtual void CancelStartingWindow(sptr<IRemoteObject> abilityToken) override;
+
 private:
     static inline BrokerDelegator<WindowManagerServiceHandlerProxy> delegator_;
 };

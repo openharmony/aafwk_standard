@@ -36,7 +36,7 @@ ohos_unittest("dataobs_mgr_client_test") {
     "${aafwk_path}/interfaces/innerkits/dataobs_manager:dataobs_manager",
     "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${aafwk_path}/services/dataobsmgr:dataobsms",
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${innerkits_path}/want:want",
     "//third_party/googletest:gmock_main",

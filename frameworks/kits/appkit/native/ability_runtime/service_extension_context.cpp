@@ -81,6 +81,15 @@ ErrCode ServiceExtensionContext::StartAbilityWithAccount(
     return err;
 }
 
+ErrCode ServiceExtensionContext::StartServiceExtensionAbility(const AAFwk::Want &want, int32_t userId) const
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartExtensionAbility(
+        want, token_, userId, AppExecFwk::ExtensionAbilityType::SERVICE);
+    HILOG_INFO("%{public}s end. ret=%{public}d", __func__, err);
+    return err;
+}
+
 bool ServiceExtensionContext::ConnectAbilityWithAccount(
     const AAFwk::Want &want, int accountId, const sptr<AbilityConnectCallback> &connectCallback) const
 {

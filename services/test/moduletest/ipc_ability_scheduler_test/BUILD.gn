@@ -48,7 +48,7 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/interfaces/innerkits/base:base",
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",

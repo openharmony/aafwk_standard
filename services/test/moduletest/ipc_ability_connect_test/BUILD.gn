@@ -30,7 +30,7 @@ ohos_moduletest("IpcAbilityConnectModuleTest") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",
     "//third_party/googletest:gmock_main",

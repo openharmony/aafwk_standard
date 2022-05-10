@@ -17,6 +17,9 @@
 #define OHOS_AAFWK_WMS_HANDLER_STUB_H
 
 #ifdef SUPPORT_GRAPHICS
+
+#include <map>
+
 #include "iremote_stub.h"
 #include "message_parcel.h"
 #include "nocopyable.h"
@@ -26,13 +29,21 @@ namespace OHOS {
 namespace AAFwk {
 class WindowManagerServiceHandlerStub : public IRemoteStub<IWindowManagerServiceHandler> {
 public:
-    WindowManagerServiceHandlerStub() = default;
-    virtual ~WindowManagerServiceHandlerStub() = default;
+    WindowManagerServiceHandlerStub();
+    virtual ~WindowManagerServiceHandlerStub();
 
     int OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
 private:
-    DISALLOW_COPY_AND_MOVE(WindowManagerServiceHandlerStub);
+    void Init();
+    int NotifyWindowTransitionInner(MessageParcel &data, MessageParcel &reply);
+    int GetFocusWindowInner(MessageParcel &data, MessageParcel &reply);
+    int StartingWindowCold(MessageParcel &data, MessageParcel &reply);
+    int StartingWindowHot(MessageParcel &data, MessageParcel &reply);
+    int CancelStartingWindowInner(MessageParcel &data, MessageParcel &reply);
+
+    using RequestFuncType = int (WindowManagerServiceHandlerStub::*)(MessageParcel &data, MessageParcel &reply);
+    std::map<uint32_t, RequestFuncType> requestFuncMap_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

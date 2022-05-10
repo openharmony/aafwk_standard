@@ -176,6 +176,15 @@ ErrCode AbilityContextImpl::StartAbilityForResultWithAccount(
     return err;
 }
 
+ErrCode AbilityContextImpl::StartServiceExtensionAbility(const AAFwk::Want &want, int32_t userId)
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartExtensionAbility(
+        want, token_, userId, AppExecFwk::ExtensionAbilityType::SERVICE);
+    HILOG_INFO("%{public}s end. ret=%{public}d", __func__, err);
+    return err;
+}
+
 ErrCode AbilityContextImpl::TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode)
 {
     HILOG_DEBUG("%{public}s. Start calling TerminateAbilityWithResult.", __func__);
