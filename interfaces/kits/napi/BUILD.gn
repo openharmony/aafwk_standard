@@ -51,7 +51,10 @@ group("napi_packages") {
   ]
 
   if (ability_runtime_graphics) {
-    deps += [ "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility:featureability" ]
+    deps += [
+      "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/featureAbility:featureability",
+      "//foundation/aafwk/standard/interfaces/kits/napi/aafwk/feature_ability:featureability_napi",
+    ]
   }
 }
 

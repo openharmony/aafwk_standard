@@ -2028,5 +2028,16 @@ Want *Want::FromString(std::string &string)
     }
     return want;
 }
+
+/**
+ * @description: Sets a device id in a Want.
+ * @param deviceId Indicates the device id to set.
+ * @return Returns this Want object containing the flag.
+ */
+Want &Want::SetDeviceId(const std::string &deviceId)
+{
+    operation_.SetDeviceId(deviceId);
+    return *this;
+}
 }  // namespace AAFwk
 }  // namespace OHOS
