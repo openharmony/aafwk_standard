@@ -128,7 +128,7 @@ NativeValue* JsBaseContext::OnSwitchArea(NativeEngine& engine, NativeCallbackInf
 
 NativeValue* JsBaseContext::GetCacheDir(NativeEngine* engine, NativeCallbackInfo* info)
 {
-    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    HILOG_INFO("JsBaseContext::GetCacheDir is called");
     JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
     return me != nullptr ? me->OnGetCacheDir(*engine, *info) : nullptr;
 }
@@ -146,7 +146,7 @@ NativeValue* JsBaseContext::OnGetCacheDir(NativeEngine& engine, NativeCallbackIn
 
 NativeValue* JsBaseContext::GetTempDir(NativeEngine* engine, NativeCallbackInfo* info)
 {
-    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    HILOG_INFO("JsBaseContext::GetTempDir is called");
     JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
     return me != nullptr ? me->OnGetTempDir(*engine, *info) : nullptr;
 }
@@ -164,7 +164,7 @@ NativeValue* JsBaseContext::OnGetTempDir(NativeEngine& engine, NativeCallbackInf
 
 NativeValue* JsBaseContext::GetFilesDir(NativeEngine* engine, NativeCallbackInfo* info)
 {
-    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    HILOG_INFO("JsBaseContext::GetFilesDir is called");
     JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
     return me != nullptr ? me->OnGetFilesDir(*engine, *info) : nullptr;
 }
@@ -182,7 +182,7 @@ NativeValue* JsBaseContext::OnGetFilesDir(NativeEngine& engine, NativeCallbackIn
 
 NativeValue* JsBaseContext::GetDistributedFilesDir(NativeEngine* engine, NativeCallbackInfo* info)
 {
-    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    HILOG_INFO("JsBaseContext::GetDistributedFilesDir is called");
     JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
     return me != nullptr ? me->OnGetDistributedFilesDir(*engine, *info) : nullptr;
 }
@@ -200,7 +200,7 @@ NativeValue* JsBaseContext::OnGetDistributedFilesDir(NativeEngine& engine, Nativ
 
 NativeValue* JsBaseContext::GetDatabaseDir(NativeEngine* engine, NativeCallbackInfo* info)
 {
-    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    HILOG_INFO("JsBaseContext::GetDatabaseDir is called");
     JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
     return me != nullptr ? me->OnGetDatabaseDir(*engine, *info) : nullptr;
 }
@@ -218,7 +218,7 @@ NativeValue* JsBaseContext::OnGetDatabaseDir(NativeEngine& engine, NativeCallbac
 
 NativeValue* JsBaseContext::GetPreferencesDir(NativeEngine* engine, NativeCallbackInfo* info)
 {
-    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    HILOG_INFO("JsBaseContext::GetPreferencesDir is called");
     JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
     return me != nullptr ? me->OnGetPreferencesDir(*engine, *info) : nullptr;
 }
@@ -236,7 +236,7 @@ NativeValue* JsBaseContext::OnGetPreferencesDir(NativeEngine& engine, NativeCall
 
 NativeValue* JsBaseContext::GetBundleCodeDir(NativeEngine* engine, NativeCallbackInfo* info)
 {
-    HILOG_INFO("JsBaseContext::SwitchArea is called");
+    HILOG_INFO("JsBaseContext::GetBundleCodeDir is called");
     JsBaseContext* me = CheckParamsAndGetThis<JsBaseContext>(engine, info, BASE_CONTEXT_NAME);
     return me != nullptr ? me->OnGetBundleCodeDir(*engine, *info) : nullptr;
 }
