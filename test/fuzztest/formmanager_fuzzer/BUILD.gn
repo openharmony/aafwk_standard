@@ -40,7 +40,7 @@ ohos_fuzztest("FormManagerFuzzTest") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/interfaces/innerkits/base:base",
     "${aafwk_path}/interfaces/innerkits/want:want",
-    "${services_path}/formmgr:fms_target",
+    "${form_runtime_path}:fms_target",
   ]
 
   external_deps = [

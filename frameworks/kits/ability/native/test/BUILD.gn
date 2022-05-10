@@ -52,7 +52,7 @@ config("module_private_config") {
   if (ability_runtime_graphics) {
     include_dirs += [
       "${global_path}/i18n/frameworks/intl/include",
-      "${aafwk_path}/frameworks/kits/fmskit/native/include",
+      "${form_runtime_path}/interfaces/kits/native/include",
     ]
   }
 }

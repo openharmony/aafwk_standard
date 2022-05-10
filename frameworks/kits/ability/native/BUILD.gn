@@ -29,7 +29,7 @@ config("ability_config") {
     "${services_path}/abilitymgr/include",
     "${kits_path}/appkit/native/ability_runtime/app",
     "${kits_path}/appkit/native/app/include",
-    "${kits_path}/fmskit/native/include",
+    "${form_runtime_path}/interfaces/kits/native/include",
     "${kits_path}/app/native/app/include",
     "${services_path}/common/include",
     "//third_party/node/src",
@@ -52,7 +52,7 @@ config("ability_config") {
   }
 
   if (ability_runtime_graphics) {
-    include_dirs += [ "${innerkits_path}/form_manager/include" ]
+    include_dirs += [ "${form_runtime_path}/interfaces/inner_api/include" ]
     defines += [ "SUPPORT_GRAPHICS" ]
   }
 }
@@ -81,8 +81,8 @@ config("ability_public_config") {
 
   if (ability_runtime_graphics) {
     include_dirs += [
-      "${kits_path}/fmskit/native/include",
-      "${innerkits_path}/form_manager/include",
+      "${form_runtime_path}/interfaces/kits/native/include",
+      "${form_runtime_path}/interfaces/inner_api/include",
       "${windowmanager_path}/interfaces/innerkits/wm",
       "${windowmanager_path}/interfaces/kits/napi/window_runtime/window_stage_napi",
     ]

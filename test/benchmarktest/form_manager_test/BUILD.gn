@@ -26,9 +26,9 @@ ohos_benchmarktest("BenchmarkTestForFormManager") {
   }
 
   deps = [
-    "${aafwk_path}/frameworks/kits/fmskit:fmskit_native",
-    "${aafwk_path}/interfaces/innerkits/form_manager:form_manager",
     "${aafwk_path}/interfaces/innerkits/want:want",
+    "${form_runtime_path}:fmskit_native",
+    "${form_runtime_path}:form_manager",
     "//third_party/benchmark:benchmark",
     "//third_party/googletest:gtest_main",
   ]
