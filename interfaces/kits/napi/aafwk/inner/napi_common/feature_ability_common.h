@@ -277,6 +277,11 @@ struct ShowOnLockScreenCB {
     bool isShow;
 };
 
+struct SetWakeUpScreenCB {
+    CBBase cbBase;
+    bool wakeUp;
+};
+
 static inline std::string NapiValueToStringUtf8(napi_env env, napi_value value)
 {
     std::string result = "";
