@@ -31,9 +31,9 @@ ohos_unittest("FmsFormMgrNotifyInvisibleFormsTest") {
     "${aafwk_path}/services/formmgr/include",
     "${appexecfwk_path}/services/bundlemgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
-    "${appexecfwk_innerkits_path}/appexecfwk_base/include/",
+    "${appexecfwk_inner_api_path}/appexecfwk_base/include/",
     "${form_runtime_path}/interfaces/inner_api/include",
-    "${appexecfwk_innerkits_path}/appexecfwk_core/include/bundlemgr/",
+    "${appexecfwk_inner_api_path}/appexecfwk_core/include/bundlemgr/",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
     "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
     "${appexecfwk_innerkits_path}/libeventhandler/include",
@@ -46,7 +46,7 @@ ohos_unittest("FmsFormMgrNotifyInvisibleFormsTest") {
   ]
 
   configs = [
-    #"${appexecfwk_innerkits_path}/appexecfwk_core:bundlemgr_sdk_config",
+    #"${appexecfwk_inner_api_path}/appexecfwk_core:bundlemgr_sdk_config",
     #"${form_runtime_path}:formmgr_config",
   ]
   cflags = []
@@ -59,7 +59,7 @@ ohos_unittest("FmsFormMgrNotifyInvisibleFormsTest") {
     #"${libs_path}/libeventhandler:libeventhandler_target",
     "${aafwk_path}/interfaces/innerkits/base:base",
     "${aafwk_path}/interfaces/innerkits/want:want",
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",

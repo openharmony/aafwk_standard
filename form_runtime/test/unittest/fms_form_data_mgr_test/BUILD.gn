@@ -29,9 +29,9 @@ ohos_unittest("FmsFormDataMgrTest") {
     "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
 
-    "${appexecfwk_innerkits_path}/appexecfwk_base/include/",
+    "${appexecfwk_inner_api_path}/appexecfwk_base/include/",
     "${form_runtime_path}/interfaces/inner_api/include",
-    "${appexecfwk_innerkits_path}/appexecfwk_core/include/bundlemgr/",
+    "${appexecfwk_inner_api_path}/appexecfwk_core/include/bundlemgr/",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
 
     #"${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
@@ -41,7 +41,7 @@ ohos_unittest("FmsFormDataMgrTest") {
   ]
 
   configs = [
-    #"${appexecfwk_innerkits_path}/appexecfwk_core:bundlemgr_sdk_config",
+    #"${appexecfwk_inner_api_path}/appexecfwk_core:bundlemgr_sdk_config",
     #"${form_runtime_path}:formmgr_config",
   ]
   cflags = []
@@ -50,7 +50,7 @@ ohos_unittest("FmsFormDataMgrTest") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${form_runtime_path}:fms_target",
 

@@ -118,10 +118,6 @@ static napi_value GetFormIds(napi_env env, napi_value value, ErrCode &errCode, s
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, value, &arrayLength));
-    if (arrayLength < 0) {
-        errCode = ERR_APPEXECFWK_FORM_FORM_ID_ARRAY_ERR;
-        return nullptr;
-    }
 
     for (size_t i = 0; i < arrayLength; i++) {
         napi_value napiFormId;
@@ -1192,7 +1188,7 @@ napi_value NAPI_NotifyVisibleForms(napi_env env, napi_callback_info info)
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, argv[0], &arrayLength));
-    if (arrayLength <= 0) {
+    if (arrayLength == 0) {
         AsyncErrMsgCallbackInfo *asyncErrorInfo = new
             AsyncErrMsgCallbackInfo {
                 .env = env,
@@ -1432,7 +1428,7 @@ napi_value NAPI_NotifyInvisibleForms(napi_env env, napi_callback_info info)
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, argv[0], &arrayLength));
-    if (arrayLength <= 0) {
+    if (arrayLength == 0) {
         AsyncErrMsgCallbackInfo *asyncErrorInfo = new
             AsyncErrMsgCallbackInfo {
                 .env = env,
@@ -1672,7 +1668,7 @@ napi_value NAPI_EnableFormsUpdate(napi_env env, napi_callback_info info)
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, argv[0], &arrayLength));
-    if (arrayLength <= 0) {
+    if (arrayLength == 0) {
         AsyncErrMsgCallbackInfo *asyncErrorInfo = new
             AsyncErrMsgCallbackInfo {
                 .env = env,
@@ -1911,7 +1907,7 @@ napi_value NAPI_DisableFormsUpdate(napi_env env, napi_callback_info info)
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, argv[0], &arrayLength));
-    if (arrayLength <= 0) {
+    if (arrayLength == 0) {
         AsyncErrMsgCallbackInfo *asyncErrorInfo = new
             AsyncErrMsgCallbackInfo {
                 .env = env,
@@ -2352,9 +2348,6 @@ napi_value NAPI_DeleteInvalidForms(napi_env env, napi_callback_info info)
 
     uint32_t arrayLength = 0;
     NAPI_CALL(env, napi_get_array_length(env, argv[0], &arrayLength));
-    if (arrayLength < 0) {
-        return RetErrMsg(InitErrMsg(env, ERR_APPEXECFWK_FORM_FORM_ID_ARRAY_ERR, callbackType, argv[1]));
-    }
 
     std::vector<int64_t> formIds;
     formIds.clear();
@@ -2452,7 +2445,10 @@ public:
 
     virtual ~FormStateCallbackClient()
     {
-        delete asyncCallbackInfo_;
+        if (asyncCallbackInfo_ != nullptr) {
+            delete asyncCallbackInfo_;
+            asyncCallbackInfo_ = nullptr;
+        }
     }
 
     void ProcessAcquireState(FormState state) override

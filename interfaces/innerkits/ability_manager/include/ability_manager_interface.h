@@ -121,6 +121,24 @@ public:
         int32_t userId = DEFAULT_INVAL_VALUE,
         int requestCode = DEFAULT_INVAL_VALUE) = 0;
 
+    /**
+     * Start extension ability with want, send want to ability manager service.
+     *
+     * @param want, the want of the ability to start.
+     * @param callerToken, caller ability token.
+     * @param userId, Designation User ID.
+     * @param extensionType If an ExtensionAbilityType is set, only extension of that type can be started.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StartExtensionAbility(
+        const Want &want,
+        const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        AppExecFwk::ExtensionAbilityType extensionType = AppExecFwk::ExtensionAbilityType::UNSPECIFIED)
+    {
+        return 0;
+    }
+
     virtual int GetAppMemorySize()
     {
         return 0;
@@ -771,6 +789,9 @@ public:
 
         // dump ability info done (59)
         DUMP_ABILITY_INFO_DONE,
+
+        // start extension ability (60)
+        START_EXTENSION_ABILITY,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)

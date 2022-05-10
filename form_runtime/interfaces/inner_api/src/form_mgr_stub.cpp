@@ -442,8 +442,13 @@ int32_t FormMgrStub::HandleRouterEvent(MessageParcel &data, MessageParcel &reply
 {
     HILOG_INFO("%{public}s called.", __func__);
     int64_t formId = data.ReadInt64();
+    std::unique_ptr<Want> want(data.ReadParcelable<Want>());
+    if (!want) {
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
 
-    int32_t result = RouterEvent(formId);
+    int32_t result = RouterEvent(formId, *want);
     reply.WriteInt32(result);
     return result;
 }

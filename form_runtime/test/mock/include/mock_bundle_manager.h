@@ -34,17 +34,9 @@ public:
     {}
     virtual ~BundleMgrProxy()
     {}
-    MOCK_METHOD3(CanRequestPermission,
-        bool(const std::string &bundleName, const std::string &permissionName, const int userId));
-    MOCK_METHOD3(RequestPermissionFromUser,
-        bool(const std::string &bundleName, const std::string &permission, const int userId));
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &));
-    MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD2(RegisterPermissionsChanged,
-        bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override
     {
         return true;
@@ -120,20 +112,7 @@ public:
         return 0;
     }
 
-    virtual int CheckPermission(const std::string &bundleName, const std::string &permission) override
-    {
-        return 0;
-    }
     virtual bool GetPermissionDef(const std::string &permissionName, PermissionDef &permissionDef) override
-    {
-        return true;
-    }
-    virtual bool GetAllPermissionGroupDefs(std::vector<PermissionDef> &permissionDefs) override
-    {
-        return true;
-    }
-    virtual bool GetAppsGrantedPermissions(
-        const std::vector<std::string> &permissions, std::vector<std::string> &appNames) override
     {
         return true;
     }
@@ -248,19 +227,10 @@ public:
 class BundleMgrService : public BundleMgrStub {
 public:
     MOCK_METHOD2(GetAppIdByBundleName, std::string(const std::string &bundleName, const int userId));
-    MOCK_METHOD2(CheckPermission, int(const std::string &bundleName, const std::string &permission));
     MOCK_METHOD2(CleanBundleDataFiles, bool(const std::string &bundleName, const int userId));
-    MOCK_METHOD3(
-        CanRequestPermission, bool(const std::string &bundleName, const std::string &permissionName, const int userId));
-    MOCK_METHOD3(RequestPermissionFromUser,
-        bool(const std::string &bundleName, const std::string &permission, const int userId));
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &));
-    MOCK_METHOD1(RegisterAllPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD2(RegisterPermissionsChanged,
-        bool(const std::vector<int> &uids, const sptr<OnPermissionChangedCallback> &callback));
-    MOCK_METHOD1(UnregisterPermissionsChanged, bool(const sptr<OnPermissionChangedCallback> &callback));
     bool QueryAbilityInfo(const AAFwk::Want &want, AbilityInfo &abilityInfo) override;
     bool QueryAbilityInfoByUri(const std::string &uri, AbilityInfo &abilityInfo) override;
 
@@ -323,15 +293,6 @@ public:
     {
         return true;
     };
-    virtual bool GetAllPermissionGroupDefs(std::vector<PermissionDef> &permissionDefs) override
-    {
-        return true;
-    };
-    virtual bool GetAppsGrantedPermissions(
-        const std::vector<std::string> &permissions, std::vector<std::string> &appNames) override
-    {
-        return true;
-    };
     virtual bool HasSystemCapability(const std::string &capName) override
     {
         return true;
@@ -388,11 +349,6 @@ public:
         return true;
     }
     virtual bool QueryAbilityInfosByUri(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos) override
-    {
-        return true;
-    }
-    virtual int CheckPermissionByUid(
-        const std::string &bundleName, const std::string &permission, const int userId) override
     {
         return true;
     }
@@ -458,6 +414,14 @@ public:
         const std::string &bundleName, const std::string &abilityName,
         const int64_t launchTime, const int uid = 0) override
     {
+        return true;
+    }
+
+    virtual bool ImplicitQueryInfoByPriority(const Want &want, int32_t flags, int32_t userId,
+        AbilityInfo &abilityInfo, ExtensionAbilityInfo &extensionInfo) override
+    {
+        abilityInfo.name = "MainAbility";
+        abilityInfo.bundleName = "com.ohos.launcher";
         return true;
     }
 };

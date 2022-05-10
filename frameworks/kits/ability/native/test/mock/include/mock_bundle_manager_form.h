@@ -113,20 +113,7 @@ public:
         return 0;
     }
 
-    virtual int CheckPermission(const std::string &bundleName, const std::string &permission) override
-    {
-        return 0;
-    }
     virtual bool GetPermissionDef(const std::string &permissionName, PermissionDef &permissionDef) override
-    {
-        return true;
-    }
-    virtual bool GetAllPermissionGroupDefs(std::vector<PermissionDef> &permissionDefs) override
-    {
-        return true;
-    }
-    virtual bool GetAppsGrantedPermissions(
-        const std::vector<std::string> &permissions, std::vector<std::string> &appNames) override
     {
         return true;
     }
@@ -308,15 +295,6 @@ public:
     {
         return true;
     };
-    virtual bool GetAllPermissionGroupDefs(std::vector<PermissionDef> &permissionDefs) override
-    {
-        return true;
-    };
-    virtual bool GetAppsGrantedPermissions(
-        const std::vector<std::string> &permissions, std::vector<std::string> &appNames) override
-    {
-        return true;
-    };
     virtual bool HasSystemCapability(const std::string &capName) override
     {
         return true;
@@ -404,11 +382,6 @@ public:
         return true;
     }
     virtual bool QueryAbilityInfosByUri(const std::string &abilityUri, std::vector<AbilityInfo> &abilityInfos) override
-    {
-        return true;
-    }
-    virtual int CheckPermissionByUid(
-        const std::string &bundleName, const std::string &permission, const int userId) override
     {
         return true;
     }

@@ -99,17 +99,6 @@ public:
     MOCK_METHOD0(GetBundleInstaller, sptr<IBundleInstaller>());
     MOCK_METHOD1(GetBundleInstaller, bool(const std::string &));
     MOCK_METHOD1(IsApplicationEnabled, bool(const std::string &));
-
-    virtual bool CanRequestPermission(
-        const std::string &bundleName, const std::string &permissionName, const int userId) override
-    {
-        return true;
-    }
-    virtual bool RequestPermissionFromUser(
-        const std::string &bundleName, const std::string &permission, const int userId) override
-    {
-        return true;
-    }
     MOCK_METHOD2(GetNameForUid, bool(const int uid, std::string &name));
     MOCK_METHOD2(GetBundlesForUid, bool(const int uid, std::vector<std::string> &));
     MOCK_METHOD1(IsAbilityEnabled, bool(const AbilityInfo &));
