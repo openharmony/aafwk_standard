@@ -130,6 +130,7 @@ struct AbilityRequest {
     int32_t uid = 0;
     int requestCode = -1;
     bool restart = false;
+    int32_t restartCount = -1;
 
     // call ability
     int callerUid = -1;
@@ -749,6 +750,8 @@ public:
     bool GetPowerState() const;
 
     void SetRestarting(const bool isRestart);
+    void SetRestarting(const bool isRestart, int32_t canReStartCount);
+    int32_t GetRestartCount() const;
     bool IsRestarting() const;
     void SetAppState(const AppState &state);
     AppState GetAppState() const;
@@ -800,6 +803,8 @@ public:
     void SetWindowMode(int32_t windowMode);
     void RemoveWindowMode();
     LifeCycleStateInfo lifeCycleStateInfo_;                // target life state info
+
+    bool CanRestartRootLauncher();
 
 protected:
     void SendEvent(uint32_t msg, uint32_t timeOut);
