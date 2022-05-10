@@ -1060,23 +1060,6 @@ bool ContextContainer::SetMissionInformation(const MissionInformation &missionIn
     return (errval == ERR_OK) ? true : false;
 }
 
-/**
- * set lock screen
- *
- * @param isAllow Whether to allow lock screen.
- *
- */
-void ContextContainer::SetShowOnLockScreen(bool isAllow)
-{
-    if (baseContext_ == nullptr) {
-        HILOG_ERROR("ContextContainer::SetShowOnLockScreen baseContext_ is nullptr");
-        return;
-    }
-
-    baseContext_->SetShowOnLockScreen(isAllow);
-    HILOG_INFO("ContextContainer::SetShowOnLockScreen called end.");
-}
-
 bool ContextContainer::IsUpdatingConfigurations()
 {
     if (baseContext_ != nullptr) {

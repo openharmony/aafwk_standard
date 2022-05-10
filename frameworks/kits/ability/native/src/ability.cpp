@@ -84,6 +84,7 @@ const int Ability::DEFAULT_DMS_SESSION_ID(0);
 const std::string PERMISSION_REQUIRE_FORM = "ohos.permission.REQUIRE_FORM";
 const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
+const std::string SHOW_ON_LOCK_SCREEN = "ShowOnLockScreen";
 
 #ifdef SUPPORT_GRAPHICS
 static std::mutex formLock;
@@ -926,6 +927,23 @@ void Ability::SetCompatibleVersion(int32_t compatibleVersion)
 }
 
 #ifdef SUPPORT_GRAPHICS
+void Ability::SetShowOnLockScreen(bool showOnLockScreen)
+{
+    HILOG_INFO("SetShowOnLockScreen come, showOnLockScreen is %{public}d", showOnLockScreen);
+    showOnLockScreen_ = showOnLockScreen;
+    sptr<Rosen::Window> window = nullptr;
+    if (abilityWindow_ == nullptr || (window = abilityWindow_->GetWindow()) == nullptr) {
+        HILOG_INFO("SetShowOnLockScreen come, window is null");
+        return;
+    }
+    HILOG_INFO("SetShowOnLockScreen come, addWindowFlag, showOnLockScreen is %{public}d", showOnLockScreen);
+    if (showOnLockScreen) {
+        window->AddWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
+    } else {
+        window->RemoveWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
+    }
+}
+
 /**
  * @brief Called when a key is lone pressed.
  *
@@ -3578,6 +3596,19 @@ sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
         AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
     HILOG_INFO("Ability::GetWindowOption window mode is %{public}d.", windowMode);
     option->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
+    bool showOnLockScreen = false;
+    if (abilityInfo_) {
+        std::vector<CustomizeData> datas = abilityInfo_->metaData.customizeData;
+        for (CustomizeData data : datas) {
+            if (data.name == SHOW_ON_LOCK_SCREEN) {
+                showOnLockScreen = true;
+            }
+        }
+    }
+    if (showOnLockScreen_ || showOnLockScreen) {
+        HILOG_DEBUG("Ability::GetWindowOption come, add window flag WINDOW_FLAG_SHOW_WHEN_LOCKED.");
+        option->AddWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
+    }
 
     if (want.GetElement().GetBundleName() == LAUNCHER_BUNDLE_NAME &&
         want.GetElement().GetAbilityName() == LAUNCHER_ABILITY_NAME) {
