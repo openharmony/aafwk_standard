@@ -920,7 +920,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
             HILOG_ERROR("OHOSApplication::OHOSApplication: Failed to create runtime");
             return;
         }
-        // auto& jsEngine = (static_cast<AbilityRuntime::JsRuntime&>(*runtime)).GetNativeEngine();
+        
         auto bundleName = appInfo.bundleName;
         auto versionCode = appInfo.versionCode;
         wptr<MainThread> weak = this;
@@ -962,7 +962,7 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
                 bundleName.c_str(), errorName.c_str(), summary.c_str());
             appThread->ScheduleProcessSecurityExit();
         };
-        // jsEngine.RegisterUncaughtExceptionHandler(uncaughtTask);
+        jsEngine.RegisterUncaughtExceptionHandler(uncaughtTask);
         application_->SetRuntime(std::move(runtime));
 
         AbilityLoader::GetInstance().RegisterAbility("Ability", [application = application_]() {
