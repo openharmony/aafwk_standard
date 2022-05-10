@@ -19,7 +19,7 @@ config("appmgr_test_service_config") {
     "${aafwk_path}/services/abilitymgr/test/mock/appmgr_test_service/include/",
     "${aafwk_path}/services/abilitymgr/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
-    "${appexecfwk_innerkits_path}/appexecfwk_core/include",
+    "${appexecfwk_inner_api_path}/appexecfwk_core/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/services/common/include",
@@ -44,7 +44,7 @@ ohos_source_set("appmgr_test_service") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${innerkits_path}/want:want",
     "//third_party/jsoncpp:jsoncpp",

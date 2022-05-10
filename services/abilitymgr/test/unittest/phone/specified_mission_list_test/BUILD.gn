@@ -41,7 +41,7 @@ ohos_unittest("specified_mission_list_test") {
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/services/abilitymgr:abilityms",
-    "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base",
+    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${innerkits_path}/uri:zuri",
     "${innerkits_path}/want:want",

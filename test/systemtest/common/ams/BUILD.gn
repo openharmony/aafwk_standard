@@ -21,8 +21,8 @@ config("ams_system_test_config") {
   ]
 
   configs = [
-    # "${appexecfwk_innerkits_path}/appexecfwk_core:bundlemgr_sdk_config",
-    # "${appexecfwk_innerkits_path}/appexecfwk_base:appexecfwk_base_sdk_config",
+    # "${appexecfwk_inner_api_path}/appexecfwk_core:bundlemgr_sdk_config",
+    # "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base_sdk_config",
   ]
 }
 
