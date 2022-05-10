@@ -20,6 +20,7 @@
 #include "base_def.h"
 #include "refbase.h"
 #include "user_object_base.h"
+#include "foundation/communication/ipc/interfaces/innerkits/ipc_core/include/iremote_object.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -208,6 +209,19 @@ INTERFACE(IUserObject, 4edb325d - 8532 - 4af7 - b42e - 82f4f29dfdea)
     }
 
     virtual ErrCode GetValue(std::shared_ptr<UserObjectBase> & value) = 0; /* [out] */
+};
+
+INTERFACE(IRemoteObjectWrap, 520d74e7 - 9aff - 7191 - 31b5 - f60c47f25c41)
+{
+    inline static IRemoteObjectWrap *Query(IInterface * object)
+    {
+        if (object == nullptr) {
+            return nullptr;
+        }
+        return static_cast<IRemoteObjectWrap *>(object->Query(g_IID_IRemoteObjectWrap));
+    }
+
+    virtual sptr<IRemoteObject> GetValue() = 0;
 };
 
 }  // namespace AAFwk
