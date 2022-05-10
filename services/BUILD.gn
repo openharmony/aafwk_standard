@@ -21,9 +21,3 @@ group("ams_services_target") {
     "uripermmgr:libupms",
   ]
 }
-
-group("fms_services_target") {
-  if (ability_runtime_graphics) {
-    deps = [ "formmgr:fms_target" ]
-  }
-}

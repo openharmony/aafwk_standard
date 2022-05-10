@@ -10,22 +10,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import("//foundation/aafwk/standard/aafwk.gni")
 
-group("innerkits_target") {
-  deps = [
-    "ability_manager:ability_manager",
-    "app_manager:app_manager",
-    "dataobs_manager:dataobs_manager",
-    "uri_permission:uri_permission_mgr",
-    "want:want",
-  ]
-}
+import("//build/ohos/sa_profile/sa_profile.gni")
 
-group("base_innerkits_target") {
-  deps = [
-    "app_manager:configuration",
-    "base:base",
-    "want:want",
-  ]
+ohos_sa_profile("form_sa_profile") {
+  sources = [ "403.xml" ]
+
+  part_name = "form_runtime"
 }
