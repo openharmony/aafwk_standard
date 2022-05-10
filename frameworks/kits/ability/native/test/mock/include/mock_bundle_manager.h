@@ -95,6 +95,14 @@ public:
     virtual bool NotifyAbilityLifeStatus(
         const std::string &bundleName, const std::string &abilityName, const int64_t launchTime, const int uid)
         override;
+
+    virtual bool ImplicitQueryInfoByPriority(const Want &want, int32_t flags, int32_t userId,
+        AbilityInfo &abilityInfo, ExtensionAbilityInfo &extensionInfo) override
+    {
+        abilityInfo.name = "MainAbility";
+        abilityInfo.bundleName = "com.ohos.launcher";
+        return true;
+    }
 };
 
 class BundleMgrStub : public IRemoteStub<IBundleMgr> {
