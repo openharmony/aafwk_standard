@@ -3760,5 +3760,27 @@ void Ability::RequsetFocus(const Want &want)
     abilityWindow_->OnPostAbilityForeground(sceneFlag_);
 }
 #endif
+
+ErrCode Ability::StartFeatureAbilityForResult(const Want &want, int requestCode, FeatureAbilityTask &&task)
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    resultCallbacks_.insert(make_pair(requestCode, std::move(task)));
+    ErrCode err = StartAbilityForResult(want, requestCode);
+    HILOG_INFO("%{public}s end. ret=%{public}d", __func__, err);
+    return err;
+}
+
+void Ability::OnFeatureAbilityResult(int requestCode, int resultCode, const Want &want)
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    auto callback = resultCallbacks_.find(requestCode);
+    if (callback != resultCallbacks_.end()) {
+        if (callback->second) {
+            callback->second(resultCode, want);
+        }
+        resultCallbacks_.erase(requestCode);
+    }
+    HILOG_INFO("%{public}s end.", __func__);
+}
 }  // namespace AppExecFwk
 }  // namespace OHOS
