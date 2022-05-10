@@ -2013,6 +2013,7 @@ void MissionListManager::NotifyAnimationFromRecentTask(const std::shared_ptr<Abi
     }
     SetAbilityTransitionInfo(abilityInfo, toInfo, abilityRecord);
     sptr<AbilityTransitionInfo> fromInfo = new AbilityTransitionInfo();
+    fromInfo->isRecent_ = true;
     windowHandler->NotifyWindowTransition(fromInfo, toInfo);
 }
 
