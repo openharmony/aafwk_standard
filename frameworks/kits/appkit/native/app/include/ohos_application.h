@@ -23,7 +23,7 @@
 #include "ability_lifecycle_callbacks.h"
 #include "ability_runtime/context/context.h"
 #include "ability_stage.h"
-#include "application_context.h"
+#include "app/include/application_context.h"
 #include "element_callback.h"
 
 namespace OHOS {

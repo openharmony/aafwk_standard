@@ -19,7 +19,7 @@
 #include "ability_constants.h"
 #include "ability_manager_client.h"
 #include "ability_manager_errors.h"
-#include "application_context.h"
+#include "app/include/application_context.h"
 #include "bundle_constants.h"
 #include "hilog_wrapper.h"
 
