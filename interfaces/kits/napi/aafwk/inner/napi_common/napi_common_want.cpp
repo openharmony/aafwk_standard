@@ -971,7 +971,7 @@ bool HandleRemoteObject(napi_env env, napi_value param, std::string strProName, 
 
             WantParams wp;
             wp.SetParam(TYPE_PROPERTY, String::Box(REMOTE_OBJECT));
-            wp.SetParam(VALUE_PROPERTY, AAFwk::RemoteObjectWrapper::Box(remoteObject));
+            wp.SetParam(VALUE_PROPERTY, AAFwk::RemoteObjectWrap::Box(remoteObject));
             sptr<AAFwk::IWantParams> pWantParams = AAFwk::WantParamWrapper::Box(wp);
             wantParams.SetParam(strProName, pWantParams);
             return false;
