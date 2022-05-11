@@ -41,7 +41,6 @@ ohos_unittest("AmsAppStateCallbackTest") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "//third_party/googletest:gmock_main",
     "//utils/native/base:utils",
   ]

@@ -37,7 +37,6 @@ ohos_moduletest("PandingWantMgrTest") {
     "${aafwk_path}/services/abilitymgr/test/mock/libs/sa_mgr/src/sa_mgr_client_mock.cpp",
     "${aafwk_path}/services/test/mock/src/mock_app_mgr_client.cpp",
     "${aafwk_path}/services/test/mock/src/mock_bundle_mgr.cpp",
-    "${appexecfwk_path}/common/log/src/app_log_wrapper.cpp",
     "panding_want_manager_test.cpp",
   ]
 

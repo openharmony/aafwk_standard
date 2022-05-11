@@ -42,7 +42,6 @@ ohos_unittest("AppRunningProcessesInfoTest") {
 
   sources += [ "app_running_processes_info_test.cpp" ]
 
-  configs = [ "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
@@ -52,7 +51,6 @@ ohos_unittest("AppRunningProcessesInfoTest") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/services/appmgr:libappms",
     "${appexecfwk_inner_api_path}/appexecfwk_core:appexecfwk_core",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
   ]
@@ -66,6 +64,7 @@ ohos_unittest("AppRunningProcessesInfoTest") {
     "access_token:libaccesstoken_sdk",
     "appspawn:appspawn_socket_client",
     "common_event_service:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",

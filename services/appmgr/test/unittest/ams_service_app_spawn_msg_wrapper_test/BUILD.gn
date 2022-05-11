@@ -36,12 +36,9 @@ ohos_unittest("AmsServiceAppSpawnMsgWrapperTest") {
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
-  configs = [ "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config" ]
+  configs = []
 
-  deps = [
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
-    "${services_path}/appmgr/test:appmgr_test_source",
-  ]
+  deps = [ "${services_path}/appmgr/test:appmgr_test_source" ]
 
   if (os_account_part_enabled) {
     cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]

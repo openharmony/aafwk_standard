@@ -25,7 +25,6 @@ ohos_unittest("ams_mgr_scheduler_dump_test") {
 
   deps = [
     "${aafwk_path}/services/appmgr:libappms",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]

@@ -24,7 +24,6 @@ ohos_unittest("ability_manager_proxy_test") {
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "${aafwk_path}/services/abilitymgr/test/mock/libs/ability_scheduler_mock",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include",
   ]
 

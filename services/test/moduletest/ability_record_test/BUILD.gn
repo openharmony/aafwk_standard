@@ -65,7 +65,6 @@ ohos_moduletest("AbilityRecordModuleTest") {
 
   configs = [
     "${services_path}/test:aafwk_module_test_config",
-    "${appexecfwk_path}/common:appexecfwk_common_config",
     "${appexecfwk_inner_api_path}/appexecfwk_core:appexecfwk_core_config",
     "${appexecfwk_innerkits_path}/libeventhandler:public_libeventhandler_config",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_config",

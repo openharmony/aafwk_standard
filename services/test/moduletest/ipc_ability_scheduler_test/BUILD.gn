@@ -26,7 +26,6 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
 
   sources = [
     "${aafwk_path}/frameworks/kits/content/cpp/src/ohos/aafwk/content/pac_map.cpp",
-    "${appexecfwk_path}/common/log/src/app_log_wrapper.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_proxy.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_stub.cpp",
     "${services_path}/abilitymgr/src/caller_info.cpp",
@@ -37,7 +36,6 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
 
   configs = [
     "${services_path}/test:aafwk_module_test_config",
-    "${appexecfwk_path}/common:appexecfwk_common_config",
     "${aafwk_path}/interfaces/innerkits/want:want_public_config",
   ]
   cflags = []
