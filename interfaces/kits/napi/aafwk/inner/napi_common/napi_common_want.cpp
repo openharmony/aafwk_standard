@@ -947,14 +947,14 @@ bool HandleRemoteObject(napi_env env, napi_value param, std::string strProName, 
     HILOG_INFO("%{public}s called. Property name=%{public}s.", __func__, strProName.c_str());
     napi_value jsWantParamProValue = nullptr;
     NAPI_CALL_BASE(env, napi_get_named_property(env, param, strProName.c_str(), &jsWantParamProValue), false);
-    jsProValue = nullptr;
+    napi_value jsProValue = nullptr;
     NAPI_CALL_BASE(env, napi_get_named_property(env, jsWantParamProValue, VALUE_PROPERTY.c_str(), &jsProValue),
         false);
 
     sptr<IRemoteObject> remoteObject = NAPI_ohos_rpc_getNativeRemoteObject(env, jsProValue);
     if (remoteObject == nullptr) {
         HILOG_ERROR("%{public}s called, transfer to remoteObject fail", __func__);
-        return;
+        return false;
     }
 
     WantParams wp;
