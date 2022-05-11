@@ -922,7 +922,7 @@ bool IsSpecialObject(napi_env env, napi_value param, std::string strProName, std
     return true;
 }
 
-void HandleFdObject(napi_env env, napi_value param, std::string strProName, AAFwk::WantParams &wantParams)
+bool HandleFdObject(napi_env env, napi_value param, std::string strProName, AAFwk::WantParams &wantParams)
 {
     HILOG_INFO("%{public}s called. Property name=%{public}s.", __func__, strProName.c_str());
     napi_value jsWantParamProValue = nullptr;
@@ -939,9 +939,10 @@ void HandleFdObject(napi_env env, napi_value param, std::string strProName, AAFw
     wp.SetParam(VALUE_PROPERTY, Integer::Box(natValue32));
     sptr<AAFwk::IWantParams> pWantParams = AAFwk::WantParamWrapper::Box(wp);
     wantParams.SetParam(strProName, pWantParams);
+    return true;
 }
 
-void HandleRemoteObject(napi_env env, napi_value param, std::string strProName, AAFwk::WantParams &wantParams)
+bool HandleRemoteObject(napi_env env, napi_value param, std::string strProName, AAFwk::WantParams &wantParams)
 {
     HILOG_INFO("%{public}s called. Property name=%{public}s.", __func__, strProName.c_str());
     napi_value jsWantParamProValue = nullptr;
@@ -961,6 +962,7 @@ void HandleRemoteObject(napi_env env, napi_value param, std::string strProName, 
     wp.SetParam(VALUE_PROPERTY, AAFwk::RemoteObjectWrap::Box(remoteObject));
     sptr<AAFwk::IWantParams> pWantParams = AAFwk::WantParamWrapper::Box(wp);
     wantParams.SetParam(strProName, pWantParams);
+    return true;
 }
 
 napi_value InnerWrapWantOptions(napi_env env, const Want &want)
