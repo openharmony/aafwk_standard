@@ -45,8 +45,8 @@ const std::string ABILITY_TOOL_HELP_MSG_START =
     "ability_tool start options list:\n"
     "  --help                      list available options\n"
     "  --device <device-id>        device Id\n"
-    "  --ability <ability-name>    ability name\n"
-    "  --bundle <bundle-name>      bundle name\n"
+    "  --ability <ability-name>    ability name, mandatory\n"
+    "  --bundle <bundle-name>      bundle name, mandatory\n"
     "  --options <key> <value>     start options, such as windowMode 102\n"
     "  --flags <flag>              flags in a want\n"
     "  -C                          cold start\n"
@@ -57,21 +57,21 @@ const std::string ABILITY_TOOL_HELP_MSG_STOP_SERVICE =
     "ability_tool stop-service options list:\n"
     "  --help                      list available options\n"
     "  --device <device-id>        device Id\n"
-    "  --ability <ability-name>    ability name\n"
-    "  --bundle <bundle-name>      bundle name\n";
+    "  --ability <ability-name>    ability name, mandatory\n"
+    "  --bundle <bundle-name>      bundle name, mandatory\n";
 
 const std::string ABILITY_TOOL_HELP_MSG_FORCE_STOP =
     "usage: ability_tool force-stop <options>\n"
     "ability_tool force-stop options list:\n"
     "  --help                      list available options\n"
-    "  <bundle-name>               bundle name\n";
+    "  <bundle-name>               bundle name, mandatory\n";
 
 const std::string ABILITY_TOOL_HELP_MSG_TEST =
     "usage: ability_tool test <options>\n"
     "ability_tool test options list:\n"
     "  --help                              list available options\n"
-    "  --bundle <bundle-name>              bundle name\n"
-    "  --options unittest <test-runner>    test runner need to start\n"
+    "  --bundle <bundle-name>              bundle name, mandatory\n"
+    "  --options unittest <test-runner>    test runner need to start, mandatory\n"
     "  --package-name <package-name>       package name, required for the FA model\n"
     "  --module-name <module-name>         module name, required for the STAGE model\n"
     "  --options <key> <value>             test options, such as testcase test_001\n"
@@ -83,6 +83,7 @@ const std::string ABILITY_TOOL_HELP_MSG_NO_BUNDLE_NAME_OPTION = "error: --bundle
 const std::string ABILITY_TOOL_HELP_MSG_WINDOW_MODE_INVALID = "error: --options windowMode <value> with invalid param";
 const std::string ABILITY_TOOL_HELP_MSG_LACK_VALUE = "error: lack of value of key";
 const std::string ABILITY_TOOL_HELP_MSG_ONLY_NUM = "error: current option only support number";
+const std::string ABILITY_TOOL_HELP_LACK_OPTIONS = "error: lack of essential args";
 
 const std::string shortOptionsForTest = "hb:o:p:m:w:D";
 const struct option longOptionsForTest[] = {
@@ -194,7 +195,7 @@ ErrCode AbilityToolCommand::RunAsStopService()
 ErrCode AbilityToolCommand::RunAsForceStop()
 {
     if (argList_.empty()) {
-        resultReceiver_.append(ABILITY_TOOL_HELP_MSG_FORCE_STOP + "\n");
+        resultReceiver_.append(ABILITY_TOOL_HELP_MSG_FORCE_STOP);
         return OHOS::ERR_INVALID_VALUE;
     }
 
@@ -229,7 +230,7 @@ ErrCode AbilityToolCommand::RunAsTestCommand()
 
     if (!aaShellCmd_.get()->IsTestCommandIntegrity(params)) {
         HILOG_ERROR("test command lack of essential args.");
-        resultReceiver_ = "error: lack of essential args.\n";
+        resultReceiver_ = ABILITY_TOOL_HELP_LACK_OPTIONS + "\n";
         resultReceiver_.append(ABILITY_TOOL_HELP_MSG_TEST);
         return OHOS::ERR_INVALID_VALUE;
     }
