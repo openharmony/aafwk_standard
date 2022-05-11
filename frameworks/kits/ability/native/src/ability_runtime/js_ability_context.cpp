@@ -62,7 +62,7 @@ void JsAbilityContext::Finalizer(NativeEngine* engine, void* data, void* hint)
 
 NativeValue* JsAbilityContext::StartAbility(NativeEngine* engine, NativeCallbackInfo* info)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
     return (me != nullptr) ? me->OnStartAbility(*engine, *info) : nullptr;
 }
@@ -81,7 +81,7 @@ NativeValue* JsAbilityContext::StartAbilityByCall(NativeEngine* engine, NativeCa
 
 NativeValue* JsAbilityContext::StartAbilityForResult(NativeEngine* engine, NativeCallbackInfo* info)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
     return (me != nullptr) ? me->OnStartAbilityForResult(*engine, *info) : nullptr;
 }

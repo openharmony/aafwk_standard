@@ -836,7 +836,7 @@ int MissionListManager::DispatchForegroundNew(const std::shared_ptr<AbilityRecor
 
 void MissionListManager::CompleteForegroundNew(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
 
     CHECK_POINTER(abilityRecord);

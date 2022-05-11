@@ -111,7 +111,7 @@ int AppMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParce
 
 int32_t AppMgrStub::HandleAttachApplication(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IRemoteObject> client = data.ReadRemoteObject();
     AttachApplication(client);
     return NO_ERROR;
@@ -119,28 +119,28 @@ int32_t AppMgrStub::HandleAttachApplication(MessageParcel &data, MessageParcel &
 
 int32_t AppMgrStub::HandleApplicationForegrounded(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     ApplicationForegrounded(data.ReadInt32());
     return NO_ERROR;
 }
 
 int32_t AppMgrStub::HandleApplicationBackgrounded(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     ApplicationBackgrounded(data.ReadInt32());
     return NO_ERROR;
 }
 
 int32_t AppMgrStub::HandleApplicationTerminated(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     ApplicationTerminated(data.ReadInt32());
     return NO_ERROR;
 }
 
 int32_t AppMgrStub::HandleCheckPermission(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     int32_t recordId = data.ReadInt32();
     std::string permission = data.ReadString();
     int32_t result = CheckPermission(recordId, permission);
@@ -150,7 +150,7 @@ int32_t AppMgrStub::HandleCheckPermission(MessageParcel &data, MessageParcel &re
 
 int32_t AppMgrStub::HandleAbilityCleaned(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IRemoteObject> token = data.ReadRemoteObject();
     AbilityCleaned(token);
     return NO_ERROR;
@@ -158,7 +158,7 @@ int32_t AppMgrStub::HandleAbilityCleaned(MessageParcel &data, MessageParcel &rep
 
 int32_t AppMgrStub::HandleGetAmsMgr(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     int32_t result = NO_ERROR;
     sptr<IAmsMgr> amsMgr = GetAmsMgr();
     if (!amsMgr) {
@@ -176,7 +176,7 @@ int32_t AppMgrStub::HandleGetAmsMgr(MessageParcel &data, MessageParcel &reply)
 
 int32_t AppMgrStub::HandleClearUpApplicationData(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::string bundleName = data.ReadString();
     int32_t result = ClearUpApplicationData(bundleName);
     reply.WriteInt32(result);
@@ -185,7 +185,7 @@ int32_t AppMgrStub::HandleClearUpApplicationData(MessageParcel &data, MessagePar
 
 int32_t AppMgrStub::HandleGetAllRunningProcesses(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::vector<RunningProcessInfo> info;
     auto result = GetAllRunningProcesses(info);
     reply.WriteInt32(info.size());
@@ -202,7 +202,7 @@ int32_t AppMgrStub::HandleGetAllRunningProcesses(MessageParcel &data, MessagePar
 
 int32_t AppMgrStub::HandleGetProcessRunningInfosByUserId(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     int32_t userId = data.ReadInt32();
     std::vector<RunningProcessInfo> info;
     auto result = GetProcessRunningInfosByUserId(info, userId);
@@ -220,7 +220,7 @@ int32_t AppMgrStub::HandleGetProcessRunningInfosByUserId(MessageParcel &data, Me
 
 int32_t AppMgrStub::HandleGetSystemMemoryAttr(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     SystemMemoryAttr memoryInfo;
     std::string strConfig;
     data.ReadString(strConfig);
@@ -241,7 +241,7 @@ int32_t AppMgrStub::HandleAddAbilityStageDone(MessageParcel &data, MessageParcel
 
 int32_t AppMgrStub::HandleStartupResidentProcess(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::vector<AppExecFwk::BundleInfo> bundleInfos;
     int32_t infoSize = data.ReadInt32();
     for (int32_t i = 0; i < infoSize; i++) {
@@ -350,7 +350,7 @@ int32_t AppMgrStub::HandleScheduleAcceptWantDone(MessageParcel &data, MessagePar
 
 int32_t AppMgrStub::HandleGetAbilityRecordsByProcessID(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     int32_t pid = data.ReadInt32();
     std::vector<sptr<IRemoteObject>> tokens;
     auto result = GetAbilityRecordsByProcessID(pid, tokens);

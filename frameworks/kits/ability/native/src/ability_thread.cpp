@@ -197,7 +197,7 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
     const std::shared_ptr<AbilityLocalRecord> &abilityRecord, const std::shared_ptr<EventRunner> &mainRunner,
     const std::shared_ptr<AbilityRuntime::Context> &stageContext)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     if ((application == nullptr) || (abilityRecord == nullptr) || (mainRunner == nullptr)) {
         HILOG_ERROR("Attach ability failed, context or record is nullptr.");
         return;
@@ -261,7 +261,7 @@ void AbilityThread::Attach(std::shared_ptr<OHOSApplication> &application,
 void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &application,
     const std::shared_ptr<AbilityLocalRecord> &abilityRecord, const std::shared_ptr<EventRunner> &mainRunner)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     if ((application == nullptr) || (abilityRecord == nullptr) || (mainRunner == nullptr)) {
         HILOG_ERROR("Attach extension failed, context or record is nullptr.");
         return;
@@ -316,7 +316,7 @@ void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &applicatio
 void AbilityThread::AttachExtension(std::shared_ptr<OHOSApplication> &application,
     const std::shared_ptr<AbilityLocalRecord> &abilityRecord)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("AbilityThread::AttachExtension begin");
     if ((application == nullptr) || (abilityRecord == nullptr)) {
         HILOG_ERROR("AbilityThread::AttachExtension failed,context or record is nullptr");
@@ -373,7 +373,7 @@ void AbilityThread::Attach(
     std::shared_ptr<OHOSApplication> &application, const std::shared_ptr<AbilityLocalRecord> &abilityRecord,
     const std::shared_ptr<AbilityRuntime::Context> &stageContext)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("AbilityThread::Attach begin");
     if ((application == nullptr) || (abilityRecord == nullptr)) {
         HILOG_ERROR("AbilityThread::ability attach failed,context or record is nullptr");
@@ -437,7 +437,7 @@ void AbilityThread::Attach(
  */
 void AbilityThread::HandleAbilityTransaction(const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Handle ability transaction begin, name is %{public}s.", want.GetElement().GetAbilityName().c_str());
     if (abilityImpl_ == nullptr) {
         HILOG_ERROR("Handle ability transaction error, abilityImpl_ == nullptr.");
@@ -459,7 +459,7 @@ void AbilityThread::HandleAbilityTransaction(const Want &want, const LifeCycleSt
  */
 void AbilityThread::HandleExtensionTransaction(const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("AbilityThread::HandleExtensionTransaction begin");
     if (extensionImpl_ == nullptr) {
         HILOG_ERROR("AbilityThread::HandleExtensionTransaction extensionImpl_ == nullptr");
@@ -475,7 +475,7 @@ void AbilityThread::HandleExtensionTransaction(const Want &want, const LifeCycle
  */
 void AbilityThread::HandleConnectAbility(const Want &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("AbilityThread::HandleConnectAbility begin");
     if (abilityImpl_ == nullptr) {
         HILOG_ERROR("AbilityThread::HandleConnectAbility abilityImpl_ == nullptr");
@@ -495,7 +495,7 @@ void AbilityThread::HandleConnectAbility(const Want &want)
  */
 void AbilityThread::HandleDisconnectAbility(const Want &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Handle disconnect ability begin.");
     if (abilityImpl_ == nullptr) {
         HILOG_ERROR("Handle disconnect ability error, abilityImpl_ == nullptr.");
@@ -524,7 +524,7 @@ void AbilityThread::HandleDisconnectAbility(const Want &want)
  */
 void AbilityThread::HandleCommandAbility(const Want &want, bool restart, int startId)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("AbilityThread::HandleCommandAbility begin");
     if (abilityImpl_ == nullptr) {
         HILOG_ERROR("AbilityThread::HandleCommandAbility failed. abilityImpl_ == nullptr");
@@ -545,7 +545,7 @@ void AbilityThread::HandleCommandAbility(const Want &want, bool restart, int sta
  */
 void AbilityThread::HandleConnectExtension(const Want &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("AbilityThread::HandleConnectExtension begin");
     if (extensionImpl_ == nullptr) {
         HILOG_ERROR("AbilityThread::HandleConnectExtension extensionImpl_ == nullptr");
@@ -564,7 +564,7 @@ void AbilityThread::HandleConnectExtension(const Want &want)
  */
 void AbilityThread::HandleDisconnectExtension(const Want &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("AbilityThread::HandleDisconnectExtension begin");
     if (extensionImpl_ == nullptr) {
         HILOG_ERROR("AbilityThread::HandleDisconnectExtension extensionImpl_ == nullptr");
@@ -590,7 +590,7 @@ void AbilityThread::HandleDisconnectExtension(const Want &want)
  */
 void AbilityThread::HandleCommandExtension(const Want &want, bool restart, int startId)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("AbilityThread::HandleCommandExtension begin");
     if (extensionImpl_ == nullptr) {
         HILOG_ERROR("AbilityThread::HandleCommandExtension extensionImpl_ == nullptr");
@@ -717,7 +717,7 @@ void AbilityThread::HandleExtensionUpdateConfiguration(const Configuration &conf
  */
 void AbilityThread::ScheduleAbilityTransaction(const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Schedule ability transaction, name is %{public}s, targeState is %{public}d, isNewWant is %{public}d.",
         want.GetElement().GetAbilityName().c_str(),
         lifeCycleStateInfo.state,
