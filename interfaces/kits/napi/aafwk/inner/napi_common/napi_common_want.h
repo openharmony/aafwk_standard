@@ -41,9 +41,12 @@ bool UnwrapWant(napi_env env, napi_value param, Want &want);
 void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std::string strProName,
     AAFwk::WantParams &wantParams);
 
-bool HandleFdObject(napi_env env, napi_value param, std::string strProName, AAFwk::WantParams &wantParams);
+bool IsSpecialObject(napi_env env, napi_value param, std::string strProName, std::string type,
+    napi_valuetype jsValueProType);
 
-bool HandleRemoteObject(napi_env env, napi_value param, std::string strProName, AAFwk::WantParams &wantParams);
+void HandleFdObject(napi_env env, napi_value param, std::string strProName, AAFwk::WantParams &wantParams);
+
+void HandleRemoteObject(napi_env env, napi_value param, std::string strProName, AAFwk::WantParams &wantParams);
 
 EXTERN_C_END
 }  // namespace AppExecFwk
