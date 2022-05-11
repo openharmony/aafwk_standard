@@ -77,7 +77,6 @@ ohos_source_set("abilityms_test_source") {
   external_dependent_files = [
     "${aafwk_path}/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/app_state_callback_host.cpp",
     "${aafwk_path}/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/app_mgr_client.cpp",
-    "${appexecfwk_path}/common/log/src/app_log_wrapper.cpp",
     "${aafwk_path}/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/app_state_callback_proxy.cpp",
   ]
 

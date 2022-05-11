@@ -23,7 +23,6 @@ ohos_moduletest("IpcAbilityMgrServiceModuleTest") {
 
   configs = [
     "${services_path}/test:aafwk_module_test_config",
-    "${appexecfwk_path}/common:appexecfwk_common_config",
     "${aafwk_path}/interfaces/innerkits/app_manager:appmgr_sdk_config",
   ]
   cflags = []

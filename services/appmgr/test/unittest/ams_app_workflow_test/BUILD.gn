@@ -45,15 +45,12 @@ ohos_unittest("AmsWorkFlowTest") {
 
   sources += [ "ams_workflow_test.cpp" ]
 
-  configs = [ "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config" ]
-
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/interfaces/innerkits/base:base",
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",

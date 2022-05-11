@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("//foundation/appexecfwk/standard/appexecfwk.gni")
 SUBDEMOSYSTEM_DIR = "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/amsKitSystemTestDataA"
 SUBST_TOOLS_DIR =
     "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/tools"

@@ -56,7 +56,6 @@ ohos_source_set("appmgr_mst_source") {
 
   public_configs = [
     ":appmgr_test_config",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config",
     "${services_path}/test:services_module_test_config",
     "${services_path}/appmgr:appmgr_config",
     "${services_path}/test:services_mock_ams_config",
@@ -83,8 +82,6 @@ ohos_source_set("appmgr_mst_source") {
     "${aafwk_path}/interfaces/innerkits/base:base",
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/common:perm_verification",
@@ -105,6 +102,7 @@ ohos_source_set("appmgr_mst_source") {
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_core",
     "common_event_service:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
     "hicollie_native:libhicollie",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
