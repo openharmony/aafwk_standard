@@ -225,6 +225,8 @@ public:
         return 0;
     }
 
+    virtual void CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken) override {}
+
     virtual int SetAbilityController(const sptr<AppExecFwk::IAbilityController> &abilityController,
         bool imAStabilityTest) override
     {

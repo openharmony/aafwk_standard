@@ -173,6 +173,8 @@ public:
         return 0;
     }
 
+    virtual void CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken) override {}
+
     virtual int SendANRProcessID(int pid)
     {
         return 0;

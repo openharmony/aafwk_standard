@@ -157,6 +157,10 @@ int AbilityRecord::LoadAbility()
 {
     BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Start load ability, name is %{public}s.", abilityInfo_.name.c_str());
+    if (abilityInfo_.type != AppExecFwk::AbilityType::DATA) {
+        SendEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, AbilityManagerService::LOAD_TIMEOUT);
+    }
+
     startTime_ = AbilityUtil::SystemTimeMillis();
     CHECK_POINTER_AND_RETURN(token_, ERR_INVALID_VALUE);
     std::string appName = applicationInfo_.name;
@@ -170,9 +174,6 @@ int AbilityRecord::LoadAbility()
         return ERR_INVALID_VALUE;
     }
 
-    if (abilityInfo_.type != AppExecFwk::AbilityType::DATA) {
-        SendEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, AbilityManagerService::LOAD_TIMEOUT);
-    }
     sptr<Token> callerToken_ = nullptr;
     if (!callerList_.empty() && callerList_.back()) {
         auto caller = callerList_.back()->GetCaller();

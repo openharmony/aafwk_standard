@@ -43,7 +43,9 @@
 #include "want_sender_info.h"
 #include "want_sender_interface.h"
 #include "uri.h"
+#ifdef SUPPORT_GRAPHICS
 #include "window_manager_service_handler.h"
+#endif
 
 namespace OHOS {
 namespace AAFwk {
@@ -452,7 +454,20 @@ public:
     virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
         const std::shared_ptr<OHOS::Media::PixelMap> &icon) = 0;
 
+    /**
+     * Register the WindowManagerService handler
+     *
+     * @param handler Indidate handler of WindowManagerService.
+     * @return ErrCode Returns ERR_OK on success, others on failure.
+     */
     virtual int RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler) = 0;
+
+    /**
+     * WindowManager notification AbilityManager after the first frame is drawn.
+     *
+     * @param abilityToken Indidate token of ability.
+     */
+    virtual void CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken) = 0;
 #endif
 
     virtual int GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info) = 0;
@@ -901,6 +916,7 @@ public:
         FORCE_TIMEOUT,
 
         REGISTER_WMS_HANDLER = 2500,
+        COMPLETEFIRSTFRAMEDRAWING = 2501,
 
         GET_TOP_ABILITY = 3000,
         FREE_INSTALL_ABILITY_FROM_REMOTE = 3001,
