@@ -44,7 +44,7 @@ struct MissionSnapshot : public Parcelable {
 #ifdef SUPPORT_GRAPHICS
     std::shared_ptr<OHOS::Media::PixelMap> snapshot;
     // If is private, the snapshot is a blank picture.
-    bool isPrivate = true;
+    bool isPrivate = false;
 #endif
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
