@@ -63,6 +63,9 @@
 #include "uri_permission_manager_client.h"
 #include "xcollie/watchdog.h"
 #include "parameter.h"
+#ifdef SUPPORT_GRAPHICS
+#include "window_focus_controller.h"
+#endif
 
 using OHOS::AppExecFwk::ElementName;
 using OHOS::Security::AccessToken::AccessTokenKit;
@@ -87,9 +90,6 @@ static void GetOsAccountIdFromUid(int uid, int &osAccountId)
 
 using namespace std::chrono;
 using namespace std::chrono_literals;
-#ifdef SUPPORT_GRAPHICS
-using namespace OHOS::Rosen;
-#endif
 const bool CONCURRENCY_MODE_FALSE = false;
 const int32_t MAIN_USER_ID = 100;
 const int32_t U0_USER_ID = 0;
@@ -206,14 +206,12 @@ void AbilityManagerService::OnStart()
         return;
     }
 #ifdef SUPPORT_GRAPHICS
-    if (focusChangedListener_ == nullptr) {
-        focusChangedListener_ = new (std::nothrow) AbilityManagerService::FocusChangedListener();
-        if (focusChangedListener_ == nullptr) {
-            HILOG_ERROR("new focusChangedListener fail");
-            return;
-        }
+    auto windowsInstance = WindowFocusController::GetInstance();
+    if (windowsInstance) {
+        windowsInstance->SubscribeWindowFocus();
+    } else {
+        HILOG_ERROR("OnStart. windowsInstance == nullptr !");
     }
-    WindowManager::GetInstance().RegisterFocusChangedListener(focusChangedListener_);
 #endif
     HILOG_INFO("AMS start success.");
 }
@@ -4733,53 +4731,29 @@ void AbilityManagerService::HandleFreeInstallErrorCode(int &resultCode)
     resultCode = itToApp->second;
 }
 
-#ifdef SUPPORT_GRAPHICS
-void AbilityManagerService::FocusChangedListener::OnFocused(const sptr<OHOS::Rosen::FocusChangeInfo> &focusChangeInfo)
-{
-    HILOG_DEBUG("%{public}s  OnFocused called.", __func__);
-    if (instance_ != nullptr) {
-        instance_->focusChangeInfo_ = focusChangeInfo;
-    } else {
-        HILOG_ERROR("%{public}s  instance_ is null.", __func__);
-    }
-}
-
-void AbilityManagerService::FocusChangedListener::OnUnfocused(const sptr<OHOS::Rosen::FocusChangeInfo> &focusChangeInfo)
-{
-    HILOG_DEBUG("%{public}s  OnUnfocused called.", __func__);
-}
-#endif
 AppExecFwk::ElementName AbilityManagerService::GetTopAbility()
 {
-    HILOG_DEBUG("%{public}s  start.", __func__);
+    HILOG_DEBUG("%{public}s start.", __func__);
+    AppExecFwk::ElementName elementName = {};
 #ifdef SUPPORT_GRAPHICS
-    if (instance_ == nullptr) {
-        HILOG_ERROR("%{public}s  instance_ is null.", __func__);
-        return {};
+    auto windowsInstance = WindowFocusController::GetInstance();
+    if (windowsInstance) {
+        windowsInstance->GetTopAbility(elementName);
+    } else {
+        HILOG_ERROR("OnStart. windowsInstance == nullptr !");
     }
-    if (instance_->focusChangeInfo_ == nullptr) {
-        HILOG_ERROR("%{public}s  focusChangeInfo_ is null.", __func__);
-        return {};
-    }
-    auto abilityRecord = Token::GetAbilityRecordByToken(instance_->focusChangeInfo_->abilityToken_);
-    if (abilityRecord == nullptr) {
-        HILOG_ERROR("%{public}s  abilityRecord is null.", __func__);
-        return {};
-    }
-    AppExecFwk::ElementName elementName = abilityRecord->GetWant().GetElement();
     auto bundleName = elementName.GetBundleName();
     auto abilityName = elementName.GetAbilityName();
-    HILOG_DEBUG("BundleName is %{public}s , AbilityName is %{public}s", bundleName.c_str(), abilityName.c_str());
+    HILOG_DEBUG("BundleName is %{public}s, AbilityName is %{public}s", bundleName.c_str(), abilityName.c_str());
     bool isDeviceEmpty = elementName.GetDeviceID().empty();
     std::string localDeviceId;
     bool hasLocalDeviceId = GetLocalDeviceId(localDeviceId);
     if (isDeviceEmpty && hasLocalDeviceId) {
         elementName.SetDeviceID(localDeviceId);
     }
-    HILOG_DEBUG("%{public}s  end.", __func__);
-    return elementName;
+    HILOG_DEBUG("%{public}s end.", __func__);
 #endif
-    return {};
+    return elementName;
 }
 
 int AbilityManagerService::Dump(int fd, const std::vector<std::u16string> &args)
