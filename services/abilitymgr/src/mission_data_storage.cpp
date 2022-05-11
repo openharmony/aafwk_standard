@@ -20,11 +20,15 @@
 #include "image_source.h"
 #include "media_errors.h"
 #ifdef SUPPORT_GRAPHICS
+#include <cstdio>
 #include "png.h"
+#include "securec.h"
 #endif
 
 namespace OHOS {
 namespace AAFwk {
+constexpr int32_t BPP = 4; // bytes per pixel
+
 MissionDataStorage::MissionDataStorage(int userId)
 {
     userId_ = userId;
@@ -146,9 +150,21 @@ void MissionDataStorage::SaveSnapshotFile(int32_t missionId, const MissionSnapsh
         }
     }
 #ifdef SUPPORT_GRAPHICS
-    const uint8_t* data = missionSnapshot.snapshot->GetPixels();
-    bool saveMissionFile = WriteToPng(filePath.c_str(), missionSnapshot.snapshot->GetWidth(),
-        missionSnapshot.snapshot->GetHeight(), data);
+    bool saveMissionFile = false;
+    if (missionSnapshot.isPrivate) {
+        size_t dataLength = missionSnapshot.snapshot->GetWidth() * missionSnapshot.snapshot->GetHeight() * BPP;
+        uint8_t* data = (uint8_t*) malloc(dataLength);
+        if (memset_s(data, dataLength, 0xff, dataLength) == EOK) {
+            saveMissionFile = WriteToPng(filePath.c_str(), missionSnapshot.snapshot->GetWidth(),
+                missionSnapshot.snapshot->GetHeight(), data);
+        }
+        free(data);
+    } else {
+        const uint8_t* data = missionSnapshot.snapshot->GetPixels();
+        saveMissionFile = WriteToPng(filePath.c_str(), missionSnapshot.snapshot->GetWidth(),
+            missionSnapshot.snapshot->GetHeight(), data);
+    }
+
     if (!saveMissionFile) {
         HILOG_ERROR("snapshot: save mission snapshot failed, path = %{public}s.", filePath.c_str());
     }
@@ -257,7 +273,6 @@ bool MissionDataStorage::WriteToPng(const char* fileName, uint32_t width, uint32
 {
 #ifdef SUPPORT_GRAPHICS
     const int BITMAP_DEPTH = 8; // color depth
-    const int BPP = 4; // bytes per pixel
     png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (png_ptr == nullptr) {
         HILOG_ERROR("snapshot: png_create_write_struct error, nullptr!\n");
