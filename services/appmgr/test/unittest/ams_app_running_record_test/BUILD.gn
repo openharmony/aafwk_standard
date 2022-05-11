@@ -44,7 +44,6 @@ ohos_unittest("AmsAppRunningRecordTest") {
 
   sources += [ "ams_app_running_record_test.cpp" ]
 
-  configs = [ "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
@@ -53,7 +52,6 @@ ohos_unittest("AmsAppRunningRecordTest") {
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/services/appmgr:libappms",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
     "${services_path}/common:perm_verification",

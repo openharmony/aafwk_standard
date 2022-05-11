@@ -43,10 +43,7 @@ ohos_unittest("AmsServiceLoadAbilityProcessTest") {
 
   sources += [ "ams_service_load_ability_process_test.cpp" ]
 
-  configs = [
-    "${services_path}/appmgr/test:appmgr_test_config",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config",
-  ]
+  configs = [ "${services_path}/appmgr/test:appmgr_test_config" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
@@ -57,7 +54,6 @@ ohos_unittest("AmsServiceLoadAbilityProcessTest") {
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
