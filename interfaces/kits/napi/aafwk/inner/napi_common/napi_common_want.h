@@ -29,6 +29,7 @@ namespace AppExecFwk {
 const std::string REMOTE_OBJECT = "RemoteObject";
 const std::string TYPE_PROPERTY = "type";
 const std::string VALUE_PROPERTY = "value";
+const int PROPERTIES_SIZE = 2;
 EXTERN_C_START
 
 napi_value WrapElementName(napi_env env, const ElementName &elementName);
