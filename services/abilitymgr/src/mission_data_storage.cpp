@@ -27,7 +27,9 @@
 
 namespace OHOS {
 namespace AAFwk {
+#ifdef SUPPORT_GRAPHICS
 constexpr int32_t BPP = 4; // bytes per pixel
+#endif
 
 MissionDataStorage::MissionDataStorage(int userId)
 {
