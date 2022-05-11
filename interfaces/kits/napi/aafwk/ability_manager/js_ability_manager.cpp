@@ -63,6 +63,12 @@ public:
         return (me != nullptr) ? me->OnUpdateConfiguration(*engine, *info) : nullptr;
     }
 
+    static NativeValue* GetTopAbility(NativeEngine* engine, NativeCallbackInfo* info)
+    {
+        JsAbilityManager* me = CheckParamsAndGetThis<JsAbilityManager>(engine, info);
+        return (me != nullptr) ? me->OnGetTopAbility(*engine, *info) : nullptr;
+    }
+
 private:
     NativeValue* OnGetAbilityRunningInfos(NativeEngine &engine, NativeCallbackInfo &info)
     {
@@ -155,6 +161,22 @@ private:
             engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
         return result;
     }
+
+    NativeValue* OnGetTopAbility(NativeEngine &engine, NativeCallbackInfo &info)
+    {
+        HILOG_INFO("%{public}s is called", __FUNCTION__);
+        AsyncTask::CompleteCallback complete =
+            [](NativeEngine &engine, AsyncTask &task, int32_t status) {
+                AppExecFwk::ElementName elementName = AbilityManagerClient::GetInstance()->GetTopAbility();
+                task.Resolve(engine, CreateJsElementName(engine, elementName));
+            };
+
+        NativeValue* lastParam = (info.argc == 0) ? nullptr : info.argv[0];
+        NativeValue* result = nullptr;
+        AsyncTask::Schedule(
+            engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+        return result;
+    }
 };
 } // namespace
 
@@ -182,6 +204,7 @@ NativeValue* JsAbilityManagerInit(NativeEngine* engine, NativeValue* exportObj)
     BindNativeFunction(*engine, *object, "getAbilityRunningInfos", JsAbilityManager::GetAbilityRunningInfos);
     BindNativeFunction(*engine, *object, "getExtensionRunningInfos", JsAbilityManager::GetExtensionRunningInfos);
     BindNativeFunction(*engine, *object, "updateConfiguration", JsAbilityManager::UpdateConfiguration);
+    BindNativeFunction(*engine, *object, "getTopAbility", JsAbilityManager::GetTopAbility);
     HILOG_INFO("JsAbilityManagerInit end");
     return engine->CreateUndefined();
 }
