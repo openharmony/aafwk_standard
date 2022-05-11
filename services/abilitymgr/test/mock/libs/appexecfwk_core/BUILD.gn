@@ -28,7 +28,6 @@ config("appexecfwk_core_mock_config") {
     "${aafwk_path}/services/abilitymgr/test/mock/libs/aakit/include/",
     "${appexecfwk_inner_api_path}/appexecfwk_base/include",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
   ]
 }
 

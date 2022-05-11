@@ -31,13 +31,13 @@ ohos_moduletest("AmsIpcAmsmgrModuleTest") {
   sources = [ "ams_ipc_ams_mgr_module_test.cpp" ]
 
   deps = [
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${services_path}/appmgr/test:appmgr_test_source",
     "${services_path}/common:perm_verification",
     "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
   ]
 
   external_deps = [
+    "eventhandler:libeventhandler",
     "hicollie_native:libhicollie",
     "ipc:ipc_core",
   ]

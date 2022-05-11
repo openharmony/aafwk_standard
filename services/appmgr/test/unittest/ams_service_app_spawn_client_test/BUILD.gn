@@ -47,14 +47,12 @@ ohos_unittest("AmsServiceAppSpawnClientTest") {
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
-  configs = [ "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config" ]
 
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/interfaces/innerkits/base:base",
     "${aafwk_path}/interfaces/innerkits/want:want",
     "${aafwk_path}/services/appmgr:libappms",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
@@ -71,6 +69,7 @@ ohos_unittest("AmsServiceAppSpawnClientTest") {
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
     "hicollie_native:libhicollie",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",

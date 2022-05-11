@@ -13,7 +13,6 @@
 
 import("//build/ohos.gni")
 import("//build/test.gni")
-import("//foundation/appexecfwk/standard/appexecfwk.gni")
 module_output_path = "appexecfwk_standard/ams/"
 
 config("system_test_ams_ability_state_age_manual_test_config") {
