@@ -610,6 +610,8 @@ public:
 
     virtual int RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler) override;
 
+    virtual void CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken) override;
+
     sptr<IWindowManagerServiceHandler> GetWMSHandler() const;
 #endif
 
