@@ -139,6 +139,17 @@ bool TaskDataPersistenceMgr::SaveMissionSnapshot(int missionId, const MissionSna
     return handler_->PostTask(SaveMissionSnapshotFunc, SAVE_MISSION_SNAPSHOT);
 }
 
+#ifdef SUPPORT_GRAPHICS
+sptr<Media::PixelMap> TaskDataPersistenceMgr::GetSnapshot(int missionId) const
+{
+    if (!currentMissionDataStorage_) {
+        HILOG_ERROR("snapshot: currentMissionDataStorage_ is nullptr");
+        return nullptr;
+    }
+    return currentMissionDataStorage_->GetSnapshot(missionId);
+}
+#endif
+
 bool TaskDataPersistenceMgr::GetMissionSnapshot(int missionId, MissionSnapshot& snapshot)
 {
     std::lock_guard<std::mutex> lock(mutex_);

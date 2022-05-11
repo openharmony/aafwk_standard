@@ -120,7 +120,10 @@ ohos_shared_library("abilityms") {
       "//foundation/arkui/ace_engine/interfaces/inner_api/ui_service_manager:ui_service_mgr",
       "//third_party/libpng:libpng",
     ]
-    public_deps = [ "${graphic_path}:libwmservice" ]
+    public_deps = [
+      "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
+      "${graphic_path}:libwmservice",
+    ]
     external_deps += [
       "i18n:intl_util",
       "multimedia_image_standard:image_native",
