@@ -133,7 +133,7 @@ void JsServiceExtension::OnStop()
 
 sptr<IRemoteObject> JsServiceExtension::OnConnect(const AAFwk::Want &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     Extension::OnConnect(want);
     HILOG_INFO("%{public}s begin.", __func__);
     HandleScope handleScope(jsRuntime_);
@@ -173,7 +173,7 @@ sptr<IRemoteObject> JsServiceExtension::OnConnect(const AAFwk::Want &want)
 
 void JsServiceExtension::OnDisconnect(const AAFwk::Want &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     Extension::OnDisconnect(want);
     HILOG_INFO("%{public}s begin.", __func__);
     HandleScope handleScope(jsRuntime_);

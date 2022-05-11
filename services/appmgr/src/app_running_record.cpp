@@ -311,7 +311,7 @@ void AppRunningRecord::ScheduleAppCrash([[maybe_unused]] const std::string &desc
 
 void AppRunningRecord::LaunchApplication(const Configuration &config)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (appLifeCycleDeal_ == nullptr) {
         HILOG_ERROR("appLifeCycleDeal_ is null");
         return;
@@ -390,7 +390,7 @@ void AppRunningRecord::AddAbilityStageDone()
 
 void AppRunningRecord::LaunchAbility(const std::shared_ptr<AbilityRunningRecord> &ability)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (appLifeCycleDeal_ == nullptr) {
         HILOG_ERROR("appLifeCycleDeal_ is null");
         return;
@@ -650,7 +650,7 @@ void AppRunningRecord::UpdateAbilityState(const sptr<IRemoteObject> &token, cons
 
 void AppRunningRecord::AbilityForeground(const std::shared_ptr<AbilityRunningRecord> &ability)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!ability) {
         HILOG_ERROR("ability is null");
         return;
@@ -685,7 +685,7 @@ void AppRunningRecord::AbilityForeground(const std::shared_ptr<AbilityRunningRec
 
 void AppRunningRecord::AbilityBackground(const std::shared_ptr<AbilityRunningRecord> &ability)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!ability) {
         HILOG_ERROR("ability is null");
         return;
