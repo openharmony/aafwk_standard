@@ -33,6 +33,7 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+const int PROPERTIES_SIZE = 2;
 EXTERN_C_START
 /**
  * @brief Init param of wantOptions.
