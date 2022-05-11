@@ -71,6 +71,15 @@ public:
      */
     void DeleteMissionSnapshot(int32_t missionId);
 
+#ifdef SUPPORT_GRAPHICS
+    /**
+     * @brief Get the Snapshot object
+     * @param missionId Indicates this mission id.
+     * @return Returns PixelMap of snapshot.
+     */
+    sptr<Media::PixelMap> GetSnapshot(int missionId) const;
+#endif
+
     /**
      * @brief Get the Mission Snapshot object
      * @param missionId
@@ -80,11 +89,11 @@ public:
     bool GetMissionSnapshot(int32_t missionId, MissionSnapshot& missionSnapshot);
 
 private:
-    std::string GetMissionDataDirPath();
+    std::string GetMissionDataDirPath() const;
 
     std::string GetMissionDataFilePath(int missionId);
 
-    std::string GetMissionSnapshotPath(int32_t missionId);
+    std::string GetMissionSnapshotPath(int32_t missionId) const;
 
     bool CheckFileNameValid(const std::string &fileName);
 
@@ -97,6 +106,10 @@ private:
     bool DeleteCachedSnapshot(int32_t missionId);
 
     void SaveSnapshotFile(int32_t missionId, const MissionSnapshot& missionSnapshot);
+
+#ifdef SUPPORT_GRAPHICS
+    std::unique_ptr<Media::PixelMap> GetPixelMap(int missionId) const;
+#endif
 
 private:
     int userId_ = 0;
