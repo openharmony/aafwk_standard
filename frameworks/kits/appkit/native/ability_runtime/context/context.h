@@ -30,6 +30,8 @@ using IRemoteObject = OHOS::IRemoteObject;
 
 namespace OHOS {
 namespace AbilityRuntime {
+class ApplicationContext;
+
 class Context : public Bindable {
 public:
     Context() = default;
@@ -41,6 +43,13 @@ public:
      * @return Returns the Context object of the application.
      */
     static std::shared_ptr<Context> GetApplicationContext();
+
+    /**
+     * @brief Obtains the Js Context object of the application.
+     *
+     * @return Returns the Js Context object of the application.
+     */
+    static std::shared_ptr<ApplicationContext> GetJsApplicationContext();
 
     /**
      * @brief Obtains the bundle name of the current ability.
@@ -221,6 +230,7 @@ protected:
     }
 
     static std::shared_ptr<Context> appContext_;
+    static std::shared_ptr<ApplicationContext> applicationContext_;
     static std::mutex contextMutex_;
 };
 }  // namespace AbilityRuntime

@@ -169,7 +169,10 @@ ohos_shared_library("app_context") {
   public_configs = [ ":appkit_public_config" ]
 
   sources = [
+    "native/ability_runtime/context/ability_lifecycle_callback.cpp",
+    "native/ability_runtime/context/application_context.cpp",
     "native/ability_runtime/context/context_impl.cpp",
+    "native/ability_runtime/context/js_application_context_utils.cpp",
     "native/ability_runtime/context/js_context_utils.cpp",
     "native/ability_runtime/context/js_hap_module_info_utils.cpp",
     "native/ability_runtime/context/js_resource_manager_utils.cpp",

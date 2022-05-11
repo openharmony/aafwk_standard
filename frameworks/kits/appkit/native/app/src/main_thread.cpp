@@ -50,6 +50,7 @@
 #include "dfx_dump_catcher.h"
 #include "hisysevent.h"
 #include "js_runtime_utils.h"
+#include "context/application_context.h"
 
 #include "hdc_register.h"
 
@@ -852,7 +853,11 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
     contextImpl->SetResourceManager(resourceManager);
     contextImpl->SetApplicationInfo(std::make_shared<ApplicationInfo>(appInfo));
     contextImpl->InitAppContext();
-    application_->SetApplicationContext(contextImpl);
+    std::shared_ptr<AbilityRuntime::ApplicationContext> applicationContext =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
+    applicationContext->AttachContextImpl(contextImpl);
+    applicationContext->InitApplicationContext();
+    application_->SetApplicationContext(applicationContext);
 
     bool moduelJson = false;
     bool isStageBased = false;
