@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "application_context.h"
+#include "app/include/application_context.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
