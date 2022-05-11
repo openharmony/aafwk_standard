@@ -297,12 +297,6 @@ HWTEST_F(AbilityRecordModuleTest, AbilityScheduler_001, TestSize.Level3)
         EXPECT_EQ(abilityRecord->GetAbilityState(), INACTIVATING);
 
         testResult = false;
-        auto mockBackgroundHandler = [&](const Want &want, const LifeCycleStateInfo &lifeCycleStateInfo) {
-            testResult = (lifeCycleStateInfo.state == AbilityLifeCycleState::ABILITY_STATE_BACKGROUND);
-        };
-        EXPECT_CALL(*mockAbilityScheduerStub, ScheduleAbilityTransaction(_, _))
-            .Times(1)
-            .WillOnce(Invoke(mockBackgroundHandler));
 
         // Terminate
         EXPECT_CALL(*mockAbilityScheduerStub, ScheduleAbilityTransaction(_, _)).Times(1);
