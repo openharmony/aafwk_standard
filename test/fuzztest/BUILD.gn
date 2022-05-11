@@ -25,8 +25,6 @@ group("fuzztest") {
     #"startability_fuzzer:fuzztest",
     "abilitymanager_fuzzer:fuzztest",
     "appmanager_fuzzer:fuzztest",
-
-    #"formmanager_fuzzer:fuzztest",
     "startcontinuation_fuzzer:fuzztest",
     "stopserviceability_fuzzer:fuzztest",
     "updateconfiguration_fuzzer:fuzztest",
@@ -34,4 +32,8 @@ group("fuzztest") {
     "wantagenthelperstring_fuzzer:fuzztest",
     "wantagenthelpertrigger_fuzzer:fuzztest",
   ]
+
+  if (ability_runtime_graphics) {
+    deps += [ "formmanager_fuzzer:fuzztest" ]
+  }
 }
