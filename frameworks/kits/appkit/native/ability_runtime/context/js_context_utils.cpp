@@ -16,10 +16,12 @@
 #include "js_context_utils.h"
 
 #include "hilog_wrapper.h"
+#include "js_application_context_utils.h"
 #include "js_data_struct_converter.h"
 #include "js_hap_module_info_utils.h"
 #include "js_resource_manager_utils.h"
 #include "js_runtime_utils.h"
+#include "application_context.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -284,21 +286,21 @@ NativeValue* JsBaseContext::OnCreateBundleContext(NativeEngine& engine, NativeCa
 
 NativeValue* JsBaseContext::OnGetApplicationContext(NativeEngine& engine, NativeCallbackInfo& info)
 {
+    HILOG_INFO("GetApplicationContext start");
     auto context = context_.lock();
     if (!context) {
         HILOG_WARN("context is already released");
         return engine.CreateUndefined();
     }
 
-    auto appContext = context->GetApplicationContext();
-    if (!appContext) {
-        HILOG_ERROR("appContext is nullptr");
+    auto applicatioContext = Context::GetJsApplicationContext();
+    if (applicatioContext == nullptr) {
+        HILOG_WARN("applicatioContext is nullptr");
         return engine.CreateUndefined();
     }
-
     JsRuntime& jsRuntime = *static_cast<JsRuntime*>(engine.GetJsEngine());
-    NativeValue* value = CreateJsBaseContext(engine, appContext, true);
-    return jsRuntime.LoadSystemModule("application.Context", &value, 1)->Get();
+    NativeValue* value = CreateJsApplicationContext(engine, applicatioContext, true);
+    return jsRuntime.LoadSystemModule("application.ApplicationContext", &value, 1)->Get();
 }
 } // namespace
 

@@ -26,6 +26,7 @@ group("napi_packages") {
     "${aafwk_path}/interfaces/kits/napi/aafwk/app/ability_stage_context:abilitystagecontext_napi",
     "${aafwk_path}/interfaces/kits/napi/aafwk/app/appMgr:napi_app_mgr",
     "${aafwk_path}/interfaces/kits/napi/aafwk/app/app_manager:appmanager_napi",
+    "${aafwk_path}/interfaces/kits/napi/aafwk/app/application_context:applicationcontext_napi",
     "${aafwk_path}/interfaces/kits/napi/aafwk/app/context:context_napi",
     "${aafwk_path}/interfaces/kits/napi/aafwk/app/test_runner:testrunner_napi",
     "${aafwk_path}/interfaces/kits/napi/aafwk/callee:callee_napi",
