@@ -1078,6 +1078,16 @@ void AbilityRecord::SetMinimizeReason(bool fromUser)
     minimizeReason_ = fromUser;
 }
 
+void AbilityRecord::SetDlp(bool isDlp)
+{
+    isDlp_ = isDlp;
+}
+
+bool AbilityRecord::IsDlp() const
+{
+    return isDlp_;
+}
+
 bool AbilityRecord::IsMinimizeFromUser() const
 {
     return minimizeReason_;
