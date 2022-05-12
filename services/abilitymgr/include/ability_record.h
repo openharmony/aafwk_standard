@@ -755,6 +755,7 @@ private:
     std::shared_ptr<CallContainer> callContainer_ = nullptr;
     bool isStartedByCall_ = false;
     bool isStartToBackground_ = false;
+    bool isDlp_ = false;
     bool minimizeReason_ = false;
 
     int32_t restartCount_ = -1;
@@ -765,7 +766,6 @@ private:
     mutable std::condition_variable dumpCondition_;
     mutable bool isDumpWaiting_ = false;
     std::vector<std::string> dumpInfos_;
-    bool isDlp_ = false;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
