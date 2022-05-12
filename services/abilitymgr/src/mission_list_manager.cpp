@@ -1175,6 +1175,10 @@ void MissionListManager::CompleteTerminateAndUpdateMission(const std::shared_ptr
         if (it == abilityRecord) {
             terminateAbilityList_.remove(it);
             // update inner mission info time
+            if (abilityRecord->IsDlp()) {
+                DelayedSingleton<MissionInfoMgr>::GetInstance()->DeleteMissionInfo(abilityRecord->GetMissionId());
+                return;
+            }
             InnerMissionInfo innerMissionInfo;
             int result = DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
                 abilityRecord->GetMissionId(), innerMissionInfo);
@@ -1387,6 +1391,7 @@ void MissionListManager::UpdateMissionSnapshot(const std::shared_ptr<AbilityReco
     CHECK_POINTER(abilityRecord);
     int32_t missionId = abilityRecord->GetMissionId();
     MissionSnapshot snapshot;
+    snapshot.isPrivate = abilityRecord->IsDlp();
     DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionSnapshot(missionId, abilityRecord->GetToken(),
         snapshot);
     if (listenerController_) {
@@ -1838,11 +1843,15 @@ void MissionListManager::HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecor
 
     // update running state.
     if (!ability->IsUninstallAbility()) {
-        InnerMissionInfo info;
-        if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
-            mission->GetMissionId(), info) == 0) {
-            info.missionInfo.runningState = -1;
-            DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(info);
+        if (ability->IsDlp()) {
+            DelayedSingleton<MissionInfoMgr>::GetInstance()->DeleteMissionInfo(mission->GetMissionId());
+        } else {
+            InnerMissionInfo info;
+            if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
+                mission->GetMissionId(), info) == 0) {
+                info.missionInfo.runningState = -1;
+                DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionInfo(info);
+            }
         }
     }
 
