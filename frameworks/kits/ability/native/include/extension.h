@@ -132,8 +132,9 @@ public:
     virtual void Dump(const std::vector<std::string> &params, std::vector<std::string> &info);
 
     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_ = nullptr;
-private:
+protected:
     std::shared_ptr<AppExecFwk::AbilityHandler> handler_ = nullptr;
+private:
     std::shared_ptr<AppExecFwk::OHOSApplication> application_ = nullptr;
     std::shared_ptr<AAFwk::Want> launchWant_ = nullptr;
     std::shared_ptr<AAFwk::Want> lastRequestWant_ = nullptr;
