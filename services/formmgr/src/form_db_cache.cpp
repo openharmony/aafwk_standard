@@ -139,12 +139,13 @@ ErrCode FormDbCache::DeleteFormInfo(int64_t formId)
  * @param removedDBForms Removed db form infos
  * @return Returns ERR_OK on success, others on failure.
  */
-ErrCode FormDbCache::DeleteFormInfoByBundleName(const std::string &bundleName, std::vector<FormDBInfo> &removedDBForms)
+ErrCode FormDbCache::DeleteFormInfoByBundleName(const std::string &bundleName, const int32_t userId,
+    std::vector<FormDBInfo> &removedDBForms)
 {
     std::lock_guard<std::mutex> lock(formDBInfosMutex_);
     std::vector<FormDBInfo>::iterator itRecord;
     for (itRecord = formDBInfos_.begin(); itRecord != formDBInfos_.end(); ) {
-        if (bundleName == itRecord->bundleName) {
+        if ((bundleName == itRecord->bundleName) && (userId == itRecord->userId)) {
             int64_t formId = itRecord->formId;
             if (dataStorage_->DeleteStorageFormInfo(std::to_string(formId)) == ERR_OK) {
                 removedDBForms.emplace_back(*itRecord);

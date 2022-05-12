@@ -820,7 +820,8 @@ void FormDataMgr::CleanRemovedFormRecords(const std::string &bundleName, std::se
  * @param  bundleName BundleName.
  * @param removedForms The id list of the forms.
  */
-void FormDataMgr::CleanRemovedTempFormRecords(const std::string &bundleName, std::set<int64_t> &removedForms)
+void FormDataMgr::CleanRemovedTempFormRecords(const std::string &bundleName, const int32_t userId,
+    std::set<int64_t> &removedForms)
 {
     HILOG_INFO("%{public}s, clean removed form records", __func__);
     std::set<int64_t> removedTempForms;
@@ -828,7 +829,8 @@ void FormDataMgr::CleanRemovedTempFormRecords(const std::string &bundleName, std
         std::lock_guard<std::mutex> lock(formRecordMutex_);
         std::map<int64_t, FormRecord>::iterator itFormRecord;
         for (itFormRecord = formRecords_.begin(); itFormRecord != formRecords_.end();) {
-            if (itFormRecord->second.formTempFlg && bundleName == itFormRecord->second.bundleName) {
+            if ((itFormRecord->second.formTempFlg) && (bundleName == itFormRecord->second.bundleName)
+                && (userId == itFormRecord->second.userId)) {
                 removedTempForms.emplace(itFormRecord->second.formId);
                 itFormRecord = formRecords_.erase(itFormRecord);
             } else {
