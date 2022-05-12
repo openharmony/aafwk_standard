@@ -43,9 +43,9 @@ struct MissionSnapshot : public Parcelable {
     AppExecFwk::ElementName topAbility;
 #ifdef SUPPORT_GRAPHICS
     std::shared_ptr<OHOS::Media::PixelMap> snapshot;
-    // If is private, the snapshot is a blank picture.
-    bool isPrivate = false;
 #endif
+    // If is private, ability is secure, the snapshot is a blank picture.
+    bool isPrivate = false;
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
     static MissionSnapshot *Unmarshalling(Parcel &parcel);
