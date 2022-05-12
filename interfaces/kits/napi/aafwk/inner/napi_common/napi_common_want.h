@@ -26,9 +26,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-const std::string REMOTE_OBJECT = "RemoteObject";
-const std::string TYPE_PROPERTY = "type";
-const std::string VALUE_PROPERTY = "value";
 EXTERN_C_START
 
 napi_value WrapElementName(napi_env env, const ElementName &elementName);
@@ -44,7 +41,12 @@ bool UnwrapWant(napi_env env, napi_value param, Want &want);
 void HandleNapiObject(napi_env env, napi_value param, napi_value jsProValue, std::string strProName,
     AAFwk::WantParams &wantParams);
 
-bool IsRemoteObject(napi_env env, napi_value param, std::string strProName);
+bool IsSpecialObject(napi_env env, napi_value param, std::string strProName, std::string type,
+    napi_valuetype jsValueProType);
+
+bool HandleFdObject(napi_env env, napi_value param, std::string strProName, AAFwk::WantParams &wantParams);
+
+bool HandleRemoteObject(napi_env env, napi_value param, std::string strProName, AAFwk::WantParams &wantParams);
 
 EXTERN_C_END
 }  // namespace AppExecFwk
