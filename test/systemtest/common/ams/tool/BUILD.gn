@@ -12,7 +12,6 @@
 # limitations under the License.
 import("//build/ohos.gni")
 import("//build/test.gni")
-import("//foundation/appexecfwk/standard/appexecfwk.gni")
 
 config("system_test_ability_util_config") {
   include_dirs = [
