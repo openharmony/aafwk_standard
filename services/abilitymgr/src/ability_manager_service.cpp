@@ -3692,16 +3692,11 @@ void AbilityManagerService::StartSystemAbilityByUser(int32_t userId, bool isBoot
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
         StartHighestPriorityAbility(isBoot);
-        StartingScreenLockAbility();
         return;
     }
 
     HILOG_INFO("start oobe or launcher");
     StartHighestPriorityAbility(isBoot);
-
-    if (amsConfigResolver_->GetStartScreenLockState()) {
-        StartingScreenLockAbility();
-    }
 #endif
 }
 
@@ -4098,17 +4093,6 @@ bool AbilityManagerService::JudgeMultiUserConcurrency(const int32_t userId)
     }
 
     return true;
-}
-
-void AbilityManagerService::StartingScreenLockAbility()
-{
-#ifdef SUPPORT_GRAPHICS
-    HILOG_DEBUG("%{public}s", __func__);
-    auto userId = GetUserId();
-    Want screenLockWant;
-    screenLockWant.SetElementName(AbilityConfig::SCREEN_LOCK_BUNDLE_NAME, AbilityConfig::SCREEN_LOCK_ABILITY_NAME);
-    (void)StartAbility(screenLockWant, userId, DEFAULT_INVAL_VALUE);
-#endif
 }
 
 #ifdef ABILITY_COMMAND_FOR_TEST

@@ -854,11 +854,6 @@ private:
      *
      */
     void StartingSettingsDataAbility();
-    /**
-     * starting screen lock ability.
-     *
-     */
-    void StartingScreenLockAbility();
 
     /**
      * starting system ui abilites.
