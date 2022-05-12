@@ -28,7 +28,6 @@ const std::string HOME_APP("home_application");
 const std::string AMS_CONFIG_FILE_PATH {"/system/etc/ams_service_config.json"};
 const std::string SERVICE_ITEM_AMS {"service_startup_config"};
 const std::string STARTUP_SETTINGS_DATA {"startup_settings_data"};
-const std::string STARTUP_SCREEN_LOCK {"startup_screen_lock"};
 const std::string MISSION_SAVE_TIME {"mission_save_time"};
 const std::string APP_NOT_RESPONSE_PROCESS_TIMEOUT_TIME {"app_not_response_process_timeout_time"};
 const std::string AMS_TIMEOUT_TIME {"ams_timeout_time"};
@@ -53,11 +52,6 @@ public:
      * return false : ams do not start settings data
      */
     bool GetStartSettingsDataState() const;
-    /**
-     * return true : ams can start screen lock
-     * return false : ams do not start screen lock
-     */
-    bool GetStartScreenLockState() const;
     /**
      * Get profile information
      */
@@ -103,7 +97,6 @@ private:
 private:
     bool nonConfigFile_ {false};
     bool canStartSettingsData_ {false};
-    bool canStartScreenLock_ {false};
     int maxRestartNum_ = 0;
     std::string orientation_ {""};
     int missionSaveTime_ {12 * 60 * 60 * 1000};
