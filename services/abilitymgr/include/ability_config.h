@@ -58,9 +58,6 @@ const std::string LOCK_SCREEN_EVENT_NAME = "lock_screen";
 const std::string MMS_ABILITY_NAME = "com.ohos.mms.ServiceAbility";
 const std::string MMS_BUNDLE_NAME = "com.ohos.mms";
 
-const std::string SCREEN_LOCK_ABILITY_NAME = "com.ohos.screenlock.ServiceExtAbility";
-const std::string SCREEN_LOCK_BUNDLE_NAME = "com.ohos.screenlock";
-
 const std::string PARAMS_STREAM = "ability.params.stream";
 
 const std::string GRANT_ABILITY_BUNDLE_NAME = "com.ohos.permissionmanager";
