@@ -481,14 +481,6 @@ bool WantParams::WriteToParcelWantParams(Parcel &parcel, sptr<IInterface> &o) co
 bool WantParams::WriteToParcelFD(Parcel &parcel, const WantParams &value) const
 {
     ABILITYBASE_LOGI("%{public}s called.", __func__);
-    if (value.Size() != PROPERTIES_SIZE) {
-        ABILITYBASE_LOGE("%{public}s, size is invalid.", __func__);
-        return false;
-    }
-    if (!value.HasParam(VALUE_PROPERTY)) {
-        ABILITYBASE_LOGE("%{public}s, not has value property.", __func__);
-        return false;
-    }
     if (!parcel.WriteInt32(VALUE_TYPE_FD)) {
         return false;
     }
@@ -509,14 +501,6 @@ bool WantParams::WriteToParcelFD(Parcel &parcel, const WantParams &value) const
 bool WantParams::WriteToParcelRemoteObject(Parcel &parcel, const WantParams &value) const
 {
     ABILITYBASE_LOGI("%{public}s called.", __func__);
-    if (value.Size() != PROPERTIES_SIZE) {
-        ABILITYBASE_LOGE("%{public}s, size is invalid.", __func__);
-        return false;
-    }
-    if (!value.HasParam(VALUE_PROPERTY)) {
-        ABILITYBASE_LOGE("%{public}s, not has value property.", __func__);
-        return false;
-    }
     if (!parcel.WriteInt32(VALUE_TYPE_REMOTE_OBJECT)) {
         return false;
     }

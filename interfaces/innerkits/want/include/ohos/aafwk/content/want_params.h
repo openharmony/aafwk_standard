@@ -30,7 +30,6 @@ const std::string FD = "FD";
 const std::string REMOTE_OBJECT = "RemoteObject";
 const std::string TYPE_PROPERTY = "type";
 const std::string VALUE_PROPERTY = "value";
-const int PROPERTIES_SIZE = 2;
 class UnsupportedData {
 public:
     std::u16string key;
