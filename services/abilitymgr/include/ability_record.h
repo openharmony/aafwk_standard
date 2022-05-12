@@ -635,6 +635,8 @@ public:
     void SetRestarting(const bool isRestart);
     void SetRestarting(const bool isRestart, int32_t canReStartCount);
     int32_t GetRestartCount() const;
+    void SetDlp(bool isDlp);
+    bool IsDlp() const;
     bool IsRestarting() const;
     void SetAppState(const AppState &state);
     AppState GetAppState() const;
@@ -763,6 +765,7 @@ private:
     mutable std::condition_variable dumpCondition_;
     mutable bool isDumpWaiting_ = false;
     std::vector<std::string> dumpInfos_;
+    bool isDlp_ = false;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
