@@ -1409,6 +1409,7 @@ void MissionListManager::UpdateMissionSnapshot(const std::shared_ptr<AbilityReco
     CHECK_POINTER(abilityRecord);
     int32_t missionId = abilityRecord->GetMissionId();
     MissionSnapshot snapshot;
+    snapshot.isPrivate = abilityRecord->IsDlp();
     DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionSnapshot(missionId, abilityRecord->GetToken(),
         snapshot);
     if (listenerController_) {
