@@ -55,7 +55,7 @@ private:
     const std::vector<FormInfo> &targetForms);
     void HandleBundleFormInfoChanged(const std::string &bundleName, int32_t userId);
     void HandleBundleFormInfoRemoved(const std::string &bundleName, int32_t userId);
-    void HandleProviderRemoved(const std::string &bundleName);
+    void HandleProviderRemoved(const std::string &bundleName, int32_t userId);
     void HandleBundleDataCleared(const std::string &bundleName, const int uid);
     void HandleFormHostDataCleared(const int uid);
     void ClearFormDBRecordData(const int uid, std::map<int64_t, bool> &removedFormsMap);
