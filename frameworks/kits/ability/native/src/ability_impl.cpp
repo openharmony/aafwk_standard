@@ -29,7 +29,7 @@ void AbilityImpl::Init(std::shared_ptr<OHOSApplication> &application, const std:
     std::shared_ptr<Ability> &ability, std::shared_ptr<AbilityHandler> &handler, const sptr<IRemoteObject> &token,
     std::shared_ptr<ContextDeal> &contextDeal)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("AbilityImpl::init begin");
     if ((token == nullptr) || (application == nullptr) || (handler == nullptr) || (record == nullptr) ||
         ability == nullptr || contextDeal == nullptr) {
@@ -235,7 +235,7 @@ void AbilityImpl::AfterFocused()
 
 void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     auto owner = owner_.lock();
     if (owner && !owner->IsStageBasedModel()) {
@@ -250,7 +250,7 @@ void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
 
 void AbilityImpl::WindowLifeCycleImpl::AfterBackground()
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     auto owner = owner_.lock();
     if (owner && !owner->IsStageBasedModel()) {

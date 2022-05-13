@@ -90,7 +90,7 @@ int AppScheduler::LoadAbility(const sptr<IRemoteObject> &token, const sptr<IRemo
 
 int AppScheduler::TerminateAbility(const sptr<IRemoteObject> &token)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Terminate ability.");
     CHECK_POINTER_AND_RETURN(appMgrClient_, INNER_ERR);
     /* because the errcode type of AppMgr Client API will be changed to int,
@@ -105,7 +105,7 @@ int AppScheduler::TerminateAbility(const sptr<IRemoteObject> &token)
 
 void AppScheduler::MoveToForground(const sptr<IRemoteObject> &token)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Start to move the ability to foreground.");
     CHECK_POINTER(appMgrClient_);
     appMgrClient_->UpdateAbilityState(token, AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND);
@@ -113,7 +113,7 @@ void AppScheduler::MoveToForground(const sptr<IRemoteObject> &token)
 
 void AppScheduler::MoveToBackground(const sptr<IRemoteObject> &token)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Move the app to background.");
     CHECK_POINTER(appMgrClient_);
     appMgrClient_->UpdateAbilityState(token, AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
@@ -177,7 +177,7 @@ AppAbilityState AppScheduler::GetAbilityState() const
 
 void AppScheduler::OnAbilityRequestDone(const sptr<IRemoteObject> &token, const AppExecFwk::AbilityState state)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("On ability request done, state:%{public}d", static_cast<int32_t>(state));
     auto callback = callback_.lock();
     CHECK_POINTER(callback);
@@ -236,7 +236,7 @@ void AppScheduler::PrepareTerminate(const sptr<IRemoteObject> &token)
 
 void AppScheduler::OnAppStateChanged(const AppExecFwk::AppProcessData &appData)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto callback = callback_.lock();
     CHECK_POINTER(callback);
     AppInfo info;

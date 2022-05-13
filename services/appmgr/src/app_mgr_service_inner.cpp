@@ -123,7 +123,7 @@ void AppMgrServiceInner::LoadAbility(const sptr<IRemoteObject> &token, const spt
     const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<ApplicationInfo> &appInfo,
     const std::shared_ptr<AAFwk::Want> &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!CheckLoadabilityConditions(token, abilityInfo, appInfo)) {
         HILOG_ERROR("CheckLoadabilityConditions failed");
         return;
@@ -245,7 +245,7 @@ bool AppMgrServiceInner::GetBundleAndHapInfo(const AbilityInfo &abilityInfo,
 
 void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppScheduler> &app)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (pid <= 0) {
         HILOG_ERROR("invalid pid:%{public}d", pid);
         return;
@@ -269,7 +269,7 @@ void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppSched
 
 void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecord> &appRecord)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!appRecord) {
         HILOG_ERROR("appRecord is null");
         return;
@@ -314,7 +314,7 @@ void AppMgrServiceInner::AddAbilityStageDone(const int32_t recordId)
 
 void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     auto appRecord = GetAppRunningRecordByAppRecordId(recordId);
     if (!appRecord) {
         HILOG_ERROR("get app record failed");
@@ -338,7 +338,7 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
 
 void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     auto appRecord = GetAppRunningRecordByAppRecordId(recordId);
     if (!appRecord) {
         HILOG_ERROR("get app record failed");
@@ -358,7 +358,7 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
 
 void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!appRunningManager_) {
         HILOG_ERROR("appRunningManager_ is nullptr");
         return;
@@ -544,7 +544,7 @@ int32_t AppMgrServiceInner::KillApplicationByUserIdLocked(const std::string &bun
 
 void AppMgrServiceInner::ClearUpApplicationData(const std::string &bundleName, int32_t callerUid, pid_t callerPid)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     auto userId = GetUserIdByUid(callerUid);
     HILOG_INFO("userId:%{public}d", userId);
     ClearUpApplicationDataByUserId(bundleName, callerUid, callerPid, userId);
@@ -744,7 +744,7 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::CreateAppRunningRecord(con
     const std::shared_ptr<AbilityInfo> &abilityInfo, const std::string &processName, const BundleInfo &bundleInfo,
     const HapModuleInfo &hapModuleInfo, const std::shared_ptr<AAFwk::Want> &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!appRunningManager_) {
         return nullptr;
     }
@@ -771,7 +771,7 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::CreateAppRunningRecord(con
 
 void AppMgrServiceInner::TerminateAbility(const sptr<IRemoteObject> &token)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Terminate ability come.");
     if (!token) {
         HILOG_ERROR("AppMgrServiceInner::TerminateAbility token is null!");
@@ -790,7 +790,7 @@ void AppMgrServiceInner::TerminateAbility(const sptr<IRemoteObject> &token)
 
 void AppMgrServiceInner::UpdateAbilityState(const sptr<IRemoteObject> &token, const AbilityState state)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("AppMgrService start to update the ability to state %{public}d.", static_cast<int32_t>(state));
     if (!token) {
         HILOG_ERROR("token is null!");
@@ -904,7 +904,7 @@ void AppMgrServiceInner::RegisterAppStateCallback(const sptr<IAppStateCallback> 
         HILOG_ERROR("%{public}s: Not abilityMgr call.", __func__);
         return;
     }
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (callback != nullptr) {
         appStateCallbacks_.push_back(callback);
     }
@@ -915,7 +915,7 @@ void AppMgrServiceInner::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &toke
     const int32_t perceptibility,   // 0:false,1:true
     const int32_t connectionState)  // 0:false,1:true
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!token) {
         HILOG_ERROR("token is null");
         return;
@@ -940,7 +940,7 @@ void AppMgrServiceInner::AbilityBehaviorAnalysis(const sptr<IRemoteObject> &toke
 
 void AppMgrServiceInner::KillProcessByAbilityToken(const sptr<IRemoteObject> &token)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!token) {
         HILOG_ERROR("token is null");
         return;
@@ -1002,7 +1002,7 @@ void AppMgrServiceInner::StartAbility(const sptr<IRemoteObject> &token, const sp
     const std::shared_ptr<AbilityInfo> &abilityInfo, const std::shared_ptr<AppRunningRecord> &appRecord,
     const HapModuleInfo &hapModuleInfo, const std::shared_ptr<AAFwk::Want> &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("already create appRecord, just start ability");
     if (!appRecord) {
         HILOG_ERROR("appRecord is null");
@@ -1058,7 +1058,7 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::GetAppRunningRecordByAbili
 
 void AppMgrServiceInner::AbilityTerminated(const sptr<IRemoteObject> &token)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Terminate ability come.");
     if (!token) {
         HILOG_ERROR("Terminate ability error, token is null!");
@@ -1232,7 +1232,7 @@ void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &
 void AppMgrServiceInner::StartProcess(const std::string &appName, const std::string &processName, uint32_t startFlags,
     const std::shared_ptr<AppRunningRecord> &appRecord, const int uid, const std::string &bundleName)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!remoteClientManager_->GetSpawnClient() || !appRecord) {
         HILOG_ERROR("appSpawnClient or apprecord is null");
         return;
@@ -1449,7 +1449,7 @@ const std::shared_ptr<AppTaskInfo> AppMgrServiceInner::GetAppTaskInfoById(const 
 
 void AppMgrServiceInner::AddAppDeathRecipient(const pid_t pid, const sptr<AppDeathRecipient> &appDeathRecipient) const
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     std::shared_ptr<AppRunningRecord> appRecord = GetAppRunningRecordByPid(pid);
     if (appRecord) {
         appRecord->SetAppDeathRecipient(appDeathRecipient);
@@ -1490,7 +1490,7 @@ void AppMgrServiceInner::SetEventHandler(const std::shared_ptr<AMSEventHandler> 
 
 void AppMgrServiceInner::HandleAbilityAttachTimeOut(const sptr<IRemoteObject> &token)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s called", __func__);
     if (!appRunningManager_) {
         HILOG_ERROR("appRunningManager_ is nullptr");

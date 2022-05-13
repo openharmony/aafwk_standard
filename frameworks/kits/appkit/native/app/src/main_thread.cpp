@@ -197,7 +197,7 @@ std::shared_ptr<ApplicationImpl> MainThread::GetApplicationImpl()
  */
 bool MainThread::ConnectToAppMgr()
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread ConnectToAppMgr start.");
     auto object = OHOS::DelayedSingleton<SysMrgClient>::GetInstance()->GetSystemAbility(APP_MGR_SERVICE_ID);
     if (object == nullptr) {
@@ -232,7 +232,7 @@ bool MainThread::ConnectToAppMgr()
  */
 void MainThread::Attach()
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread attach called.");
     if (!ConnectToAppMgr()) {
         HILOG_ERROR("attachApplication failed");
@@ -282,7 +282,7 @@ std::shared_ptr<EventHandler> MainThread::GetMainHandler() const
  */
 void MainThread::ScheduleForegroundApplication()
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("Schedule the application to foreground begin.");
     wptr<MainThread> weak = this;
     auto task = [weak]() {
@@ -411,7 +411,7 @@ void MainThread::ScheduleLowMemory()
  */
 void MainThread::ScheduleLaunchApplication(const AppLaunchData &data, const Configuration &config)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread schedule launch application start.");
     wptr<MainThread> weak = this;
     auto task = [weak, data, config]() {
@@ -637,7 +637,7 @@ void MainThread::HandleTerminateApplicationLocal()
  */
 void MainThread::HandleProcessSecurityExit()
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread::HandleProcessSecurityExit called start.");
     if (abilityRecordMgr_ == nullptr) {
         HILOG_ERROR("MainThread::HandleProcessSecurityExit abilityRecordMgr_ is null");
@@ -657,7 +657,7 @@ void MainThread::HandleProcessSecurityExit()
 bool MainThread::InitCreate(
     std::shared_ptr<ContextDeal> &contextDeal, ApplicationInfo &appInfo, ProcessInfo &processInfo, Profile &appProfile)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     applicationInfo_ = std::make_shared<ApplicationInfo>(appInfo);
     if (applicationInfo_ == nullptr) {
         HILOG_ERROR("MainThread::InitCreate create applicationInfo_ failed");
@@ -724,7 +724,7 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     std::shared_ptr<ContextDeal> &contextDeal, ApplicationInfo &appInfo, BundleInfo& bundleInfo,
     const Configuration &config)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     std::vector<std::string> resPaths;
     ChangeToLocalPath(bundleInfo.name, bundleInfo.moduleResPaths, resPaths);
     for (auto moduleResPath : resPaths) {
@@ -795,7 +795,7 @@ static std::string GetNativeStrFromJsTaggedObj(NativeObject* obj, const char* ke
  */
 void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, const Configuration &config)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread handle launch application start.");
     if (!CheckForHandleLaunchApplication(appLaunchData)) {
         HILOG_ERROR("MainThread::handleLaunchApplication CheckForHandleLaunchApplication failed");
@@ -1149,7 +1149,7 @@ bool MainThread::PrepareAbilityDelegator(const std::shared_ptr<UserTestRecord> &
  */
 void MainThread::HandleLaunchAbility(const std::shared_ptr<AbilityLocalRecord> &abilityRecord)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread::handleLaunchAbility called start.");
 
     if (applicationImpl_ == nullptr) {
@@ -1260,7 +1260,7 @@ void MainThread::HandleCleanAbilityLocal(const sptr<IRemoteObject> &token)
  */
 void MainThread::HandleCleanAbility(const sptr<IRemoteObject> &token)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("Handle clean ability start, app is %{public}s.", applicationInfo_->name.c_str());
     if (!IsApplicationReady()) {
         HILOG_ERROR("MainThread::handleCleanAbility not init OHOSApplication, should launch application first");
@@ -1308,7 +1308,7 @@ void MainThread::HandleCleanAbility(const sptr<IRemoteObject> &token)
  */
 void MainThread::HandleForegroundApplication()
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread handle application to foreground called.");
     if ((application_ == nullptr) || (appMgr_ == nullptr)) {
         HILOG_ERROR("MainThread::handleForegroundApplication error!");
@@ -1332,7 +1332,7 @@ void MainThread::HandleForegroundApplication()
  */
 void MainThread::HandleBackgroundApplication()
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread::handleBackgroundApplication called start.");
 
     if ((application_ == nullptr) || (appMgr_ == nullptr)) {
@@ -1356,7 +1356,7 @@ void MainThread::HandleBackgroundApplication()
  */
 void MainThread::HandleTerminateApplication()
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread::handleTerminateApplication called start.");
     if ((application_ == nullptr) || (appMgr_ == nullptr)) {
         HILOG_ERROR("MainThread::handleTerminateApplication error!");
@@ -1409,7 +1409,7 @@ void MainThread::HandleTerminateApplication()
  */
 void MainThread::HandleShrinkMemory(const int level)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread::HandleShrinkMemory called start.");
 
     if (applicationImpl_ == nullptr) {
@@ -1430,7 +1430,7 @@ void MainThread::HandleShrinkMemory(const int level)
  */
 void MainThread::HandleConfigurationUpdated(const Configuration &config)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread::HandleConfigurationUpdated called start.");
 
     if (applicationImpl_ == nullptr) {
@@ -1444,7 +1444,7 @@ void MainThread::HandleConfigurationUpdated(const Configuration &config)
 
 void MainThread::TaskTimeoutDetected(const std::shared_ptr<EventRunner> &runner)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread::TaskTimeoutDetected called start.");
 
     auto deliveryTimeoutCallback = []() {
@@ -1466,7 +1466,7 @@ void MainThread::TaskTimeoutDetected(const std::shared_ptr<EventRunner> &runner)
 
 void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::shared_ptr<EventRunner> &watchDogRunner)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread:Init Start");
     mainHandler_ = std::make_shared<MainHandler>(runner, this);
     watchDogHandler_ = std::make_shared<WatchDog>(watchDogRunner);
@@ -1541,7 +1541,7 @@ void MainThread::HandleScheduleANRProcess()
 
 void MainThread::Start()
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread start come.");
     std::shared_ptr<EventRunner> runner = EventRunner::GetMainEventRunner();
     if (runner == nullptr) {
@@ -1628,7 +1628,7 @@ bool MainThread::IsApplicationReady() const
  */
 void MainThread::LoadAbilityLibrary(const std::vector<std::string> &libraryPaths)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
 #ifdef ABILITY_LIBRARY_LOADER
     HILOG_INFO("MainThread load ability library start.");
 #ifdef ACEABILITY_LIBRARY_LOADER
@@ -1684,7 +1684,7 @@ void MainThread::LoadAbilityLibrary(const std::vector<std::string> &libraryPaths
 
 void MainThread::LoadAppLibrary()
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
 #ifdef APPLICATION_LIBRARY_LOADER
     std::string appPath = applicationLibraryPath;
     HILOG_INFO("MainThread::handleLaunchApplication Start calling dlopen. appPath=%{public}s", appPath.c_str());

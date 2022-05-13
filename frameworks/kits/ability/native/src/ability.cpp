@@ -204,7 +204,7 @@ bool Ability::PrintDrawnCompleted()
 
 void Ability::OnStart(const Want &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     if (abilityInfo_ == nullptr) {
         HILOG_ERROR("Ability::OnStart failed abilityInfo_ is nullptr.");
         return;
@@ -326,7 +326,7 @@ void Ability::OnStart(const Want &want)
  */
 void Ability::OnStop()
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin", __func__);
 #ifdef SUPPORT_GRAPHICS
     // Call JS Func(onWindowStageDestroy) and Release the scene.
@@ -374,7 +374,7 @@ void Ability::DestroyInstance()
  */
 void Ability::OnActive()
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
 #ifdef SUPPORT_GRAPHICS
     if (abilityWindow_ != nullptr) {
@@ -404,7 +404,7 @@ void Ability::OnActive()
  */
 void Ability::OnInactive()
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin", __func__);
 #ifdef SUPPORT_GRAPHICS
     if (abilityWindow_ != nullptr && abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
@@ -469,7 +469,7 @@ void Ability::onSceneDestroyed()
  */
 void Ability::OnForeground(const Want &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     DoOnForeground(want);
     DispatchLifecycleOnForeground(want);
@@ -559,7 +559,7 @@ void Ability::NotityContinuationResult(const Want& want, bool success)
  */
 void Ability::OnBackground()
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
         if (abilityInfo_->isStageBasedModel) {
@@ -609,7 +609,7 @@ void Ability::OnBackground()
  */
 sptr<IRemoteObject> Ability::OnConnect(const Want &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin", __func__);
     if (abilityLifecycleExecutor_ == nullptr) {
         HILOG_ERROR("Ability::OnConnect error. abilityLifecycleExecutor_ == nullptr.");
@@ -634,7 +634,7 @@ sptr<IRemoteObject> Ability::OnConnect(const Want &want)
  */
 void Ability::OnDisconnect(const Want &want)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s come", __func__);
 }
 
@@ -1282,7 +1282,7 @@ void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
  */
 void Ability::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO(
         "%{public}s begin restart=%{public}s,startId=%{public}d.", __func__, restart ? "true" : "false", startId);
     if (abilityLifecycleExecutor_ == nullptr) {

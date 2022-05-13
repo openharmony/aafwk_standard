@@ -97,7 +97,7 @@ void AbilityContextImpl::SwitchArea(int mode)
 
 ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, int requestCode)
 {
-    BYTRACE_NAME(BYTRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Start calling StartAbility.");
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartAbility(want, token_, requestCode);
     HILOG_INFO("AbilityContextImpl::StartAbility. End calling StartAbility. ret=%{public}d", err);
