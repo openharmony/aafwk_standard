@@ -274,7 +274,7 @@ public:
      * @param  bundleName BundleName.
      * @param removedForms The id list of the forms.
      */
-    void CleanRemovedTempFormRecords(const std::string &bundleName, std::set<int64_t> &removedForms);
+    void CleanRemovedTempFormRecords(const std::string &bundleName, int32_t userId, std::set<int64_t> &removedForms);
     /**
      * @brief Get recreate form records.
      * @param reCreateForms The id list of the forms.
