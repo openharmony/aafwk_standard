@@ -13,11 +13,20 @@
  * limitations under the License.
  */
 
+#include <cstring>
+
 #include "ability_command.h"
+#include "ability_tool_command.h"
 
 int main(int argc, char *argv[])
 {
-    OHOS::AAFwk::AbilityManagerShellCommand cmd(argc, argv);
-    std::cout << cmd.ExecCommand();
+    if (strstr(argv[0], "aa") != nullptr) {
+        OHOS::AAFwk::AbilityManagerShellCommand cmd(argc, argv);
+        std::cout << cmd.ExecCommand();
+    } else if (strstr(argv[0], "ability_tool") != nullptr) {
+        OHOS::AAFwk::AbilityToolCommand cmd(argc, argv);
+        std::cout << cmd.ExecCommand();
+    }
+
     return 0;
 }
