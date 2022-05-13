@@ -154,7 +154,7 @@ void MissionDataStorage::SaveSnapshotFile(int32_t missionId, const MissionSnapsh
 #ifdef SUPPORT_GRAPHICS
     bool saveMissionFile = false;
     if (missionSnapshot.isPrivate) {
-        size_t dataLength = missionSnapshot.snapshot->GetWidth() * missionSnapshot.snapshot->GetHeight() * BPP;
+        ssize_t dataLength = missionSnapshot.snapshot->GetWidth() * missionSnapshot.snapshot->GetHeight() * BPP;
         uint8_t* data = (uint8_t*) malloc(dataLength);
         if (memset_s(data, dataLength, 0xff, dataLength) == EOK) {
             saveMissionFile = WriteToPng(filePath.c_str(), missionSnapshot.snapshot->GetWidth(),
@@ -297,6 +297,10 @@ std::string MissionDataStorage::GetMissionSnapshotPath(int32_t missionId) const
 bool MissionDataStorage::WriteToPng(const char* fileName, uint32_t width, uint32_t height, const uint8_t* data)
 {
 #ifdef SUPPORT_GRAPHICS
+    if (data == nullptr) {
+        HILOG_ERROR("snapshot: data error, nullptr!\n");
+        return false;
+    }
     const int BITMAP_DEPTH = 8; // color depth
     png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (png_ptr == nullptr) {
