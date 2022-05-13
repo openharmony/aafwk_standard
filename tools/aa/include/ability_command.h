@@ -136,9 +136,12 @@ public:
     ~AbilityManagerShellCommand() override
     {}
 
+    ErrCode CreateMessageMap() override;
+    bool IsTestCommandIntegrity(const std::map<std::string, std::string> &params);
+    ErrCode StartUserTest(const std::map<std::string, std::string> &params, const bool isDebug);
+
 private:
     ErrCode CreateCommandMap() override;
-    ErrCode CreateMessageMap() override;
     ErrCode init() override;
 
     ErrCode RunAsHelpCommand();
@@ -153,9 +156,7 @@ private:
     ErrCode RunAsDumpCommandOptopt();
     ErrCode MakeWantFromCmd(Want &want, std::string &windowMode);
     ErrCode RunAsTestCommand();
-    bool IsTestCommandIntegrity(const std::map<std::string, std::string> &params);
     ErrCode TestCommandError(const std::string &info);
-    ErrCode StartUserTest(const std::map<std::string, std::string> &params, const bool isDebug);
 };
 }  // namespace AAFwk
 }  // namespace OHOS
