@@ -33,7 +33,7 @@ AppSpawnClient::AppSpawnClient(bool isNWebSpawn)
 
 ErrCode AppSpawnClient::OpenConnection()
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!socket_) {
         HILOG_ERROR("failed to open connection without socket!");
         return ERR_APPEXECFWK_BAD_APPSPAWN_SOCKET;
@@ -58,7 +58,7 @@ ErrCode AppSpawnClient::OpenConnection()
 
 ErrCode AppSpawnClient::StartProcess(const AppSpawnStartMsg &startMsg, pid_t &pid)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     int32_t retryCount = 1;
     ErrCode errCode = StartProcessImpl(startMsg, pid);
     while (FAILED(errCode) && retryCount <= CONNECT_RETRY_MAX_TIMES) {
@@ -72,7 +72,7 @@ ErrCode AppSpawnClient::StartProcess(const AppSpawnStartMsg &startMsg, pid_t &pi
 
 ErrCode AppSpawnClient::StartProcessImpl(const AppSpawnStartMsg &startMsg, pid_t &pid)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     if (!socket_) {
         HILOG_ERROR("failed to startProcess without socket!");
         return ERR_APPEXECFWK_BAD_APPSPAWN_SOCKET;

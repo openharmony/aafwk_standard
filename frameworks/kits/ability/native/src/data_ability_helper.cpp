@@ -389,7 +389,7 @@ bool DataAbilityHelper::Release()
  */
 std::vector<std::string> DataAbilityHelper::GetFileTypes(Uri &uri, const std::string &mimeTypeFilter)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("DataAbilityHelper::GetFileTypes start.");
     std::vector<std::string> matchedMIMEs;
     if (!CheckUriParam(uri)) {
@@ -535,7 +535,7 @@ int DataAbilityHelper::OpenRawFile(Uri &uri, const std::string &mode)
  */
 int DataAbilityHelper::Insert(Uri &uri, const NativeRdb::ValuesBucket &value)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("DataAbilityHelper::Insert start.");
     int index = -1;
     if (!CheckUriParam(uri)) {
@@ -621,7 +621,7 @@ std::shared_ptr<AppExecFwk::PacMap> DataAbilityHelper::Call(
 int DataAbilityHelper::Update(
     Uri &uri, const NativeRdb::ValuesBucket &value, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("DataAbilityHelper::Update start.");
     int index = -1;
     if (!CheckUriParam(uri)) {
@@ -667,7 +667,7 @@ int DataAbilityHelper::Update(
  */
 int DataAbilityHelper::Delete(Uri &uri, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("DataAbilityHelper::Delete start.");
     int index = -1;
     if (!CheckUriParam(uri)) {
@@ -715,7 +715,7 @@ int DataAbilityHelper::Delete(Uri &uri, const NativeRdb::DataAbilityPredicates &
 std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityHelper::Query(
     Uri &uri, std::vector<std::string> &columns, const NativeRdb::DataAbilityPredicates &predicates)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("DataAbilityHelper::Query start.");
     std::shared_ptr<NativeRdb::AbsSharedResultSet> resultset = nullptr;
 
@@ -762,7 +762,7 @@ std::shared_ptr<NativeRdb::AbsSharedResultSet> DataAbilityHelper::Query(
  */
 std::string DataAbilityHelper::GetType(Uri &uri)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("DataAbilityHelper::GetType start.");
     std::string type;
     if (!CheckUriParam(uri)) {
@@ -855,7 +855,7 @@ bool DataAbilityHelper::Reload(Uri &uri, const PacMap &extras)
  */
 int DataAbilityHelper::BatchInsert(Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("DataAbilityHelper::BatchInsert start.");
     int ret = -1;
     if (!CheckUriParam(uri)) {
@@ -1070,7 +1070,7 @@ void DataAbilityHelper::UnregisterObserver(const Uri &uri, const sptr<AAFwk::IDa
  */
 void DataAbilityHelper::NotifyChange(const Uri &uri)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("DataAbilityHelper::NotifyChange start.");
     if (!CheckUriParam(uri)) {
         HILOG_ERROR("%{public}s called. CheckUriParam uri failed", __func__);
@@ -1111,7 +1111,7 @@ void DataAbilityHelper::NotifyChange(const Uri &uri)
  */
 Uri DataAbilityHelper::NormalizeUri(Uri &uri)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("DataAbilityHelper::NormalizeUri start.");
     Uri urivalue("");
     if (!CheckUriParam(uri)) {
@@ -1159,7 +1159,7 @@ Uri DataAbilityHelper::NormalizeUri(Uri &uri)
  */
 Uri DataAbilityHelper::DenormalizeUri(Uri &uri)
 {
-    BYTRACE_NAME(BYTRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_DISTRIBUTEDDATA, __PRETTY_FUNCTION__);
     HILOG_INFO("DataAbilityHelper::DenormalizeUri start.");
     Uri urivalue("");
     if (!CheckUriParam(uri)) {

@@ -79,42 +79,42 @@ int AppSchedulerHost::OnRemoteRequest(uint32_t code, MessageParcel &data, Messag
 
 int32_t AppSchedulerHost::HandleScheduleForegroundApplication(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     ScheduleForegroundApplication();
     return NO_ERROR;
 }
 
 int32_t AppSchedulerHost::HandleScheduleBackgroundApplication(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     ScheduleBackgroundApplication();
     return NO_ERROR;
 }
 
 int32_t AppSchedulerHost::HandleScheduleTerminateApplication(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     ScheduleTerminateApplication();
     return NO_ERROR;
 }
 
 int32_t AppSchedulerHost::HandleScheduleLowMemory(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     ScheduleLowMemory();
     return NO_ERROR;
 }
 
 int32_t AppSchedulerHost::HandleScheduleShrinkMemory(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     ScheduleShrinkMemory(data.ReadInt32());
     return NO_ERROR;
 }
 
 int32_t AppSchedulerHost::HandleScheduleLaunchAbility(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::unique_ptr<AbilityInfo> abilityInfo(data.ReadParcelable<AbilityInfo>());
     if (!abilityInfo) {
         HILOG_ERROR("ReadParcelable<AbilityInfo> failed");
@@ -133,7 +133,7 @@ int32_t AppSchedulerHost::HandleScheduleLaunchAbility(MessageParcel &data, Messa
 
 int32_t AppSchedulerHost::HandleScheduleCleanAbility(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IRemoteObject> token = data.ReadRemoteObject();
     ScheduleCleanAbility(token);
     return NO_ERROR;
@@ -141,7 +141,7 @@ int32_t AppSchedulerHost::HandleScheduleCleanAbility(MessageParcel &data, Messag
 
 int32_t AppSchedulerHost::HandleScheduleLaunchApplication(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::unique_ptr<AppLaunchData> launchData(data.ReadParcelable<AppLaunchData>());
     std::unique_ptr<Configuration> config(data.ReadParcelable<Configuration>());
     if (!launchData) {
@@ -159,7 +159,7 @@ int32_t AppSchedulerHost::HandleScheduleLaunchApplication(MessageParcel &data, M
 
 int32_t AppSchedulerHost::HandleScheduleAbilityStage(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::unique_ptr<HapModuleInfo> abilityStage(data.ReadParcelable<HapModuleInfo>());
     if (!abilityStage) {
         HILOG_ERROR("ReadParcelable<launchData> failed");
@@ -172,7 +172,7 @@ int32_t AppSchedulerHost::HandleScheduleAbilityStage(MessageParcel &data, Messag
 
 int32_t AppSchedulerHost::HandleScheduleProfileChanged(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::unique_ptr<Profile> profile(data.ReadParcelable<Profile>());
     if (!profile) {
         HILOG_ERROR("ReadParcelable<Profile> failed");
@@ -185,7 +185,7 @@ int32_t AppSchedulerHost::HandleScheduleProfileChanged(MessageParcel &data, Mess
 
 int32_t AppSchedulerHost::HandleScheduleConfigurationUpdated(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::unique_ptr<Configuration> configuration(data.ReadParcelable<Configuration>());
     if (!configuration) {
         HILOG_ERROR("ReadParcelable<Configuration> failed");
@@ -198,14 +198,14 @@ int32_t AppSchedulerHost::HandleScheduleConfigurationUpdated(MessageParcel &data
 
 int32_t AppSchedulerHost::HandleScheduleProcessSecurityExit(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     ScheduleProcessSecurityExit();
     return NO_ERROR;
 }
 
 int32_t AppSchedulerHost::HandleScheduleAcceptWant(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     AAFwk::Want *want = data.ReadParcelable<AAFwk::Want>();
     if (want == nullptr) {
         HILOG_ERROR("want is nullptr");

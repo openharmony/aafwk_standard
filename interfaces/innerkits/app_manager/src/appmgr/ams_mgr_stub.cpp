@@ -94,7 +94,7 @@ int AmsMgrStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParce
 
 ErrCode AmsMgrStub::HandleLoadAbility(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IRemoteObject> token = nullptr;
     sptr<IRemoteObject> preToke = nullptr;
     if (data.ReadBool()) {
@@ -127,7 +127,7 @@ ErrCode AmsMgrStub::HandleLoadAbility(MessageParcel &data, MessageParcel &reply)
 
 ErrCode AmsMgrStub::HandleTerminateAbility(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IRemoteObject> token = data.ReadRemoteObject();
     TerminateAbility(token);
     return NO_ERROR;
@@ -135,7 +135,7 @@ ErrCode AmsMgrStub::HandleTerminateAbility(MessageParcel &data, MessageParcel &r
 
 ErrCode AmsMgrStub::HandleUpdateAbilityState(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IRemoteObject> token = data.ReadRemoteObject();
     int32_t state = data.ReadInt32();
     UpdateAbilityState(token, static_cast<AbilityState>(state));
@@ -152,7 +152,7 @@ ErrCode AmsMgrStub::HandleUpdateExtensionState(MessageParcel &data, MessageParce
 
 ErrCode AmsMgrStub::HandleRegisterAppStateCallback(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IAppStateCallback> callback = nullptr;
     if (data.ReadBool()) {
         sptr<IRemoteObject> obj = data.ReadRemoteObject();
@@ -164,7 +164,7 @@ ErrCode AmsMgrStub::HandleRegisterAppStateCallback(MessageParcel &data, MessageP
 
 ErrCode AmsMgrStub::HandleAbilityBehaviorAnalysis(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IRemoteObject> token = data.ReadRemoteObject();
     sptr<IRemoteObject> preToke = nullptr;
     if (data.ReadBool()) {
@@ -180,7 +180,7 @@ ErrCode AmsMgrStub::HandleAbilityBehaviorAnalysis(MessageParcel &data, MessagePa
 
 ErrCode AmsMgrStub::HandleKillProcessByAbilityToken(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IRemoteObject> token = data.ReadRemoteObject();
 
     KillProcessByAbilityToken(token);
@@ -189,7 +189,7 @@ ErrCode AmsMgrStub::HandleKillProcessByAbilityToken(MessageParcel &data, Message
 
 ErrCode AmsMgrStub::HandleKillProcessesByUserId(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     int32_t userId = data.ReadInt32();
 
     KillProcessesByUserId(userId);
@@ -200,7 +200,7 @@ ErrCode AmsMgrStub::HandleKillProcessWithAccount(MessageParcel &data, MessagePar
 {
     HILOG_INFO("enter");
 
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
 
     std::string bundleName = data.ReadString();
     int accountId = data.ReadInt32();
@@ -217,7 +217,7 @@ ErrCode AmsMgrStub::HandleKillProcessWithAccount(MessageParcel &data, MessagePar
 
 ErrCode AmsMgrStub::HandleKillApplication(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::string bundleName = data.ReadString();
     int32_t result = KillApplication(bundleName);
     reply.WriteInt32(result);
@@ -226,7 +226,7 @@ ErrCode AmsMgrStub::HandleKillApplication(MessageParcel &data, MessageParcel &re
 
 ErrCode AmsMgrStub::HandleKillApplicationByUid(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::string bundleName = data.ReadString();
     int uid = data.ReadInt32();
     int32_t result = KillApplicationByUid(bundleName, uid);
@@ -236,7 +236,7 @@ ErrCode AmsMgrStub::HandleKillApplicationByUid(MessageParcel &data, MessageParce
 
 int32_t AmsMgrStub::HandleAbilityAttachTimeOut(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IRemoteObject> token = data.ReadRemoteObject();
     AbilityAttachTimeOut(token);
     return NO_ERROR;

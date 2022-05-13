@@ -71,7 +71,7 @@ void AppStateCallbackHost::OnAppStateChanged(const AppProcessData &)
 
 int32_t AppStateCallbackHost::HandleOnAppStateChanged(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     std::unique_ptr<AppProcessData> processData(data.ReadParcelable<AppProcessData>());
     if (!processData) {
         HILOG_ERROR("ReadParcelable<AppProcessData> failed");
@@ -84,7 +84,7 @@ int32_t AppStateCallbackHost::HandleOnAppStateChanged(MessageParcel &data, Messa
 
 int32_t AppStateCallbackHost::HandleOnAbilityRequestDone(MessageParcel &data, MessageParcel &reply)
 {
-    BYTRACE(BYTRACE_TAG_APP);
+    HITRACE_METER(HITRACE_TAG_APP);
     sptr<IRemoteObject> obj = nullptr;
     if (data.ReadBool()) {
         obj = data.ReadRemoteObject();

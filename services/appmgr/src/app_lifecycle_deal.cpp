@@ -27,7 +27,7 @@ AppLifeCycleDeal::~AppLifeCycleDeal()
 
 void AppLifeCycleDeal::LaunchApplication(const AppLaunchData &launchData_, const Configuration &config)
 {
-    BYTRACE_NAME(BYTRACE_TAG_APP, __PRETTY_FUNCTION__);
+    HITRACE_METER_NAME(HITRACE_TAG_APP, __PRETTY_FUNCTION__);
     HILOG_INFO("AppLifeCycleDeal ScheduleLaunchApplication");
     if (appThread_) {
         appThread_->ScheduleLaunchApplication(launchData_, config);
