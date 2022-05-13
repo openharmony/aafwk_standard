@@ -79,7 +79,7 @@ void FormSysEventReceiver::OnReceiveEvent(const EventFwk::CommonEventData &event
             HILOG_INFO("%{public}s, bundle removed, bundleName: %{public}s", __func__, bundleName.c_str());
             int32_t userId = want.GetIntParam(KEY_USER_ID, 0);
             HandleBundleFormInfoRemoved(bundleName, userId);
-            HandleProviderRemoved(bundleName);
+            HandleProviderRemoved(bundleName, userId);
         };
         eventHandler_->PostTask(task);
     } else if (action == EventFwk::CommonEventSupport::COMMON_EVENT_ABILITY_UPDATED) {
@@ -177,14 +177,15 @@ void FormSysEventReceiver::HandleProviderUpdated(const std::string &bundleName, 
     }
 }
 
-void FormSysEventReceiver::HandleProviderRemoved(const std::string &bundleName)
+void FormSysEventReceiver::HandleProviderRemoved(const std::string &bundleName, const int32_t userId)
 {
-    HILOG_INFO("GET into HandleProviderRemoved with bundleName : %{public}s", bundleName.c_str());
+    HILOG_INFO("GET into HandleProviderRemoved with bundleName : %{public}s, userId : %{public}d",
+        bundleName.c_str(), userId);
     // clean removed form in DB
     std::set<int64_t> removedForms;
     {
         std::vector<FormDBInfo> removedDBForm;
-        FormDbCache::GetInstance().DeleteFormInfoByBundleName(bundleName, removedDBForm);
+        FormDbCache::GetInstance().DeleteFormInfoByBundleName(bundleName, userId, removedDBForm);
         for (const auto &dbForm : removedDBForm) {
             removedForms.emplace(dbForm.formId);
             int32_t matchCount = FormDbCache::GetInstance().GetMatchCount(dbForm.bundleName, dbForm.moduleName);
@@ -196,7 +197,7 @@ void FormSysEventReceiver::HandleProviderRemoved(const std::string &bundleName)
     // clean removed form in FormRecords
     FormDataMgr::GetInstance().CleanRemovedFormRecords(bundleName, removedForms);
     // clean removed temp form in FormRecords
-    FormDataMgr::GetInstance().CleanRemovedTempFormRecords(bundleName, removedForms);
+    FormDataMgr::GetInstance().CleanRemovedTempFormRecords(bundleName, userId, removedForms);
     // clean removed forms in FormHostRecords
     std::vector<int64_t> vRemovedForms;
     vRemovedForms.assign(removedForms.begin(), removedForms.end());
