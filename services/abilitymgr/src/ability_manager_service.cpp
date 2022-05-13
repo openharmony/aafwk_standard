@@ -3027,23 +3027,11 @@ void AbilityManagerService::StartSystemApplication()
     if (!amsConfigResolver_ || amsConfigResolver_->NonConfigFile()) {
         HILOG_INFO("start all");
         StartingSettingsDataAbility();
-        StartingSystemUiAbility();
         return;
     }
 
     StartingSettingsDataAbility();
-    StartingSystemUiAbility();
     StartupResidentProcess(U0_USER_ID);
-}
-
-void AbilityManagerService::StartingSystemUiAbility()
-{
-#ifdef SUPPORT_GRAPHICS
-    HILOG_DEBUG("%{public}s", __func__);
-    Want systemUiWant;
-    systemUiWant.SetElementName(AbilityConfig::SYSTEM_UI_BUNDLE_NAME, AbilityConfig::SYSTEM_UI_ABILITY_NAME);
-    (void)StartAbility(systemUiWant, U0_USER_ID, DEFAULT_INVAL_VALUE);
-#endif
 }
 
 void AbilityManagerService::ConnectBmsService()
