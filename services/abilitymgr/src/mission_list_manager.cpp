@@ -2291,11 +2291,22 @@ void MissionListManager::CancelStartingWindow(sptr<IRemoteObject> abilityToken) 
 {
     auto windowHandler = GetWMSHandler();
     if (!windowHandler) {
-        HILOG_WARN("%{public}s, Get WMS handler failed.", __func__);
+        HILOG_ERROR("%{public}s, Get WMS handler failed.", __func__);
         return;
     }
 
-    windowHandler->CancelStartingWindow(abilityToken);
+    auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
+    if (handler == nullptr) {
+        HILOG_ERROR("Fail to get AbilityEventHandler.");
+        return;
+    }
+
+    auto task = [windowHandler, abilityToken] {
+        if (windowHandler) {
+            windowHandler->CancelStartingWindow(abilityToken);
+        }
+    };
+    handler->PostTask(task, 0);
 }
 
 void MissionListManager::CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken) const
