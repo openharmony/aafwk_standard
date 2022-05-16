@@ -170,12 +170,12 @@ bool AmsConfigurationUpdatedTest::SubscribeEvent()
 void AmsConfigurationUpdatedTest::SetDefaultConfig()
 {
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, "ZH-HANS");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "ZH-HANS");
     abilityMgrService->UpdateConfiguration(configuration);
     (void)TestWaitCompleted(event, "Updated", MAIN_ABILITY_CODE, WAIT_LAUNCHER_TIME);
 
     AppExecFwk::Configuration configuration2;
-    configuration2.AddItem(GlobalConfigurationKey::SYSTEM_ORIENTATION, "vertical");
+    configuration2.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION, "vertical");
     abilityMgrService->UpdateConfiguration(configuration2);
     (void)TestWaitCompleted(event, "Updated", MAIN_ABILITY_CODE, WAIT_LAUNCHER_TIME);
     STAbilityUtil::CleanMsg(event);
@@ -201,7 +201,7 @@ HWTEST_F(AmsConfigurationUpdatedTest, AMS_UpdateConfiguration_0100, Function | M
     SetDefaultConfig();
 
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, "fr_FR");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "fr_FR");
     abilityMgrService->UpdateConfiguration(configuration);
     g_tempDataStr = "Updated";
     EXPECT_EQ(TestWaitCompleted(event, "fr_FR", MAIN_ABILITY_CODE, WAIT_LAUNCHER_TIME), 0);
@@ -231,7 +231,7 @@ HWTEST_F(AmsConfigurationUpdatedTest, AMS_UpdateConfiguration_0200, Function | M
     SetDefaultConfig();
 
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, "ZH-HANS");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "ZH-HANS");
     abilityMgrService->UpdateConfiguration(configuration);
     EXPECT_NE(TestWaitCompleted(event, "Updated", MAIN_ABILITY_CODE, WAIT_LAUNCHER_TIME), 0);
 
@@ -260,7 +260,7 @@ HWTEST_F(AmsConfigurationUpdatedTest, AMS_UpdateConfiguration_0300, Function | M
     SetDefaultConfig();
 
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_ORIENTATION, "horizontal");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION, "horizontal");
     abilityMgrService->UpdateConfiguration(configuration);
     EXPECT_EQ(TestWaitCompleted(event, "horizontal", MAIN_ABILITY_CODE, WAIT_LAUNCHER_TIME), 0);
 
@@ -289,7 +289,7 @@ HWTEST_F(AmsConfigurationUpdatedTest, AMS_UpdateConfiguration_0400, Function | M
     SetDefaultConfig();
 
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_ORIENTATION, "vertical");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION, "vertical");
     abilityMgrService->UpdateConfiguration(configuration);
 
     g_tempDataStr = "Updated";
@@ -325,7 +325,7 @@ HWTEST_F(AmsConfigurationUpdatedTest, AMS_UpdateConfiguration_0500, Function | M
     sleep(WAIT_ONACTIVE_TIME);
 
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, "fr_FR");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "fr_FR");
     abilityMgrService->UpdateConfiguration(configuration);
     EXPECT_EQ(TestWaitCompleted(event, "fr_FR", MAIN_ABILITY_CODE, WAIT_LAUNCHER_TIME), 0);
     EXPECT_EQ(TestWaitCompleted(event, "fr_FR", SECOND_ABILITY_CODE, WAIT_LAUNCHER_TIME), 0);
@@ -362,7 +362,7 @@ HWTEST_F(AmsConfigurationUpdatedTest, AMS_UpdateConfiguration_0600, Function | M
     sleep(WAIT_ONACTIVE_TIME);
 
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_ORIENTATION, "horizontal");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION, "horizontal");
     abilityMgrService->UpdateConfiguration(configuration);
     EXPECT_EQ(TestWaitCompleted(event, "horizontal", MAIN_ABILITY_CODE, WAIT_LAUNCHER_TIME), 0);
     EXPECT_EQ(TestWaitCompleted(event, "horizontal", SECOND_ABILITY_CODE, WAIT_LAUNCHER_TIME), 0);
@@ -399,11 +399,11 @@ HWTEST_F(AmsConfigurationUpdatedTest, AMS_UpdateConfiguration_0700, Function | M
     sleep(WAIT_ONACTIVE_TIME);
 
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, "fr_FR");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "fr_FR");
     GTEST_LOG_(INFO) << "\nUpdateConfiguration First Time ====>> ";
     abilityMgrService->UpdateConfiguration(configuration);
     AppExecFwk::Configuration configuration2;
-    configuration2.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, "en_US");
+    configuration2.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "en_US");
     GTEST_LOG_(INFO) << "\nUpdateConfiguration Second Time ====>> ";
     abilityMgrService->UpdateConfiguration(configuration2);
 
@@ -446,11 +446,11 @@ HWTEST_F(AmsConfigurationUpdatedTest, AMS_UpdateConfiguration_0800, Function | M
     sleep(WAIT_ONACTIVE_TIME);
 
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_ORIENTATION, "horizontal");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION, "horizontal");
     GTEST_LOG_(INFO) << "\nUpdateConfiguration First Time ====>> ";
     abilityMgrService->UpdateConfiguration(configuration);
     AppExecFwk::Configuration configuration2;
-    configuration2.AddItem(GlobalConfigurationKey::SYSTEM_ORIENTATION, "vertical");
+    configuration2.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION, "vertical");
     GTEST_LOG_(INFO) << "\nUpdateConfiguration Second Time ====>> ";
     abilityMgrService->UpdateConfiguration(configuration2);
 
@@ -496,9 +496,9 @@ HWTEST_F(AmsConfigurationUpdatedTest, AMS_UpdateConfiguration_0900, Function | M
     g_secondAbilityUpdateTimes = 0;
     g_thirdAbilityUpdateTimes = 0;
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, "fr_FR");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "fr_FR");
     AppExecFwk::Configuration configuration2;
-    configuration2.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, "en_US");
+    configuration2.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "en_US");
     for (int iLoop = 0; iLoop < TEST_TIMES / 2; iLoop++) {
         abilityMgrService->UpdateConfiguration(configuration);
         abilityMgrService->UpdateConfiguration(configuration2);
@@ -543,9 +543,9 @@ HWTEST_F(AmsConfigurationUpdatedTest, AMS_UpdateConfiguration_1000, Function | M
     g_secondAbilityUpdateTimes = 0;
     g_thirdAbilityUpdateTimes = 0;
     AppExecFwk::Configuration configuration;
-    configuration.AddItem(GlobalConfigurationKey::SYSTEM_ORIENTATION, "horizontal");
+    configuration.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION, "horizontal");
     AppExecFwk::Configuration configuration2;
-    configuration2.AddItem(GlobalConfigurationKey::SYSTEM_ORIENTATION, "vertical");
+    configuration2.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION, "vertical");
     for (int iLoop = 0; iLoop < TEST_TIMES / 2; iLoop++) {
         abilityMgrService->UpdateConfiguration(configuration);
         abilityMgrService->UpdateConfiguration(configuration2);

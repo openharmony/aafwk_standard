@@ -23,7 +23,7 @@
 #include "extension_running_info.h"
 #include "running_process_info.h"
 #include "native_engine/native_engine.h"
-#include "ohos/aafwk/content/want_params_wrapper.h"
+#include "want_params_wrapper.h"
 #include "want.h"
 
 namespace OHOS {

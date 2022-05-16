@@ -57,10 +57,10 @@ ohos_unittest("FmsFormMgrNotifyInvisibleFormsTest") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
 
     #"${libs_path}/libeventhandler:libeventhandler_target",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "${base_path}:want",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${form_runtime_path}:fms_target",

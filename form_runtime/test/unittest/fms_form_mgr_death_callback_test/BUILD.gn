@@ -53,11 +53,12 @@ ohos_unittest("FmsFormMgrDeathCallbackTest") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
+    "${base_path}:base",
+    "${base_path}:configuration",
+    "${base_path}:want",
     "${form_runtime_path}:fms_target",
     "${form_runtime_path}:fmskit_native",
 

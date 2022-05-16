@@ -27,10 +27,9 @@ config("abilityms_config") {
     "include/",
     "${innerkits_path}/ability_manager/include",
     "${innerkits_path}/app_manager/include",
-    "${innerkits_path}/base/include",
-    "${innerkits_path}/uri/include",
-    "${innerkits_path}/want/include",
-    "${innerkits_path}/want/include/ohos/aafwk/content",
+    "${base_inner_api_path}/base/include",
+    "${base_inner_api_path}/uri/include",
+    "${base_inner_api_path}/want/include",
     "${services_path}/common/include",
     "//utils/native/base/include",
     "//prebuilts/jdk/jdk8/linux-x86/include",
@@ -55,9 +54,9 @@ config("abilityms_config") {
 
   if (ability_runtime_graphics) {
     include_dirs += [
-      "${graphic_path}/interfaces/innerkits",
+      "${graphic_path}/interfaces/inner_api",
       "${multimedia_path}/interfaces/innerkits/include",
-      "${graphic_path}/interfaces/innerkits/wmservice",
+      "${graphic_path}/interfaces/inner_api/wmservice",
       "${global_path}/i18n/frameworks/intl/include",
     ]
 

@@ -20,9 +20,8 @@ ohos_moduletest("AmsIpcAmsmgrModuleTest") {
   module_out_path = module_output_path
 
   include_dirs = [
-    "${aafwk_path}/interfaces/innerkits/base/include",
-    "${aafwk_path}/interfaces/innerkits/uri/include",
-    "${aafwk_path}/interfaces/innerkits/want/include",
+    "${base_inner_api_path}/uri/include",
+    "${base_inner_api_path}/want/include",
     "${aafwk_path}/services/appmgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "${appexecfwk_inner_api_path}/appexecfwk_core/include",

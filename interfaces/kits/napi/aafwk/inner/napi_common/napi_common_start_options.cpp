@@ -17,7 +17,7 @@
 
 #include "hilog_wrapper.h"
 #include "napi_common_util.h"
-#include "ohos/aafwk/base/int_wrapper.h"
+#include "int_wrapper.h"
 
 namespace OHOS {
 namespace AppExecFwk {

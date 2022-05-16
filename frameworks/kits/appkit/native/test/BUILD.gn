@@ -15,7 +15,6 @@ import("//build/test.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
 module_output_path = "ability_runtime/application_test"
 
-#APP_INNERKITS_PATH = "${appexecfwk_innerkits_path}"
 ABILITY_INNERKITS_PATH = "${aafwk_path}/interfaces/innerkits"
 
 ###############################################################################
@@ -24,10 +23,9 @@ config("module_private_config") {
   include_dirs = [
     "${aafwk_path}/frameworks/kits/appkit/native/ability_runtime/context",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
-    "${aafwk_path}/interfaces/innerkits/uri/include",
+    "${base_inner_api_path}/uri/include",
     "${appexecfwk_inner_api_path}/appexecfwk_core/include/bundlemgr",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
+    "${base_inner_api_path}/want/include",
     "${aafwk_path}/frameworks/kits/appkit/native/test/mock/include",
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
@@ -47,9 +45,8 @@ config("module_context_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
-    "${aafwk_path}/interfaces/innerkits/uri/include",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
+    "${base_inner_api_path}/uri/include",
+    "${base_inner_api_path}/want/include",
     "${aafwk_path}/frameworks/kits/appkit/native/test/mock/include",
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include",
     "${appexecfwk_inner_api_path}/appexecfwk_core/include/bundlemgr",
@@ -57,7 +54,6 @@ config("module_context_config") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/include/task",
     "${appexecfwk_innerkits_path}/libeventhandler/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
-    "${aafwk_path}/interfaces/innerkits/base/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -80,12 +76,12 @@ ohos_unittest("context_deal_interface_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gmock_main",
@@ -117,17 +113,17 @@ ohos_unittest("application_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "${base_path}:base",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -150,7 +146,6 @@ ohos_unittest("context_container_test") {
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/mock_bundle_manager.cpp",
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "../app/src/ohos_application.cpp",
     "unittest/context_container_test.cpp",
   ]
@@ -158,19 +153,20 @@ ohos_unittest("context_container_test") {
   configs = [ ":module_context_config" ]
 
   deps = [
-    "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -183,7 +179,6 @@ ohos_unittest("context_deal_test") {
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/mock_bundle_manager.cpp",
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/sys_mgr_client_mock.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "../app/src/ohos_application.cpp",
     "mock/include/mock_ability_manager_client.cpp",
     "unittest/context_deal_test.cpp",
@@ -192,13 +187,13 @@ ohos_unittest("context_deal_test") {
   configs = [ ":module_context_config" ]
 
   deps = [
-    "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -206,6 +201,7 @@ ohos_unittest("context_deal_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -226,16 +222,16 @@ ohos_unittest("application_impl_test") {
 
   deps = [
     "${ABILITY_INNERKITS_PATH}/uri_permission:uri_permission_mgr",
-    "${ABILITY_INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "${base_path}:base",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -290,7 +286,7 @@ ohos_unittest("watchdog_test") {
   module_out_path = module_output_path
 
   include_dirs = [
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "${base_inner_api_path}/want/include",
     "//third_party/json/include",
   ]
 
@@ -309,6 +305,7 @@ ohos_unittest("watchdog_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

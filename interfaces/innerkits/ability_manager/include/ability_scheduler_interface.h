@@ -16,8 +16,8 @@
 #ifndef OHOS_AAFWK_ABILITY_SCHEDULER_INTERFACE_H
 #define OHOS_AAFWK_ABILITY_SCHEDULER_INTERFACE_H
 
-#include "foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr/configuration.h"
 #include <iremote_broker.h>
+#include "configuration.h"
 #include "lifecycle_state_info.h"
 #include "pac_map.h"
 #include "want.h"

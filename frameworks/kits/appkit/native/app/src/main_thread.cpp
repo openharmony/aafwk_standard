@@ -752,7 +752,7 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
         HILOG_INFO("MainThread::handleLaunchApplication localeInfo is nullptr.");
     }
 
-    std::string colormode = config.GetItem(GlobalConfigurationKey::SYSTEM_COLORMODE);
+    std::string colormode = config.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_COLORMODE);
     resConfig->SetColorMode(ConvertColorMode(colormode));
 #endif
     resourceManager->UpdateResConfig(*resConfig);

@@ -16,23 +16,19 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 module_output_path = "ability_runtime/ability_test"
 
-INNERKITS_PATH = "${aafwk_path}/interfaces/innerkits"
-
 ###############################################################################
 config("module_private_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
-    "${aafwk_path}/interfaces/innerkits/uri/include",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk_L2/content",
+    "${base_inner_api_path}/uri/include",
+    "${base_inner_api_path}/want/include",
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include",
     "${aafwk_path}/frameworks/kits/appkit/native/test/mock/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
     "${appexecfwk_inner_api_path}/appexecfwk_base/include",
     "${distributeddatamgr_path}/distributeddatamgr/interfaces/innerkits/app_distributeddata/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
@@ -61,20 +57,19 @@ config("module_ability_context_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
-    "${aafwk_path}/interfaces/innerkits/uri/include",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "${base_inner_api_path}/uri/include",
+    "${base_inner_api_path}/want/include",
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include",
     "${aafwk_path}/frameworks/kits/appkit/native/test/mock/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
+    "${base_inner_api_path}/base/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "//third_party/googletest/googlemock/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
     "${multimodalinput_path}/interfaces/native/innerkits/event/include",
-    "${aafwk_path}/interfaces/innerkits/base/include",
     "//third_party/libuv/include",
-    "${aafwk_path}/interfaces/innerkits/base/include/ohos/aafwk/base",
     "${global_path}/resource_management/interfaces/inner_api/include",
   ]
   cflags = []
@@ -94,23 +89,19 @@ ohos_unittest("ability_test") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "unittest/ability_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/base:base",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gmock_main",
@@ -119,6 +110,9 @@ ohos_unittest("ability_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -143,16 +137,14 @@ ohos_unittest("ability_lifecycle_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/base:base",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
@@ -179,15 +171,15 @@ ohos_unittest("ability_lifecycle_executor_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "${base_path}:configuration",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
@@ -215,13 +207,13 @@ ohos_unittest("ability_context_interface_test") {
   configs = [ ":module_ability_context_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gmock_main",
@@ -257,13 +249,13 @@ ohos_unittest("ability_context_test") {
   configs = [ ":module_ability_context_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//foundation/arkui/napi:ace_napi",
     "//third_party/googletest:gmock_main",
@@ -293,15 +285,15 @@ ohos_unittest("page_ability_impl_test") {
     configs = [ ":module_private_config" ]
 
     deps = [
-      "${INNERKITS_PATH}/want:want",
       "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
       "${aafwk_path}/frameworks/kits/appkit:app_context",
       "${aafwk_path}/frameworks/kits/appkit:appkit_native",
       "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-      "${aafwk_path}/interfaces/innerkits/base:base",
       "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
       "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
       "${appexecfwk_path}/common:libappexecfwk_common",
+      "${base_path}:base",
+      "${base_path}:want",
       "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
       "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
       "${multimodalinput_path}/frameworks/proxy:libmmi-common",
@@ -327,15 +319,15 @@ ohos_unittest("service_ability_impl_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gtest_main",
@@ -362,15 +354,15 @@ ohos_unittest("scene_created_test") {
     sources = [ "unittest/scene_created_test.cpp" ]
 
     deps = [
-      "${INNERKITS_PATH}/want:want",
       "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
       "${aafwk_path}/frameworks/kits/appkit:app_context",
       "${aafwk_path}/frameworks/kits/appkit:appkit_native",
       "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-      "${aafwk_path}/interfaces/innerkits/base:base",
       "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
       "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
       "${appexecfwk_path}/common:libappexecfwk_common",
+      "${base_path}:base",
+      "${base_path}:want",
       "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
       "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
       "//third_party/googletest:gtest_main",
@@ -394,9 +386,6 @@ ohos_unittest("data_ability_helper_test") {
   configs = [ ":module_ability_context_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/base:base",
-    "${INNERKITS_PATH}/uri:zuri",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
@@ -407,6 +396,8 @@ ohos_unittest("data_ability_helper_test") {
   ]
 
   external_deps = [
+    "ability_base:want",
+    "ability_base:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",
@@ -426,12 +417,9 @@ ohos_unittest("data_ability_operation_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/uri:zuri",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
@@ -443,6 +431,9 @@ ohos_unittest("data_ability_operation_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_base:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_appdatafwk",
@@ -466,13 +457,10 @@ ohos_unittest("ability_impl_active_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/uri:zuri",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
@@ -483,6 +471,9 @@ ohos_unittest("ability_impl_active_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -505,14 +496,11 @@ ohos_unittest("ability_impl_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/uri:zuri",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
@@ -523,7 +511,10 @@ ohos_unittest("ability_impl_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
     "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
@@ -552,7 +543,6 @@ ohos_unittest("ability_thread_test") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/process_info.cpp",
     "mock/include/mock_ability_manager_client.cpp",
     "mock/include/sys_mgr_client_mock.cpp",
@@ -562,13 +552,10 @@ ohos_unittest("ability_thread_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/uri:zuri",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
@@ -579,6 +566,10 @@ ohos_unittest("ability_thread_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -603,18 +594,15 @@ ohos_unittest("ability_thread_call_request_test") {
   module_out_path = module_output_path
   sources = [
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
-    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "unittest/ability_thread_call_request_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
@@ -622,7 +610,12 @@ ohos_unittest("ability_thread_call_request_test") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ "ability_runtime:runtime" ]
+  external_deps = [
+    "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
+    "ability_runtime:runtime",
+  ]
 }
 
 ohos_unittest("form_provider_client_test") {
@@ -641,16 +634,16 @@ ohos_unittest("form_provider_client_test") {
     configs = [ ":module_private_config" ]
 
     deps = [
-      "${INNERKITS_PATH}/want:want",
       "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
       "${aafwk_path}/frameworks/kits/appkit:app_context",
       "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
       "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-      "${aafwk_path}/interfaces/innerkits/base:base",
-      "${aafwk_path}/interfaces/innerkits/base:base",
       "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
       "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
       "${appexecfwk_path}/common:libappexecfwk_common",
+      "${base_path}:base",
+      "${base_path}:configuration",
+      "${base_path}:want",
       "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
       "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
       "${graphic_path}:libwmclient",
@@ -678,7 +671,6 @@ ohos_unittest("data_ability_impl_test") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/process_info.cpp",
     "unittest/data_ability_impl_test.cpp",
   ]
@@ -686,9 +678,6 @@ ohos_unittest("data_ability_impl_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/base:base",
-    "${INNERKITS_PATH}/uri:zuri",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
@@ -703,6 +692,9 @@ ohos_unittest("data_ability_impl_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -732,7 +724,6 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/process_info.cpp",
     "unittest/data_ability_impl_file_secondpart_test.cpp",
   ]
@@ -740,9 +731,6 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/base:base",
-    "${INNERKITS_PATH}/uri:zuri",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
@@ -757,6 +745,9 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -786,7 +777,6 @@ ohos_unittest("data_ability_impl_file_test") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/process_info.cpp",
     "unittest/data_ability_impl_file_test.cpp",
   ]
@@ -794,9 +784,6 @@ ohos_unittest("data_ability_impl_file_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/base:base",
-    "${INNERKITS_PATH}/uri:zuri",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
@@ -811,6 +798,9 @@ ohos_unittest("data_ability_impl_file_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -840,7 +830,6 @@ ohos_unittest("ability_thread_dataability_test") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/process_info.cpp",
     "mock/include/mock_ability_manager_client.cpp",
     "mock/include/sys_mgr_client_mock.cpp",
@@ -850,13 +839,10 @@ ohos_unittest("ability_thread_dataability_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/uri:zuri",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
@@ -867,6 +853,10 @@ ohos_unittest("ability_thread_dataability_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -915,7 +905,6 @@ ohos_unittest("data_uri_utils_test") {
   deps = [
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
@@ -924,6 +913,7 @@ ohos_unittest("data_uri_utils_test") {
   ]
 
   external_deps = [
+    "ability_base:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
@@ -940,10 +930,10 @@ ohos_unittest("pac_map_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/want:want",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "${base_path}:want",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -970,13 +960,13 @@ ohos_unittest("ability_permission_test") {
   configs = [ ":module_ability_context_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//third_party/googletest:gmock_main",
@@ -1001,10 +991,10 @@ ohos_unittest("task_handler_client_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "${base_path}:want",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -1027,9 +1017,9 @@ ohos_unittest("ability_thread_for_ability_on_configuration_update") {
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${base_path}:want",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -1052,12 +1042,12 @@ ohos_unittest("data_ability_result_test") {
 
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
+    "ability_base:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
@@ -1075,7 +1065,6 @@ ohos_unittest("form_host_client_test") {
       "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
       "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
       "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-      "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
       "${aafwk_path}/services/abilitymgr/src/ability_start_setting.cpp",
       "mock/include/mock_bundle_manager_form.cpp",
       "unittest/form_host_client_test.cpp",
@@ -1084,15 +1073,15 @@ ohos_unittest("form_host_client_test") {
     configs = [ ":module_private_config" ]
 
     deps = [
-      "${INNERKITS_PATH}/want:want",
       "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
       "${aafwk_path}/frameworks/kits/appkit:app_context",
       "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
       "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-      "${aafwk_path}/interfaces/innerkits/base:base",
       "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
       "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
       "${appexecfwk_path}/common:libappexecfwk_common",
+      "${base_path}:base",
+      "${base_path}:want",
       "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
       "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
       "${graphic_path}:libwmclient",
@@ -1102,6 +1091,7 @@ ohos_unittest("form_host_client_test") {
     ]
 
     external_deps = [
+      "ability_base:configuration",
       "ability_runtime:runtime",
       "bundle_framework:appexecfwk_core",
       "form_runtime:fmskit_native",
@@ -1119,20 +1109,16 @@ ohos_unittest("continuation_test") {
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
-    "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/configuration.cpp",
     "unittest/continuation_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "${INNERKITS_PATH}/uri:zuri",
-    "${INNERKITS_PATH}/want:want",
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:app_context",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${appexecfwk_path}/common:libappexecfwk_common",
@@ -1143,6 +1129,10 @@ ohos_unittest("continuation_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
     "ability_runtime:runtime",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
