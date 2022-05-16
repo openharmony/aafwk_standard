@@ -21,6 +21,15 @@
 #include <string>
 #include <vector>
 
+#include "app_running_record.h"
+#include "app_state_data.h"
+#include "iapp_state_callback.h"
+#include "iapplication_state_observer.h"
+#include "permission_constants.h"
+#include "permission_verification.h"
+#include "singleton.h"
+#include "uri_permission_manager_client.h"
+
 namespace OHOS {
 namespace AppExecFwk {
 class AppStateObserverManager : public std::enable_shared_from_this<AppStateObserverManager> {
@@ -28,15 +37,24 @@ class AppStateObserverManager : public std::enable_shared_from_this<AppStateObse
 public:
     void Init();
     int32_t RegisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer);
+    int32_t UnregisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer);
+    void StateChangedNotifyObserver(const AbilityStateData abilityStateData, bool isAbility);
+    void OnAppStateChanged(const std::shared_ptr<AppRunningRecord> &appRecord, const ApplicationState state);
+    void OnProcessCreated(const std::shared_ptr<AppRunningRecord> &appRecord);
+    void OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord);
 private:
     void HandleAppStateChanged(const std::shared_ptr<AppRunningRecord> &appRecord, const ApplicationState state);
-    void HandleOnComponentStateChanged(const AbilityStateData abilityStateData, bool isAbility);
+    void HandleStateChangedNotifyObserver(const AbilityStateData abilityStateData, bool isAbility);
     void HandleOnProcessCreated(const std::shared_ptr<AppRunningRecord> &appRecord);
     void HandleOnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord);
     bool ObserverExist(const sptr<IApplicationStateObserver> &observer);
     void AddObserverDeathRecipient(const sptr<IApplicationStateObserver> &observer);
     void RemoveObserverDeathRecipient(const sptr<IApplicationStateObserver> &observer);
     int VerifyObserverPermission();
+    ProcessData WrapProcessData(const std::shared_ptr<AppRunningRecord> &appRecord);
+    void OnObserverDied(const wptr<IRemoteObject> &remote);
+    AppStateData WrapAppStateData(const std::shared_ptr<AppRunningRecord> &appRecord,
+    const ApplicationState state);
 
 private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_;

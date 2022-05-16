@@ -27,6 +27,7 @@
 #include "perf_profile.h"
 
 #include "app_process_data.h"
+#include "app_state_observer_manager.h"
 #include "bundle_constants.h"
 #include "hitrace_meter.h"
 #include "common_event.h"
@@ -114,6 +115,7 @@ AppMgrServiceInner::AppMgrServiceInner()
 void AppMgrServiceInner::Init()
 {
     GetGlobalConfiguration();
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->Init();
 }
 
 AppMgrServiceInner::~AppMgrServiceInner()
@@ -383,7 +385,7 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_TERMINATED);
     appRunningManager_->RemoveAppRunningRecordById(recordId);
     RemoveAppFromRecentListById(recordId);
-    AppStateObserverManager::OnProcessDied(appRecord);
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
 
     HILOG_INFO("application is terminated");
 }
@@ -821,8 +823,8 @@ void AppMgrServiceInner::UpdateAbilityState(const sptr<IRemoteObject> &token, co
         state == AbilityState::ABILITY_STATE_TERMINATED ||
         state == AbilityState::ABILITY_STATE_CONNECTED ||
         state == AbilityState::ABILITY_STATE_DISCONNECTED)) {
-        HILOG_INFO("OnComponentStateChanged service type, state:%{public}d", static_cast<int32_t>(state));
-        AppStateObserverManager::OnComponentStateChanged(abilityRecord, static_cast<int32_t>(state), true);
+        HILOG_INFO("StateChangedNotifyObserver service type, state:%{public}d", static_cast<int32_t>(state));
+        appRecord->StateChangedNotifyObserver(abilityRecord, static_cast<int32_t>(state), true);
         return;
     }
     if (state > AbilityState::ABILITY_STATE_BACKGROUND || state < AbilityState::ABILITY_STATE_FOREGROUND) {
@@ -849,7 +851,7 @@ void AppMgrServiceInner::UpdateExtensionState(const sptr<IRemoteObject> &token, 
         HILOG_ERROR("can not find ability record!");
         return;
     }
-    AppStateObserverManager::OnComponentStateChanged(abilityRecord, static_cast<int32_t>(state), false);
+    appRecord->StateChangedNotifyObserver(abilityRecord, static_cast<int32_t>(state), false);
 }
 
 void AppMgrServiceInner::OnStop()
@@ -1099,7 +1101,7 @@ void AppMgrServiceInner::OnAppStateChanged(
         }
     }
 
-    AppStateObserverManager::OnAppStateChanged(appRecord, state);
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnAppStateChanged(appRecord, state);
 }
 
 AppProcessData AppMgrServiceInner::WrapAppProcessData(const std::shared_ptr<AppRunningRecord> &appRecord,
@@ -1119,17 +1121,6 @@ AppProcessData AppMgrServiceInner::WrapAppProcessData(const std::shared_ptr<AppR
     return processData;
 }
 
-AppStateData AppMgrServiceInner::WrapAppStateData(const std::shared_ptr<AppRunningRecord> &appRecord,
-    const ApplicationState state)
-{
-    AppStateData appStateData;
-    appStateData.pid = appRecord->GetPriorityObject()->GetPid();
-    appStateData.bundleName = appRecord->GetBundleName();
-    appStateData.state = static_cast<int32_t>(state);
-    appStateData.uid = appRecord->GetUid();
-    return appStateData;
-}
-
 void AppMgrServiceInner::OnAbilityStateChanged(
     const std::shared_ptr<AbilityRunningRecord> &ability, const AbilityState state)
 {
@@ -1142,6 +1133,11 @@ void AppMgrServiceInner::OnAbilityStateChanged(
             callback->OnAbilityRequestDone(ability->GetToken(), state);
         }
     }
+}
+
+void AppMgrServiceInner::StateChangedNotifyObserver(const AbilityStateData abilityStateData, bool isAbility)
+{
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->StateChangedNotifyObserver(abilityStateData, isAbility);
 }
 
 void AppMgrServiceInner::StartProcess(const std::string &appName, const std::string &processName, uint32_t startFlags,
@@ -1211,7 +1207,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     appRecord->SetAppMgrServiceInner(weak_from_this());
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_CREATE);
     AddAppToRecentList(appName, appRecord->GetProcessName(), pid, appRecord->GetRecordId());
-    AppStateObserverManager::OnProcessCreated(appRecord);
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessCreated(appRecord);
     PerfProfile::GetInstance().SetAppForkEndTime(GetTickCount());
 }
 
@@ -1312,11 +1308,11 @@ void AppMgrServiceInner::ClearAppRunningData(const std::shared_ptr<AppRunningRec
 
     for (const auto &item : appRecord->GetAbilities()) {
         const auto &abilityRecord = item.second;
-        AppStateObserverManager::OnComponentStateChanged(abilityRecord,
+        appRecord->StateChangedNotifyObserver(abilityRecord,
             static_cast<int32_t>(AbilityState::ABILITY_STATE_TERMINATED), true);
     }
     RemoveAppFromRecentListById(appRecord->GetRecordId());
-    AppStateObserverManager::OnProcessDied(appRecord);
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
 
     // kill render if exist.
     auto renderRecord = appRecord->GetRenderRecord();
@@ -1449,7 +1445,7 @@ void AppMgrServiceInner::HandleTerminateApplicationTimeOut(const int64_t eventId
     }
     appRunningManager_->RemoveAppRunningRecordById(appRecord->GetRecordId());
     RemoveAppFromRecentListById(appRecord->GetRecordId());
-    AppStateObserverManager::OnProcessDied(appRecord);
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
 }
 
 void AppMgrServiceInner::HandleAddAbilityStageTimeOut(const int64_t eventId)
@@ -1651,37 +1647,12 @@ void AppMgrServiceInner::NotifyAppStatusByCallerUid(const std::string &bundleNam
 
 int32_t AppMgrServiceInner::RegisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer)
 {
-    return AppStateObserverManager::RegisterApplicationStateObserver(observer);
+    return DelayedSingleton<AppStateObserverManager>::GetInstance()->RegisterApplicationStateObserver(observer);
 }
 
 int32_t AppMgrServiceInner::UnregisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer)
 {
-    return AppStateObserverManager::UnregisterApplicationStateObserver(observer);
-}
-
-void AppMgrServiceInner::OnObserverDied(const wptr<IRemoteObject> &remote)
-{
-    HILOG_INFO("%{public}s begin", __func__);
-    auto object = remote.promote();
-    if (object == nullptr) {
-        HILOG_ERROR("observer nullptr.");
-        return;
-    }
-    if (eventHandler_) {
-        auto task = [object, appManager = this]() {appManager->HandleObserverDiedTask(object);};
-        eventHandler_->PostTask(task, TASK_ON_CALLBACK_DIED);
-    }
-}
-
-void AppMgrServiceInner::HandleObserverDiedTask(const sptr<IRemoteObject> &observer)
-{
-    HILOG_INFO("Handle call back died task.");
-    if (observer == nullptr) {
-        HILOG_ERROR("observer nullptr.");
-        return;
-    }
-    sptr<IApplicationStateObserver> object = iface_cast<IApplicationStateObserver>(observer);
-    UnregisterApplicationStateObserver(object);
+    return DelayedSingleton<AppStateObserverManager>::GetInstance()->UnregisterApplicationStateObserver(observer);
 }
 
 int32_t AppMgrServiceInner::GetForegroundApplications(std::vector<AppStateData> &list)
