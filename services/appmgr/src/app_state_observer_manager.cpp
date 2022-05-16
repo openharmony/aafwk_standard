@@ -104,10 +104,10 @@ void AppStateObserverManager::OnProcessDied(const std::shared_ptr<AppRunningReco
     auto task = [weak = weak_from_this(), appRecord]() {
         auto self = weak.lock();
         if (self == nullptr) {
-            HILOG_ERROR("self is nullptr, OnAppStateChanged failed.");
+            HILOG_ERROR("self is nullptr, OnProcessDied failed.");
             return;
         }
-        HILOG_INFO("OnAppStateChanged come.");
+        HILOG_INFO("OnProcessDied come.");
         self->HandleOnProcessDied(appRecord);
     };
     handler_->PostTask(task);
@@ -118,10 +118,10 @@ void AppStateObserverManager::OnProcessCreated(const std::shared_ptr<AppRunningR
     auto task = [weak = weak_from_this(), appRecord]() {
         auto self = weak.lock();
         if (self == nullptr) {
-            HILOG_ERROR("self is nullptr, OnAppStateChanged failed.");
+            HILOG_ERROR("self is nullptr, OnProcessCreated failed.");
             return;
         }
-        HILOG_INFO("OnAppStateChanged come.");
+        HILOG_INFO("OnProcessCreated come.");
         self->HandleOnProcessCreated(appRecord);
     };
     handler_->PostTask(task);
@@ -132,16 +132,17 @@ void AppStateObserverManager::StateChangedNotifyObserver(const AbilityStateData 
     auto task = [weak = weak_from_this(), abilityStateData, isAbility]() {
         auto self = weak.lock();
         if (self == nullptr) {
-            HILOG_ERROR("self is nullptr, OnAppStateChanged failed.");
+            HILOG_ERROR("self is nullptr, StateChangedNotifyObserver failed.");
             return;
         }
-        HILOG_INFO("OnAppStateChanged come.");
+        HILOG_INFO("StateChangedNotifyObserver come.");
         self->HandleStateChangedNotifyObserver(abilityStateData, isAbility);
     };
     handler_->PostTask(task);
 }
 
-void AppStateObserverManager::HandleAppStateChanged(const std::shared_ptr<AppRunningRecord> &appRecord, const ApplicationState state)
+void AppStateObserverManager::HandleAppStateChanged(const std::shared_ptr<AppRunningRecord> &appRecord,
+    const ApplicationState state)
 {
     if (state == ApplicationState::APP_STATE_FOREGROUND || state == ApplicationState::APP_STATE_BACKGROUND) {
         AppStateData data = WrapAppStateData(appRecord, state);
