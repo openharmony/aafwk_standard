@@ -42,6 +42,7 @@ ohos_shared_library("libappms") {
     "src/app_spawn_client.cpp",
     "src/app_spawn_msg_wrapper.cpp",
     "src/app_spawn_socket.cpp",
+    "src/app_state_observer_manager.cpp",
     "src/module_running_record.cpp",
     "src/remote_client_manager.cpp",
     "src/system_environment_information.cpp",
