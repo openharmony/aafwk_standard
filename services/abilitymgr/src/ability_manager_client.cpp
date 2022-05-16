@@ -178,6 +178,15 @@ ErrCode AbilityManagerClient::MinimizeAbility(const sptr<IRemoteObject> &token, 
     return abms->MinimizeAbility(token, fromUser);
 }
 
+ErrCode AbilityManagerClient::ConnectAbility(const Want &want, const sptr<IAbilityConnection> &connect, int32_t userId)
+{
+    auto abms = GetAbilityManager();
+    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    HILOG_INFO("Connect ability called, bundleName:%{public}s, abilityName:%{public}s, userId:%{public}d.",
+        want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), userId);
+    return abms->ConnectAbility(want, connect, nullptr, userId);
+}
+
 ErrCode AbilityManagerClient::ConnectAbility(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
@@ -584,6 +593,14 @@ ErrCode AbilityManagerClient::GetMissionIdByToken(const sptr<IRemoteObject> &tok
         return MISSION_NOT_FOUND;
     }
     return ERR_OK;
+}
+
+ErrCode AbilityManagerClient::StartAbilityByCall(const Want &want, const sptr<IAbilityConnection> &connect)
+{
+    auto abms = GetAbilityManager();
+    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    HILOG_DEBUG("AbilityManagerClient::StartAbilityByCall called.");
+    return abms->StartAbilityByCall(want, connect, nullptr);
 }
 
 ErrCode AbilityManagerClient::StartAbilityByCall(

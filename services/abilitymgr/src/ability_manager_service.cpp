@@ -952,6 +952,10 @@ int AbilityManagerService::IsConnectFreeInstall(
 {
     if (CheckIsFreeInstall(want)) {
         auto abilityRecord = Token::GetAbilityRecordByToken(callerToken);
+        if (!abilityRecord) {
+            HILOG_ERROR("AbilityManagerService::IsConnectFreeInstall. abilityRecord is nullptr");
+            return ERR_INVALID_VALUE;
+        }
         AppExecFwk::AbilityType type = abilityRecord->GetAbilityInfo().type;
         if (type == AppExecFwk::AbilityType::PAGE) {
             if (!IsTopAbility(callerToken)) {
