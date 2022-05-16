@@ -232,11 +232,11 @@ void ApplicationContext::SwitchArea(int mode)
 
 int ApplicationContext::GetArea()
 {
-    if (contextImpl_ != nullptr) {
-        return contextImpl_->GetArea();
+    if (contextImpl_ == nullptr) {
+        HILOG_ERROR("AbilityContext::contextImpl is nullptr.");
+        return EL_DEFAULT;
     }
-    HILOG_ERROR("AbilityContext::contextImpl is nullptr.");
-    return EL2;
+    return contextImpl_->GetArea();
 }
 
 
