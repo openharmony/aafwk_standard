@@ -179,6 +179,7 @@ ErrCode AbilityContextImpl::StartAbilityForResultWithAccount(
 ErrCode AbilityContextImpl::TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode)
 {
     HILOG_DEBUG("%{public}s. Start calling TerminateAbilityWithResult.", __func__);
+    isTerminating_ = true;
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, resultCode, &want);
     HILOG_INFO("%{public}s. End calling TerminateAbilityWithResult. ret=%{public}d", __func__, err);
     return err;
@@ -297,6 +298,7 @@ void AbilityContextImpl::MinimizeAbility(bool fromUser)
 ErrCode AbilityContextImpl::TerminateSelf()
 {
     HILOG_DEBUG("%{public}s begin.", __func__);
+    isTerminating_ = true;
     AAFwk::Want resultWant;
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->TerminateAbility(token_, -1, &resultWant);
     if (err != ERR_OK) {
@@ -308,6 +310,7 @@ ErrCode AbilityContextImpl::TerminateSelf()
 ErrCode AbilityContextImpl::CloseAbility()
 {
     HILOG_DEBUG("%{public}s begin.", __func__);
+    isTerminating_ = true;
     AAFwk::Want resultWant;
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->CloseAbility(token_, -1, &resultWant);
     if (err != ERR_OK) {

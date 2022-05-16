@@ -51,6 +51,7 @@ public:
     static NativeValue* RequestPermissionsFromUser(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* RestoreWindowStage(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* SetMissionLabel(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* IsTerminating(NativeEngine* engine, NativeCallbackInfo* info);
 
 #ifdef SUPPORT_GRAPHICS
     static NativeValue* SetMissionIcon(NativeEngine* engine, NativeCallbackInfo* info);
@@ -78,6 +79,7 @@ private:
     NativeValue* OnRequestPermissionsFromUser(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnRestoreWindowStage(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnSetMissionLabel(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnIsTerminating(NativeEngine& engine, NativeCallbackInfo& info);
 
 #ifdef SUPPORT_GRAPHICS
     NativeValue* OnSetMissionIcon(NativeEngine& engine, NativeCallbackInfo& info);
