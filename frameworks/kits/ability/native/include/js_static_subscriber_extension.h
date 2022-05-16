@@ -54,7 +54,7 @@ public:
 
     void OnStop() override;
 
-    void OnReceiveEvent(EventFwk::CommonEventData* data) override;
+    void OnReceiveEvent(std::shared_ptr<EventFwk::CommonEventData> data) override;
 private:
     JsRuntime& jsRuntime_;
     std::unique_ptr<NativeReference> jsObj_;

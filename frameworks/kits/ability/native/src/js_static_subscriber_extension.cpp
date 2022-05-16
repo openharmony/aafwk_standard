@@ -16,6 +16,7 @@
 #include "js_static_subscriber_extension.h"
 
 #include "ability_info.h"
+#include "ability_handler.h"
 #include "hilog_wrapper.h"
 #include "js_runtime.h"
 #include "js_runtime_utils.h"
@@ -122,50 +123,58 @@ void JsStaticSubscriberExtension::OnDisconnect(const AAFwk::Want& want)
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-void JsStaticSubscriberExtension::OnReceiveEvent(EventFwk::CommonEventData* data)
+void JsStaticSubscriberExtension::OnReceiveEvent(std::shared_ptr<EventFwk::CommonEventData> data)
 {
-    StaticSubscriberExtension::OnReceiveEvent(data);
     HILOG_INFO("%{public}s begin.", __func__);
-    if (data == nullptr) {
-        HILOG_ERROR("%{public}s common event data == nullptr", __func__);
+
+    if (handler_ == nullptr) {
         return;
     }
+    auto task = [this, data]() {
+        if (data == nullptr) {
+            HILOG_ERROR("OnReceiveEvent common event data == nullptr");
+            return;
+        }
+        StaticSubscriberExtension::OnReceiveEvent(data);
+        if (!jsObj_) {
+            HILOG_ERROR("Not found StaticSubscriberExtension.js");
+            return;
+        }
+        HandleScope handleScope(jsRuntime_);
+        NativeEngine& nativeEngine = jsRuntime_.GetNativeEngine();
+        NativeValue* jCommonEventData = nativeEngine.CreateObject();
+        NativeObject* commonEventData = ConvertNativeValueTo<NativeObject>(jCommonEventData);
+        Want want = data->GetWant();
+        commonEventData->SetProperty("event",
+            nativeEngine.CreateString(want.GetAction().c_str(), want.GetAction().size()));
+        commonEventData->SetProperty("bundleName",
+            nativeEngine.CreateString(want.GetBundle().c_str(), want.GetBundle().size()));
+        commonEventData->SetProperty("code", nativeEngine.CreateNumber(data->GetCode()));
+        commonEventData->SetProperty("data",
+            nativeEngine.CreateString(data->GetData().c_str(), data->GetData().size()));
+        napi_value napiParams = AppExecFwk::WrapWantParams(
+            reinterpret_cast<napi_env>(&nativeEngine), want.GetParams());
+        NativeValue* nativeParams = reinterpret_cast<NativeValue*>(napiParams);
+        commonEventData->SetProperty("parameters", nativeParams);
 
-    HandleScope handleScope(jsRuntime_);
-    NativeEngine& nativeEngine = jsRuntime_.GetNativeEngine();
+        NativeValue* argv[] = {jCommonEventData};
 
-    NativeValue* jCommonEventData = nativeEngine.CreateObject();
-    NativeObject* commonEventData = ConvertNativeValueTo<NativeObject>(jCommonEventData);
-    Want want = data->GetWant();
-    commonEventData->SetProperty("event", nativeEngine.CreateString(want.GetAction().c_str(), want.GetAction().size()));
-    commonEventData->SetProperty("bundleName", nativeEngine.CreateString(want.GetBundle().c_str(),
-        want.GetBundle().size()));
-    commonEventData->SetProperty("code", nativeEngine.CreateNumber(data->GetCode()));
-    commonEventData->SetProperty("data", nativeEngine.CreateString(data->GetData().c_str(), data->GetData().size()));
-    napi_value napiParams = AppExecFwk::WrapWantParams(reinterpret_cast<napi_env>(&nativeEngine), want.GetParams());
-    NativeValue* nativeParams = reinterpret_cast<NativeValue*>(napiParams);
-    commonEventData->SetProperty("parameters", nativeParams);
+        NativeValue* value = jsObj_->Get();
+        NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
+        if (obj == nullptr) {
+            HILOG_ERROR("Failed to get StaticSubscriberExtension object");
+            return;
+        }
 
-    NativeValue* argv[] = {jCommonEventData};
-    if (!jsObj_) {
-        HILOG_WARN("Not found StaticSubscriberExtension.js");
-        return;
-    }
-
-    NativeValue* value = jsObj_->Get();
-    NativeObject* obj = ConvertNativeValueTo<NativeObject>(value);
-    if (obj == nullptr) {
-        HILOG_ERROR("Failed to get StaticSubscriberExtension object");
-        return;
-    }
-
-    NativeValue* method = obj->GetProperty("onReceiveEvent");
-    if (method == nullptr) {
-        HILOG_ERROR("Failed to get onReceiveEvent from StaticSubscriberExtension object");
-        return;
-    }
-    nativeEngine.CallFunction(value, method, argv, ARGC_ONE);
-    HILOG_INFO("%{public}s end.", __func__);
+        NativeValue* method = obj->GetProperty("onReceiveEvent");
+        if (method == nullptr) {
+            HILOG_ERROR("Failed to get onReceiveEvent from StaticSubscriberExtension object");
+            return;
+        }
+        nativeEngine.CallFunction(value, method, argv, ARGC_ONE);
+        HILOG_INFO("JsStaticSubscriberExtension js receive event called.");
+    };
+    handler_->PostTask(task);
 }
 } // namespace AbilityRuntime
 } // namespace OHOS
