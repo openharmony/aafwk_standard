@@ -22,7 +22,6 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
-const int EL2 = 1;
 std::map<int64_t, std::shared_ptr<AbilityLifecycleCallback>> ApplicationContext::callbacks_;
 std::shared_ptr<ApplicationContext> Context::applicationContext_ = nullptr;
 
