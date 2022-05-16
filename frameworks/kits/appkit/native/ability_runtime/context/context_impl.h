@@ -239,6 +239,8 @@ public:
      */
     std::string GetBaseDir() const override;
 
+    static const int EL_DEFAULT = 1;
+
 protected:
     sptr<IRemoteObject> token_;
 
@@ -261,7 +263,6 @@ private:
     static const std::string CONTEXT_FILES;
     static const std::string CONTEXT_HAPS;
     static const std::string CONTEXT_ELS[];
-    static const int EL_DEFAULT = 1;
     int flags_ = 0x00000000;
 
     void InitResourceManager(
