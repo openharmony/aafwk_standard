@@ -35,6 +35,7 @@ const std::string GRANT_ABILITY_BUNDLE_NAME = "com.ohos.permissionmanager";
 const std::string GRANT_ABILITY_ABILITY_NAME = "com.ohos.permissionmanager.GrantAbility";
 const std::string PERMISSION_KEY = "ohos.user.grant.permission";
 const std::string STATE_KEY = "ohos.user.grant.permission.state";
+const int EL2 = 1;
 
 
 std::string AbilityContextImpl::GetBaseDir() const
@@ -103,7 +104,7 @@ int AbilityContextImpl::GetArea()
     }
 
     HILOG_ERROR("AbilityContextImpl::stageContext is nullptr.");
-    return -1;
+    return EL2;
 }
 
 ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, int requestCode)
