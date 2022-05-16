@@ -215,6 +215,15 @@ public:
      *
      * @param want, Special want for service type's ability.
      * @param connect, Callback used to notify caller the result of connecting or disconnecting.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode ConnectAbility(const Want &want, const sptr<IAbilityConnection> &connect, int32_t userId);
+
+    /**
+     * ConnectAbility, connect session with service ability.
+     *
+     * @param want, Special want for service type's ability.
+     * @param connect, Callback used to notify caller the result of connecting or disconnecting.
      * @param callerToken, caller ability token.
      * @return Returns ERR_OK on success, others on failure.
      */
@@ -489,7 +498,16 @@ public:
      */
     ErrCode GetMissionIdByToken(const sptr<IRemoteObject> &token, int32_t &missionId);
 
-	/**
+    /**
+     * Start Ability, connect session with common ability.
+     *
+     * @param want, Special want for service type's ability.
+     * @param connect, Callback used to notify caller the result of connecting or disconnecting.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode StartAbilityByCall(const Want &want, const sptr<IAbilityConnection> &connect);
+
+    /**
      * Start Ability, connect session with common ability.
      *
      * @param want, Special want for service type's ability.
