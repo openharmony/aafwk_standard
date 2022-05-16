@@ -257,6 +257,8 @@ public:
 #ifdef SUPPORT_GRAPHICS
     virtual int GetCurrentWindowMode() = 0;
 #endif
+    virtual bool IsTerminating() = 0;
+    virtual void SetTerminating(bool state) = 0;
     using SelfType = AbilityContext;
     static const size_t CONTEXT_TYPE_ID;
 
