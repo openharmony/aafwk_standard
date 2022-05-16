@@ -39,6 +39,7 @@ ohos_unittest("AmsAppRunningRecordTest") {
     "${services_path}/appmgr/src/app_spawn_client.cpp",
     "${services_path}/appmgr/src/app_spawn_msg_wrapper.cpp",
     "${services_path}/appmgr/src/app_spawn_socket.cpp",
+    "${services_path}/appmgr/src/app_state_observer_manager.cpp",
     "${services_path}/appmgr/test/mock/src/mock_bundle_manager.cpp",
   ]
 
