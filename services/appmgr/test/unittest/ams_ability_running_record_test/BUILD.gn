@@ -40,6 +40,7 @@ ohos_unittest("AmsAbilityRunningRecordTest") {
     "${services_path}/appmgr/src/app_spawn_client.cpp",
     "${services_path}/appmgr/src/app_spawn_msg_wrapper.cpp",
     "${services_path}/appmgr/src/app_spawn_socket.cpp",
+    "${services_path}/appmgr/src/app_state_observer_manager.cpp",
   ]
 
   sources += [ "ams_ability_running_record_test.cpp" ]
