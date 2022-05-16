@@ -99,12 +99,11 @@ void AbilityContextImpl::SwitchArea(int mode)
 int AbilityContextImpl::GetArea()
 {
     HILOG_DEBUG("AbilityContextImpl::GetArea.");
-    if (stageContext_ != nullptr) {
-        return stageContext_->GetArea();
+    if (stageContext_ == nullptr) {
+        HILOG_ERROR("AbilityContextImpl::stageContext is nullptr.");
+        return EL_DEFAULT;
     }
-
-    HILOG_ERROR("AbilityContextImpl::stageContext is nullptr.");
-    return EL2;
+    return stageContext_->GetArea();
 }
 
 ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, int requestCode)

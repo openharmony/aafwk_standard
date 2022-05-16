@@ -54,7 +54,6 @@ const std::string ContextImpl::CONTEXT_TEMP("/temp");
 const std::string ContextImpl::CONTEXT_FILES("/files");
 const std::string ContextImpl::CONTEXT_HAPS("/haps");
 const std::string ContextImpl::CONTEXT_ELS[] = {"el1", "el2"};
-const int32_t DEFAULT_EL = 1;
 #ifndef OS_ACCOUNT_PART_ENABLED
 const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 #endif // OS_ACCOUNT_PART_ENABLED
@@ -182,7 +181,7 @@ int ContextImpl::GetArea()
     }
     if (mode == -1) {
         HILOG_ERROR("ContextImpl::GetArea not find mode.");
-        return DEFAULT_EL;
+        return EL_DEFAULT;
     }
     HILOG_DEBUG("ContextImpl::GetArea end");
     return mode;
