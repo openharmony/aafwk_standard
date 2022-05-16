@@ -14,6 +14,7 @@
  */
 
 #include "app_state_observer_manager.h"
+#include "application_state_observer_stub.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
@@ -93,12 +94,12 @@ void AppStateObserverManager::OnAppStateChanged(
             return;
         }
         HILOG_INFO("OnAppStateChanged come.");
-        self->HandleAppStateChanged(appRecord, missionId);
+        self->HandleAppStateChanged(appRecord, state);
     };
     handler_->PostTask(task);
 }
 
-void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord)
+void AppStateObserverManager::OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord)
 {
     auto task = [weak = weak_from_this(), appRecord]() {
         auto self = weak.lock();
@@ -112,7 +113,7 @@ void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &
     handler_->PostTask(task);
 }
 
-void AppMgrServiceInner::OnProcessCreated(const std::shared_ptr<AppRunningRecord> &appRecord)
+void AppStateObserverManager::OnProcessCreated(const std::shared_ptr<AppRunningRecord> &appRecord)
 {
     auto task = [weak = weak_from_this(), appRecord]() {
         auto self = weak.lock();
@@ -126,16 +127,16 @@ void AppMgrServiceInner::OnProcessCreated(const std::shared_ptr<AppRunningRecord
     handler_->PostTask(task);
 }
 
-void AppMgrServiceInner::OnComponentStateChanged(const AbilityStateData abilityStateData, bool isAbility)
+void AppStateObserverManager::StateChangedNotifyObserver(const AbilityStateData abilityStateData, bool isAbility)
 {
-    auto task = [weak = weak_from_this(), appRecord]() {
+    auto task = [weak = weak_from_this(), abilityStateData, isAbility]() {
         auto self = weak.lock();
         if (self == nullptr) {
             HILOG_ERROR("self is nullptr, OnAppStateChanged failed.");
             return;
         }
         HILOG_INFO("OnAppStateChanged come.");
-        self->HandleOnComponentStateChanged(appRecord, isAbility);
+        self->HandleStateChangedNotifyObserver(abilityStateData, isAbility);
     };
     handler_->PostTask(task);
 }
@@ -167,7 +168,7 @@ void AppStateObserverManager::HandleAppStateChanged(const std::shared_ptr<AppRun
     }
 }
 
-void AppStateObserverManager::HandleOnComponentStateChanged(const AbilityStateData abilityStateData, bool isAbility)
+void AppStateObserverManager::HandleStateChangedNotifyObserver(const AbilityStateData abilityStateData, bool isAbility)
 {
     std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
     HILOG_DEBUG("module:%{public}s, bundle:%{public}s, ability:%{public}s, state:%{public}d,"
@@ -257,7 +258,7 @@ void AppStateObserverManager::AddObserverDeathRecipient(const sptr<IApplicationS
         return;
     } else {
         sptr<IRemoteObject::DeathRecipient> deathRecipient = new ApplicationStateObserverRecipient(
-            std::bind(&AppMgrServiceInner::OnObserverDied, this, std::placeholders::_1));
+            std::bind(&AppStateObserverManager::OnObserverDied, this, std::placeholders::_1));
         observer->AsObject()->AddDeathRecipient(deathRecipient);
         recipientMap_.emplace(observer->AsObject(), deathRecipient);
     }
@@ -292,6 +293,29 @@ int AppStateObserverManager::VerifyObserverPermission()
     }
     HILOG_ERROR("%{public}s: Permission verification failed", __func__);
     return ERR_PERMISSION_DENIED;
+}
+
+void AppStateObserverManager::OnObserverDied(const wptr<IRemoteObject> &remote)
+{
+    HILOG_INFO("%{public}s begin", __func__);
+    auto object = remote.promote();
+    if (object == nullptr) {
+        HILOG_ERROR("observer nullptr.");
+        return;
+    }
+    sptr<IApplicationStateObserver> observer = iface_cast<IApplicationStateObserver>(object);
+    UnregisterApplicationStateObserver(observer);
+}
+
+AppStateData AppStateObserverManager::WrapAppStateData(const std::shared_ptr<AppRunningRecord> &appRecord,
+    const ApplicationState state)
+{
+    AppStateData appStateData;
+    appStateData.pid = appRecord->GetPriorityObject()->GetPid();
+    appStateData.bundleName = appRecord->GetBundleName();
+    appStateData.state = static_cast<int32_t>(state);
+    appStateData.uid = appRecord->GetUid();
+    return appStateData;
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
