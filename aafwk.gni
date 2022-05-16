@@ -32,6 +32,10 @@ system_test_app_path =
 form_runtime_path = "${aafwk_path}/form_runtime"
 form_runtime_napi_path = "${aafwk_path}/form_runtime/frameworks/js/napi"
 
+base_path = "//foundation/aafwk/standard/ability_base"
+base_inner_api_path = "${base_path}/interfaces/inner_api"
+base_native_path = "${base_path}/frameworks/native"
+
 declare_args() {
   background_task_mgr_continuous_task_enable = true
   distributed_data_object_enable = true

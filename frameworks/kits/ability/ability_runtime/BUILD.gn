@@ -47,6 +47,7 @@ ohos_shared_library("ability_context_native") {
   deps = [ "${kits_path}/appkit:app_context" ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_base:want",
     "ability_runtime:ability_manager",
     "ability_runtime:app_manager",

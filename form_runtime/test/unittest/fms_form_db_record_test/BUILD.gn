@@ -51,8 +51,9 @@ ohos_unittest("FmsFormDbRecordTest") {
     "${form_runtime_path}:fms_target",
 
     #"${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${base_path}:base",
+    "${base_path}:configuration",
+    "${base_path}:want",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//utils/native/base:utils",

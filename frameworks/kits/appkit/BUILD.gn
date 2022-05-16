@@ -54,6 +54,7 @@ config("appkit_config") {
 config("appkit_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
+    "${base_inner_api_path}/configuration/include",
     "native/ability_delegator/include",
     "${global_path}/resource_management/interfaces/inner_api/include",
   ]
@@ -191,6 +192,7 @@ ohos_shared_library("app_context") {
       [ "${global_path}/resource_management/frameworks/resmgr:global_resmgr" ]
 
   external_deps = [
+    "ability_base:configuration",
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:ability_manager",

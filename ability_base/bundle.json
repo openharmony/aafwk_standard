@@ -5,7 +5,7 @@
     "license": "Apache License 2.0",
     "publishAs": "code-segment",
     "segment": {
-        "destPath": "foundation/aafwk/standard/interfaces/innerkits"
+        "destPath": "foundation/aafwk/standard/ability_base"
     },
     "dirs": {},
     "scripts": {},
@@ -32,67 +32,69 @@
         },
         "build": {
             "sub_component": [
-                "//foundation/aafwk/standard/interfaces/innerkits:base_innerkits_target"
+                "//foundation/aafwk/standard/ability_base:base_innerkits_target"
             ],
             "inner_kits": [
                 {
                     "header": {
-                      "header_base": "//foundation/aafwk/standard/interfaces/innerkits/base/include/",
+                      "header_base": "//foundation/aafwk/standard/ability_base/interfaces/inner_api/base/include/",
                       "header_files": [
-                        "ohos/aafwk/base/base_def.h",
-                        "ohos/aafwk/base/base_interfaces.h",
-                        "ohos/aafwk/base/base_object.h",
-                        "ohos/aafwk/base/base_types.h",
-                        "ohos/aafwk/base/bool_wrapper.h",
-                        "ohos/aafwk/base/byte_wrapper.h",
-                        "ohos/aafwk/base/double_wrapper.h",
-                        "ohos/aafwk/base/float_wrapper.h",
-                        "ohos/aafwk/base/int_wrapper.h",
-                        "ohos/aafwk/base/light_refbase.h",
-                        "ohos/aafwk/base/long_wrapper.h",
-                        "ohos/aafwk/base/short_wrapper.h",
-                        "ohos/aafwk/base/string_wrapper.h"
+                        "base_def.h",
+                        "base_interfaces.h",
+                        "base_object.h",
+                        "base_types.h",
+                        "bool_wrapper.h",
+                        "byte_wrapper.h",
+                        "double_wrapper.h",
+                        "float_wrapper.h",
+                        "int_wrapper.h",
+                        "light_refbase.h",
+                        "long_wrapper.h",
+                        "short_wrapper.h",
+                        "string_wrapper.h"
                       ]
                     },
-                    "name": "//foundation/aafwk/standard/interfaces/innerkits/base:base"
+                    "name": "//foundation/aafwk/standard/ability_base:base"
                 },
                 {
                     "header": {
-                      "header_base": "//foundation/aafwk/standard/interfaces/innerkits/want/include/",
+                      "header_base": "//foundation/aafwk/standard/ability_base/interfaces/inner_api/want/include/",
                       "header_files": [
-                        "ohos/aafwk/content/element_name.h",
-                        "ohos/aafwk/content/want.h",
-                        "ohos/aafwk/content/skills.h",
-                        "ohos/aafwk/content/want_params.h",
-                        "ohos/aafwk/content/match_type.h",
-                        "ohos/aafwk/content/operation.h",
-                        "ohos/aafwk/content/patterns_matcher.h",
-                        "ohos/aafwk/content/pac_map.h"
+                        "element_name.h",
+                        "want.h",
+                        "skills.h",
+                        "want_params.h",
+                        "match_type.h",
+                        "operation.h",
+                        "patterns_matcher.h",
+                        "pac_map.h"
                       ]
                     },
-                    "name": "//foundation/aafwk/standard/interfaces/innerkits/want:want"
+                    "name": "//foundation/aafwk/standard/ability_base:want"
                 },
                 {
                     "header": {
-                      "header_base": "//foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr",
+                      "header_base": "//foundation/aafwk/standard/ability_base/interfaces/inner_api/configuration/include",
                       "header_files": [
                         "configuration.h",
                         "global_configuration_key.h"
                       ]
                     },
-                    "name": "//foundation/aafwk/standard/interfaces/innerkits/app_manager:configuration"
+                    "name": "//foundation/aafwk/standard/ability_base:configuration"
                 },
                 {
                   "header": {
-                    "header_base": "//foundation/aafwk/standard/interfaces/innerkits/uri/include",
+                    "header_base": "//foundation/aafwk/standard/ability_base/interfaces/inner_api/uri/include",
                     "header_files": [
                       "uri.h"
                     ]
                   },
-                  "name": "//foundation/aafwk/standard/interfaces/innerkits/uri:zuri"
+                  "name": "//foundation/aafwk/standard/ability_base:zuri"
                 }
             ],
-            "test": []
+            "test": [
+              "//foundation/aafwk/standard/ability_base/test:unittest"
+            ]
         }
     }
 }
