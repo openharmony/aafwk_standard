@@ -110,6 +110,13 @@ public:
     void SwitchArea(int mode) override;
 
     /**
+     * @brief Get file area
+     *
+     * @return file area.
+     */
+    int GetArea() override;
+
+    /**
      * @brief set the ResourceManager.
      *
      * @param the ResourceManager has been inited.

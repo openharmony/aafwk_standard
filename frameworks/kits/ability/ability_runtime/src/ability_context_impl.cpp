@@ -95,6 +95,17 @@ void AbilityContextImpl::SwitchArea(int mode)
     }
 }
 
+int AbilityContextImpl::GetArea()
+{
+    HILOG_DEBUG("AbilityContextImpl::GetArea.");
+    if (stageContext_ != nullptr) {
+        return stageContext_->GetArea();
+    }
+
+    HILOG_ERROR("AbilityContextImpl::stageContext is nullptr.");
+    return -1;
+}
+
 ErrCode AbilityContextImpl::StartAbility(const AAFwk::Want &want, int requestCode)
 {
     HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
