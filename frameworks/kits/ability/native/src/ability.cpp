@@ -1025,10 +1025,10 @@ void Ability::OnConfigurationUpdatedNotify(const Configuration &changeConfigurat
 
 #ifdef SUPPORT_GRAPHICS
     // Notify WindowScene
-    if (scene_ != nullptr && !language.empty()) {
+    if (scene_ != nullptr) {
         auto diffConfiguration = std::make_shared<AppExecFwk::Configuration>(changeConfiguration);
         scene_->UpdateConfiguration(diffConfiguration);
-        HILOG_ERROR("%{public}s scene_ -> UpdateConfiguration success.", __func__);
+        HILOG_INFO("%{public}s scene_ -> UpdateConfiguration success.", __func__);
     }
 #endif
     if (abilityContext_ != nullptr && application_ != nullptr) {
