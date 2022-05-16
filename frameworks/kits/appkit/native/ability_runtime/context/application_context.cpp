@@ -229,6 +229,15 @@ void ApplicationContext::SwitchArea(int mode)
     }
 }
 
+int ApplicationContext::GetArea()
+{
+    if (contextImpl_ != nullptr) {
+        return contextImpl_->GetArea();
+    }
+    return -1;
+}
+
+
 std::shared_ptr<AppExecFwk::Configuration> ApplicationContext::GetConfiguration() const
 {
     return (contextImpl_ != nullptr) ? contextImpl_->GetConfiguration() : nullptr;

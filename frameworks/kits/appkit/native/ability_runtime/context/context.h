@@ -186,6 +186,13 @@ public:
     virtual void SwitchArea(int mode) = 0;
 
     /**
+     * @brief Get file area
+     *
+     * @return file area.
+     */
+    virtual int GetArea() = 0;
+
+    /**
      * @brief Obtains the configuration of application.
      *
      * @return configuration of application.
