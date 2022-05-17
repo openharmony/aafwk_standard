@@ -66,6 +66,7 @@ const std::string CLASS_NAME = "ohos.app.MainThread";
 const std::string FUNC_NAME = "main";
 const std::string SO_PATH = "system/lib64/libmapleappkit.z.so";
 const std::string RENDER_PARAM = "invalidparam";
+const std::string COLD_START = "coldStart";
 const int32_t SIGNAL_KILL = 9;
 constexpr int32_t USER_SCALE = 200000;
 #define ENUM_TO_STRING(s) #s
@@ -757,6 +758,9 @@ std::shared_ptr<AppRunningRecord> AppMgrServiceInner::CreateAppRunningRecord(con
     appRecord->AddModule(appInfo, abilityInfo, token, hapModuleInfo, want);
     if (want) {
         appRecord->SetDebugApp(want->GetBoolParam("debugApp", false));
+        if (want.GetBoolParam(COLD_START, false)) {
+            appRecord->SetDebugApp(true);
+        }
     }
 
     if (preToken) {
@@ -1978,6 +1982,9 @@ int AppMgrServiceInner::StartEmptyProcess(const AAFwk::Want &want, const sptr<IR
     auto isDebug = want.GetBoolParam("debugApp", false);
     HILOG_INFO("Set Debug : %{public}s", (isDebug ? "true" : "false"));
     appRecord->SetDebugApp(isDebug);
+    if (want.GetBoolParam(COLD_START, false)) {
+        appRecord->SetDebugApp(true);
+    }
 
     std::shared_ptr<UserTestRecord> testRecord = std::make_shared<UserTestRecord>();
     if (!testRecord) {
