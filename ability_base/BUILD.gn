@@ -1,0 +1,185 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
+
+baseImpl = "${base_path}/frameworks/native"
+
+################################### base ########################################
+config("base_config") {
+  visibility = [ ":*" ]
+}
+
+config("base_public_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "interfaces/inner_api/base/include",
+    "//utils/native/base/include",
+  ]
+}
+
+ohos_shared_library("base") {
+  sources = [
+    "${baseImpl}/base/src/base.cpp",
+    "${baseImpl}/base/src/base_object.cpp",
+    "${baseImpl}/base/src/bool_wrapper.cpp",
+    "${baseImpl}/base/src/byte_wrapper.cpp",
+    "${baseImpl}/base/src/double_wrapper.cpp",
+    "${baseImpl}/base/src/float_wrapper.cpp",
+    "${baseImpl}/base/src/int_wrapper.cpp",
+    "${baseImpl}/base/src/long_wrapper.cpp",
+    "${baseImpl}/base/src/remote_object_wrapper.cpp",
+    "${baseImpl}/base/src/short_wrapper.cpp",
+    "${baseImpl}/base/src/string_wrapper.cpp",
+    "${baseImpl}/base/src/user_object_wrapper.cpp",
+    "${baseImpl}/base/src/zchar_wrapper.cpp",
+  ]
+  configs = [ ":base_config" ]
+  public_configs = [ ":base_public_config" ]
+  external_deps = [ "utils_base:utils" ]
+
+  subsystem_name = "aafwk"
+  part_name = "ability_base"
+}
+
+################################### configuration ########################################
+config("configuration_sdk_config") {
+  include_dirs = [
+    "interfaces/inner_api/configuration/include",
+    "${innerkits_path}/log/include",
+    "//third_party/json/include",
+  ]
+}
+
+ohos_shared_library("configuration") {
+  sources = [
+    "${baseImpl}/configuration/src/configuration.cpp",
+    "${baseImpl}/configuration/src/configuration_convertor.cpp",
+  ]
+
+  public_configs = [ ":configuration_sdk_config" ]
+
+  defines = [
+    "ABILITYBASE_LOG_TAG = \"Configuration\"",
+    "ABILITYBASE_LOG_DOMAIN = 0xD002200",
+  ]
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "resource_management:global_resmgr",
+    "utils_base:utils",
+  ]
+
+  subsystem_name = "aafwk"
+  part_name = "ability_base"
+}
+
+################################### zuri ########################################
+config("zuri_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "interfaces/inner_api/uri/include" ]
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+}
+
+ohos_shared_library("zuri") {
+  public_configs = [ ":zuri_config" ]
+
+  sources = [ "${baseImpl}/uri/src/uri.cpp" ]
+
+  deps = []
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "utils_base:utils",
+  ]
+
+  subsystem_name = "aafwk"
+  part_name = "ability_base"
+}
+
+################################### want ########################################
+config("want_config") {
+  visibility = [ ":*" ]
+  include_dirs = []
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+  defines = [
+    "ABILITYBASE_LOG_TAG = \"Ability\"",
+    "ABILITYBASE_LOG_DOMAIN = 0xD002200",
+  ]
+}
+
+config("want_public_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "//utils/native/base/include",
+    "${base_inner_api_path}/base/include",
+    "${base_inner_api_path}/uri/include",
+    "${base_inner_api_path}/want/include",
+    "${innerkits_path}/log/include",
+    "${kits_path}/content/cpp/src",
+    "//third_party/jsoncpp/include",
+    "//third_party/json/include",
+  ]
+}
+
+wantImpl = "${base_native_path}/want/src"
+
+ohos_shared_library("want") {
+  sources = [
+    "${wantImpl}/array_wrapper.cpp",
+    "${wantImpl}/element_name.cpp",
+    "${wantImpl}/extra_params.cpp",
+    "${wantImpl}/operation.cpp",
+    "${wantImpl}/operation_builder.cpp",
+    "${wantImpl}/pac_map.cpp",
+    "${wantImpl}/patterns_matcher.cpp",
+    "${wantImpl}/skills.cpp",
+    "${wantImpl}/want.cpp",
+    "${wantImpl}/want_params.cpp",
+    "${wantImpl}/want_params_wrapper.cpp",
+  ]
+
+  deps = [ "//third_party/jsoncpp:jsoncpp" ]
+
+  external_deps = [
+    "ability_base:base",
+    "ability_base:zuri",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "utils_base:utils",
+  ]
+
+  configs = [ ":want_config" ]
+  public_configs = [ ":want_public_config" ]
+  subsystem_name = "aafwk"
+  part_name = "ability_base"
+}
+
+group("base_innerkits_target") {
+  deps = [
+    ":base",
+    ":configuration",
+    ":want",
+  ]
+}

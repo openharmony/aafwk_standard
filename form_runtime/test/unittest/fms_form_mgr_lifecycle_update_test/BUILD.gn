@@ -58,10 +58,10 @@ ohos_unittest("FmsFormMgrLifecycleUpdateTest") {
 
     #"${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     #"//base/startup/appspawn_standard:appspawn_socket_client",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "${base_path}:want",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${form_runtime_path}:fms_target",

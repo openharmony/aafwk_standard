@@ -1,0 +1,224 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+import("//foundation/aafwk/standard/aafwk.gni")
+
+base_output_path = "aafwk/base_test"
+
+config("base_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [ "//utils/native/base/include" ]
+}
+
+ohos_unittest("base_test") {
+  module_out_path = base_output_path
+  sources = [ "unittest/base/base_test.cpp" ]
+
+  configs = [ ":base_private_config" ]
+
+  deps = [ "//third_party/googletest:gtest_main" ]
+
+  external_deps = [
+    "ability_base:base",
+    "utils_base:utils",
+  ]
+}
+
+######################################################################
+want_output_path = "ability_runtime/want_test"
+
+###############################################################################
+config("want_private_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "//utils/native/base/include",
+    "//sdk/appexecfwk/appexecfwk_base/include",
+    "${base_inner_api_path}/uri/include",
+    "${base_inner_api_path}/want/include",
+    "${appexecfwk_path}/common/log/include",
+  ]
+
+  defines = [
+    "ABILITYBASE_LOG_TAG = \"WantUnitTest\"",
+    "ABILITYBASE_LOG_DOMAIN = 0xD002210",
+  ]
+}
+
+config("module_private_want_param_wrapper_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "//utils/native/base/include",
+    "//sdk/appexecfwk/appexecfwk_base/include",
+    "${base_inner_api_path}/want/include",
+  ]
+
+  defines = [
+    "ABILITYBASE_LOG_TAG = \"WantUnitTest\"",
+    "ABILITYBASE_LOG_DOMAIN = 0xD002210",
+  ]
+}
+
+ohos_unittest("operation_test") {
+  module_out_path = want_output_path
+  sources = [ "unittest/want/operation_test.cpp" ]
+
+  configs = [
+    ":want_private_config",
+    "${base_path}:want_public_config",
+  ]
+
+  deps = [
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_base:zuri",
+    "bundle_framework:appexecfwk_base",
+  ]
+}
+
+ohos_unittest("patterns_matcher_test") {
+  module_out_path = want_output_path
+  sources = [ "unittest/want/patterns_matcher_test.cpp" ]
+
+  configs = [
+    ":want_private_config",
+    "${base_path}:want_public_config",
+  ]
+
+  deps = [
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "ability_base:want",
+    "bundle_framework:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
+}
+
+ohos_unittest("skills_test") {
+  module_out_path = want_output_path
+  sources = [ "unittest/want/skills_test.cpp" ]
+
+  configs = [
+    ":want_private_config",
+    "${base_path}:want_public_config",
+  ]
+
+  deps = [
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_base:zuri",
+    "bundle_framework:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
+}
+
+ohos_unittest("want_params_test") {
+  module_out_path = want_output_path
+  sources = [ "unittest/want/want_params_test.cpp" ]
+
+  configs = [
+    ":want_private_config",
+    "${base_path}:want_public_config",
+  ]
+
+  deps = [
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:base",
+    "${base_path}:want",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
+ohos_unittest("want_params_wrapper_test") {
+  module_out_path = want_output_path
+  sources = [ "unittest/want/want_params_wrapper_test.cpp" ]
+
+  configs = [ ":module_private_want_param_wrapper_config" ]
+
+  deps = [
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_base:zuri",
+    "bundle_framework:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
+ohos_unittest("want_test") {
+  module_out_path = want_output_path
+  sources = [ "unittest/want/want_test.cpp" ]
+
+  configs = [
+    ":want_private_config",
+    "${base_path}:want_public_config",
+  ]
+
+  deps = [
+    "${appexecfwk_path}/common:libappexecfwk_common",
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_base:zuri",
+    "bundle_framework:appexecfwk_base",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
+}
+
+###############################################################################
+
+group("unittest") {
+  testonly = true
+  deps = [
+    #":base_test",
+    ":operation_test",
+    ":patterns_matcher_test",
+    ":skills_test",
+    ":want_params_test",
+    ":want_params_wrapper_test",
+    ":want_test",
+  ]
+}

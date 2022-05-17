@@ -17,6 +17,7 @@ import("//foundation/aafwk/standard/aafwk.gni")
 config("appmgr_sdk_config") {
   include_dirs = [
     "include/appmgr",
+    "${base_inner_api_path}/configuration/include",
     "${kits_path}/ability/native/include",
     "${innerkits_path}/ability_manager/include",
     "${appexecfwk_inner_api_path}/appexecfwk_base/include",
@@ -24,7 +25,7 @@ config("appmgr_sdk_config") {
   defines = [ "ABILITY_COMMAND_FOR_TEST" ]
 }
 
-config("appexecfwk_core_config") {
+config("appmgr_core_config") {
   include_dirs = [ "include" ]
   defines = [ "ABILITY_COMMAND_FOR_TEST" ]
 }
@@ -70,7 +71,7 @@ ohos_shared_library("app_manager") {
   ]
 
   public_configs = [
-    ":appexecfwk_core_config",
+    ":appmgr_core_config",
     ":appmgr_sdk_config",
   ]
 
@@ -100,39 +101,4 @@ ohos_shared_library("app_manager") {
 
   subsystem_name = "aafwk"
   part_name = "ability_runtime"
-}
-
-config("configuration_sdk_config") {
-  include_dirs = [
-    "include/appmgr",
-    "${innerkits_path}/log/include",
-    "//third_party/json/include",
-  ]
-}
-
-ohos_shared_library("configuration") {
-  sources = [
-    "src/appmgr/configuration.cpp",
-    "src/appmgr/configuration_convertor.cpp",
-  ]
-
-  public_configs = [ ":configuration_sdk_config" ]
-
-  defines = [
-    "ABILITYBASE_LOG_TAG = \"Configuration\"",
-    "ABILITYBASE_LOG_DOMAIN = 0xD002200",
-  ]
-  cflags = []
-  if (target_cpu == "arm") {
-    cflags += [ "-DBINDER_IPC_32BIT" ]
-  }
-
-  external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
-    "resource_management:global_resmgr",
-    "utils_base:utils",
-  ]
-
-  subsystem_name = "aafwk"
-  part_name = "ability_base"
 }

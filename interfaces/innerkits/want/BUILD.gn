@@ -31,18 +31,17 @@ config("want_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "//utils/native/base/include",
-    "${innerkits_path}/want/include",
-    "${innerkits_path}/base/include",
+    "${base_inner_api_path}/base/include",
+    "${base_inner_api_path}/uri/include",
+    "${base_inner_api_path}/want/include",
     "${innerkits_path}/log/include",
-    "${innerkits_path}/uri/include",
-    "${innerkits_path}/want/include/ohos/aafwk/content",
     "${kits_path}/content/cpp/src",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
   ]
 }
 
-wantImpl = "${kits_path}/content/cpp/src/ohos/aafwk/content"
+wantImpl = "${kits_path}/content/cpp/src"
 
 ohos_shared_library("want") {
   sources = [
@@ -59,13 +58,11 @@ ohos_shared_library("want") {
     "${wantImpl}/want_params_wrapper.cpp",
   ]
 
-  deps = [
-    "${innerkits_path}/base:base",
-    "${innerkits_path}/uri:zuri",
-    "//third_party/jsoncpp:jsoncpp",
-  ]
+  deps = [ "//third_party/jsoncpp:jsoncpp" ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "utils_base:utils",

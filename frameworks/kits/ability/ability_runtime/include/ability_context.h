@@ -18,10 +18,10 @@
 
 #include "foundation/aafwk/standard/frameworks/kits/ability/native/include/iability_callback.h"
 #include "foundation/aafwk/standard/frameworks/kits/appkit/native/ability_runtime/context/context.h"
-#include "foundation/aafwk/standard/interfaces/innerkits/app_manager/include/appmgr/configuration.h"
 
 #include "ability_connect_callback.h"
 #include "ability_info.h"
+#include "configuration.h"
 #include "native_engine/native_reference.h"
 #include "native_engine/native_value.h"
 #include "start_options.h"

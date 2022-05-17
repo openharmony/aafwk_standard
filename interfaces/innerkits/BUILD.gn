@@ -18,14 +18,5 @@ group("innerkits_target") {
     "app_manager:app_manager",
     "dataobs_manager:dataobs_manager",
     "uri_permission:uri_permission_mgr",
-    "want:want",
-  ]
-}
-
-group("base_innerkits_target") {
-  deps = [
-    "app_manager:configuration",
-    "base:base",
-    "want:want",
   ]
 }

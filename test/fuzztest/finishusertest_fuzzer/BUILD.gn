@@ -44,8 +44,8 @@ ohos_fuzztest("FinishUserTestFuzzTest") {
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${base_path}:base",
+    "${base_path}:want",
   ]
 }
 

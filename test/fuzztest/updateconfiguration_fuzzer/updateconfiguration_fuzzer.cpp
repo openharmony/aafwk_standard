@@ -34,7 +34,7 @@ namespace OHOS {
 
         // fuzz for string, the value of colorMode is constrained
         Configuration config;
-        if (!config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, reinterpret_cast<const char*>(data))) {
+        if (!config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, reinterpret_cast<const char*>(data))) {
             return false;
         }
 

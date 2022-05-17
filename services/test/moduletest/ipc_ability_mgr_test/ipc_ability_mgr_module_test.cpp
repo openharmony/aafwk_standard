@@ -18,7 +18,7 @@
 
 #include "mock_ability_mgr_service.h"
 #include "ability_manager_interface.h"
-#include "ohos/aafwk/content/want.h"
+#include "want.h"
 #include "iremote_object.h"
 #include "mock_ability_scheduler.h"
 #include "ability_record.h"
