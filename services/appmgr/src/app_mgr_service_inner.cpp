@@ -2211,12 +2211,12 @@ void AppMgrServiceInner::GetGlobalConfiguration()
     // Currently only this interface is known
     auto language = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
     HILOG_INFO("current global language is : %{public}s", language.c_str());
-    configuration_->AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
+    configuration_->AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
 #endif
 
     // Assign to default colormode "light"
     HILOG_INFO("current global colormode is : %{public}s", ConfigurationInner::COLOR_MODE_LIGHT.c_str());
-    configuration_->AddItem(GlobalConfigurationKey::SYSTEM_COLORMODE, ConfigurationInner::COLOR_MODE_LIGHT);
+    configuration_->AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_COLORMODE, ConfigurationInner::COLOR_MODE_LIGHT);
 }
 
 std::shared_ptr<AppExecFwk::Configuration> AppMgrServiceInner::GetConfiguration()

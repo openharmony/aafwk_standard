@@ -19,7 +19,7 @@
 #include "context_container.h"
 #include "element_name.h"
 #include "event_handler.h"
-#include "ohos/aafwk/base/base_types.h"
+#include "base_types.h"
 #include "pending_want.h"
 #include "pending_want_record.h"
 #include "want.h"

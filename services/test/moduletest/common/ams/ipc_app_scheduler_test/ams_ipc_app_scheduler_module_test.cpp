@@ -276,14 +276,14 @@ HWTEST_F(AmsIpcAppSchedulerModuleTest, ExcuteApplicationIPCInterface_010, TestSi
     OHOS::Semaphore sem(0);
     Configuration testConfig;
     std::string val = "ZH-HANS";
-    testConfig.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
+    testConfig.AddItem(OHOS::AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, val);
     for (int i = 0; i < COUNT; i++) {
         sptr<MockAppScheduler> mockAppScheduler(new MockAppScheduler());
         sptr<IAppScheduler> client = iface_cast<IAppScheduler>(mockAppScheduler);
         bool testResult = false;
 
         auto mockHandler = [&](const Configuration &config) {
-            testResult = (val == config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE));
+            testResult = (val == config.GetItem(OHOS::AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE));
             sem.Post();
         };
 

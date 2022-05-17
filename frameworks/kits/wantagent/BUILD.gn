@@ -22,6 +22,7 @@ config("wantagent_innerkits_public_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
+    "${base_inner_api_path}/configuration/include",
     "${global_path}/resource_management/interfaces/inner_api/include",
     "${kits_path}/ability/native/include",
     "${innerkits_path}/ability_manager/include",

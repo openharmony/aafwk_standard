@@ -17,7 +17,7 @@
 #include <memory>
 #include <regex>
 #include "pac_map.h"
-#include "ohos/aafwk/base/user_object_base.h"
+#include "user_object_base.h"
 namespace OHOS {
 namespace AppExecFwk {
 using namespace testing::ext;

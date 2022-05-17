@@ -314,7 +314,7 @@ HWTEST_F(AppkitNativeModuleTestThird, App_ElementsCallbacks_0100, Function | Med
     mockAppMgr->ScheduleShrinkMemory(10);
     WaitUntilTaskDone(mockHandler_);
 
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, "ZH-HANS");
+    config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, "ZH-HANS");
 
     mockAppMgr->ScheduleConfigurationUpdated(config);
     WaitUntilTaskDone(mockHandler_);

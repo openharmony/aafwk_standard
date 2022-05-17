@@ -21,7 +21,7 @@
 #include "ability_info.h"
 #include "application_info.h"
 #include "bundlemgr/bundle_mgr_interface.h"
-#include "ohos/aafwk/content/want.h"
+#include "want.h"
 #include "iremote_proxy.h"
 #include "iremote_stub.h"
 
