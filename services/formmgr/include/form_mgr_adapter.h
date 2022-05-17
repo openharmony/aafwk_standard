@@ -172,6 +172,14 @@ public:
     int MessageEvent(const int64_t formId, const Want &want, const sptr<IRemoteObject> &callerToken);
 
     /**
+     * @brief Process js router event.
+     * @param formId Indicates the unique id of form.
+     * @param want the want of the ability to start.
+     * @return Returns true if execute success, false otherwise.
+     */
+    int RouterEvent(const int64_t formId, Want &want);
+
+    /**
      * @brief Acquire form data from form provider.
      * @param formId The Id of the from.
      * @param want The want of the request.
