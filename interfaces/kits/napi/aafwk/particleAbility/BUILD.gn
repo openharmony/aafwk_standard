@@ -58,9 +58,9 @@ ohos_shared_library("particleability") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
-    "native_appdatamgr:native_appdatafwk",
-    "native_appdatamgr:native_dataability",
-    "native_appdatamgr:native_rdb",
+    "relational_store:native_appdatafwk",
+    "dataability:native_dataability",
+    "relational_store:native_rdb",
     "utils_base:utils",
   ]
 

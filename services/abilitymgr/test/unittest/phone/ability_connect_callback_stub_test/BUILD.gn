@@ -61,9 +61,9 @@ ohos_unittest("ability_connect_callback_stub_test") {
     "access_token:libaccesstoken_sdk",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "native_appdatamgr:native_appdatafwk",
-    "native_appdatamgr:native_dataability",
-    "native_appdatamgr:native_rdb",
+    "relational_store:native_appdatafwk",
+    "dataability:native_dataability",
+    "relational_store:native_rdb",
   ]
 }
 
