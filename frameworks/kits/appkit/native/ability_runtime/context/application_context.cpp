@@ -233,7 +233,7 @@ int ApplicationContext::GetArea()
 {
     if (contextImpl_ == nullptr) {
         HILOG_ERROR("AbilityContext::contextImpl is nullptr.");
-        return EL_DEFAULT;
+        return ContextImpl::EL_DEFAULT;
     }
     return contextImpl_->GetArea();
 }
