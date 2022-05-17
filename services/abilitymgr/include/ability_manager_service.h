@@ -28,7 +28,6 @@
 #include "ability_event_handler.h"
 #include "ability_manager_stub.h"
 #include "app_scheduler.h"
-#include "atomic_service_status_callback.h"
 #include "bundlemgr/bundle_mgr_interface.h"
 #include "bundle_constants.h"
 #include "data_ability_manager.h"
@@ -894,8 +893,6 @@ private:
     int StartRemoteAbilityByCall(const Want &want, const sptr<IRemoteObject> &connect);
     int ReleaseRemoteAbility(const sptr<IRemoteObject> &connect, const AppExecFwk::ElementName &element);
 
-    int IsConnectFreeInstall(const Want &want, int32_t userId, const sptr<IRemoteObject> &callerToken);
-
     void DumpInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionInner(const std::string &args, std::vector<std::string> &info);
     void DumpStateInner(const std::string &args, std::vector<std::string> &info);
@@ -1042,17 +1039,6 @@ private:
     std::multimap<std::string, std::string> timeoutMap_;
 
     static sptr<AbilityManagerService> instance_;
-    struct FreeInstallInfo {
-        Want want;
-        int32_t userId = DEFAULT_INVAL_VALUE;
-        int32_t requestCode = DEFAULT_INVAL_VALUE;
-        std::shared_ptr<std::promise<int32_t>> promise;
-        bool isInstalled = false;
-        sptr<IRemoteObject> callerToken = nullptr;
-        sptr<IRemoteObject> dmsCallback = nullptr;
-    };
-    std::vector<FreeInstallInfo> freeInstallList_;
-    std::vector<FreeInstallInfo> dmsFreeInstallCbs_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

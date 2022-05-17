@@ -93,6 +93,11 @@ bool UnwrapElementName(napi_env env, napi_value param, ElementName &elementName)
     if (UnwrapStringByPropertyName(env, param, "abilityName", natValue)) {
         elementName.SetAbilityName(natValue);
     }
+
+    natValue = "";
+    if (UnwrapStringByPropertyName(env, param, "moduleName", natValue)) {
+        elementName.SetModuleName(natValue);
+    }
     return true;
 }
 
@@ -1082,11 +1087,6 @@ bool UnwrapWant(napi_env env, napi_value param, Want &want)
         want.SetAction(natValueString);
     }
 
-    natValueString = "";
-    if (UnwrapStringByPropertyName(env, param, "moduleName", natValueString)) {
-        want.SetParam("moduleName", natValueString);
-    }
-
     std::vector<std::string> natValueStringList;
     if (UnwrapStringArrayByPropertyName(env, param, "entities", natValueStringList)) {
         for (size_t i = 0; i < natValueStringList.size(); i++) {
@@ -1106,7 +1106,8 @@ bool UnwrapWant(napi_env env, napi_value param, Want &want)
 
     ElementName natElementName;
     UnwrapElementName(env, param, natElementName);
-    want.SetElementName(natElementName.GetDeviceID(), natElementName.GetBundleName(), natElementName.GetAbilityName());
+    want.SetElementName(natElementName.GetDeviceID(), natElementName.GetBundleName(), natElementName.GetAbilityName(),
+        natElementName.GetModuleName());
 
     natValueString = "";
     if (UnwrapStringByPropertyName(env, param, "type", natValueString)) {

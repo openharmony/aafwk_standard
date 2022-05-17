@@ -372,6 +372,11 @@ enum NativeFreeInstallError {
     DMS_PERMISSION_DENIED = 29360157,
 
     /**
+     * Result(29360176) for component access permission check failed.
+     */
+    DMS_COMPONENT_ACCESS_PERMISSION_DENIED = 29360176,
+
+    /**
      * Invalid parameters.
      */
     INVALID_PARAMETERS_ERR = 29360128,
@@ -407,6 +412,7 @@ static const std::map<NativeFreeInstallError, int> FIErrorToAppMaps = {
     {NOT_ALLOWED_TO_PULL_THIS_FA, 7},
     {NOT_SUPPORT_CROSS_DEVICE_FREE_INSTALL_PA, 7},
     {DMS_PERMISSION_DENIED, 8},
+    {DMS_COMPONENT_ACCESS_PERMISSION_DENIED, 8},
     {INVALID_PARAMETERS_ERR, 9},
     {REMOTE_DEVICE_NOT_COMPATIBLE, 10},
     {DEVICE_OFFLINE_ERR, 11},
@@ -492,6 +498,10 @@ static const std::map<NativeFreeInstallError, std::string> FIErrorStrs = {
     {
         DMS_PERMISSION_DENIED,
         "Permission denied."
+    },
+    {
+        DMS_COMPONENT_ACCESS_PERMISSION_DENIED,
+        "Component access permission denied."
     },
     {
         INVALID_PARAMETERS_ERR,
