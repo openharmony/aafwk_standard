@@ -79,6 +79,7 @@ abilityms_files = [
   "src/atomic_service_status_callback_proxy.cpp",
   "src/atomic_service_status_callback_stub.cpp",
   "src/atomic_service_status_callback.cpp",
+  "src/free_install_manager.cpp",
 ]
 
 if (ability_runtime_graphics) {
