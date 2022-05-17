@@ -172,11 +172,11 @@ void AppStateObserverManager::HandleAppStateChanged(const std::shared_ptr<AppRun
 void AppStateObserverManager::HandleStateChangedNotifyObserver(const AbilityStateData abilityStateData, bool isAbility)
 {
     std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
-    HILOG_DEBUG("module:%{public}s, bundle:%{public}s, ability:%{public}s, state:%{public}d,"
-        "pid:%{public}d ,uid:%{public}d, abilityType:%{public}d",
+    HILOG_DEBUG("Handle state change, module:%{public}s, bundle:%{public}s, ability:%{public}s, state:%{public}d,"
+        "pid:%{public}d ,uid:%{public}d, abilityType:%{public}d, isAbility:%{public}d",
         abilityStateData.moduleName.c_str(), abilityStateData.bundleName.c_str(),
         abilityStateData.abilityName.c_str(), abilityStateData.abilityState,
-        abilityStateData.pid, abilityStateData.uid, abilityStateData.abilityType);
+        abilityStateData.pid, abilityStateData.uid, abilityStateData.abilityType, isAbility);
     for (const auto &observer : appStateObservers_) {
         if (observer != nullptr) {
             if (isAbility) {
@@ -289,10 +289,10 @@ int AppStateObserverManager::VerifyObserverPermission()
     auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
         AAFwk::PermissionConstants::PERMISSION_RUNNING_STATE_OBSERVER);
     if (isCallingPerm) {
-        HILOG_ERROR("%{public}s: Permission verification succeeded", __func__);
+        HILOG_INFO("Permission verification succeeded.");
         return ERR_OK;
     }
-    HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+    HILOG_ERROR("Permission verification failed.");
     return ERR_PERMISSION_DENIED;
 }
 
