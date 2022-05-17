@@ -100,7 +100,7 @@ int AbilityContextImpl::GetArea()
     HILOG_DEBUG("AbilityContextImpl::GetArea.");
     if (stageContext_ == nullptr) {
         HILOG_ERROR("AbilityContextImpl::stageContext is nullptr.");
-        return EL_DEFAULT;
+        return ContextImpl::EL_DEFAULT;
     }
     return stageContext_->GetArea();
 }
