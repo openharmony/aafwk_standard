@@ -147,9 +147,9 @@ ohos_source_set("abilityms_test_source") {
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "native_appdatamgr:native_appdatafwk",
-    "native_appdatamgr:native_dataability",
-    "native_appdatamgr:native_rdb",
+    "relational_store:native_appdatafwk",
+    "dataability:native_dataability",
+    "relational_store:native_rdb",
     "resource_management:global_resmgr",
   ]
 
