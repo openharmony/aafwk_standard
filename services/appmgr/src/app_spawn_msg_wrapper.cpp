@@ -42,35 +42,43 @@ bool AppSpawnMsgWrapper::AssembleMsg(const AppSpawnStartMsg &startMsg)
         HILOG_ERROR("failed to memset!");
         return false;
     }
-    msg_->uid = startMsg.uid;
-    msg_->gid = startMsg.gid;
-    msg_->gidCount = startMsg.gids.size();
-    for (uint32_t i = 0; i < msg_->gidCount; ++i) {
-        msg_->gidTable[i] = startMsg.gids[i];
-    }
-    if (strcpy_s(msg_->processName, sizeof(msg_->processName), startMsg.procName.c_str()) != EOK) {
-        HILOG_ERROR("failed to transform procName!");
-        return false;
-    }
-    if (strcpy_s(msg_->soPath, sizeof(msg_->soPath), startMsg.soPath.c_str()) != EOK) {
-        HILOG_ERROR("failed to transform soPath!");
-        return false;
-    }
-    msg_->accessTokenId = startMsg.accessTokenId;
-    if (strcpy_s(msg_->apl, sizeof(msg_->apl), startMsg.apl.c_str()) != EOK) {
-        HILOG_ERROR("failed to transform apl!");
-        return false;
-    }
-    if (strcpy_s(msg_->bundleName, sizeof(msg_->bundleName), startMsg.bundleName.c_str()) != EOK) {
-        HILOG_ERROR("failed to transform bundleName!");
-        return false;
-    }
+    msg_->code = static_cast<AppSpawn::ClientSocket::AppOperateCode>(startMsg.code);
+    if (msg_->code == AppSpawn::ClientSocket::AppOperateCode::DEFAULT) {
+        msg_->uid = startMsg.uid;
+        msg_->gid = startMsg.gid;
+        msg_->gidCount = startMsg.gids.size();
+        for (uint32_t i = 0; i < msg_->gidCount; ++i) {
+            msg_->gidTable[i] = startMsg.gids[i];
+        }
+        if (strcpy_s(msg_->processName, sizeof(msg_->processName), startMsg.procName.c_str()) != EOK) {
+            HILOG_ERROR("failed to transform procName!");
+            return false;
+        }
+        if (strcpy_s(msg_->soPath, sizeof(msg_->soPath), startMsg.soPath.c_str()) != EOK) {
+            HILOG_ERROR("failed to transform soPath!");
+            return false;
+        }
+        msg_->accessTokenId = startMsg.accessTokenId;
+        if (strcpy_s(msg_->apl, sizeof(msg_->apl), startMsg.apl.c_str()) != EOK) {
+            HILOG_ERROR("failed to transform apl!");
+            return false;
+        }
+        if (strcpy_s(msg_->bundleName, sizeof(msg_->bundleName), startMsg.bundleName.c_str()) != EOK) {
+            HILOG_ERROR("failed to transform bundleName!");
+            return false;
+        }
 
-    if (strcpy_s(msg_->renderCmd, sizeof(msg_->renderCmd), startMsg.renderParam.c_str()) != EOK) {
-        HILOG_ERROR("failed to transform renderCmd!");
+        if (strcpy_s(msg_->renderCmd, sizeof(msg_->renderCmd), startMsg.renderParam.c_str()) != EOK) {
+            HILOG_ERROR("failed to transform renderCmd!");
+            return false;
+        }
+        msg_->flags = startMsg.coldStart ? AppSpawn::ClientSocket::APPSPAWN_COLD_BOOT : 0;
+    } else if (msg_->code == AppSpawn::ClientSocket::AppOperateCode::GET_RENDER_TERMINATION_STATUS) {
+        msg_->pid = startMsg.pid;
+    } else {
+        HILOG_ERROR("invalid code");
         return false;
     }
-    msg_->flags = startMsg.coldStart ? AppSpawn::ClientSocket::APPSPAWN_COLD_BOOT : 0;
 
     isValid_ = true;
     DumpMsg();
@@ -79,30 +87,40 @@ bool AppSpawnMsgWrapper::AssembleMsg(const AppSpawnStartMsg &startMsg)
 
 bool AppSpawnMsgWrapper::VerifyMsg(const AppSpawnStartMsg &startMsg) const
 {
-    if (startMsg.uid < 0) {
-        HILOG_ERROR("invalid uid! [%{public}d]", startMsg.uid);
-        return false;
-    }
-
-    if (startMsg.gid < 0) {
-        HILOG_ERROR("invalid gid! [%{public}d]", startMsg.gid);
-        return false;
-    }
-
-    if (startMsg.gids.size() > AppSpawn::ClientSocket::MAX_GIDS) {
-        HILOG_ERROR("too many app gids!");
-        return false;
-    }
-
-    for (uint32_t i = 0; i < startMsg.gids.size(); ++i) {
-        if (startMsg.gids[i] < 0) {
-            HILOG_ERROR("invalid gids array! [%{public}d]", startMsg.gids[i]);
+    if (startMsg.code == 0) { // 0: DEFAULT
+        if (startMsg.uid < 0) {
+            HILOG_ERROR("invalid uid! [%{public}d]", startMsg.uid);
             return false;
         }
-    }
 
-    if (startMsg.procName.empty() || startMsg.procName.size() >= AppSpawn::ClientSocket::LEN_PROC_NAME) {
-        HILOG_ERROR("invalid procName!");
+        if (startMsg.gid < 0) {
+            HILOG_ERROR("invalid gid! [%{public}d]", startMsg.gid);
+            return false;
+        }
+
+        if (startMsg.gids.size() > AppSpawn::ClientSocket::MAX_GIDS) {
+            HILOG_ERROR("too many app gids!");
+            return false;
+        }
+
+        for (uint32_t i = 0; i < startMsg.gids.size(); ++i) {
+            if (startMsg.gids[i] < 0) {
+                HILOG_ERROR("invalid gids array! [%{public}d]", startMsg.gids[i]);
+                return false;
+            }
+        }
+
+        if (startMsg.procName.empty() || startMsg.procName.size() >= AppSpawn::ClientSocket::LEN_PROC_NAME) {
+            HILOG_ERROR("invalid procName!");
+            return false;
+        }
+    } else if (startMsg.code == 1) { // 1:GET_RENDER_TERMINATION_STATUS
+        if (startMsg.pid < 0) {
+            HILOG_ERROR("invalid pid!");
+            return false;
+        }
+    } else {
+        HILOG_ERROR("invalid code!");
         return false;
     }
 

@@ -440,6 +440,15 @@ void AppMgrClient::AttachRenderProcess(const sptr<IRenderScheduler> &renderSched
     }
 }
 
+int AppMgrClient::GetRenderProcessTerminationStatus(pid_t renderPid, int &status)
+{
+    sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);
+    if (service != nullptr) {
+        return service->GetRenderProcessTerminationStatus(renderPid, status);
+    }
+    return AppMgrResultCode::ERROR_SERVICE_NOT_CONNECTED;
+}
+
 void AppMgrClient::PostANRTaskByProcessID(const pid_t pid)
 {
     sptr<IAppMgr> service = iface_cast<IAppMgr>(remote_);

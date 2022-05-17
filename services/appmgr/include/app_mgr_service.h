@@ -214,6 +214,8 @@ public:
 
     virtual void AttachRenderProcess(const sptr<IRemoteObject> &shceduler) override;
 
+    virtual int GetRenderProcessTerminationStatus(pid_t renderPid, int &status) override;
+
     /**
      * Post a task to the not response process.
      *
