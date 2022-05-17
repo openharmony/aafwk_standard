@@ -76,6 +76,8 @@ AppMgrStub::AppMgrStub()
         &AppMgrStub::HandleStartRenderProcess;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::ATTACH_RENDER_PROCESS)] =
         &AppMgrStub::HandleAttachRenderProcess;
+    memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::GET_RENDER_PROCESS_TERMINATION_STATUS)] =
+        &AppMgrStub::HandleGetRenderProcessTerminationStatus;
     memberFuncMap_[static_cast<uint32_t>(IAppMgr::Message::POST_ANR_TASK_BY_PID)] =
         &AppMgrStub::HandlePostANRTaskByProcessID;
 }
@@ -388,6 +390,22 @@ int32_t AppMgrStub::HandleAttachRenderProcess(MessageParcel &data, MessageParcel
     sptr<IRemoteObject> scheduler = data.ReadParcelable<IRemoteObject>();
     AttachRenderProcess(scheduler);
     return NO_ERROR;
+}
+
+int32_t AppMgrStub::HandleGetRenderProcessTerminationStatus(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t renderPid = data.ReadInt32();
+    int status = 0;
+    int32_t result = GetRenderProcessTerminationStatus(renderPid, status);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("write result error.");
+        return ERR_INVALID_VALUE;
+    }
+    if (!reply.WriteInt32(status)) {
+        HILOG_ERROR("write status error.");
+        return ERR_INVALID_VALUE;
+    }
+    return result;
 }
 
 int32_t AppMgrStub::HandlePostANRTaskByProcessID(MessageParcel &data, MessageParcel &reply)

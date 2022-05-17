@@ -2491,6 +2491,7 @@ int AppMgrServiceInner::StartRenderProcessImpl(const std::shared_ptr<RenderRecor
 
     AppSpawnStartMsg startMsg = appRecord->GetStartMsg();
     startMsg.renderParam = renderRecord->GetRenderParam();
+    startMsg.code = 0; // 0: DEFAULT
     pid_t pid = 0;
     ErrCode errCode = nwebSpawnClient->StartProcess(startMsg, pid);
     if (FAILED(errCode)) {
@@ -2502,6 +2503,31 @@ int AppMgrServiceInner::StartRenderProcessImpl(const std::shared_ptr<RenderRecor
     renderRecord->SetPid(pid);
     HILOG_INFO("start render process successed, hostPid:%{public}d, pid:%{public}d uid:%{public}d",
         renderRecord->GetHostPid(), pid, startMsg.uid);
+    return 0;
+}
+
+int AppMgrServiceInner::GetRenderProcessTerminationStatus(pid_t renderPid, int &status)
+{
+    if (remoteClientManager_ == nullptr) {
+        HILOG_ERROR("remoteClientManager_ is null");
+        return ERR_INVALID_VALUE;
+    }
+    auto nwebSpawnClient = remoteClientManager_->GetNWebSpawnClient();
+    if (!nwebSpawnClient) {
+        HILOG_ERROR("nwebSpawnClient is null");
+        return ERR_INVALID_VALUE;
+    }
+
+    AppSpawnStartMsg startMsg;
+    startMsg.pid = renderPid;
+    startMsg.code = 1; // 1: GET_RENDER_TERMINATION_STATUS
+    ErrCode errCode = nwebSpawnClient->GetRenderProcessTerminationStatus(startMsg, status);
+    if (FAILED(errCode)) {
+        HILOG_ERROR("failed to get render process termination status, errCode %{public}08x", errCode);
+        return ERR_INVALID_VALUE;
+    }
+    HILOG_INFO("Get render process termination status successed, renderPid:%{public}d, status:%{public}d",
+        renderPid, status);
     return 0;
 }
 
