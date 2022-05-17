@@ -16,8 +16,7 @@
 <configuration ver="2.0">
     <target name="BenchmarkTestForFormManager">
         <preparer>
-            <option name="push" value="form_test_bundle/formTestWidget1.hap -> /data/test/formTestWidget1.hap"
-                    src="res"/>
+            <option name="push" value="form_test_bundle/formTestWidget1.hap -> /data/test/" src="res"/>
             <option name="shell" value="bm install -r -p /data/test/formTestWidget1.hap"/>
         </preparer>
     </target>
