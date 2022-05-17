@@ -156,6 +156,14 @@ public:
     virtual int MessageEvent(const int64_t formId, const Want &want, const sptr<IRemoteObject> &callerToken) = 0;
 
     /**
+     * @brief Process js router event.
+     * @param formId Indicates the unique id of form.
+     * @param want the want of the ability to start.
+     * @return Returns true if execute success, false otherwise.
+     */
+    virtual int RouterEvent(const int64_t formId, Want &want) = 0;
+
+    /**
      * @brief Batch add forms to form records for st limit value test.
      * @param want The want of the form to add.
      * @return Returns ERR_OK on success, others on failure.
@@ -289,6 +297,7 @@ public:
         FORM_MGR_GET_FORMS_INFO_BY_APP,
         FORM_MGR_GET_FORMS_INFO_BY_MODULE,
         FORM_MGR_UPDATE_ROUTER_ACTION,
+        FORM_MGR_ROUTER_EVENT,
     };
 };
 }  // namespace AppExecFwk
