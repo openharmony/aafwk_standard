@@ -40,6 +40,7 @@ public:
     std::string GetPreferencesDir() override;
     std::string GetDistributedFilesDir() override;
     void SwitchArea(int mode) override;
+    int GetArea() override;
     std::string GetBundleName() const override;
     std::shared_ptr<AppExecFwk::ApplicationInfo> GetApplicationInfo() const override;
     std::shared_ptr<Global::Resource::ResourceManager> GetResourceManager() const override;
