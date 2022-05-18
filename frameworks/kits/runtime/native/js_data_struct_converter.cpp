@@ -200,9 +200,9 @@ NativeValue* CreateJsConfiguration(NativeEngine& engine, const AppExecFwk::Confi
     NativeObject* object = ConvertNativeValueTo<NativeObject>(objValue);
 
     object->SetProperty("language", CreateJsValue(engine,
-        configuration.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE)));
+        configuration.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE)));
     object->SetProperty("colorMode", CreateJsValue(engine,
-        ConvertColorMode(configuration.GetItem(GlobalConfigurationKey::SYSTEM_COLORMODE))));
+        ConvertColorMode(configuration.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_COLORMODE))));
 
     int32_t displayId = ConvertDisplayId(configuration.GetItem(ConfigurationInner::APPLICATION_DISPLAYID));
 

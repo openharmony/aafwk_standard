@@ -23,7 +23,7 @@
 #include "ability_manager_client.h"
 #include "element_name.h"
 #include "hilog_wrapper.h"
-#include "ohos/aafwk/base/bool_wrapper.h"
+#include "bool_wrapper.h"
 
 using namespace OHOS::AppExecFwk;
 

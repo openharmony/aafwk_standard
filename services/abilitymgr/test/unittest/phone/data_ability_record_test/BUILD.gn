@@ -36,7 +36,7 @@ ohos_unittest("data_ability_record_test") {
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",
-    "${aafwk_path}/interfaces/innerkits/base:base_public_config",
+    "${base_path}:base_public_config",
     "${services_path}/abilitymgr/test/mock:aafwk_mock_config",
   ]
   cflags = []
@@ -45,9 +45,7 @@ ohos_unittest("data_ability_record_test") {
   }
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${aafwk_path}/services/abilitymgr:abilityms",
-    "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test:abilityms_test_source",
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
@@ -63,6 +61,8 @@ ohos_unittest("data_ability_record_test") {
   ]
 
   external_deps = [
+    "ability_base:want",
+    "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

@@ -26,7 +26,7 @@
 #include "ohos_application.h"
 #include "ability_scheduler_stub.h"
 #include "pac_map.h"
-#include "ohos/aafwk/base/ipc_singleton.h"
+#include "ipc_singleton.h"
 
 namespace OHOS {
 namespace AppExecFwk {

@@ -73,7 +73,6 @@ ohos_moduletest("running_infos_module_test") {
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/uri:zuri",
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_inner_api_path}/appexecfwk_core:appexecfwk_core",
@@ -81,7 +80,6 @@ ohos_moduletest("running_infos_module_test") {
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
-    "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",
     "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
     "//third_party/googletest:gmock_main",
@@ -106,6 +104,8 @@ ohos_moduletest("running_infos_module_test") {
 
   external_deps = [
     "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
     "common_event_service:cesfwk_core",
     "common_event_service:cesfwk_innerkits",

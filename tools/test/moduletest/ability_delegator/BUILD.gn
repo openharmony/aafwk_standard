@@ -42,6 +42,7 @@ ohos_moduletest("ability_command_module_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -63,6 +64,7 @@ ohos_moduletest("test_observer_module_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -83,6 +85,7 @@ ohos_moduletest("shell_command_result_module_test") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

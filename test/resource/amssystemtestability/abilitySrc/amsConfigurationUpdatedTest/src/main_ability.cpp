@@ -86,8 +86,8 @@ void MainAbility::OnConfigurationUpdated(const Configuration &configuration)
     HILOG_INFO("MainAbility::OnConfigurationUpdated====<");
     Ability::OnConfigurationUpdated(configuration);
     OnBlockProcess(bIsBlockUpdate);
-    languageValue = configuration.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
-    orientationValue = configuration.GetItem(GlobalConfigurationKey::SYSTEM_ORIENTATION);
+    languageValue = configuration.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    orientationValue = configuration.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_ORIENTATION);
     TestUtils::PublishEvent(g_EVENT_RESP_MAIN_LIFECYCLE, MAIN_ABILITY_CODE, languageValue);
     TestUtils::PublishEvent(g_EVENT_RESP_MAIN_LIFECYCLE, MAIN_ABILITY_CODE, orientationValue);
     callbackUpdated += "Updated";

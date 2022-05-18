@@ -2060,7 +2060,7 @@ HWTEST_F(AmsAppLifeCycleTest, UpdateConfiguration_001, TestSize.Level1)
     serviceInner_->Init();
     auto configMgr = serviceInner_->GetConfiguration();
     EXPECT_TRUE(configMgr);
-    auto language = configMgr->GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    auto language = configMgr->GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
     // has default value
     EXPECT_TRUE(!language.empty());
 }
@@ -2076,7 +2076,7 @@ HWTEST_F(AmsAppLifeCycleTest, UpdateConfiguration_002, TestSize.Level1)
 {
     auto testLanguge = "ch-zh";
     auto configUpdate = [testLanguge](const Configuration &config) {
-        auto l = config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+        auto l = config.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
         EXPECT_TRUE(testLanguge == l);
     };
 
@@ -2088,7 +2088,7 @@ HWTEST_F(AmsAppLifeCycleTest, UpdateConfiguration_002, TestSize.Level1)
         .WillOnce(testing::Invoke(configUpdate));
 
     Configuration config;
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
+    config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
     serviceInner_->UpdateConfiguration(config);
 }
 
@@ -2103,7 +2103,7 @@ HWTEST_F(AmsAppLifeCycleTest, UpdateConfiguration_003, TestSize.Level1)
 {
     auto testLanguge = "ch-zh";
     auto configUpdate = [testLanguge](const Configuration &config) {
-        auto l = config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+        auto l = config.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
         EXPECT_TRUE(testLanguge == l);
     };
 
@@ -2115,7 +2115,7 @@ HWTEST_F(AmsAppLifeCycleTest, UpdateConfiguration_003, TestSize.Level1)
         .WillOnce(testing::Invoke(configUpdate));
 
     Configuration config;
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
+    config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
     serviceInner_->UpdateConfiguration(config);
     serviceInner_->UpdateConfiguration(config);
 }
@@ -2132,11 +2132,11 @@ HWTEST_F(AmsAppLifeCycleTest, GetGlobalConfiguration_001, TestSize.Level1)
     auto configMgr = serviceInner_->GetConfiguration();
     EXPECT_TRUE(configMgr);
 
-    auto language = configMgr->GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    auto language = configMgr->GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
     EXPECT_TRUE(language.empty());
 
     serviceInner_->GetGlobalConfiguration();
-    language = configMgr->GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+    language = configMgr->GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
     EXPECT_TRUE(!language.empty());
 }
 }  // namespace AppExecFwk

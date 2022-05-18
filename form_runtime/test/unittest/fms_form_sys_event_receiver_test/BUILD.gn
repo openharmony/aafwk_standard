@@ -55,9 +55,6 @@ ohos_unittest("FmsFormSysEventReceiverTest") {
   deps = [
     "${aafwk_path}/frameworks/kits/wantagent:wantagent_innerkits",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/uri:zuri",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
@@ -75,6 +72,9 @@ ohos_unittest("FmsFormSysEventReceiverTest") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
     "appspawn:appspawn_socket_client",
     "bundle_framework:appexecfwk_core",

@@ -16,8 +16,7 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 config("tools_fm_config") {
   include_dirs = [
-    "${aafwk_path}/interfaces/innerkits/want/include",
-    "${aafwk_path}/interfaces/innerkits/base/include",
+    "${base_inner_api_path}/want/include",
     "${aafwk_path}/services/common/include",
     "${aafwk_path}/tools/aa/include",
     "${aafwk_path}/services/common/include",
