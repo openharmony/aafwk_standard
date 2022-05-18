@@ -44,7 +44,7 @@ public:
     void OnInstallFinished(int resultCode, const Want &want, int32_t userId) override;
 
     /**
-     * OnRemoteInstallFinished, Download hap is complete.
+     * OnRemoteInstallFinished, DMS has finished.
      *
      * @param resultCode, ERR_OK on success, others on failure.
      * @param want, installed ability.

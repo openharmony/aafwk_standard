@@ -1424,7 +1424,7 @@ int AbilityManagerStub::FreeInstallAbilityFromRemoteInner(MessageParcel &data, M
     }
     want->SetParam(FROM_REMOTE_KEY, true);
 
-    auto callback = data.ReadParcelable<IRemoteObject>();
+    auto callback = data.ReadRemoteObject();
     if (callback == nullptr) {
         HILOG_ERROR("callback is nullptr");
         return ERR_INVALID_VALUE;

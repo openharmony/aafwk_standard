@@ -15,14 +15,13 @@
 
 #include "atomic_service_status_callback.h"
 
-#include "ability_info.h"
-#include "ability_manager_service.h"
 #include "ability_util.h"
+#include "free_install_manager.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AAFwk {
-AtomicServiceStatusCallback::AtomicServiceStatusCallback(const std::weak_ptr<AbilityManagerService> &server)
+AtomicServiceStatusCallback::AtomicServiceStatusCallback(const std::weak_ptr<FreeInstallManager> &server)
     : server_(server)
 {
 }

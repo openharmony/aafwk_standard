@@ -24,14 +24,14 @@
 
 namespace OHOS {
 namespace AAFwk {
-class AbilityManagerService;
+class FreeInstallManager;
 /**
  * @class AtomicServiceStatusCallback
  * AtomicServiceStatusCallback.
  */
 class AtomicServiceStatusCallback : public AtomicServiceStatusCallbackStub {
 public:
-    explicit AtomicServiceStatusCallback(const std::weak_ptr<AbilityManagerService> &server);
+    explicit AtomicServiceStatusCallback(const std::weak_ptr<FreeInstallManager> &server);
     virtual ~AtomicServiceStatusCallback() = default;
 
     /**
@@ -44,7 +44,7 @@ public:
     void OnInstallFinished(int resultCode, const Want &want, int32_t userId) override;
 
     /**
-     * OnRemoteInstallFinished, Download hap is complete.
+     * OnRemoteInstallFinished, DMS has finished.
      *
      * @param resultCode, ERR_OK on success, others on failure.
      * @param want, installed ability.
@@ -53,7 +53,7 @@ public:
     void OnRemoteInstallFinished(int resultCode, const Want &want, int32_t userId) override;
 
 private:
-    std::weak_ptr<AbilityManagerService> server_;
+    std::weak_ptr<FreeInstallManager> server_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS
