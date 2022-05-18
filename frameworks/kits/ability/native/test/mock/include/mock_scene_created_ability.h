@@ -17,7 +17,6 @@
 #define FOUNDATION_APPEXECFWK_OHOS_MOCK_ABILITY_SCENE_H
 
 #include "ability.h"
-#include "window_scene.h"
 
 namespace OHOS {
 namespace AppExecFwk {
