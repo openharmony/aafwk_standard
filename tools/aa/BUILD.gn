@@ -83,6 +83,8 @@ ohos_executable("aa") {
   deps = [ ":tools_aa_source_set" ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

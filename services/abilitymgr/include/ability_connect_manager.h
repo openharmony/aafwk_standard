@@ -27,7 +27,7 @@
 #include "extension_running_info.h"
 #include "connection_record.h"
 #include "element_name.h"
-#include "ohos/aafwk/content/want.h"
+#include "want.h"
 #include "iremote_object.h"
 #include "nocopyable.h"
 

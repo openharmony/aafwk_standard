@@ -23,11 +23,11 @@
 #include "element_name.h"
 #include "event_handler.h"
 #include "pending_want.h"
-#include "ohos/aafwk/base/base_types.h"
+#include "base_types.h"
 #include "want.h"
 #include "want_params.h"
 #include "want_receiver_stub.h"
-#include "ohos/aafwk/base/bool_wrapper.h"
+#include "bool_wrapper.h"
 
 using namespace testing::ext;
 using namespace OHOS::AAFwk;

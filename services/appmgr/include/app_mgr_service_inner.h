@@ -43,7 +43,7 @@
 #include "bundle_info.h"
 #include "istart_specified_ability_response.h"
 
-#include "ohos/aafwk/content/want.h"
+#include "want.h"
 
 namespace OHOS {
 namespace AppExecFwk {

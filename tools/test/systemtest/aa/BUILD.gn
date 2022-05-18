@@ -48,6 +48,8 @@ ohos_systemtest("aa_command_start_system_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -76,6 +78,8 @@ ohos_systemtest("aa_command_stop_service_system_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -106,6 +110,8 @@ ohos_systemtest("aa_command_dump_system_test") {
   ]
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:configuration",
     "bundle_framework:appexecfwk_base",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",

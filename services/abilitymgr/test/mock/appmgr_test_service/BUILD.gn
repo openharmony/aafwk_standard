@@ -46,7 +46,7 @@ ohos_source_set("appmgr_test_service") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
-    "${innerkits_path}/want:want",
+    "${base_path}:want",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",
   ]
