@@ -27,6 +27,7 @@
 #include "perf_profile.h"
 
 #include "app_process_data.h"
+#include "app_state_observer_manager.h"
 #include "bundle_constants.h"
 #include "hitrace_meter.h"
 #include "common_event.h"
@@ -114,6 +115,7 @@ AppMgrServiceInner::AppMgrServiceInner()
 void AppMgrServiceInner::Init()
 {
     GetGlobalConfiguration();
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->Init();
 }
 
 AppMgrServiceInner::~AppMgrServiceInner()
@@ -383,7 +385,7 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_TERMINATED);
     appRunningManager_->RemoveAppRunningRecordById(recordId);
     RemoveAppFromRecentListById(recordId);
-    OnProcessDied(appRecord);
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
 
     HILOG_INFO("application is terminated");
 }
@@ -1099,29 +1101,7 @@ void AppMgrServiceInner::OnAppStateChanged(
         }
     }
 
-    if (state == ApplicationState::APP_STATE_FOREGROUND || state == ApplicationState::APP_STATE_BACKGROUND) {
-        AppStateData data = WrapAppStateData(appRecord, state);
-        HILOG_DEBUG("OnForegroundApplicationChanged, name:%{public}s, uid:%{public}d, state:%{public}d",
-            data.bundleName.c_str(), data.uid, data.state);
-        std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
-        for (const auto &observer : appStateObservers_) {
-            if (observer != nullptr) {
-                observer->OnForegroundApplicationChanged(data);
-            }
-        }
-    }
-
-    if (state == ApplicationState::APP_STATE_CREATE || state == ApplicationState::APP_STATE_TERMINATED) {
-        AppStateData data = WrapAppStateData(appRecord, state);
-        HILOG_INFO("OnApplicationStateChanged, name:%{public}s, uid:%{public}d, state:%{public}d",
-            data.bundleName.c_str(), data.uid, data.state);
-        std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
-        for (const auto &observer : appStateObservers_) {
-            if (observer != nullptr) {
-                observer->OnApplicationStateChanged(data);
-            }
-        }
-    }
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnAppStateChanged(appRecord, state);
 }
 
 AppProcessData AppMgrServiceInner::WrapAppProcessData(const std::shared_ptr<AppRunningRecord> &appRecord,
@@ -1141,26 +1121,6 @@ AppProcessData AppMgrServiceInner::WrapAppProcessData(const std::shared_ptr<AppR
     return processData;
 }
 
-AppStateData AppMgrServiceInner::WrapAppStateData(const std::shared_ptr<AppRunningRecord> &appRecord,
-    const ApplicationState state)
-{
-    AppStateData appStateData;
-    appStateData.pid = appRecord->GetPriorityObject()->GetPid();
-    appStateData.bundleName = appRecord->GetBundleName();
-    appStateData.state = static_cast<int32_t>(state);
-    appStateData.uid = appRecord->GetUid();
-    return appStateData;
-}
-
-ProcessData AppMgrServiceInner::WrapProcessData(const std::shared_ptr<AppRunningRecord> &appRecord)
-{
-    ProcessData processData;
-    processData.bundleName = appRecord->GetBundleName();
-    processData.pid = appRecord->GetPriorityObject()->GetPid();
-    processData.uid = appRecord->GetUid();
-    return processData;
-}
-
 void AppMgrServiceInner::OnAbilityStateChanged(
     const std::shared_ptr<AbilityRunningRecord> &ability, const AbilityState state)
 {
@@ -1177,56 +1137,7 @@ void AppMgrServiceInner::OnAbilityStateChanged(
 
 void AppMgrServiceInner::StateChangedNotifyObserver(const AbilityStateData abilityStateData, bool isAbility)
 {
-    std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
-    HILOG_DEBUG("module:%{public}s, bundle:%{public}s, ability:%{public}s, state:%{public}d,"
-        "pid:%{public}d ,uid:%{public}d, abilityType:%{public}d",
-        abilityStateData.moduleName.c_str(), abilityStateData.bundleName.c_str(),
-        abilityStateData.abilityName.c_str(), abilityStateData.abilityState,
-        abilityStateData.pid, abilityStateData.uid, abilityStateData.abilityType);
-    for (const auto &observer : appStateObservers_) {
-        if (observer != nullptr) {
-            if (isAbility) {
-                observer->OnAbilityStateChanged(abilityStateData);
-            } else {
-                observer->OnExtensionStateChanged(abilityStateData);
-            }
-        }
-    }
-}
-
-void AppMgrServiceInner::OnProcessCreated(const std::shared_ptr<AppRunningRecord> &appRecord)
-{
-    if (!appRecord) {
-        HILOG_ERROR("app record is null");
-        return;
-    }
-    ProcessData data = WrapProcessData(appRecord);
-    HILOG_DEBUG("OnProcessCreated, bundle:%{public}s, pid:%{public}d, uid:%{public}d, size:%{public}d",
-        data.bundleName.c_str(), data.pid, data.uid, (int32_t)appStateObservers_.size());
-    std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
-    for (const auto &observer : appStateObservers_) {
-        if (observer != nullptr) {
-            observer->OnProcessCreated(data);
-        }
-    }
-}
-
-void AppMgrServiceInner::OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord)
-{
-    HILOG_DEBUG("OnProcessDied begin.");
-    if (!appRecord) {
-        HILOG_ERROR("app record is null");
-        return;
-    }
-    ProcessData data = WrapProcessData(appRecord);
-    HILOG_DEBUG("Process died, bundle:%{public}s, pid:%{public}d, uid:%{public}d, size:%{public}d.",
-        data.bundleName.c_str(), data.pid, data.uid, (int32_t)appStateObservers_.size());
-    std::lock_guard<std::recursive_mutex> lockNotify(observerLock_);
-    for (const auto &observer : appStateObservers_) {
-        if (observer != nullptr) {
-            observer->OnProcessDied(data);
-        }
-    }
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->StateChangedNotifyObserver(abilityStateData, isAbility);
 }
 
 void AppMgrServiceInner::StartProcess(const std::string &appName, const std::string &processName, uint32_t startFlags,
@@ -1296,7 +1207,7 @@ void AppMgrServiceInner::StartProcess(const std::string &appName, const std::str
     appRecord->SetAppMgrServiceInner(weak_from_this());
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_CREATE);
     AddAppToRecentList(appName, appRecord->GetProcessName(), pid, appRecord->GetRecordId());
-    OnProcessCreated(appRecord);
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessCreated(appRecord);
     PerfProfile::GetInstance().SetAppForkEndTime(GetTickCount());
 }
 
@@ -1401,7 +1312,7 @@ void AppMgrServiceInner::ClearAppRunningData(const std::shared_ptr<AppRunningRec
             static_cast<int32_t>(AbilityState::ABILITY_STATE_TERMINATED), true);
     }
     RemoveAppFromRecentListById(appRecord->GetRecordId());
-    OnProcessDied(appRecord);
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
 
     // kill render if exist.
     auto renderRecord = appRecord->GetRenderRecord();
@@ -1534,7 +1445,7 @@ void AppMgrServiceInner::HandleTerminateApplicationTimeOut(const int64_t eventId
     }
     appRunningManager_->RemoveAppRunningRecordById(appRecord->GetRecordId());
     RemoveAppFromRecentListById(appRecord->GetRecordId());
-    OnProcessDied(appRecord);
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
 }
 
 void AppMgrServiceInner::HandleAddAbilityStageTimeOut(const int64_t eventId)
@@ -1736,122 +1647,12 @@ void AppMgrServiceInner::NotifyAppStatusByCallerUid(const std::string &bundleNam
 
 int32_t AppMgrServiceInner::RegisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer)
 {
-    HILOG_INFO("%{public}s begin", __func__);
-    if (VerifyObserverPermission() == ERR_PERMISSION_DENIED) {
-        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
-        return ERR_PERMISSION_DENIED;
-    }
-    std::lock_guard<std::recursive_mutex> lockRegister(observerLock_);
-    if (observer == nullptr) {
-        HILOG_ERROR("Observer nullptr");
-        return ERR_INVALID_VALUE;
-    }
-    if (ObserverExist(observer)) {
-        HILOG_ERROR("Observer exist.");
-        return ERR_INVALID_VALUE;
-    }
-    appStateObservers_.push_back(observer);
-    HILOG_INFO("%{public}s appStateObservers_ size:%{public}d", __func__, (int32_t)appStateObservers_.size());
-    AddObserverDeathRecipient(observer);
-    return ERR_OK;
+    return DelayedSingleton<AppStateObserverManager>::GetInstance()->RegisterApplicationStateObserver(observer);
 }
 
 int32_t AppMgrServiceInner::UnregisterApplicationStateObserver(const sptr<IApplicationStateObserver> &observer)
 {
-    HILOG_INFO("%{public}s begin", __func__);
-    if (VerifyObserverPermission() == ERR_PERMISSION_DENIED) {
-        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
-        return ERR_PERMISSION_DENIED;
-    }
-    std::lock_guard<std::recursive_mutex> lockUnregister(observerLock_);
-    if (observer == nullptr) {
-        HILOG_ERROR("Observer nullptr");
-        return ERR_INVALID_VALUE;
-    }
-    std::vector<sptr<IApplicationStateObserver>>::iterator it;
-    for (it = appStateObservers_.begin(); it != appStateObservers_.end(); ++it) {
-        if ((*it)->AsObject() == observer->AsObject()) {
-            appStateObservers_.erase(it);
-            HILOG_INFO("%{public}s appStateObservers_ size:%{public}d", __func__, (int32_t)appStateObservers_.size());
-            RemoveObserverDeathRecipient(observer);
-            return ERR_OK;
-        }
-    }
-    HILOG_ERROR("Observer not exist.");
-    return ERR_INVALID_VALUE;
-}
-
-bool AppMgrServiceInner::ObserverExist(const sptr<IApplicationStateObserver> &observer)
-{
-    if (observer == nullptr) {
-        HILOG_ERROR("Observer nullptr");
-        return false;
-    }
-    for (int i = 0; i < (int)appStateObservers_.size(); i++) {
-        if (appStateObservers_[i]->AsObject() == observer->AsObject()) {
-            return true;
-        }
-    }
-    return false;
-}
-
-void AppMgrServiceInner::AddObserverDeathRecipient(const sptr<IApplicationStateObserver> &observer)
-{
-    HILOG_INFO("%{public}s begin", __func__);
-    if (observer == nullptr || observer->AsObject() == nullptr) {
-        HILOG_ERROR("observer nullptr.");
-        return;
-    }
-    auto it = recipientMap_.find(observer->AsObject());
-    if (it != recipientMap_.end()) {
-        HILOG_ERROR("This death recipient has been added.");
-        return;
-    } else {
-        sptr<IRemoteObject::DeathRecipient> deathRecipient = new ApplicationStateObserverRecipient(
-            std::bind(&AppMgrServiceInner::OnObserverDied, this, std::placeholders::_1));
-        observer->AsObject()->AddDeathRecipient(deathRecipient);
-        recipientMap_.emplace(observer->AsObject(), deathRecipient);
-    }
-}
-
-void AppMgrServiceInner::RemoveObserverDeathRecipient(const sptr<IApplicationStateObserver> &observer)
-{
-    HILOG_INFO("%{public}s begin", __func__);
-    if (observer == nullptr || observer->AsObject() == nullptr) {
-        HILOG_ERROR("observer nullptr.");
-        return;
-    }
-    auto it = recipientMap_.find(observer->AsObject());
-    if (it != recipientMap_.end()) {
-        it->first->RemoveDeathRecipient(it->second);
-        recipientMap_.erase(it);
-        return;
-    }
-}
-
-void AppMgrServiceInner::OnObserverDied(const wptr<IRemoteObject> &remote)
-{
-    HILOG_INFO("%{public}s begin", __func__);
-    auto object = remote.promote();
-    if (object == nullptr) {
-        HILOG_ERROR("observer nullptr.");
-        return;
-    }
-    if (eventHandler_) {
-        auto task = [object, appManager = this]() {appManager->HandleObserverDiedTask(object);};
-        eventHandler_->PostTask(task, TASK_ON_CALLBACK_DIED);
-    }
-}
-
-void AppMgrServiceInner::HandleObserverDiedTask(const sptr<IRemoteObject> &observer)
-{
-    HILOG_INFO("Handle call back died task.");
-    if (observer == nullptr) {
-        HILOG_ERROR("observer nullptr.");
-        return;
-    }
-    sptr<IApplicationStateObserver> object = iface_cast<IApplicationStateObserver>(observer);
-    UnregisterApplicationStateObserver(object);
+    return DelayedSingleton<AppStateObserverManager>::GetInstance()->UnregisterApplicationStateObserver(observer);
 }
 
 int32_t AppMgrServiceInner::GetForegroundApplications(std::vector<AppStateData> &list)
@@ -2384,22 +2185,6 @@ int AppMgrServiceInner::VerifyAccountPermission(const std::string &permissionNam
     auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(permissionName);
     if (isCallingPerm) {
         HILOG_DEBUG("%{public}s: Permission verification succeeded", __func__);
-        return ERR_OK;
-    }
-    HILOG_ERROR("%{public}s: Permission verification failed", __func__);
-    return ERR_PERMISSION_DENIED;
-}
-
-int AppMgrServiceInner::VerifyObserverPermission()
-{
-    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
-    if (isSaCall) {
-        return ERR_OK;
-    }
-    auto isCallingPerm = AAFwk::PermissionVerification::GetInstance()->VerifyCallingPermission(
-        AAFwk::PermissionConstants::PERMISSION_RUNNING_STATE_OBSERVER);
-    if (isCallingPerm) {
-        HILOG_ERROR("%{public}s: Permission verification succeeded", __func__);
         return ERR_OK;
     }
     HILOG_ERROR("%{public}s: Permission verification failed", __func__);

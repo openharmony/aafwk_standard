@@ -40,6 +40,7 @@ ohos_unittest("AmsServiceAppSpawnClientTest") {
     "${services_path}/appmgr/src/app_spawn_client.cpp",
     "${services_path}/appmgr/src/app_spawn_msg_wrapper.cpp",
     "${services_path}/appmgr/src/app_spawn_socket.cpp",
+    "${services_path}/appmgr/src/app_state_observer_manager.cpp",
   ]
 
   sources += [ "ams_service_app_spawn_client_test.cpp" ]

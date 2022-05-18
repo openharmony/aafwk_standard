@@ -670,25 +670,6 @@ private:
     AppProcessData WrapAppProcessData(const std::shared_ptr<AppRunningRecord> &appRecord,
         const ApplicationState state);
 
-    AppStateData WrapAppStateData(const std::shared_ptr<AppRunningRecord> &appRecord,
-        const ApplicationState state);
-
-    ProcessData WrapProcessData(const std::shared_ptr<AppRunningRecord> &appRecord);
-
-    void AddObserverDeathRecipient(const sptr<IApplicationStateObserver> &observer);
-
-    void RemoveObserverDeathRecipient(const sptr<IApplicationStateObserver> &observer);
-
-    void OnObserverDied(const wptr<IRemoteObject> &remote);
-
-    void HandleObserverDiedTask(const sptr<IRemoteObject> &observer);
-
-    bool ObserverExist(const sptr<IApplicationStateObserver> &observer);
-
-    void OnProcessCreated(const std::shared_ptr<AppRunningRecord> &appRecord);
-
-    void OnProcessDied(const std::shared_ptr<AppRunningRecord> &appRecord);
-
     int UserTestAbnormalFinish(const sptr<IRemoteObject> &observer, const std::string &msg);
     int GetHapModuleInfoForTestRunner(const AAFwk::Want &want, const sptr<IRemoteObject> &observer,
         const BundleInfo &bundleInfo, HapModuleInfo &hapModuleInfo);
@@ -719,8 +700,6 @@ private:
     void ClearUpApplicationDataByUserId(const std::string &bundleName,
         int32_t callerUid, pid_t callerPid, const int userId);
 
-    int VerifyObserverPermission();
-
     uint32_t BuildStartFlags(const AAFwk::Want &want, const AbilityInfo &abilityInfo);
 
 private:
@@ -749,9 +728,6 @@ private:
     int FinishUserTestLocked(
         const std::string &msg, const int64_t &resultCode, const std::shared_ptr<AppRunningRecord> &appRecord);
     const std::string TASK_ON_CALLBACK_DIED = "OnCallbackDiedTask";
-    std::vector<sptr<IApplicationStateObserver>> appStateObservers_;
-    std::map<sptr<IRemoteObject>, sptr<IRemoteObject::DeathRecipient>> recipientMap_;
-    std::recursive_mutex observerLock_;
     std::vector<const sptr<IAppStateCallback>> appStateCallbacks_;
     std::shared_ptr<AppProcessManager> appProcessManager_;
     std::shared_ptr<RemoteClientManager> remoteClientManager_;
