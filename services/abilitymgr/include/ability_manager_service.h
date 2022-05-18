@@ -123,7 +123,7 @@ public:
         const sptr<IRemoteObject> &callerToken,
         int32_t userId = DEFAULT_INVAL_VALUE,
         int requestCode = DEFAULT_INVAL_VALUE) override;
-    
+
     /**
      * Start extension ability with want, send want to ability manager service.
      *
@@ -762,6 +762,7 @@ public:
     static constexpr uint32_t FOREGROUNDNEW_TIMEOUT_MSG = 5;
     static constexpr uint32_t BACKGROUNDNEW_TIMEOUT_MSG = 6;
 
+    static constexpr uint32_t COLDSTART_LOAD_TIMEOUT = 10000; // ms
     static constexpr uint32_t LOAD_TIMEOUT = 3000;            // ms
     static constexpr uint32_t ACTIVE_TIMEOUT = 5000;          // ms
     static constexpr uint32_t INACTIVE_TIMEOUT = 500;         // ms

@@ -158,7 +158,9 @@ int AbilityRecord::LoadAbility()
     HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Start load ability, name is %{public}s.", abilityInfo_.name.c_str());
     if (abilityInfo_.type != AppExecFwk::AbilityType::DATA) {
-        SendEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, AbilityManagerService::LOAD_TIMEOUT);
+        auto loadTimeOut = want_.GetBoolParam("coldStart", false) ?
+            AbilityManagerService::COLDSTART_LOAD_TIMEOUT : AbilityManagerService::LOAD_TIMEOUT;
+        SendEvent(AbilityManagerService::LOAD_TIMEOUT_MSG, loadTimeOut);
     }
 
     startTime_ = AbilityUtil::SystemTimeMillis();
