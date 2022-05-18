@@ -1175,7 +1175,7 @@ void MissionListManager::CompleteTerminateAndUpdateMission(const std::shared_ptr
         if (it == abilityRecord) {
             terminateAbilityList_.remove(it);
             // update inner mission info time
-            if (abilityRecord->IsDlp() || ability->GetAbilityInfo().removeMissionAfterTerminate) {
+            if (abilityRecord->IsDlp() || abilityRecord->GetAbilityInfo().removeMissionAfterTerminate) {
                 RemoveMissionLocked(abilityRecord->GetMissionId());
                 return;
             }
