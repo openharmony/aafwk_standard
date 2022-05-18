@@ -24,7 +24,8 @@ ErrCode StaticSubscriberStubImp::OnReceiveEvent(CommonEventData* data)
     HILOG_INFO("%{public}s begin.", __func__);
     auto extension = extension_.lock();
     if (extension != nullptr) {
-        extension->OnReceiveEvent(data);
+        std::shared_ptr<CommonEventData> commonEventData(data);
+        extension->OnReceiveEvent(commonEventData);
         HILOG_INFO("%{public}s end successfully.", __func__);
         return 0;
     }
