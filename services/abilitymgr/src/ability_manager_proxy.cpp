@@ -2462,7 +2462,7 @@ int AbilityManagerProxy::FreeInstallAbilityFromRemote(const Want &want, const sp
         return INNER_ERR;
     }
 
-    if (!data.WriteParcelable(callback)) {
+    if (!data.WriteRemoteObject(callback)) {
         HILOG_ERROR("callback write failed.");
         return INNER_ERR;
     }

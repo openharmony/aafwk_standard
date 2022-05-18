@@ -40,6 +40,7 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/src/data_ability_caller_recipient.cpp",
     "${services_path}/abilitymgr/src/data_ability_manager.cpp",
     "${services_path}/abilitymgr/src/data_ability_record.cpp",
+    "${services_path}/abilitymgr/src/free_install_manager.cpp",
     "${services_path}/abilitymgr/src/launch_param.cpp",
     "${services_path}/abilitymgr/src/lifecycle_deal.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
