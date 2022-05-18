@@ -1175,8 +1175,8 @@ void MissionListManager::CompleteTerminateAndUpdateMission(const std::shared_ptr
         if (it == abilityRecord) {
             terminateAbilityList_.remove(it);
             // update inner mission info time
-            if (abilityRecord->IsDlp()) {
-                DelayedSingleton<MissionInfoMgr>::GetInstance()->DeleteMissionInfo(abilityRecord->GetMissionId());
+            if (abilityRecord->IsDlp() || ability->GetAbilityInfo().removeMissionAfterTerminate) {
+                RemoveMissionLocked(abilityRecord->GetMissionId());
                 return;
             }
             InnerMissionInfo innerMissionInfo;
@@ -1843,8 +1843,8 @@ void MissionListManager::HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecor
 
     // update running state.
     if (!ability->IsUninstallAbility()) {
-        if (ability->IsDlp()) {
-            DelayedSingleton<MissionInfoMgr>::GetInstance()->DeleteMissionInfo(mission->GetMissionId());
+        if (ability->IsDlp() || ability->GetAbilityInfo().removeMissionAfterTerminate) {
+            RemoveMissionLocked(mission->GetMissionId());
         } else {
             InnerMissionInfo info;
             if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
@@ -2886,6 +2886,18 @@ void MissionListManager::GetForegroundAbilities(const std::shared_ptr<MissionLis
         if (abilityRecord->IsActiveState()) {
             foregroundList.emplace_back(abilityRecord);
         }
+    }
+}
+
+void MissionListManager::RemoveMissionLocked(int32_t missionId)
+{
+    if (missionId <= 0) {
+        return;
+    }
+
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->DeleteMissionInfo(missionId);
+    if (listenerController_) {
+        listenerController_->NotifyMissionDestroyed(missionId);
     }
 }
 
