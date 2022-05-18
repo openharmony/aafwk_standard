@@ -63,10 +63,10 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   external_deps = [
     "ability_base:configuration",
     "bundle_framework:appexecfwk_core",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 }

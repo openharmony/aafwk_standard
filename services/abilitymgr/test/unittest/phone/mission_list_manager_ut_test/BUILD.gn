@@ -56,10 +56,10 @@ ohos_unittest("mission_list_manager_ut_test") {
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 }
