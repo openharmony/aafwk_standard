@@ -55,10 +55,7 @@ ohos_moduletest("PandingWantMgrTest") {
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "${innerkits_path}/base:base",
-    "${innerkits_path}/uri:zuri",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
-    "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
     "//third_party/googletest:gmock_main",
@@ -73,6 +70,9 @@ ohos_moduletest("PandingWantMgrTest") {
   }
 
   external_deps = [
+    "ability_base:base",
+    "ability_base:want",
+    "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_core",

@@ -20,7 +20,7 @@
 #include "gmock/gmock.h"
 #include "ability_info.h"
 #include "application_info.h"
-#include "ohos/aafwk/content/want.h"
+#include "want.h"
 #include "iremote_proxy.h"
 #include "iremote_stub.h"
 #include "bundle_mgr_interface.h"

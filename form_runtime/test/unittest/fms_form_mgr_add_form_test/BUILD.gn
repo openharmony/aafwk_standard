@@ -53,12 +53,13 @@ ohos_unittest("FmsFormMgrAddFormTest") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${aafwk_path}/services/abilitymgr:abilityms_target",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
+    "${base_path}:base",
+    "${base_path}:configuration",
+    "${base_path}:want",
     "${distributeddatamgr_path}/distributeddatamgr/interfaces/innerkits/distributeddata:distributeddata_inner",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",

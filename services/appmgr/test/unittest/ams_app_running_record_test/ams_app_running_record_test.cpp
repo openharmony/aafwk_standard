@@ -1435,12 +1435,12 @@ HWTEST_F(AmsAppRunningRecordTest, UpdateConfiguration_001, TestSize.Level1)
 {
     auto testLanguge = std::string("ch-zh");
     auto configUpdate = [testLanguge](const Configuration &config) {
-        auto l = config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+        auto l = config.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
         EXPECT_TRUE(testLanguge == l);
     };
 
     Configuration config;
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
+    config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
     auto record = GetTestAppRunningRecord();
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleConfigurationUpdated(_))
         .Times(1)
@@ -1461,12 +1461,12 @@ HWTEST_F(AmsAppRunningRecordTest, UpdateConfiguration_002, TestSize.Level1)
 {
     auto test = std::string("colour");
     auto configUpdate = [test](const Configuration &config) {
-        auto l = config.GetItem(GlobalConfigurationKey::SYSTEM_COLORMODE);
+        auto l = config.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_COLORMODE);
         EXPECT_TRUE(test == l);
     };
 
     Configuration config;
-    config.AddItem(GlobalConfigurationKey::SYSTEM_COLORMODE, test);
+    config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_COLORMODE, test);
     auto record = GetTestAppRunningRecord();
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleConfigurationUpdated(_))
         .Times(1)

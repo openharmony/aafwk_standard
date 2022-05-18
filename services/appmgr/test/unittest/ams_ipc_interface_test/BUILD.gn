@@ -22,10 +22,10 @@ ohos_unittest("AmsIpcAppSchedulerInterfaceTest") {
   include_dirs = [
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/account_error/include",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "${base_inner_api_path}/want/include",
   ]
 
-  configs = [ "${aafwk_path}/interfaces/innerkits/want:want_public_config" ]
+  configs = [ "${base_path}:want_public_config" ]
 
   sources = [ "ams_ipc_appscheduler_interface_test.cpp" ]
   cflags = []
@@ -35,6 +35,7 @@ ohos_unittest("AmsIpcAppSchedulerInterfaceTest") {
   deps = [ "${services_path}/appmgr/test:appmgr_test_source" ]
 
   external_deps = [
+    "ability_base:configuration",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
@@ -50,7 +51,7 @@ ohos_unittest("AmsIpcAppMgrInterfaceTest") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${base_path}:want",
     "${services_path}/appmgr/test:appmgr_test_source",
   ]
 

@@ -42,8 +42,6 @@ ohos_unittest("ability_connect_callback_proxy_test") {
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
-    "${innerkits_path}/uri:zuri",
-    "${innerkits_path}/want:want",
     "${services_path}/abilitymgr/test:abilityms_test_source",
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
@@ -56,6 +54,8 @@ ohos_unittest("ability_connect_callback_proxy_test") {
   ]
 
   external_deps = [
+    "ability_base:want",
+    "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
     "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",

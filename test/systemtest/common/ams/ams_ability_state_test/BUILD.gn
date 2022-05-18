@@ -19,10 +19,10 @@ config("system_test_ams_ability_state_test_config") {
   include_dirs = [
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
     "${appexecfwk_inner_api_path}/appexecfwk_core/include/bundlemgr",
-    "${aafwk_path}/interfaces/innerkits/want/include",
+    "${base_inner_api_path}/want/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
     "${aafwk_path}/frameworks/kits/ability/native/include",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "${base_inner_api_path}/want/include",
     "//third_party/json/include",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
@@ -65,8 +65,6 @@ ohos_systemtest("ams_ability_state_test") {
   deps = [
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/uri:zuri",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
@@ -76,6 +74,8 @@ ohos_systemtest("ams_ability_state_test") {
   ]
 
   external_deps = [
+    "ability_base:want",
+    "ability_base:zuri",
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",

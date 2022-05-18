@@ -22,7 +22,7 @@
 #include "hilog_wrapper.h"
 #include "iservice_registry.h"
 #include "mission_snapshot.h"
-#include "ohos/aafwk/base/bool_wrapper.h"
+#include "bool_wrapper.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
 #include "test_observer.h"

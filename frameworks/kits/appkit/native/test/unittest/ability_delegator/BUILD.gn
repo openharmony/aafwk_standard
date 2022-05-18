@@ -78,7 +78,7 @@ ohos_unittest("ability_delegator_args_unittest") {
 
   deps = [
     "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
-    "${aafwk_path}/interfaces/innerkits/want:want",
+    "${base_path}:want",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -98,8 +98,8 @@ ohos_unittest("iability_monitor_unittest") {
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${appexecfwk_path}/common:libappexecfwk_common",
+    "${base_path}:want",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -125,8 +125,8 @@ ohos_unittest("ability_delegator_unittest") {
     "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${aafwk_path}/services/abilitymgr:abilityms",
+    "${base_path}:want",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -175,8 +175,8 @@ ohos_unittest("ability_delegator_registry_unittest") {
     "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${aafwk_path}/services/abilitymgr:abilityms",
+    "${base_path}:want",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -206,8 +206,8 @@ ohos_unittest("js_test_runner_unittest") {
     "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${aafwk_path}/services/abilitymgr:abilityms",
+    "${base_path}:want",
     "//ark/js_runtime:libark_jsruntime",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",

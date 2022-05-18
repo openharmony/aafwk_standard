@@ -25,7 +25,6 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   ]
 
   sources = [
-    "${aafwk_path}/frameworks/kits/content/cpp/src/ohos/aafwk/content/pac_map.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_proxy.cpp",
     "${services_path}/abilitymgr/src/ability_scheduler_stub.cpp",
     "${services_path}/abilitymgr/src/caller_info.cpp",
@@ -36,7 +35,7 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
 
   configs = [
     "${services_path}/test:aafwk_module_test_config",
-    "${aafwk_path}/interfaces/innerkits/want:want_public_config",
+    "${base_path}:want_public_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -45,10 +44,7 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/base:base",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${innerkits_path}/uri:zuri",
-    "${innerkits_path}/want:want",
     "${services_path}/common:perm_verification",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -61,7 +57,10 @@ ohos_moduletest("IpcAbilitySchedulerModuleTest") {
   }
 
   external_deps = [
+    "ability_base:base",
     "ability_base:configuration",
+    "ability_base:want",
+    "ability_base:zuri",
     "bundle_framework:appexecfwk_core",
     "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
