@@ -20,9 +20,9 @@ config("amsKitSystemTestDataAConfig") {
   include_dirs = [
     "${SUBDEMOSYSTEM_DIR}/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
-    "${aafwk_path}/interfaces/innerkits/want/include/ohos/aafwk/content",
+    "${base_inner_api_path}/want/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
-    "${aafwk_path}/interfaces/innerkits/uri/include",
+    "${base_inner_api_path}/uri/include",
     "${innerkits_path}/libeventhandler/include",
     "${services_path}/bundlemgr/include",
     "${aafwk_path}/services/abilitymgr/include",
@@ -54,8 +54,6 @@ ohos_shared_library("amsKitSystemTestDataA") {
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/uri:zuri",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${common_path}:libappexecfwk_common",
     "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/dataability:native_dataability",
     "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/rdb:native_rdb",
@@ -65,6 +63,8 @@ ohos_shared_library("amsKitSystemTestDataA") {
     "//utils/native/base:utilsbase",
   ]
   external_deps = [
+    "ability_base:want",
+    "ability_base:zuri",
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_innerkits",
     "dataability:native_dataability",

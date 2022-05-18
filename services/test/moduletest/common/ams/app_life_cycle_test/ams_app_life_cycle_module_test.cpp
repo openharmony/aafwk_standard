@@ -1712,12 +1712,12 @@ HWTEST_F(AmsAppLifeCycleModuleTest, UpdateConfiguration_001, TestSize.Level1)
 
     auto testLanguge = std::string("ch-zh");
     auto configUpdate = [testLanguge](const Configuration &config) {
-        auto l = config.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE);
+        auto l = config.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
         EXPECT_TRUE(testLanguge == l);
     };
 
     Configuration config;
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
+    config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
 
     auto appMap = serviceInner_->appRunningManager_->GetAppRunningRecordMap();
     EXPECT_EQ(2, static_cast<int>(appMap.size()));
@@ -1774,17 +1774,17 @@ HWTEST_F(AmsAppLifeCycleModuleTest, UpdateConfiguration_002, TestSize.Level1)
     auto again = std::string("Russian");
     auto displayId = 10;
     auto configUpdate = [testLanguge, displayId](const Configuration &config) {
-        auto l = config.GetItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE);
+        auto l = config.GetItem(displayId, AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
         EXPECT_TRUE(testLanguge == l);
     };
 
     auto configUpdateAgain = [again, displayId](const Configuration &config) {
-        auto l = config.GetItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE);
+        auto l = config.GetItem(displayId, AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
         EXPECT_TRUE(again == l);
     };
 
     Configuration config;
-    config.AddItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
+    config.AddItem(displayId, AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
 
     auto appMap = serviceInner_->appRunningManager_->GetAppRunningRecordMap();
     EXPECT_EQ(2, static_cast<int>(appMap.size()));
@@ -1801,7 +1801,7 @@ HWTEST_F(AmsAppLifeCycleModuleTest, UpdateConfiguration_002, TestSize.Level1)
 
     serviceInner_->UpdateConfiguration(config);
 
-    config.AddItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE, again);
+    config.AddItem(displayId, AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, again);
 
     serviceInner_->UpdateConfiguration(config);
 }
@@ -1847,15 +1847,15 @@ HWTEST_F(AmsAppLifeCycleModuleTest, UpdateConfiguration_003, TestSize.Level1)
     auto testLanguge = std::string("ch-zh");
     auto displayId = 10;
     auto configUpdate = [testLanguge, displayId](const Configuration &config) {
-        auto ld = config.GetItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE);
-        auto l = config.GetItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE);
+        auto ld = config.GetItem(displayId, AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
+        auto l = config.GetItem(displayId, AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE);
         EXPECT_TRUE(testLanguge == ld);
         EXPECT_TRUE(testLanguge == l);
     };
 
     Configuration config;
-    config.AddItem(displayId, GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
-    config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
+    config.AddItem(displayId, AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
+    config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, testLanguge);
 
     auto appMap = serviceInner_->appRunningManager_->GetAppRunningRecordMap();
     EXPECT_EQ(2, static_cast<int>(appMap.size()));

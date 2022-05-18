@@ -32,6 +32,7 @@ ohos_moduletest("AmsAppLifeCycleModuleTest") {
   ]
 
   external_deps = [
+    "ability_base:configuration",
     "ipc:ipc_core",
     "samgr_standard:samgr_proxy",
   ]

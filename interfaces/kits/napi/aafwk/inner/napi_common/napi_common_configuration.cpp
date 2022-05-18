@@ -44,10 +44,10 @@ napi_value WrapConfiguration(napi_env env, const AppExecFwk::Configuration &conf
     NAPI_CALL(env, napi_create_object(env, &jsObject));
 
     napi_value jsValue = nullptr;
-    jsValue = WrapStringToJS(env, configuration.GetItem(GlobalConfigurationKey::SYSTEM_LANGUAGE));
+    jsValue = WrapStringToJS(env, configuration.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE));
     SetPropertyValueByPropertyName(env, jsObject, "language", jsValue);
 
-    jsValue = WrapInt32ToJS(env, ConvertColorMode(configuration.GetItem(GlobalConfigurationKey::SYSTEM_COLORMODE)));
+    jsValue = WrapInt32ToJS(env, ConvertColorMode(configuration.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_COLORMODE)));
     SetPropertyValueByPropertyName(env, jsObject, "colorMode", jsValue);
 
     int32_t displayId = ConvertDisplayId(configuration.GetItem(ConfigurationInner::APPLICATION_DISPLAYID));
@@ -78,7 +78,7 @@ bool UnwrapConfiguration(napi_env env, napi_value param, Configuration &config)
     std::string language {""};
     if (UnwrapStringByPropertyName(env, param, "language", language)) {
         HILOG_DEBUG("The parsed language part %{public}s", language.c_str());
-        if (!config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language)) {
+        if (!config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, language)) {
             HILOG_ERROR("language Parsing failed");
             return false;
         }
@@ -91,7 +91,7 @@ bool UnwrapConfiguration(napi_env env, napi_value param, Configuration &config)
             HILOG_ERROR("Set colorMode to unsupported value.");
             return false;
         }
-        if (!config.AddItem(GlobalConfigurationKey::SYSTEM_COLORMODE, GetColorModeStr(colormode))) {
+        if (!config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_COLORMODE, GetColorModeStr(colormode))) {
             HILOG_ERROR("colorMode parsing failed");
             return false;
         }

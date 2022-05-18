@@ -42,11 +42,11 @@ ohos_shared_library("system_test_ability_util_lib") {
 
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/interfaces/innerkits/want:want",
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${aafwk_path}/services/test/moduletest/module_test_dump_util:module_test_dump_util_lib",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${base_path}:want",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/jsoncpp:jsoncpp",
     "//utils/native/base:utils",

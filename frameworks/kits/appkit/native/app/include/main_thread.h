@@ -26,7 +26,7 @@
 #include "application_impl.h"
 #include "resource_manager.h"
 #include "foundation/aafwk/standard/interfaces/innerkits/runtime/include/runtime.h"
-#include "ohos/aafwk/base/ipc_singleton.h"
+#include "ipc_singleton.h"
 #include "watchdog.h"
 #define ABILITY_LIBRARY_LOADER
 

@@ -167,7 +167,7 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_ScheduleUpdateConfiguration_002, Tes
                 EXPECT_EQ(testNotify2, 0);
                 auto language = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
                 GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_002 : " << language;
-                config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
+                config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
                 Want want; // Trigger Ability LifeCycle to Active
                 mockAbilityimpl->CommandAbility(want, 0, 0);
                 mockAbilityimpl->ScheduleUpdateConfiguration(config);
@@ -230,7 +230,7 @@ HWTEST_F(AbilityImplTest, AaFwk_AbilityImpl_ScheduleUpdateConfiguration_003, Tes
                 EXPECT_EQ(testNotify2, 0);
                 auto language = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
                 GTEST_LOG_(INFO) << "AaFwk_AbilityImpl_ScheduleUpdateConfiguration_003 : " << language;
-                config.AddItem(GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
+                config.AddItem(AAFwk::GlobalConfigurationKey::SYSTEM_LANGUAGE, language);
                 Want want; // Trigger Ability LifeCycle to Active
                 mockAbilityimpl->CommandAbility(want, 0, 0);
                 mockAbilityimpl->ScheduleUpdateConfiguration(config);
