@@ -120,10 +120,10 @@ ohos_unittest("ability_test") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 
@@ -407,10 +407,10 @@ ohos_unittest("data_ability_helper_test") {
   ]
 
   external_deps = [
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 
@@ -443,10 +443,10 @@ ohos_unittest("data_ability_operation_test") {
   ]
 
   external_deps = [
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 
@@ -526,10 +526,10 @@ ohos_unittest("ability_impl_test") {
     "ability_base:configuration",
     "ability_runtime:runtime",
     "bundle_framework:appexecfwk_core",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 
@@ -580,10 +580,10 @@ ohos_unittest("ability_thread_test") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 
@@ -704,10 +704,10 @@ ohos_unittest("data_ability_impl_test") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 
@@ -758,10 +758,10 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 
@@ -812,10 +812,10 @@ ohos_unittest("data_ability_impl_file_test") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 
@@ -868,10 +868,10 @@ ohos_unittest("ability_thread_dataability_test") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 
@@ -1144,10 +1144,10 @@ ohos_unittest("continuation_test") {
 
   external_deps = [
     "ability_runtime:runtime",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 

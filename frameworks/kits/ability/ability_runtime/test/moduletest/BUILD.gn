@@ -55,10 +55,10 @@ ohos_moduletest("ability_caller_fw_module_test") {
 
   external_deps = [
     "bundle_framework:appexecfwk_core",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
-    "dataability:native_dataability",
     "relational_store:native_rdb",
   ]
 
