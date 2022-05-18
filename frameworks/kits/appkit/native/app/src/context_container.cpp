@@ -360,7 +360,7 @@ int ContextContainer::VerifySelfPermission(const std::string &permission)
  *
  * @return Returns the bundle name of the current ability.
  */
-std::string ContextContainer::GetBundleName()
+std::string ContextContainer::GetBundleName() const
 {
     if (baseContext_ != nullptr) {
         return baseContext_->GetBundleName();

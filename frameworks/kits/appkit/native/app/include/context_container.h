@@ -216,7 +216,7 @@ public:
      *
      * @return Returns the bundle name of the current ability.
      */
-    std::string GetBundleName() override;
+    std::string GetBundleName() const override;
 
     /**
      * @brief Obtains the path of the OHOS Ability Package (HAP} containing this ability.

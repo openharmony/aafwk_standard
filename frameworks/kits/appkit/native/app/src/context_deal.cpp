@@ -42,12 +42,18 @@ const std::string ContextDeal::CONTEXT_DEAL_Files("files");
 const std::string ContextDeal::CONTEXT_DEAL_NO_BACKUP_Files("no_backup");
 const std::string ContextDeal::CONTEXT_DEAL_DIRNAME("preferences");
 const int64_t ContextDeal::CONTEXT_CREATE_BY_SYSTEM_APP(0x00000001);
-const std::string ContextDeal::CONTEXT_FILE_SEPARATOR("/");
 const std::string ContextDeal::CONTEXT_DISTRIBUTED_BASE_BEFORE("/mnt/hmdfs/");
 const std::string ContextDeal::CONTEXT_DISTRIBUTED_BASE_MIDDLE("/device_view/local/data/");
 const std::string ContextDeal::CONTEXT_DISTRIBUTED("distributedfiles");
 const std::string ContextDeal::CONTEXT_DATA_STORAGE("/data/storage/");
 const std::string ContextDeal::CONTEXT_ELS[] = {"el1", "el2"};
+const std::string ContextDeal::CONTEXT_DEAL_DATA_APP("/data/app/");
+const std::string ContextDeal::CONTEXT_DEAL_BASE("base");
+const std::string ContextDeal::CONTEXT_DEAL_DATABASE("database");
+const std::string ContextDeal::CONTEXT_DEAL_PREFERENCES("preferences");
+const std::string ContextDeal::CONTEXT_DEAL_DISTRIBUTEDFILES("distributedfiles");
+const std::string ContextDeal::CONTEXT_DEAL_CACHE("cache");
+const std::string ContextDeal::CONTEXT_DEAL_DATA("data");
 
 ContextDeal::ContextDeal(bool isCreateBySystemApp) : isCreateBySystemApp_(isCreateBySystemApp)
 {}
@@ -314,7 +320,10 @@ bool ContextDeal::StopAbility(const AAFwk::Want &want)
  */
 std::string ContextDeal::GetCacheDir()
 {
-    return (applicationInfo_ != nullptr) ? applicationInfo_->cacheDir : "";
+    std::string dir = GetBaseDir() + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_CACHE;
+    CreateDirIfNotExist(dir);
+    HILOG_DEBUG("ContextDeal::GetCacheDir:%{public}s", dir.c_str());
+    return dir;
 }
 
 bool ContextDeal::IsUpdatingConfigurations()
@@ -336,9 +345,10 @@ bool ContextDeal::PrintDrawnCompleted()
  */
 std::string ContextDeal::GetCodeCacheDir()
 {
-    return (applicationInfo_ != nullptr)
-               ? (applicationInfo_->dataDir + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_CODE_CACHE)
-               : "";
+    std::string dir = GetDataDir() + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_CODE_CACHE;
+    CreateDirIfNotExist(dir);
+    HILOG_DEBUG("ContextDeal::GetCodeCacheDir:%{public}s", dir.c_str());
+    return dir;
 }
 
 /**
@@ -349,7 +359,16 @@ std::string ContextDeal::GetCodeCacheDir()
  */
 std::string ContextDeal::GetDatabaseDir()
 {
-    return (applicationInfo_ != nullptr) ? applicationInfo_->dataBaseDir : "";
+    std::string dir;
+    if (IsCreateBySystemApp()) {
+        dir = CONTEXT_DEAL_DATA_APP + currArea_ + CONTEXT_DEAL_FILE_SEPARATOR + std::to_string(GetCurrentAccountId())
+		    + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_DATABASE + CONTEXT_DEAL_FILE_SEPARATOR + GetBundleName();
+    } else {
+        dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_DATABASE;
+    }
+    CreateDirIfNotExist(dir);
+    HILOG_DEBUG("ContextDeal::GetDatabaseDir:%{public}s", dir.c_str());
+    return dir;
 }
 
 /**
@@ -359,7 +378,10 @@ std::string ContextDeal::GetDatabaseDir()
  */
 std::string ContextDeal::GetDataDir()
 {
-    return (applicationInfo_ != nullptr) ? applicationInfo_->dataDir : "";
+    std::string dir = GetBaseDir() + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_DATA;
+    CreateDirIfNotExist(dir);
+    HILOG_DEBUG("ContextDeal::GetDataDir dir = %{public}s", dir.c_str());
+    return dir;
 }
 
 /**
@@ -423,9 +445,10 @@ std::string ContextDeal::GetExternalFilesDir(std::string &type)
  */
 std::string ContextDeal::GetFilesDir()
 {
-    return (applicationInfo_ != nullptr)
-               ? (applicationInfo_->dataDir + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_Files)
-               : "";
+    std::string dir = GetBaseDir() + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_Files;
+    CreateDirIfNotExist(dir);
+    HILOG_DEBUG("ContextDeal::GetFilesDir dir = %{public}s", dir.c_str());
+    return dir;
 }
 
 /**
@@ -438,13 +461,13 @@ std::string ContextDeal::GetFilesDir()
 std::string ContextDeal::GetNoBackupFilesDir()
 {
     HILOG_INFO("ContextDeal::GetNoBackupFilesDir begin");
-    std::string dir = applicationInfo_->dataDir + CONTEXT_DEAL_NO_BACKUP_Files;
+    std::string dir = GetDataDir() + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_NO_BACKUP_Files;
     if (!OHOS::FileExists(dir)) {
         HILOG_INFO("ContextDeal::GetDir GetNoBackupFilesDir is not exits");
         OHOS::ForceCreateDirectory(dir);
         OHOS::ChangeModeDirectory(dir, MODE);
     }
-    HILOG_INFO("ContextDeal::GetNoBackupFilesDir end");
+    HILOG_DEBUG("ContextDeal::GetCodeCacheDir:%{public}s", dir.c_str());
     return dir;
 }
 
@@ -468,7 +491,7 @@ int ContextDeal::VerifySelfPermission(const std::string &permission)
  *
  * @return Returns the bundle name of the current ability.
  */
-std::string ContextDeal::GetBundleName()
+std::string ContextDeal::GetBundleName() const
 {
     return (applicationInfo_ != nullptr) ? applicationInfo_->bundleName : "";
 }
@@ -629,17 +652,16 @@ void ContextDeal::CreateDirIfNotExist(const std::string &dirPath) const
  */
 std::string ContextDeal::GetDistributedDir()
 {
-    HILOG_INFO("ContextImpl::GetDistributedDir");
+    HILOG_INFO("ContextDeal::GetDistributedDir");
     std::string dir;
     if (IsCreateBySystemApp()) {
         dir = CONTEXT_DISTRIBUTED_BASE_BEFORE + std::to_string(GetCurrentAccountId()) +
               CONTEXT_DISTRIBUTED_BASE_MIDDLE + GetBundleName();
     } else {
-        dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_FILE_SEPARATOR + CONTEXT_DISTRIBUTED + CONTEXT_FILE_SEPARATOR +
-              ((GetHapModuleInfo() == nullptr) ? "" : GetHapModuleInfo()->moduleName);
+        dir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_DISTRIBUTEDFILES;
     }
     CreateDirIfNotExist(dir);
-    HILOG_INFO("ContextImpl::GetDistributedDir:%{public}s", dir.c_str());
+    HILOG_INFO("ContextDeal::GetDistributedDir:%{public}s", dir.c_str());
     return dir;
 }
 /**
@@ -1071,53 +1093,10 @@ int ContextDeal::GetDisplayOrientation()
 std::string ContextDeal::GetPreferencesDir()
 {
     HILOG_INFO("ContextDeal::GetPreferencesDir begin");
-    if (!preferenceDir_.empty()) {
-        return preferenceDir_;
-    }
-
-    if (abilityInfo_ == nullptr || applicationInfo_ == nullptr) {
-        HILOG_ERROR("ContextDeal::GetPreferencesDir %s is nullptr",
-            (abilityInfo_ == nullptr) ? "abilityInfo_" : "applicationInfo_");
-        return "";
-    }
-
-    std::string abilityDirectoryName = "";
-    if (abilityInfo_->isNativeAbility) {  // Native Interface corresponding IX-1038
-        abilityDirectoryName = abilityInfo_->name;
-    } else {
-        std::string abilityname = abilityInfo_->name;
-        size_t findpos = abilityname.find_last_of(".");
-        if (findpos == std::string::npos) {
-            HILOG_ERROR("ContextDeal::GetPreferencesDir Find last of string failed.");
-            return "";
-        }
-
-        abilityDirectoryName = abilityname.substr(findpos + 1, abilityname.length());
-        if (abilityDirectoryName == "") {
-            HILOG_ERROR("ContextDeal::GetPreferencesDir abilityDirectoryName is nullptr");
-            return "";
-        }
-    }
-
-    std::string dataDir = applicationInfo_->dataDir + CONTEXT_DEAL_FILE_SEPARATOR + abilityDirectoryName +
-                          CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_DIRNAME;
-
-    if (!OHOS::FileExists(dataDir)) {
-        HILOG_INFO("ContextDeal::GetPreferencesDir File is not exits. Bengin create");
-        if (!OHOS::ForceCreateDirectory(dataDir)) {
-            HILOG_ERROR("ContextDeal::GetPreferencesDir ForceCreateDirectory return false. Create failed");
-            return "";
-        }
-        if (!OHOS::ChangeModeDirectory(dataDir, MODE)) {
-            HILOG_WARN("ContextDeal::GetPreferencesDir ChangeModeDirectory(%s, 0771) return false. Change failed",
-                dataDir.c_str());
-        }
-        HILOG_INFO("ContextDeal::GetPreferencesDir File create complete");
-    }
-
-    preferenceDir_ = dataDir;
-    HILOG_INFO("ContextDeal::GetPreferencesDir end");
-    return preferenceDir_;
+    std::string dir = GetBaseDir() + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_PREFERENCES;
+    CreateDirIfNotExist(dir);
+    HILOG_DEBUG("ContextDeal::GetPreferencesDir:%{public}s", dir.c_str());
+    return dir;
 }
 
 /**
@@ -1430,5 +1409,19 @@ void ContextDeal::SetShowOnLockScreen(bool isAllow)
         HILOG_ERROR("ContextDeal::SetShowOnLockScreen SetShowOnLockScreen retval is ERROR(%d)", errval);
     }
 }
+
+std::string ContextDeal::GetBaseDir() const
+{
+    std::string baseDir;
+    if (IsCreateBySystemApp()) {
+        baseDir = CONTEXT_DEAL_DATA_APP + currArea_ + CONTEXT_DEAL_FILE_SEPARATOR +
+            std::to_string(GetCurrentAccountId()) + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_BASE +
+            CONTEXT_DEAL_FILE_SEPARATOR + GetBundleName();
+    } else {
+        baseDir = CONTEXT_DATA_STORAGE + currArea_ + CONTEXT_DEAL_FILE_SEPARATOR + CONTEXT_DEAL_BASE;
+    }
+
+    HILOG_DEBUG("ContextDeal::GetBaseDir:%{public}s", baseDir.c_str());
+    return baseDir;
 }  // namespace AppExecFwk
 }  // namespace OHOS
