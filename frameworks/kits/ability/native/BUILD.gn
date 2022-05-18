@@ -129,7 +129,6 @@ ohos_shared_library("abilitykit_native") {
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/common/include",
     "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_dataability/include",
-    "//foundation/distributeddatamgr/appdatamgr/frameworks/jskitsimpl/napi_rdb/include",
     "//foundation/distributeddatamgr/objectstore/interfaces/innerkits/",
   ]
 
