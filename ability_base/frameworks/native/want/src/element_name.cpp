@@ -100,7 +100,6 @@ bool ElementName::ReadFromParcel(Parcel &parcel)
     bundleName_ = Str16ToStr8(parcel.ReadString16());
     abilityName_ = Str16ToStr8(parcel.ReadString16());
     deviceId_ = Str16ToStr8(parcel.ReadString16());
-    moduleName_ = Str16ToStr8(parcel.ReadString16());
     return true;
 }
 
@@ -120,7 +119,6 @@ bool ElementName::Marshalling(Parcel &parcel) const
     WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(String16, parcel, Str8ToStr16(bundleName_));
     WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(String16, parcel, Str8ToStr16(abilityName_));
     WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(String16, parcel, Str8ToStr16(deviceId_));
-    WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(String16, parcel, Str8ToStr16(moduleName_));
     return true;
 }
 }  // namespace AppExecFwk
