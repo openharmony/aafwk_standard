@@ -13,7 +13,8 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
-SUBDEMOSYSTEM_DIR = "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/amsStDataAbility"
+SUBDEMOSYSTEM_DIR =
+    "test/resource/amssystemtestability/abilitySrc/amsStDataAbility"
 
 config("verify_act_ability_config") {
   visibility = [ ":*" ]
@@ -27,7 +28,6 @@ config("verify_act_ability_config") {
     "${appexecfwk_path}/services/bundlemgr/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
   ]
   defines = [
     "AMS_LOG_TAG = \"amsStDataAbility\"",
@@ -52,7 +52,6 @@ ohos_shared_library("amsStDataAbility") {
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/services/bundlemgr:libbms",
     "//utils/native/base:utilsbase",
   ]
