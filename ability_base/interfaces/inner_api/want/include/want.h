@@ -816,6 +816,9 @@ public:
     static const std::string PARAM_RESV_CALLER_UID;
     static const std::string PARAM_RESV_CALLER_PID;
 
+    // module name string
+    static const std::string PARAM_MODULE_NAME;
+
 private:
     WantParams parameters_;
     Operation operation_;

@@ -74,6 +74,10 @@ napi_value WrapElementName(napi_env env, const ElementName &elementName)
     NAPI_CALL(env, napi_create_string_utf8(env, elementName.GetAbilityName().c_str(), NAPI_AUTO_LENGTH, &jsValue));
     NAPI_CALL(env, napi_set_named_property(env, jsObject, "abilityName", jsValue));
 
+    jsValue = nullptr;
+    NAPI_CALL(env, napi_create_string_utf8(env, elementName.GetModuleName().c_str(), NAPI_AUTO_LENGTH, &jsValue));
+    NAPI_CALL(env, napi_set_named_property(env, jsObject, "moduleName", jsValue));
+
     return jsObject;
 }
 
@@ -1041,6 +1045,10 @@ napi_value WrapWant(napi_env env, const Want &want)
     SetPropertyValueByPropertyName(env, jsObject, "abilityName", jsValue);
 
     jsValue = nullptr;
+    jsValue = GetPropertyValueByPropertyName(env, jsElementName, "moduleName", napi_string);
+    SetPropertyValueByPropertyName(env, jsObject, "moduleName", jsValue);
+
+    jsValue = nullptr;
     jsValue = WrapStringToJS(env, want.GetUriString());
     SetPropertyValueByPropertyName(env, jsObject, "uri", jsValue);
 
@@ -1106,8 +1114,8 @@ bool UnwrapWant(napi_env env, napi_value param, Want &want)
 
     ElementName natElementName;
     UnwrapElementName(env, param, natElementName);
-    want.SetElementName(natElementName.GetDeviceID(), natElementName.GetBundleName(), natElementName.GetAbilityName(),
-        natElementName.GetModuleName());
+    want.SetElementName(natElementName.GetDeviceID(), natElementName.GetBundleName(),
+        natElementName.GetAbilityName(), natElementName.GetModuleName());
 
     natValueString = "";
     if (UnwrapStringByPropertyName(env, param, "type", natValueString)) {
