@@ -70,7 +70,6 @@ ohos_source_set("abilityms_test_source") {
     "${aafwk_path}/interfaces/innerkits/dataobs_manager/include",
     "//base/account/os_account/frameworks/common/account_error/include",
     "//base/account/os_account/frameworks/common/database/include",
-    "//base/account/os_account/frameworks/common/log/include",
     "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
     "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include/xcollie",
   ]

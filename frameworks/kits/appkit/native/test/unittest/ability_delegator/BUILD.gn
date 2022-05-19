@@ -98,7 +98,6 @@ ohos_unittest("iability_monitor_unittest") {
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_delegator",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${base_path}:want",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
