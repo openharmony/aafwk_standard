@@ -36,8 +36,8 @@ ohos_fuzztest("UriPermissionManagerFuzzTest") {
 
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
-    "${base_path}:base",
-    "${base_path}:want",
+    "${ability_base_path}:base",
+    "${ability_base_path}:want",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/uripermmgr:libupms",
   ]

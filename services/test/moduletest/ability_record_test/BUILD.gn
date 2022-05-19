@@ -65,10 +65,10 @@ ohos_moduletest("AbilityRecordModuleTest") {
 
   configs = [
     "${services_path}/test:aafwk_module_test_config",
-    "${appexecfwk_inner_api_path}/appexecfwk_core:appexecfwk_core_config",
-    "${appexecfwk_innerkits_path}/libeventhandler:public_libeventhandler_config",
+    "${bundlefwk_inner_api_path}/appexecfwk_core:appexecfwk_core_config",
+    "${bundlefwk_innerkits_path}/libeventhandler:public_libeventhandler_config",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_config",
-    "${base_path}:want_public_config",
+    "${ability_base_path}:want_public_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -78,8 +78,8 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/services/abilitymgr:abilityms",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${innerkits_path}/uri_permission:uri_permission_mgr",

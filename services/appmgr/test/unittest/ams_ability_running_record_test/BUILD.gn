@@ -20,10 +20,10 @@ ohos_unittest("AmsAbilityRunningRecordTest") {
   module_out_path = module_output_path
   cflags_cc = []
   include_dirs = [
-    "${base_inner_api_path}/want/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_core/include",
+    "${ability_base_innerapi_path}/want/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_core/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/inclide",
-    "${base_inner_api_path}/uri/include",
+    "${ability_base_innerapi_path}/uri/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
     "//base/account/os_account/frameworks/common/database/include",

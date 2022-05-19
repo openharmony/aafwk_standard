@@ -31,9 +31,9 @@ config("want_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "//utils/native/base/include",
-    "${base_inner_api_path}/base/include",
-    "${base_inner_api_path}/uri/include",
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/base/include",
+    "${ability_base_innerapi_path}/uri/include",
+    "${ability_base_innerapi_path}/want/include",
     "${innerkits_path}/log/include",
     "${kits_path}/content/cpp/src",
     "//third_party/jsoncpp/include",

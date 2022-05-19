@@ -13,7 +13,7 @@
 
 import("//ark/ts2abc/ts2panda/ts2abc_config.gni")
 import("//build/ohos.gni")
-import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/form_runtime/form_runtime.gni")
 
 ################################### formbindingdata_napi ########################################
 ohos_shared_library("formbindingdata_napi") {
@@ -24,7 +24,7 @@ ohos_shared_library("formbindingdata_napi") {
     "form_binding_data/form_binding_data_module.cpp",
   ]
 
-  configs = [ "${services_path}/common:common_config" ]
+  configs = []
 
   deps = []
 
@@ -125,7 +125,7 @@ ohos_shared_library("forminfo_napi") {
     "form_info/js_form_info.cpp",
   ]
 
-  configs = [ "${services_path}/common:common_config" ]
+  configs = []
 
   deps = []
 
@@ -157,9 +157,9 @@ ohos_shared_library("formhost_napi") {
 
   deps = [
     ":formutil_napi",
-    "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
+    "${ability_runtime_kits_path}/appkit:appkit_native",
+    "${ability_runtime_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
     "${form_runtime_path}:fmskit_native",
-    "${kits_path}/appkit:appkit_native",
   ]
 
   external_deps = [
@@ -190,8 +190,8 @@ ohos_shared_library("formmanager") {
   ]
 
   deps = [
-    "${aafwk_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
-    "${kits_path}/appkit:appkit_native",
+    "${ability_runtime_kits_path}/appkit:appkit_native",
+    "${ability_runtime_path}/interfaces/kits/napi/aafwk/inner/napi_common:napi_common",
   ]
 
   external_deps = [
@@ -224,7 +224,7 @@ ohos_shared_library("formprovider_napi") {
 
   deps = [
     ":formutil_napi",
-    "${kits_path}/appkit:appkit_native",
+    "${ability_runtime_kits_path}/appkit:appkit_native",
   ]
 
   external_deps = [
@@ -257,7 +257,7 @@ ohos_shared_library("formutil_napi") {
 
   sources = [ "formUtil/napi_form_util.cpp" ]
 
-  deps = [ "${aafwk_path}/frameworks/kits/appkit:appkit_native" ]
+  deps = [ "${ability_runtime_path}/frameworks/kits/appkit:appkit_native" ]
 
   external_deps = [
     "ability_base:base",
@@ -283,7 +283,7 @@ ohos_shared_library("formerror_napi") {
     "form_error/js_form_error.cpp",
   ]
 
-  configs = [ "${services_path}/common:common_config" ]
+  configs = []
 
   deps = [ ":formutil_napi" ]
 

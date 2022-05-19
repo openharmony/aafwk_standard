@@ -12,9 +12,9 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/ability_base/ability_base.gni")
 
-baseImpl = "${base_path}/frameworks/native"
+baseImpl = "${ability_base_path}/frameworks/native"
 
 ################################### base ########################################
 config("base_config") {
@@ -57,7 +57,7 @@ ohos_shared_library("base") {
 config("configuration_sdk_config") {
   include_dirs = [
     "interfaces/inner_api/configuration/include",
-    "${innerkits_path}/log/include",
+    "${ability_runtime_innerapi_path}/log/include",
     "//third_party/json/include",
   ]
 }
@@ -133,17 +133,16 @@ config("want_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "//utils/native/base/include",
-    "${base_inner_api_path}/base/include",
-    "${base_inner_api_path}/uri/include",
-    "${base_inner_api_path}/want/include",
-    "${innerkits_path}/log/include",
-    "${kits_path}/content/cpp/src",
+    "${ability_base_innerapi_path}/base/include",
+    "${ability_base_innerapi_path}/uri/include",
+    "${ability_base_innerapi_path}/want/include",
+    "${ability_runtime_innerapi_path}/log/include",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
   ]
 }
 
-wantImpl = "${base_native_path}/want/src"
+wantImpl = "${ability_base_native_path}/want/src"
 
 ohos_shared_library("want") {
   sources = [

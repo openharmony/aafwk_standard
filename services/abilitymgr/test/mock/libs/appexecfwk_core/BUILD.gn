@@ -21,12 +21,12 @@ config("appexecfwk_core_mock_config") {
     "${aafwk_path}/services/abilitymgr/test/mock/libs/appexecfwk_core/include/bundlemgr",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${aafwk_path}/services/abilitymgr/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
     "${aafwk_path}/frameworks/kits/ability/native/include/",
     "//base/telephony/core_service/sim/include/",
     "${aafwk_path}/services/abilitymgr/test/mock/libs/aakit/include/",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include",
     "${aafwk_path}/services/common/include",
   ]
 }
@@ -41,9 +41,9 @@ ohos_source_set("appexecfwk_appmgr_mock") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
-    "${base_path}:want",
+    "${ability_base_path}:want",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//utils/native/base:utils",
@@ -68,9 +68,9 @@ ohos_source_set("appexecfwk_bundlemgr_mock") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
-    "${base_path}:want",
+    "${ability_base_path}:want",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",
