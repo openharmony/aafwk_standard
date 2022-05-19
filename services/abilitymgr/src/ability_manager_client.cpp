@@ -23,9 +23,14 @@
 #include "iservice_registry.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
+#include "event_report.h"
 
 namespace OHOS {
 namespace AAFwk {
+namespace {
+const std::string START_ABILTIY_ERROR = "START_ABILTIY_ERROR";
+const std::string START_ABILTIY = "START_ABILTIY";
+}
 std::shared_ptr<AbilityManagerClient> AbilityManagerClient::instance_ = nullptr;
 std::recursive_mutex AbilityManagerClient::mutex_;
 
@@ -99,6 +104,13 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode, in
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    int32_t ret = ERR_OK;
+    const std::string abilityName = want.GetElement().GetAbilityName();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILTIY , AAFWK::HiSysEventType::FAULT);
+    ret = abms->StartAbility(want, userId, requestCode);
+    if (ret != ERR_OK) {
+        AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILTIY_ERROR , AAFWK::HiSysEventType::FAULT);
+    }
     return abms->StartAbility(want, userId, requestCode);
 }
 

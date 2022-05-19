@@ -45,3 +45,119 @@ THREAD_BLOCK_6S:
   PACKAGE_NAME: {type: STRING, desc: package name}
   PROCESS_NAME: {type: STRING, desc: process name}
   MSG: {type: STRING, desc: application event message}
+  
+ABILITY_START_ERROR:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+ABILITY_START:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_FOREGROUND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_BACKGROUND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_STOP:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONSTART:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONSTOP:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONACTIVE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONINACTIVE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONFOREGROUND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONBACKGROUND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONCONNECT:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONDISCONNECT:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONCOMMAND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+EXTENSION_ONSTART:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for extensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+EXTENSION_ONSTOP:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for extensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+EXTENSION_ONCONNECT:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for extensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+EXTENSION_ONDISCONNECT:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for extensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+EXTENSION_ONCOMMAND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for extensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+APP_ATTACH:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: application event}
+  NAME: {type: STRING, desc: application name}
+  VERSION_NAME: {type: STRING, desc: version name}
+  VERSION_CODE: {type: INT32, desc: version code}
+  PROCESS: {type: STRING, desc: process}
+  TIME_STAMP: {type: INT32, desc: time stamp}
+
+APP_LAUNCH:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: application event}
+  NAME: {type: STRING, desc: application name}
+  VERSION_NAME: {type: STRING, desc: version name}
+  VERSION_CODE: {type: INT32, desc: version code}
+  PROCESS: {type: STRING, desc: process}
+  TIME_STAMP: {type: INT32, desc: time stamp}
+
+APP_FOREGROUND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: application event}
+  NAME: {type: STRING, desc: application name}
+  VERSION_NAME: {type: STRING, desc: version name}
+  VERSION_CODE: {type: INT32, desc: version code}
+  PROCESS: {type: STRING, desc: process}
+  TIME_STAMP: {type: INT32, desc: time stamp}
+
+APP_BACKGROUND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: application event}
+  NAME: {type: STRING, desc: application name}
+  VERSION_NAME: {type: STRING, desc: version name}
+  VERSION_CODE: {type: INT32, desc: version code}
+  PROCESS: {type: STRING, desc: process}
+  TIME_STAMP: {type: INT32, desc: time stamp}
+
+APP_TERMINATE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: application event}
+  NAME: {type: STRING, desc: application name}
+  VERSION_NAME: {type: STRING, desc: version name}
+  VERSION_CODE: {type: INT32, desc: version code}
+  PROCESS: {type: STRING, desc: process}
+  TIME_STAMP: {type: INT32, desc: time stamp}
