@@ -93,7 +93,10 @@ ohos_shared_library("ability_manager") {
     "${services_path}/abilitymgr:abilityms_config",
   ]
 
-  deps = [ "//third_party/jsoncpp:jsoncpp" ]
+  deps = [
+    "${services_path}/common:perm_verification",
+    "//third_party/jsoncpp:jsoncpp",
+  ]
 
   external_deps = [
     "ability_base:base",
