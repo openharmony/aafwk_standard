@@ -32,7 +32,6 @@
 #include "form_refresh_limiter.h"
 #include "form_sys_event_receiver.h"
 #include "if_system_ability_manager.h"
-#include "inner_bundle_info.h"
 #include "ipc_skeleton.h"
 #include "form_bms_helper.h"
 #include "iservice_registry.h"

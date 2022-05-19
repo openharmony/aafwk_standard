@@ -55,16 +55,11 @@ ohos_source_set("appmgr_test_source") {
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/render_scheduler_host.cpp",
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/render_scheduler_proxy.cpp",
     "${aafwk_path}/interfaces/innerkits/app_manager/src/appmgr/running_process_info.cpp",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/src/ability_info.cpp",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/src/application_info.cpp",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/src/bundle_info.cpp",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/src/bundle_user_info.cpp",
   ]
 
   include_dirs = [
     "//third_party/json/include",
     "${aafwk_path}/services/appmgr/include/lmks",
-    "${appexecfwk_inner_api_path}/appexecfwk_core/include",
   ]
 
   public_configs = [
@@ -73,7 +68,6 @@ ohos_source_set("appmgr_test_source") {
   ]
 
   public_deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -97,6 +91,7 @@ ohos_source_set("appmgr_test_source") {
 
   external_deps = [
     "ability_base:configuration",
+    "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_core",
     "common_event_service:cesfwk_innerkits",

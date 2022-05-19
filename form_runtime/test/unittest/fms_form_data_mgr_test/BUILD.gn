@@ -26,7 +26,6 @@ ohos_unittest("FmsFormDataMgrTest") {
 
   include_dirs = [
     "//third_party/json/include",
-    "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
 
     "${appexecfwk_inner_api_path}/appexecfwk_base/include/",
@@ -51,7 +50,6 @@ ohos_unittest("FmsFormDataMgrTest") {
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${form_runtime_path}:fms_target",
 
     #"${libs_path}/libeventhandler:libeventhandler_target",

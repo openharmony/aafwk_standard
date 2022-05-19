@@ -18,17 +18,16 @@ ohos_systemtest("ams_app_process_manage_test") {
 
   include_dirs = [
     "${distributedschedule_path}/safwk/services/safwk/include",
-    "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/common",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/include",
+    "test/systemtest/common/ams/tool/include",
     "//third_party/jsoncpp/include",
   ]
 
   sources = [
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/event.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/st_ability_util.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/stoperator.cpp",
     "ams_app_process_manage_test.cpp",
+    "test/systemtest/common/ams/tool/src/event.cpp",
+    "test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
+    "test/systemtest/common/ams/tool/src/st_ability_util.cpp",
+    "test/systemtest/common/ams/tool/src/stoperator.cpp",
   ]
 
   configs = [
@@ -58,8 +57,7 @@ ohos_systemtest("ams_app_process_manage_test") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]
-  resource_config_file =
-      "${appexecfwk_path}/test/resource/mstbundlemgrservice/ohos_test.xml"
+  resource_config_file = "test/resource/mstbundlemgrservice/ohos_test.xml"
 }
 
 group("systemtest") {

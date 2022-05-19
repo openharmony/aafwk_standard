@@ -27,7 +27,6 @@ ohos_unittest("FmsFormMgrLifecycleUpdateTest") {
 
   include_dirs = [
     "//third_party/json/include",
-    "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
     "${appexecfwk_path}/services/bundlemgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
@@ -59,7 +58,6 @@ ohos_unittest("FmsFormMgrLifecycleUpdateTest") {
     #"${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     #"//base/startup/appspawn_standard:appspawn_socket_client",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${base_path}:base",
     "${base_path}:want",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",

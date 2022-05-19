@@ -12,7 +12,8 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-SUBDEMOSYSTEM_DIR = "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/serviceAbilityA"
+SUBDEMOSYSTEM_DIR =
+    "test/resource/amssystemtestability/abilitySrc/serviceAbilityA"
 
 config("service_ability_a_config") {
   visibility = [ ":*" ]
@@ -37,7 +38,6 @@ ohos_shared_library("serviceAbilityA") {
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
-    "${appexecfwk_path}/common:libappexecfwk_common",
   ]
   external_deps = [
     "ability_base:want",

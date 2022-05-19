@@ -23,7 +23,6 @@ ohos_unittest("FmsFormProviderDataTest") {
 
   include_dirs = [
     "//third_party/json/include",
-    "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
     "${appexecfwk_inner_api_path}/appexecfwk_base/include/",
     "${form_runtime_path}/interfaces/inner_api/include",
@@ -41,7 +40,6 @@ ohos_unittest("FmsFormProviderDataTest") {
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${base_path}:base",
     "${base_path}:want",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",

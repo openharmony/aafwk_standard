@@ -27,7 +27,6 @@ ohos_shared_library("libfms") {
   include_dirs = [
     "${services_path}/common:perm_verification",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
     "${kits_path}/appkit/native/ability_runtime",
   ]
   sources = [
