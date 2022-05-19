@@ -106,10 +106,10 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode, in
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     int32_t ret = ERR_OK;
     const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILTIY , AAFWK::HiSysEventType::FAULT);
+    AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILTIY, AAFWK::HiSysEventType::FAULT);
     ret = abms->StartAbility(want, userId, requestCode);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILTIY_ERROR , AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILTIY_ERROR, AAFWK::HiSysEventType::FAULT);
     }
     return abms->StartAbility(want, userId, requestCode);
 }
