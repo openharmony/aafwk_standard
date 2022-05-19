@@ -1412,7 +1412,7 @@ void MissionListManager::OnTimeOut(uint32_t msgId, int64_t eventId)
 
 #ifdef SUPPORT_GRAPHICS
     if (abilityRecord->IsStartingWindow()) {
-        CancelStartingWindow(abilityRecord->GetToken());
+        CancelStartingWindow(abilityRecord->GetToken(), false);
     }
 #endif
 
@@ -1641,7 +1641,7 @@ void MissionListManager::OnAbilityDied(std::shared_ptr<AbilityRecord> abilityRec
 
 #ifdef SUPPORT_GRAPHICS
     if (abilityRecord->IsStartingWindow()) {
-        CancelStartingWindow(abilityRecord->GetToken());
+        CancelStartingWindow(abilityRecord->GetToken(), false);
     }
 #endif
 
@@ -2009,7 +2009,7 @@ void MissionListManager::NotifyAnimationFromRecentTask(const std::shared_ptr<Abi
         return;
     }
 
-    auto toInfo = CreateAbilityTransitionInfo(abilityRecord, startOptions, want);
+    auto toInfo = CreateAbilityTransitionInfo(abilityRecord->GetToken(), startOptions, want);
     SetAbilityTransitionInfo(abilityInfo, toInfo);
     sptr<AbilityTransitionInfo> fromInfo = new AbilityTransitionInfo();
     fromInfo->isRecent_ = true;
@@ -2017,7 +2017,7 @@ void MissionListManager::NotifyAnimationFromRecentTask(const std::shared_ptr<Abi
 }
 
 void MissionListManager::NotifyAnimationFromStartingAbility(const std::shared_ptr<AbilityRecord> &callerAbility,
-    const AbilityRequest &abilityRequest, const std::shared_ptr<AbilityRecord> &targetAbilityRecord) const
+    const AbilityRequest &abilityRequest, const sptr<IRemoteObject> abilityToken) const
 {
     auto abilityInfo = abilityRequest.abilityInfo;
     if (abilityInfo.name == AbilityConfig::GRANT_ABILITY_ABILITY_NAME &&
@@ -2041,7 +2041,7 @@ void MissionListManager::NotifyAnimationFromStartingAbility(const std::shared_pt
         fromInfo->abilityToken_ = abilityRequest.callerToken;
     }
 
-    auto toInfo = CreateAbilityTransitionInfo(abilityRequest, targetAbilityRecord);
+    auto toInfo = CreateAbilityTransitionInfo(abilityRequest, abilityToken);
     SetAbilityTransitionInfo(abilityInfo, toInfo);
 
     windowHandler->NotifyWindowTransition(fromInfo, toInfo);
@@ -2090,9 +2090,8 @@ sptr<Media::PixelMap> MissionListManager::GetPixelMap(const uint32_t windowIconI
     return sptr<Media::PixelMap>(pixelMapPtr.release());
 }
 
-sptr<AbilityTransitionInfo> MissionListManager::CreateAbilityTransitionInfo(
-    const std::shared_ptr<AbilityRecord> &abilityRecord, const std::shared_ptr<StartOptions> &startOptions,
-    const Want &want) const
+sptr<AbilityTransitionInfo> MissionListManager::CreateAbilityTransitionInfo(const sptr<IRemoteObject> abilityToken,
+    const std::shared_ptr<StartOptions> &startOptions, const Want &want) const
 {
     sptr<AbilityTransitionInfo> info = new AbilityTransitionInfo();
     if (startOptions != nullptr) {
@@ -2101,12 +2100,12 @@ sptr<AbilityTransitionInfo> MissionListManager::CreateAbilityTransitionInfo(
     } else {
         SetWindowModeAndDisplayId(info, want);
     }
-    info->abilityToken_ = abilityRecord->GetToken();
+    info->abilityToken_ = abilityToken;
     return info;
 }
 
 sptr<AbilityTransitionInfo> MissionListManager::CreateAbilityTransitionInfo(const AbilityRequest &abilityRequest,
-    const std::shared_ptr<AbilityRecord> &abilityRecord) const
+    const sptr<IRemoteObject> abilityToken) const
 {
     sptr<AbilityTransitionInfo> info = new AbilityTransitionInfo();
     auto abilityStartSetting = abilityRequest.startSetting;
@@ -2118,7 +2117,7 @@ sptr<AbilityTransitionInfo> MissionListManager::CreateAbilityTransitionInfo(cons
     } else {
         SetWindowModeAndDisplayId(info, abilityRequest.want);
     }
-    info->abilityToken_ = abilityRecord->GetToken();
+    info->abilityToken_ = abilityToken;
     return info;
 }
 
@@ -2150,7 +2149,7 @@ void MissionListManager::NotifyStartingWindow(bool isCold, const std::shared_ptr
                 mgr->NotifyAnimationFromRecentTask(targetAbilityRecord, startOptions, want);
             }
         };
-        handler->PostTask(task, 0);
+        handler->PostTask(task, AppExecFwk::EventQueue::Priority::IMMEDIATE);
     } else {
         auto task = [self, targetAbilityRecord, startOptions, want, missionId] {
             auto mgr = self.lock();
@@ -2160,7 +2159,7 @@ void MissionListManager::NotifyStartingWindow(bool isCold, const std::shared_ptr
                 mgr->NotifyAnimationFromRecentTask(targetAbilityRecord, startOptions, want);
             }
         };
-        handler->PostTask(task, 0);
+        handler->PostTask(task, AppExecFwk::EventQueue::Priority::IMMEDIATE);
     }
 }
 
@@ -2185,7 +2184,7 @@ void MissionListManager::NotifyStartingWindow(bool isCold, const std::shared_ptr
                 mgr->StartingWindowCold(targetAbilityRecord, startOptions, want, abilityRequest);
             }
         };
-        handler->PostTask(task, 0);
+        handler->PostTask(task, AppExecFwk::EventQueue::Priority::IMMEDIATE);
     } else {
         auto missionId = targetMission->GetMissionId();
         auto task = [self, targetAbilityRecord, abilityRequest, missionId] {
@@ -2196,18 +2195,19 @@ void MissionListManager::NotifyStartingWindow(bool isCold, const std::shared_ptr
                 mgr->StartingWindowHot(targetAbilityRecord, startOptions, want, abilityRequest, missionId);
             }
         };
-        handler->PostTask(task, 0);
+        handler->PostTask(task, AppExecFwk::EventQueue::Priority::IMMEDIATE);
     }
 
     auto state = targetAbilityRecord->GetAbilityState();
     if (state != AbilityState::FOREGROUND && state != AbilityState::FOREGROUNDING) {
-        auto task = [self, callerAbility, abilityRequest, targetAbilityRecord] {
+        auto abilityToken = targetAbilityRecord->GetToken();
+        auto task = [self, callerAbility, abilityRequest, abilityToken] {
             auto mgr = self.lock();
             if (mgr) {
-                mgr->NotifyAnimationFromStartingAbility(callerAbility, abilityRequest, targetAbilityRecord);
+                mgr->NotifyAnimationFromStartingAbility(callerAbility, abilityRequest, abilityToken);
             }
         };
-        handler->PostTask(task, 0);
+        handler->PostTask(task, AppExecFwk::EventQueue::Priority::IMMEDIATE);
     }
 }
 
@@ -2245,14 +2245,20 @@ void MissionListManager::StartingWindowCold(const std::shared_ptr<AbilityRecord>
     }
     HILOG_DEBUG("%{public}s colorId is %{public}u, bgColor is %{public}u.", __func__, colorId, bgColor);
 
+    auto abilityToken = abilityRecord->GetToken();
+    if (!abilityToken) {
+        HILOG_WARN("%{public}s. ability token is nullptr.", __func__);
+        return;
+    }
     sptr<AbilityTransitionInfo> info;
     if (startOptions) {
-        info = CreateAbilityTransitionInfo(abilityRecord, startOptions, want);
+        info = CreateAbilityTransitionInfo(abilityToken, startOptions, want);
     } else {
-        info = CreateAbilityTransitionInfo(abilityRequest, abilityRecord);
+        info = CreateAbilityTransitionInfo(abilityRequest, abilityToken);
     }
 
     windowHandler->StartingWindow(info, pixelMap, bgColor);
+    CancelStartingWindow(abilityToken, true);
 }
 
 void MissionListManager::StartingWindowHot(const std::shared_ptr<AbilityRecord> &abilityRecord,
@@ -2272,11 +2278,16 @@ void MissionListManager::StartingWindowHot(const std::shared_ptr<AbilityRecord> 
         return;
     }
 
+    auto abilityToken = abilityRecord->GetToken();
+    if (!abilityToken) {
+        HILOG_WARN("%{public}s. ability token is nullptr.", __func__);
+        return;
+    }
     sptr<AbilityTransitionInfo> info;
     if (startOptions) {
-        info = CreateAbilityTransitionInfo(abilityRecord, startOptions, want);
+        info = CreateAbilityTransitionInfo(abilityToken, startOptions, want);
     } else {
-        info = CreateAbilityTransitionInfo(abilityRequest, abilityRecord);
+        info = CreateAbilityTransitionInfo(abilityRequest, abilityToken);
     }
     auto pixelMap = DelayedSingleton<MissionInfoMgr>::GetInstance()->GetSnapshot(missionId);
     if (!pixelMap) {
@@ -2285,10 +2296,12 @@ void MissionListManager::StartingWindowHot(const std::shared_ptr<AbilityRecord> 
     }
 
     windowHandler->StartingWindow(info, pixelMap);
+    CancelStartingWindow(abilityToken, true);
 }
 
-void MissionListManager::CancelStartingWindow(sptr<IRemoteObject> abilityToken) const
+void MissionListManager::CancelStartingWindow(const sptr<IRemoteObject> abilityToken, bool isDelay) const
 {
+    HILOG_DEBUG("%{public}s, call CancelStartingWindow.", __func__);
     auto windowHandler = GetWMSHandler();
     if (!windowHandler) {
         HILOG_ERROR("%{public}s, Get WMS handler failed.", __func__);
@@ -2302,11 +2315,18 @@ void MissionListManager::CancelStartingWindow(sptr<IRemoteObject> abilityToken) 
     }
 
     auto task = [windowHandler, abilityToken] {
-        if (windowHandler) {
+        auto abilityRecord = Token::GetAbilityRecordByToken(abilityToken);
+        if (windowHandler && abilityRecord && abilityRecord->IsStartingWindow()) {
             windowHandler->CancelStartingWindow(abilityToken);
+            abilityRecord->SetStartingWindow(false);
         }
     };
-    handler->PostTask(task, 0);
+    if (isDelay) {
+        int64_t delayTime = 5 * 1000;
+        handler->PostTask(task, delayTime);
+    } else {
+        handler->PostTask(task, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+    }
 }
 
 void MissionListManager::CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken) const
