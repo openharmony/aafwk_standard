@@ -251,7 +251,6 @@ bool Operation::Marshalling(Parcel &parcel) const
     WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(String16, parcel, Str8ToStr16(action_));
     WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(String16, parcel, Str8ToStr16(bundleName_));
     WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(String16, parcel, Str8ToStr16(deviceId_));
-    WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(String16, parcel, Str8ToStr16(moduleName_));
     WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(StringVector, parcel, entities_);
     WRITE_PARCEL_AND_RETURN_FALSE_IF_FAIL(Uint32, parcel, flags_);
 
@@ -297,9 +296,6 @@ bool Operation::ReadFromParcel(Parcel &parcel)
 
     READ_PARCEL_AND_RETURN_FALSE_IF_FAIL(String16, parcel, readString16);
     deviceId_ = Str16ToStr8(readString16);
-    readString16.clear();
-    READ_PARCEL_AND_RETURN_FALSE_IF_FAIL(String16, parcel, readString16);
-    moduleName_ = Str16ToStr8(readString16);
     readString16.clear();
 
     READ_PARCEL_AND_RETURN_FALSE_IF_FAIL(StringVector, parcel, &entities_);
