@@ -26,7 +26,6 @@ ohos_unittest("FmsFormSetNextRefreshTest") {
 
   include_dirs = [
     "//third_party/json/include",
-    "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
     "${appexecfwk_path}/services/bundlemgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
@@ -42,7 +41,6 @@ ohos_unittest("FmsFormSetNextRefreshTest") {
   configs = [
     "${form_runtime_path}/test:formmgr_test_config",
     "${aafwk_path}/services/abilitymgr:abilityms_config",
-    "${appexecfwk_path}/services/bundlemgr/test:bundlemgr_test_config",
 
     #"${appexecfwk_inner_api_path}/appexecfwk_core:bundlemgr_sdk_config",
     #"${form_runtime_path}:formmgr_config",
@@ -55,7 +53,6 @@ ohos_unittest("FmsFormSetNextRefreshTest") {
     "${aafwk_path}/frameworks/kits/wantagent:wantagent_innerkits",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${form_runtime_path}:fms_target",
     "${form_runtime_path}:fmskit_native",
     "//base/miscservices/time/services:time_service",

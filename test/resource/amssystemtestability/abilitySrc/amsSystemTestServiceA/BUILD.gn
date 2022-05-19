@@ -26,7 +26,6 @@ config("amsSystemTestCConfig") {
     "${appexecfwk_path}/services/bundlemgr/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
     "//third_party/jsoncpp/include",
   ]
   defines = [
@@ -43,7 +42,6 @@ ohos_shared_library("amsSystemTestServiceA") {
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/services/abilitymgr:abilityms",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/services/bundlemgr:libbms",
     "${base_path}:want",
     "//utils/native/base:utilsbase",

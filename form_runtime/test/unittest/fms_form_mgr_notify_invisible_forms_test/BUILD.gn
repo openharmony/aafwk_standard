@@ -27,7 +27,6 @@ ohos_unittest("FmsFormMgrNotifyInvisibleFormsTest") {
 
   include_dirs = [
     "//third_party/json/include",
-    "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
     "${appexecfwk_path}/services/bundlemgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
@@ -58,7 +57,6 @@ ohos_unittest("FmsFormMgrNotifyInvisibleFormsTest") {
 
     #"${libs_path}/libeventhandler:libeventhandler_target",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${base_path}:base",
     "${base_path}:want",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",

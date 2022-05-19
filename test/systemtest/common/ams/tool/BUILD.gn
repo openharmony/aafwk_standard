@@ -16,7 +16,7 @@ import("//build/test.gni")
 config("system_test_ability_util_config") {
   include_dirs = [
     "//third_party/jsoncpp/include",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/include",
+    "test/systemtest/common/ams/tool/include",
     "${distributedschedule_path}/safwk/services/safwk/include",
   ]
   cflags = []
@@ -27,10 +27,10 @@ config("system_test_ability_util_config") {
 
 ohos_shared_library("system_test_ability_util_lib") {
   sources = [
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/event.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/st_ability_util.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/stoperator.cpp",
+    "test/systemtest/common/ams/tool/src/event.cpp",
+    "test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
+    "test/systemtest/common/ams/tool/src/st_ability_util.cpp",
+    "test/systemtest/common/ams/tool/src/stoperator.cpp",
   ]
 
   configs = [

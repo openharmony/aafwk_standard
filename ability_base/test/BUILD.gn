@@ -46,7 +46,6 @@ config("want_private_config") {
     "//sdk/appexecfwk/appexecfwk_base/include",
     "${base_inner_api_path}/uri/include",
     "${base_inner_api_path}/want/include",
-    "${appexecfwk_path}/common/log/include",
   ]
 
   defines = [
@@ -101,7 +100,6 @@ ohos_unittest("patterns_matcher_test") {
   ]
 
   deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${base_path}:base",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
@@ -124,7 +122,6 @@ ohos_unittest("skills_test") {
   ]
 
   deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -148,7 +145,6 @@ ohos_unittest("want_params_test") {
   ]
 
   deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${base_path}:base",
     "${base_path}:want",
     "//third_party/googletest:gtest_main",
@@ -169,7 +165,6 @@ ohos_unittest("want_params_wrapper_test") {
   configs = [ ":module_private_want_param_wrapper_config" ]
 
   deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -194,7 +189,6 @@ ohos_unittest("want_test") {
   ]
 
   deps = [
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]

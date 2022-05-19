@@ -20,16 +20,16 @@ ohos_systemtest("ams_data_ability_test") {
 
   include_dirs = [
     "${distributedschedule_path}/safwk/services/safwk/include",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/include",
+    "test/systemtest/common/ams/tool/include",
     "//third_party/jsoncpp/include",
   ]
 
   sources = [
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/event.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/st_ability_util.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/stoperator.cpp",
     "ams_data_ability_test.cpp",
+    "test/systemtest/common/ams/tool/src/event.cpp",
+    "test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
+    "test/systemtest/common/ams/tool/src/st_ability_util.cpp",
+    "test/systemtest/common/ams/tool/src/stoperator.cpp",
   ]
 
   configs = [
