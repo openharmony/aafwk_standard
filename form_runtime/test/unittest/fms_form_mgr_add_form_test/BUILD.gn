@@ -12,7 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/form_runtime/form_runtime.gni")
 
 module_output_path = "form_runtime/formmgrservice"
 
@@ -29,11 +29,11 @@ ohos_unittest("FmsFormMgrAddFormTest") {
   include_dirs = [
     "//third_party/zlib/contrib/minizip",
     "//third_party/zlib",
-    "${appexecfwk_innerkits_path}/libeventhandler/include",
-    "${aafwk_path}/services/formmgr/include",
-    "${appexecfwk_path}/services/bundlemgr/include",
+    "${bundlefwk_innerkits_path}/libeventhandler/include",
+    "${ability_runtime_path}/services/formmgr/include",
+    "${bundlefwk_path}/services/bundlemgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/include/",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include/",
     "${form_runtime_path}/interfaces/inner_api/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
     "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
@@ -41,20 +41,20 @@ ohos_unittest("FmsFormMgrAddFormTest") {
 
   configs = [
     "${form_runtime_path}/test:formmgr_test_config",
-    "${aafwk_path}/services/abilitymgr:abilityms_config",
+    "${ability_runtime_path}/services/abilitymgr:abilityms_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${aafwk_path}/services/abilitymgr:abilityms_target",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
-    "${base_path}:base",
-    "${base_path}:configuration",
-    "${base_path}:want",
+    "${ability_base_path}:base",
+    "${ability_base_path}:configuration",
+    "${ability_base_path}:want",
+    "${ability_runtime_path}/interfaces/innerkits/app_manager:app_manager",
+    "${ability_runtime_path}/services/abilitymgr:abilityms_target",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_path}/libs/libeventhandler:libeventhandler_target",
     "${distributeddatamgr_path}/distributeddatamgr/interfaces/innerkits/distributeddata:distributeddata_inner",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",

@@ -1,0 +1,27 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+ability_base_path = "//foundation/aafwk/standard/ability_base"
+ability_base_innerapi_path = "${ability_base_path}/interfaces/inner_api"
+ability_runtime_path = "//foundation/aafwk/standard"
+ability_runtime_innerapi_path = "${ability_runtime_path}/interfaces/innerkits"
+ability_runtime_kits_path = "${ability_runtime_path}/frameworks/kits"
+ability_runtime_services_path = "${ability_runtime_path}/services"
+bundlefwk_path = "//foundation/bundlemanager/bundle_framework"
+bundlefwk_innerkits_path = "${bundlefwk_path}/interfaces/innerkits"
+bundlefwk_inner_api_path = "${bundlefwk_path}/interfaces/inner_api"
+distributeddatamgr_path = "//foundation/distributeddatamgr"
+distributedschedule_path = "//foundation/distributedschedule"
+form_runtime_path = "//foundation/aafwk/standard/form_runtime"
+form_runtime_napi_path = "${form_runtime_path}/frameworks/js/napi"
+global_path = "//base/global"

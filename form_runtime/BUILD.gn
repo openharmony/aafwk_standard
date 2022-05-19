@@ -13,6 +13,7 @@
 
 import("//build/ohos.gni")
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/form_runtime/form_runtime.gni")
 
 ################################### libfms ########################################
 config("formmgr_config") {
@@ -25,9 +26,8 @@ config("formmgr_config") {
 ohos_shared_library("libfms") {
   cflags_cc = []
   include_dirs = [
-    "${services_path}/common:perm_verification",
-    "${aafwk_path}/services/common/include",
-    "${kits_path}/appkit/native/ability_runtime",
+    "${ability_runtime_path}/services/common/include",
+    "${ability_runtime_kits_path}/appkit/native/ability_runtime",
   ]
   sources = [
     "services/src/form_ability_connection.cpp",
@@ -79,8 +79,8 @@ ohos_shared_library("libfms") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${kits_path}/appkit:app_context",
-    "${services_path}/common:perm_verification",
+    "${ability_runtime_kits_path}/appkit:app_context",
+    "${ability_runtime_services_path}/common:perm_verification",
   ]
 
   external_deps = [
@@ -130,10 +130,10 @@ config("fmskit_config") {
 config("fmskit_public_config") {
   include_dirs = [
     "interfaces/kits/native/include",
-    "${aafwk_path}/services/common/include",
+    "${ability_runtime_path}/services/common/include",
     "${form_runtime_path}/interfaces/inner_api/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/include",
-    "${base_inner_api_path}/want/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include",
+    "${ability_base_innerapi_path}/want/include",
   ]
 }
 
@@ -175,10 +175,10 @@ config("formmgr_sdk_config") {
   include_dirs = [
     "interfaces/inner_api/include/",
     "//third_party/json/include",
-    "${kits_path}/ability/native/include",
-    "${innerkits_path}/ability_manager/include",
-    "${innerkits_path}/app_manager/include/appmgr",
-    "${aafwk_path}/services/common/include",
+    "${ability_runtime_kits_path}/ability/native/include",
+    "${ability_runtime_innerapi_path}/ability_manager/include",
+    "${ability_runtime_innerapi_path}/app_manager/include/appmgr",
+    "${ability_runtime_path}/services/common/include",
   ]
   cflags = []
   if (target_cpu == "arm") {
