@@ -709,11 +709,11 @@ ErrCode AbilityManagerClient::FinishUserTest(
     return abms->FinishUserTest(msg, resultCode, bundleName);
 }
 
-ErrCode AbilityManagerClient::GetCurrentTopAbility(sptr<IRemoteObject> &token)
+ErrCode AbilityManagerClient::GetTopAbility(sptr<IRemoteObject> &token)
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    return abms->GetCurrentTopAbility(token);
+    return abms->GetTopAbility(token);
 }
 
 ErrCode AbilityManagerClient::DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token)
