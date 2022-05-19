@@ -152,6 +152,12 @@ NativeValue* JsAbilityContext::SetMissionLabel(NativeEngine* engine, NativeCallb
     return (me != nullptr) ? me->OnSetMissionLabel(*engine, *info) : nullptr;
 }
 
+NativeValue* JsAbilityContext::IsTerminating(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
+    return (me != nullptr) ? me->OnIsTerminating(*engine, *info) : nullptr;
+}
+
 #ifdef SUPPORT_GRAPHICS
 NativeValue* JsAbilityContext::SetMissionIcon(NativeEngine* engine, NativeCallbackInfo* info)
 {
@@ -566,6 +572,11 @@ NativeValue* JsAbilityContext::OnTerminateSelfWithResult(NativeEngine& engine, N
         return engine.CreateUndefined();
     }
 
+    auto abilityContext = context_.lock();
+    if (abilityContext != nullptr) {
+        abilityContext->SetTerminating(true);
+    }
+
     AsyncTask::CompleteCallback complete =
         [weak = context_, want, resultCode](NativeEngine& engine, AsyncTask& task, int32_t status) {
             auto context = weak.lock();
@@ -766,6 +777,11 @@ NativeValue* JsAbilityContext::OnTerminateSelf(NativeEngine& engine, NativeCallb
         return engine.CreateUndefined();
     }
 
+    auto abilityContext = context_.lock();
+    if (abilityContext != nullptr) {
+        abilityContext->SetTerminating(true);
+    }
+
     AsyncTask::CompleteCallback complete =
         [weak = context_](NativeEngine& engine, AsyncTask& task, int32_t status) {
             auto context = weak.lock();
@@ -899,6 +915,17 @@ NativeValue* JsAbilityContext::OnSetMissionLabel(NativeEngine& engine, NativeCal
     AsyncTask::Schedule(
         engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
     return result;
+}
+
+NativeValue* JsAbilityContext::OnIsTerminating(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    HILOG_INFO("OnIsTerminating is called");
+    auto context = context_.lock();
+    if (context == nullptr) {
+        HILOG_ERROR("OnIsTerminating context is nullptr");
+        return engine.CreateUndefined();
+    }
+    return engine.CreateBoolean(context->IsTerminating());
 }
 
 #ifdef SUPPORT_GRAPHICS
@@ -1098,6 +1125,7 @@ NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<Abilit
     BindNativeFunction(engine, *object, "requestPermissionsFromUser", JsAbilityContext::RequestPermissionsFromUser);
     BindNativeFunction(engine, *object, "restoreWindowStage", JsAbilityContext::RestoreWindowStage);
     BindNativeFunction(engine, *object, "setMissionLabel", JsAbilityContext::SetMissionLabel);
+    BindNativeFunction(engine, *object, "isTerminating", JsAbilityContext::IsTerminating);
 
 #ifdef SUPPORT_GRAPHICS
     BindNativeFunction(engine, *object, "setMissionIcon", JsAbilityContext::SetMissionIcon);
