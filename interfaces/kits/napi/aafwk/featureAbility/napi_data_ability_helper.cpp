@@ -1222,6 +1222,10 @@ static void OnChangeJSThreadWorker(uv_work_t *work, int status)
         return;
     }
     DAHelperOnOffCB *onCB = (DAHelperOnOffCB *)work->data;
+    if (onCB == nullptr) {
+        HILOG_ERROR("OnChange, uv_queue_work onCB is nullptr");
+        return;
+    }
     NAPIDataAbilityObserver* obs = onCB->observer;
     onCB->observer = nullptr;
     if (obs != nullptr) {
