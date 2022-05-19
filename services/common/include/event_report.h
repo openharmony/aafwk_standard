@@ -17,7 +17,6 @@
 #define FOUNDATION_AAFWK_SERVICES_ABILITYMGR_INCLUDE_INNER_EVENT_REPORT_H
 
 #include <string>
-#include <unordered_map>
 
 namespace OHOS {
 namespace AAFWK {
