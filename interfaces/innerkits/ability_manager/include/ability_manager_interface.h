@@ -525,12 +525,12 @@ public:
     virtual int FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName) = 0;
 
     /**
-     * GetCurrentTopAbility, get the token of current top ability.
+     * GetTopAbility, get the token of top ability.
      *
-     * @param token, the token of current top ability.
+     * @param token, the token of top ability.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) = 0;
+    virtual int GetTopAbility(sptr<IRemoteObject> &token) = 0;
 
     /**
      * The delegator calls this interface to move the ability to the foreground.
@@ -907,7 +907,7 @@ public:
         FINISH_USER_TEST = 1121,
         DELEGATOR_DO_ABILITY_FOREGROUND = 1122,
         DELEGATOR_DO_ABILITY_BACKGROUND = 1123,
-        GET_CURRENT_TOP_ABILITY         = 1124,
+        GET_TOP_ABILITY_TOKEN         = 1124,
 
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)

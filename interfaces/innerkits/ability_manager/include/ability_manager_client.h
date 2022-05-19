@@ -626,13 +626,13 @@ public:
      */
     ErrCode FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName);
 
-    /**
-     * GetCurrentTopAbility, get the token of current top ability.
+     /**
+     * GetTopAbility, get the token of top ability.
      *
-     * @param token, the token of current top ability.
+     * @param token, the token of top ability.
      * @return Returns ERR_OK on success, others on failure.
      */
-    ErrCode GetCurrentTopAbility(sptr<IRemoteObject> &token);
+    ErrCode GetTopAbility(sptr<IRemoteObject> &token);
 
     /**
      * DelegatorDoAbilityForeground, the delegator calls this interface to move the ability to the foreground.

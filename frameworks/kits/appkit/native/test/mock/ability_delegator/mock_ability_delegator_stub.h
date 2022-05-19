@@ -139,7 +139,7 @@ public:
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
     virtual int FinishUserTest(
         const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override;
-    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) override;
+    virtual int GetTopAbility(sptr<IRemoteObject> &token) override;
     virtual int DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token) override;
     virtual int DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token) override;
     virtual int DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag);
@@ -276,7 +276,7 @@ public:
     virtual int StartUserTest(const Want &want, const sptr<IRemoteObject> &observer) override;
     virtual int FinishUserTest(
         const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override;
-    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) override;
+    virtual int GetTopAbility(sptr<IRemoteObject> &token) override;
     virtual int DelegatorDoAbilityForeground(const sptr<IRemoteObject> &token) override;
     virtual int DelegatorDoAbilityBackground(const sptr<IRemoteObject> &token) override;
     virtual int DoAbilityForeground(const sptr<IRemoteObject> &token, uint32_t flag);
