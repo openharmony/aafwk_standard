@@ -47,8 +47,8 @@ ohos_shared_library("perm_verification") {
   public_configs = [ ":perm_verification_config" ]
 
   sources = [
-    "src/permission_verification.cpp",
     "src/event_report.cpp",
+    "src/permission_verification.cpp",
   ]
 
   external_deps = [
