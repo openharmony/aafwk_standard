@@ -16,6 +16,7 @@
 #include <cinttypes>
 #include <regex>
 
+#include "ability_manager_errors.h"
 #include "appexecfwk_errors.h"
 #include "form_acquire_connection.h"
 #include "form_acquire_state_connection.h"
@@ -1423,6 +1424,51 @@ int FormMgrAdapter::MessageEvent(const int64_t formId, const Want &want, const s
 
     HILOG_INFO("%{public}s, find target client.", __func__);
     return FormProviderMgr::GetInstance().MessageEvent(matchedFormId, record, want);
+}
+
+
+/**
+ * @brief Process js router event.
+ * @param formId Indicates the unique id of form.
+ * @param want the want of the ability to start.
+ * @return Returns true if execute success, false otherwise.
+ */
+int FormMgrAdapter::RouterEvent(const int64_t formId, Want &want)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    if (formId <= 0) {
+        HILOG_ERROR("%{public}s form formId or bundleName is invalid", __func__);
+        return ERR_APPEXECFWK_FORM_INVALID_PARAM;
+    }
+
+    int64_t matchedFormId = FormDataMgr::GetInstance().FindMatchedFormId(formId);
+    FormRecord record;
+    bool bGetRecord = FormDataMgr::GetInstance().GetFormRecord(matchedFormId, record);
+    if (!bGetRecord) {
+        HILOG_ERROR("%{public}s fail, not exist such form:%{public}" PRId64 "", __func__, matchedFormId);
+        return ERR_APPEXECFWK_FORM_NOT_EXIST_ID;
+    }
+
+    sptr<IBundleMgr> iBundleMgr = FormBmsHelper::GetInstance().GetBundleMgr();
+    if (iBundleMgr == nullptr) {
+        HILOG_ERROR("%{public}s fail, failed to get IBundleMgr.", __func__);
+        return ERR_APPEXECFWK_FORM_GET_BMS_FAILED;
+    }
+
+    if (record.bundleName != want.GetBundle()) {
+        if (!CheckIsSystemAppByBundleName(iBundleMgr, record.bundleName)) {
+            HILOG_WARN("Only system apps can launch the ability of the other apps.");
+            want.SetBundle(record.bundleName);
+        }
+    }
+
+    int32_t result = FormAmsHelper::GetInstance().GetAbilityManager()->StartAbility(want);
+    if (result != ERR_OK && result != START_ABILITY_WAITING) {
+        HILOG_ERROR("Failed to StartAbility, result: %{public}d.", result);
+        return result;
+    }
+
+    return ERR_OK;
 }
 
 ErrCode FormMgrAdapter::HandleUpdateFormFlag(const std::vector<int64_t> &formIds,
