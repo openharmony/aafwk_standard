@@ -103,5 +103,35 @@ HWTEST_F(AbilityManagerClientTest, AbilityManagerClient_DumpSysState_0100, TestS
     EXPECT_EQ(result, ERR_OK);
     EXPECT_EQ(state.size(), SIZE_ZERO);
 }
+
+/**
+ * @tc.name: AbilityManagerClient_SetMissionIcon_0100
+ * @tc.desc: SetMissionIcon
+ * @tc.type: FUNC
+ * @tc.require: SR000GVIJQ
+ */
+HWTEST_F(AbilityManagerClientTest, AbilityManagerClient_SetMissionIcon_0100, TestSize.Level1)
+{
+    sptr<IRemoteObject> abilityToken = nullptr;
+    std::shared_ptr<OHOS::Media::PixelMap> icon = std::make_shared<OHOS::Media::PixelMap>();
+
+    auto result = client_->SetMissionIcon(abilityToken, icon);
+    EXPECT_NE(result, ERR_OK);
+}
+
+/**
+ * @tc.name: AbilityManagerClient_SetMissionIcon_0200
+ * @tc.desc: SetMissionIcon
+ * @tc.type: FUNC
+ * @tc.require: SR000GVIJQ
+ */
+HWTEST_F(AbilityManagerClientTest, AbilityManagerClient_SetMissionIcon_0200, TestSize.Level1)
+{
+    sptr<IRemoteObject> abilityToken = new AbilityManagerStubTestMock();
+    std::shared_ptr<OHOS::Media::PixelMap> icon = nullptr;
+
+    auto result = client_->SetMissionIcon(abilityToken, icon);
+    EXPECT_NE(result, ERR_OK);
+}
 }  // namespace AAFwk
 }  // namespace OHOS
