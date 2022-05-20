@@ -17,19 +17,11 @@
 
 #include <algorithm>
 
-#include "configuration.h"
 #include "hilog_wrapper.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
-std::map<int64_t, std::shared_ptr<AbilityLifecycleCallback>> ApplicationContext::callbacks_;
-std::shared_ptr<ApplicationContext> Context::applicationContext_ = nullptr;
-
-std::shared_ptr<ApplicationContext> Context::GetJsApplicationContext()
-{
-    std::lock_guard<std::mutex> lock(Context::contextMutex_);
-    return applicationContext_;
-}
+std::vector<std::shared_ptr<AbilityLifecycleCallback>> ApplicationContext::callbacks_;
 
 void ApplicationContext::InitApplicationContext()
 {
@@ -43,19 +35,19 @@ void ApplicationContext::AttachContextImpl(const std::shared_ptr<ContextImpl> &c
 }
 
 void ApplicationContext::RegisterAbilityLifecycleCallback(
-    const int64_t callbackId, const std::shared_ptr<AbilityLifecycleCallback> &abilityLifecycleCallback)
+    const std::shared_ptr<AbilityLifecycleCallback> &abilityLifecycleCallback)
 {
     HILOG_INFO("ApplicationContext RegisterAbilityLifecycleCallback");
-    callbacks_.emplace(callbackId, abilityLifecycleCallback);
+    callbacks_.push_back(abilityLifecycleCallback);
 }
 
-void ApplicationContext::UnregisterAbilityLifecycleCallback(const int64_t callbackId)
+void ApplicationContext::UnregisterAbilityLifecycleCallback(
+    const std::shared_ptr<AbilityLifecycleCallback> &abilityLifecycleCallback)
 {
     HILOG_INFO("ApplicationContext UnregisterAbilityLifecycleCallback");
-    auto iter = callbacks_.find(callbackId);
-    if (iter != callbacks_.end()) {
-        HILOG_INFO("callbackId exist");
-        callbacks_.erase(iter);
+    auto it = std::find(callbacks_.begin(), callbacks_.end(), abilityLifecycleCallback);
+    if (it != callbacks_.end()) {
+        callbacks_.erase(it);
     }
 }
 
@@ -66,7 +58,7 @@ void ApplicationContext::DispatchOnAbilityCreate(const std::weak_ptr<NativeRefer
         return;
     }
     for (auto callback : callbacks_) {
-        callback.second->OnAbilityCreate(abilityObj);
+        callback->OnAbilityCreate(abilityObj);
     }
 }
 
@@ -77,7 +69,7 @@ void ApplicationContext::DispatchOnAbilityWindowStageCreate(const std::weak_ptr<
         return;
     }
     for (auto callback : callbacks_) {
-        callback.second->OnAbilityWindowStageCreate(abilityObj);
+        callback->OnAbilityWindowStageCreate(abilityObj);
     }
 }
 
@@ -88,7 +80,7 @@ void ApplicationContext::DispatchOnAbilityWindowStageDestroy(const std::weak_ptr
         return;
     }
     for (auto callback : callbacks_) {
-        callback.second->OnAbilityWindowStageDestroy(abilityObj);
+        callback->OnAbilityWindowStageDestroy(abilityObj);
     }
 }
 
@@ -99,7 +91,7 @@ void ApplicationContext::DispatchOnAbilityDestroy(const std::weak_ptr<NativeRefe
         return;
     }
     for (auto callback : callbacks_) {
-        callback.second->OnAbilityDestroy(abilityObj);
+        callback->OnAbilityDestroy(abilityObj);
     }
 }
 
@@ -110,7 +102,7 @@ void ApplicationContext::DispatchOnAbilityForeground(const std::weak_ptr<NativeR
         return;
     }
     for (auto callback : callbacks_) {
-        callback.second->OnAbilityForeground(abilityObj);
+        callback->OnAbilityForeground(abilityObj);
     }
 }
 
@@ -121,7 +113,7 @@ void ApplicationContext::DispatchOnAbilityBackground(const std::weak_ptr<NativeR
         return;
     }
     for (auto callback : callbacks_) {
-        callback.second->OnAbilityBackground(abilityObj);
+        callback->OnAbilityBackground(abilityObj);
     }
 }
 void ApplicationContext::DispatchOnAbilityContinue(const std::weak_ptr<NativeReference> &abilityObj)
@@ -131,7 +123,7 @@ void ApplicationContext::DispatchOnAbilityContinue(const std::weak_ptr<NativeRef
         return;
     }
     for (auto callback : callbacks_) {
-        callback.second->OnAbilityContinue(abilityObj);
+        callback->OnAbilityContinue(abilityObj);
     }
 }
 
@@ -237,7 +229,6 @@ int ApplicationContext::GetArea()
     }
     return contextImpl_->GetArea();
 }
-
 
 std::shared_ptr<AppExecFwk::Configuration> ApplicationContext::GetConfiguration() const
 {

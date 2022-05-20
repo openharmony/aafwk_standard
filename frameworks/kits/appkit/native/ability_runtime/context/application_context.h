@@ -16,7 +16,7 @@
 #ifndef ABILITY_RUNTIME_APPLICATION_CONTEXT_H
 #define ABILITY_RUNTIME_APPLICATION_CONTEXT_H
 
-#include <map>
+#include <vector>
 #include <shared_mutex>
 
 #include "ability_lifecycle_callback.h"
@@ -25,14 +25,12 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
-class ContextImpl;
 class ApplicationContext : public Context, public std::enable_shared_from_this<ApplicationContext> {
 public:
     ApplicationContext() = default;
     ~ApplicationContext() = default;
-    void RegisterAbilityLifecycleCallback(
-        const int64_t callbackId, const std::shared_ptr<AbilityLifecycleCallback> &abilityLifecycleCallback);
-    void UnregisterAbilityLifecycleCallback(const int64_t callbackId);
+    void RegisterAbilityLifecycleCallback(const std::shared_ptr<AbilityLifecycleCallback> &abilityLifecycleCallback);
+    void UnregisterAbilityLifecycleCallback(const std::shared_ptr<AbilityLifecycleCallback> &abilityLifecycleCallback);
     void DispatchOnAbilityCreate(const std::weak_ptr<NativeReference> &abilityObj);
     void DispatchOnAbilityWindowStageCreate(const std::weak_ptr<NativeReference> &abilityObj);
     void DispatchOnAbilityWindowStageDestroy(const std::weak_ptr<NativeReference> &abilityObj);
@@ -40,9 +38,6 @@ public:
     void DispatchOnAbilityForeground(const std::weak_ptr<NativeReference> &abilityObj);
     void DispatchOnAbilityBackground(const std::weak_ptr<NativeReference> &abilityObj);
     void DispatchOnAbilityContinue(const std::weak_ptr<NativeReference> &abilityObj);
-
-    void SetConfiguration(const std::shared_ptr<AppExecFwk::Configuration> &config);
-    void SetStageContext(const std::shared_ptr<AbilityRuntime::Context> &stageContext);
 
     std::string GetBundleName() const override;
     std::shared_ptr<Context> CreateBundleContext(const std::string &bundleName) override;
@@ -71,7 +66,7 @@ public:
 
 private:
     std::shared_ptr<ContextImpl> contextImpl_;
-    static std::map<int64_t, std::shared_ptr<AbilityLifecycleCallback>> callbacks_;
+    static std::vector<std::shared_ptr<AbilityLifecycleCallback>> callbacks_;
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

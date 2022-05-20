@@ -86,8 +86,8 @@ ohos_unittest("ability_test") {
   module_out_path = module_output_path
   sources = [
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ability_record_mgr.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
     "unittest/ability_test.cpp",
   ]
@@ -442,8 +442,8 @@ ohos_unittest("data_ability_operation_test") {
 ohos_unittest("ability_impl_active_test") {
   module_out_path = module_output_path
   sources = [
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
   ]
 
@@ -480,8 +480,8 @@ ohos_unittest("ability_impl_active_test") {
 ohos_unittest("ability_impl_test") {
   module_out_path = module_output_path
   sources = [
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
   ]
 
@@ -529,8 +529,8 @@ ohos_unittest("ability_thread_test") {
   module_out_path = module_output_path
   sources = [
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/mock_data_ability_impl.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
@@ -654,8 +654,8 @@ ohos_unittest("data_ability_impl_test") {
   module_out_path = module_output_path
   sources = [
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/mock_replace_ability_impl.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
@@ -706,8 +706,8 @@ ohos_unittest("data_ability_impl_file_secondpart_test") {
   module_out_path = module_output_path
   sources = [
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/mock_replace_ability_impl.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
@@ -758,8 +758,8 @@ ohos_unittest("data_ability_impl_file_test") {
   module_out_path = module_output_path
   sources = [
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/mock_replace_ability_impl.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
@@ -810,8 +810,8 @@ ohos_unittest("ability_thread_dataability_test") {
   module_out_path = module_output_path
   sources = [
     "${aafwk_path}/frameworks/kits/ability/native/test/mock/include/mock_data_ability_impl.cpp",
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_container.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/context_deal.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
@@ -1042,8 +1042,8 @@ ohos_unittest("form_host_client_test") {
   if (ability_runtime_graphics) {
     sources = [
       "${aafwk_path}/frameworks/kits/appkit/native/app/src/ability_record_mgr.cpp",
+      "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
       "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-      "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
       "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
       "${aafwk_path}/services/abilitymgr/src/ability_start_setting.cpp",
       "mock/include/mock_bundle_manager_form.cpp",
@@ -1085,8 +1085,8 @@ ohos_unittest("form_host_client_test") {
 ohos_unittest("continuation_test") {
   module_out_path = module_output_path
   sources = [
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/ohos_application.cpp",
     "unittest/continuation_test.cpp",
   ]

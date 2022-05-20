@@ -42,14 +42,7 @@ public:
      *
      * @return Returns the Context object of the application.
      */
-    static std::shared_ptr<Context> GetApplicationContext();
-
-    /**
-     * @brief Obtains the Js Context object of the application.
-     *
-     * @return Returns the Js Context object of the application.
-     */
-    static std::shared_ptr<ApplicationContext> GetJsApplicationContext();
+    static std::shared_ptr<ApplicationContext> GetApplicationContext();
 
     /**
      * @brief Obtains the bundle name of the current ability.
@@ -236,7 +229,6 @@ protected:
         return contextTypeId == CONTEXT_TYPE_ID;
     }
 
-    static std::shared_ptr<Context> appContext_;
     static std::shared_ptr<ApplicationContext> applicationContext_;
     static std::mutex contextMutex_;
 };

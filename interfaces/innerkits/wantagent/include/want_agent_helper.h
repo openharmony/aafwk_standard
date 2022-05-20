@@ -18,7 +18,7 @@
 
 #include <string>
 #include <memory>
-#include "context/context.h"
+#include "context/application_context.h"
 #include "completed_callback.h"
 #include "completed_dispatcher.h"
 #include "event_handler.h"
@@ -56,7 +56,7 @@ public:
      * @return Returns the created WantAgent object.
      */
     static std::shared_ptr<WantAgent> GetWantAgent(
-        const std::shared_ptr<OHOS::AbilityRuntime::Context> &context, const WantAgentInfo &paramsInfo);
+        const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, const WantAgentInfo &paramsInfo);
 
     /**
      * Obtains an WantAgent object.

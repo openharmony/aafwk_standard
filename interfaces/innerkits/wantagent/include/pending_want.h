@@ -21,7 +21,7 @@
 #include <mutex>
 #include <memory>
 #include "cancel_listener.h"
-#include "context/context.h"
+#include "context/application_context.h"
 #include "completed_dispatcher.h"
 #include "event_handler.h"
 #include "want.h"
@@ -55,8 +55,9 @@ public:
      * parameters.  May return null only if FLAG_NO_CREATE has been
      * supplied.
      */
-    static std::shared_ptr<PendingWant> GetAbility(const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
-        int requestCode, const std::shared_ptr<AAFwk::Want> &want, unsigned int flags);
+    static std::shared_ptr<PendingWant> GetAbility(
+        const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, int requestCode,
+        const std::shared_ptr<AAFwk::Want> &want, unsigned int flags);
 
     /**
      * Retrieve a PendingWant that will start a new ability
@@ -74,9 +75,10 @@ public:
      * parameters.  May return null only if FLAG_NO_CREATE has been
      * supplied.
      */
-    static std::shared_ptr<PendingWant> GetAbility(const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
-        int requestCode, const std::shared_ptr<AAFwk::Want> &want,
-        unsigned int flags, const std::shared_ptr<AAFwk::WantParams> &options);
+    static std::shared_ptr<PendingWant> GetAbility(
+        const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, int requestCode,
+        const std::shared_ptr<AAFwk::Want> &want, unsigned int flags,
+        const std::shared_ptr<AAFwk::WantParams> &options);
 
     /**
      * Like GetAbility(Context, int, Want, int)}, but allows an
@@ -95,8 +97,9 @@ public:
      * parameters.  May return null only if FLAG_NO_CREATE has been
      * supplied.
      */
-    static std::shared_ptr<PendingWant> GetAbilities(const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
-        int requestCode, std::vector<std::shared_ptr<AAFwk::Want>> &wants, unsigned int flags);
+    static std::shared_ptr<PendingWant> GetAbilities(
+        const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, int requestCode,
+        std::vector<std::shared_ptr<AAFwk::Want>> &wants, unsigned int flags);
 
     /**
      * Like GetAbility(Context, int, Want, int)}, but allows an
@@ -116,8 +119,9 @@ public:
      * parameters.  May return null only if FLAG_NO_CREATE has been
      * supplied.
      */
-    static std::shared_ptr<PendingWant> GetAbilities(const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
-        int requestCode, std::vector<std::shared_ptr<AAFwk::Want>> &wants, unsigned int flags,
+    static std::shared_ptr<PendingWant> GetAbilities(
+        const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, int requestCode,
+        std::vector<std::shared_ptr<AAFwk::Want>> &wants, unsigned int flags,
         const std::shared_ptr<AAFwk::WantParams> &options);
 
     /**
@@ -135,15 +139,16 @@ public:
      * parameters.  May return null only if FLAG_NO_CREATE has been
      * supplied.
      */
-    static std::shared_ptr<PendingWant> GetCommonEvent(const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
-        int requestCode, const std::shared_ptr<AAFwk::Want> &want, unsigned int flags);
+    static std::shared_ptr<PendingWant> GetCommonEvent(
+        const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, int requestCode,
+        const std::shared_ptr<AAFwk::Want> &want, unsigned int flags);
 
     /**
      * Note that current user will be interpreted at the time the
      * common event is sent, not when the pending want is created.
      */
     static std::shared_ptr<PendingWant> GetCommonEventAsUser(
-        const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
+        const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context,
         int requestCode, const std::shared_ptr<AAFwk::Want> &want, unsigned int flags, int uid);
 
     /**
@@ -162,7 +167,7 @@ public:
      * supplied.
      */
     static std::shared_ptr<PendingWant> GetService(
-        const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
+        const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context,
         int requestCode, const std::shared_ptr<AAFwk::Want> &want, unsigned int flags);
 
     /**
@@ -181,7 +186,7 @@ public:
      * supplied.
      */
     static std::shared_ptr<PendingWant> GetForegroundService(
-        const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
+        const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context,
         int requestCode, const std::shared_ptr<AAFwk::Want> &want, unsigned int flags);
 
     /**
@@ -273,7 +278,7 @@ private:
     };
 
     static std::shared_ptr<PendingWant> BuildServicePendingWant(
-        const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
+        const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context,
         int requestCode, const std::shared_ptr<AAFwk::Want> &want, unsigned int flags,
         WantAgentConstant::OperationType serviceKind);
 };

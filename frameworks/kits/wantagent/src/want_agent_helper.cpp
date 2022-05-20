@@ -64,7 +64,7 @@ unsigned int WantAgentHelper::FlagsTransformer(const std::vector<WantAgentConsta
 }
 
 std::shared_ptr<WantAgent> WantAgentHelper::GetWantAgent(
-    const std::shared_ptr<OHOS::AbilityRuntime::Context> &context, const WantAgentInfo &paramsInfo)
+    const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, const WantAgentInfo &paramsInfo)
 {
     WANT_AGENT_LOGI("WantAgentHelper::GetWantAgent begin.");
     if (context == nullptr) {
