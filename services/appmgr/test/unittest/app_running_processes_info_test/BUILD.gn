@@ -42,6 +42,8 @@ ohos_unittest("AppRunningProcessesInfoTest") {
 
   sources += [ "app_running_processes_info_test.cpp" ]
 
+  configs = [ "${services_path}/appmgr/test:appmgr_test_config" ]
+
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]

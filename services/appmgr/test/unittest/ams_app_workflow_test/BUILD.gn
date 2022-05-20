@@ -46,6 +46,8 @@ ohos_unittest("AmsWorkFlowTest") {
 
   sources += [ "ams_workflow_test.cpp" ]
 
+  configs = [ "${services_path}/appmgr/test:appmgr_test_config" ]
+
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
@@ -55,6 +57,7 @@ ohos_unittest("AmsWorkFlowTest") {
     "${base_path}:want",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
+    "${services_path}/appmgr:libappms",
     "${services_path}/appmgr/test:appmgr_test_source",
     "${services_path}/common:perm_verification",
   ]

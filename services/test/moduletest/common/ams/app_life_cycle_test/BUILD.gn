@@ -27,6 +27,7 @@ ohos_moduletest("AmsAppLifeCycleModuleTest") {
 
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${services_path}/appmgr:libappms",
     "${services_path}/common:perm_verification",
     "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
   ]
