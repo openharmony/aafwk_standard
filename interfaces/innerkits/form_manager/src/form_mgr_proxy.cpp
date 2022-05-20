@@ -50,7 +50,7 @@ int FormMgrProxy::AddForm(
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -80,7 +80,7 @@ int FormMgrProxy::DeleteForm(const int64_t formId, const sptr<IRemoteObject> &ca
         HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -116,7 +116,7 @@ int FormMgrProxy::ReleaseForm(const int64_t formId, const sptr<IRemoteObject> &c
         HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -234,7 +234,7 @@ int FormMgrProxy::LifecycleUpdate(
         HILOG_ERROR("%{public}s, failed to write formId", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write bundleName", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -275,7 +275,7 @@ int FormMgrProxy::RequestForm(const int64_t formId, const sptr<IRemoteObject> &c
         HILOG_ERROR("%{public}s, failed to write formId", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -321,7 +321,7 @@ int FormMgrProxy::NotifyWhetherVisibleForms(
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -362,7 +362,7 @@ int FormMgrProxy::CastTempForm(const int64_t formId, const sptr<IRemoteObject> &
         HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -500,7 +500,7 @@ int FormMgrProxy::MessageEvent(const int64_t formId, const Want &want, const spt
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
 
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -728,7 +728,7 @@ int FormMgrProxy::DeleteInvalidForms(const std::vector<int64_t> &formIds, const 
         HILOG_ERROR("%{public}s, failed to write vector formIds", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-        if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
@@ -773,7 +773,7 @@ int FormMgrProxy::AcquireFormState(const Want &want, const sptr<IRemoteObject> &
         HILOG_ERROR("%{public}s, failed to write want", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }
-    if (!data.WriteParcelable(callerToken)) {
+    if (!data.WriteRemoteObject(callerToken)) {
         HILOG_ERROR("%{public}s, failed to write callerToken", __func__);
         return ERR_APPEXECFWK_PARCEL_ERROR;
     }

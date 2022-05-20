@@ -34,7 +34,10 @@ ReverseContinuationSchedulerReplicaStub::~ReverseContinuationSchedulerReplicaStu
 int32_t ReverseContinuationSchedulerReplicaStub::PassPrimaryInner(MessageParcel &data, MessageParcel &reply)
 {
     HILOG_INFO("%{public}s called begin", __func__);
-    const sptr<IRemoteObject> primary = data.ReadParcelable<IRemoteObject>();
+    sptr<IRemoteObject> primary = nullptr;
+    if (data.ReadBool()) {
+        primary = data.ReadRemoteObject();
+    }
     PassPrimary(primary);
     HILOG_INFO("%{public}s called end", __func__);
     return NO_ERROR;
