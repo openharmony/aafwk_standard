@@ -775,6 +775,7 @@ std::shared_ptr<Mission> MissionListManager::GetMissionById(int missionId) const
 
 int MissionListManager::AbilityTransactionDone(const sptr<IRemoteObject> &token, int state, const PacMap &saveData)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     int targetState = AbilityRecord::ConvertLifeCycleToAbilityState(static_cast<AbilityLifeCycleState>(state));
     std::string abilityState = AbilityRecord::ConvertAbilityState(static_cast<AbilityState>(targetState));
     HILOG_INFO("AbilityTransactionDone, state: %{public}s.", abilityState.c_str());
@@ -960,6 +961,7 @@ void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord>
 int MissionListManager::TerminateAbility(const std::shared_ptr<AbilityRecord> &abilityRecord,
     int resultCode, const Want *resultWant, bool flag)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     std::string element = abilityRecord->GetWant().GetElement().GetURI();
     HILOG_DEBUG("Terminate ability, ability is %{public}s.", element.c_str());
     std::lock_guard<std::recursive_mutex> guard(managerLock_);
@@ -1324,6 +1326,7 @@ int MissionListManager::SetMissionLockedState(int missionId, bool lockedState)
 
 void MissionListManager::MoveToBackgroundTask(const std::shared_ptr<AbilityRecord> &abilityRecord)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     if (abilityRecord == nullptr) {
         HILOG_ERROR("Move the ability to background fail, ability record is null.");
         return;

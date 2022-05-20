@@ -23,7 +23,6 @@
 #include "connection_manager.h"
 #include "hilog_wrapper.h"
 #include "permission_list_state.h"
-#include "hitrace_meter.h"
 
 using OHOS::Security::AccessToken::AccessTokenKit;
 using OHOS::Security::AccessToken::PermissionListState;
@@ -243,6 +242,7 @@ bool AbilityContextImpl::ConnectAbilityWithAccount(const AAFwk::Want &want, int 
 void AbilityContextImpl::DisconnectAbility(const AAFwk::Want &want,
                                            const sptr<AbilityConnectCallback> &connectCallback)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Disconnect ability begin, caller:%{public}s.",
         abilityInfo_ == nullptr ? "" : abilityInfo_->name.c_str());
     ErrCode ret =
@@ -329,6 +329,7 @@ ErrCode AbilityContextImpl::TerminateSelf()
 
 ErrCode AbilityContextImpl::CloseAbility()
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("%{public}s begin.", __func__);
     AAFwk::Want resultWant;
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->CloseAbility(token_, -1, &resultWant);

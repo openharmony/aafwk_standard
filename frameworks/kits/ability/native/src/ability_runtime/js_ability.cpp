@@ -179,6 +179,7 @@ void JsAbility::OnStart(const Want &want)
 
 void JsAbility::OnStop()
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     Ability::OnStop();
 
     CallObjectMethod("onDestroy");
@@ -314,6 +315,7 @@ void JsAbility::OnForeground(const Want &want)
 
 void JsAbility::OnBackground()
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     Ability::OnBackground();
 
     CallObjectMethod("onBackground");
