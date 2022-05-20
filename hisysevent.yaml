@@ -46,23 +46,27 @@ THREAD_BLOCK_6S:
   PROCESS_NAME: {type: STRING, desc: process name}
   MSG: {type: STRING, desc: application event message}
   
-ABILITY_START_ERROR:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
+START_ABILITY_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for ability}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
-ABILITY_START:
+TERMINATE_ABILITY_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+START_ABILITY:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-ABILITY_FOREGROUND:
+DO_FOREGROUND_ABILITY:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-ABILITY_BACKGROUND:
+DO_BACKGROUND_ABILITY:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-ABILITY_STOP:
+TERMINATE_ABILITY:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
@@ -74,14 +78,6 @@ ABILITY_ONSTOP:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-ABILITY_ONACTIVE:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_ONINACTIVE:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
 ABILITY_ONFOREGROUND:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
   ABILITY_NAME: {type: STRING, desc: ability name}
@@ -90,36 +86,128 @@ ABILITY_ONBACKGROUND:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-ABILITY_ONCONNECT:
+ABILITY_WINDOWSTAGE_CREATE:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-ABILITY_ONDISCONNECT:
+ABILITY_WINDOWSTAGE_DESTORY:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
   ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_ONCOMMAND:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  
+START_EXTENSION_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for extensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+STOP_EXTENSION_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for extensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+CONNECT_SERVICE_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for serviceExtensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+DISCONNECT_SERVICE_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for serviceExtensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+START_SERVICE_EXTENSION:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for serviceExtensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+STOP_SERVICE_EXTENSION:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for serviceExtensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+CONNECT_SERVICE_EXTENSION:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for serviceExtensionAbility}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+DISCONNECT_SERVICE_EXTENSION:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for serviceExtensionAbility}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-EXTENSION_ONSTART:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for extensionAbility}
+SERVICE_EXTENSION_ONSTART:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle callback}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-EXTENSION_ONSTOP:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for extensionAbility}
+SERVICE_EXTENSION_ONSTOP:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle callback}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-EXTENSION_ONCONNECT:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for extensionAbility}
+SERVICE_EXTENSION_ONCONNECT:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle callback}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-EXTENSION_ONDISCONNECT:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for extensionAbility}
+SERVICE_EXTENSION_ONDISCONNECT:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle callback}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
-EXTENSION_ONCOMMAND:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for extensionAbility}
+SERVICE_EXTENSION_ONREQUEST:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle callback}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ADD_FORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+REQUEST_FORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+DELETE_FORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+CASTTEMP_FORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ACQUIREFORMSTATE_FORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+MESSAGE_EVENT_FORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ROUTE_EVENT_FORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+RELEASE_FORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+DELETE_INVALID_FORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+SET_NEXT_REFRESH_TIME_FORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+FORM_ONCREATE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+FORM_ONDESTROY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+FORM_ONUPDATE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+FORM_EVENT:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+FORM_ONCASTTEMPFORM:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+FORM_ONACQUIREFORMSTATE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 APP_ATTACH:

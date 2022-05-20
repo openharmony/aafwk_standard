@@ -30,6 +30,7 @@
 #include "start_options.h"
 #include "want.h"
 #include "event_handler.h"
+#include "hitrace_meter.h"
 
 #ifdef SUPPORT_GRAPHICS
 #include "pixel_map_napi.h"
@@ -162,6 +163,7 @@ NativeValue* JsAbilityContext::SetMissionIcon(NativeEngine* engine, NativeCallba
 
 NativeValue* JsAbilityContext::OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnStartAbility is called.");
 
     if (info.argc == ARGC_ZERO) {

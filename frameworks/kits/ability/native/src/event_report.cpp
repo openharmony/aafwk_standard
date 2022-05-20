@@ -36,7 +36,6 @@ const std::string EVENT_KEY_APP_NAME = "NAME";
 const std::string EVENT_KEY_VERSION_NAME = "VERSION_NAME";
 const std::string EVENT_KEY_VERSION_CODE = "VERSION_CODE";
 const std::string EVENT_KEY_TIME_STAMP = "TIME_STAMP";
-const std::string EVENT_KEY_FORM_ID = "FORM_ID";
 const std::string TYPE = "TYPE";
 }
 void EventReport::SendHiSysEvent(const std::string &abilityName, const std::string &eventName,
@@ -49,6 +48,31 @@ void EventReport::SendHiSysEvent(const std::string &abilityName, const std::stri
     HILOG_WARN("{eventName}: abilityName: %{public}s",
         abilityName.c_str());
 }
+// void EventReport::AppEvent(const std::shared_ptr<ApplicationInfo> &applicationInfo,
+//     const std::string &pid, const std::string &eventName, HiSysEventType type)
+// {
+//     std::string name = applicationInfo->name.c_str();
+//     std::string versionName = applicationInfo->versionName.c_str();
+//     uint32_t versionCode = applicationInfo->versionCode;
+//     int32_t timeStamp =
+//         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
+//         .count();
+//     EventReport::EventWrite(
+//         eventName,
+//         type,
+//         EVENT_KEY_APP_NAME, name,
+//         EVENT_KEY_VERSION_NAME, versionName,
+//         EVENT_KEY_VERSION_CODE, std::to_string(versionCode),
+//         EVENT_KEY_PID, pid.c_str(),
+//         EVENT_KEY_TIME_STAMP, std::to_string(timeStamp));
+//     HILOG_WARN("{eventName}: name: %{public}s, versionName: %{public}s,"
+//         "versionCode: %{public}d, pid: %{public}s, timeStamp: %{public}d",
+//         name.c_str(),
+//         versionName.c_str(),
+//         versionCode,
+//         pid.c_str(),
+//         timeStamp);
+// }
 template<typename... Types>
 void EventReport::EventWrite(
     const std::string &eventName,

@@ -30,6 +30,8 @@ class EventReport {
 public:
     static void SendHiSysEvent(const std::string &abilityName, const std::string &eventName,
         HiSysEventType type);
+    // static void AppEvent(const std::shared_ptr<AppExecFwk::ApplicationInfo> &applicationInfo,
+    //     const std::string &pid, const std::string &eventName, HiSysEventType type);
     template<typename... Types>
     static void EventWrite(const std::string &eventName,
         HiSysEventType type, Types... keyValues);

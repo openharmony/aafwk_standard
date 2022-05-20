@@ -132,6 +132,7 @@ config("fmskit_public_config") {
   include_dirs = [
     "interfaces/kits/native/include",
     "${aafwk_path}/services/common/include",
+    "${appexecfwk_path}/test/systemtest/common/fms/common/include",
     "${form_runtime_path}/interfaces/inner_api/include",
     "${appexecfwk_inner_api_path}/appexecfwk_base/include",
     "${base_inner_api_path}/want/include",
@@ -142,6 +143,7 @@ ohos_shared_library("fmskit_native") {
   configs = [ ":fmskit_config" ]
   public_configs = [ ":fmskit_public_config" ]
   sources = [
+    "${services_path}/common/src/event_report.cpp",
     "interfaces/kits/native/src/form_errors.cpp",
     "interfaces/kits/native/src/form_host_client.cpp",
     "interfaces/kits/native/src/form_mgr.cpp",
@@ -160,6 +162,7 @@ ohos_shared_library("fmskit_native") {
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "form_runtime:form_manager",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "samgr_standard:samgr_proxy",
