@@ -31,7 +31,6 @@ namespace OHOS {
 namespace AbilityRuntime {
 NativeValue *CreateJsApplicationContext(
     NativeEngine &engine, std::shared_ptr<ApplicationContext> applicationContext, bool keepApplicationContext = false);
-static int64_t serialNumber_ = 0;
 }  // namespace AbilityRuntime
 }  // namespace OHOS
 #endif  // ABILITY_RUNTIME_JS_APPLICATION_CONTEXT_UTILS_H

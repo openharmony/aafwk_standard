@@ -131,7 +131,7 @@ ohos_shared_library("abilitykit_native") {
     "${kits_path}/appkit/native/ability_runtime/extension_context.cpp",
     "${kits_path}/appkit/native/ability_runtime/service_extension_context.cpp",
     "${kits_path}/appkit/native/ability_runtime/static_subscriber_extension_context.cpp",
-    "${kits_path}/appkit/native/app/src/application_context.cpp",
+    "${kits_path}/appkit/native/app/src/app_context.cpp",
     "${kits_path}/appkit/native/app/src/context_container.cpp",
     "${kits_path}/appkit/native/app/src/context_deal.cpp",
     "${kits_path}/appkit/native/app/src/sys_mgr_client.cpp",

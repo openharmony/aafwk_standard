@@ -16,6 +16,7 @@
 #ifndef ABILITY_RUNTIME_JS_APPLICATION_CONTEXT_ABILITY_LIFECYCLE_CALLBACK_H
 #define ABILITY_RUNTIME_JS_APPLICATION_CONTEXT_ABILITY_LIFECYCLE_CALLBACK_H
 
+#include <map>
 #include <memory>
 
 class NativeEngine;
@@ -27,8 +28,7 @@ namespace OHOS {
 namespace AbilityRuntime {
 class AbilityLifecycleCallback {
 public:
-    explicit AbilityLifecycleCallback(NativeEngine &engine);
-    ~AbilityLifecycleCallback();
+    virtual ~AbilityLifecycleCallback() {}
     /**
      * Called back when the ability is started for initialization.
      *
@@ -37,7 +37,7 @@ public:
      * @param ability: Indicates the ability to register for listening.
      * @StageModelOnly
      */
-    void OnAbilityCreate(const std::weak_ptr<NativeReference> &abilityObj);
+    virtual void OnAbilityCreate(const std::weak_ptr<NativeReference> &abilityObj) = 0;
 
     /**
      * Called back when the ability window stage is created.
@@ -47,7 +47,7 @@ public:
      * @param ability: Indicates the ability to register for listening.
      * @StageModelOnly
      */
-    void OnAbilityWindowStageCreate(const std::weak_ptr<NativeReference> &abilityObj);
+    virtual void OnAbilityWindowStageCreate(const std::weak_ptr<NativeReference> &abilityObj) = 0;
 
     /**
      * Called back when the ability window stage is created.
@@ -57,7 +57,7 @@ public:
      * @param ability: Indicates the ability to register for listening.
      * @StageModelOnly
      */
-    void OnAbilityWindowStageDestroy(const std::weak_ptr<NativeReference> &abilityObj);
+    virtual void OnAbilityWindowStageDestroy(const std::weak_ptr<NativeReference> &abilityObj) = 0;
 
     /**
      * Called back when the ability window stage is created.
@@ -67,7 +67,7 @@ public:
      * @param ability: Indicates the ability to register for listening.
      * @StageModelOnly
      */
-    void OnAbilityDestroy(const std::weak_ptr<NativeReference> &abilityObj);
+    virtual void OnAbilityDestroy(const std::weak_ptr<NativeReference> &abilityObj) = 0;
 
     /**
      * Called back when the ability window stage is created.
@@ -77,7 +77,7 @@ public:
      * @param ability: Indicates the ability to register for listening.
      * @StageModelOnly
      */
-    void OnAbilityForeground(const std::weak_ptr<NativeReference> &abilityObj);
+    virtual void OnAbilityForeground(const std::weak_ptr<NativeReference> &abilityObj) = 0;
 
     /**
      * Called back when the ability window stage is created.
@@ -87,7 +87,7 @@ public:
      * @param ability: Indicates the ability to register for listening.
      * @StageModelOnly
      */
-    void OnAbilityBackground(const std::weak_ptr<NativeReference> &abilityObj);
+    virtual void OnAbilityBackground(const std::weak_ptr<NativeReference> &abilityObj) = 0;
 
     /**
      * Called back when the ability window stage is created.
@@ -97,15 +97,31 @@ public:
      * @param ability: Indicates the ability to register for listening.
      * @StageModelOnly
      */
-    void OnAbilityContinue(const std::weak_ptr<NativeReference> &abilityObj);
+    virtual void OnAbilityContinue(const std::weak_ptr<NativeReference> &abilityObj) = 0;
+};
 
-    void SetJsCallback(NativeValue *jsCallback);
+class JsAbilityLifecycleCallback : public AbilityLifecycleCallback,
+                                   public std::enable_shared_from_this<AbilityLifecycleCallback> {
+public:
+    explicit JsAbilityLifecycleCallback(NativeEngine* engine);
+    void OnAbilityCreate(const std::weak_ptr<NativeReference> &abilityObj) override;
+    void OnAbilityWindowStageCreate(const std::weak_ptr<NativeReference> &abilityObj) override;
+    void OnAbilityWindowStageDestroy(const std::weak_ptr<NativeReference> &abilityObj) override;
+    void OnAbilityDestroy(const std::weak_ptr<NativeReference> &abilityObj) override;
+    void OnAbilityForeground(const std::weak_ptr<NativeReference> &abilityObj) override;
+    void OnAbilityBackground(const std::weak_ptr<NativeReference> &abilityObj) override;
+    void OnAbilityContinue(const std::weak_ptr<NativeReference> &abilityObj) override;
+    int32_t Register(NativeValue *jsCallback);
+    void UnRegister(int32_t callbackId);
+    bool IsEmpty();
+    static int32_t serialNumber_;
 
 private:
-    NativeValue *CallLifecycleCBFunction(const std::string &functionName,
-        const std::weak_ptr<NativeReference> &abilityObj);
-    NativeEngine &engine_;
+    NativeEngine* engine_;
     std::shared_ptr<NativeReference> jsCallback_;
+    std::map<int32_t, std::shared_ptr<NativeReference>> callbacks_;
+    void CallJsMethod(const std::string &methodName, const std::weak_ptr<NativeReference> &abilityObj);
+    void CallJsMethodInner(const std::string &methodName, const std::shared_ptr<NativeReference> &ability);
 };
 }  // namespace AbilityRuntime
 }  // namespace OHOS

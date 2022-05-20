@@ -434,19 +434,13 @@ bool ContextImpl::IsCreateBySystemApp() const
     return (static_cast<uint64_t>(flags_) & static_cast<uint64_t>(CONTEXT_CREATE_BY_SYSTEM_APP)) == 1;
 }
 
-std::shared_ptr<Context> Context::appContext_ = nullptr;
+std::shared_ptr<ApplicationContext> Context::applicationContext_ = nullptr;
 std::mutex Context::contextMutex_;
 
-std::shared_ptr<Context> Context::GetApplicationContext()
+std::shared_ptr<ApplicationContext> Context::GetApplicationContext()
 {
     std::lock_guard<std::mutex> lock(contextMutex_);
-    return appContext_;
-}
-
-void ContextImpl::InitAppContext()
-{
-    std::lock_guard<std::mutex> lock(Context::contextMutex_);
-    Context::appContext_ = shared_from_this();
+    return applicationContext_;
 }
 
 void ContextImpl::SetToken(const sptr<IRemoteObject> &token)

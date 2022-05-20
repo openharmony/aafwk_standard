@@ -200,11 +200,6 @@ public:
     void InitHapModuleInfo(const AppExecFwk::HapModuleInfo &hapModuleInfo);
 
     /**
-     * @brief Set application context
-     */
-    void InitAppContext();
-
-    /**
      * @brief Set the token witch the app launched.
      *
      * @param token The token which the is launched by app.

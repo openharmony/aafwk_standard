@@ -23,7 +23,7 @@
 
 #include "ability.h"
 #include "completed_callback.h"
-#include "context/context.h"
+#include "context/application_context.h"
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
@@ -60,7 +60,7 @@ struct AsyncGetWantAgentCallbackInfo {
     int32_t requestCode = -1;
     std::vector<WantAgentConstant::Flags> wantAgentFlags;
     std::shared_ptr<AAFwk::WantParams> extraInfo;
-    std::shared_ptr<AbilityRuntime::Context> context;
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context;
     std::shared_ptr<WantAgent> wantAgent;
 };
 

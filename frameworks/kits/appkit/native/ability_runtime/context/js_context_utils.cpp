@@ -313,7 +313,7 @@ NativeValue* JsBaseContext::OnGetApplicationContext(NativeEngine& engine, Native
         return engine.CreateUndefined();
     }
 
-    auto applicatioContext = Context::GetJsApplicationContext();
+    auto applicatioContext = Context::GetApplicationContext();
     if (applicatioContext == nullptr) {
         HILOG_WARN("applicatioContext is nullptr");
         return engine.CreateUndefined();
