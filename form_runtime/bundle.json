@@ -22,7 +22,7 @@
         "deps": {
           "components": [
               "ability_runtime",
-              "ans_standard",
+              "distributed_notification_service",
               "bundle_framework",
               "common_event_service",
               "hiviewdfx_hilog_native",
