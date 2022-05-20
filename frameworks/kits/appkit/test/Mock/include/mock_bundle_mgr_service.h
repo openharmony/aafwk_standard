@@ -59,10 +59,6 @@ public:
         GTEST_LOG_(INFO) << "MockBundleMgrService::GetAppType called";
         return "ModuleTestType";
     }
-    virtual bool CheckIsSystemAppByUid(const int uid) override
-    {
-        return false;
-    }
     virtual sptr<IBundleUserMgr> GetBundleUserMgr() override
     {
         return nullptr;
