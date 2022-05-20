@@ -60,6 +60,7 @@ ohos_unittest("ability_scheduler_proxy_test") {
     "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
     "hiviewdfx_hilog_native:libhilog",
+    "hitrace_native:hitrace_meter",
     "ipc:ipc_core",
   ]
 }
