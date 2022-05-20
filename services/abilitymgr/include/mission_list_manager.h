@@ -349,13 +349,6 @@ public:
         MissionSnapshot& missionSnapshot);
     void GetAbilityRunningInfos(std::vector<AbilityRunningInfo> &info, bool isPerm);
 
-    /**
-     * @brief get current top ability by bundle name
-     * @param bundleName the bundle name
-     * @return the current top ability.
-     */
-    std::shared_ptr<AbilityRecord> GetCurrentTopAbility(const std::string &bundleName);
-
     #ifdef ABILITY_COMMAND_FOR_TEST
     /**
      * Block ability.
