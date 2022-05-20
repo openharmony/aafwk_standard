@@ -73,6 +73,7 @@ private:
     int UninstallAppInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityInner(MessageParcel &data, MessageParcel &reply);
     int StartExtensionAbilityInner(MessageParcel &data, MessageParcel &reply);
+    int StopExtensionAbilityInner(MessageParcel& data, MessageParcel& reply);
     int StartAbilityAddCallerInner(MessageParcel &data, MessageParcel &reply);
     int ConnectAbilityInner(MessageParcel &data, MessageParcel &reply);
     int DisconnectAbilityInner(MessageParcel &data, MessageParcel &reply);

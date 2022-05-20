@@ -527,7 +527,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     return missionListManager->StartAbility(abilityRequest);
 }
 
-int AbilityManagerService::CheckStartExtensionAbility(const Want &want, AbilityRequest &abilityRequest,
+int AbilityManagerService::CheckOptExtensionAbility(const Want &want, AbilityRequest &abilityRequest,
     int32_t validUserId, AppExecFwk::ExtensionAbilityType extensionType)
 {
     auto abilityInfo = abilityRequest.abilityInfo;
@@ -592,9 +592,9 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     HILOG_DEBUG("userId is : %{public}d, singleton is : %{public}d",
         validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
 
-    result = CheckStartExtensionAbility(want, abilityRequest, validUserId, extensionType);
+    result = CheckOptExtensionAbility(want, abilityRequest, validUserId, extensionType);
     if (result != ERR_OK) {
-        HILOG_ERROR("CheckStartExtensionAbility error.");
+        HILOG_ERROR("CheckOptExtensionAbility error.");
         return result;
     }
 
@@ -606,6 +606,54 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     HILOG_INFO("Start extension begin, name is %{public}s.", abilityInfo.name.c_str());
     return connectManager->StartAbility(abilityRequest);
 }
+
+int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
+    int32_t userId, AppExecFwk::ExtensionAbilityType extensionType)
+{
+    HILOG_INFO("Stop extension ability come, bundlename: %{public}s, ability is %{public}s, userId is %{public}d",
+        want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), userId);
+    if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
+        HILOG_ERROR("%{public}s: Permission verification failed.", __func__);
+        return CHECK_PERMISSION_FAILED;
+    }
+
+    if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
+        HILOG_ERROR("%{public}s VerificationAllToken failed.", __func__);
+        return ERR_INVALID_VALUE;
+    }
+    int32_t validUserId = GetValidUserId(userId);
+    if (!JudgeMultiUserConcurrency(validUserId)) {
+        HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
+        return ERR_INVALID_VALUE;
+    }
+
+    AbilityRequest abilityRequest;
+    auto result = GenerateExtensionAbilityRequest(want, abilityRequest, callerToken, validUserId);
+    if (result != ERR_OK) {
+        HILOG_ERROR("Generate ability request local error.");
+        return result;
+    }
+
+    auto abilityInfo = abilityRequest.abilityInfo;
+    validUserId = abilityInfo.applicationInfo.singleton ? U0_USER_ID : validUserId;
+    HILOG_DEBUG("userId is : %{public}d, singleton is : %{public}d",
+        validUserId, static_cast<int>(abilityInfo.applicationInfo.singleton));
+
+    result = CheckOptExtensionAbility(want, abilityRequest, validUserId, extensionType);
+    if (result != ERR_OK) {
+        HILOG_ERROR("CheckOptExtensionAbility error.");
+        return result;
+    }
+
+    auto connectManager = GetConnectManagerByUserId(validUserId);
+    if (!connectManager) {
+        HILOG_ERROR("connectManager is nullptr. userId=%{public}d", validUserId);
+        return ERR_INVALID_VALUE;
+    }
+    HILOG_INFO("Stop extension begin, name is %{public}s.", abilityInfo.name.c_str());
+    return connectManager->StopServiceAbility(abilityRequest);
+}
+
 
 void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUserId)
 {

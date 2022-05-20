@@ -140,6 +140,7 @@ void AbilityManagerStub::ThirdStepInit()
     requestFuncMap_[SET_MISSION_ICON] = &AbilityManagerStub::SetMissionIconInner;
     requestFuncMap_[DUMP_ABILITY_INFO_DONE] = &AbilityManagerStub::DumpAbilityInfoDoneInner;
     requestFuncMap_[START_EXTENSION_ABILITY] = &AbilityManagerStub::StartExtensionAbilityInner;
+    requestFuncMap_[STOP_EXTENSION_ABILITY] = &AbilityManagerStub::StopExtensionAbilityInner;
 #ifdef SUPPORT_GRAPHICS
     requestFuncMap_[REGISTER_WMS_HANDLER] = &AbilityManagerStub::RegisterWindowManagerServiceHandlerInner;
     requestFuncMap_[COMPLETEFIRSTFRAMEDRAWING] = &AbilityManagerStub::CompleteFirstFrameDrawingInner;
@@ -371,6 +372,26 @@ int AbilityManagerStub::StartExtensionAbilityInner(MessageParcel &data, MessageP
     int32_t extensionType = data.ReadInt32();
     int32_t result = StartExtensionAbility(*want, callerToken, userId,
         static_cast<AppExecFwk::ExtensionAbilityType>(extensionType));
+    reply.WriteInt32(result);
+    delete want;
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::StopExtensionAbilityInner(MessageParcel& data, MessageParcel& reply)
+{
+    Want* want = data.ReadParcelable<Want>();
+    if (want == nullptr) {
+        HILOG_ERROR("want is nullptr");
+        return ERR_INVALID_VALUE;
+    }
+    sptr<IRemoteObject> callerToken = nullptr;
+    if (data.ReadBool()) {
+        callerToken = data.ReadRemoteObject();
+    }
+    int32_t userId = data.ReadInt32();
+    int32_t extensionType = data.ReadInt32();
+    int32_t result =
+        StopExtensionAbility(*want, callerToken, userId, static_cast<AppExecFwk::ExtensionAbilityType>(extensionType));
     reply.WriteInt32(result);
     delete want;
     return NO_ERROR;

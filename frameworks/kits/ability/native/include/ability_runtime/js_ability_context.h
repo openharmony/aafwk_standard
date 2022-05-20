@@ -45,6 +45,8 @@ public:
     static NativeValue* StartAbilityForResultWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* StartServiceExtensionAbility(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* StartServiceExtensionAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* StopServiceExtensionAbility(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* StopServiceExtensionAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* ConnectAbility(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* ConnectAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* DisconnectAbility(NativeEngine* engine, NativeCallbackInfo* info);
@@ -75,6 +77,8 @@ private:
     NativeValue* OnStartAbilityForResultWithAccount(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnStartExtensionAbility(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnStartExtensionAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnStopExtensionAbility(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnStopExtensionAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnTerminateSelfWithResult(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnConnectAbility(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnConnectAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info);

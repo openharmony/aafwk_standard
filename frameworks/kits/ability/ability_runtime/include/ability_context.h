@@ -118,7 +118,9 @@ public:
         const AAFwk::Want &Want, int accountId, const AAFwk::StartOptions &startOptions,
         int requestCode, RuntimeTask &&task) = 0;
 
-    virtual ErrCode StartServiceExtensionAbility(const AAFwk::Want &want, int32_t userId = -1) = 0;
+    virtual ErrCode StartServiceExtensionAbility(const AAFwk::Want &want, int32_t accountId = -1) = 0;
+
+    virtual ErrCode StopServiceExtensionAbility(const AAFwk::Want& want, int32_t accountId = -1) = 0;
 
     virtual ErrCode TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode) = 0;
 
