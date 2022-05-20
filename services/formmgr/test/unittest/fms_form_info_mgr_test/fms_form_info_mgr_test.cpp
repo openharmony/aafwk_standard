@@ -103,6 +103,7 @@ HWTEST(ExtensionFormProfileTest, TransformTo_0101, TestSize.Level0)
         ExtensionFormProfileReader::SRC,
         ExtensionFormProfileReader::WINDOW,
         ExtensionFormProfileReader::COLOR_MODE,
+        ExtensionFormProfileReader::FORM_CONFIG_ABILITY,
         ExtensionFormProfileReader::FORM_VISIBLE_NOTIFY,
         ExtensionFormProfileReader::SCHEDULED_UPDATE_TIME,
         ExtensionFormProfileReader::UPDATE_DURATION,
@@ -118,7 +119,6 @@ HWTEST(ExtensionFormProfileTest, TransformTo_0101, TestSize.Level0)
 
     std::vector<std::string> mustPropKeys = {
         ExtensionFormProfileReader::NAME,
-        ExtensionFormProfileReader::FORM_CONFIG_ABILITY,
         ExtensionFormProfileReader::IS_DEFAULT,
         ExtensionFormProfileReader::UPDATE_ENABLED,
         ExtensionFormProfileReader::DEFAULT_DIMENSION,

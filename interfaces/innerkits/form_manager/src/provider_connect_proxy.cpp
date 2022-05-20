@@ -47,9 +47,16 @@ void ProviderConnectProxy::OnAbilityConnectDone(
         return;
     }
 
-    if (!data.WriteRemoteObject(remoteObject)) {
-        HILOG_ERROR("%{public}s, failed to write remote object ", __func__);
-        return;
+    if (remoteObject) {
+        if (!data.WriteBool(true) || !data.WriteRemoteObject(remoteObject)) {
+            HILOG_ERROR("%{public}s, failed to write flag and remote object", __func__);
+            return;
+        }
+    } else {
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("%{public}s, failed to write flag", __func__);
+            return;
+        }
     }
 
     if (!data.WriteInt32(resultCode)) {
