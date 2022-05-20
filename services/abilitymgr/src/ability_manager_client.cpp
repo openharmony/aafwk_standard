@@ -216,15 +216,13 @@ ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &caller
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    // int32_t ret = ERR_OK;
-    // auto abilityRecord = Token::GetAbilityRecordByToken(callerToken);
-    // auto abilityInfo = abilityRecord->GetAbilityInfo();
-    // const std::string abilityName = abilityInfo.name.c_str();
-    // AAFWK::EventReport::SendHiSysEvent(abilityName, TERMINATE_ABILITY, AAFWK::HiSysEventType::BEHAVIOR);
-    // ret = abms->TerminateAbilityByCaller(callerToken, requestCode);
-    // if (ret != ERR_OK) {
-    //     AAFWK::EventReport::SendHiSysEvent(abilityName, TERMINATE_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT);
-    // }
+    int32_t ret = ERR_OK;
+    const std::string abilityName = "terminate ability";
+    AAFWK::EventReport::SendHiSysEvent(abilityName, TERMINATE_ABILITY, AAFWK::HiSysEventType::BEHAVIOR);
+    ret = abms->TerminateAbilityByCaller(callerToken, requestCode);
+    if (ret != ERR_OK) {
+        AAFWK::EventReport::SendHiSysEvent(abilityName, TERMINATE_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT);
+    }
     return abms->TerminateAbilityByCaller(callerToken, requestCode);
 }
 
