@@ -2753,39 +2753,6 @@ void MissionListManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> 
     }
 }
 
-std::shared_ptr<AbilityRecord> MissionListManager::GetCurrentTopAbility(const std::string &bundleName)
-{
-    std::lock_guard<std::recursive_mutex> guard(managerLock_);
-
-    for (auto &missionList : currentMissionLists_) {
-        if (!missionList) {
-            HILOG_WARN("Invalid missionList.");
-            continue;
-        }
-
-        auto missions = missionList->GetAllMissions();
-        for (auto &mission : missions) {
-            if (!mission) {
-                HILOG_WARN("Invalid mission.");
-                continue;
-            }
-
-            auto abilityRecord = mission->GetAbilityRecord();
-            if (!abilityRecord) {
-                HILOG_WARN("Invalid ability record.");
-                continue;
-            }
-
-            auto appInfo = abilityRecord->GetApplicationInfo();
-            if (bundleName.compare(appInfo.bundleName) == 0) {
-                return abilityRecord;
-            }
-        }
-    }
-
-    return {};
-}
-
 void MissionListManager::UninstallApp(const std::string &bundleName, int32_t uid)
 {
     HILOG_INFO("Uninstall app, bundleName: %{public}s, uid:%{public}d", bundleName.c_str(), uid);

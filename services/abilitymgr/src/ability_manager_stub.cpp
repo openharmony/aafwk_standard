@@ -130,7 +130,7 @@ void AbilityManagerStub::ThirdStepInit()
 {
     requestFuncMap_[START_USER_TEST] = &AbilityManagerStub::StartUserTestInner;
     requestFuncMap_[FINISH_USER_TEST] = &AbilityManagerStub::FinishUserTestInner;
-    requestFuncMap_[GET_CURRENT_TOP_ABILITY] = &AbilityManagerStub::GetCurrentTopAbilityInner;
+    requestFuncMap_[GET_TOP_ABILITY_TOKEN] = &AbilityManagerStub::GetTopAbilityTokenInner;
     requestFuncMap_[DELEGATOR_DO_ABILITY_FOREGROUND] = &AbilityManagerStub::DelegatorDoAbilityForegroundInner;
     requestFuncMap_[DELEGATOR_DO_ABILITY_BACKGROUND] = &AbilityManagerStub::DelegatorDoAbilityBackgroundInner;
     requestFuncMap_[DO_ABILITY_FOREGROUND] = &AbilityManagerStub::DoAbilityForegroundInner;
@@ -1300,10 +1300,10 @@ int AbilityManagerStub::FinishUserTestInner(MessageParcel &data, MessageParcel &
     return result;
 }
 
-int AbilityManagerStub::GetCurrentTopAbilityInner(MessageParcel &data, MessageParcel &reply)
+int AbilityManagerStub::GetTopAbilityTokenInner(MessageParcel &data, MessageParcel &reply)
 {
     sptr<IRemoteObject> token;
-    auto result = GetCurrentTopAbility(token);
+    auto result = GetTopAbility(token);
     if (!reply.WriteRemoteObject(token)) {
         HILOG_ERROR("data write failed.");
         return ERR_INVALID_VALUE;

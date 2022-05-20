@@ -2213,7 +2213,7 @@ int AbilityManagerProxy::FinishUserTest(
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::GetCurrentTopAbility(sptr<IRemoteObject> &token)
+int AbilityManagerProxy::GetTopAbility(sptr<IRemoteObject> &token)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -2223,7 +2223,7 @@ int AbilityManagerProxy::GetCurrentTopAbility(sptr<IRemoteObject> &token)
         return INNER_ERR;
     }
 
-    auto error = Remote()->SendRequest(IAbilityManager::GET_CURRENT_TOP_ABILITY, data, reply, option);
+    auto error = Remote()->SendRequest(IAbilityManager::GET_TOP_ABILITY_TOKEN, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("Send request error: %{public}d", error);
         return error;
