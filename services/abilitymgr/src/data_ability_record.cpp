@@ -356,11 +356,6 @@ int DataAbilityRecord::RemoveClients(const std::shared_ptr<AbilityRecord> &clien
                 }
                 appScheduler->AbilityBehaviorAnalysis(ability_->GetToken(), clientAbilityRecord->GetToken(), 0, 0, 0);
                 it = clients_.erase(it);
-                HILOG_INFO("Ability '%{public}s|%{public}s' --X-> Data ability '%{public}s|%{public}s'.",
-                    client->GetApplicationInfo().bundleName.c_str(),
-                    client->GetAbilityInfo().name.c_str(),
-                    ability_->GetApplicationInfo().bundleName.c_str(),
-                    ability_->GetAbilityInfo().name.c_str());
             } else {
                 ++it;
             }
