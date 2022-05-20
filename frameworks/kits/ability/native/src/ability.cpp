@@ -1626,6 +1626,7 @@ ErrCode Ability::StartAbility(const Want &want)
  */
 ErrCode Ability::TerminateAbility()
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s begin.", __func__);
     return AbilityContext::TerminateAbility();
 }

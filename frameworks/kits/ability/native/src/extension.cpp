@@ -19,6 +19,7 @@
 #include "configuration.h"
 #include "extension_context.h"
 #include "hilog_wrapper.h"
+#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -40,6 +41,7 @@ void Extension::Init(const std::shared_ptr<AppExecFwk::AbilityLocalRecord> &reco
 
 void Extension::OnStart(const AAFwk::Want &want)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnStart begin, extension:%{public}s.", abilityInfo_->name.c_str());
     SetLaunchWant(want);
     SetLastRequestWant(want);
@@ -54,6 +56,7 @@ void Extension::OnStop()
 
 sptr<IRemoteObject> Extension::OnConnect(const AAFwk::Want &want)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnConnect begin, extension:%{public}s.", abilityInfo_->name.c_str());
     HILOG_INFO("OnConnect end, extension:%{public}s.", abilityInfo_->name.c_str());
     return nullptr;
@@ -61,6 +64,7 @@ sptr<IRemoteObject> Extension::OnConnect(const AAFwk::Want &want)
 
 void Extension::OnDisconnect(const AAFwk::Want &want)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnDisconnect begin, extension:%{public}s.", abilityInfo_->name.c_str());
     HILOG_INFO("OnDisconnect end, extension:%{public}s.", abilityInfo_->name.c_str());
 }

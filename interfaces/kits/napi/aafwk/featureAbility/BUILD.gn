@@ -52,6 +52,7 @@ ohos_shared_library("featureability") {
     "bundle_framework:appexecfwk_core",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
+    "hitrace_native:hitrace_meter",
     "ipc:ipc_core",
     "napi:ace_napi",
     "native_appdatamgr:native_appdatafwk",

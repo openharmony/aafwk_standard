@@ -791,6 +791,7 @@ void AbilityThread::ScheduleConnectAbility(const Want &want)
  */
 void AbilityThread::ScheduleDisconnectAbility(const Want &want)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Schedule disconnect ability begin, isExtension:%{public}d.", isExtension_);
     wptr<AbilityThread> weak = this;
     auto task = [weak, want]() {
