@@ -44,7 +44,7 @@ public:
 
     virtual Language GetLanguage() const = 0;
 
-    virtual void StartDebugMode(bool needBreakPoint) = 0;
+    virtual void StartDebugMode(bool needBreakPoint, int32_t instanceId = 0) = 0;
     virtual std::string BuildNativeAndJsBackStackTrace() = 0;
 
     Runtime(const Runtime&) = delete;
