@@ -46,6 +46,16 @@ class ServiceExtensionContext extends ExtensionContext {
         return this.__context_impl__.startServiceExtensionAbilityWithAccount(want, accountId, callback)
     }
 
+    stopServiceExtensionAbility(want, callback) {
+        console.log("stopServiceExtensionAbility");
+        return this.__context_impl__.stopServiceExtensionAbility(want, callback)
+    }
+
+    stopServiceExtensionAbilityWithAccount(want, accountId, callback) {
+        console.log("stopServiceExtensionAbilityWithAccount");
+        return this.__context_impl__.stopServiceExtensionAbilityWithAccount(want, accountId, callback)
+    }
+
     connectAbilityWithAccount(want, accountId, options) {
         console.log("connectAbilityWithAccount");
         return this.__context_impl__.connectAbilityWithAccount(want, accountId, options);
