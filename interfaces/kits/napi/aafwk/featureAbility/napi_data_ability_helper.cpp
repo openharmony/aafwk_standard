@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -199,10 +199,8 @@ napi_value NAPI_Insert(napi_env env, napi_callback_info info)
     napi_value ret = InsertWrap(env, info, insertCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
-        if (insertCB != nullptr) {
-            delete insertCB;
-            insertCB = nullptr;
-        }
+        delete insertCB;
+        insertCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,called end", __func__);
@@ -485,10 +483,8 @@ napi_value NAPI_NotifyChange(napi_env env, napi_callback_info info)
     napi_value ret = NotifyChangeWrap(env, info, notifyChangeCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
-        if (notifyChangeCB != nullptr) {
-            delete notifyChangeCB;
-            notifyChangeCB = nullptr;
-        }
+        delete notifyChangeCB;
+        notifyChangeCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -679,10 +675,8 @@ napi_value NAPI_Register(napi_env env, napi_callback_info info)
     napi_value ret = RegisterWrap(env, info, onCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
-        if (onCB != nullptr) {
-            delete onCB;
-            onCB = nullptr;
-        }
+        delete onCB;
+        onCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,called end", __func__);
@@ -861,10 +855,8 @@ napi_value NAPI_UnRegister(napi_env env, napi_callback_info info)
     napi_value ret = UnRegisterWrap(env, info, offCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
-        if (offCB != nullptr) {
-            delete offCB;
-            offCB = nullptr;
-        }
+        delete offCB;
+        offCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,called end", __func__);
@@ -1119,10 +1111,8 @@ void UnRegisterCompleteCB(napi_env env, napi_status status, void *data)
     }
 
     offCB->DestoryList.clear();
-    if (offCB != nullptr) {
-        delete offCB;
-        offCB = nullptr;
-    }
+    delete offCB;
+    offCB = nullptr;
 
     HILOG_INFO("NAPI_UnRegister, main event thread complete. end");
 }
@@ -1222,6 +1212,10 @@ static void OnChangeJSThreadWorker(uv_work_t *work, int status)
         return;
     }
     DAHelperOnOffCB *onCB = (DAHelperOnOffCB *)work->data;
+    if (onCB == nullptr) {
+        HILOG_ERROR("OnChange, uv_queue_work onCB is nullptr");
+        return;
+    }
     NAPIDataAbilityObserver* obs = onCB->observer;
     onCB->observer = nullptr;
     if (obs != nullptr) {
@@ -1250,14 +1244,10 @@ static void OnChangeJSThreadWorker(uv_work_t *work, int status)
             obs->ChangeWorkPreDone();
         }
     }
-    if (onCB != nullptr) {
-        delete onCB;
-        onCB = nullptr;
-    }
-    if (work != nullptr) {
-        delete work;
-        work = nullptr;
-    }
+    delete onCB;
+    onCB = nullptr;
+    delete work;
+    work = nullptr;
     HILOG_INFO("OnChange, uv_queue_work. end");
 }
 
@@ -1284,10 +1274,8 @@ void NAPIDataAbilityObserver::OnChange()
     DAHelperOnOffCB *onCB = new (std::nothrow) DAHelperOnOffCB;
     if (onCB == nullptr) {
         HILOG_ERROR("%{public}s, onCB == nullptr.", __func__);
-        if (work != nullptr) {
-            delete work;
-            work = nullptr;
-        }
+        delete work;
+        work = nullptr;
         ChangeWorkPreDone();
         return;
     }
@@ -1329,10 +1317,8 @@ napi_value NAPI_GetType(napi_env env, napi_callback_info info)
     napi_value ret = GetTypeWrap(env, info, gettypeCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (gettypeCB != nullptr) {
-            delete gettypeCB;
-            gettypeCB = nullptr;
-        }
+        delete gettypeCB;
+        gettypeCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -1509,10 +1495,8 @@ napi_value NAPI_GetFileTypes(napi_env env, napi_callback_info info)
     napi_value ret = GetFileTypesWrap(env, info, getfiletypesCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (getfiletypesCB != nullptr) {
-            delete getfiletypesCB;
-            getfiletypesCB = nullptr;
-        }
+        delete getfiletypesCB;
+        getfiletypesCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -1719,10 +1703,8 @@ napi_value NAPI_NormalizeUri(napi_env env, napi_callback_info info)
     napi_value ret = NormalizeUriWrap(env, info, normalizeuriCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (normalizeuriCB != nullptr) {
-            delete normalizeuriCB;
-            normalizeuriCB = nullptr;
-        }
+        delete normalizeuriCB;
+        normalizeuriCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -1898,10 +1880,8 @@ napi_value NAPI_DenormalizeUri(napi_env env, napi_callback_info info)
     napi_value ret = DenormalizeUriWrap(env, info, denormalizeuriCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (denormalizeuriCB != nullptr) {
-            delete denormalizeuriCB;
-            denormalizeuriCB = nullptr;
-        }
+        delete denormalizeuriCB;
+        denormalizeuriCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -2098,10 +2078,8 @@ napi_value NAPI_Delete(napi_env env, napi_callback_info info)
     napi_value ret = DeleteWrap(env, info, deleteCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (deleteCB != nullptr) {
-            delete deleteCB;
-            deleteCB = nullptr;
-        }
+        delete deleteCB;
+        deleteCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -2292,10 +2270,8 @@ napi_value NAPI_Update(napi_env env, napi_callback_info info)
     napi_value ret = UpdateWrap(env, info, updateCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (updateCB != nullptr) {
-            delete updateCB;
-            updateCB = nullptr;
-        }
+        delete updateCB;
+        updateCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -2834,10 +2810,8 @@ napi_value NAPI_Call(napi_env env, napi_callback_info info)
     napi_value ret = CallWrap(env, info, callCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
-        if (callCB != nullptr) {
-            delete callCB;
-            callCB = nullptr;
-        }
+        delete callCB;
+        callCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s, called end", __func__);
@@ -2868,10 +2842,8 @@ napi_value NAPI_OpenFile(napi_env env, napi_callback_info info)
     napi_value ret = OpenFileWrap(env, info, openFileCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (openFileCB != nullptr) {
-            delete openFileCB;
-            openFileCB = nullptr;
-        }
+        delete openFileCB;
+        openFileCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -3067,10 +3039,8 @@ napi_value NAPI_BatchInsert(napi_env env, napi_callback_info info)
     napi_value ret = BatchInsertWrap(env, info, BatchInsertCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (BatchInsertCB != nullptr) {
-            delete BatchInsertCB;
-            BatchInsertCB = nullptr;
-        }
+        delete BatchInsertCB;
+        BatchInsertCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -3301,10 +3271,8 @@ napi_value NAPI_Query(napi_env env, napi_callback_info info)
     napi_value ret = QueryWrap(env, info, queryCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (queryCB != nullptr) {
-            delete queryCB;
-            queryCB = nullptr;
-        }
+        delete queryCB;
+        queryCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -3514,10 +3482,8 @@ napi_value NAPI_Release(napi_env env, napi_callback_info info)
     napi_value ret = ReleaseWrap(env, info, releaseCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s,ret == nullptr", __func__);
-        if (releaseCB != nullptr) {
-            delete releaseCB;
-            releaseCB = nullptr;
-        }
+        delete releaseCB;
+        releaseCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
@@ -3677,10 +3643,8 @@ napi_value NAPI_ExecuteBatch(napi_env env, napi_callback_info info)
     napi_value ret = ExecuteBatchWrap(env, info, executeBatchCB);
     if (ret == nullptr) {
         HILOG_ERROR("%{public}s, ret == nullptr.", __func__);
-        if (executeBatchCB != nullptr) {
-            delete executeBatchCB;
-            executeBatchCB = nullptr;
-        }
+        delete executeBatchCB;
+        executeBatchCB = nullptr;
         ret = WrapVoidToJS(env);
     }
     HILOG_INFO("%{public}s,end", __func__);
