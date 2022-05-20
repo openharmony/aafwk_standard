@@ -618,6 +618,5 @@ HWTEST_F(AbilityRecordModuleTest, Dump_001, TestSize.Level2)
     abilityRecord->Dump(info);
     EXPECT_FALSE(info.empty());
 }
-
 }  // namespace AAFwk
 }  // namespace OHOS
