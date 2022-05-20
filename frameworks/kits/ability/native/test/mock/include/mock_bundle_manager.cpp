@@ -65,10 +65,6 @@ std::string BundleMgrProxy::GetAppType(const std::string &bundleName)
     GTEST_LOG_(INFO) << " BundleMgrProxy::GetAppTyp";
     return "system";
 }
-bool BundleMgrProxy::CheckIsSystemAppByUid(const int uid)
-{
-    return true;
-}
 bool BundleMgrProxy::GetBundleInfosByMetaData(const std::string &metaData, std::vector<BundleInfo> &bundleInfos)
 {
     return true;
@@ -251,10 +247,6 @@ std::string BundleMgrService::GetAppType(const std::string &bundleName)
 {
     GTEST_LOG_(INFO) << " BundleMgrService::GetAppType";
     return "system";
-}
-bool BundleMgrService::CheckIsSystemAppByUid(const int uid)
-{
-    return true;
 }
 bool BundleMgrService::GetBundleInfosByMetaData(const std::string &metaData, std::vector<BundleInfo> &bundleInfos)
 {
