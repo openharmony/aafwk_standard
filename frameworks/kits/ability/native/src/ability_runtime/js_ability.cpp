@@ -34,9 +34,19 @@
 #include "string_wrapper.h"
 #include "context/context.h"
 #include "context/application_context.h"
+#include "event_report.h"
+#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
+namespace {
+const std::string ABILITY_ONSTART = "ABILITY_ONSTART";
+const std::string ABILITY_ONSTOP = "ABILITY_ONSTOP";
+const std::string ABILITY_ONFOREGROUND = "ABILITY_ONFOREGROUND";
+const std::string ABILITY_ONBACKGROUND = "ABILITY_ONBACKGROUND";
+const std::string ABILITY_WINDOWSTAGE_CREATE = "ABILITY_WINDOWSTAGE_CREATE";
+const std::string ABILITY_WINDOWSTAGE_DESTORY = "ABILITY_WINDOWSTAGE_DESTORY";
+}
 #ifdef SUPPORT_GRAPHICS
 const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
 #endif
@@ -122,6 +132,7 @@ void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
 
 void JsAbility::OnStart(const Want &want)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnStart begin, ability is %{public}s.", GetAbilityName().c_str());
     Ability::OnStart(want);
 
@@ -162,6 +173,8 @@ void JsAbility::OnStart(const Want &want)
         delegator->PostPerformStart(CreateADelegatorAbilityProperty());
     }
     HILOG_INFO("OnStart end, ability is %{public}s.", GetAbilityName().c_str());
+    const std::string abilityName = GetAbilityName().c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONSTART, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
 void JsAbility::OnStop()
@@ -186,11 +199,14 @@ void JsAbility::OnStop()
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityDestroy(jsAbilityObj_);
     }
+    const std::string abilityName = GetAbilityName().c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONSTOP, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
 #ifdef SUPPORT_GRAPHICS
 void JsAbility::OnSceneCreated()
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnSceneCreated begin, ability is %{public}s.", GetAbilityName().c_str());
     Ability::OnSceneCreated();
     auto jsAppWindowStage = CreateAppWindowStage();
@@ -213,6 +229,8 @@ void JsAbility::OnSceneCreated()
     }
 
     HILOG_INFO("OnSceneCreated end, ability is %{public}s.", GetAbilityName().c_str());
+    const std::string abilityName = GetAbilityName().c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_WINDOWSTAGE_CREATE, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
 void JsAbility::OnSceneRestored()
@@ -252,10 +270,13 @@ void JsAbility::onSceneDestroyed()
         applicationContext->DispatchOnAbilityWindowStageDestroy(jsAbilityObj_);
     }
     HILOG_INFO("onSceneDestroyed end, ability is %{public}s.", GetAbilityName().c_str());
+    const std::string abilityName = GetAbilityName().c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_WINDOWSTAGE_DESTORY, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
 void JsAbility::OnForeground(const Want &want)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnForeground begin, ability is %{public}s.", GetAbilityName().c_str());
     Ability::OnForeground(want);
 
@@ -287,6 +308,8 @@ void JsAbility::OnForeground(const Want &want)
         applicationContext->DispatchOnAbilityForeground(jsAbilityObj_);
     }
     HILOG_INFO("OnForeground end, ability is %{public}s.", GetAbilityName().c_str());
+    const std::string abilityName = GetAbilityName().c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONFOREGROUND, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
 void JsAbility::OnBackground()
@@ -305,6 +328,8 @@ void JsAbility::OnBackground()
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityBackground(jsAbilityObj_);
     }
+    const std::string abilityName = GetAbilityName().c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONBACKGROUND, AAFWK::HiSysEventType::BEHAVIOR);
 }
 #endif
 

@@ -17,6 +17,7 @@
 #include "app_mgr_service_inner.h"
 #include "app_running_record.h"
 #include "hilog_wrapper.h"
+#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -167,6 +168,7 @@ void ModuleRunningRecord::OnAbilityStateChanged(
 
 void ModuleRunningRecord::LaunchAbility(const std::shared_ptr<AbilityRunningRecord> &ability)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Launch ability.");
     if (!ability || !ability->GetToken()) {
         HILOG_ERROR("null abilityRecord or abilityToken");

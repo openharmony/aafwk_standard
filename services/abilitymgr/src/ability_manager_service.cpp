@@ -266,6 +266,7 @@ ServiceRunningState AbilityManagerService::QueryServiceState() const
 
 int AbilityManagerService::StartAbility(const Want &want, int32_t userId, int requestCode)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("%{public}s coldStart:%{public}d", __func__, want.GetBoolParam("coldStart", false));
     return StartAbilityInner(want, nullptr, requestCode, -1, userId);
 }

@@ -15,6 +15,7 @@
 
 #include "page_ability_impl.h"
 #include "hilog_wrapper.h"
+#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -28,6 +29,7 @@ using AbilityManagerClient = OHOS::AAFwk::AbilityManagerClient;
  */
 void PageAbilityImpl::HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Handle ability transaction start, sourceState:%{public}d, targetState:%{public}d, "
              "isNewWant:%{public}d, sceneFlag:%{public}d.",
         lifecycleState_,

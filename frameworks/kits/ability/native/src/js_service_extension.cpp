@@ -27,12 +27,18 @@
 #include "napi_common_configuration.h"
 #include "napi_common_want.h"
 #include "napi_remote_object.h"
+#include "event_report.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
 namespace {
 constexpr size_t ARGC_ONE = 1;
 constexpr size_t ARGC_TWO = 2;
+const std::string SERVICE_EXTENSION_ONSTART = "SERVICE_EXTENSION_ONSTART";
+const std::string SERVICE_EXTENSION_ONSTOP = "SERVICE_EXTENSION_ONSTOP";
+const std::string SERVICE_EXTENSION_ONCONNECT = "SERVICE_EXTENSION_ONCONNECT";
+const std::string SERVICE_EXTENSION_ONDISCONNECT = "SERVICE_EXTENSION_ONDISCONNECT";
+const std::string SERVICE_EXTENSION_ONREQUEST = "SERVICE_EXTENSION_ONREQUEST";
 }
 
 using namespace OHOS::AppExecFwk;
@@ -116,6 +122,8 @@ void JsServiceExtension::OnStart(const AAFwk::Want &want)
     NativeValue* argv[] = {nativeWant};
     CallObjectMethod("onCreate", argv, ARGC_ONE);
     HILOG_INFO("%{public}s end.", __func__);
+    const std::string abilityName = abilityInfo_->name.c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, SERVICE_EXTENSION_ONSTART, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
 void JsServiceExtension::OnStop()
@@ -129,6 +137,8 @@ void JsServiceExtension::OnStop()
         HILOG_INFO("The service extension connection is not disconnected.");
     }
     HILOG_INFO("%{public}s end.", __func__);
+    const std::string abilityName = abilityInfo_->name.c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, SERVICE_EXTENSION_ONSTOP, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
 sptr<IRemoteObject> JsServiceExtension::OnConnect(const AAFwk::Want &want)
@@ -168,6 +178,8 @@ sptr<IRemoteObject> JsServiceExtension::OnConnect(const AAFwk::Want &want)
     if (remoteObj == nullptr) {
         HILOG_ERROR("remoteObj nullptr.");
     }
+    const std::string abilityName = abilityInfo_->name.c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, SERVICE_EXTENSION_ONCONNECT, AAFWK::HiSysEventType::BEHAVIOR);
     return remoteObj;
 }
 
@@ -200,6 +212,8 @@ void JsServiceExtension::OnDisconnect(const AAFwk::Want &want)
     }
     nativeEngine->CallFunction(value, method, argv, ARGC_ONE);
     HILOG_INFO("%{public}s end.", __func__);
+    const std::string abilityName = abilityInfo_->name.c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, SERVICE_EXTENSION_ONDISCONNECT, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
 void JsServiceExtension::OnCommand(const AAFwk::Want &want, bool restart, int startId)
@@ -221,6 +235,8 @@ void JsServiceExtension::OnCommand(const AAFwk::Want &want, bool restart, int st
     NativeValue* argv[] = {nativeWant, nativeStartId};
     CallObjectMethod("onRequest", argv, ARGC_TWO);
     HILOG_INFO("%{public}s end.", __func__);
+    const std::string abilityName = abilityInfo_->name.c_str();
+    AAFWK::EventReport::SendHiSysEvent(abilityName, SERVICE_EXTENSION_ONREQUEST, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
 NativeValue* JsServiceExtension::CallObjectMethod(const char* name, NativeValue* const* argv, size_t argc)
