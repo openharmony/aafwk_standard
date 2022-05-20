@@ -43,6 +43,8 @@ ohos_unittest("AmsRecentAppListTest") {
   ]
 
   sources += [ "ams_recent_app_list_test.cpp" ]
+
+  configs = [ "${services_path}/appmgr/test:appmgr_test_config" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
@@ -56,6 +58,7 @@ ohos_unittest("AmsRecentAppListTest") {
     "${base_path}:want",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
+    "${services_path}/appmgr:libappms",
     "${services_path}/appmgr/test:appmgr_test_source",
     "${services_path}/common:perm_verification",
   ]
