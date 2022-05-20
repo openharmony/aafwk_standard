@@ -92,6 +92,8 @@ FormMgrStub::FormMgrStub()
         &FormMgrStub::HandleGetFormsInfoByModule;
     memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_UPDATE_ROUTER_ACTION)] =
         &FormMgrStub::HandleUpdateRouterAction;
+    memberFuncMap_[static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_ROUTER_EVENT)] =
+        &FormMgrStub::HandleRouterEvent;
 }
 
 FormMgrStub::~FormMgrStub()
@@ -425,6 +427,27 @@ int32_t FormMgrStub::HandleMessageEvent(MessageParcel &data, MessageParcel &repl
     }
 
     int32_t result = MessageEvent(formId, *want, client);
+    reply.WriteInt32(result);
+    return result;
+}
+
+/**
+ * @brief Handle RouterEvent message.
+ * @param data input param.
+ * @param reply output param.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+int32_t FormMgrStub::HandleRouterEvent(MessageParcel &data, MessageParcel &reply)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    int64_t formId = data.ReadInt64();
+    std::unique_ptr<Want> want(data.ReadParcelable<Want>());
+    if (!want) {
+        HILOG_ERROR("%{public}s, failed to ReadParcelable<Want>", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    int32_t result = RouterEvent(formId, *want);
     reply.WriteInt32(result);
     return result;
 }
