@@ -56,6 +56,7 @@ public:
     void RemoveTask(const std::string& name);
     NativeValue* SetCallbackTimer(NativeEngine& engine, NativeCallbackInfo& info, bool isInterval);
     NativeValue* ClearCallbackTimer(NativeEngine& engine, NativeCallbackInfo& info);
+    void DumpHeapSnapshot(bool isVmMode, DumpFormat dumpFormat, bool isPrivate) override;
     std::string BuildNativeAndJsBackStackTrace() override;
 
     virtual bool RunScript(const std::string& path);

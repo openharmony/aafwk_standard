@@ -1527,7 +1527,7 @@ void MainThread::HandleDumpHeap(bool isPrivate)
     HILOG_INFO("Dump heap start.");
     if (applicationForAnr_ != nullptr && applicationForAnr_->GetRuntime() != nullptr) {
         HILOG_INFO("Send dump heap to ark start.");
-        applicationForAnr_->GetRuntime()->DumpHeapSnapshot(true, 0, isPrivate);
+        applicationForAnr_->GetRuntime()->DumpHeapSnapshot(true, DumpFormat::JSON, isPrivate);
     }
 }
 
