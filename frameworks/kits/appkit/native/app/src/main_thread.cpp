@@ -753,6 +753,7 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     }
 
     std::string colormode = config.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_COLORMODE);
+    HILOG_INFO("colormode is %{public}s.", colormode.c_str());
     resConfig->SetColorMode(ConvertColorMode(colormode));
 #endif
     resourceManager->UpdateResConfig(*resConfig);
