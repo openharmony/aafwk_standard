@@ -19,6 +19,7 @@ class AbilityStage {
     onAcceptWant(want) {
         console.log('onAcceptWant, want:' + want.abilityName);
     }
+    onConfigurationUpdated(config) {}
 }
 
 export default AbilityStage
