@@ -51,7 +51,7 @@ const std::string ContextImpl::CONTEXT_DATABASE("database");
 const std::string ContextImpl::CONTEXT_TEMP("/temp");
 const std::string ContextImpl::CONTEXT_FILES("/files");
 const std::string ContextImpl::CONTEXT_HAPS("/haps");
-const std::string ContextImpl::CONTEXT_ELS[] = {"el1", "el2", "el3", "el4"};
+const std::string ContextImpl::CONTEXT_ELS[] = {"el1", "el2"};
 
 std::string ContextImpl::GetBundleName() const
 {
