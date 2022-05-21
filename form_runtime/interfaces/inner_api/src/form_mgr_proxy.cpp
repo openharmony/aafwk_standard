@@ -212,6 +212,124 @@ int FormMgrProxy::SetNextRefreshTime(const int64_t formId, const int64_t nextTim
     }
     return reply.ReadInt32();
 }
+
+/**
+* @brief Add the form info.
+*
+* @param formInfo Indicates the form info to be added.
+* @return Returns ERR_OK on success, others on failure.
+*/
+ErrCode FormMgrProxy::AddFormInfo(FormInfo &formInfo)
+{
+    MessageParcel data;
+    MessageParcel reply;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteParcelable(&formInfo)) {
+        HILOG_ERROR("%{public}s, failed to write formInfo", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    MessageOption option;
+    int32_t error = Remote()->SendRequest(
+        static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_ADD_FORM_INFO),
+        data,
+        reply,
+        option);
+    if (error != ERR_OK) {
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+        return ERR_APPEXECFWK_FORM_SEND_FMS_MSG;
+    }
+    return reply.ReadInt32();
+}
+
+/**
+ * @brief Remove the specified form info.
+ *
+ * @param moduleName Indicates the module name of the dynamic form info to be removed.
+ * @param formName Indicates the form name of the dynamic form info to be removed.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormMgrProxy::RemoveFormInfo(const std::string &moduleName, const std::string &formName)
+{
+    MessageParcel data;
+    MessageParcel reply;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteString(moduleName)) {
+        HILOG_ERROR("%{public}s, failed to write moduleName", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteString(formName)) {
+        HILOG_ERROR("%{public}s, failed to write formName", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+
+    MessageOption option;
+    int32_t error = Remote()->SendRequest(
+        static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_REMOVE_FORM_INFO),
+        data,
+        reply,
+        option);
+    if (error != ERR_OK) {
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+        return ERR_APPEXECFWK_FORM_SEND_FMS_MSG;
+    }
+    return reply.ReadInt32();
+}
+
+/**
+ * @brief Request to publish a form to the form host.
+ *
+ * @param want The want of the form to publish.
+ * @param withFormBindingData Indicates whether the formBindingData is carried with.
+ * @param formBindingData Indicates the form data.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormMgrProxy::RequestPublishForm(Want &want, bool withFormBindingData,
+                                         std::unique_ptr<FormProviderData> &formBindingData)
+{
+    MessageParcel data;
+    MessageParcel reply;
+
+    if (!WriteInterfaceToken(data)) {
+        HILOG_ERROR("%{public}s, failed to write interface token", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("%{public}s, failed to write want", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (!data.WriteBool(withFormBindingData)) {
+        HILOG_ERROR("%{public}s, failed to write withFormBindingData", __func__);
+        return ERR_APPEXECFWK_PARCEL_ERROR;
+    }
+    if (withFormBindingData) {
+        if (!data.WriteParcelable(formBindingData.get())) {
+            HILOG_ERROR("%{public}s, failed to write formBindingData", __func__);
+            return ERR_APPEXECFWK_PARCEL_ERROR;
+        }
+    }
+
+    MessageOption option;
+    int32_t error = Remote()->SendRequest(
+        static_cast<uint32_t>(IFormMgr::Message::FORM_MGR_REQUEST_PUBLISH_FORM),
+        data,
+        reply,
+        option);
+    if (error != ERR_OK) {
+        HILOG_ERROR("%{public}s, failed to SendRequest: %{public}d", __func__, error);
+        return ERR_APPEXECFWK_FORM_SEND_FMS_MSG;
+    }
+    return reply.ReadInt32();
+}
+
 /**
  * @brief Lifecycle update.
  * @param formIds The Id of the forms.

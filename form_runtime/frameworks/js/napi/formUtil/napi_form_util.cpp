@@ -369,3 +369,17 @@ napi_value RetErrMsg(AsyncErrMsgCallbackInfo* asyncCallbackInfo)
         return promise;
     }
 }
+
+AsyncErrMsgCallbackInfo *InitErrMsg(napi_env env, int32_t code, int32_t type, napi_value callbackValue)
+{
+    auto *asyncErrorInfo = new AsyncErrMsgCallbackInfo {
+        .env = env,
+        .asyncWork = nullptr,
+        .deferred = nullptr,
+        .callback = nullptr,
+        .callbackValue = callbackValue,
+        .code = code,
+        .type = type
+    };
+    return asyncErrorInfo;
+}
