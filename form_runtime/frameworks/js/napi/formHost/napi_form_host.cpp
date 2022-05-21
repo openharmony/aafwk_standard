@@ -224,6 +224,25 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
     HILOG_DEBUG("%{public}s, updateEnabled=%{public}d.", __func__, formInfo.updateEnabled);
     napi_set_named_property(env, result, "updateEnabled", updateEnabled);
 
+    // isStatic
+    napi_value isStatic;
+    napi_get_boolean(env, formInfo.isStatic, &isStatic);
+    HILOG_DEBUG("%{public}s, isStatic=%{public}d.", __func__, formInfo.isStatic);
+    napi_set_named_property(env, result, "isStatic", isStatic);
+
+    // window
+    napi_value formWindowObject = nullptr;
+    napi_create_object(env, &formWindowObject);
+    napi_value autoDesignWidth;
+    napi_get_boolean(env, formInfo.window.autoDesignWidth, &autoDesignWidth);
+    HILOG_DEBUG("%{public}s, window.autoDesignWidth=%{public}d.", __func__, formInfo.window.autoDesignWidth);
+    napi_set_named_property(env, formWindowObject, "autoDesignWidth", autoDesignWidth);
+    napi_value designWidth;
+    napi_create_int32(env, formInfo.window.designWidth, &designWidth);
+    HILOG_DEBUG("%{public}s, window.designWidth=%{public}d.", __func__, formInfo.window.designWidth);
+    napi_set_named_property(env, formWindowObject, "designWidth", designWidth);
+    napi_set_named_property(env, result, "window", formWindowObject);
+
     // formVisibleNotify
     napi_value formVisibleNotify;
     napi_create_int32(env, (int32_t)formInfo.formVisibleNotify, &formVisibleNotify);
@@ -300,20 +319,6 @@ static void ParseFormInfoIntoNapi(napi_env env, const FormInfo &formInfo, napi_v
     napi_set_named_property(env, result, "metaData", metaData);
 
     return;
-}
-
-static AsyncErrMsgCallbackInfo *InitErrMsg(napi_env env, int32_t code, int32_t type, napi_value callbackValue)
-{
-    auto *asyncErrorInfo = new AsyncErrMsgCallbackInfo {
-        .env = env,
-        .asyncWork = nullptr,
-        .deferred = nullptr,
-        .callback = nullptr,
-        .callbackValue = callbackValue,
-        .code = code,
-        .type = type
-    };
-    return asyncErrorInfo;
 }
 
 /**
@@ -2602,10 +2607,11 @@ napi_value AcquireFormStateCallback(napi_env env, AsyncAcquireFormStateCallbackI
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("%{public}s, napi_create_async_work complete", __func__);
             auto *asyncCallbackInfo = (AsyncAcquireFormStateCallbackInfo *) data;
-            napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
             if (asyncCallbackInfo->result != ERR_OK) {
                 FormHostClient::GetInstance()->OnAcquireState(FormState::UNKNOWN, asyncCallbackInfo->want);
             }
+            napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
+            delete asyncCallbackInfo;
         },
         (void *) asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork);
@@ -2635,10 +2641,11 @@ napi_value AcquireFormStatePromise(napi_env env, AsyncAcquireFormStateCallbackIn
         [](napi_env env, napi_status status, void *data) {
             HILOG_INFO("%{public}s, promise complete", __func__);
             auto *asyncCallbackInfo = (AsyncAcquireFormStateCallbackInfo *) data;
-            napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
             if (asyncCallbackInfo->result != ERR_OK) {
                 FormHostClient::GetInstance()->OnAcquireState(FormState::UNKNOWN, asyncCallbackInfo->want);
             }
+            napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
+            delete asyncCallbackInfo;
         },
         (void *) asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork);

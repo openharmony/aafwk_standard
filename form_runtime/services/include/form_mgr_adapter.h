@@ -147,6 +147,34 @@ public:
     int SetNextRefreshTime(const int64_t formId, const int64_t nextTime);
 
     /**
+     * @brief Add the form info.
+     *
+     * @param formInfo Indicates the form info to be added.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode AddFormInfo(FormInfo &formInfo);
+
+    /**
+     * @brief Remove the specified form info.
+     *
+     * @param moduleName Indicates the module name of the dynamic form info to be removed.
+     * @param formName Indicates the form name of the dynamic form info to be removed.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode RemoveFormInfo(const std::string &moduleName, const std::string &formName);
+
+    /**
+     * @brief Request to publish a form to the form host.
+     *
+     * @param want The want of the form to publish.
+     * @param withFormBindingData Indicates whether the formBindingData is carried with.
+     * @param formBindingData Indicates the form data.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode RequestPublishForm(Want &want, bool withFormBindingData,
+                               std::unique_ptr<FormProviderData> &formBindingData);
+
+    /**
      * @brief enable update form.
      * @param formIDs The id of the forms.
      * @param callerToken Caller ability token.

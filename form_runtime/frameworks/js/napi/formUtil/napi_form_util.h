@@ -62,5 +62,6 @@ bool ConvertStringToInt64(const std::string &strInfo, int64_t &int64Value);
 void InnerCreateCallbackRetMsg(napi_env env, int32_t code, napi_value* result);
 void InnerCreatePromiseRetMsg(napi_env env, int32_t code, napi_value* result);
 napi_value RetErrMsg(AsyncErrMsgCallbackInfo* asyncCallbackInfo);
+AsyncErrMsgCallbackInfo *InitErrMsg(napi_env env, int32_t code, int32_t type, napi_value callbackValue);
 
 #endif /* NAPI_FORM_UTIL_H_ */

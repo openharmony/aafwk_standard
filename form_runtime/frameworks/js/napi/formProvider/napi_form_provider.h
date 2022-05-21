@@ -46,8 +46,43 @@ struct AsyncUpdateFormCallbackInfo {
     int result;
 };
 
+struct AsyncRequestPublishFormCallbackInfo {
+    napi_env env = nullptr;
+    OHOS::AppExecFwk::Ability *ability = nullptr;
+    napi_async_work asyncWork = nullptr;
+    napi_deferred deferred = nullptr;
+    napi_ref callback = nullptr;
+    Want want {};
+    bool withFormBindingData = false;
+    std::unique_ptr<OHOS::AppExecFwk::FormProviderData> formProviderData = nullptr;
+    int32_t result = OHOS::ERR_OK;
+};
+
+struct AsyncAddFormInfoCallbackInfo {
+    napi_env env = nullptr;
+    OHOS::AppExecFwk::Ability *ability = nullptr;
+    napi_async_work asyncWork = nullptr;
+    napi_deferred deferred = nullptr;
+    napi_ref callback = nullptr;
+    OHOS::AppExecFwk::FormInfo formInfo {};
+    int32_t result = OHOS::ERR_OK;
+};
+
+struct AsyncRemoveFormInfoCallbackInfo {
+    napi_env env = nullptr;
+    OHOS::AppExecFwk::Ability *ability = nullptr;
+    napi_async_work asyncWork = nullptr;
+    napi_deferred deferred = nullptr;
+    napi_ref callback = nullptr;
+    std::string moduleName;
+    std::string formName;
+    int32_t result = OHOS::ERR_OK;
+};
 
 napi_value NAPI_SetFormNextRefreshTime(napi_env env, napi_callback_info info);
 napi_value NAPI_UpdateForm(napi_env env, napi_callback_info info);
+napi_value NAPI_RequestPublishForm(napi_env env, napi_callback_info info);
+napi_value NAPI_AddFormInfo(napi_env env, napi_callback_info info);
+napi_value NAPI_RemoveFormInfo(napi_env env, napi_callback_info info);
 
 #endif /* NAPI_FORM_PROVIDER_H_ */
