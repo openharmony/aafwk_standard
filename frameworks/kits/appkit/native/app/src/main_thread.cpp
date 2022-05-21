@@ -68,6 +68,8 @@ namespace {
 constexpr int32_t DELIVERY_TIME = 200;
 constexpr int32_t DISTRIBUTE_TIME = 100;
 constexpr int32_t UNSPECIFIED_USERID = -2;
+constexpr int SIGNAL_JS_HEAP = 37;
+constexpr int SIGNAL_JS_HEAP_PRIV = 38;
 
 constexpr char EVENT_KEY_PACKAGE_NAME[] = "PACKAGE_NAME";
 constexpr char EVENT_KEY_VERSION[] = "VERSION";
@@ -1502,13 +1504,13 @@ void MainThread::HandleSignal(int signal)
                 handleANRThread_ = std::make_shared<std::thread>(&MainThread::HandleScheduleANRProcess);
             }
             break;
-        case 36: {
+        case SIGNAL_JS_HEAP: {
             HILOG_INFO("Dump js heap called.");
             auto heapFunc = std::bind(&MainThread::HandleDumpHeap, false);
             dfxHandler_->PostTask(heapFunc);
             break;
         }
-        case 37: {
+        case SIGNAL_JS_HEAP_PRIV: {
             HILOG_INFO("Dump js heap private called.");
             auto privateHeapFunc = std::bind(&MainThread::HandleDumpHeap, true);
             dfxHandler_->PostTask(privateHeapFunc);
@@ -1525,7 +1527,7 @@ void MainThread::HandleDumpHeap(bool isPrivate)
     HILOG_INFO("Dump heap start.");
     if (applicationForAnr_ != nullptr && applicationForAnr_->GetRuntime() != nullptr) {
         HILOG_INFO("Send dump heap to ark start.");
-        // applicationForAnr_->GetRuntime()->DumpHeapSnapshot(0, true, isPrivate);
+        applicationForAnr_->GetRuntime()->DumpHeapSnapshot(true, 0, isPrivate);
     }
 }
 
