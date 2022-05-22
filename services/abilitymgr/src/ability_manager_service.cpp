@@ -64,9 +64,6 @@
 #include "uri_permission_manager_client.h"
 #include "xcollie/watchdog.h"
 #include "parameter.h"
-#ifdef SUPPORT_GRAPHICS
-#include "window_focus_controller.h"
-#endif
 
 using OHOS::AppExecFwk::ElementName;
 using OHOS::Security::AccessToken::AccessTokenKit;
@@ -204,14 +201,7 @@ void AbilityManagerService::OnStart()
         HILOG_ERROR("Publish AMS failed!");
         return;
     }
-#ifdef SUPPORT_GRAPHICS
-    auto windowsInstance = WindowFocusController::GetInstance();
-    if (windowsInstance) {
-        windowsInstance->SubscribeWindowFocus();
-    } else {
-        HILOG_ERROR("OnStart. windowsInstance == nullptr !");
-    }
-#endif
+
     HILOG_INFO("AMS start success.");
 }
 
@@ -3891,35 +3881,20 @@ int AbilityManagerService::FinishUserTest(
     return DelayedSingleton<AppScheduler>::GetInstance()->FinishUserTest(msg, resultCode, bundleName);
 }
 
-int AbilityManagerService::GetCurrentTopAbility(sptr<IRemoteObject> &token)
+int AbilityManagerService::GetTopAbility(sptr<IRemoteObject> &token)
 {
-    HILOG_DEBUG("enter");
-
-    auto bms = GetBundleManager();
-    CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
-
-    auto callerUid = IPCSkeleton::GetCallingUid();
-    std::string bundleName;
-    auto result = IN_PROCESS_CALL(bms->GetBundleNameForUid(callerUid, bundleName));
-    if (!result) {
-        HILOG_ERROR("GetBundleNameForUid fail");
-        return GET_BUNDLENAME_BY_UID_FAIL;
-    }
-
-    auto abilityRecord = currentMissionListManager_->GetCurrentTopAbility(bundleName);
-    if (!abilityRecord) {
-        HILOG_ERROR("Failed to get top ability");
+#ifdef SUPPORT_GRAPHICS
+    if (!wmsHandler_) {
+        HILOG_ERROR("wmsHandler_ is nullptr.");
         return ERR_INVALID_VALUE;
     }
+    wmsHandler_->GetFocusWindow(token);
 
-    token = abilityRecord->GetToken();
     if (!token) {
-        HILOG_ERROR("Failed to get token");
+        HILOG_ERROR("token is nullptr");
         return ERR_INVALID_VALUE;
     }
-
-    HILOG_INFO("bundleName : %{public}s, abilityName : %{public}s",
-        bundleName.data(), abilityRecord->GetAbilityInfo().name.data());
+#endif
     return ERR_OK;
 }
 
@@ -4399,22 +4374,27 @@ AppExecFwk::ElementName AbilityManagerService::GetTopAbility()
     HILOG_DEBUG("%{public}s start.", __func__);
     AppExecFwk::ElementName elementName = {};
 #ifdef SUPPORT_GRAPHICS
-    auto windowsInstance = WindowFocusController::GetInstance();
-    if (windowsInstance) {
-        windowsInstance->GetTopAbility(elementName);
-    } else {
-        HILOG_ERROR("OnStart. windowsInstance == nullptr !");
+    sptr<IRemoteObject> token;
+    int ret = GetTopAbility(token);
+    if (ret) {
+        return elementName;
     }
-    auto bundleName = elementName.GetBundleName();
-    auto abilityName = elementName.GetAbilityName();
-    HILOG_DEBUG("BundleName is %{public}s, AbilityName is %{public}s", bundleName.c_str(), abilityName.c_str());
+    if (!token) {
+        HILOG_ERROR("token is nullptr");
+        return elementName;
+    }
+    auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    if (abilityRecord == nullptr) {
+        HILOG_ERROR("%{public}s abilityRecord is null.", __func__);
+        return elementName;
+    }
+    elementName = abilityRecord->GetWant().GetElement();
     bool isDeviceEmpty = elementName.GetDeviceID().empty();
     std::string localDeviceId;
     bool hasLocalDeviceId = GetLocalDeviceId(localDeviceId);
     if (isDeviceEmpty && hasLocalDeviceId) {
         elementName.SetDeviceID(localDeviceId);
     }
-    HILOG_DEBUG("%{public}s end.", __func__);
 #endif
     return elementName;
 }

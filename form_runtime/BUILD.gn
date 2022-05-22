@@ -27,7 +27,6 @@ ohos_shared_library("libfms") {
   include_dirs = [
     "${services_path}/common:perm_verification",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
     "${kits_path}/appkit/native/ability_runtime",
   ]
   sources = [
@@ -224,11 +223,11 @@ ohos_shared_library("form_manager") {
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "native_appdatamgr:native_appdatafwk",
-    "native_appdatamgr:native_dataability",
-    "native_appdatamgr:native_rdb",
+    "relational_store:native_appdatafwk",
+    "relational_store:native_rdb",
     "utils_base:utils",
   ]
 

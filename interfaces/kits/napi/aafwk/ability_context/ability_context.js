@@ -89,6 +89,10 @@ class AbilityContext extends Context {
         return this.__context_impl__.terminateSelf(callback)
     }
 
+    isTerminating() {
+        return this.__context_impl__.isTerminating()
+    }
+
     terminateSelfWithResult(abilityResult, callback) {
         return this.__context_impl__.terminateSelfWithResult(abilityResult, callback)
     }

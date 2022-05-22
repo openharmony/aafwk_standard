@@ -22,7 +22,6 @@ ohos_unittest("FmsFormTimerMgrTest") {
   sources = [ "fms_form_timer_mgr_test.cpp" ]
 
   include_dirs = [
-    "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "${appexecfwk_inner_api_path}/appexecfwk_base/include/",
@@ -37,7 +36,6 @@ ohos_unittest("FmsFormTimerMgrTest") {
   }
   deps = [
     "${aafwk_path}/frameworks/kits/wantagent:wantagent_innerkits",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${form_runtime_path}:fms_target",
     "//base/miscservices/time/services:time_service",
     "//third_party/googletest:gmock_main",

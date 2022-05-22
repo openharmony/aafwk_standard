@@ -19,10 +19,7 @@ config("formmgr_test_config") {
     "mock/include",
   ]
 
-  configs = [
-    "${form_runtime_path}:formmgr_config",
-    "${appexecfwk_path}/common:appexecfwk_common_config",
-  ]
+  configs = [ "${form_runtime_path}:formmgr_config" ]
 }
 
 public_configs = [
@@ -31,7 +28,6 @@ public_configs = [
 ]
 
 public_deps = [
-  "${appexecfwk_path}/common:libappexecfwk_common",
   "//third_party/googletest:gmock_main",
   "//third_party/googletest:gtest_main",
   "//utils/native/base:utils",
@@ -63,4 +59,10 @@ group("unittest") {
     "unittest/fms_form_sys_event_receiver_test:unittest",
     "unittest/fms_form_timer_mgr_test:unittest",
   ]
+}
+
+group("systemtest") {
+  testonly = true
+
+  deps = [ "systemtest:systemtest" ]
 }

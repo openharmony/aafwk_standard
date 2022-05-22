@@ -465,13 +465,13 @@ public:
     virtual int FinishUserTest(
         const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override;
 
-    /**
-     * GetCurrentTopAbility, get the token of current top ability.
+     /**
+     * GetTopAbility, get the token of top ability.
      *
-     * @param token, the token of current top ability.
+     * @param token, the token of top ability.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) override;
+    virtual int GetTopAbility(sptr<IRemoteObject> &token) override;
 
     /**
      * The delegator calls this interface to move the ability to the foreground.

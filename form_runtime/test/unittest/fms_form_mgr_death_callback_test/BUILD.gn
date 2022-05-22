@@ -32,7 +32,6 @@ ohos_unittest("FmsFormMgrDeathCallbackTest") {
     "//third_party/zlib/contrib/minizip",
     "//third_party/zlib",
     "${appexecfwk_innerkits_path}/libeventhandler/include",
-    "${appexecfwk_path}/common/log/include/",
     "${aafwk_path}/services/formmgr/include",
     "${appexecfwk_path}/services/bundlemgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
@@ -54,7 +53,6 @@ ohos_unittest("FmsFormMgrDeathCallbackTest") {
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
     "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
     "${base_path}:base",
     "${base_path}:configuration",

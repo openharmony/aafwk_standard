@@ -275,7 +275,7 @@ public:
         return 0;
     }
 
-    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) override
+    virtual int GetTopAbility(sptr<IRemoteObject> &token) override
     {
         return 0;
     }
@@ -604,7 +604,7 @@ public:
         return 0;
     }
 
-    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) override
+    virtual int GetTopAbility(sptr<IRemoteObject> &token) override
     {
         return 0;
     }
