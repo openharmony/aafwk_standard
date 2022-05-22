@@ -141,6 +141,24 @@ public:
         return 0;
     }
 
+    /**
+     * Stop extension ability with want, send want to ability manager service.
+     *
+     * @param want, the want of the ability to stop.
+     * @param callerToken, caller ability token.
+     * @param userId, Designation User ID.
+     * @param extensionType If an ExtensionAbilityType is set, only extension of that type can be stopped.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StopExtensionAbility(
+        const Want& want,
+        const sptr<IRemoteObject>& callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        AppExecFwk::ExtensionAbilityType extensionType = AppExecFwk::ExtensionAbilityType::UNSPECIFIED)
+    {
+        return 0;
+    }
+
     virtual int GetAppMemorySize()
     {
         return 0;
@@ -807,6 +825,9 @@ public:
 
         // start extension ability (60)
         START_EXTENSION_ABILITY,
+
+        // stop extension ability (61)
+        STOP_EXTENSION_ABILITY,
 
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)
