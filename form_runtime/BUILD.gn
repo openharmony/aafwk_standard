@@ -132,7 +132,6 @@ config("fmskit_public_config") {
   include_dirs = [
     "interfaces/kits/native/include",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/test/systemtest/common/fms/common/include",
     "${form_runtime_path}/interfaces/inner_api/include",
     "${appexecfwk_inner_api_path}/appexecfwk_base/include",
     "${base_inner_api_path}/want/include",
