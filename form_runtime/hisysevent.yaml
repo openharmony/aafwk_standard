@@ -11,7 +11,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-domain: ABILITY
+domain: AAFWK
 
 ADD_FORM:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
