@@ -650,6 +650,11 @@ NativeValue* JsRuntime::ClearCallbackTimer(NativeEngine& engine, NativeCallbackI
     return engine.CreateUndefined();
 }
 
+void JsRuntime::DumpHeapSnapshot(bool isPrivate)
+{
+    nativeEngine_->DumpHeapSnapshot(true, DumpFormat::JSON, isPrivate);
+}
+
 std::string JsRuntime::BuildNativeAndJsBackStackTrace()
 {
     std::string straceStr = "";

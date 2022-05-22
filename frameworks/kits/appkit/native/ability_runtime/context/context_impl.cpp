@@ -306,11 +306,9 @@ void ContextImpl::InitResourceManager(
     }
     for (auto moduleResPath : moduleResPaths) {
         if (!moduleResPath.empty()) {
-            HILOG_ERROR("ContextImpl::InitResourceManager length: %{public}zu, moduleResPath: %{public}s",
-                moduleResPath.length(),
-                moduleResPath.c_str());
             if (!resourceManager->AddResource(moduleResPath.c_str())) {
-                HILOG_ERROR("ContextImpl::InitResourceManager AddResource failed");
+                HILOG_ERROR("ContextImpl::InitResourceManager AddResource fail, moduleResPath: %{public}s",
+                    moduleResPath.c_str());
             }
         }
     }

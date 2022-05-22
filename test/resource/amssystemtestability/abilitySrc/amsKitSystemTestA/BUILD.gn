@@ -11,9 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import("//build/ohos.gni")
-SUBDEMOSYSTEM_DIR = "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/amsKitSystemTestA"
-SUBST_TOOLS_DIR =
-    "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/tools"
+SUBDEMOSYSTEM_DIR =
+    "test/resource/amssystemtestability/abilitySrc/amsKitSystemTestA"
+SUBST_TOOLS_DIR = "test/resource/amssystemtestability/abilitySrc/tools"
 config("amsKitSystemTestAConfig") {
   visibility = [ ":*" ]
   include_dirs = [
@@ -26,7 +26,6 @@ config("amsKitSystemTestAConfig") {
     "${services_path}/bundlemgr/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${common_path}/log/include",
-    "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/common",
     "${SUBST_TOOLS_DIR}/include",
     "//third_party/jsoncpp/include",
   ]
