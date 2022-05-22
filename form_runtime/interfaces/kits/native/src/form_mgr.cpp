@@ -83,7 +83,7 @@ int FormMgr::AddForm(
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName().c_str();
+    const std::string abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, ADD_FORM, AAFWK::HiSysEventType::BEHAVIOR);
     return remoteProxy_->AddForm(formId, want, callerToken, formInfo);
 }
@@ -162,7 +162,7 @@ int FormMgr::RequestForm(const int64_t formId, const sptr<IRemoteObject> &caller
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName().c_str();
+    const std::string abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, REQUEST_FORM, AAFWK::HiSysEventType::BEHAVIOR);
     return remoteProxy_->RequestForm(formId, callerToken, want);
 }
@@ -285,7 +285,7 @@ int FormMgr::MessageEvent(const int64_t formId, const Want &want, const sptr<IRe
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName().c_str();
+    const std::string abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, MESSAGE_EVENT_FORM, AAFWK::HiSysEventType::BEHAVIOR);
     return remoteProxy_->MessageEvent(formId, want, callerToken);
 }
@@ -304,7 +304,7 @@ int FormMgr::RouterEvent(const int64_t formId, Want &want)
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName().c_str();
+    const std::string abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, ROUTE_EVENT_FORM, AAFWK::HiSysEventType::BEHAVIOR);
     return remoteProxy_->RouterEvent(formId, want);
 }
@@ -637,7 +637,7 @@ int FormMgr::AcquireFormState(const Want &want, const sptr<IRemoteObject> &calle
         HILOG_ERROR("%{public}s failed, errCode: %{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName().c_str();
+    const std::string abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, ACQUIREFORMSTATE_FORM, AAFWK::HiSysEventType::BEHAVIOR);
     return remoteProxy_->AcquireFormState(want, callerToken, stateInfo);
 }

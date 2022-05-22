@@ -159,7 +159,7 @@ OHOS::AppExecFwk::FormProviderInfo JsFormExtension::OnCreate(const OHOS::AAFwk::
     }
     formProviderInfo.SetFormData(formData);
     HILOG_INFO("%{public}s called end.", __func__);
-    const std::string abilityName = want.GetElement().GetAbilityName().c_str();
+    const std::string abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, FORM_LIFECYCLE_ONCREATE, AAFWK::HiSysEventType::BEHAVIOR);
     return formProviderInfo;
 }
@@ -368,7 +368,7 @@ FormState JsFormExtension::OnAcquireFormState(const Want &want)
     } else {
         return (AppExecFwk::FormState) state;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName().c_str();
+    const std::string abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, FORM_LIFECYCLE_ONACQUIREFORMSTATE, AAFWK::HiSysEventType::BEHAVIOR);
 }
 } // namespace AbilityRuntime
