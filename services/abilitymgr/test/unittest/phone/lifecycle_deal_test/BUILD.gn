@@ -61,7 +61,6 @@ ohos_unittest("lifecycle_deal_test") {
     "access_token:libaccesstoken_sdk",
     "bundle_framework:appexecfwk_core",
     "hiviewdfx_hilog_native:libhilog",
-    "hitrace_native:hitrace_meter",
     "ipc:ipc_core",
   ]
 }

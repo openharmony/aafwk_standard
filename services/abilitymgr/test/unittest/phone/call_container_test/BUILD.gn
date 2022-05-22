@@ -54,7 +54,6 @@ ohos_unittest("call_container_test") {
     "ability_base:zuri",
     "common_event_service:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
-    "hitrace_native:hitrace_meter",
     "ipc:ipc_core",
   ]
 }
