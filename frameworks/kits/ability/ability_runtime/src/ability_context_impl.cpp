@@ -187,12 +187,31 @@ ErrCode AbilityContextImpl::StartAbilityForResultWithAccount(
     return err;
 }
 
-ErrCode AbilityContextImpl::StartServiceExtensionAbility(const AAFwk::Want &want, int32_t userId)
+ErrCode AbilityContextImpl::StartServiceExtensionAbility(const AAFwk::Want &want, int32_t accountId)
 {
     HILOG_DEBUG("%{public}s begin.", __func__);
+    HILOG_INFO(
+        "%{public}s begin. bundleName=%{public}s, abilityName=%{public}s, accountId=%{public}d",
+        __func__, want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), accountId);
     ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StartExtensionAbility(
-        want, token_, userId, AppExecFwk::ExtensionAbilityType::SERVICE);
-    HILOG_INFO("%{public}s end. ret=%{public}d", __func__, err);
+        want, token_, accountId, AppExecFwk::ExtensionAbilityType::SERVICE);
+    if (err != ERR_OK) {
+        HILOG_ERROR("AbilityContextImpl::StartServiceExtensionAbility is failed %{public}d", err);
+    }
+    return err;
+}
+
+ErrCode AbilityContextImpl::StopServiceExtensionAbility(const AAFwk::Want& want, int32_t accountId)
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    HILOG_INFO(
+        "%{public}s begin. bundleName=%{public}s, abilityName=%{public}s, accountId=%{public}d",
+        __func__, want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), accountId);
+    ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->StopExtensionAbility(
+        want, token_, accountId, AppExecFwk::ExtensionAbilityType::SERVICE);
+    if (err != ERR_OK) {
+        HILOG_ERROR("AbilityContextImpl::StopServiceExtensionAbility is failed %{public}d", err);
+    }
     return err;
 }
 
