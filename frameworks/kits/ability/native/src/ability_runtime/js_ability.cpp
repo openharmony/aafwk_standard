@@ -173,7 +173,7 @@ void JsAbility::OnStart(const Want &want)
         delegator->PostPerformStart(CreateADelegatorAbilityProperty());
     }
     HILOG_INFO("OnStart end, ability is %{public}s.", GetAbilityName().c_str());
-    const std::string abilityName = GetAbilityName().c_str();
+    const std::string abilityName = GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONSTART, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
@@ -200,7 +200,7 @@ void JsAbility::OnStop()
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityDestroy(jsAbilityObj_);
     }
-    const std::string abilityName = GetAbilityName().c_str();
+    const std::string abilityName = GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONSTOP, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
@@ -230,7 +230,7 @@ void JsAbility::OnSceneCreated()
     }
 
     HILOG_INFO("OnSceneCreated end, ability is %{public}s.", GetAbilityName().c_str());
-    const std::string abilityName = GetAbilityName().c_str();
+    const std::string abilityName = GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_WINDOWSTAGE_CREATE, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
@@ -271,7 +271,7 @@ void JsAbility::onSceneDestroyed()
         applicationContext->DispatchOnAbilityWindowStageDestroy(jsAbilityObj_);
     }
     HILOG_INFO("onSceneDestroyed end, ability is %{public}s.", GetAbilityName().c_str());
-    const std::string abilityName = GetAbilityName().c_str();
+    const std::string abilityName = GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_WINDOWSTAGE_DESTORY, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
@@ -309,7 +309,7 @@ void JsAbility::OnForeground(const Want &want)
         applicationContext->DispatchOnAbilityForeground(jsAbilityObj_);
     }
     HILOG_INFO("OnForeground end, ability is %{public}s.", GetAbilityName().c_str());
-    const std::string abilityName = GetAbilityName().c_str();
+    const std::string abilityName = GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONFOREGROUND, AAFWK::HiSysEventType::BEHAVIOR);
 }
 
@@ -330,7 +330,7 @@ void JsAbility::OnBackground()
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityBackground(jsAbilityObj_);
     }
-    const std::string abilityName = GetAbilityName().c_str();
+    const std::string abilityName = GetAbilityName();
     AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONBACKGROUND, AAFWK::HiSysEventType::BEHAVIOR);
 }
 #endif
