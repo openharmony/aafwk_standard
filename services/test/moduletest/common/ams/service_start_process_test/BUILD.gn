@@ -27,7 +27,6 @@ ohos_moduletest("AmsServiceStartModuleTest") {
   ]
 
   deps = [
-    "${services_path}/appmgr:libappms",
     "${services_path}/common:perm_verification",
     "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
   ]

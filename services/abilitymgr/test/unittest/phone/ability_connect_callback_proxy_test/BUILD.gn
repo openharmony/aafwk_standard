@@ -59,7 +59,6 @@ ohos_unittest("ability_connect_callback_proxy_test") {
     "access_token:libaccesstoken_sdk",
     "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
-    "hitrace_native:hitrace_meter",
     "ipc:ipc_core",
     "relational_store:native_appdatafwk",
     "relational_store:native_rdb",

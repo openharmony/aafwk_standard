@@ -26,7 +26,6 @@
 #include "permission_verification.h"
 #include "sa_mgr_client.h"
 #include "system_ability_definition.h"
-#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -149,7 +148,6 @@ static sptr<AppExecFwk::IBundleMgr> GetBundleManager()
 
 [[maybe_unused]] static int JudgeAbilityVisibleControl(const AppExecFwk::AbilityInfo &abilityInfo, int callerUid = -1)
 {
-    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Judge ability visible begin.");
     if (!abilityInfo.visible) {
         HILOG_INFO("Ability visible is false.");

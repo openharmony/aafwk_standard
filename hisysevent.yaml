@@ -1,4 +1,4 @@
-#  Copyright (c) 2021 Huawei Device Co., Ltd.
+#  Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
@@ -11,7 +11,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-domain: AAFWK
+domain: ABILITY
 
 LIFECYCLE_TIMEOUT:
   __BASE: {type: FAULT, level: CRITICAL, tag: STABILITY, desc: application freeze}
@@ -47,171 +47,107 @@ THREAD_BLOCK_6S:
   MSG: {type: STRING, desc: application event message}
   
 START_ABILITY_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for ability}
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: start ability error}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 TERMINATE_ABILITY_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-  
-START_ABILITY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-DO_FOREGROUND_ABILITY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-DO_BACKGROUND_ABILITY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-TERMINATE_ABILITY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_ONSTART:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_ONSTOP:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_ONFOREGROUND:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_ONBACKGROUND:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_WINDOWSTAGE_CREATE:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_WINDOWSTAGE_DESTORY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: callback for ability}
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: terminate ability error}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 START_EXTENSION_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for extensionAbility}
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: start extensionAbility error}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 STOP_EXTENSION_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for extensionAbility}
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: stop extensionAbility error}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 CONNECT_SERVICE_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for serviceExtensionAbility}
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: connnect serviceExtensionAbility error}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 DISCONNECT_SERVICE_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: entrance error for serviceExtensionAbility}
+  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: disconnect serviceExtensionAbility error}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+START_ABILITY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: start ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+DO_FOREGROUND_ABILITY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: foreground ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+DO_BACKGROUND_ABILITY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: background ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+TERMINATE_ABILITY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: terminate ability}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONSTART:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle onstart}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONSTOP:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle onstop}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONFOREGROUND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle onforeground}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_ONBACKGROUND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle onbackground}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_WINDOWSTAGE_CREATE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle windowstage create}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+ABILITY_WINDOWSTAGE_DESTORY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle windwostage destory}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 START_SERVICE_EXTENSION:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for serviceExtensionAbility}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: start serviceExtensionAbility}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 STOP_SERVICE_EXTENSION:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for serviceExtensionAbility}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: stop serviceExtensionAbility}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 CONNECT_SERVICE_EXTENSION:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for serviceExtensionAbility}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: connect serviceExtensionAbility}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 DISCONNECT_SERVICE_EXTENSION:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: entrance for serviceExtensionAbility}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: disconnect serviceExtensionAbility}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 SERVICE_EXTENSION_ONSTART:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle callback}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle onstart}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 SERVICE_EXTENSION_ONSTOP:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle callback}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle onstop}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 SERVICE_EXTENSION_ONCONNECT:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle callback}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle onconnect}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 SERVICE_EXTENSION_ONDISCONNECT:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle callback}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle ondisconnect}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 SERVICE_EXTENSION_ONREQUEST:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle callback}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ADD_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-REQUEST_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-DELETE_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-CASTTEMP_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ACQUIREFORMSTATE_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-MESSAGE_EVENT_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ROUTE_EVENT_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-RELEASE_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-DELETE_INVALID_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-SET_NEXT_REFRESH_TIME_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-FORM_ONCREATE:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-FORM_ONDESTROY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-FORM_ONUPDATE:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-FORM_EVENT:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-FORM_ONCASTTEMPFORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-FORM_ONACQUIREFORMSTATE:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form lifecycle event}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle onrequest}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 APP_ATTACH:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: application event}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: attach app}
   NAME: {type: STRING, desc: application name}
   VERSION_NAME: {type: STRING, desc: version name}
   VERSION_CODE: {type: INT32, desc: version code}
@@ -219,7 +155,7 @@ APP_ATTACH:
   TIME_STAMP: {type: INT32, desc: time stamp}
 
 APP_LAUNCH:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: application event}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: launch app}
   NAME: {type: STRING, desc: application name}
   VERSION_NAME: {type: STRING, desc: version name}
   VERSION_CODE: {type: INT32, desc: version code}
@@ -227,7 +163,7 @@ APP_LAUNCH:
   TIME_STAMP: {type: INT32, desc: time stamp}
 
 APP_FOREGROUND:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: application event}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: foreground app}
   NAME: {type: STRING, desc: application name}
   VERSION_NAME: {type: STRING, desc: version name}
   VERSION_CODE: {type: INT32, desc: version code}
@@ -235,7 +171,7 @@ APP_FOREGROUND:
   TIME_STAMP: {type: INT32, desc: time stamp}
 
 APP_BACKGROUND:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: application event}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: background app}
   NAME: {type: STRING, desc: application name}
   VERSION_NAME: {type: STRING, desc: version name}
   VERSION_CODE: {type: INT32, desc: version code}
@@ -243,7 +179,7 @@ APP_BACKGROUND:
   TIME_STAMP: {type: INT32, desc: time stamp}
 
 APP_TERMINATE:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: application event}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: terminate app}
   NAME: {type: STRING, desc: application name}
   VERSION_NAME: {type: STRING, desc: version name}
   VERSION_CODE: {type: INT32, desc: version code}
