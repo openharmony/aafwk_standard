@@ -17,6 +17,10 @@
 #define FOUNDATION_AAFWK_SERVICES_ABILITYMGR_INCLUDE_INNER_EVENT_REPORT_H
 
 #include <string>
+#include <unordered_map>
+
+#include "application_info.h"
+#include "want.h"
 
 namespace OHOS {
 namespace AAFWK {
@@ -28,6 +32,8 @@ enum HiSysEventType {
 };
 class EventReport {
 public:
+    static void AppEvent(const std::shared_ptr<AppExecFwk::ApplicationInfo> &applicationInfo,
+        const std::string &pid, const std::string &eventName, HiSysEventType type);
     static void SendHiSysEvent(const std::string &abilityName, const std::string &eventName,
         HiSysEventType type);
     template<typename... Types>
