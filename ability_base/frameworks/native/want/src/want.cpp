@@ -188,6 +188,7 @@ Want &Want::SetElementName(const std::string &deviceId, const std::string &bundl
     operation_.SetBundleName(bundleName);
     operation_.SetAbilityName(abilityName);
     operation_.SetModuleName(moduleName);
+    SetParam(PARAM_MODULE_NAME, moduleName);
     return *this;
 }
 
@@ -202,6 +203,7 @@ Want &Want::SetElement(const OHOS::AppExecFwk::ElementName &element)
     operation_.SetBundleName(element.GetBundleName());
     operation_.SetAbilityName(element.GetAbilityName());
     operation_.SetModuleName(element.GetModuleName());
+    SetParam(PARAM_MODULE_NAME, element.GetModuleName());
     return *this;
 }
 
@@ -1770,6 +1772,7 @@ bool Want::ParseUriInternal(const std::string &content, ElementName &element, Wa
         }
         std::string moduleName = want.GetStringParam(PARAM_MODULE_NAME);
         want.SetModuleName(moduleName);
+        element.SetModuleName(moduleName);
     }
 
     return true;
@@ -2055,6 +2058,7 @@ Want &Want::SetDeviceId(const std::string &deviceId)
 Want& Want::SetModuleName(const std::string &moduleName)
 {
     operation_.SetModuleName(moduleName);
+    SetParam(PARAM_MODULE_NAME, moduleName);
     return *this;
 }
 
