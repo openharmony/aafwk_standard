@@ -474,6 +474,25 @@ void AbilityManagerClient::GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &mem
     abms->GetSystemMemoryAttr(memoryInfo);
 }
 
+ErrCode AbilityManagerClient::GetAppMemorySize()
+{
+    auto abms = GetAbilityManager();
+    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    auto ret = abms->GetAppMemorySize();
+    return ret;
+}
+
+bool AbilityManagerClient::IsRamConstrainedDevice()
+{
+    auto abms = GetAbilityManager();
+    if (!abms) {
+        HILOG_ERROR("abms is nullptr.");
+        return false;
+    }
+    auto ret = abms->IsRamConstrainedDevice();
+    return ret;
+}
+
 ErrCode AbilityManagerClient::ContinueMission(const std::string &srcDeviceId, const std::string &dstDeviceId,
     int32_t missionId, const sptr<IRemoteObject> &callback, AAFwk::WantParams &wantParams)
 {
