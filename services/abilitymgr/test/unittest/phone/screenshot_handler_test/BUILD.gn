@@ -63,7 +63,6 @@ ohos_unittest("ability_screenshot_handler_test") {
     "ability_base:zuri",
     "access_token:libaccesstoken_sdk",
     "hiviewdfx_hilog_native:libhilog",
-    "hisysevent_native:libhisysevent",
     "ipc:ipc_core",
   ]
 }
