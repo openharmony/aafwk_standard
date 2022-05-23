@@ -58,6 +58,7 @@ ohos_unittest("ability_manager_client_test") {
     "access_token:libaccesstoken_sdk",
     "dsoftbus_standard:softbus_client",
     "hiviewdfx_hilog_native:libhilog",
+    "hitrace_native:hitrace_meter",
     "ipc:ipc_core",
   ]
 }
