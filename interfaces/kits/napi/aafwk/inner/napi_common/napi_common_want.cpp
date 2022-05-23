@@ -777,6 +777,33 @@ bool InnerUnwrapWantParams(napi_env env, const std::string &key, napi_value para
     return false;
 }
 
+void InnerUnwrapWantParamsNumber(napi_env env, const std::string &key, napi_value param, AAFwk::WantParams &wantParams)
+{
+    int32_t natValue32 = 0;
+    double natValueDouble = 0.0;
+    bool isReadValue32 = false;
+    bool isReadDouble = false;
+    if (napi_get_value_int32(env, param, &natValue32) == napi_ok) {
+        isReadValue32 = true;
+    }
+
+    if (napi_get_value_double(env, param, &natValueDouble) == napi_ok) {
+        isReadDouble = true;
+    }
+
+    if (isReadValue32 && isReadDouble) {
+        if (abs(natValueDouble - natValue32 * 1.0) > 0.0) {
+            wantParams.SetParam(key, AAFwk::Double::Box(natValueDouble));
+        } else {
+            wantParams.SetParam(key, AAFwk::Integer::Box(natValue32));
+        }
+    } else if (isReadValue32) {
+        wantParams.SetParam(key, AAFwk::Integer::Box(natValue32));
+    } else if (isReadDouble) {
+        wantParams.SetParam(key, AAFwk::Double::Box(natValueDouble));
+    }
+}
+
 bool BlackListFilter(const std::string &strProName)
 {
     if (strProName == Want::PARAM_RESV_WINDOW_MODE) {
@@ -832,29 +859,7 @@ bool UnwrapWantParams(napi_env env, napi_value param, AAFwk::WantParams &wantPar
                 break;
             }
             case napi_number: {
-                int32_t natValue32 = 0;
-                double natValueDouble = 0.0;
-                bool isReadValue32 = false;
-                bool isReadDouble = false;
-                if (napi_get_value_int32(env, jsProValue, &natValue32) == napi_ok) {
-                    isReadValue32 = true;
-                }
-
-                if (napi_get_value_double(env, jsProValue, &natValueDouble) == napi_ok) {
-                    isReadDouble = true;
-                }
-
-                if (isReadValue32 && isReadDouble) {
-                    if (abs(natValueDouble - natValue32 * 1.0) > 0.0) {
-                        wantParams.SetParam(strProName, AAFwk::Double::Box(natValueDouble));
-                    } else {
-                        wantParams.SetParam(strProName, AAFwk::Integer::Box(natValue32));
-                    }
-                } else if (isReadValue32) {
-                    wantParams.SetParam(strProName, AAFwk::Integer::Box(natValue32));
-                } else if (isReadDouble) {
-                    wantParams.SetParam(strProName, AAFwk::Double::Box(natValueDouble));
-                }
+                InnerUnwrapWantParamsNumber(env, strProName, jsProValue, wantParams);
                 break;
             }
             case napi_object: {
