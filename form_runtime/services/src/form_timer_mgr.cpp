@@ -28,6 +28,7 @@
 #include "form_timer_option.h"
 #include "form_util.h"
 #include "hilog_wrapper.h"
+#include "in_process_call_wrapper.h"
 #ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
 #endif // OS_ACCOUNT_PART_ENABLED
@@ -930,7 +931,7 @@ std::shared_ptr<WantAgent> FormTimerMgr::GetUpdateAtWantAgent(long updateAtTime,
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_UPDATE_AT_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
         WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, wants, nullptr);
-    return WantAgentHelper::GetWantAgent(wantAgentInfo, userId);
+    return IN_PROCESS_CALL(WantAgentHelper::GetWantAgent(wantAgentInfo, userId));
 }
 
 /**
@@ -1043,7 +1044,7 @@ std::shared_ptr<WantAgent> FormTimerMgr::GetLimiterWantAgent()
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_LIMITER_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
         WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, wants, nullptr);
-    return WantAgentHelper::GetWantAgent(wantAgentInfo);
+    return IN_PROCESS_CALL(WantAgentHelper::GetWantAgent(wantAgentInfo));
 }
 
 /**
@@ -1118,7 +1119,7 @@ std::shared_ptr<WantAgent> FormTimerMgr::GetDynamicWantAgent(int64_t nextTime, i
     wants.emplace_back(want);
     WantAgentInfo wantAgentInfo(REQUEST_DYNAMIC_CODE, WantAgentConstant::OperationType::SEND_COMMON_EVENT,
         WantAgentConstant::Flags::UPDATE_PRESENT_FLAG, wants, nullptr);
-    return WantAgentHelper::GetWantAgent(wantAgentInfo, userId);
+    return IN_PROCESS_CALL(WantAgentHelper::GetWantAgent(wantAgentInfo, userId));
 }
 
 /**
