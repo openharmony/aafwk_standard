@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -184,10 +184,16 @@ void DataObsMgrInner::AddObsDeathRecipient(const sptr<IDataAbilityObserver> &dat
         HILOG_ERROR("%{public}s this death recipient has been added.", __func__);
         return;
     } else {
+        std::weak_ptr<DataObsMgrInner> thisWeakPtr(shared_from_this());
         sptr<IRemoteObject::DeathRecipient> deathRecipient =
-            new DataObsCallbackRecipient(std::bind(&DataObsMgrInner::OnCallBackDied, this, std::placeholders::_1));
-        dataObserver->AsObject()->AddDeathRecipient(deathRecipient);
-        recipientMap_.emplace(dataObserver->AsObject(), deathRecipient);
+            new DataObsCallbackRecipient([thisWeakPtr](const wptr<IRemoteObject> &remote) {
+                auto dataObsMgrInner = thisWeakPtr.lock();
+                if (dataObsMgrInner) {
+                    dataObsMgrInner->OnCallBackDied(remote);
+                }
+            });
+            dataObserver->AsObject()->AddDeathRecipient(deathRecipient);
+            recipientMap_.emplace(dataObserver->AsObject(), deathRecipient);
     }
 }
 
