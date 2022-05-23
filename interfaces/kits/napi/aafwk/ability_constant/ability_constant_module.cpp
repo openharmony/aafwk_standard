@@ -59,6 +59,18 @@ static napi_value InitLastExitReasonObject(napi_env env)
     return object;
 }
 
+static napi_value InitOnContinueResultObject(napi_env env)
+{
+    napi_value object;
+    NAPI_CALL(env, napi_create_object(env, &object));
+
+    NAPI_CALL(env, SetEnumItem(env, object, "AGREE", ONCONTINUE_AGREE));
+    NAPI_CALL(env, SetEnumItem(env, object, "REJECT", ONCONTINUE_REJECT));
+    NAPI_CALL(env, SetEnumItem(env, object, "MISMATCH", ONCONTINUE_MISMATCH));
+
+    return object;
+}
+
 /*
  * The module initialization.
  */
@@ -70,9 +82,13 @@ static napi_value AbilityConstantInit(napi_env env, napi_value exports)
     napi_value lastExitReason = InitLastExitReasonObject(env);
     NAPI_ASSERT(env, lastExitReason != nullptr, "failed to create last exit reason object");
 
+    napi_value onContinueResult = InitOnContinueResultObject(env);
+    NAPI_ASSERT(env, onContinueResult != nullptr, "failed to create onContinue result object");
+
     napi_property_descriptor exportObjs[] = {
         DECLARE_NAPI_PROPERTY("LaunchReason", launchReason),
         DECLARE_NAPI_PROPERTY("LastExitReason", lastExitReason),
+        DECLARE_NAPI_PROPERTY("OnContinueResult", onContinueResult),
     };
     napi_status status = napi_define_properties(env, exports, sizeof(exportObjs) / sizeof(exportObjs[0]), exportObjs);
     NAPI_ASSERT(env, status == napi_ok, "failed to define properties for exports");
