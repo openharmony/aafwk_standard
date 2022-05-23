@@ -94,8 +94,14 @@ void DataAbilityHelper::AddDataAbilityDeathRecipient(const sptr<IRemoteObject> &
         token->RemoveDeathRecipient(callerDeathRecipient_);
     }
     if (callerDeathRecipient_ == nullptr) {
+        std::weak_ptr<DataAbilityHelper> thisWeakPtr(shared_from_this());
         callerDeathRecipient_ =
-            new DataAbilityDeathRecipient(std::bind(&DataAbilityHelper::OnSchedulerDied, this, std::placeholders::_1));
+            new DataAbilityDeathRecipient([thisWeakPtr](const wptr<IRemoteObject> &remote) {
+                auto dataAbilityHelper = thisWeakPtr.lock();
+                if (dataAbilityHelper) {
+                    dataAbilityHelper->OnSchedulerDied(remote);
+                }
+            });
     }
     if (token != nullptr) {
         HILOG_INFO("token AddDeathRecipient.");
