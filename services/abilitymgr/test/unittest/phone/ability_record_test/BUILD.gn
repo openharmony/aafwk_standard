@@ -110,7 +110,6 @@ ohos_unittest("ability_record_test_call") {
     "access_token:libaccesstoken_sdk",
     "common_event_service:cesfwk_innerkits",
     "hiviewdfx_hilog_native:libhilog",
-    "hisysevent_native:libhisysevent",
     "ipc:ipc_core",
   ]
 }
