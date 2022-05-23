@@ -61,7 +61,7 @@ ohos_source_set("abilityms_test_source") {
   ]
 
   include_dirs = [
-    "${appexecfwk_inner_api_path}/appexecfwk_core/include/",
+    "${bundlefwk_inner_api_path}/appexecfwk_core/include/",
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
@@ -92,10 +92,10 @@ ohos_source_set("abilityms_test_source") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
-    "${base_path}:base",
-    "${base_path}:want",
+    "${ability_base_path}:base",
+    "${ability_base_path}:want",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",

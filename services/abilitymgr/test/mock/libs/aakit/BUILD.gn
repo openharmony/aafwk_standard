@@ -18,10 +18,10 @@ config("aakit_mock_config") {
   include_dirs = [
     "${aafwk_path}/services/abilitymgr/test/mock/libs/aakit/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
-    "${base_inner_api_path}/uri/include",
+    "${ability_base_innerapi_path}/uri/include",
     "${aafwk_path}/services/abilitymgr/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_core/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_core/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include",
     "${aafwk_path}/frameworks/kits/ability/native/include/",
     "include/",
@@ -43,9 +43,9 @@ ohos_source_set("aakit_mock") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
-    "${base_path}:want",
+    "${ability_base_path}:want",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/jsoncpp:jsoncpp",

@@ -27,10 +27,10 @@ ohos_unittest("AmsAppMgrClientTest") {
   sources += [ "ams_app_mgr_client_test.cpp" ]
 
   include_dirs = [
-    "${appexecfwk_innerkits_path}/libeventhandler/include/",
-    "${base_inner_api_path}/want/include/",
-    "${base_path}/include/",
-    "${base_inner_api_path}/uri/include",
+    "${bundlefwk_innerkits_path}/libeventhandler/include/",
+    "${ability_base_innerapi_path}/want/include/",
+    "${ability_base_path}/include/",
+    "${ability_base_innerapi_path}/uri/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
     "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
     "//base/account/os_account/frameworks/common/database/include",
@@ -45,8 +45,8 @@ ohos_unittest("AmsAppMgrClientTest") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
-    "${base_path}:want",
+    "${ability_base_path}:want",
+    "${bundlefwk_path}/libs/libeventhandler:libeventhandler_target",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${services_path}/appmgr/test:appmgr_test_source",
     "${services_path}/common:perm_verification",

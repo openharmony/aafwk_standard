@@ -40,8 +40,8 @@ ohos_fuzztest("AppManagerFuzzTest") {
 
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${base_path}:base",
-    "${base_path}:want",
+    "${ability_base_path}:base",
+    "${ability_base_path}:want",
     "${services_path}/appmgr:libappms",
   ]
 

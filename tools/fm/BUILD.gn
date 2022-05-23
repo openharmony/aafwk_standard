@@ -16,11 +16,11 @@ import("//foundation/aafwk/standard/aafwk.gni")
 
 config("tools_fm_config") {
   include_dirs = [
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/want/include",
     "${aafwk_path}/services/common/include",
     "${aafwk_path}/tools/aa/include",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_innerkits_path}/libeventhandler/include",
+    "${bundlefwk_innerkits_path}/libeventhandler/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
     "//utils/native/base/include",
     "include",

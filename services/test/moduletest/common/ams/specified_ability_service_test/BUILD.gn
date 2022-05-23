@@ -42,7 +42,7 @@ ohos_moduletest("specified_ability_service_test") {
     "${services_path}/test:aafwk_module_test_config",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager_public_config",
     "${aafwk_path}/services/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock_config",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base_sdk_config",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base_sdk_config",
     "${aafwk_path}/interfaces/innerkits/app_manager:appmgr_sdk_config",
   ]
   cflags = []
@@ -53,9 +53,9 @@ ohos_moduletest("specified_ability_service_test") {
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/services/abilitymgr:abilityms",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_inner_api_path}/appexecfwk_core:appexecfwk_core",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_inner_api_path}/appexecfwk_core:appexecfwk_core",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
