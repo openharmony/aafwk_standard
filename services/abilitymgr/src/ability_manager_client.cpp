@@ -28,22 +28,6 @@
 
 namespace OHOS {
 namespace AAFwk {
-namespace {
-const std::string START_ABILITY_ERROR = "START_ABILITY_ERROR";
-const std::string TERMINATE_ABILITY_ERROR = "TERMINATE_ABILITY_ERROR";
-const std::string START_EXTENSION_ERROR = "START_EXTENSION_ERROR";
-const std::string STOP_EXTENSION_ERROR = "STOP_EXTENSION_ERROR";
-const std::string CONNECT_SERVICE_ERROR = "CONNECT_SERVICE_ERROR";
-const std::string DISCONNECT_SERVICE_ERROR = "DISCONNECT_SERVICE_ERROR";
-const std::string START_ABILITY = "START_ABILITY";
-const std::string TERMINATE_ABILITY = "TERMINATE_ABILITY";
-const std::string DO_FOREGROUND_ABILITY = "DO_FOREGROUND_ABILITY";
-const std::string DO_BACKGROUND_ABILITY = "DO_BACKGROUND_ABILITY";
-const std::string START_SERVICE_EXTENSION = "START_SERVICE_EXTENSION";
-const std::string STOP_SERVICE_EXTENSION = "STOP_SERVICE_EXTENSION";
-const std::string CONNECT_SERVICE_EXTENSION = "CONNECT_SERVICE_EXTENSION";
-const std::string DISCONNECT_SERVICE_EXTENSION = "DISCONNECT_SERVICE_EXTENSION";
-}
 std::shared_ptr<AbilityManagerClient> AbilityManagerClient::instance_ = nullptr;
 std::recursive_mutex AbilityManagerClient::mutex_;
 
@@ -119,11 +103,12 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode, in
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     int32_t ret = ERR_OK;
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILITY, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = want.GetElement().GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     ret = abms->StartAbility(want, userId, requestCode);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
     return abms->StartAbility(want, userId, requestCode);
 }
@@ -137,11 +122,12 @@ ErrCode AbilityManagerClient::StartAbility(
     HILOG_INFO("Start ability come, ability:%{public}s, userId:%{public}d.",
         want.GetElement().GetAbilityName().c_str(), userId);
     int32_t ret = ERR_OK;
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILITY, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = want.GetElement().GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     ret = abms->StartAbility(want, callerToken, userId, requestCode);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
     return abms->StartAbility(want, callerToken, userId, requestCode);
 }
@@ -153,11 +139,12 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, const AbilityStartS
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     int32_t ret = ERR_OK;
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILITY, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = want.GetElement().GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     ret = abms->StartAbility(want, abilityStartSetting, callerToken, userId, requestCode);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
     return abms->StartAbility(want, abilityStartSetting, callerToken, userId, requestCode);
 }
@@ -171,11 +158,12 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, const StartOptions 
     HILOG_INFO("%{public}s come, abilityName=%{public}s, userId=%{public}d.",
         __func__, want.GetElement().GetAbilityName().c_str(), userId);
     int32_t ret = ERR_OK;
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILITY, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = want.GetElement().GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     ret = abms->StartAbility(want, startOptions, callerToken, userId, requestCode);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
     return abms->StartAbility(want, startOptions, callerToken, userId, requestCode);
 }
@@ -188,11 +176,12 @@ ErrCode AbilityManagerClient::StartExtensionAbility(const Want &want, const sptr
     HILOG_INFO("%{public}s come, bundleName=%{public}s, abilityName=%{public}s, userId=%{public}d.",
         __func__, want.GetElement().GetAbilityName().c_str(), want.GetElement().GetBundleName().c_str(), userId);
     int32_t ret = ERR_OK;
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, START_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = want.GetElement().GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::START_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     ret = abms->StartExtensionAbility(want, callerToken, userId, extensionType);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, START_EXTENSION_ERROR, AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
     return abms->StartExtensionAbility(want, callerToken, userId, extensionType);
 }
@@ -213,11 +202,12 @@ ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &token,
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     HILOG_INFO("Terminate ability come.");
     int32_t ret = ERR_OK;
-    const std::string abilityName = resultWant->GetElement().GetAbilityName().c_str();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, TERMINATE_ABILITY, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = resultWant->GetElement().GetAbilityName().c_str();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::TERMINATE_ABILITY, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     ret = abms->TerminateAbility(token, resultCode, resultWant);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, TERMINATE_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::TERMINATE_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
     return abms->TerminateAbility(token, resultCode, resultWant);
 }
@@ -228,11 +218,12 @@ ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &caller
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     int32_t ret = ERR_OK;
-    const std::string abilityName = "terminate ability";
-    AAFWK::EventReport::SendHiSysEvent(abilityName, TERMINATE_ABILITY, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = "terminate ability";
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::TERMINATE_ABILITY, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     ret = abms->TerminateAbilityByCaller(callerToken, requestCode);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, TERMINATE_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::TERMINATE_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
     return abms->TerminateAbilityByCaller(callerToken, requestCode);
 }
@@ -269,11 +260,12 @@ ErrCode AbilityManagerClient::ConnectAbility(const Want &want, const sptr<IAbili
     HILOG_INFO("Connect ability called, bundleName:%{public}s, abilityName:%{public}s, userId:%{public}d.",
         want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), userId);
     int32_t ret = ERR_OK;
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, CONNECT_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = want.GetElement().GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     ret = abms->ConnectAbility(want, connect, nullptr, userId);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, CONNECT_SERVICE_ERROR, AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
     return abms->ConnectAbility(want, connect, nullptr, userId);
 }
@@ -287,11 +279,12 @@ ErrCode AbilityManagerClient::ConnectAbility(
     HILOG_INFO("Connect ability called, bundleName:%{public}s, abilityName:%{public}s, userId:%{public}d.",
         want.GetElement().GetBundleName().c_str(), want.GetElement().GetAbilityName().c_str(), userId);
     int32_t ret = ERR_OK;
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, CONNECT_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = want.GetElement().GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     ret = abms->ConnectAbility(want, connect, callerToken, userId);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, CONNECT_SERVICE_ERROR, AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
     return abms->ConnectAbility(want, connect, callerToken, userId);
 }
@@ -303,11 +296,12 @@ ErrCode AbilityManagerClient::DisconnectAbility(const sptr<IAbilityConnection> &
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     HILOG_INFO("Disconnect ability begin.");
     int32_t ret = ERR_OK;
-    const std::string abilityName = "disconnect ability";
-    AAFWK::EventReport::SendHiSysEvent(abilityName, DISCONNECT_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = "disconnect ability";
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::DISCONNECT_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     ret = abms->DisconnectAbility(connect);
     if (ret != ERR_OK) {
-        AAFWK::EventReport::SendHiSysEvent(abilityName, DISCONNECT_SERVICE_ERROR, AAFWK::HiSysEventType::FAULT);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::DISCONNECT_SERVICE_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
     return abms->DisconnectAbility(connect);
 }
@@ -383,8 +377,9 @@ ErrCode AbilityManagerClient::StopServiceAbility(const Want &want)
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, STOP_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = want.GetElement().GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return abms->StopServiceAbility(want);
 }
 
@@ -874,8 +869,9 @@ ErrCode AbilityManagerClient::DoAbilityForeground(const sptr<IRemoteObject> &tok
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    const std::string abilityName = "do ability foreground";
-    AAFWK::EventReport::SendHiSysEvent(abilityName, DO_FOREGROUND_ABILITY, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = "do ability foreground";
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::DO_FOREGROUND_ABILITY, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return abms->DoAbilityForeground(token, flag);
 }
 
@@ -883,8 +879,9 @@ ErrCode AbilityManagerClient::DoAbilityBackground(const sptr<IRemoteObject> &tok
 {
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
-    const std::string abilityName = "do ability background";
-    AAFWK::EventReport::SendHiSysEvent(abilityName, DO_BACKGROUND_ABILITY, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = "do ability background";
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::DO_BACKGROUND_ABILITY, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return abms->DoAbilityBackground(token, flag);
 }
 
