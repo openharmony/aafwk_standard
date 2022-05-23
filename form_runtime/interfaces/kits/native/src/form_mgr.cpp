@@ -30,18 +30,6 @@
 
 namespace OHOS {
 namespace AppExecFwk {
-namespace {
-const std::string ADD_FORM = "ADD_FORM";
-const std::string REQUEST_FORM = "REQUEST_FORM";
-const std::string DELETE_FORM = "DELETE_FORM";
-const std::string CASTTEMP_FORM = "CASTTEMP_FORM";
-const std::string ACQUIREFORMSTATE_FORM = "ACQUIREFORMSTATE_FORM";
-const std::string MESSAGE_EVENT_FORM = "MESSAGE_EVENT_FORM";
-const std::string ROUTE_EVENT_FORM = "ROUTE_EVENT_FORM";
-const std::string RELEASE_FORM = "RELEASE_FORM";
-const std::string DELETE_INVALID_FORM = "DELETE_INVALID_FORM";
-const std::string SET_NEXT_REFRESH_TIME_FORM = "SET_NEXT_REFRESH_TIME_FORM";
-}
 FormMgr::FormMgr(){}
 FormMgr::~FormMgr()
 {
@@ -83,8 +71,9 @@ int FormMgr::AddForm(
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, ADD_FORM, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.formId = formId;
+    AAFWK::EventReport::SendFormEvent(AAFWK::ADD_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return remoteProxy_->AddForm(formId, want, callerToken, formInfo);
 }
 
@@ -102,8 +91,9 @@ int FormMgr::DeleteForm(const int64_t formId, const sptr<IRemoteObject> &callerT
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = "delete form";
-    AAFWK::EventReport::SendHiSysEvent(abilityName, DELETE_FORM, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.formId = formId;
+    AAFWK::EventReport::SendFormEvent(AAFWK::DELETE_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return remoteProxy_->DeleteForm(formId, callerToken);
 }
 
@@ -122,8 +112,9 @@ int FormMgr::ReleaseForm(const int64_t formId, const sptr<IRemoteObject> &caller
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = "release form";
-    AAFWK::EventReport::SendHiSysEvent(abilityName, DELETE_FORM, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.formId = formId;
+    AAFWK::EventReport::SendFormEvent(AAFWK::DELETE_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return remoteProxy_->ReleaseForm(formId, callerToken, delCache);
 }
 
@@ -162,8 +153,9 @@ int FormMgr::RequestForm(const int64_t formId, const sptr<IRemoteObject> &caller
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, REQUEST_FORM, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.formId = formId;
+    AAFWK::EventReport::SendFormEvent(AAFWK::REQUEST_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return remoteProxy_->RequestForm(formId, callerToken, want);
 }
 
@@ -202,8 +194,9 @@ int FormMgr::CastTempForm(const int64_t formId, const sptr<IRemoteObject> &calle
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = "cast temp form";
-    AAFWK::EventReport::SendHiSysEvent(abilityName, DELETE_FORM, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.formId = formId;
+    AAFWK::EventReport::SendFormEvent(AAFWK::DELETE_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return remoteProxy_->CastTempForm(formId, callerToken);
 }
 
@@ -285,8 +278,9 @@ int FormMgr::MessageEvent(const int64_t formId, const Want &want, const sptr<IRe
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, MESSAGE_EVENT_FORM, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.formId = formId;
+    AAFWK::EventReport::SendFormEvent(AAFWK::MESSAGE_EVENT_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return remoteProxy_->MessageEvent(formId, want, callerToken);
 }
 
@@ -304,8 +298,9 @@ int FormMgr::RouterEvent(const int64_t formId, Want &want)
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, ROUTE_EVENT_FORM, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.formId = formId;
+    AAFWK::EventReport::SendFormEvent(AAFWK::ROUTE_EVENT_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return remoteProxy_->RouterEvent(formId, want);
 }
 
@@ -323,8 +318,9 @@ int FormMgr::SetNextRefreshTime(const int64_t formId, const int64_t nextTime)
         HILOG_ERROR("%{public}s failed errCode:%{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = "set next refresh form";
-    AAFWK::EventReport::SendHiSysEvent(abilityName, DELETE_FORM, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.formId = formId;
+    AAFWK::EventReport::SendFormEvent(AAFWK::DELETE_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return remoteProxy_->SetNextRefreshTime(formId, nextTime);
 }
 
@@ -617,8 +613,9 @@ int FormMgr::DeleteInvalidForms(const std::vector<int64_t> &formIds, const sptr<
         HILOG_ERROR("%{public}s failed, errCode: %{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = "delete invalid forms";
-    AAFWK::EventReport::SendHiSysEvent(abilityName, DELETE_INVALID_FORM, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.formId = 0;
+    AAFWK::EventReport::SendFormEvent(AAFWK::DELETE_INVALID_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return remoteProxy_->DeleteInvalidForms(formIds, callerToken, numFormsDeleted);
 }
 
@@ -637,8 +634,9 @@ int FormMgr::AcquireFormState(const Want &want, const sptr<IRemoteObject> &calle
         HILOG_ERROR("%{public}s failed, errCode: %{public}d.", __func__, errCode);
         return errCode;
     }
-    const std::string abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, ACQUIREFORMSTATE_FORM, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.formId = 0;
+    AAFWK::EventReport::SendFormEvent(AAFWK::ACQUIREFORMSTATE_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return remoteProxy_->AcquireFormState(want, callerToken, stateInfo);
 }
 

@@ -95,12 +95,6 @@ const std::string EVENT_MESSAGE_DEFAULT = "AppMgrServiceInner HandleTimeOut!";
 const std::string SYSTEM_BASIC = "system_basic";
 const std::string SYSTEM_CORE = "system_core";
 
-const std::string APP_ATTACH = "APP_ATTACH";
-const std::string APP_LAUNCH = "APP_LAUNCH";
-const std::string APP_FOREGROUND = "APP_FOREGROUND";
-const std::string APP_BACKGROUND = "APP_BACKGROUND";
-const std::string APP_TERMINATE = "APP_TERMINATE";
-
 int32_t GetUserIdByUid(int32_t uid)
 {
     return uid / BASE_USER_RANGE;
@@ -275,13 +269,16 @@ void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppSched
         LaunchApplication(appRecord);
     }
     appRecord->RegisterAppDeathRecipient();
-    const std::string pidStr = std::to_string(appRecord->GetPriorityObject()->GetPid());
+    AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    AAFWK::EventReport::AppEvent(
-        applicationInfo,
-        pidStr,
-        APP_ATTACH,
-        AAFWK::HiSysEventType::BEHAVIOR);
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.appName = applicationInfo->name;
+    eventInfo.versionName = applicationInfo->versionName;
+    eventInfo.versionCode = applicationInfo->versionCode;
+    eventInfo.timeStamp = 
+        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
+        .count();
+    AAFWK::EventReport::AppEvent(AAFWK::APP_ATTACH, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecord> &appRecord)
@@ -317,13 +314,16 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
         return;
     }
     appRecord->LaunchPendingAbilities();
-    const std::string pidStr = std::to_string(appRecord->GetPriorityObject()->GetPid());
+    AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    AAFWK::EventReport::AppEvent(
-        applicationInfo,
-        pidStr,
-        APP_LAUNCH,
-        AAFWK::HiSysEventType::BEHAVIOR);
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.appName = applicationInfo->name;
+    eventInfo.versionName = applicationInfo->versionName;
+    eventInfo.versionCode = applicationInfo->versionCode;
+    eventInfo.timeStamp = 
+        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
+        .count();
+    AAFWK::EventReport::AppEvent(AAFWK::APP_LAUNCH, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::AddAbilityStageDone(const int32_t recordId)
@@ -358,13 +358,16 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
     // push the foregrounded app front of RecentAppList.
     PushAppFront(recordId);
     HILOG_INFO("application is foregrounded");
-    const std::string pidStr = std::to_string(appRecord->GetPriorityObject()->GetPid());
+    AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    AAFWK::EventReport::AppEvent(
-        applicationInfo,
-        pidStr,
-        APP_FOREGROUND,
-        AAFWK::HiSysEventType::BEHAVIOR);
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.appName = applicationInfo->name;
+    eventInfo.versionName = applicationInfo->versionName;
+    eventInfo.versionCode = applicationInfo->versionCode;
+    eventInfo.timeStamp = 
+        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
+        .count();
+    AAFWK::EventReport::AppEvent(AAFWK::APP_FOREGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
@@ -385,13 +388,16 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
     }
 
     HILOG_INFO("application is backgrounded");
-    const std::string pidStr = std::to_string(appRecord->GetPriorityObject()->GetPid());
+    AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    AAFWK::EventReport::AppEvent(
-        applicationInfo,
-        pidStr,
-        APP_BACKGROUND,
-        AAFWK::HiSysEventType::BEHAVIOR);
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.appName = applicationInfo->name;
+    eventInfo.versionName = applicationInfo->versionName;
+    eventInfo.versionCode = applicationInfo->versionCode;
+    eventInfo.timeStamp = 
+        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
+        .count();
+    AAFWK::EventReport::AppEvent(AAFWK::APP_BACKGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
@@ -424,13 +430,16 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
 
     HILOG_INFO("application is terminated");
-    const std::string pidStr = std::to_string(appRecord->GetPriorityObject()->GetPid());
+    AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    AAFWK::EventReport::AppEvent(
-        applicationInfo,
-        pidStr,
-        APP_TERMINATE,
-        AAFWK::HiSysEventType::BEHAVIOR);
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.appName = applicationInfo->name;
+    eventInfo.versionName = applicationInfo->versionName;
+    eventInfo.versionCode = applicationInfo->versionCode;
+    eventInfo.timeStamp = 
+        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
+        .count();
+    AAFWK::EventReport::AppEvent(AAFWK::APP_TERMINATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 int32_t AppMgrServiceInner::KillApplication(const std::string &bundleName)

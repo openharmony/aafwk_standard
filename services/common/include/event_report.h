@@ -21,21 +21,153 @@
 
 #include "application_info.h"
 #include "want.h"
+#include "errors.h"
 
 namespace OHOS {
 namespace AAFWK {
+namespace {
+// event type
+const std::string START_ABILITY_ERROR = "START_ABILITY_ERROR";
+const std::string TERMINATE_ABILITY_ERROR = "TERMINATE_ABILITY_ERROR";
+const std::string START_EXTENSION_ERROR = "START_EXTENSION_ERROR";
+const std::string STOP_EXTENSION_ERROR = "STOP_EXTENSION_ERROR";
+const std::string CONNECT_SERVICE_ERROR = "CONNECT_SERVICE_ERROR";
+const std::string DISCONNECT_SERVICE_ERROR = "DISCONNECT_SERVICE_ERROR";
+
+const std::string START_ABILITY = "START_ABILITY";
+const std::string TERMINATE_ABILITY = "TERMINATE_ABILITY";
+const std::string DO_FOREGROUND_ABILITY = "DO_FOREGROUND_ABILITY";
+const std::string DO_BACKGROUND_ABILITY = "DO_BACKGROUND_ABILITY";
+const std::string ABILITY_ONSTART = "ABILITY_ONSTART";
+const std::string ABILITY_ONSTOP = "ABILITY_ONSTOP";
+const std::string ABILITY_ONFOREGROUND = "ABILITY_ONFOREGROUND";
+const std::string ABILITY_ONBACKGROUND = "ABILITY_ONBACKGROUND";
+const std::string ABILITY_WINDOWSTAGE_CREATE = "ABILITY_WINDOWSTAGE_CREATE";
+const std::string ABILITY_WINDOWSTAGE_DESTORY = "ABILITY_WINDOWSTAGE_DESTORY";
+const std::string START_SERVICE_EXTENSION = "START_SERVICE_EXTENSION";
+const std::string STOP_SERVICE_EXTENSION = "STOP_SERVICE_EXTENSION";
+const std::string CONNECT_SERVICE_EXTENSION = "CONNECT_SERVICE_EXTENSION";
+const std::string DISCONNECT_SERVICE_EXTENSION = "DISCONNECT_SERVICE_EXTENSION";
+const std::string SERVICE_EXTENSION_ONSTART = "SERVICE_EXTENSION_ONSTART";
+const std::string SERVICE_EXTENSION_ONSTOP = "SERVICE_EXTENSION_ONSTOP";
+const std::string SERVICE_EXTENSION_ONCONNECT = "SERVICE_EXTENSION_ONCONNECT";
+const std::string SERVICE_EXTENSION_ONDISCONNECT = "SERVICE_EXTENSION_ONDISCONNECT";
+const std::string SERVICE_EXTENSION_ONREQUEST = "SERVICE_EXTENSION_ONREQUEST";
+const std::string ADD_FORM = "ADD_FORM";
+const std::string REQUEST_FORM = "REQUEST_FORM";
+const std::string DELETE_FORM = "DELETE_FORM";
+const std::string CASTTEMP_FORM = "CASTTEMP_FORM";
+const std::string ACQUIREFORMSTATE_FORM = "ACQUIREFORMSTATE_FORM";
+const std::string MESSAGE_EVENT_FORM = "MESSAGE_EVENT_FORM";
+const std::string ROUTE_EVENT_FORM = "ROUTE_EVENT_FORM";
+const std::string RELEASE_FORM = "RELEASE_FORM";
+const std::string DELETE_INVALID_FORM = "DELETE_INVALID_FORM";
+const std::string SET_NEXT_REFRESH_TIME_FORM = "SET_NEXT_REFRESH_TIME_FORM";
+const std::string FORM_LIFECYCLE_ONCREATE = "FORM_LIFECYCLE_ONCREATE";
+const std::string FORM_LIFECYCLE_ONDESTROY = "FORM_LIFECYCLE_ONDESTROY";
+const std::string FORM_LIFECYCLE_ONUPDATE = "FORM_LIFECYCLE_ONUPDATE";
+const std::string FORM_LIFECYCLE_EVENT = "FORM_LIFECYCLE_EVENT";
+const std::string FORM_LIFECYCLE_ONCASTTEMPFORM = "FORM_LIFECYCLE_ONCASTTEMPFORM";
+const std::string FORM_LIFECYCLE_ONACQUIREFORMSTATE = "FORM_LIFECYCLE_ONACQUIREFORMSTATE";
+const std::string APP_ATTACH = "APP_ATTACH";
+const std::string APP_LAUNCH = "APP_LAUNCH";
+const std::string APP_FOREGROUND = "APP_FOREGROUND";
+const std::string APP_BACKGROUND = "APP_BACKGROUND";
+const std::string APP_TERMINATE = "APP_TERMINATE";
+}
+// enum class AMSEventType {
+//     UNKNOW = 0,
+//     /***********FAULT EVENT**************/
+//     START_ABILITY_ERROR,
+//     TERMINATE_ABILITY_ERROR,
+//     START_EXTENSION_ERROR,
+//     STOP_EXTENSION_ERROR,
+//     CONNECT_SERVICE_ERROR,
+//     DISCONNECT_SERVICE_ERROR,
+//     /***********BEHAVIOR EVENT***********/
+//     START_ABILITY,
+//     DO_FOREGROUND_ABILITY,
+//     DO_BACKGROUND_ABILITY,
+//     TERMINATE_ABILITY,
+//     ABILITY_ONSTART,
+//     ABILITY_ONSTOP,
+//     ABILITY_ONFOREGROUND,
+//     ABILITY_ONBACKGROUND,
+//     ABILITY_WINDOWSTAGE_CREATE,
+//     ABILITY_WINDOWSTAGE_DESTORY,
+//     START_SERVICE_EXTENSION,
+//     STOP_SERVICE_EXTENSION,
+//     CONNECT_SERVICE_EXTENSION,
+//     DISCONNECT_SERVICE_EXTENSION,
+//     SERVICE_EXTENSION_ONSTART,
+//     SERVICE_EXTENSION_ONSTOP,
+//     SERVICE_EXTENSION_ONCONNECT,
+//     SERVICE_EXTENSION_ONDISCONNECT,
+//     SERVICE_EXTENSION_ONREQUEST,
+//     ADD_FORM,
+//     REQUEST_FORM,
+//     DELETE_FORM,
+//     CASTTEMP_FORM,
+//     ACQUIREFORMSTATE_FORM,
+//     MESSAGE_EVENT_FORM,
+//     ROUTE_EVENT_FORM,
+//     RELEASE_FORM,
+//     DELETE_INVALID_FORM,
+//     SET_NEXT_REFRESH_TIME_FORM,
+//     FORM_ONCREATE,
+//     FORM_ONDESTROY,
+//     FORM_ONUPDATE,
+//     FORM_EVENT,
+//     FORM_ONCASTTEMPFORM,
+//     FORM_ONACQUIREFORMSTATE,
+//     APP_ATTACH,
+//     APP_LAUNCH,
+//     APP_FOREGROUND,
+//     APP_BACKGROUND,
+//     APP_TERMINATE,
+// };
+
 enum HiSysEventType {
     FAULT = 1,
     STATISTIC = 2,
     SECURITY = 3,
     BEHAVIOR = 4,
 };
+
+struct EventInfo {
+    int32_t pid = -1;
+    int32_t userId = -1;
+    int64_t timeStamp = 0;
+    int64_t formId =-1;
+    uint32_t versionCode = 0;
+    std::string versionName;
+    std::string moduleName;
+    std::string abilityName;
+    std::string appName;
+
+    // olny used in fault event
+    ErrCode errCode = ERR_OK;
+
+    void Reset()
+    {
+        pid =-1;
+        userId = -1;
+        timeStamp = 0;
+        formId =-1;
+        versionCode = 0;
+        versionName.clear();
+        moduleName.clear();
+        abilityName.clear();
+        appName.clear();
+        errCode = ERR_OK;
+    }
+};
 class EventReport {
 public:
-    static void AppEvent(const std::shared_ptr<AppExecFwk::ApplicationInfo> &applicationInfo,
-        const std::string &pid, const std::string &eventName, HiSysEventType type);
-    static void SendHiSysEvent(const std::string &abilityName, const std::string &eventName,
-        HiSysEventType type);
+    static void AppEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
+    static void SendAbilityEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
+    static void SendExtensionEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
+    static void SendFormEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
     template<typename... Types>
     static void EventWrite(const std::string &eventName,
         HiSysEventType type, Types... keyValues);

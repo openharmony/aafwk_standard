@@ -39,14 +39,6 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
-namespace {
-const std::string ABILITY_ONSTART = "ABILITY_ONSTART";
-const std::string ABILITY_ONSTOP = "ABILITY_ONSTOP";
-const std::string ABILITY_ONFOREGROUND = "ABILITY_ONFOREGROUND";
-const std::string ABILITY_ONBACKGROUND = "ABILITY_ONBACKGROUND";
-const std::string ABILITY_WINDOWSTAGE_CREATE = "ABILITY_WINDOWSTAGE_CREATE";
-const std::string ABILITY_WINDOWSTAGE_DESTORY = "ABILITY_WINDOWSTAGE_DESTORY";
-}
 #ifdef SUPPORT_GRAPHICS
 const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
 #endif
@@ -173,8 +165,9 @@ void JsAbility::OnStart(const Want &want)
         delegator->PostPerformStart(CreateADelegatorAbilityProperty());
     }
     HILOG_INFO("OnStart end, ability is %{public}s.", GetAbilityName().c_str());
-    const std::string abilityName = GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONSTART, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::ABILITY_ONSTART, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void JsAbility::OnStop()
@@ -200,8 +193,9 @@ void JsAbility::OnStop()
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityDestroy(jsAbilityObj_);
     }
-    const std::string abilityName = GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONSTOP, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::ABILITY_ONSTOP, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 #ifdef SUPPORT_GRAPHICS
@@ -230,8 +224,9 @@ void JsAbility::OnSceneCreated()
     }
 
     HILOG_INFO("OnSceneCreated end, ability is %{public}s.", GetAbilityName().c_str());
-    const std::string abilityName = GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_WINDOWSTAGE_CREATE, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::ABILITY_WINDOWSTAGE_CREATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void JsAbility::OnSceneRestored()
@@ -271,8 +266,9 @@ void JsAbility::onSceneDestroyed()
         applicationContext->DispatchOnAbilityWindowStageDestroy(jsAbilityObj_);
     }
     HILOG_INFO("onSceneDestroyed end, ability is %{public}s.", GetAbilityName().c_str());
-    const std::string abilityName = GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_WINDOWSTAGE_DESTORY, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::ABILITY_WINDOWSTAGE_DESTORY, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void JsAbility::OnForeground(const Want &want)
@@ -309,8 +305,9 @@ void JsAbility::OnForeground(const Want &want)
         applicationContext->DispatchOnAbilityForeground(jsAbilityObj_);
     }
     HILOG_INFO("OnForeground end, ability is %{public}s.", GetAbilityName().c_str());
-    const std::string abilityName = GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONFOREGROUND, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::ABILITY_ONFOREGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void JsAbility::OnBackground()
@@ -330,8 +327,9 @@ void JsAbility::OnBackground()
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityBackground(jsAbilityObj_);
     }
-    const std::string abilityName = GetAbilityName();
-    AAFWK::EventReport::SendHiSysEvent(abilityName, ABILITY_ONBACKGROUND, AAFWK::HiSysEventType::BEHAVIOR);
+    AAFWK::EventInfo eventInfo;
+    eventInfo.abilityName = GetAbilityName();
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::ABILITY_ONBACKGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 #endif
 
