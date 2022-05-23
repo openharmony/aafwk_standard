@@ -32,7 +32,7 @@ ohos_moduletest("IpcAbilityMgrServiceModuleTest") {
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/services/abilitymgr:abilityms",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${services_path}/common:perm_verification",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",

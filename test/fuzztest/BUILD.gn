@@ -32,8 +32,4 @@ group("fuzztest") {
     "wantagenthelperstring_fuzzer:fuzztest",
     "wantagenthelpertrigger_fuzzer:fuzztest",
   ]
-
-  if (ability_runtime_graphics) {
-    deps += [ "formmanager_fuzzer:fuzztest" ]
-  }
 }

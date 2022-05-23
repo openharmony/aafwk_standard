@@ -73,6 +73,14 @@ class AbilityContext extends Context {
         return this.__context_impl__.startServiceExtensionAbilityWithAccount(want, accountId, callback)
     }
 
+    stopServiceExtensionAbility(want, callback) {
+        return this.__context_impl__.stopServiceExtensionAbility(want, callback)
+    }
+
+    stopServiceExtensionAbilityWithAccount(want, accountId, callback) {
+        return this.__context_impl__.stopServiceExtensionAbilityWithAccount(want, accountId, callback)
+    }
+
     connectAbility(want, options) {
         return this.__context_impl__.connectAbility(want, options);
     }
@@ -87,6 +95,10 @@ class AbilityContext extends Context {
 
     terminateSelf(callback) {
         return this.__context_impl__.terminateSelf(callback)
+    }
+
+    isTerminating() {
+        return this.__context_impl__.isTerminating()
     }
 
     terminateSelfWithResult(abilityResult, callback) {

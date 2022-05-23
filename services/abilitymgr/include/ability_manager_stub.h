@@ -73,6 +73,7 @@ private:
     int UninstallAppInner(MessageParcel &data, MessageParcel &reply);
     int StartAbilityInner(MessageParcel &data, MessageParcel &reply);
     int StartExtensionAbilityInner(MessageParcel &data, MessageParcel &reply);
+    int StopExtensionAbilityInner(MessageParcel& data, MessageParcel& reply);
     int StartAbilityAddCallerInner(MessageParcel &data, MessageParcel &reply);
     int ConnectAbilityInner(MessageParcel &data, MessageParcel &reply);
     int DisconnectAbilityInner(MessageParcel &data, MessageParcel &reply);
@@ -144,7 +145,7 @@ private:
 
     int StartUserTestInner(MessageParcel &data, MessageParcel &reply);
     int FinishUserTestInner(MessageParcel &data, MessageParcel &reply);
-    int GetCurrentTopAbilityInner(MessageParcel &data, MessageParcel &reply);
+    int GetTopAbilityTokenInner(MessageParcel &data, MessageParcel &reply);
     int DelegatorDoAbilityForegroundInner(MessageParcel &data, MessageParcel &reply);
     int DelegatorDoAbilityBackgroundInner(MessageParcel &data, MessageParcel &reply);
     int DoAbilityForegroundInner(MessageParcel &data, MessageParcel &reply);

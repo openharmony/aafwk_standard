@@ -1,0 +1,64 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#####################hydra-fuzz###################
+import("//build/config/features.gni")
+import("//build/ohos.gni")
+import("//build/test.gni")
+import("//foundation/aafwk/standard/form_runtime/form_runtime.gni")
+module_output_path = "form_runtime/formmgr"
+
+##############################fuzztest##########################################
+ohos_fuzztest("FormManagerFuzzTest") {
+  module_out_path = module_output_path
+
+  fuzz_config_file = "${ability_runtime_path}/test/fuzztest/formmanager_fuzzer"
+
+  include_dirs = [ "${ability_runtime_path}/form_runtime/services/include" ]
+  cflags = [
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
+  ]
+  sources = [ "formmanager_fuzzer.cpp" ]
+
+  configs = [ "${ability_runtime_path}/interfaces/innerkits/ability_manager:ability_manager_public_config" ]
+
+  deps = [
+    "${ability_base_path}:base",
+    "${ability_base_path}:want",
+    "${ability_runtime_path}/frameworks/kits/ability/native:abilitykit_native",
+    "${ability_runtime_path}/interfaces/innerkits/app_manager:app_manager",
+    "${form_runtime_path}:fms_target",
+  ]
+
+  external_deps = [
+    "common_event_service:cesfwk_core",
+    "common_event_service:cesfwk_innerkits",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+  ]
+}
+
+###############################################################################
+group("fuzztest") {
+  testonly = true
+  deps = []
+  deps += [
+    # deps file
+    ":FormManagerFuzzTest",
+  ]
+}
+###############################################################################

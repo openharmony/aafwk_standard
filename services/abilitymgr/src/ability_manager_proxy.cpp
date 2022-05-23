@@ -269,6 +269,51 @@ int AbilityManagerProxy::StartExtensionAbility(const Want &want, const sptr<IRem
     return reply.ReadInt32();
 }
 
+int AbilityManagerProxy::StopExtensionAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
+    int32_t userId, AppExecFwk::ExtensionAbilityType extensionType)
+{
+    int error;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        return INNER_ERR;
+    }
+    if (!data.WriteParcelable(&want)) {
+        HILOG_ERROR("want write failed.");
+        return INNER_ERR;
+    }
+    if (callerToken) {
+        if (!data.WriteBool(true) || !data.WriteRemoteObject(callerToken)) {
+            HILOG_ERROR("flag and callerToken write failed.");
+            return INNER_ERR;
+        }
+    } else {
+        if (!data.WriteBool(false)) {
+            HILOG_ERROR("flag write failed.");
+            return INNER_ERR;
+        }
+    }
+    if (!data.WriteInt32(userId)) {
+        HILOG_ERROR("userId write failed.");
+        return INNER_ERR;
+    }
+    if (!data.WriteInt32(static_cast<int32_t>(extensionType))) {
+        HILOG_ERROR("extensionType write failed.");
+        return INNER_ERR;
+    }
+    if (!Remote()) {
+        HILOG_ERROR("Remote error.");
+        return INNER_ERR;
+    }
+    error = Remote()->SendRequest(IAbilityManager::STOP_EXTENSION_ABILITY, data, reply, option);
+    if (error != NO_ERROR) {
+        HILOG_ERROR("Send request error: %{public}d", error);
+        return error;
+    }
+    return reply.ReadInt32();
+}
+
 int AbilityManagerProxy::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
 {
     return TerminateAbility(token, resultCode, resultWant, true);
@@ -2213,7 +2258,7 @@ int AbilityManagerProxy::FinishUserTest(
     return reply.ReadInt32();
 }
 
-int AbilityManagerProxy::GetCurrentTopAbility(sptr<IRemoteObject> &token)
+int AbilityManagerProxy::GetTopAbility(sptr<IRemoteObject> &token)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -2223,7 +2268,7 @@ int AbilityManagerProxy::GetCurrentTopAbility(sptr<IRemoteObject> &token)
         return INNER_ERR;
     }
 
-    auto error = Remote()->SendRequest(IAbilityManager::GET_CURRENT_TOP_ABILITY, data, reply, option);
+    auto error = Remote()->SendRequest(IAbilityManager::GET_TOP_ABILITY_TOKEN, data, reply, option);
     if (error != NO_ERROR) {
         HILOG_ERROR("Send request error: %{public}d", error);
         return error;
@@ -2462,7 +2507,7 @@ int AbilityManagerProxy::FreeInstallAbilityFromRemote(const Want &want, const sp
         return INNER_ERR;
     }
 
-    if (!data.WriteParcelable(callback)) {
+    if (!data.WriteRemoteObject(callback)) {
         HILOG_ERROR("callback write failed.");
         return INNER_ERR;
     }

@@ -23,7 +23,7 @@ ohos_unittest("data_ability_record_test") {
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "${services_path}/abilitymgr/test/mock/libs/ability_scheduler_mock",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
     "${aafwk_path}/frameworks/kits/ability/native/include",
     "${aafwk_path}/services/common/include",
@@ -36,7 +36,7 @@ ohos_unittest("data_ability_record_test") {
 
   configs = [
     "${services_path}/abilitymgr:abilityms_config",
-    "${base_path}:base_public_config",
+    "${ability_base_path}:base_public_config",
     "${services_path}/abilitymgr/test/mock:aafwk_mock_config",
   ]
   cflags = []
@@ -52,8 +52,8 @@ ohos_unittest("data_ability_record_test") {
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
     "${services_path}/common:perm_verification",
 
-    #"${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    #"${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",

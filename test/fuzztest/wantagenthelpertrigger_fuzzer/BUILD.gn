@@ -24,7 +24,7 @@ ohos_fuzztest("WantAgentHelperTriggerFuzzTest") {
 
   fuzz_config_file = "${aafwk_path}/test/fuzztest/wantagenthelpertrigger_fuzzer"
 
-  include_dirs = [ "${base_inner_api_path}/wantagent/include" ]
+  include_dirs = [ "${ability_base_innerapi_path}/wantagent/include" ]
 
   cflags = [
     "-g",

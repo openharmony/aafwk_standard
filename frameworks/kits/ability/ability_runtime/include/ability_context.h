@@ -118,7 +118,9 @@ public:
         const AAFwk::Want &Want, int accountId, const AAFwk::StartOptions &startOptions,
         int requestCode, RuntimeTask &&task) = 0;
 
-    virtual ErrCode StartServiceExtensionAbility(const AAFwk::Want &want, int32_t userId = -1) = 0;
+    virtual ErrCode StartServiceExtensionAbility(const AAFwk::Want &want, int32_t accountId = -1) = 0;
+
+    virtual ErrCode StopServiceExtensionAbility(const AAFwk::Want& want, int32_t accountId = -1) = 0;
 
     virtual ErrCode TerminateAbilityWithResult(const AAFwk::Want &want, int resultCode) = 0;
 
@@ -259,6 +261,8 @@ public:
 #ifdef SUPPORT_GRAPHICS
     virtual int GetCurrentWindowMode() = 0;
 #endif
+    virtual bool IsTerminating() = 0;
+    virtual void SetTerminating(bool state) = 0;
     using SelfType = AbilityContext;
     static const size_t CONTEXT_TYPE_ID;
 

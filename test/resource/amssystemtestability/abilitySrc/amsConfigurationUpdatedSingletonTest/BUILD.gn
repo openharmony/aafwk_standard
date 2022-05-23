@@ -11,22 +11,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import("//build/ohos.gni")
-SUBDEMOSYSTEM_DIR = "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/amsConfigurationUpdatedSingletonTest"
-SUBST_TOOLS_DIR =
-    "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/tools"
+SUBDEMOSYSTEM_DIR = "test/resource/amssystemtestability/abilitySrc/amsConfigurationUpdatedSingletonTest"
+SUBST_TOOLS_DIR = "test/resource/amssystemtestability/abilitySrc/tools"
 config("amsConfigurationUpdatedSingletonTestConfig") {
   visibility = [ ":*" ]
   include_dirs = [
     "${SUBDEMOSYSTEM_DIR}/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/want/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
-    "${base_inner_api_path}/uri/include",
+    "${ability_base_innerapi_path}/uri/include",
     "${innerkits_path}/libeventhandler/include",
     "${services_path}/bundlemgr/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${common_path}/log/include",
-    "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/common",
     "${SUBST_TOOLS_DIR}/include",
   ]
   defines = [
@@ -49,8 +47,7 @@ ohos_shared_library("amsConfigurationUpdatedSingletonTest") {
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/services/abilitymgr:abilityms",
-    "${base_path}:want",
-    "${common_path}:libappexecfwk_common",
+    "${ability_base_path}:want",
     "${inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${services_path}/bundlemgr:libbms",
     "//utils/native/base:utilsbase",

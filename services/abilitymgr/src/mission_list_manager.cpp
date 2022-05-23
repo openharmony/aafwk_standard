@@ -1175,8 +1175,8 @@ void MissionListManager::CompleteTerminateAndUpdateMission(const std::shared_ptr
         if (it == abilityRecord) {
             terminateAbilityList_.remove(it);
             // update inner mission info time
-            if (abilityRecord->IsDlp()) {
-                DelayedSingleton<MissionInfoMgr>::GetInstance()->DeleteMissionInfo(abilityRecord->GetMissionId());
+            if (abilityRecord->IsDlp() || abilityRecord->GetAbilityInfo().removeMissionAfterTerminate) {
+                RemoveMissionLocked(abilityRecord->GetMissionId());
                 return;
             }
             InnerMissionInfo innerMissionInfo;
@@ -1843,8 +1843,8 @@ void MissionListManager::HandleAbilityDiedByDefault(std::shared_ptr<AbilityRecor
 
     // update running state.
     if (!ability->IsUninstallAbility()) {
-        if (ability->IsDlp()) {
-            DelayedSingleton<MissionInfoMgr>::GetInstance()->DeleteMissionInfo(mission->GetMissionId());
+        if (ability->IsDlp() || ability->GetAbilityInfo().removeMissionAfterTerminate) {
+            RemoveMissionLocked(mission->GetMissionId());
         } else {
             InnerMissionInfo info;
             if (DelayedSingleton<MissionInfoMgr>::GetInstance()->GetInnerMissionInfoById(
@@ -2753,39 +2753,6 @@ void MissionListManager::GetAbilityRunningInfos(std::vector<AbilityRunningInfo> 
     }
 }
 
-std::shared_ptr<AbilityRecord> MissionListManager::GetCurrentTopAbility(const std::string &bundleName)
-{
-    std::lock_guard<std::recursive_mutex> guard(managerLock_);
-
-    for (auto &missionList : currentMissionLists_) {
-        if (!missionList) {
-            HILOG_WARN("Invalid missionList.");
-            continue;
-        }
-
-        auto missions = missionList->GetAllMissions();
-        for (auto &mission : missions) {
-            if (!mission) {
-                HILOG_WARN("Invalid mission.");
-                continue;
-            }
-
-            auto abilityRecord = mission->GetAbilityRecord();
-            if (!abilityRecord) {
-                HILOG_WARN("Invalid ability record.");
-                continue;
-            }
-
-            auto appInfo = abilityRecord->GetApplicationInfo();
-            if (bundleName.compare(appInfo.bundleName) == 0) {
-                return abilityRecord;
-            }
-        }
-    }
-
-    return {};
-}
-
 void MissionListManager::UninstallApp(const std::string &bundleName, int32_t uid)
 {
     HILOG_INFO("Uninstall app, bundleName: %{public}s, uid:%{public}d", bundleName.c_str(), uid);
@@ -2886,6 +2853,18 @@ void MissionListManager::GetForegroundAbilities(const std::shared_ptr<MissionLis
         if (abilityRecord->IsActiveState()) {
             foregroundList.emplace_back(abilityRecord);
         }
+    }
+}
+
+void MissionListManager::RemoveMissionLocked(int32_t missionId)
+{
+    if (missionId <= 0) {
+        return;
+    }
+
+    DelayedSingleton<MissionInfoMgr>::GetInstance()->DeleteMissionInfo(missionId);
+    if (listenerController_) {
+        listenerController_->NotifyMissionDestroyed(missionId);
     }
 }
 

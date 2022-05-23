@@ -12,22 +12,21 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-SUBDEMOSYSTEM_DIR = "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/amsDataSystemTestC"
-SUBST_TOOLS_DIR =
-    "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/tools"
+SUBDEMOSYSTEM_DIR =
+    "test/resource/amssystemtestability/abilitySrc/amsDataSystemTestC"
+SUBST_TOOLS_DIR = "test/resource/amssystemtestability/abilitySrc/tools"
 config("amsDataSystemTestCConfig") {
   visibility = [ ":*" ]
   include_dirs = [
     "${SUBDEMOSYSTEM_DIR}/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/want/include",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
-    "${base_inner_api_path}/uri/include",
-    "${appexecfwk_innerkits_path}/libeventhandler/include",
-    "${appexecfwk_path}/services/bundlemgr/include",
+    "${ability_base_innerapi_path}/uri/include",
+    "${bundlefwk_innerkits_path}/libeventhandler/include",
+    "${bundlefwk_path}/services/bundlemgr/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${aafwk_path}/services/common/include",
-    "${appexecfwk_path}/common/log/include",
     "${SUBST_TOOLS_DIR}/include",
     "//third_party/jsoncpp/include",
   ]
@@ -52,10 +51,9 @@ ohos_shared_library("amsDataSystemTestC") {
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
-    "${appexecfwk_path}/services/bundlemgr:libbms",
-    "${base_path}:want",
+    "${ability_base_path}:want",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_path}/services/bundlemgr:libbms",
     "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/dataability:native_dataability",
     "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/rdb:native_rdb",
     "//third_party/jsoncpp:jsoncpp",
@@ -65,11 +63,11 @@ ohos_shared_library("amsDataSystemTestC") {
     "ability_base:zuri",
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_innerkits",
+    "dataability:native_dataability",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "native_appdatamgr:native_appdatafwk",
-    "native_appdatamgr:native_dataability",
-    "native_appdatamgr:native_rdb",
+    "relational_store:native_appdatafwk",
+    "relational_store:native_rdb",
   ]
   subsystem_name = "amssystemtestability"
 }

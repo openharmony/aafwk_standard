@@ -141,6 +141,24 @@ public:
         return 0;
     }
 
+    /**
+     * Stop extension ability with want, send want to ability manager service.
+     *
+     * @param want, the want of the ability to stop.
+     * @param callerToken, caller ability token.
+     * @param userId, Designation User ID.
+     * @param extensionType If an ExtensionAbilityType is set, only extension of that type can be stopped.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StopExtensionAbility(
+        const Want& want,
+        const sptr<IRemoteObject>& callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        AppExecFwk::ExtensionAbilityType extensionType = AppExecFwk::ExtensionAbilityType::UNSPECIFIED)
+    {
+        return 0;
+    }
+
     virtual int GetAppMemorySize()
     {
         return 0;
@@ -525,12 +543,12 @@ public:
     virtual int FinishUserTest(const std::string &msg, const int64_t &resultCode, const std::string &bundleName) = 0;
 
     /**
-     * GetCurrentTopAbility, get the token of current top ability.
+     * GetTopAbility, get the token of top ability.
      *
-     * @param token, the token of current top ability.
+     * @param token, the token of top ability.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) = 0;
+    virtual int GetTopAbility(sptr<IRemoteObject> &token) = 0;
 
     /**
      * The delegator calls this interface to move the ability to the foreground.
@@ -808,6 +826,9 @@ public:
         // start extension ability (60)
         START_EXTENSION_ABILITY,
 
+        // stop extension ability (61)
+        STOP_EXTENSION_ABILITY,
+
         // ipc id 1001-2000 for DMS
         // ipc id for starting ability (1001)
         START_ABILITY = 1001,
@@ -907,7 +928,7 @@ public:
         FINISH_USER_TEST = 1121,
         DELEGATOR_DO_ABILITY_FOREGROUND = 1122,
         DELEGATOR_DO_ABILITY_BACKGROUND = 1123,
-        GET_CURRENT_TOP_ABILITY         = 1124,
+        GET_TOP_ABILITY_TOKEN         = 1124,
 
         // ipc id 2001-3000 for tools
         // ipc id for dumping state (2001)

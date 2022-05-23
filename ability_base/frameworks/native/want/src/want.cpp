@@ -72,6 +72,8 @@ const std::string Want::PARAM_RESV_CALLER_TOKEN("ohos.aafwk.param.callerToken");
 const std::string Want::PARAM_RESV_CALLER_UID("ohos.aafwk.param.callerUid");
 const std::string Want::PARAM_RESV_CALLER_PID("ohos.aafwk.param.callerPid");
 
+const std::string Want::PARAM_MODULE_NAME("moduleName");
+
 /**
  * @description:Default construcotr of Want class, which is used to initialzie flags and URI.
  * @param None
@@ -186,6 +188,7 @@ Want &Want::SetElementName(const std::string &deviceId, const std::string &bundl
     operation_.SetBundleName(bundleName);
     operation_.SetAbilityName(abilityName);
     operation_.SetModuleName(moduleName);
+    SetParam(PARAM_MODULE_NAME, moduleName);
     return *this;
 }
 
@@ -200,6 +203,7 @@ Want &Want::SetElement(const OHOS::AppExecFwk::ElementName &element)
     operation_.SetBundleName(element.GetBundleName());
     operation_.SetAbilityName(element.GetAbilityName());
     operation_.SetModuleName(element.GetModuleName());
+    SetParam(PARAM_MODULE_NAME, element.GetModuleName());
     return *this;
 }
 
@@ -1382,9 +1386,6 @@ void Want::ToUriStringInner(std::string &uriString) const
     if (operation_.GetAbilityName().length() > 0) {
         uriString += "ability=" + Encode(operation_.GetAbilityName()) + ";";
     }
-    if (operation_.GetModuleName().length() > 0) {
-        uriString += "moduleName=" + Encode(operation_.GetModuleName()) + ";";
-    }
     if (operation_.GetFlags() != 0) {
         uriString += "flag=";
         char buf[HEX_STRING_BUF_LEN] {0};
@@ -1701,6 +1702,8 @@ bool Want::ReadFromParcel(Parcel &parcel)
             parameters_ = *params;
             delete params;
             params = nullptr;
+            std::string moduleName = GetStringParam(PARAM_MODULE_NAME);
+            SetModuleName(moduleName);
         } else {
             return false;
         }
@@ -1760,8 +1763,6 @@ bool Want::ParseUriInternal(const std::string &content, ElementName &element, Wa
         element.SetBundleName(value);
     } else if (prop == "ability") {
         element.SetAbilityName(value);
-    } else if (prop == "moduleName") {
-        element.SetModuleName(value);
     } else if (prop == "package") {
         want.SetBundle(Decode(value));
     } else if (prop.length() > TYPE_TAG_SIZE) {
@@ -1769,6 +1770,9 @@ bool Want::ParseUriInternal(const std::string &content, ElementName &element, Wa
         if (!Want::CheckAndSetParameters(want, key, prop, value)) {
             return false;
         }
+        std::string moduleName = want.GetStringParam(PARAM_MODULE_NAME);
+        want.SetModuleName(moduleName);
+        element.SetModuleName(moduleName);
     }
 
     return true;
@@ -1956,7 +1960,6 @@ nlohmann::json Want::ToJson() const
         {"deviceId", operation_.GetDeviceId()},
         {"bundleName", operation_.GetBundleName()},
         {"abilityName", operation_.GetAbilityName()},
-        {"moduleName", operation_.GetModuleName()},
         {"uri", GetUriString()},
         {"type", GetType()},
         {"flags", GetFlags()},
@@ -1974,7 +1977,6 @@ bool Want::ReadFromJson(nlohmann::json &wantJson)
     if ((wantJson.find("deviceId") == jsonObjectEnd)
         || (wantJson.find("bundleName") == jsonObjectEnd)
         || (wantJson.find("abilityName") == jsonObjectEnd)
-        || (wantJson.find("moduleName") == jsonObjectEnd)
         || (wantJson.find("uri") == jsonObjectEnd)
         || (wantJson.find("type") == jsonObjectEnd)
         || (wantJson.find("flags") == jsonObjectEnd)
@@ -1988,8 +1990,7 @@ bool Want::ReadFromJson(nlohmann::json &wantJson)
     std::string deviceId = wantJson.at("deviceId").get<std::string>();
     std::string bundleName = wantJson.at("bundleName").get<std::string>();
     std::string abilityName = wantJson.at("abilityName").get<std::string>();
-    std::string moduleName = wantJson.at("moduleName").get<std::string>();
-    SetElementName(deviceId, bundleName, abilityName, moduleName);
+    SetElementName(deviceId, bundleName, abilityName);
 
     std::string uri = wantJson.at("uri").get<std::string>();
     SetUri(uri);
@@ -2006,6 +2007,9 @@ bool Want::ReadFromJson(nlohmann::json &wantJson)
     std::string parametersString = wantJson.at("parameters").get<std::string>();
     WantParams parameters = WantParamWrapper::ParseWantParams(parametersString);
     SetParams(parameters);
+    std::string moduleName = GetStringParam(PARAM_MODULE_NAME);
+    SetModuleName(moduleName);
+
     if (wantJson.at("entities").is_null()) {
         ABILITYBASE_LOGI("entities is null");
     } else {
@@ -2054,6 +2058,7 @@ Want &Want::SetDeviceId(const std::string &deviceId)
 Want& Want::SetModuleName(const std::string &moduleName)
 {
     operation_.SetModuleName(moduleName);
+    SetParam(PARAM_MODULE_NAME, moduleName);
     return *this;
 }
 
