@@ -495,12 +495,6 @@ int32_t AppMgrServiceInner::KillApplicationByUserId(const std::string &bundleNam
         return ERR_NO_INIT;
     }
 
-    int32_t callerUid = IPCSkeleton::GetCallingUid();
-    if (!IN_PROCESS_CALL(bundleMgr->CheckIsSystemAppByUid(callerUid))) {
-        HILOG_ERROR("caller is not systemApp, callerUid %{public}d", callerUid);
-        return ERR_INVALID_VALUE;
-    }
-
     return KillApplicationByUserIdLocked(bundleName, userId);
 }
 

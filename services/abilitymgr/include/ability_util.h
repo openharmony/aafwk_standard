@@ -156,11 +156,10 @@ static sptr<AppExecFwk::IBundleMgr> GetBundleManager()
         }
         auto bms = GetBundleManager();
         CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
-        auto isSystemApp = bms->CheckIsSystemAppByUid(callerUid);
 
         auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
         auto apl = abilityInfo.applicationInfo.appPrivilegeLevel;
-        if (!isSaCall && apl != SYSTEM_BASIC && apl != SYSTEM_CORE && !isSystemApp) {
+        if (!isSaCall && apl != SYSTEM_BASIC && apl != SYSTEM_CORE) {
             HILOG_INFO("Caller is not systemAp or system.");
             std::string bundleName;
             bool result = bms->GetBundleNameForUid(callerUid, bundleName);
