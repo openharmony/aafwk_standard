@@ -219,12 +219,12 @@ ohos_shared_library("abilitykit_native") {
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_innerkits",
+    "dataability:native_dataability",
     "hitrace_native:hitrace_meter",
     "ipc:ipc_core",
     "ipc_js:rpc",
-    "native_appdatamgr:native_appdatafwk",
-    "native_appdatamgr:native_dataability",
-    "native_appdatamgr:native_rdb",
+    "relational_store:native_appdatafwk",
+    "relational_store:native_rdb",
     "resource_management:global_resmgr",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
@@ -247,7 +247,7 @@ ohos_shared_library("abilitykit_native") {
   }
 
   public_deps = [
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${global_path}/resource_management/frameworks/resmgr:global_resmgr",
     "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
     "//foundation/arkui/napi:ace_napi",

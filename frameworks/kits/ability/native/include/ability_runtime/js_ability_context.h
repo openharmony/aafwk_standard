@@ -45,6 +45,8 @@ public:
     static NativeValue* StartAbilityForResultWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* StartServiceExtensionAbility(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* StartServiceExtensionAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* StopServiceExtensionAbility(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* StopServiceExtensionAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* ConnectAbility(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* ConnectAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* DisconnectAbility(NativeEngine* engine, NativeCallbackInfo* info);
@@ -53,6 +55,7 @@ public:
     static NativeValue* RequestPermissionsFromUser(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* RestoreWindowStage(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* SetMissionLabel(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* IsTerminating(NativeEngine* engine, NativeCallbackInfo* info);
 
 #ifdef SUPPORT_GRAPHICS
     static NativeValue* SetMissionIcon(NativeEngine* engine, NativeCallbackInfo* info);
@@ -74,6 +77,8 @@ private:
     NativeValue* OnStartAbilityForResultWithAccount(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnStartExtensionAbility(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnStartExtensionAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnStopExtensionAbility(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnStopExtensionAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnTerminateSelfWithResult(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnConnectAbility(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnConnectAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info);
@@ -82,6 +87,7 @@ private:
     NativeValue* OnRequestPermissionsFromUser(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnRestoreWindowStage(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnSetMissionLabel(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnIsTerminating(NativeEngine& engine, NativeCallbackInfo& info);
 
 #ifdef SUPPORT_GRAPHICS
     NativeValue* OnSetMissionIcon(NativeEngine& engine, NativeCallbackInfo& info);

@@ -64,10 +64,13 @@ namespace AppExecFwk {
 using namespace OHOS::AbilityRuntime::Constants;
 std::shared_ptr<OHOSApplication> MainThread::applicationForAnr_ = nullptr;
 std::shared_ptr<std::thread> MainThread::handleANRThread_ = nullptr;
+std::shared_ptr<EventHandler> MainThread::dfxHandler_ = nullptr;
 namespace {
 constexpr int32_t DELIVERY_TIME = 200;
 constexpr int32_t DISTRIBUTE_TIME = 100;
 constexpr int32_t UNSPECIFIED_USERID = -2;
+constexpr int SIGNAL_JS_HEAP = 37;
+constexpr int SIGNAL_JS_HEAP_PRIV = 38;
 
 constexpr char EVENT_KEY_PACKAGE_NAME[] = "PACKAGE_NAME";
 constexpr char EVENT_KEY_VERSION[] = "VERSION";
@@ -79,6 +82,7 @@ constexpr char EVENT_KEY_SUMMARY[] = "SUMMARY";
 
 const std::string JSCRASH_TYPE = "3";
 const std::string JSVM_TYPE = "ARK";
+const std::string  DFX_THREAD_NAME = "DfxThreadName";
 constexpr char EXTENSION_PARAMS_TYPE[] = "type";
 constexpr char EXTENSION_PARAMS_NAME[] = "name";
 }
@@ -753,6 +757,7 @@ bool MainThread::InitResourceManager(std::shared_ptr<Global::Resource::ResourceM
     }
 
     std::string colormode = config.GetItem(AAFwk::GlobalConfigurationKey::SYSTEM_COLORMODE);
+    HILOG_INFO("colormode is %{public}s.", colormode.c_str());
     resConfig->SetColorMode(ConvertColorMode(colormode));
 #endif
     resourceManager->UpdateResConfig(*resConfig);
@@ -1470,6 +1475,7 @@ void MainThread::Init(const std::shared_ptr<EventRunner> &runner, const std::sha
     HILOG_INFO("MainThread:Init Start");
     mainHandler_ = std::make_shared<MainHandler>(runner, this);
     watchDogHandler_ = std::make_shared<WatchDog>(watchDogRunner);
+    dfxHandler_ = std::make_shared<EventHandler>(EventRunner::Create(DFX_THREAD_NAME));
     wptr<MainThread> weak = this;
     auto task = [weak]() {
         auto appThread = weak.promote();
@@ -1504,9 +1510,30 @@ void MainThread::HandleSignal(int signal)
                 handleANRThread_ = std::make_shared<std::thread>(&MainThread::HandleScheduleANRProcess);
             }
             break;
+        case SIGNAL_JS_HEAP: {
+            HILOG_INFO("Dump js heap called.");
+            auto heapFunc = std::bind(&MainThread::HandleDumpHeap, false);
+            dfxHandler_->PostTask(heapFunc);
+            break;
+        }
+        case SIGNAL_JS_HEAP_PRIV: {
+            HILOG_INFO("Dump js heap private called.");
+            auto privateHeapFunc = std::bind(&MainThread::HandleDumpHeap, true);
+            dfxHandler_->PostTask(privateHeapFunc);
+            break;
+        }
         default:
             HILOG_INFO("Signal:%{public}d need not to handle.", signal);
             break;
+    }
+}
+
+void MainThread::HandleDumpHeap(bool isPrivate)
+{
+    HILOG_INFO("Dump heap start.");
+    if (applicationForAnr_ != nullptr && applicationForAnr_->GetRuntime() != nullptr) {
+        HILOG_INFO("Send dump heap to ark start.");
+        applicationForAnr_->GetRuntime()->DumpHeapSnapshot(isPrivate);
     }
 }
 
@@ -1564,6 +1591,8 @@ void MainThread::Start()
     sigAct.sa_flags = 0;
     sigAct.sa_handler = &MainThread::HandleSignal;
     sigaction(SIGUSR1, &sigAct, NULL);
+    sigaction(SIGNAL_JS_HEAP, &sigAct, NULL);
+    sigaction(SIGNAL_JS_HEAP_PRIV, &sigAct, NULL);
 
     thread->Init(runner, runnerWatchDog);
 

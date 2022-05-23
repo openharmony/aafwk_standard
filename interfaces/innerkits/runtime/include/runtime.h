@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,6 +46,7 @@ public:
 
     virtual void StartDebugMode(bool needBreakPoint, int32_t instanceId = 0) = 0;
     virtual std::string BuildNativeAndJsBackStackTrace() = 0;
+    virtual void DumpHeapSnapshot(bool isPrivate) = 0;
 
     Runtime(const Runtime&) = delete;
     Runtime(Runtime&&) = delete;

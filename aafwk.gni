@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,7 +12,7 @@
 # limitations under the License.
 
 aafwk_path = "//foundation/aafwk/standard"
-appexecfwk_path = "//foundation/bundlemanager/bundle_framework"
+bundlefwk_path = "//foundation/bundlemanager/bundle_framework"
 multimedia_path = "//foundation/multimedia/image_standard"
 services_path = "//foundation/aafwk/standard/services"
 multimodalinput_path = "//foundation/multimodalinput/input"
@@ -24,18 +24,18 @@ notification_path = "//base/notification"
 distributeddatamgr_path = "//foundation/distributeddatamgr"
 kits_path = "//foundation/aafwk/standard/frameworks/kits"
 innerkits_path = "//foundation/aafwk/standard/interfaces/innerkits"
-appexecfwk_innerkits_path = "${appexecfwk_path}/interfaces/innerkits"
-appexecfwk_inner_api_path = "${appexecfwk_path}/interfaces/inner_api"
+bundlefwk_innerkits_path = "${bundlefwk_path}/interfaces/innerkits"
+bundlefwk_inner_api_path = "${bundlefwk_path}/interfaces/inner_api"
 ans_core_path =
     "//base/notification/distributed_notification_service/frameworks/core"
 system_test_app_path =
     "//foundation/aafwk/standard/test/resource/amssystemtestability/abilitySrc"
-form_runtime_path = "${aafwk_path}/form_runtime"
-form_runtime_napi_path = "${aafwk_path}/form_runtime/frameworks/js/napi"
+form_runtime_path = "//foundation/aafwk/standard/form_runtime"
+form_runtime_napi_path = "${form_runtime_path}/frameworks/js/napi"
 
-base_path = "//foundation/aafwk/standard/ability_base"
-base_inner_api_path = "${base_path}/interfaces/inner_api"
-base_native_path = "${base_path}/frameworks/native"
+ability_base_path = "//foundation/aafwk/standard/ability_base"
+ability_base_innerapi_path = "${ability_base_path}/interfaces/inner_api"
+ability_base_native_path = "${ability_base_path}/frameworks/native"
 
 declare_args() {
   background_task_mgr_continuous_task_enable = true

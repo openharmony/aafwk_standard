@@ -43,7 +43,7 @@ constexpr size_t ARGC_ONE = 1;
 constexpr size_t ARGC_TWO = 2;
 constexpr size_t ARGC_THREE = 3;
 constexpr int32_t ERROR_CODE_ONE = 1;
-constexpr int32_t ERR_NOTOK = -1;
+constexpr int32_t ERR_NOT_OK = -1;
 
 class StartAbilityByCallParameters {
 public:
@@ -104,6 +104,18 @@ NativeValue* JsAbilityContext::StartServiceExtensionAbilityWithAccount(NativeEng
     return (me != nullptr) ? me->OnStartExtensionAbilityWithAccount(*engine, *info) : nullptr;
 }
 
+NativeValue* JsAbilityContext::StopServiceExtensionAbility(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
+    return (me != nullptr) ? me->OnStopExtensionAbility(*engine, *info) : nullptr;
+}
+
+NativeValue* JsAbilityContext::StopServiceExtensionAbilityWithAccount(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
+    return (me != nullptr) ? me->OnStopExtensionAbilityWithAccount(*engine, *info) : nullptr;
+}
+
 NativeValue* JsAbilityContext::ConnectAbility(NativeEngine* engine, NativeCallbackInfo* info)
 {
     JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
@@ -150,6 +162,12 @@ NativeValue* JsAbilityContext::SetMissionLabel(NativeEngine* engine, NativeCallb
 {
     JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
     return (me != nullptr) ? me->OnSetMissionLabel(*engine, *info) : nullptr;
+}
+
+NativeValue* JsAbilityContext::IsTerminating(NativeEngine* engine, NativeCallbackInfo* info)
+{
+    JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
+    return (me != nullptr) ? me->OnIsTerminating(*engine, *info) : nullptr;
 }
 
 #ifdef SUPPORT_GRAPHICS
@@ -478,17 +496,24 @@ NativeValue* JsAbilityContext::OnStartAbilityForResultWithAccount(NativeEngine& 
 NativeValue* JsAbilityContext::OnStartExtensionAbility(NativeEngine& engine, NativeCallbackInfo& info)
 {
     HILOG_INFO("OnStartExtensionAbility is called.");
+    int32_t argErrorCode = 0;
+    AAFwk::Want want;
+
     if (info.argc != ARGC_ONE && info.argc != ARGC_TWO) {
         HILOG_ERROR("Invalid params");
-        return engine.CreateUndefined();
+        argErrorCode = ERR_NOT_OK;
+    } else {
+        OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[0]), want);
     }
-    AAFwk::Want want;
-    OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
-        reinterpret_cast<napi_value>(info.argv[0]), want);
 
     AsyncTask::CompleteCallback complete =
-        [weak = context_, want](NativeEngine& engine, AsyncTask& task, int32_t status) {
+        [weak = context_, want, argErrorCode](NativeEngine& engine, AsyncTask& task, int32_t status) {
             auto context = weak.lock();
+            if (argErrorCode != 0) {
+               task.Reject(engine, CreateJsError(engine, argErrorCode, "Invalid params."));
+               return; 
+            }
             if (!context) {
                 HILOG_WARN("context is released");
                 task.Reject(engine, CreateJsError(engine, 1, "Context is released"));
@@ -498,11 +523,11 @@ NativeValue* JsAbilityContext::OnStartExtensionAbility(NativeEngine& engine, Nat
             if (errcode == 0) {
                 task.Resolve(engine, engine.CreateUndefined());
             } else {
-                task.Reject(engine, CreateJsError(engine, errcode, "Start Ability failed."));
+                task.Reject(engine, CreateJsError(engine, errcode, "Start extensionAbility failed."));
             }
         };
 
-    NativeValue* lastParam = (info.argc == ARGC_ONE) ? nullptr : info.argv[ARGC_ONE];
+    NativeValue* lastParam = (info.argc <= ARGC_ONE) ? nullptr : info.argv[ARGC_ONE];
     NativeValue* result = nullptr;
     AsyncTask::Schedule(
         engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -512,24 +537,31 @@ NativeValue* JsAbilityContext::OnStartExtensionAbility(NativeEngine& engine, Nat
 NativeValue* JsAbilityContext::OnStartExtensionAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info)
 {
     HILOG_INFO("OnStartExtensionAbilityWithAccount is called.");
+    int32_t argErrorCode = 0;
+    AAFwk::Want want;
+    int32_t accountId = -1;
+
     if (info.argc != ARGC_TWO && info.argc != ARGC_THREE) {
         HILOG_ERROR("Invalid params");
-        return engine.CreateUndefined();
-    }
-    AAFwk::Want want;
-    OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
-        reinterpret_cast<napi_value>(info.argv[0]), want);
+        argErrorCode = ERR_NOT_OK;
+    } else {
+        OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[0]), want);
 
-    int32_t accountId = -1;
-    if (!OHOS::AppExecFwk::UnwrapInt32FromJS2(reinterpret_cast<napi_env>(&engine),
-        reinterpret_cast<napi_value>(info.argv[1]), accountId)) {
-        HILOG_INFO("%{public}s called, the second parameter is invalid.", __func__);
-        return engine.CreateUndefined();
+        if (!OHOS::AppExecFwk::UnwrapInt32FromJS2(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[1]), accountId)) {
+            HILOG_INFO("%{public}s called, the second parameter is invalid.", __func__);
+            argErrorCode = ERR_NOT_OK;
+        }
     }
 
     AsyncTask::CompleteCallback complete =
-        [weak = context_, want, accountId](NativeEngine& engine, AsyncTask& task, int32_t status) {
+        [weak = context_, want, accountId, argErrorCode](NativeEngine& engine, AsyncTask& task, int32_t status) {
             auto context = weak.lock();
+            if (argErrorCode != 0) {
+               task.Reject(engine, CreateJsError(engine, argErrorCode, "Invalid params."));
+               return; 
+            }
             if (!context) {
                 HILOG_WARN("context is released");
                 task.Reject(engine, CreateJsError(engine, 1, "Context is released"));
@@ -539,11 +571,99 @@ NativeValue* JsAbilityContext::OnStartExtensionAbilityWithAccount(NativeEngine& 
             if (errcode == 0) {
                 task.Resolve(engine, engine.CreateUndefined());
             } else {
-                task.Reject(engine, CreateJsError(engine, errcode, "Start Ability failed."));
+                task.Reject(engine, CreateJsError(engine, errcode, "Start extensionAbility failed."));
             }
         };
 
-    NativeValue* lastParam = (info.argc == ARGC_TWO) ? nullptr : info.argv[ARGC_TWO];
+    NativeValue* lastParam = (info.argc <= ARGC_TWO) ? nullptr : info.argv[ARGC_TWO];
+    NativeValue* result = nullptr;
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    return result;
+}
+
+NativeValue* JsAbilityContext::OnStopExtensionAbility(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    HILOG_INFO("OnStopExtensionAbility is called.");
+    int32_t argErrorCode = 0;
+    AAFwk::Want want;
+
+    if (info.argc != ARGC_ONE && info.argc != ARGC_TWO) {
+        HILOG_ERROR("Invalid params");
+        argErrorCode = ERR_NOT_OK;
+    } else {
+        OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[0]), want);
+    }
+
+    AsyncTask::CompleteCallback complete =
+        [weak = context_, want, argErrorCode](NativeEngine& engine, AsyncTask& task, int32_t status) {
+            auto context = weak.lock();
+            if (argErrorCode != 0) {
+               task.Reject(engine, CreateJsError(engine, argErrorCode, "Invalid params."));
+               return; 
+            }
+            if (!context) {
+                HILOG_WARN("context is released");
+                task.Reject(engine, CreateJsError(engine, 1, "Context is released"));
+                return;
+            }
+            auto errcode = context->StopServiceExtensionAbility(want);
+            if (errcode == 0) {
+                task.Resolve(engine, engine.CreateUndefined());
+            } else {
+                task.Reject(engine, CreateJsError(engine, errcode, "Stop extensionAbility failed."));
+            }
+        };
+
+    NativeValue* lastParam = (info.argc <= ARGC_ONE) ? nullptr : info.argv[ARGC_ONE];
+    NativeValue* result = nullptr;
+    AsyncTask::Schedule(
+        engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
+    return result;
+}
+
+NativeValue* JsAbilityContext::OnStopExtensionAbilityWithAccount(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    HILOG_INFO("OnStartExtensionAbilityWithAccount is called.");
+    int32_t argErrorCode = 0;
+    AAFwk::Want want;
+    int32_t accountId = -1;
+    if (info.argc != ARGC_TWO && info.argc != ARGC_THREE) {
+        HILOG_ERROR("Invalid params");
+        argErrorCode = ERR_NOT_OK;
+    } else {
+        OHOS::AppExecFwk::UnwrapWant(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[0]), want);
+
+        if (!OHOS::AppExecFwk::UnwrapInt32FromJS2(reinterpret_cast<napi_env>(&engine),
+            reinterpret_cast<napi_value>(info.argv[1]), accountId)) {
+            HILOG_INFO("%{public}s called, the second parameter is invalid.", __func__);
+            argErrorCode = ERR_NOT_OK;
+        }
+    }
+
+    AsyncTask::CompleteCallback complete =
+        [weak = context_, want, accountId, argErrorCode](NativeEngine& engine, AsyncTask& task, int32_t status) {
+            auto context = weak.lock();
+            if (argErrorCode != 0) {
+               task.Reject(engine, CreateJsError(engine, argErrorCode, "Invalid params."));
+               return; 
+            }
+            if (!context) {
+                HILOG_WARN("context is released");
+                task.Reject(engine, CreateJsError(engine, 1, "Context is released"));
+                return;
+            }
+            auto errcode = context->StopServiceExtensionAbility(want, accountId);
+            if (errcode == 0) {
+                task.Resolve(engine, engine.CreateUndefined());
+            } else {
+                task.Reject(engine, CreateJsError(engine, errcode, "Stop extensionAbility failed."));
+            }
+        };
+
+    NativeValue* lastParam = (info.argc <= ARGC_TWO) ? nullptr : info.argv[ARGC_TWO];
     NativeValue* result = nullptr;
     AsyncTask::Schedule(
         engine, CreateAsyncTaskWithLastParam(engine, lastParam, nullptr, std::move(complete), &result));
@@ -564,6 +684,11 @@ NativeValue* JsAbilityContext::OnTerminateSelfWithResult(NativeEngine& engine, N
     if (!JsAbilityContext::UnWrapAbilityResult(engine, info.argv[0], resultCode, want)) {
         HILOG_ERROR("%s Failed to parse ability result!", __func__);
         return engine.CreateUndefined();
+    }
+
+    auto abilityContext = context_.lock();
+    if (abilityContext != nullptr) {
+        abilityContext->SetTerminating(true);
     }
 
     AsyncTask::CompleteCallback complete =
@@ -766,6 +891,11 @@ NativeValue* JsAbilityContext::OnTerminateSelf(NativeEngine& engine, NativeCallb
         return engine.CreateUndefined();
     }
 
+    auto abilityContext = context_.lock();
+    if (abilityContext != nullptr) {
+        abilityContext->SetTerminating(true);
+    }
+
     AsyncTask::CompleteCallback complete =
         [weak = context_](NativeEngine& engine, AsyncTask& task, int32_t status) {
             auto context = weak.lock();
@@ -869,7 +999,7 @@ NativeValue* JsAbilityContext::OnSetMissionLabel(NativeEngine& engine, NativeCal
     std::string label;
     if (!ConvertFromJsValue(engine, info.argv[0], label)) {
         HILOG_ERROR("OnSetMissionLabel, parse label failed.");
-        errorCode = ERR_NOTOK;
+        errorCode = ERR_NOT_OK;
     }
 
     AsyncTask::CompleteCallback complete =
@@ -901,6 +1031,17 @@ NativeValue* JsAbilityContext::OnSetMissionLabel(NativeEngine& engine, NativeCal
     return result;
 }
 
+NativeValue* JsAbilityContext::OnIsTerminating(NativeEngine& engine, NativeCallbackInfo& info)
+{
+    HILOG_INFO("OnIsTerminating is called");
+    auto context = context_.lock();
+    if (context == nullptr) {
+        HILOG_ERROR("OnIsTerminating context is nullptr");
+        return engine.CreateUndefined();
+    }
+    return engine.CreateBoolean(context->IsTerminating());
+}
+
 #ifdef SUPPORT_GRAPHICS
 NativeValue* JsAbilityContext::OnSetMissionIcon(NativeEngine& engine, NativeCallbackInfo& info)
 {
@@ -915,7 +1056,7 @@ NativeValue* JsAbilityContext::OnSetMissionIcon(NativeEngine& engine, NativeCall
         reinterpret_cast<napi_value>(info.argv[0]));
     if (!icon) {
         HILOG_ERROR("OnSetMissionIcon, parse icon failed.");
-        errorCode = ERR_NOTOK;
+        errorCode = ERR_NOT_OK;
     }
 
     AsyncTask::CompleteCallback complete =
@@ -1090,6 +1231,9 @@ NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<Abilit
     BindNativeFunction(engine, *object, "startServiceExtensionAbility", JsAbilityContext::StartServiceExtensionAbility);
     BindNativeFunction(engine, *object, "startServiceExtensionAbilityWithAccount",
         JsAbilityContext::StartServiceExtensionAbilityWithAccount);
+    BindNativeFunction(engine, *object, "stopServiceExtensionAbility", JsAbilityContext::StopServiceExtensionAbility);
+    BindNativeFunction(engine, *object, "stopServiceExtensionAbilityWithAccount",
+        JsAbilityContext::StopServiceExtensionAbilityWithAccount);
     BindNativeFunction(engine, *object, "connectAbility", JsAbilityContext::ConnectAbility);
     BindNativeFunction(engine, *object, "connectAbilityWithAccount", JsAbilityContext::ConnectAbilityWithAccount);
     BindNativeFunction(engine, *object, "disconnectAbility", JsAbilityContext::DisconnectAbility);
@@ -1098,6 +1242,7 @@ NativeValue* CreateJsAbilityContext(NativeEngine& engine, std::shared_ptr<Abilit
     BindNativeFunction(engine, *object, "requestPermissionsFromUser", JsAbilityContext::RequestPermissionsFromUser);
     BindNativeFunction(engine, *object, "restoreWindowStage", JsAbilityContext::RestoreWindowStage);
     BindNativeFunction(engine, *object, "setMissionLabel", JsAbilityContext::SetMissionLabel);
+    BindNativeFunction(engine, *object, "isTerminating", JsAbilityContext::IsTerminating);
 
 #ifdef SUPPORT_GRAPHICS
     BindNativeFunction(engine, *object, "setMissionIcon", JsAbilityContext::SetMissionIcon);

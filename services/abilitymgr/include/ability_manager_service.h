@@ -28,7 +28,6 @@
 #include "ability_event_handler.h"
 #include "ability_manager_stub.h"
 #include "app_scheduler.h"
-#include "atomic_service_status_callback.h"
 #include "bundlemgr/bundle_mgr_interface.h"
 #include "bundle_constants.h"
 #include "data_ability_manager.h"
@@ -123,7 +122,7 @@ public:
         const sptr<IRemoteObject> &callerToken,
         int32_t userId = DEFAULT_INVAL_VALUE,
         int requestCode = DEFAULT_INVAL_VALUE) override;
-    
+
     /**
      * Start extension ability with want, send want to ability manager service.
      *
@@ -136,6 +135,21 @@ public:
     virtual int StartExtensionAbility(
         const Want &want,
         const sptr<IRemoteObject> &callerToken,
+        int32_t userId = DEFAULT_INVAL_VALUE,
+        AppExecFwk::ExtensionAbilityType extensionType = AppExecFwk::ExtensionAbilityType::UNSPECIFIED) override;
+
+    /**
+     * Stop extension ability with want, send want to ability manager service.
+     *
+     * @param want, the want of the ability to stop.
+     * @param callerToken, caller ability token.
+     * @param userId, Designation User ID.
+     * @param extensionType If an ExtensionAbilityType is set, only extension of that type can be stopped.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int StopExtensionAbility(
+        const Want& want,
+        const sptr<IRemoteObject>& callerToken,
         int32_t userId = DEFAULT_INVAL_VALUE,
         AppExecFwk::ExtensionAbilityType extensionType = AppExecFwk::ExtensionAbilityType::UNSPECIFIED) override;
 
@@ -631,13 +645,12 @@ public:
         const std::string &msg, const int64_t &resultCode, const std::string &bundleName) override;
 
     /**
-     * GetCurrentTopAbility, get the token of current top ability.
+     * GetTopAbility, get the token of top ability.
      *
-     * @param token, the token of current top ability.
+     * @param token, the token of top ability.
      * @return Returns ERR_OK on success, others on failure.
      */
-    virtual int GetCurrentTopAbility(sptr<IRemoteObject> &token) override;
-
+    virtual int GetTopAbility(sptr<IRemoteObject> &token) override;
     /**
      * The delegator calls this interface to move the ability to the foreground.
      *
@@ -762,6 +775,7 @@ public:
     static constexpr uint32_t FOREGROUNDNEW_TIMEOUT_MSG = 5;
     static constexpr uint32_t BACKGROUNDNEW_TIMEOUT_MSG = 6;
 
+    static constexpr uint32_t COLDSTART_LOAD_TIMEOUT = 10000; // ms
     static constexpr uint32_t LOAD_TIMEOUT = 3000;            // ms
     static constexpr uint32_t ACTIVE_TIMEOUT = 5000;          // ms
     static constexpr uint32_t INACTIVE_TIMEOUT = 500;         // ms
@@ -894,8 +908,6 @@ private:
     int StartRemoteAbilityByCall(const Want &want, const sptr<IRemoteObject> &connect);
     int ReleaseRemoteAbility(const sptr<IRemoteObject> &connect, const AppExecFwk::ElementName &element);
 
-    int IsConnectFreeInstall(const Want &want, int32_t userId, const sptr<IRemoteObject> &callerToken);
-
     void DumpInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionInner(const std::string &args, std::vector<std::string> &info);
     void DumpStateInner(const std::string &args, std::vector<std::string> &info);
@@ -1006,7 +1018,7 @@ private:
     void NotifyFreeInstallResult(const Want &want, int resultCode);
     int GenerateExtensionAbilityRequest(const Want &want, AbilityRequest &request,
         const sptr<IRemoteObject> &callerToken, int32_t userId);
-    int CheckStartExtensionAbility(const Want &want, AbilityRequest &abilityRequest,
+    int CheckOptExtensionAbility(const Want &want, AbilityRequest &abilityRequest,
         int32_t validUserId, AppExecFwk::ExtensionAbilityType extensionType);
 
     constexpr static int REPOLL_TIME_MICRO_SECONDS = 1000000;
@@ -1042,17 +1054,6 @@ private:
     std::multimap<std::string, std::string> timeoutMap_;
 
     static sptr<AbilityManagerService> instance_;
-    struct FreeInstallInfo {
-        Want want;
-        int32_t userId = DEFAULT_INVAL_VALUE;
-        int32_t requestCode = DEFAULT_INVAL_VALUE;
-        std::shared_ptr<std::promise<int32_t>> promise;
-        bool isInstalled = false;
-        sptr<IRemoteObject> callerToken = nullptr;
-        sptr<IRemoteObject> dmsCallback = nullptr;
-    };
-    std::vector<FreeInstallInfo> freeInstallList_;
-    std::vector<FreeInstallInfo> dmsFreeInstallCbs_;
 };
 }  // namespace AAFwk
 }  // namespace OHOS

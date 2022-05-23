@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/form_runtime/form_runtime.gni")
 
 config("formmgr_test_config") {
   include_dirs = [
@@ -19,10 +19,7 @@ config("formmgr_test_config") {
     "mock/include",
   ]
 
-  configs = [
-    "${form_runtime_path}:formmgr_config",
-    "${appexecfwk_path}/common:appexecfwk_common_config",
-  ]
+  configs = [ "${form_runtime_path}:formmgr_config" ]
 }
 
 public_configs = [
@@ -31,7 +28,6 @@ public_configs = [
 ]
 
 public_deps = [
-  "${appexecfwk_path}/common:libappexecfwk_common",
   "//third_party/googletest:gmock_main",
   "//third_party/googletest:gtest_main",
   "//utils/native/base:utils",
@@ -63,4 +59,10 @@ group("unittest") {
     "unittest/fms_form_sys_event_receiver_test:unittest",
     "unittest/fms_form_timer_mgr_test:unittest",
   ]
+}
+
+group("systemtest") {
+  testonly = true
+
+  deps = [ "systemtest:systemtest" ]
 }

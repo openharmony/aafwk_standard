@@ -28,7 +28,6 @@
 #include "form_mgr_service.h"
 #include "form_provider_mgr.h"
 #include "if_system_ability_manager.h"
-#include "inner_bundle_info.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 

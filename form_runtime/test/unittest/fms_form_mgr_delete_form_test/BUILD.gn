@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,7 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/form_runtime/form_runtime.gni")
 
 module_output_path = "form_runtime/formmgrservice"
 
@@ -29,12 +29,11 @@ ohos_unittest("FmsFormMgrDeleteFormTest") {
   include_dirs = [
     "//third_party/zlib/contrib/minizip",
     "//third_party/zlib",
-    "${appexecfwk_innerkits_path}/libeventhandler/include",
-    "${appexecfwk_path}/common/log/include/",
-    "${aafwk_path}/services/formmgr/include",
-    "${appexecfwk_path}/services/bundlemgr/include",
+    "${bundlefwk_innerkits_path}/libeventhandler/include",
+    "${ability_runtime_path}/services/formmgr/include",
+    "${bundlefwk_path}/services/bundlemgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/include/",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include/",
     "${form_runtime_path}/interfaces/inner_api/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
     "${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
@@ -43,28 +42,24 @@ ohos_unittest("FmsFormMgrDeleteFormTest") {
 
   configs = [
     "${form_runtime_path}/test:formmgr_test_config",
-    "${aafwk_path}/services/abilitymgr:abilityms_config",
-    "${appexecfwk_path}/services/bundlemgr/test:bundlemgr_test_config",
-
-    # "${appexecfwk_inner_api_path}/appexecfwk_core:bundlemgr_sdk_config",
+    "${ability_runtime_path}/services/abilitymgr:abilityms_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_path}/common:libappexecfwk_common",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_target",
-    "${base_path}:base",
-    "${base_path}:configuration",
-    "${base_path}:want",
+    "${ability_base_path}:base",
+    "${ability_base_path}:configuration",
+    "${ability_base_path}:want",
+    "${ability_runtime_path}/interfaces/innerkits/app_manager:app_manager",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_path}/libs/libeventhandler:libeventhandler_target",
     "${form_runtime_path}:fms_target",
     "${form_runtime_path}:fmskit_native",
 
-    #"${appexecfwk_path}/services/bundlemgr:bms_target",
-    "${aafwk_path}/services/abilitymgr:abilityms_target",
+    #"${bundlefwk_path}/services/bundlemgr:bms_target",
+    "${ability_runtime_path}/services/abilitymgr:abilityms_target",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gmock_main",

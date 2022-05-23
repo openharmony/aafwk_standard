@@ -11,22 +11,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import("//build/ohos.gni")
-SUBDEMOSYSTEM_DIR = "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/amsAbilityAppendTestA"
-SUBST_TOOLS_DIR =
-    "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/tools"
+SUBDEMOSYSTEM_DIR =
+    "test/resource/amssystemtestability/abilitySrc/amsAbilityAppendTestA"
+SUBST_TOOLS_DIR = "test/resource/amssystemtestability/abilitySrc/tools"
 config("amsAbilityAppendTestAConfig") {
   visibility = [ ":*" ]
   include_dirs = [
     "${SUBDEMOSYSTEM_DIR}/include",
     "${aafwk_path}/frameworks/kits/appkit/native/app",
     "${aafwk_path}/interfaces/innerkits/ability_manager/include",
-    "${base_inner_api_path}/want/include",
-    "${base_inner_api_path}/uri/include",
+    "${ability_base_innerapi_path}/want/include",
+    "${ability_base_innerapi_path}/uri/include",
     "${innerkits_path}/libeventhandler/include",
     "${services_path}/bundlemgr/include",
     "${aafwk_path}/services/abilitymgr/include",
     "${common_path}/log/include",
-    "${appexecfwk_path}/test/resource/amssystemtestability/abilitySrc/common",
     "${SUBST_TOOLS_DIR}/include",
     "//third_party/jsoncpp/include",
   ]
@@ -50,8 +49,7 @@ ohos_shared_library("amsAbilityAppendTestA") {
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${base_path}:want",
-    "${common_path}:libappexecfwk_common",
+    "${ability_base_path}:want",
     "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/dataability:native_dataability",
     "${distributeddatamgr_path}/appdatamgr/interfaces/inner_api/native/rdb:native_rdb",
     "${inner_api_path}/appexecfwk_base:appexecfwk_base",

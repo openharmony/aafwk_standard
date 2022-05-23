@@ -18,11 +18,11 @@ module_output_path = "appexecfwk_standard/ams/"
 config("system_test_ams_ability_state_age_manual_test_config") {
   include_dirs = [
     "${aafwk_path}/frameworks/kits/appkit/native/app/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_core/include/bundlemgr",
-    "${base_inner_api_path}/want/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_core/include/bundlemgr",
+    "${ability_base_innerapi_path}/want/include",
     "${aafwk_path}/interfaces/innerkits/app_manager/include/appmgr",
     "${aafwk_path}/frameworks/kits/ability/native/include",
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/want/include",
     "//third_party/json/include",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
@@ -37,15 +37,15 @@ ohos_systemtest("ams_ability_state_age_manual_test") {
 
   include_dirs = [
     "${distributedschedule_path}/safwk/services/safwk/include",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/include",
+    "test/systemtest/common/ams/tool/include",
   ]
 
   sources = [
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/event.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/st_ability_util.cpp",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/src/stoperator.cpp",
     "ams_ability_state_age_manual_test.cpp",
+    "test/systemtest/common/ams/tool/src/event.cpp",
+    "test/systemtest/common/ams/tool/src/module_test_dump_util.cpp",
+    "test/systemtest/common/ams/tool/src/st_ability_util.cpp",
+    "test/systemtest/common/ams/tool/src/stoperator.cpp",
   ]
 
   configs = [
@@ -55,8 +55,8 @@ ohos_systemtest("ams_ability_state_age_manual_test") {
     # "${aafwk_path}/frameworks/kits/appkit:appkit_config",
 
     ":system_test_ams_ability_state_age_manual_test_config",
-    "${appexecfwk_path}/test/systemtest/common/ams/tool/:system_test_ability_util_config",
-    "${appexecfwk_path}/libs/libeventhandler:libeventhandler_config",
+    "test/systemtest/common/ams/tool/:system_test_ability_util_config",
+    "${bundlefwk_path}/libs/libeventhandler:libeventhandler_config",
   ]
   cflags = []
   if (target_cpu == "arm") {
@@ -66,8 +66,8 @@ ohos_systemtest("ams_ability_state_age_manual_test") {
     "${aafwk_path}/frameworks/kits/appkit:appkit_native",
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
     "${aafwk_path}/services/abilitymgr:abilityms",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",

@@ -40,6 +40,7 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/src/data_ability_caller_recipient.cpp",
     "${services_path}/abilitymgr/src/data_ability_manager.cpp",
     "${services_path}/abilitymgr/src/data_ability_record.cpp",
+    "${services_path}/abilitymgr/src/free_install_manager.cpp",
     "${services_path}/abilitymgr/src/launch_param.cpp",
     "${services_path}/abilitymgr/src/lifecycle_deal.cpp",
     "${services_path}/abilitymgr/src/lifecycle_state_info.cpp",
@@ -60,7 +61,7 @@ ohos_source_set("abilityms_test_source") {
   ]
 
   include_dirs = [
-    "${appexecfwk_inner_api_path}/appexecfwk_core/include/",
+    "${bundlefwk_inner_api_path}/appexecfwk_core/include/",
     "${services_path}/abilitymgr/test/mock/libs/system_ability_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
@@ -69,7 +70,6 @@ ohos_source_set("abilityms_test_source") {
     "${aafwk_path}/interfaces/innerkits/dataobs_manager/include",
     "//base/account/os_account/frameworks/common/account_error/include",
     "//base/account/os_account/frameworks/common/database/include",
-    "//base/account/os_account/frameworks/common/log/include",
     "//base/account/os_account/interfaces/innerkits/osaccount/native/include",
     "//base/hiviewdfx/hicollie/interfaces/native/innerkits/include/xcollie",
   ]
@@ -92,10 +92,10 @@ ohos_source_set("abilityms_test_source") {
   }
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
-    "${base_path}:base",
-    "${base_path}:want",
+    "${ability_base_path}:base",
+    "${ability_base_path}:want",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/abilitymgr/test/mock/libs/sa_mgr:sa_mgr_mock",
     "//base/hiviewdfx/hiview/adapter/utility:hiview_adapter_utility",
@@ -125,7 +125,6 @@ ohos_source_set("abilityms_test_source") {
       "${services_path}/abilitymgr/src/remote_mission_listener_stub.cpp",
       "${services_path}/abilitymgr/src/screenshot_handler.cpp",
       "${services_path}/abilitymgr/src/screenshot_response.cpp",
-      "${services_path}/abilitymgr/src/window_focus_controller.cpp",
     ]
     deps += [
       "${global_path}/i18n/frameworks/intl:intl_util",
@@ -141,15 +140,15 @@ ohos_source_set("abilityms_test_source") {
     "bundle_framework:appexecfwk_core",
     "common_event_service:cesfwk_core",
     "common_event_service:cesfwk_innerkits",
+    "dataability:native_dataability",
     "dsoftbus_standard:softbus_client",
     "hicollie_native:libhicollie",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "native_appdatamgr:native_appdatafwk",
-    "native_appdatamgr:native_dataability",
-    "native_appdatamgr:native_rdb",
+    "relational_store:native_appdatafwk",
+    "relational_store:native_rdb",
     "resource_management:global_resmgr",
   ]
 

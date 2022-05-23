@@ -48,11 +48,11 @@ ohos_unittest("AmsWorkFlowTest") {
 
   deps = [
     "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
-    "${base_path}:base",
-    "${base_path}:configuration",
-    "${base_path}:want",
+    "${ability_base_path}:base",
+    "${ability_base_path}:configuration",
+    "${ability_base_path}:want",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
     "${services_path}/appmgr/test:appmgr_test_source",
