@@ -409,12 +409,10 @@ void FormExtensionProviderClient::NotifyFormExtensionAcquireState(const Want &wa
                                                                   const sptr<IRemoteObject> &callerToken)
 {
     HILOG_INFO("%{public}s called.", __func__);
-    int errorCode = ERR_OK;
     FormState state = FormState::UNKNOWN;
     std::shared_ptr<FormExtension> ownerFormExtension = GetOwner();
     if (ownerFormExtension == nullptr) {
         HILOG_ERROR("%{public}s error, ownerFormExtension is nullptr.", __func__);
-        errorCode = ERR_APPEXECFWK_FORM_NO_SUCH_ABILITY;
     } else {
         state = ownerFormExtension->OnAcquireFormState(wantArg);
     }
