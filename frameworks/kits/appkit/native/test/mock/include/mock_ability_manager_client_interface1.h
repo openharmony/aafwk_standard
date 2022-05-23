@@ -117,10 +117,6 @@ public:
     {
         return std::string("");
     };
-    virtual bool CheckIsSystemAppByUid(const int uid)
-    {
-        return true;
-    };
     virtual bool GetBundleInfosByMetaData(const std::string &metaData, std::vector<BundleInfo> &bundleInfos)
     {
         return true;
