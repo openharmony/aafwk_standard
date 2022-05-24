@@ -35,9 +35,6 @@
 #include "ability_util.h"
 #include "hitrace_meter.h"
 #include "bundle_mgr_client.h"
-#ifdef SUPPORT_GRAPHICS
-#include "display_manager.h"
-#endif
 #include "distributed_client.h"
 #include "free_install_manager.h"
 #include "hilog_wrapper.h"
@@ -46,11 +43,6 @@
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "itest_observer.h"
-#ifdef SUPPORT_GRAPHICS
-#include "png.h"
-#include "ui_service_mgr_client.h"
-#include "locale_config.h"
-#endif
 #include "mission_info_mgr.h"
 #include "permission_constants.h"
 #include "permission_verification.h"
@@ -64,6 +56,13 @@
 #include "uri_permission_manager_client.h"
 #include "xcollie/watchdog.h"
 #include "parameter.h"
+
+#ifdef SUPPORT_GRAPHICS
+#include "display_manager.h"
+#include "png.h"
+#include "ui_service_mgr_client.h"
+#include "locale_config.h"
+#endif
 
 using OHOS::AppExecFwk::ElementName;
 using OHOS::Security::AccessToken::AccessTokenKit;
@@ -3321,73 +3320,6 @@ int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityReq
     return ERR_OK;
 }
 
-int AbilityManagerService::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string &label)
-{
-    HILOG_DEBUG("%{public}s", __func__);
-    auto missionListManager = currentMissionListManager_;
-    if (missionListManager) {
-        missionListManager->SetMissionLabel(token, label);
-    }
-    return 0;
-}
-
-#ifdef SUPPORT_GRAPHICS
-int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token,
-    const std::shared_ptr<OHOS::Media::PixelMap> &icon)
-{
-    HILOG_DEBUG("%{public}s", __func__);
-    auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    if (!abilityRecord) {
-        HILOG_ERROR("no such ability record");
-        return -1;
-    }
-
-    auto callingUid = IPCSkeleton::GetCallingUid();
-    auto recordUid = abilityRecord->GetUid();
-    if (callingUid != recordUid) {
-        HILOG_ERROR("not self, callingUid:%{public}d, recordUid:%{public}d", callingUid, recordUid);
-        return -1;
-    }
-
-    auto userId = callingUid / BASE_USER_RANGE;
-    auto missionListManager = GetListManagerByUserId(userId);
-    if (!missionListManager) {
-        HILOG_ERROR("failed to find mission list manager.");
-        return -1;
-    }
-
-    return missionListManager->SetMissionIcon(token, icon);
-}
-
-int AbilityManagerService::RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler> &handler)
-{
-    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
-    if (!isSaCall) {
-        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
-        return CHECK_PERMISSION_FAILED;
-    }
-    wmsHandler_ = handler;
-    HILOG_DEBUG("%{public}s: WMS handler registered successfully.", __func__);
-    return ERR_OK;
-}
-
-sptr<IWindowManagerServiceHandler> AbilityManagerService::GetWMSHandler() const
-{
-    return wmsHandler_;
-}
-
-void AbilityManagerService::CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken)
-{
-    HILOG_DEBUG("%{public}s is called.", __func__);
-    std::shared_lock<std::shared_mutex> lock(managersMutex_);
-    for (auto& item : missionListManagers_) {
-        if (item.second) {
-            item.second->CompleteFirstFrameDrawing(abilityToken);
-        }
-    }
-}
-#endif
-
 int AbilityManagerService::StartUser(int userId)
 {
     HILOG_DEBUG("%{public}s, userId:%{public}d", __func__, userId);
@@ -4007,21 +3939,6 @@ int AbilityManagerService::DelegatorMoveMissionToFront(int32_t missionId)
     return currentMissionListManager_->MoveMissionToFront(missionId);
 }
 
-#ifdef SUPPORT_GRAPHICS
-int32_t AbilityManagerService::ShowPickerDialog(const Want& want, int32_t userId)
-{
-    auto bms = GetBundleManager();
-    CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
-    HILOG_INFO("share content: ShowPickerDialog, userId is %{public}d", userId);
-    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
-    IN_PROCESS_CALL_WITHOUT_RET(
-        bms->QueryAbilityInfos(
-            want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, abilityInfos)
-    );
-    return Ace::UIServiceMgrClient::GetInstance()->ShowAppPickerDialog(want, abilityInfos, userId);
-}
-#endif
-
 void AbilityManagerService::UpdateCallerInfo(Want& want)
 {
     int32_t tokenId = (int32_t)IPCSkeleton::GetCallingTokenID();
@@ -4545,5 +4462,85 @@ int AbilityManagerService::DumpAbilityInfoDone(std::vector<std::string> &infos, 
     abilityRecord->DumpAbilityInfoDone(infos);
     return ERR_OK;
 }
+
+#ifdef SUPPORT_GRAPHICS
+int AbilityManagerService::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string &label)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    auto missionListManager = currentMissionListManager_;
+    if (missionListManager) {
+        missionListManager->SetMissionLabel(token, label);
+    }
+    return 0;
+}
+
+int AbilityManagerService::SetMissionIcon(const sptr<IRemoteObject> &token,
+    const std::shared_ptr<OHOS::Media::PixelMap> &icon)
+{
+    HILOG_DEBUG("%{public}s", __func__);
+    auto abilityRecord = Token::GetAbilityRecordByToken(token);
+    if (!abilityRecord) {
+        HILOG_ERROR("no such ability record");
+        return -1;
+    }
+
+    auto callingUid = IPCSkeleton::GetCallingUid();
+    auto recordUid = abilityRecord->GetUid();
+    if (callingUid != recordUid) {
+        HILOG_ERROR("not self, callingUid:%{public}d, recordUid:%{public}d", callingUid, recordUid);
+        return -1;
+    }
+
+    auto userId = callingUid / BASE_USER_RANGE;
+    auto missionListManager = GetListManagerByUserId(userId);
+    if (!missionListManager) {
+        HILOG_ERROR("failed to find mission list manager.");
+        return -1;
+    }
+
+    return missionListManager->SetMissionIcon(token, icon);
+}
+
+int AbilityManagerService::RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler> &handler)
+{
+    auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
+    if (!isSaCall) {
+        HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        return CHECK_PERMISSION_FAILED;
+    }
+    wmsHandler_ = handler;
+    HILOG_DEBUG("%{public}s: WMS handler registered successfully.", __func__);
+    return ERR_OK;
+}
+
+sptr<IWindowManagerServiceHandler> AbilityManagerService::GetWMSHandler() const
+{
+    return wmsHandler_;
+}
+
+void AbilityManagerService::CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken)
+{
+    HILOG_DEBUG("%{public}s is called.", __func__);
+    std::shared_lock<std::shared_mutex> lock(managersMutex_);
+    for (auto& item : missionListManagers_) {
+        if (item.second) {
+            item.second->CompleteFirstFrameDrawing(abilityToken);
+        }
+    }
+}
+
+int32_t AbilityManagerService::ShowPickerDialog(const Want& want, int32_t userId)
+{
+    auto bms = GetBundleManager();
+    CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
+    HILOG_INFO("share content: ShowPickerDialog, userId is %{public}d", userId);
+    std::vector<AppExecFwk::AbilityInfo> abilityInfos;
+    IN_PROCESS_CALL_WITHOUT_RET(
+        bms->QueryAbilityInfos(
+            want, AppExecFwk::AbilityInfoFlag::GET_ABILITY_INFO_WITH_APPLICATION, userId, abilityInfos)
+    );
+    return Ace::UIServiceMgrClient::GetInstance()->ShowAppPickerDialog(want, abilityInfos, userId);
+}
+#endif
 }  // namespace AAFwk
 }  // namespace OHOS

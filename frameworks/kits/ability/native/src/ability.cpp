@@ -42,19 +42,9 @@
 #include "data_uri_utils.h"
 #include "distributed_objectstore.h"
 #include "hilog_wrapper.h"
-#ifdef SUPPORT_GRAPHICS
-#include "display_type.h"
-#include "form_host_client.h"
-#include "form_mgr.h"
-#include "form_mgr_errors.h"
-#include "form_provider_client.h"
-#endif
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
-#ifdef SUPPORT_GRAPHICS
-#include "key_event.h"
-#endif
 #include "ohos_application.h"
 #include "reverse_continuation_scheduler_primary.h"
 #include "reverse_continuation_scheduler_replica.h"
@@ -64,6 +54,15 @@
 #include "system_ability_definition.h"
 #include "task_handler_client.h"
 #include "values_bucket.h"
+
+#ifdef SUPPORT_GRAPHICS
+#include "display_type.h"
+#include "form_host_client.h"
+#include "form_mgr.h"
+#include "form_mgr_errors.h"
+#include "form_provider_client.h"
+#include "key_event.h"
+#endif
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -82,12 +81,6 @@ const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 const std::string LAUNCHER_ABILITY_NAME = "com.ohos.launcher.MainAbility";
 const std::string SHOW_ON_LOCK_SCREEN = "ShowOnLockScreen";
 
-#ifdef SUPPORT_GRAPHICS
-static std::mutex formLock;
-
-constexpr int64_t SEC_TO_MILLISEC = 1000;
-constexpr int64_t MILLISEC_TO_NANOSEC = 1000000;
-#endif
 #ifdef DISTRIBUTED_DATA_OBJECT_ENABLE
 constexpr int32_t DISTRIBUTED_OBJECT_TIMEOUT = 10000;
 #endif
@@ -189,18 +182,6 @@ bool Ability::IsUpdatingConfigurations()
 {
     return AbilityContext::IsUpdatingConfigurations();
 }
-
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Informs the system of the time required for drawing this Page ability.
- *
- * @return Returns the notification is successful or fail
- */
-bool Ability::PrintDrawnCompleted()
-{
-    return AbilityContext::PrintDrawnCompleted();
-}
-#endif
 
 void Ability::OnStart(const Want &want)
 {
@@ -426,57 +407,6 @@ void Ability::OnInactive()
     HILOG_INFO("%{public}s end", __func__);
 }
 
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Called after instantiating WindowScene.
- *
- *
- * You can override this function to implement your own processing logic.
- */
-void Ability::OnSceneCreated()
-{
-    HILOG_INFO("%{public}s called.", __func__);
-}
-
-/**
- * @brief Called after restore WindowScene.
- *
- *
- * You can override this function to implement your own processing logic.
- */
-void Ability::OnSceneRestored()
-{
-    HILOG_INFO("%{public}s called.", __func__);
-}
-
-/**
- * @brief Called after ability stoped.
- *
- *
- * You can override this function to implement your own processing logic.
- */
-void Ability::onSceneDestroyed()
-{
-    HILOG_INFO("%{public}s called.", __func__);
-}
-
-/**
- * @brief Called when this ability enters the <b>STATE_FOREGROUND</b> state.
- *
- *
- * The ability in the <b>STATE_FOREGROUND</b> state is visible.
- * You can override this function to implement your own processing logic.
- */
-void Ability::OnForeground(const Want &want)
-{
-    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin.", __func__);
-    DoOnForeground(want);
-    DispatchLifecycleOnForeground(want);
-    HILOG_INFO("%{public}s end.", __func__);
-}
-#endif
-
 bool Ability::IsRestoredInContinuation() const
 {
     if (abilityContext_ == nullptr) {
@@ -548,56 +478,6 @@ void Ability::NotityContinuationResult(const Want& want, bool success)
     continuationManager_->NotifyCompleteContinuation(
         originDeviceId, sessionId, success, reverseContinuationSchedulerReplica_);
 }
-
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Called when this ability enters the <b>STATE_BACKGROUND</b> state.
- *
- *
- * The ability in the <b>STATE_BACKGROUND</b> state is invisible.
- * You can override this function to implement your own processing logic.
- */
-void Ability::OnBackground()
-{
-    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin.", __func__);
-    if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        if (abilityInfo_->isStageBasedModel) {
-            if (scene_ == nullptr) {
-                HILOG_ERROR("Ability::OnBackground error. scene_ == nullptr.");
-                return;
-            }
-            HILOG_INFO("GoBackground sceneFlag:%{public}d.", sceneFlag_);
-            scene_->GoBackground(sceneFlag_);
-        } else {
-            if (abilityWindow_ == nullptr) {
-                HILOG_ERROR("Ability::OnBackground error. abilityWindow_ == nullptr.");
-                return;
-            }
-            HILOG_INFO("OnPostAbilityBackground sceneFlag:%{public}d.", sceneFlag_);
-            abilityWindow_->OnPostAbilityBackground(sceneFlag_);
-        }
-    }
-
-    if (abilityLifecycleExecutor_ == nullptr) {
-        HILOG_ERROR("Ability::OnBackground error. abilityLifecycleExecutor_ == nullptr.");
-        return;
-    }
-
-    if (abilityInfo_->isStageBasedModel) {
-        abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND_NEW);
-    } else {
-        abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND);
-    }
-
-    if (lifecycle_ == nullptr) {
-        HILOG_ERROR("Ability::OnBackground error. lifecycle_ == nullptr.");
-        return;
-    }
-    lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_BACKGROUND);
-    HILOG_INFO("%{public}s end", __func__);
-}
-#endif
 
 /**
  * @brief Called when this Service ability is connected for the first time.
@@ -722,196 +602,6 @@ ErrCode Ability::StartAbility(const Want &want, AbilityStartSetting abilityStart
     return err;
 }
 
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Called when a key is pressed. When any component in the Ability gains focus, the key-down event for
- * the component will be handled first. This callback will not be invoked if the callback triggered for the
- * key-down event of the component returns true. The default implementation of this callback does nothing
- * and returns false.
- *
- * @param keyEvent Indicates the key-down event.
- *
- * @return Returns true if this event is handled and will not be passed further; returns false if this event
- * is not handled and should be passed to other handlers.
- */
-void Ability::OnKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
-{
-    HILOG_INFO("Ability::OnKeyDown called");
-}
-
-/**
- * @brief Called when a key is released. When any component in the Ability gains focus, the key-up event for
- * the component will be handled first. This callback will not be invoked if the callback triggered for the
- * key-up event of the component returns true. The default implementation of this callback does nothing and
- * returns false.
- *
- * @param keyEvent Indicates the key-up event.
- *
- * @return Returns true if this event is handled and will not be passed further; returns false if this event
- * is not handled and should be passed to other handlers.
- */
-void Ability::OnKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
-{
-    HILOG_INFO("Ability::OnKeyUp called");
-    auto code = keyEvent->GetKeyCode();
-    if (code == MMI::KeyEvent::KEYCODE_BACK) {
-        HILOG_INFO("Ability::OnKey Back key pressed.");
-        OnBackPressed();
-    }
-}
-
-/**
- * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
- * does nothing and returns false.
- *
- * @param event  Indicates information about the touch event.
- *
- * @return Returns true if the event is handled; returns false otherwise.
- */
-void Ability::OnPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent)
-{
-    HILOG_INFO("Ability::OnTouchEvent called");
-}
-
-/**
- * @brief Inflates UI controls by using ComponentContainer.
- * You can create a ComponentContainer instance that contains multiple components.
- *
- * @param componentContainer Indicates a set of customized components.
- */
-void Ability::SetUIContent(const ComponentContainer &componentContainer)
-{}
-
-/**
- * @brief Inflates layout resources by using the layout resource ID.
- *
- * @param layoutRes Indicates the layout resource ID, which cannot be a negative number.
- */
-void Ability::SetUIContent(int layoutRes)
-{}
-
-/**
- * @brief Inflates UI controls by using ComponentContainer.
- * You can create a ComponentContainer instance that contains multiple components.
- *
- * @param componentContainer Indicates the component layout defined by the user.
- * @param context Indicates the context to use.
- * @param typeFlag Indicates the window type.
- */
-void Ability::SetUIContent(
-    const ComponentContainer &componentContainer, std::shared_ptr<Context> &context, int typeFlag)
-{}
-
-/**
- * @brief Inflates layout resources by using the layout resource ID.
- *
- * @param layoutRes Indicates the layout resource ID, which cannot be a negative number.
- * @param context Indicates the context to use.
- * @param typeFlag Indicates the window type.
- */
-void Ability::SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int typeFlag)
-{}
-
-/**
- * @brief Inflates UI controls by using WindowOption.
- *
- * @param windowOption Indicates the window option defined by the user.
- */
-void Ability::InitWindow(Rosen::WindowType winType, int32_t displayId, sptr<Rosen::WindowOption> option)
-{
-    if (abilityWindow_ == nullptr) {
-        HILOG_ERROR("Ability::InitWindow abilityWindow_ is nullptr");
-        return;
-    }
-    abilityWindow_->InitWindow(winType, abilityContext_, sceneListener_, displayId, option);
-}
-
-/**
- * @brief Get the window belong to the ability.
- *
- * @return Returns a IWindowsManager object pointer.
- */
-const sptr<Rosen::Window> Ability::GetWindow()
-{
-    if (abilityWindow_ != nullptr) {
-        return abilityWindow_->GetWindow();
-    } else {
-        HILOG_INFO("%{public}s abilityWindow_ is nullptr.", __func__);
-        return nullptr;
-    }
-}
-
-/**
- * @brief get the scene belong to the ability.
- *
- * @return Returns a WindowScene object pointer.
- */
-std::shared_ptr<Rosen::WindowScene> Ability::GetScene()
-{
-    return scene_;
-}
-
-/**
- * @brief Obtains the type of audio whose volume is adjusted by the volume button.
- *
- * @return Returns the AudioManager.AudioVolumeType.
- */
-int Ability::GetVolumeTypeAdjustedByKey()
-{
-    return 0;
-}
-
-/**
- * @brief Checks whether the main window of this ability has window focus.
- *
- * @return Returns true if this ability currently has window focus; returns false otherwise.
- */
-bool Ability::HasWindowFocus()
-{
-    if (abilityInfo_ == nullptr) {
-        HILOG_INFO("Ability::HasWindowFocus abilityInfo_ == nullptr");
-        return false;
-    }
-
-    if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
-        return bWindowFocus_;
-    }
-
-    return false;
-}
-
-void Ability::SetShowOnLockScreen(bool showOnLockScreen)
-{
-    HILOG_INFO("SetShowOnLockScreen come, showOnLockScreen is %{public}d", showOnLockScreen);
-    showOnLockScreen_ = showOnLockScreen;
-    sptr<Rosen::Window> window = nullptr;
-    if (abilityWindow_ == nullptr || (window = abilityWindow_->GetWindow()) == nullptr) {
-        HILOG_INFO("SetShowOnLockScreen come, window is null");
-        return;
-    }
-    HILOG_INFO("SetShowOnLockScreen come, addWindowFlag, showOnLockScreen is %{public}d", showOnLockScreen);
-    if (showOnLockScreen) {
-        window->AddWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
-    } else {
-        window->RemoveWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
-    }
-}
-
-/**
- * @brief Called when a key is lone pressed.
- *
- * @param keyCode Indicates the code of the key long pressed.
- * @param keyEvent Indicates the key-long-press event.
- *
- * @return Returns true if this event is handled and will not be passed further; returns false if this event
- * is not handled and should be passed to other handlers.
- */
-bool Ability::OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &keyEvent)
-{
-    return false;
-}
-#endif
-
 /**
  * @brief Called back after permissions are requested by using
  * AbilityContext.requestPermissionsFromUser(java.lang.String[],int).
@@ -928,16 +618,6 @@ bool Ability::OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &ke
 void Ability::OnRequestPermissionsFromUserResult(
     int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
 {}
-
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Called when this ability is about to leave the foreground and enter the background due to a user
- * operation, for example, when the user touches the Home key.
- *
- */
-void Ability::OnLeaveForeground()
-{}
-#endif
 
 /**
  * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
@@ -1256,16 +936,6 @@ void Ability::SetResult(int resultCode, const Want &resultData)
     }
     HILOG_INFO("%{public}s end.", __func__);
 }
-
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Sets the type of audio whose volume will be adjusted by the volume button.
- *
- * @param volumeType Indicates the AudioManager.AudioVolumeType to set.
- */
-void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
-{}
-#endif
 
 /**
  * @brief Called back when Service is started.
@@ -1669,24 +1339,6 @@ void Ability::SetMainRoute(const std::string &entry)
 void Ability::AddActionRoute(const std::string &action, const std::string &entry)
 {}
 
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Sets the background color of the window in RGB color mode.
- *
- * @param red The value ranges from 0 to 255.
- *
- * @param green The value ranges from 0 to 255.
- *
- * @param blue The value ranges from 0 to 255.
- *
- * @return Returns the result of SetWindowBackgroundColor
- */
-int Ability::SetWindowBackgroundColor(int red, int green, int blue)
-{
-    return -1;
-}
-#endif
-
 /**
  * @brief Connects the current ability to an ability using the AbilityInfo.AbilityType.SERVICE template.
  *
@@ -1779,21 +1431,6 @@ int32_t Ability::OnContinue(WantParams &wantParams)
 {
     return ContinuationManager::OnContinueResult::Reject;
 }
-
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Get page ability stack info.
- *
- * @return A string represents page ability stack info, empty if failed;
- */
-std::string Ability::GetContentInfo()
-{
-    if (scene_ == nullptr) {
-        return "";
-    }
-    return scene_->GetContentInfo();
-}
-#endif
 
 /**
  * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
@@ -1959,25 +1596,6 @@ bool Ability::IsFlagExists(unsigned int flag, unsigned int flagSet)
     return (flag & flagSet) == flag;
 }
 
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Called when this ability gains or loses window focus.
- *
- * @param hasFocus Specifies whether this ability has focus.
- */
-void Ability::OnWindowFocusChanged(bool hasFocus)
-{}
-
-/**
- * @brief Called when this ability is moved to or removed from the top of the stack.
- *
- * @param topActive Specifies whether this ability is moved to or removed from the top of the stack. The value true
- * indicates that it is moved to the top, and false indicates that it is removed from the top of the stack.
- */
-void Ability::OnTopActiveAbilityChanged(bool topActive)
-{}
-#endif
-
 /**
  * @brief Called to set caller information for the application. The default implementation returns null.
  *
@@ -1998,7 +1616,844 @@ std::shared_ptr<AbilityPostEventTimeout> Ability::CreatePostEventTimeouter(std::
     return std::make_shared<AbilityPostEventTimeout>(taskstr, handler_);
 }
 
+/**
+ * @brief Keep this Service ability in the background and displays a notification bar.
+ *
+ * @param wantAgent Indicates which ability to start when user click the notification bar.
+ * @return the method result code, 0 means succeed
+ */
+int Ability::StartBackgroundRunning(const AbilityRuntime::WantAgent::WantAgent &wantAgent)
+{
+#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
+    uint32_t defaultBgMode = 0;
+    BackgroundTaskMgr::ContinuousTaskParam taskParam = BackgroundTaskMgr::ContinuousTaskParam(false, defaultBgMode,
+        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(wantAgent), abilityInfo_->name, GetToken());
+    return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
+#else
+    return ERR_INVALID_OPERATION;
+#endif
+}
+
+/**
+ * @brief Cancel background running of this ability to free up system memory.
+ *
+ * @return the method result code, 0 means succeed
+ */
+int Ability::StopBackgroundRunning()
+{
+#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
+    return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStopBackgroundRunning(abilityInfo_->name, GetToken());
+#else
+    return ERR_INVALID_OPERATION;
+#endif
+}
+
+/**
+ * @brief Get the error message by error code.
+ * @param errorCode the error code return form fms.
+ * @return Returns the error message detail.
+ */
+std::string Ability::GetErrorMsg(const ErrCode errorCode)
+{
 #ifdef SUPPORT_GRAPHICS
+    return FormMgr::GetInstance().GetErrorMessage(errorCode);
+#else
+    return nullptr;
+#endif
+}
+
+/**
+ * @brief Acquire a bundle manager, if it not existed.
+ * @return returns the bundle manager ipc object, or nullptr for failed.
+ */
+sptr<IBundleMgr> Ability::GetBundleMgr()
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    if (iBundleMgr_ == nullptr) {
+        sptr<ISystemAbilityManager> systemAbilityManager =
+            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        auto remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+        if (remoteObject == nullptr) {
+            HILOG_ERROR("%{public}s error, failed to get bundle manager service.", __func__);
+            return nullptr;
+        }
+
+        iBundleMgr_ = iface_cast<IBundleMgr>(remoteObject);
+        if (iBundleMgr_ == nullptr) {
+            HILOG_ERROR("%{public}s error, failed to get bundle manager service", __func__);
+            return nullptr;
+        }
+    }
+
+    return iBundleMgr_;
+}
+
+/**
+ * @brief Add the bundle manager instance for debug.
+ * @param bundleManager the bundle manager ipc object.
+ */
+void Ability::SetBundleManager(const sptr<IBundleMgr> &bundleManager)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+
+    iBundleMgr_ = bundleManager;
+}
+
+/**
+ * @brief Set the start ability setting.
+ * @param setting the start ability setting.
+ */
+void Ability::SetStartAbilitySetting(std::shared_ptr<AbilityStartSetting> setting)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    setting_ = setting;
+}
+
+/**
+ * @brief Set the launch param.
+ *
+ * @param launchParam the launch param.
+ */
+void Ability::SetLaunchParam(const AAFwk::LaunchParam &launchParam)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    launchParam_ = launchParam;
+}
+
+const AAFwk::LaunchParam& Ability::GetLaunchParam() const
+{
+    return launchParam_;
+}
+
+std::vector<std::shared_ptr<DataAbilityResult>> Ability::ExecuteBatch(
+    const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
+{
+    HILOG_INFO("Ability::ExecuteBatch start");
+    std::vector<std::shared_ptr<DataAbilityResult>> results;
+    if (abilityInfo_ == nullptr) {
+        HILOG_ERROR("Ability::ExecuteBatch abilityInfo is nullptr");
+        return results;
+    }
+    if (abilityInfo_->type != AppExecFwk::AbilityType::DATA) {
+        HILOG_ERROR("Ability::ExecuteBatch data ability type failed, current type: %{public}d", abilityInfo_->type);
+        return results;
+    }
+    size_t len = operations.size();
+    HILOG_INFO("Ability::ExecuteBatch operation is nullptr, len %{public}zu", len);
+    for (size_t i = 0; i < len; i++) {
+        std::shared_ptr<DataAbilityOperation> operation = operations[i];
+        if (operation == nullptr) {
+            HILOG_INFO("Ability::ExecuteBatch operation is nullptr, create DataAbilityResult");
+            results.push_back(std::make_shared<DataAbilityResult>(0));
+            continue;
+        }
+        ExecuteOperation(operation, results, i);
+    }
+    HILOG_INFO("Ability::ExecuteBatch end, %{public}zu", results.size());
+    return results;
+}
+void Ability::ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
+    std::vector<std::shared_ptr<DataAbilityResult>> &results, int index)
+{
+    HILOG_INFO("Ability::ExecuteOperation start, index=%{public}d", index);
+    if (abilityInfo_->type != AppExecFwk::AbilityType::DATA) {
+        HILOG_ERROR("Ability::ExecuteOperation data ability type failed, current type: %{public}d", abilityInfo_->type);
+        return;
+    }
+    if (index < 0) {
+        HILOG_ERROR(
+            "Ability::ExecuteOperation operation result index should not below zero, current index: %{public}d", index);
+        return;
+    }
+    if (operation == nullptr) {
+        HILOG_INFO("Ability::ExecuteOperation operation is nullptr, create DataAbilityResult");
+        results.push_back(std::make_shared<DataAbilityResult>(0));
+        return;
+    }
+
+    int numRows = 0;
+    std::shared_ptr<NativeRdb::ValuesBucket> valuesBucket = ParseValuesBucketReference(results, operation, index);
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates =
+        ParsePredictionArgsReference(results, operation, index);
+    if (operation->IsInsertOperation()) {
+        HILOG_INFO("Ability::ExecuteOperation IsInsertOperation");
+        numRows = Insert(*(operation->GetUri().get()), *valuesBucket);
+    } else if (operation->IsDeleteOperation() && predicates) {
+        HILOG_INFO("Ability::ExecuteOperation IsDeleteOperation");
+        numRows = Delete(*(operation->GetUri().get()), *predicates);
+    } else if (operation->IsUpdateOperation() && predicates) {
+        HILOG_INFO("Ability::ExecuteOperation IsUpdateOperation");
+        numRows = Update(*(operation->GetUri().get()), *valuesBucket, *predicates);
+    } else if (operation->IsAssertOperation() && predicates) {
+        HILOG_INFO("Ability::ExecuteOperation IsAssertOperation");
+        std::vector<std::string> columns;
+        std::shared_ptr<NativeRdb::AbsSharedResultSet> queryResult =
+            Query(*(operation->GetUri().get()), columns, *predicates);
+        if (queryResult == nullptr) {
+            HILOG_ERROR("Ability::ExecuteOperation Query retval is nullptr");
+            results.push_back(std::make_shared<DataAbilityResult>(0));
+            return;
+        }
+        if (queryResult->GetRowCount(numRows) != 0) {
+            HILOG_ERROR("Ability::ExecuteOperation queryResult->GetRowCount(numRows) != E_OK");
+        }
+        if (!CheckAssertQueryResult(queryResult, operation->GetValuesBucket())) {
+            if (queryResult != nullptr) {
+                queryResult->Close();
+            }
+            HILOG_ERROR("Query Result is not equal to expected value.");
+        }
+
+        if (queryResult != nullptr) {
+            queryResult->Close();
+        }
+    } else {
+        HILOG_ERROR("Ability::ExecuteOperation Expected bad type %{public}d", operation->GetType());
+    }
+    if (operation->GetExpectedCount() != numRows) {
+        HILOG_ERROR("Ability::ExecuteOperation Expected %{public}d rows but actual %{public}d",
+            operation->GetExpectedCount(),
+            numRows);
+    } else {
+        if (operation->GetUri() != nullptr) {
+            results.push_back(std::make_shared<DataAbilityResult>(*operation->GetUri(), numRows));
+        } else {
+            results.push_back(std::make_shared<DataAbilityResult>(Uri(std::string("")), numRows));
+        }
+    }
+}
+
+std::shared_ptr<NativeRdb::DataAbilityPredicates> Ability::ParsePredictionArgsReference(
+    std::vector<std::shared_ptr<DataAbilityResult>> &results, std::shared_ptr<DataAbilityOperation> &operation,
+    int numRefs)
+{
+    if (operation == nullptr) {
+        HILOG_ERROR("Ability::ParsePredictionArgsReference intpur is nullptr");
+        return nullptr;
+    }
+
+    std::map<int, int> predicatesBackReferencesMap = operation->GetDataAbilityPredicatesBackReferences();
+    if (predicatesBackReferencesMap.empty()) {
+        return operation->GetDataAbilityPredicates();
+    }
+
+    std::vector<std::string> strPredicatesList;
+    strPredicatesList.clear();
+    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates = operation->GetDataAbilityPredicates();
+    if (predicates == nullptr) {
+        HILOG_INFO("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates is nullptr");
+    } else {
+        HILOG_INFO("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates isn`t nullptr");
+        strPredicatesList = predicates->GetWhereArgs();
+    }
+
+    if (strPredicatesList.empty()) {
+        HILOG_ERROR("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates()->GetWhereArgs()"
+                 "error strList is empty()");
+    }
+
+    for (auto iterMap : predicatesBackReferencesMap) {
+        HILOG_INFO(
+            "Ability::ParsePredictionArgsReference predicatesBackReferencesMap first:%{public}d second:%{public}d",
+            iterMap.first,
+            iterMap.second);
+        int tempCount = ChangeRef2Value(results, numRefs, iterMap.second);
+        if (tempCount < 0) {
+            HILOG_ERROR("Ability::ParsePredictionArgsReference tempCount:%{public}d", tempCount);
+            continue;
+        }
+        std::string strPredicates = std::to_string(tempCount);
+        HILOG_INFO("Ability::ParsePredictionArgsReference strPredicates:%{public}s", strPredicates.c_str());
+        strPredicatesList.push_back(strPredicates);
+        HILOG_INFO("Ability::ParsePredictionArgsReference push_back done");
+    }
+
+    if (predicates) {
+        predicates->SetWhereArgs(strPredicatesList);
+    }
+
+    return predicates;
+}
+
+std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
+    std::vector<std::shared_ptr<DataAbilityResult>> &results, std::shared_ptr<DataAbilityOperation> &operation,
+    int numRefs)
+{
+    NativeRdb::ValuesBucket retValueBucket;
+    if (operation == nullptr) {
+        HILOG_ERROR("Ability::ParseValuesBucketReference intpur is nullptr");
+        return nullptr;
+    }
+
+    if (operation->GetValuesBucketReferences() == nullptr) {
+        return operation->GetValuesBucket();
+    }
+
+    retValueBucket.Clear();
+    if (operation->GetValuesBucket() == nullptr) {
+        HILOG_INFO("Ability::ParseValuesBucketReference operation->GetValuesBucket is nullptr");
+    } else {
+        HILOG_INFO("Ability::ParseValuesBucketReference operation->GetValuesBucket is nullptr");
+        retValueBucket = *operation->GetValuesBucket();
+    }
+
+    std::map<std::string, NativeRdb::ValueObject> valuesMapReferences;
+    operation->GetValuesBucketReferences()->GetAll(valuesMapReferences);
+
+    for (auto itermap : valuesMapReferences) {
+        std::string key = itermap.first;
+        NativeRdb::ValueObject obj;
+        if (!operation->GetValuesBucketReferences()->GetObject(key, obj)) {
+            HILOG_ERROR("Ability::ParseValuesBucketReference operation->GetValuesBucketReferences()->GetObject error");
+            continue;
+        }
+        switch (obj.GetType()) {
+            case NativeRdb::ValueObjectType::TYPE_INT: {
+                int val = 0;
+                if (obj.GetInt(val) != 0) {
+                    HILOG_ERROR("Ability::ParseValuesBucketReference ValueObject->GetInt() error");
+                    break;
+                }
+                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutInt(%{public}s, %{public}d)",
+                    key.c_str(),
+                    val);
+                retValueBucket.PutInt(key, val);
+            } break;
+            case NativeRdb::ValueObjectType::TYPE_DOUBLE: {
+                double val = 0.0;
+                if (obj.GetDouble(val) != 0) {
+                    HILOG_ERROR("Ability::ParseValuesBucketReference ValueObject->GetDouble() error");
+                    break;
+                }
+                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutDouble(%{public}s, %{public}f)",
+                    key.c_str(),
+                    val);
+                retValueBucket.PutDouble(key, val);
+            } break;
+            case NativeRdb::ValueObjectType::TYPE_STRING: {
+                std::string val = "";
+                if (obj.GetString(val) != 0) {
+                    HILOG_ERROR("Ability::ParseValuesBucketReference ValueObject->GetString() error");
+                    break;
+                }
+                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutString(%{public}s, %{public}s)",
+                    key.c_str(),
+                    val.c_str());
+                retValueBucket.PutString(key, val);
+            } break;
+            case NativeRdb::ValueObjectType::TYPE_BLOB: {
+                std::vector<uint8_t> val;
+                if (obj.GetBlob(val) != 0) {
+                    HILOG_ERROR("Ability::ParseValuesBucketReference ValueObject->GetBlob() error");
+                    break;
+                }
+                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutBlob(%{public}s, %{public}zu)",
+                    key.c_str(),
+                    val.size());
+                retValueBucket.PutBlob(key, val);
+            } break;
+            case NativeRdb::ValueObjectType::TYPE_BOOL: {
+                bool val = false;
+                if (obj.GetBool(val) != 0) {
+                    HILOG_ERROR("Ability::ParseValuesBucketReference ValueObject->GetBool() error");
+                    break;
+                }
+                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutBool(%{public}s, %{public}s)",
+                    key.c_str(),
+                    val ? "true" : "false");
+                retValueBucket.PutBool(key, val);
+            } break;
+            default: {
+                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutNull(%{public}s)", key.c_str());
+                retValueBucket.PutNull(key);
+            } break;
+        }
+    }
+
+    std::map<std::string, NativeRdb::ValueObject> valuesMap;
+    retValueBucket.GetAll(valuesMap);
+
+    return std::make_shared<NativeRdb::ValuesBucket>(valuesMap);
+}
+
+int Ability::ChangeRef2Value(std::vector<std::shared_ptr<DataAbilityResult>> &results, int numRefs, int index)
+{
+    int retval = -1;
+    if (index >= numRefs) {
+        HILOG_ERROR("Ability::ChangeRef2Value index >= numRefs");
+        return retval;
+    }
+
+    if (index >= static_cast<int>(results.size())) {
+        HILOG_ERROR("Ability::ChangeRef2Value index:%{public}d >= results.size():%{public}zu", index, results.size());
+        return retval;
+    }
+
+    std::shared_ptr<DataAbilityResult> refResult = results[index];
+    if (refResult == nullptr) {
+        HILOG_ERROR("Ability::ChangeRef2Value No.%{public}d refResult is null", index);
+        return retval;
+    }
+
+    if (refResult->GetUri().ToString().empty()) {
+        retval = refResult->GetCount();
+    } else {
+        retval = DataUriUtils::GetId(refResult->GetUri());
+    }
+
+    return retval;
+}
+
+bool Ability::CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultSet> &queryResult,
+    std::shared_ptr<NativeRdb::ValuesBucket> &&valuesBucket)
+{
+    if (queryResult == nullptr) {
+        HILOG_ERROR("Ability::CheckAssertQueryResult intput queryResult is null");
+        return true;
+    }
+
+    if (valuesBucket == nullptr) {
+        HILOG_ERROR("Ability::CheckAssertQueryResult intput valuesBucket is null");
+        return true;
+    }
+
+    std::map<std::string, NativeRdb::ValueObject> valuesMap;
+    valuesBucket->GetAll(valuesMap);
+    if (valuesMap.empty()) {
+        HILOG_ERROR("Ability::CheckAssertQueryResult valuesMap is empty");
+        return true;
+    }
+    int count = 0;
+    if (queryResult->GetRowCount(count) != 0) {
+        HILOG_ERROR("Ability::CheckAssertQueryResult GetRowCount is 0");
+        return true;
+    }
+
+    for (auto iterMap : valuesMap) {
+        std::string strObject;
+        if (iterMap.second.GetString(strObject) != 0) {
+            HILOG_ERROR("Ability::CheckAssertQueryResult GetString strObject is error");
+            continue;
+        }
+        if (strObject.empty()) {
+            HILOG_ERROR("Ability::CheckAssertQueryResult strObject is empty");
+            continue;
+        }
+        for (int i = 0; i < count; ++i) {
+            std::string strName;
+            if (queryResult->GetString(i, strName) != 0) {
+                HILOG_ERROR("Ability::CheckAssertQueryResult GetString strName is error");
+                continue;
+            }
+            if (strName.empty()) {
+                HILOG_ERROR("Ability::CheckAssertQueryResult strName is empty");
+                continue;
+            }
+            if (strName == strObject) {
+                HILOG_ERROR("Ability::CheckAssertQueryResult strName same to strObject");
+                continue;
+            }
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * @brief request a remote object of callee from this ability.
+ * @return Returns the remote object of callee.
+ */
+sptr<IRemoteObject> Ability::CallRequest()
+{
+    return nullptr;
+}
+
+ErrCode Ability::StartFeatureAbilityForResult(const Want &want, int requestCode, FeatureAbilityTask &&task)
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    resultCallbacks_.insert(make_pair(requestCode, std::move(task)));
+    ErrCode err = StartAbilityForResult(want, requestCode);
+    HILOG_INFO("%{public}s end. ret=%{public}d", __func__, err);
+    return err;
+}
+
+void Ability::OnFeatureAbilityResult(int requestCode, int resultCode, const Want &want)
+{
+    HILOG_DEBUG("%{public}s begin.", __func__);
+    auto callback = resultCallbacks_.find(requestCode);
+    if (callback != resultCallbacks_.end()) {
+        if (callback->second) {
+            callback->second(resultCode, want);
+        }
+        resultCallbacks_.erase(requestCode);
+    }
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
+#ifdef SUPPORT_GRAPHICS
+static std::mutex formLock;
+constexpr int64_t SEC_TO_MILLISEC = 1000;
+constexpr int64_t MILLISEC_TO_NANOSEC = 1000000;
+
+/**
+ * @brief Informs the system of the time required for drawing this Page ability.
+ *
+ * @return Returns the notification is successful or fail
+ */
+bool Ability::PrintDrawnCompleted()
+{
+    return AbilityContext::PrintDrawnCompleted();
+}
+
+/**
+ * @brief Called after instantiating WindowScene.
+ *
+ *
+ * You can override this function to implement your own processing logic.
+ */
+void Ability::OnSceneCreated()
+{
+    HILOG_INFO("%{public}s called.", __func__);
+}
+
+/**
+ * @brief Called after restore WindowScene.
+ *
+ *
+ * You can override this function to implement your own processing logic.
+ */
+void Ability::OnSceneRestored()
+{
+    HILOG_INFO("%{public}s called.", __func__);
+}
+
+/**
+ * @brief Called after ability stoped.
+ *
+ *
+ * You can override this function to implement your own processing logic.
+ */
+void Ability::onSceneDestroyed()
+{
+    HILOG_INFO("%{public}s called.", __func__);
+}
+
+/**
+ * @brief Called when this ability enters the <b>STATE_FOREGROUND</b> state.
+ *
+ *
+ * The ability in the <b>STATE_FOREGROUND</b> state is visible.
+ * You can override this function to implement your own processing logic.
+ */
+void Ability::OnForeground(const Want &want)
+{
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HILOG_INFO("%{public}s begin.", __func__);
+    DoOnForeground(want);
+    DispatchLifecycleOnForeground(want);
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
+/**
+ * @brief Called when this ability enters the <b>STATE_BACKGROUND</b> state.
+ *
+ *
+ * The ability in the <b>STATE_BACKGROUND</b> state is invisible.
+ * You can override this function to implement your own processing logic.
+ */
+void Ability::OnBackground()
+{
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HILOG_INFO("%{public}s begin.", __func__);
+    if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
+        if (abilityInfo_->isStageBasedModel) {
+            if (scene_ == nullptr) {
+                HILOG_ERROR("Ability::OnBackground error. scene_ == nullptr.");
+                return;
+            }
+            HILOG_INFO("GoBackground sceneFlag:%{public}d.", sceneFlag_);
+            scene_->GoBackground(sceneFlag_);
+        } else {
+            if (abilityWindow_ == nullptr) {
+                HILOG_ERROR("Ability::OnBackground error. abilityWindow_ == nullptr.");
+                return;
+            }
+            HILOG_INFO("OnPostAbilityBackground sceneFlag:%{public}d.", sceneFlag_);
+            abilityWindow_->OnPostAbilityBackground(sceneFlag_);
+        }
+    }
+
+    if (abilityLifecycleExecutor_ == nullptr) {
+        HILOG_ERROR("Ability::OnBackground error. abilityLifecycleExecutor_ == nullptr.");
+        return;
+    }
+
+    if (abilityInfo_->isStageBasedModel) {
+        abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND_NEW);
+    } else {
+        abilityLifecycleExecutor_->DispatchLifecycleState(AbilityLifecycleExecutor::LifecycleState::BACKGROUND);
+    }
+
+    if (lifecycle_ == nullptr) {
+        HILOG_ERROR("Ability::OnBackground error. lifecycle_ == nullptr.");
+        return;
+    }
+    lifecycle_->DispatchLifecycle(LifeCycle::Event::ON_BACKGROUND);
+    HILOG_INFO("%{public}s end", __func__);
+}
+
+/**
+ * @brief Called when a key is pressed. When any component in the Ability gains focus, the key-down event for
+ * the component will be handled first. This callback will not be invoked if the callback triggered for the
+ * key-down event of the component returns true. The default implementation of this callback does nothing
+ * and returns false.
+ *
+ * @param keyEvent Indicates the key-down event.
+ *
+ * @return Returns true if this event is handled and will not be passed further; returns false if this event
+ * is not handled and should be passed to other handlers.
+ */
+void Ability::OnKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
+{
+    HILOG_INFO("Ability::OnKeyDown called");
+}
+
+/**
+ * @brief Called when a key is released. When any component in the Ability gains focus, the key-up event for
+ * the component will be handled first. This callback will not be invoked if the callback triggered for the
+ * key-up event of the component returns true. The default implementation of this callback does nothing and
+ * returns false.
+ *
+ * @param keyEvent Indicates the key-up event.
+ *
+ * @return Returns true if this event is handled and will not be passed further; returns false if this event
+ * is not handled and should be passed to other handlers.
+ */
+void Ability::OnKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
+{
+    HILOG_INFO("Ability::OnKeyUp called");
+    auto code = keyEvent->GetKeyCode();
+    if (code == MMI::KeyEvent::KEYCODE_BACK) {
+        HILOG_INFO("Ability::OnKey Back key pressed.");
+        OnBackPressed();
+    }
+}
+
+/**
+ * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
+ * does nothing and returns false.
+ *
+ * @param event  Indicates information about the touch event.
+ *
+ * @return Returns true if the event is handled; returns false otherwise.
+ */
+void Ability::OnPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent)
+{
+    HILOG_INFO("Ability::OnTouchEvent called");
+}
+
+/**
+ * @brief Inflates UI controls by using ComponentContainer.
+ * You can create a ComponentContainer instance that contains multiple components.
+ *
+ * @param componentContainer Indicates a set of customized components.
+ */
+void Ability::SetUIContent(const ComponentContainer &componentContainer)
+{}
+
+/**
+ * @brief Inflates layout resources by using the layout resource ID.
+ *
+ * @param layoutRes Indicates the layout resource ID, which cannot be a negative number.
+ */
+void Ability::SetUIContent(int layoutRes)
+{}
+
+/**
+ * @brief Inflates UI controls by using ComponentContainer.
+ * You can create a ComponentContainer instance that contains multiple components.
+ *
+ * @param componentContainer Indicates the component layout defined by the user.
+ * @param context Indicates the context to use.
+ * @param typeFlag Indicates the window type.
+ */
+void Ability::SetUIContent(
+    const ComponentContainer &componentContainer, std::shared_ptr<Context> &context, int typeFlag)
+{}
+
+/**
+ * @brief Inflates layout resources by using the layout resource ID.
+ *
+ * @param layoutRes Indicates the layout resource ID, which cannot be a negative number.
+ * @param context Indicates the context to use.
+ * @param typeFlag Indicates the window type.
+ */
+void Ability::SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int typeFlag)
+{}
+
+/**
+ * @brief Inflates UI controls by using WindowOption.
+ *
+ * @param windowOption Indicates the window option defined by the user.
+ */
+void Ability::InitWindow(Rosen::WindowType winType, int32_t displayId, sptr<Rosen::WindowOption> option)
+{
+    if (abilityWindow_ == nullptr) {
+        HILOG_ERROR("Ability::InitWindow abilityWindow_ is nullptr");
+        return;
+    }
+    abilityWindow_->InitWindow(winType, abilityContext_, sceneListener_, displayId, option);
+}
+
+/**
+ * @brief Get the window belong to the ability.
+ *
+ * @return Returns a IWindowsManager object pointer.
+ */
+const sptr<Rosen::Window> Ability::GetWindow()
+{
+    if (abilityWindow_ != nullptr) {
+        return abilityWindow_->GetWindow();
+    } else {
+        HILOG_INFO("%{public}s abilityWindow_ is nullptr.", __func__);
+        return nullptr;
+    }
+}
+
+/**
+ * @brief get the scene belong to the ability.
+ *
+ * @return Returns a WindowScene object pointer.
+ */
+std::shared_ptr<Rosen::WindowScene> Ability::GetScene()
+{
+    return scene_;
+}
+
+/**
+ * @brief Obtains the type of audio whose volume is adjusted by the volume button.
+ *
+ * @return Returns the AudioManager.AudioVolumeType.
+ */
+int Ability::GetVolumeTypeAdjustedByKey()
+{
+    return 0;
+}
+
+/**
+ * @brief Checks whether the main window of this ability has window focus.
+ *
+ * @return Returns true if this ability currently has window focus; returns false otherwise.
+ */
+bool Ability::HasWindowFocus()
+{
+    if (abilityInfo_ == nullptr) {
+        HILOG_INFO("Ability::HasWindowFocus abilityInfo_ == nullptr");
+        return false;
+    }
+
+    if (abilityInfo_->type == AppExecFwk::AbilityType::PAGE) {
+        return bWindowFocus_;
+    }
+
+    return false;
+}
+
+void Ability::SetShowOnLockScreen(bool showOnLockScreen)
+{
+    HILOG_INFO("SetShowOnLockScreen come, showOnLockScreen is %{public}d", showOnLockScreen);
+    showOnLockScreen_ = showOnLockScreen;
+    sptr<Rosen::Window> window = nullptr;
+    if (abilityWindow_ == nullptr || (window = abilityWindow_->GetWindow()) == nullptr) {
+        HILOG_INFO("SetShowOnLockScreen come, window is null");
+        return;
+    }
+    HILOG_INFO("SetShowOnLockScreen come, addWindowFlag, showOnLockScreen is %{public}d", showOnLockScreen);
+    if (showOnLockScreen) {
+        window->AddWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
+    } else {
+        window->RemoveWindowFlag(Rosen::WindowFlag::WINDOW_FLAG_SHOW_WHEN_LOCKED);
+    }
+}
+
+/**
+ * @brief Called when a key is lone pressed.
+ *
+ * @param keyCode Indicates the code of the key long pressed.
+ * @param keyEvent Indicates the key-long-press event.
+ *
+ * @return Returns true if this event is handled and will not be passed further; returns false if this event
+ * is not handled and should be passed to other handlers.
+ */
+bool Ability::OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &keyEvent)
+{
+    return false;
+}
+
+/**
+ * @brief Called when this ability is about to leave the foreground and enter the background due to a user
+ * operation, for example, when the user touches the Home key.
+ *
+ */
+void Ability::OnLeaveForeground()
+{}
+
+/**
+ * @brief Sets the type of audio whose volume will be adjusted by the volume button.
+ *
+ * @param volumeType Indicates the AudioManager.AudioVolumeType to set.
+ */
+void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
+{}
+
+/**
+ * @brief Sets the background color of the window in RGB color mode.
+ *
+ * @param red The value ranges from 0 to 255.
+ *
+ * @param green The value ranges from 0 to 255.
+ *
+ * @param blue The value ranges from 0 to 255.
+ *
+ * @return Returns the result of SetWindowBackgroundColor
+ */
+int Ability::SetWindowBackgroundColor(int red, int green, int blue)
+{
+    return -1;
+}
+
+/**
+ * @brief Get page ability stack info.
+ *
+ * @return A string represents page ability stack info, empty if failed;
+ */
+std::string Ability::GetContentInfo()
+{
+    if (scene_ == nullptr) {
+        return "";
+    }
+    return scene_->GetContentInfo();
+}
+
+/**
+ * @brief Called when this ability gains or loses window focus.
+ *
+ * @param hasFocus Specifies whether this ability has focus.
+ */
+void Ability::OnWindowFocusChanged(bool hasFocus)
+{}
+
+/**
+ * @brief Called when this ability is moved to or removed from the top of the stack.
+ *
+ * @param topActive Specifies whether this ability is moved to or removed from the top of the stack. The value true
+ * indicates that it is moved to the top, and false indicates that it is removed from the top of the stack.
+ */
+void Ability::OnTopActiveAbilityChanged(bool topActive)
+{}
+
 /**
  * Releases an obtained form by its ID.
  *
@@ -2079,41 +2534,7 @@ ErrCode Ability::DeleteForm(const int64_t formId)
     // delete form with formId
     return DeleteForm(formId, DELETE_FORM);
 }
-#endif
 
-/**
- * @brief Keep this Service ability in the background and displays a notification bar.
- *
- * @param wantAgent Indicates which ability to start when user click the notification bar.
- * @return the method result code, 0 means succeed
- */
-int Ability::StartBackgroundRunning(const AbilityRuntime::WantAgent::WantAgent &wantAgent)
-{
-#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
-    uint32_t defaultBgMode = 0;
-    BackgroundTaskMgr::ContinuousTaskParam taskParam = BackgroundTaskMgr::ContinuousTaskParam(false, defaultBgMode,
-        std::make_shared<AbilityRuntime::WantAgent::WantAgent>(wantAgent), abilityInfo_->name, GetToken());
-    return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStartBackgroundRunning(taskParam);
-#else
-    return ERR_INVALID_OPERATION;
-#endif
-}
-
-/**
- * @brief Cancel background running of this ability to free up system memory.
- *
- * @return the method result code, 0 means succeed
- */
-int Ability::StopBackgroundRunning()
-{
-#ifdef BGTASKMGR_CONTINUOUS_TASK_ENABLE
-    return BackgroundTaskMgr::BackgroundTaskMgrHelper::RequestStopBackgroundRunning(abilityInfo_->name, GetToken());
-#else
-    return ERR_INVALID_OPERATION;
-#endif
-}
-
-#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Cast temp form with formId.
  *
@@ -3078,60 +3499,7 @@ ErrCode Ability::GetFormsInfoByModule(std::string &bundleName, std::string &modu
     // GetFormsInfoByModule request to fms
     return FormMgr::GetInstance().GetFormsInfoByModule(bundleName, moduleName, formInfos);
 }
-#endif
 
-/**
- * @brief Get the error message by error code.
- * @param errorCode the error code return form fms.
- * @return Returns the error message detail.
- */
-std::string Ability::GetErrorMsg(const ErrCode errorCode)
-{
-#ifdef SUPPORT_GRAPHICS
-    return FormMgr::GetInstance().GetErrorMessage(errorCode);
-#else
-    return nullptr;
-#endif
-}
-
-/**
- * @brief Acquire a bundle manager, if it not existed.
- * @return returns the bundle manager ipc object, or nullptr for failed.
- */
-sptr<IBundleMgr> Ability::GetBundleMgr()
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    if (iBundleMgr_ == nullptr) {
-        sptr<ISystemAbilityManager> systemAbilityManager =
-            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        auto remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-        if (remoteObject == nullptr) {
-            HILOG_ERROR("%{public}s error, failed to get bundle manager service.", __func__);
-            return nullptr;
-        }
-
-        iBundleMgr_ = iface_cast<IBundleMgr>(remoteObject);
-        if (iBundleMgr_ == nullptr) {
-            HILOG_ERROR("%{public}s error, failed to get bundle manager service", __func__);
-            return nullptr;
-        }
-    }
-
-    return iBundleMgr_;
-}
-
-/**
- * @brief Add the bundle manager instance for debug.
- * @param bundleManager the bundle manager ipc object.
- */
-void Ability::SetBundleManager(const sptr<IBundleMgr> &bundleManager)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-
-    iBundleMgr_ = bundleManager;
-}
-
-#ifdef SUPPORT_GRAPHICS
 /**
  * @brief Acquire a form provider remote object.
  * @return Returns form provider remote object.
@@ -3151,378 +3519,12 @@ sptr<IRemoteObject> Ability::GetFormRemoteObject()
     HILOG_INFO("%{public}s end", __func__);
     return providerRemoteObject_;
 }
-#endif
 
-/**
- * @brief Set the start ability setting.
- * @param setting the start ability setting.
- */
-void Ability::SetStartAbilitySetting(std::shared_ptr<AbilityStartSetting> setting)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    setting_ = setting;
-}
-
-/**
- * @brief Set the launch param.
- *
- * @param launchParam the launch param.
- */
-void Ability::SetLaunchParam(const AAFwk::LaunchParam &launchParam)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    launchParam_ = launchParam;
-}
-
-const AAFwk::LaunchParam& Ability::GetLaunchParam() const
-{
-    return launchParam_;
-}
-
-#ifdef SUPPORT_GRAPHICS
 void Ability::SetSceneListener(const sptr<Rosen::IWindowLifeCycle> &listener)
 {
     sceneListener_ = listener;
 }
-#endif
 
-std::vector<std::shared_ptr<DataAbilityResult>> Ability::ExecuteBatch(
-    const std::vector<std::shared_ptr<DataAbilityOperation>> &operations)
-{
-    HILOG_INFO("Ability::ExecuteBatch start");
-    std::vector<std::shared_ptr<DataAbilityResult>> results;
-    if (abilityInfo_ == nullptr) {
-        HILOG_ERROR("Ability::ExecuteBatch abilityInfo is nullptr");
-        return results;
-    }
-    if (abilityInfo_->type != AppExecFwk::AbilityType::DATA) {
-        HILOG_ERROR("Ability::ExecuteBatch data ability type failed, current type: %{public}d", abilityInfo_->type);
-        return results;
-    }
-    size_t len = operations.size();
-    HILOG_INFO("Ability::ExecuteBatch operation is nullptr, len %{public}zu", len);
-    for (size_t i = 0; i < len; i++) {
-        std::shared_ptr<DataAbilityOperation> operation = operations[i];
-        if (operation == nullptr) {
-            HILOG_INFO("Ability::ExecuteBatch operation is nullptr, create DataAbilityResult");
-            results.push_back(std::make_shared<DataAbilityResult>(0));
-            continue;
-        }
-        ExecuteOperation(operation, results, i);
-    }
-    HILOG_INFO("Ability::ExecuteBatch end, %{public}zu", results.size());
-    return results;
-}
-void Ability::ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
-    std::vector<std::shared_ptr<DataAbilityResult>> &results, int index)
-{
-    HILOG_INFO("Ability::ExecuteOperation start, index=%{public}d", index);
-    if (abilityInfo_->type != AppExecFwk::AbilityType::DATA) {
-        HILOG_ERROR("Ability::ExecuteOperation data ability type failed, current type: %{public}d", abilityInfo_->type);
-        return;
-    }
-    if (index < 0) {
-        HILOG_ERROR(
-            "Ability::ExecuteOperation operation result index should not below zero, current index: %{public}d", index);
-        return;
-    }
-    if (operation == nullptr) {
-        HILOG_INFO("Ability::ExecuteOperation operation is nullptr, create DataAbilityResult");
-        results.push_back(std::make_shared<DataAbilityResult>(0));
-        return;
-    }
-
-    int numRows = 0;
-    std::shared_ptr<NativeRdb::ValuesBucket> valuesBucket = ParseValuesBucketReference(results, operation, index);
-    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates =
-        ParsePredictionArgsReference(results, operation, index);
-    if (operation->IsInsertOperation()) {
-        HILOG_INFO("Ability::ExecuteOperation IsInsertOperation");
-        numRows = Insert(*(operation->GetUri().get()), *valuesBucket);
-    } else if (operation->IsDeleteOperation() && predicates) {
-        HILOG_INFO("Ability::ExecuteOperation IsDeleteOperation");
-        numRows = Delete(*(operation->GetUri().get()), *predicates);
-    } else if (operation->IsUpdateOperation() && predicates) {
-        HILOG_INFO("Ability::ExecuteOperation IsUpdateOperation");
-        numRows = Update(*(operation->GetUri().get()), *valuesBucket, *predicates);
-    } else if (operation->IsAssertOperation() && predicates) {
-        HILOG_INFO("Ability::ExecuteOperation IsAssertOperation");
-        std::vector<std::string> columns;
-        std::shared_ptr<NativeRdb::AbsSharedResultSet> queryResult =
-            Query(*(operation->GetUri().get()), columns, *predicates);
-        if (queryResult == nullptr) {
-            HILOG_ERROR("Ability::ExecuteOperation Query retval is nullptr");
-            results.push_back(std::make_shared<DataAbilityResult>(0));
-            return;
-        }
-        if (queryResult->GetRowCount(numRows) != 0) {
-            HILOG_ERROR("Ability::ExecuteOperation queryResult->GetRowCount(numRows) != E_OK");
-        }
-        if (!CheckAssertQueryResult(queryResult, operation->GetValuesBucket())) {
-            if (queryResult != nullptr) {
-                queryResult->Close();
-            }
-            HILOG_ERROR("Query Result is not equal to expected value.");
-        }
-
-        if (queryResult != nullptr) {
-            queryResult->Close();
-        }
-    } else {
-        HILOG_ERROR("Ability::ExecuteOperation Expected bad type %{public}d", operation->GetType());
-    }
-    if (operation->GetExpectedCount() != numRows) {
-        HILOG_ERROR("Ability::ExecuteOperation Expected %{public}d rows but actual %{public}d",
-            operation->GetExpectedCount(),
-            numRows);
-    } else {
-        if (operation->GetUri() != nullptr) {
-            results.push_back(std::make_shared<DataAbilityResult>(*operation->GetUri(), numRows));
-        } else {
-            results.push_back(std::make_shared<DataAbilityResult>(Uri(std::string("")), numRows));
-        }
-    }
-}
-
-std::shared_ptr<NativeRdb::DataAbilityPredicates> Ability::ParsePredictionArgsReference(
-    std::vector<std::shared_ptr<DataAbilityResult>> &results, std::shared_ptr<DataAbilityOperation> &operation,
-    int numRefs)
-{
-    if (operation == nullptr) {
-        HILOG_ERROR("Ability::ParsePredictionArgsReference intpur is nullptr");
-        return nullptr;
-    }
-
-    std::map<int, int> predicatesBackReferencesMap = operation->GetDataAbilityPredicatesBackReferences();
-    if (predicatesBackReferencesMap.empty()) {
-        return operation->GetDataAbilityPredicates();
-    }
-
-    std::vector<std::string> strPredicatesList;
-    strPredicatesList.clear();
-    std::shared_ptr<NativeRdb::DataAbilityPredicates> predicates = operation->GetDataAbilityPredicates();
-    if (predicates == nullptr) {
-        HILOG_INFO("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates is nullptr");
-    } else {
-        HILOG_INFO("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates isn`t nullptr");
-        strPredicatesList = predicates->GetWhereArgs();
-    }
-
-    if (strPredicatesList.empty()) {
-        HILOG_ERROR("Ability::ParsePredictionArgsReference operation->GetDataAbilityPredicates()->GetWhereArgs()"
-                 "error strList is empty()");
-    }
-
-    for (auto iterMap : predicatesBackReferencesMap) {
-        HILOG_INFO(
-            "Ability::ParsePredictionArgsReference predicatesBackReferencesMap first:%{public}d second:%{public}d",
-            iterMap.first,
-            iterMap.second);
-        int tempCount = ChangeRef2Value(results, numRefs, iterMap.second);
-        if (tempCount < 0) {
-            HILOG_ERROR("Ability::ParsePredictionArgsReference tempCount:%{public}d", tempCount);
-            continue;
-        }
-        std::string strPredicates = std::to_string(tempCount);
-        HILOG_INFO("Ability::ParsePredictionArgsReference strPredicates:%{public}s", strPredicates.c_str());
-        strPredicatesList.push_back(strPredicates);
-        HILOG_INFO("Ability::ParsePredictionArgsReference push_back done");
-    }
-
-    if (predicates) {
-        predicates->SetWhereArgs(strPredicatesList);
-    }
-
-    return predicates;
-}
-
-std::shared_ptr<NativeRdb::ValuesBucket> Ability::ParseValuesBucketReference(
-    std::vector<std::shared_ptr<DataAbilityResult>> &results, std::shared_ptr<DataAbilityOperation> &operation,
-    int numRefs)
-{
-    NativeRdb::ValuesBucket retValueBucket;
-    if (operation == nullptr) {
-        HILOG_ERROR("Ability::ParseValuesBucketReference intpur is nullptr");
-        return nullptr;
-    }
-
-    if (operation->GetValuesBucketReferences() == nullptr) {
-        return operation->GetValuesBucket();
-    }
-
-    retValueBucket.Clear();
-    if (operation->GetValuesBucket() == nullptr) {
-        HILOG_INFO("Ability::ParseValuesBucketReference operation->GetValuesBucket is nullptr");
-    } else {
-        HILOG_INFO("Ability::ParseValuesBucketReference operation->GetValuesBucket is nullptr");
-        retValueBucket = *operation->GetValuesBucket();
-    }
-
-    std::map<std::string, NativeRdb::ValueObject> valuesMapReferences;
-    operation->GetValuesBucketReferences()->GetAll(valuesMapReferences);
-
-    for (auto itermap : valuesMapReferences) {
-        std::string key = itermap.first;
-        NativeRdb::ValueObject obj;
-        if (!operation->GetValuesBucketReferences()->GetObject(key, obj)) {
-            HILOG_ERROR("Ability::ParseValuesBucketReference operation->GetValuesBucketReferences()->GetObject error");
-            continue;
-        }
-        switch (obj.GetType()) {
-            case NativeRdb::ValueObjectType::TYPE_INT: {
-                int val = 0;
-                if (obj.GetInt(val) != 0) {
-                    HILOG_ERROR("Ability::ParseValuesBucketReference ValueObject->GetInt() error");
-                    break;
-                }
-                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutInt(%{public}s, %{public}d)",
-                    key.c_str(),
-                    val);
-                retValueBucket.PutInt(key, val);
-            } break;
-            case NativeRdb::ValueObjectType::TYPE_DOUBLE: {
-                double val = 0.0;
-                if (obj.GetDouble(val) != 0) {
-                    HILOG_ERROR("Ability::ParseValuesBucketReference ValueObject->GetDouble() error");
-                    break;
-                }
-                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutDouble(%{public}s, %{public}f)",
-                    key.c_str(),
-                    val);
-                retValueBucket.PutDouble(key, val);
-            } break;
-            case NativeRdb::ValueObjectType::TYPE_STRING: {
-                std::string val = "";
-                if (obj.GetString(val) != 0) {
-                    HILOG_ERROR("Ability::ParseValuesBucketReference ValueObject->GetString() error");
-                    break;
-                }
-                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutString(%{public}s, %{public}s)",
-                    key.c_str(),
-                    val.c_str());
-                retValueBucket.PutString(key, val);
-            } break;
-            case NativeRdb::ValueObjectType::TYPE_BLOB: {
-                std::vector<uint8_t> val;
-                if (obj.GetBlob(val) != 0) {
-                    HILOG_ERROR("Ability::ParseValuesBucketReference ValueObject->GetBlob() error");
-                    break;
-                }
-                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutBlob(%{public}s, %{public}zu)",
-                    key.c_str(),
-                    val.size());
-                retValueBucket.PutBlob(key, val);
-            } break;
-            case NativeRdb::ValueObjectType::TYPE_BOOL: {
-                bool val = false;
-                if (obj.GetBool(val) != 0) {
-                    HILOG_ERROR("Ability::ParseValuesBucketReference ValueObject->GetBool() error");
-                    break;
-                }
-                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutBool(%{public}s, %{public}s)",
-                    key.c_str(),
-                    val ? "true" : "false");
-                retValueBucket.PutBool(key, val);
-            } break;
-            default: {
-                HILOG_INFO("Ability::ParseValuesBucketReference retValueBucket->PutNull(%{public}s)", key.c_str());
-                retValueBucket.PutNull(key);
-            } break;
-        }
-    }
-
-    std::map<std::string, NativeRdb::ValueObject> valuesMap;
-    retValueBucket.GetAll(valuesMap);
-
-    return std::make_shared<NativeRdb::ValuesBucket>(valuesMap);
-}
-
-int Ability::ChangeRef2Value(std::vector<std::shared_ptr<DataAbilityResult>> &results, int numRefs, int index)
-{
-    int retval = -1;
-    if (index >= numRefs) {
-        HILOG_ERROR("Ability::ChangeRef2Value index >= numRefs");
-        return retval;
-    }
-
-    if (index >= static_cast<int>(results.size())) {
-        HILOG_ERROR("Ability::ChangeRef2Value index:%{public}d >= results.size():%{public}zu", index, results.size());
-        return retval;
-    }
-
-    std::shared_ptr<DataAbilityResult> refResult = results[index];
-    if (refResult == nullptr) {
-        HILOG_ERROR("Ability::ChangeRef2Value No.%{public}d refResult is null", index);
-        return retval;
-    }
-
-    if (refResult->GetUri().ToString().empty()) {
-        retval = refResult->GetCount();
-    } else {
-        retval = DataUriUtils::GetId(refResult->GetUri());
-    }
-
-    return retval;
-}
-
-bool Ability::CheckAssertQueryResult(std::shared_ptr<NativeRdb::AbsSharedResultSet> &queryResult,
-    std::shared_ptr<NativeRdb::ValuesBucket> &&valuesBucket)
-{
-    if (queryResult == nullptr) {
-        HILOG_ERROR("Ability::CheckAssertQueryResult intput queryResult is null");
-        return true;
-    }
-
-    if (valuesBucket == nullptr) {
-        HILOG_ERROR("Ability::CheckAssertQueryResult intput valuesBucket is null");
-        return true;
-    }
-
-    std::map<std::string, NativeRdb::ValueObject> valuesMap;
-    valuesBucket->GetAll(valuesMap);
-    if (valuesMap.empty()) {
-        HILOG_ERROR("Ability::CheckAssertQueryResult valuesMap is empty");
-        return true;
-    }
-    int count = 0;
-    if (queryResult->GetRowCount(count) != 0) {
-        HILOG_ERROR("Ability::CheckAssertQueryResult GetRowCount is 0");
-        return true;
-    }
-
-    for (auto iterMap : valuesMap) {
-        std::string strObject;
-        if (iterMap.second.GetString(strObject) != 0) {
-            HILOG_ERROR("Ability::CheckAssertQueryResult GetString strObject is error");
-            continue;
-        }
-        if (strObject.empty()) {
-            HILOG_ERROR("Ability::CheckAssertQueryResult strObject is empty");
-            continue;
-        }
-        for (int i = 0; i < count; ++i) {
-            std::string strName;
-            if (queryResult->GetString(i, strName) != 0) {
-                HILOG_ERROR("Ability::CheckAssertQueryResult GetString strName is error");
-                continue;
-            }
-            if (strName.empty()) {
-                HILOG_ERROR("Ability::CheckAssertQueryResult strName is empty");
-                continue;
-            }
-            if (strName == strObject) {
-                HILOG_ERROR("Ability::CheckAssertQueryResult strName same to strObject");
-                continue;
-            }
-
-            return false;
-        }
-    }
-
-    return true;
-}
-
-#ifdef SUPPORT_GRAPHICS
 sptr<Rosen::WindowOption> Ability::GetWindowOption(const Want &want)
 {
     sptr<Rosen::WindowOption> option = new Rosen::WindowOption();
@@ -3575,18 +3577,7 @@ void Ability::DoOnForeground(const Want& want)
 
     }
 }
-#endif
 
-/**
- * @brief request a remote object of callee from this ability.
- * @return Returns the remote object of callee.
- */
-sptr<IRemoteObject> Ability::CallRequest()
-{
-    return nullptr;
-}
-
-#ifdef SUPPORT_GRAPHICS
 int Ability::GetCurrentWindowMode()
 {
     HILOG_INFO("%{public}s start", __func__);
@@ -3808,27 +3799,5 @@ int Ability::GetDisplayOrientation()
     return 0;
 }
 #endif
-
-ErrCode Ability::StartFeatureAbilityForResult(const Want &want, int requestCode, FeatureAbilityTask &&task)
-{
-    HILOG_DEBUG("%{public}s begin.", __func__);
-    resultCallbacks_.insert(make_pair(requestCode, std::move(task)));
-    ErrCode err = StartAbilityForResult(want, requestCode);
-    HILOG_INFO("%{public}s end. ret=%{public}d", __func__, err);
-    return err;
-}
-
-void Ability::OnFeatureAbilityResult(int requestCode, int resultCode, const Want &want)
-{
-    HILOG_DEBUG("%{public}s begin.", __func__);
-    auto callback = resultCallbacks_.find(requestCode);
-    if (callback != resultCallbacks_.end()) {
-        if (callback->second) {
-            callback->second(resultCode, want);
-        }
-        resultCallbacks_.erase(requestCode);
-    }
-    HILOG_INFO("%{public}s end.", __func__);
-}
 }  // namespace AppExecFwk
 }  // namespace OHOS

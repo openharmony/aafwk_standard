@@ -37,9 +37,6 @@
 
 namespace OHOS {
 namespace AbilityRuntime {
-#ifdef SUPPORT_GRAPHICS
-const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
-#endif
 Ability *JsAbility::Create(const std::unique_ptr<Runtime> &runtime)
 {
     return new JsAbility(static_cast<JsRuntime &>(*runtime));
@@ -189,6 +186,8 @@ void JsAbility::OnStop()
 }
 
 #ifdef SUPPORT_GRAPHICS
+const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
+
 void JsAbility::OnSceneCreated()
 {
     HILOG_INFO("OnSceneCreated begin, ability is %{public}s.", GetAbilityName().c_str());
@@ -305,6 +304,116 @@ void JsAbility::OnBackground()
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityBackground(jsAbilityObj_);
     }
+}
+
+std::unique_ptr<NativeReference> JsAbility::CreateAppWindowStage()
+{
+    HandleScope handleScope(jsRuntime_);
+    auto &engine = jsRuntime_.GetNativeEngine();
+    NativeValue *jsWindowStage = Rosen::CreateJsWindowStage(engine, GetScene());
+    if (jsWindowStage == nullptr) {
+        HILOG_ERROR("Failed to create jsWindowSatge object");
+        return nullptr;
+    }
+    return jsRuntime_.LoadSystemModule("application.WindowStage", &jsWindowStage, 1);
+}
+
+void JsAbility::GetPageStackFromWant(const Want &want, std::string &pageStack)
+{
+    auto stringObj = AAFwk::IString::Query(want.GetParams().GetParam(PAGE_STACK_PROPERTY_NAME));
+    if (stringObj != nullptr) {
+        pageStack = AAFwk::String::Unbox(stringObj);
+    }
+}
+
+void JsAbility::DoOnForeground(const Want &want)
+{
+    if (scene_ == nullptr) {
+        if ((abilityContext_ == nullptr) || (sceneListener_ == nullptr)) {
+            HILOG_ERROR("Ability::OnForeground error. abilityContext_ or sceneListener_ is nullptr!");
+            return;
+        }
+        scene_ = std::make_shared<Rosen::WindowScene>();
+        if (scene_ == nullptr) {
+            HILOG_ERROR("%{public}s error. failed to create WindowScene instance!", __func__);
+            return;
+        }
+        int32_t displayId = Rosen::WindowScene::DEFAULT_DISPLAY_ID;
+        if (setting_ != nullptr) {
+            std::string strDisplayId =
+                setting_->GetProperty(OHOS::AppExecFwk::AbilityStartSetting::WINDOW_DISPLAY_ID_KEY);
+            std::regex formatRegex("[0-9]{0,9}$");
+            std::smatch sm;
+            bool flag = std::regex_match(strDisplayId, sm, formatRegex);
+            if (flag && !strDisplayId.empty()) {
+                displayId = std::stoi(strDisplayId);
+                HILOG_INFO("%{public}s success. displayId is %{public}d", __func__, displayId);
+            } else {
+                HILOG_INFO("%{public}s failed to formatRegex:[%{public}s]", __func__, strDisplayId.c_str());
+            }
+        }
+        auto option = GetWindowOption(want);
+        Rosen::WMError ret = scene_->Init(displayId, abilityContext_, sceneListener_, option);
+        if (ret != Rosen::WMError::WM_OK) {
+            HILOG_ERROR("%{public}s error. failed to init window scene!", __func__);
+            return;
+        }
+
+        // multi-instance ability continuation
+        HILOG_INFO("lauch reason = %{public}d", launchParam_.launchReason);
+        if (IsRestoredInContinuation()) {
+            std::string pageStack;
+            GetPageStackFromWant(want, pageStack);
+            HandleScope handleScope(jsRuntime_);
+            auto &engine = jsRuntime_.GetNativeEngine();
+            if (abilityContext_->GetContentStorage()) {
+                scene_->GetMainWindow()->SetUIContent(pageStack, &engine,
+                    abilityContext_->GetContentStorage()->Get(), true);
+            } else {
+                HILOG_ERROR("restore: content storage is nullptr");
+            }
+            OnSceneRestored();
+            WaitingDistributedObjectSyncComplete(want);
+        } else {
+            OnSceneCreated();
+        }
+    } else {
+        auto window = scene_->GetMainWindow();
+        if (window != nullptr && want.HasParameter(Want::PARAM_RESV_WINDOW_MODE)) {
+            auto windowMode = want.GetIntParam(Want::PARAM_RESV_WINDOW_MODE,
+                AAFwk::AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
+            window->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
+            HILOG_INFO("set window mode = %{public}d.", windowMode);
+        }
+    }
+
+    auto window = scene_->GetMainWindow();
+    if (window) {
+        HILOG_INFO("Call RegisterDisplayMoveListener, windowId: %{public}d", window->GetWindowId());
+        std::weak_ptr<Ability> weakAbility = shared_from_this();
+        abilityDisplayMoveListener_ = new AbilityDisplayMoveListener(weakAbility);
+        window->RegisterDisplayMoveListener(abilityDisplayMoveListener_);
+    }
+
+    HILOG_INFO("%{public}s begin scene_->GoForeground, sceneFlag_:%{public}d.", __func__, Ability::sceneFlag_);
+    scene_->GoForeground(Ability::sceneFlag_);
+    HILOG_INFO("%{public}s end scene_->GoForeground.", __func__);
+}
+
+void JsAbility::RequsetFocus(const Want &want)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    if (scene_ == nullptr) {
+        return;
+    }
+    auto window = scene_->GetMainWindow();
+    if (window != nullptr && want.HasParameter(Want::PARAM_RESV_WINDOW_MODE)) {
+        auto windowMode = want.GetIntParam(Want::PARAM_RESV_WINDOW_MODE,
+            AAFwk::AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
+        window->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
+        HILOG_INFO("set window mode = %{public}d.", windowMode);
+    }
+    scene_->GoForeground(Ability::sceneFlag_);
 }
 #endif
 
@@ -509,102 +618,6 @@ void JsAbility::CallObjectMethod(const char *name, NativeValue *const *argv, siz
     nativeEngine.CallFunction(value, methodOnCreate, argv, argc);
 }
 
-#ifdef SUPPORT_GRAPHICS
-std::unique_ptr<NativeReference> JsAbility::CreateAppWindowStage()
-{
-    HandleScope handleScope(jsRuntime_);
-    auto &engine = jsRuntime_.GetNativeEngine();
-    NativeValue *jsWindowStage = Rosen::CreateJsWindowStage(engine, GetScene());
-    if (jsWindowStage == nullptr) {
-        HILOG_ERROR("Failed to create jsWindowSatge object");
-        return nullptr;
-    }
-    return jsRuntime_.LoadSystemModule("application.WindowStage", &jsWindowStage, 1);
-}
-
-void JsAbility::GetPageStackFromWant(const Want &want, std::string &pageStack)
-{
-    auto stringObj = AAFwk::IString::Query(want.GetParams().GetParam(PAGE_STACK_PROPERTY_NAME));
-    if (stringObj != nullptr) {
-        pageStack = AAFwk::String::Unbox(stringObj);
-    }
-}
-
-void JsAbility::DoOnForeground(const Want &want)
-{
-    if (scene_ == nullptr) {
-        if ((abilityContext_ == nullptr) || (sceneListener_ == nullptr)) {
-            HILOG_ERROR("Ability::OnForeground error. abilityContext_ or sceneListener_ is nullptr!");
-            return;
-        }
-        scene_ = std::make_shared<Rosen::WindowScene>();
-        if (scene_ == nullptr) {
-            HILOG_ERROR("%{public}s error. failed to create WindowScene instance!", __func__);
-            return;
-        }
-        int32_t displayId = Rosen::WindowScene::DEFAULT_DISPLAY_ID;
-        if (setting_ != nullptr) {
-            std::string strDisplayId =
-                setting_->GetProperty(OHOS::AppExecFwk::AbilityStartSetting::WINDOW_DISPLAY_ID_KEY);
-            std::regex formatRegex("[0-9]{0,9}$");
-            std::smatch sm;
-            bool flag = std::regex_match(strDisplayId, sm, formatRegex);
-            if (flag && !strDisplayId.empty()) {
-                displayId = std::stoi(strDisplayId);
-                HILOG_INFO("%{public}s success. displayId is %{public}d", __func__, displayId);
-            } else {
-                HILOG_INFO("%{public}s failed to formatRegex:[%{public}s]", __func__, strDisplayId.c_str());
-            }
-        }
-        auto option = GetWindowOption(want);
-        Rosen::WMError ret = scene_->Init(displayId, abilityContext_, sceneListener_, option);
-        if (ret != Rosen::WMError::WM_OK) {
-            HILOG_ERROR("%{public}s error. failed to init window scene!", __func__);
-            return;
-        }
-
-        // multi-instance ability continuation
-        HILOG_INFO("lauch reason = %{public}d", launchParam_.launchReason);
-        if (IsRestoredInContinuation()) {
-            std::string pageStack;
-            GetPageStackFromWant(want, pageStack);
-            HandleScope handleScope(jsRuntime_);
-            auto &engine = jsRuntime_.GetNativeEngine();
-            if (abilityContext_->GetContentStorage()) {
-                scene_->GetMainWindow()->SetUIContent(pageStack, &engine,
-                    abilityContext_->GetContentStorage()->Get(), true);
-            } else {
-                HILOG_ERROR("restore: content storage is nullptr");
-            }
-            OnSceneRestored();
-            WaitingDistributedObjectSyncComplete(want);
-        } else {
-            OnSceneCreated();
-        }
-    } else {
-        auto window = scene_->GetMainWindow();
-        if (window != nullptr && want.HasParameter(Want::PARAM_RESV_WINDOW_MODE)) {
-            auto windowMode = want.GetIntParam(Want::PARAM_RESV_WINDOW_MODE,
-                AAFwk::AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
-            window->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
-            HILOG_INFO("set window mode = %{public}d.", windowMode);
-        }
-    }
-
-    auto window = scene_->GetMainWindow();
-    if (window) {
-        HILOG_INFO("Call RegisterDisplayMoveListener, windowId: %{public}d", window->GetWindowId());
-        std::weak_ptr<Ability> weakAbility = shared_from_this();
-        abilityDisplayMoveListener_ = new AbilityDisplayMoveListener(weakAbility);
-        window->RegisterDisplayMoveListener(abilityDisplayMoveListener_);
-    }
-
-    HILOG_INFO("%{public}s begin scene_->GoForeground, sceneFlag_:%{public}d.", __func__, Ability::sceneFlag_);
-    scene_->GoForeground(Ability::sceneFlag_);
-    HILOG_INFO("%{public}s end scene_->GoForeground.", __func__);
-}
-#endif
-
 std::shared_ptr<AppExecFwk::ADelegatorAbilityProperty> JsAbility::CreateADelegatorAbilityProperty()
 {
     auto property = std::make_shared<AppExecFwk::ADelegatorAbilityProperty>();
@@ -615,24 +628,6 @@ std::shared_ptr<AppExecFwk::ADelegatorAbilityProperty> JsAbility::CreateADelegat
 
     return property;
 }
-
-#ifdef SUPPORT_GRAPHICS
-void JsAbility::RequsetFocus(const Want &want)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    if (scene_ == nullptr) {
-        return;
-    }
-    auto window = scene_->GetMainWindow();
-    if (window != nullptr && want.HasParameter(Want::PARAM_RESV_WINDOW_MODE)) {
-        auto windowMode = want.GetIntParam(Want::PARAM_RESV_WINDOW_MODE,
-            AAFwk::AbilityWindowConfiguration::MULTI_WINDOW_DISPLAY_UNDEFINED);
-        window->SetWindowMode(static_cast<Rosen::WindowMode>(windowMode));
-        HILOG_INFO("set window mode = %{public}d.", windowMode);
-    }
-    scene_->GoForeground(Ability::sceneFlag_);
-}
-#endif
 
 void JsAbility::Dump(const std::vector<std::string> &params, std::vector<std::string> &info)
 {

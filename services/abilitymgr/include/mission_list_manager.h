@@ -257,28 +257,6 @@ public:
     sptr<IRemoteObject> GetAbilityTokenByMissionId(int32_t missionId);
 
     /**
-     * Set mission label of this ability.
-     *
-     * @param abilityToken target ability token.
-     * @param label target label.
-     * @return Retun 0 if success.
-     */
-    int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label);
-
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * Set mission icon of this ability.
-     *
-     * @param token target ability token.
-     * @param icon target label.
-     * @return Retun 0 if success.
-     */
-    int SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon);
-
-    void CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken) const;
-#endif
-
-    /**
      * @brief dump all abilities
      *
      * @param info dump result.
@@ -364,6 +342,62 @@ public:
     bool IsStarted();
     void PauseManager();
     void ResumeManager();
+
+#ifdef SUPPORT_GRAPHICS
+public:
+    /**
+     * Set mission label of this ability.
+     *
+     * @param abilityToken target ability token.
+     * @param label target label.
+     * @return Retun 0 if success.
+     */
+    int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label);
+
+    /**
+     * Set mission icon of this ability.
+     *
+     * @param token target ability token.
+     * @param icon target label.
+     * @return Retun 0 if success.
+     */
+    int SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon);
+
+    void CompleteFirstFrameDrawing(const sptr<IRemoteObject> &abilityToken) const;
+
+private:
+    void NotifyAnimationFromRecentTask(const std::shared_ptr<AbilityRecord> &abilityRecord,
+        const std::shared_ptr<StartOptions> &startOptions, const Want &want) const;
+    void NotifyAnimationFromStartingAbility(const std::shared_ptr<AbilityRecord> &callerAbility,
+        const AbilityRequest &abilityRequest, const sptr<IRemoteObject> abilityToken) const;
+    void SetShowWhenLocked(const AppExecFwk::AbilityInfo &abilityInfo, sptr<AbilityTransitionInfo> &info) const;
+    void SetAbilityTransitionInfo(const AppExecFwk::AbilityInfo &abilityInfo, sptr<AbilityTransitionInfo> &info) const;
+    void SetWindowModeAndDisplayId(sptr<AbilityTransitionInfo> &info, const Want &want) const;
+
+    sptr<IWindowManagerServiceHandler> GetWMSHandler() const;
+
+    void StartingWindowCold(const std::shared_ptr<AbilityRecord> &abilityRecord,
+        const std::shared_ptr<StartOptions> &startOptions, const Want &want,
+        const AbilityRequest &abilityRequest) const;
+    void StartingWindowHot(const std::shared_ptr<AbilityRecord> &abilityRecord,
+        const std::shared_ptr<StartOptions> &startOptions, const Want &want, const AbilityRequest &abilityRequest,
+        int32_t missionId) const;
+    std::shared_ptr<Global::Resource::ResourceManager> CreateResourceManager(
+        const AppExecFwk::AbilityInfo &abilityInfo) const;
+    sptr<Media::PixelMap> GetPixelMap(const uint32_t windowIconId,
+        std::shared_ptr<Global::Resource::ResourceManager> resourceManager) const;
+    sptr<AbilityTransitionInfo> CreateAbilityTransitionInfo(const sptr<IRemoteObject> abilityToken,
+        const std::shared_ptr<StartOptions> &startOptions, const Want &want) const;
+    sptr<AbilityTransitionInfo> CreateAbilityTransitionInfo(const AbilityRequest &abilityRequest,
+        const sptr<IRemoteObject> abilityToken) const;
+    void CancelStartingWindow(const sptr<IRemoteObject> abilityToken, bool isDelay) const;
+    void NotifyStartingWindow(bool isCold, const std::shared_ptr<Mission> &targetMission,
+        const std::shared_ptr<AbilityRecord> &targetAbilityRecord, const AbilityRequest &abilityRequest,
+        const std::shared_ptr<AbilityRecord> &callerAbility);
+    void NotifyStartingWindow(bool isCold, const std::shared_ptr<AbilityRecord> &targetAbilityRecord,
+        std::shared_ptr<StartOptions> &startOptions, int32_t missionId);
+#endif
+
 private:
     int StartAbilityLocked(const std::shared_ptr<AbilityRecord> &currentTopAbility,
         const std::shared_ptr<AbilityRecord> &callerAbility, const AbilityRequest &abilityRequest);
@@ -430,40 +464,6 @@ private:
     void AddUninstallTags(const std::string &bundleName, int32_t uid);
     void RemoveMissionLocked(int32_t missionId);
 
-#ifdef SUPPORT_GRAPHICS
-    void NotifyAnimationFromRecentTask(const std::shared_ptr<AbilityRecord> &abilityRecord,
-        const std::shared_ptr<StartOptions> &startOptions, const Want &want) const;
-    void NotifyAnimationFromStartingAbility(const std::shared_ptr<AbilityRecord> &callerAbility,
-        const AbilityRequest &abilityRequest, const sptr<IRemoteObject> abilityToken) const;
-    void SetShowWhenLocked(const AppExecFwk::AbilityInfo &abilityInfo, sptr<AbilityTransitionInfo> &info) const;
-    void SetAbilityTransitionInfo(const AppExecFwk::AbilityInfo &abilityInfo, sptr<AbilityTransitionInfo> &info) const;
-    void SetWindowModeAndDisplayId(sptr<AbilityTransitionInfo> &info, const Want &want) const;
-
-    sptr<IWindowManagerServiceHandler> GetWMSHandler() const;
-
-    void StartingWindowCold(const std::shared_ptr<AbilityRecord> &abilityRecord,
-        const std::shared_ptr<StartOptions> &startOptions, const Want &want,
-        const AbilityRequest &abilityRequest) const;
-    void StartingWindowHot(const std::shared_ptr<AbilityRecord> &abilityRecord,
-        const std::shared_ptr<StartOptions> &startOptions, const Want &want, const AbilityRequest &abilityRequest,
-        int32_t missionId) const;
-    std::shared_ptr<Global::Resource::ResourceManager> CreateResourceManager(
-        const AppExecFwk::AbilityInfo &abilityInfo) const;
-    sptr<Media::PixelMap> GetPixelMap(const uint32_t windowIconId,
-        std::shared_ptr<Global::Resource::ResourceManager> resourceManager) const;
-    sptr<AbilityTransitionInfo> CreateAbilityTransitionInfo(const sptr<IRemoteObject> abilityToken,
-        const std::shared_ptr<StartOptions> &startOptions, const Want &want) const;
-    sptr<AbilityTransitionInfo> CreateAbilityTransitionInfo(const AbilityRequest &abilityRequest,
-        const sptr<IRemoteObject> abilityToken) const;
-    void CancelStartingWindow(const sptr<IRemoteObject> abilityToken, bool isDelay) const;
-    void NotifyStartingWindow(bool isCold, const std::shared_ptr<Mission> &targetMission,
-        const std::shared_ptr<AbilityRecord> &targetAbilityRecord, const AbilityRequest &abilityRequest,
-        const std::shared_ptr<AbilityRecord> &callerAbility);
-    void NotifyStartingWindow(bool isCold, const std::shared_ptr<AbilityRecord> &targetAbilityRecord,
-        std::shared_ptr<StartOptions> &startOptions, int32_t missionId);
-#endif
-
-private:
     int userId_;
     mutable std::recursive_mutex managerLock_;
     // launcher list is also in currentMissionLists_
@@ -479,14 +479,12 @@ private:
     std::shared_ptr<MissionListenerController> listenerController_;
     bool isPC_ = false;
 
-private:
-class MissionDmInitCallback : public DistributedHardware::DmInitCallback {
-public:
-    void OnRemoteDied() override;
+    class MissionDmInitCallback : public DistributedHardware::DmInitCallback {
+    public:
+        void OnRemoteDied() override;
 
-public:
-    static bool isInit_;
-};
+        static bool isInit_;
+    };
 };
 }  // namespace AAFwk
 }  // namespace OHOS

@@ -48,7 +48,6 @@
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "ohos_account_kits.h"
-#include "power_mgr_client.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {
