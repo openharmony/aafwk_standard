@@ -20,7 +20,7 @@
 #include <map>
 #include <string>
 
-#include "ashmem.h"
+#include "form_ashmem.h"
 #include "message_parcel.h"
 #include "nlohmann/json.hpp"
 #include "parcel.h"
@@ -113,13 +113,13 @@ public:
      * @brief Obtains the imageDataMap stored in this {@code FormProviderData} object.
      * @return Returns the map that contains shared image data.
      */
-    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> GetImageDataMap() const;
+    std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> GetImageDataMap() const;
 
     /**
      * @brief Updates imageDataMap in this {@code FormProviderData} object.
      * @param imageDataMap Indicates the imageDataMap to update.
      */
-    void SetImageDataMap(std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap);
+    void SetImageDataMap(std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> imageDataMap);
 
     /**
      * @brief Obtains the form data stored in this {@code FormProviderData} object.
@@ -172,7 +172,7 @@ private:
 
 private:
     nlohmann::json jsonFormProviderData_;
-    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap_;
+    std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> imageDataMap_;
     std::map<std::string, std::pair<char *, int32_t>> rawImageBytesMap_;
     int32_t imageDataState_ = 0;
 };

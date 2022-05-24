@@ -35,7 +35,7 @@ FormCacheMgr::~FormCacheMgr()
  * @return Returns true if this function is successfully called; returns false otherwise.
  */
 bool FormCacheMgr::GetData(const int64_t formId, std::string &data,
-    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> &imageMap) const
+    std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> &imageMap) const
 {
     HILOG_INFO("get cache data");
     std::lock_guard<std::mutex> lock(cacheMutex_);
@@ -69,7 +69,7 @@ bool FormCacheMgr::GetData(const int64_t formId, std::string &data,
  * @return Returns true if this function is successfully called; returns false otherwise.
  */
 bool FormCacheMgr::AddData(const int64_t formId, const std::string &data,
-    const std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> &imageMap)
+    const std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> &imageMap)
 {
     HILOG_INFO("add new cache data");
     std::lock_guard<std::mutex> lock(cacheMutex_);

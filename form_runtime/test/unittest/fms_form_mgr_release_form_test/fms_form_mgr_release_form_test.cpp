@@ -175,7 +175,7 @@ HWTEST_F(FmsFormMgrReleaseFormTest, ReleaseForm_002, TestSize.Level0)
 
     FormItemInfo itemInfo;
     FormDataMgr::GetInstance().AllotFormHostRecord(itemInfo, token_, formId1, 0);
-    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageMap {};
+    std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> imageMap {};
 
     FormCacheMgr::GetInstance().AddData(formId1, "test data 1", imageMap);
     FormCacheMgr::GetInstance().AddData(formId2, "test data 2", imageMap);
