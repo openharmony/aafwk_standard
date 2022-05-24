@@ -268,7 +268,8 @@ void JsAbility::onSceneDestroyed()
     HILOG_INFO("onSceneDestroyed end, ability is %{public}s.", GetAbilityName().c_str());
     AAFWK::EventInfo eventInfo;
     eventInfo.abilityName = GetAbilityName();
-    AAFWK::EventReport::SendAbilityEvent(AAFWK::ABILITY_WINDOWSTAGE_DESTORY, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::ABILITY_WINDOWSTAGE_DESTORY, AAFWK::HiSysEventType::BEHAVIOR,
+        eventInfo);
 }
 
 void JsAbility::OnForeground(const Want &want)

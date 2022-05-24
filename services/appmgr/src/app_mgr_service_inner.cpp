@@ -275,7 +275,7 @@ void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppSched
     eventInfo.appName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
-    eventInfo.timeStamp = 
+    eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
     AAFWK::EventReport::AppEvent(AAFWK::APP_ATTACH, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
@@ -320,7 +320,7 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
     eventInfo.appName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
-    eventInfo.timeStamp = 
+    eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
     AAFWK::EventReport::AppEvent(AAFWK::APP_LAUNCH, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
@@ -364,7 +364,7 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
     eventInfo.appName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
-    eventInfo.timeStamp = 
+    eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
     AAFWK::EventReport::AppEvent(AAFWK::APP_FOREGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
@@ -394,7 +394,7 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
     eventInfo.appName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
-    eventInfo.timeStamp = 
+    eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
     AAFWK::EventReport::AppEvent(AAFWK::APP_BACKGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
@@ -436,7 +436,7 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     eventInfo.appName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
-    eventInfo.timeStamp = 
+    eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
     AAFWK::EventReport::AppEvent(AAFWK::APP_TERMINATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);

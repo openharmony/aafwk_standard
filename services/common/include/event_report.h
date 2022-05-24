@@ -75,57 +75,6 @@ const std::string APP_FOREGROUND = "APP_FOREGROUND";
 const std::string APP_BACKGROUND = "APP_BACKGROUND";
 const std::string APP_TERMINATE = "APP_TERMINATE";
 }
-// enum class AMSEventType {
-//     UNKNOW = 0,
-//     /***********FAULT EVENT**************/
-//     START_ABILITY_ERROR,
-//     TERMINATE_ABILITY_ERROR,
-//     START_EXTENSION_ERROR,
-//     STOP_EXTENSION_ERROR,
-//     CONNECT_SERVICE_ERROR,
-//     DISCONNECT_SERVICE_ERROR,
-//     /***********BEHAVIOR EVENT***********/
-//     START_ABILITY,
-//     DO_FOREGROUND_ABILITY,
-//     DO_BACKGROUND_ABILITY,
-//     TERMINATE_ABILITY,
-//     ABILITY_ONSTART,
-//     ABILITY_ONSTOP,
-//     ABILITY_ONFOREGROUND,
-//     ABILITY_ONBACKGROUND,
-//     ABILITY_WINDOWSTAGE_CREATE,
-//     ABILITY_WINDOWSTAGE_DESTORY,
-//     START_SERVICE_EXTENSION,
-//     STOP_SERVICE_EXTENSION,
-//     CONNECT_SERVICE_EXTENSION,
-//     DISCONNECT_SERVICE_EXTENSION,
-//     SERVICE_EXTENSION_ONSTART,
-//     SERVICE_EXTENSION_ONSTOP,
-//     SERVICE_EXTENSION_ONCONNECT,
-//     SERVICE_EXTENSION_ONDISCONNECT,
-//     SERVICE_EXTENSION_ONREQUEST,
-//     ADD_FORM,
-//     REQUEST_FORM,
-//     DELETE_FORM,
-//     CASTTEMP_FORM,
-//     ACQUIREFORMSTATE_FORM,
-//     MESSAGE_EVENT_FORM,
-//     ROUTE_EVENT_FORM,
-//     RELEASE_FORM,
-//     DELETE_INVALID_FORM,
-//     SET_NEXT_REFRESH_TIME_FORM,
-//     FORM_ONCREATE,
-//     FORM_ONDESTROY,
-//     FORM_ONUPDATE,
-//     FORM_EVENT,
-//     FORM_ONCASTTEMPFORM,
-//     FORM_ONACQUIREFORMSTATE,
-//     APP_ATTACH,
-//     APP_LAUNCH,
-//     APP_FOREGROUND,
-//     APP_BACKGROUND,
-//     APP_TERMINATE,
-// };
 
 enum HiSysEventType {
     FAULT = 1,
@@ -138,7 +87,7 @@ struct EventInfo {
     int32_t pid = -1;
     int32_t userId = -1;
     int64_t timeStamp = 0;
-    int64_t formId =-1;
+    int64_t formId = -1;
     uint32_t versionCode = 0;
     std::string versionName;
     std::string moduleName;
