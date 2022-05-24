@@ -298,7 +298,8 @@ ErrCode AbilityManagerClient::DisconnectAbility(const sptr<IAbilityConnection> &
     int32_t ret = ERR_OK;
     AAFWK::EventInfo eventInfo;
     eventInfo.abilityName = "disconnect ability";
-    AAFWK::EventReport::SendAbilityEvent(AAFWK::DISCONNECT_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::DISCONNECT_SERVICE_EXTENSION, AAFWK::HiSysEventType::BEHAVIOR,
+        eventInfo);
     ret = abms->DisconnectAbility(connect);
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::DISCONNECT_SERVICE_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);

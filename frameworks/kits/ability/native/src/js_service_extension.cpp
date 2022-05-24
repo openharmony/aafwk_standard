@@ -119,7 +119,8 @@ void JsServiceExtension::OnStart(const AAFwk::Want &want)
     HILOG_INFO("%{public}s end.", __func__);
     AAFWK::EventInfo eventInfo;
     eventInfo.abilityName = abilityInfo_->name;
-    AAFWK::EventReport::SendExtensionEvent(AAFWK::SERVICE_EXTENSION_ONSTART, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendExtensionEvent(AAFWK::SERVICE_EXTENSION_ONSTART, AAFWK::HiSysEventType::BEHAVIOR,
+        eventInfo);
 }
 
 void JsServiceExtension::OnStop()
@@ -135,7 +136,8 @@ void JsServiceExtension::OnStop()
     HILOG_INFO("%{public}s end.", __func__);
     AAFWK::EventInfo eventInfo;
     eventInfo.abilityName = abilityInfo_->name;
-    AAFWK::EventReport::SendExtensionEvent(AAFWK::SERVICE_EXTENSION_ONSTOP, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendExtensionEvent(AAFWK::SERVICE_EXTENSION_ONSTOP, AAFWK::HiSysEventType::BEHAVIOR,
+        eventInfo);
 }
 
 sptr<IRemoteObject> JsServiceExtension::OnConnect(const AAFwk::Want &want)
@@ -177,7 +179,8 @@ sptr<IRemoteObject> JsServiceExtension::OnConnect(const AAFwk::Want &want)
     }
     AAFWK::EventInfo eventInfo;
     eventInfo.abilityName = abilityInfo_->name;
-    AAFWK::EventReport::SendExtensionEvent(AAFWK::SERVICE_EXTENSION_ONCONNECT, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendExtensionEvent(AAFWK::SERVICE_EXTENSION_ONCONNECT, AAFWK::HiSysEventType::BEHAVIOR,
+        eventInfo);
     return remoteObj;
 }
 
@@ -212,7 +215,8 @@ void JsServiceExtension::OnDisconnect(const AAFwk::Want &want)
     HILOG_INFO("%{public}s end.", __func__);
     AAFWK::EventInfo eventInfo;
     eventInfo.abilityName = abilityInfo_->name;
-    AAFWK::EventReport::SendExtensionEvent(AAFWK::SERVICE_EXTENSION_ONDISCONNECT, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendExtensionEvent(AAFWK::SERVICE_EXTENSION_ONDISCONNECT, AAFWK::HiSysEventType::BEHAVIOR,
+        eventInfo);
 }
 
 void JsServiceExtension::OnCommand(const AAFwk::Want &want, bool restart, int startId)
@@ -236,7 +240,8 @@ void JsServiceExtension::OnCommand(const AAFwk::Want &want, bool restart, int st
     HILOG_INFO("%{public}s end.", __func__);
     AAFWK::EventInfo eventInfo;
     eventInfo.abilityName = abilityInfo_->name;
-    AAFWK::EventReport::SendExtensionEvent(AAFWK::SERVICE_EXTENSION_ONREQUEST, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendExtensionEvent(AAFWK::SERVICE_EXTENSION_ONREQUEST, AAFWK::HiSysEventType::BEHAVIOR,
+        eventInfo);
 }
 
 NativeValue* JsServiceExtension::CallObjectMethod(const char* name, NativeValue* const* argv, size_t argc)
