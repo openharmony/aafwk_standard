@@ -416,7 +416,7 @@ public:
     {
         return false;
     }
-    virtual bool ImplicitQueryInfoByPriority(const Want &want, int32_t flags, int32_t userId
+    virtual bool ImplicitQueryInfoByPriority(const Want &want, int32_t flags, int32_t userId,
         AbilityInfo &abilityInfo, ExtensionAbilityInfo &extensionAbilityInfo) override
     {
         abilityInfo.name = "MainAbility";
