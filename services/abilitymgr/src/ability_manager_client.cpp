@@ -505,6 +505,20 @@ void AbilityManagerClient::NotifyCompleteContinuation(const std::string &deviceI
     abms->NotifyCompleteContinuation(deviceId, sessionId, isSuccess);
 }
 
+ErrCode AbilityManagerClient::ContinueAbility(const std::string &deviceId, int32_t missionId, uint32_t versionCode)
+{
+    auto abms = GetAbilityManager();
+    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    return abms->ContinueAbility(deviceId, missionId, versionCode);
+}
+
+ErrCode AbilityManagerClient::NotifyContinuationResult(int32_t missionId, int32_t result)
+{
+    auto abms = GetAbilityManager();
+    CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
+    return abms->NotifyContinuationResult(missionId, result);
+}
+
 ErrCode AbilityManagerClient::LockMissionForCleanup(int32_t missionId)
 {
     auto abms = GetAbilityManager();
