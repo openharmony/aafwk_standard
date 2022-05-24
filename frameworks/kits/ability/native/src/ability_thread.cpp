@@ -1613,8 +1613,38 @@ std::shared_ptr<AbilityRuntime::AbilityContext> AbilityThread::BuildAbilityConte
     return abilityContextImpl;
 }
 
-#ifdef SUPPORT_GRAPHICS
 void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std::vector<std::string> &info)
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    if (token_ == nullptr) {
+        HILOG_ERROR("DumpAbilityInfo::failed, token_  nullptr");
+        return;
+    }
+    wptr<AbilityThread> weak = this;
+    auto task = [weak, params, token = token_]() {
+        auto abilityThread = weak.promote();
+        if (abilityThread == nullptr) {
+            HILOG_ERROR("abilityThread is nullptr, ScheduleAbilityTransaction failed.");
+            return;
+        }
+        std::vector<std::string> dumpInfo;
+        abilityThread->DumpAbilityInfoInner(params, dumpInfo);
+        ErrCode err = AbilityManagerClient::GetInstance()->DumpAbilityInfoDone(dumpInfo, token);
+        if (err != ERR_OK) {
+            HILOG_ERROR("AbilityThread:: DumpAbilityInfo failed err = %{public}d", err);
+        }
+    };
+
+    if (abilityHandler_ == nullptr) {
+        HILOG_ERROR("AbilityThread::ScheduleAbilityTransaction abilityHandler_ == nullptr");
+        return;
+    }
+
+    abilityHandler_->PostTask(task);
+}
+
+#ifdef SUPPORT_GRAPHICS
+void AbilityThread::DumpAbilityInfoInner(const std::vector<std::string> &params, std::vector<std::string> &info)
 {
     HILOG_INFO("%{public}s begin.", __func__);
     if (currentAbility_ == nullptr && currentExtension_ == nullptr) {
@@ -1622,7 +1652,7 @@ void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std:
         return;
     }
 
-    if (!params.empty() && currentAbility_ != nullptr) {
+    if (currentAbility_ != nullptr) {
         if (abilityImpl_->IsStageBasedModel()) {
             auto scene = currentAbility_->GetScene();
             if (scene == nullptr) {
@@ -1635,12 +1665,30 @@ void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std:
                 return;
             }
             window->DumpInfo(params, info);
-        } else {
-            currentAbility_->Dump(params, info);
         }
-        return;
+        currentAbility_->Dump(params, info);
     }
 
+    if (params.empty()) {
+        HILOG_INFO("params not empty");
+        DumpOtherInfo(info);
+        return;
+    }
+    HILOG_INFO("%{public}s end.", __func__);
+}
+#else
+void AbilityThread::DumpAbilityInfoInner(const std::vector<std::string> &params, std::vector<std::string> &info)
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    if (currentAbility_ != nullptr) {
+        currentAbility_->Dump(params, info);
+    }
+    DumpOtherInfo(info);
+}
+#endif
+
+void AbilityThread::DumpOtherInfo(std::vector<std::string> &info)
+{
     std::string dumpInfo = "        event:";
     info.push_back(dumpInfo);
 
@@ -1671,10 +1719,7 @@ void AbilityThread::DumpAbilityInfo(const std::vector<std::string> &params, std:
         }
         localCallContainer->DumpCalls(info);
     }
-
-    HILOG_INFO("localCallContainer need to get calls info.");
 }
-#endif
 
 sptr<IRemoteObject> AbilityThread::CallRequest()
 {
