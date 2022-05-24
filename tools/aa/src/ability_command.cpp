@@ -488,7 +488,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                     // 'aa dump -i 10 -element -lastpage'
                     // 'aa dump -i 10 -render -lastpage'
                     // 'aa dump -i 10 -layer'
-                    if (strcmp(optarg, "astpage") && strcmp(optarg, "ayer")) {
+                    if ((optarg != nullptr) && strcmp(optarg, "astpage") && strcmp(optarg, "ayer")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -510,7 +510,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                     }
                 } else {
                     // 'aa dumpsys -i 10 -inspector'
-                    if (strcmp(optarg, "nspector")) {
+                    if ((optarg != nullptr) && strcmp(optarg, "nspector")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -525,7 +525,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                     isfirstCommand = true;
                 } else {
                     // 'aa dumpsys -i 10 -element'
-                    if (strcmp(optarg, "lement")) {
+                    if ((optarg != nullptr) && strcmp(optarg, "lement")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -554,7 +554,8 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                     // 'aa dump -i 10 -render'
                     // 'aa dump -i 10 -rotation'
                     // 'aa dump -i 10 -frontend'
-                    if (strcmp(optarg, "ender") && strcmp(optarg, "otation") && strcmp(optarg, "ontend")) {
+                    if ((optarg != nullptr) && strcmp(optarg, "ender") && strcmp(optarg, "otation") &&
+                        strcmp(optarg, "ontend")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;

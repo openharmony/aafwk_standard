@@ -1417,10 +1417,8 @@ WantParams *WantParams::Unmarshalling(Parcel &parcel)
 
 void WantParams::DumpInfo(int level) const
 {
-    int typeId = VALUE_TYPE_NULL;
     for (auto it : params_) {
-        typeId = VALUE_TYPE_NULL;
-        typeId = WantParams::GetDataType(it.second);
+        int typeId = WantParams::GetDataType(it.second);
         if (typeId != VALUE_TYPE_NULL) {
             std::string value = WantParams::GetStringByType(it.second, typeId);
             ABILITYBASE_LOGI("=WantParams[%{public}s]:%{private}s =======", it.first.c_str(), value.c_str());
