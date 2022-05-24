@@ -100,7 +100,6 @@ ohos_shared_library("libfms") {
     "form_runtime:form_manager",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "power_manager_native:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "time_native:time_service",
@@ -113,6 +112,12 @@ ohos_shared_library("libfms") {
       "os_account:libaccountkits",
       "os_account:os_account_innerkits",
     ]
+  }
+
+  defines = []
+  if (ability_runtime_power) {
+    defines = [ "SUPPORT_POWER" ]
+    external_deps += [ "power_manager_native:powermgr_client" ]
   }
 
   subsystem_name = "aafwk"

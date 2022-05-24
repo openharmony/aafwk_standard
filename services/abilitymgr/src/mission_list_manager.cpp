@@ -1910,6 +1910,7 @@ void MissionListManager::BackToLauncher()
     launcherRootAbility->ProcessForegroundAbility();
 }
 
+#ifdef SUPPORT_GRAPHICS
 int MissionListManager::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string &label)
 {
     if (!token) {
@@ -1926,7 +1927,6 @@ int MissionListManager::SetMissionLabel(const sptr<IRemoteObject> &token, const 
     return DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionLabel(missionId, label);
 }
 
-#ifdef SUPPORT_GRAPHICS
 int MissionListManager::SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon)
 {
     if (!token) {

@@ -24,28 +24,6 @@ namespace AppExecFwk {
 void LifecycleObserver::OnActive()
 {}
 
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Called back in response to an ON_BACKGROUND event.
- * When an ON_BACKGROUND event is received, the ability or ability slice is invisible. You are advised to
- * suspend the threads related to this ability or ability slice and clear resources for more system memory.
- *
- */
-void LifecycleObserver::OnBackground()
-{}
-
-/**
- * @brief Called back in response to an ON_FOREGROUND event, where information for the
- * ability or ability slice to go back to the ACTIVE state is carried in the want parameter.
- * When an ON_FOREGROUND event is received, the ability or ability slice returns to the foreground. You can use
- * this method to implement re-initialization or adjust the UI display by using the want parameter.
- *
- * @param want Indicates the information for the ability or ability slice to go back to the ACTIVE state.
- */
-void LifecycleObserver::OnForeground(const Want &want)
-{}
-#endif
-
 /**
  * @brief Called back in response to an ON_INACTIVE event.
  * When an ON_INACTIVE event is received, the ability or ability slice is in the INACTIVE state. INACTIVE is an
@@ -95,5 +73,27 @@ void LifecycleObserver::OnStateChanged(Lifecycle::Event event, const Want &want)
  */
 virtual void LifecycleObserver::OnStateChanged(LifeCycle::Event event)
 {}
+
+#ifdef SUPPORT_GRAPHICS
+/**
+ * @brief Called back in response to an ON_BACKGROUND event.
+ * When an ON_BACKGROUND event is received, the ability or ability slice is invisible. You are advised to
+ * suspend the threads related to this ability or ability slice and clear resources for more system memory.
+ *
+ */
+void LifecycleObserver::OnBackground()
+{}
+
+/**
+ * @brief Called back in response to an ON_FOREGROUND event, where information for the
+ * ability or ability slice to go back to the ACTIVE state is carried in the want parameter.
+ * When an ON_FOREGROUND event is received, the ability or ability slice returns to the foreground. You can use
+ * this method to implement re-initialization or adjust the UI display by using the want parameter.
+ *
+ * @param want Indicates the information for the ability or ability slice to go back to the ACTIVE state.
+ */
+void LifecycleObserver::OnForeground(const Want &want)
+{}
+#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS

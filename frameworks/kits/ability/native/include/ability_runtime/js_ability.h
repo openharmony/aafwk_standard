@@ -46,14 +46,6 @@ public:
 
     void OnStart(const Want &want) override;
     void OnStop() override;
-#ifdef SUPPORT_GRAPHICS
-    void OnSceneCreated() override;
-    void onSceneDestroyed() override;
-    void OnSceneRestored() override;
-
-    void OnForeground(const Want &want) override;
-    void OnBackground() override;
-#endif
     int32_t OnContinue(WantParams &wantParams) override;
     void OnConfigurationUpdated(const Configuration &configuration) override;
     void UpdateContextConfiguration() override;
@@ -73,17 +65,26 @@ public:
      */
     virtual void Dump(const std::vector<std::string> &params, std::vector<std::string> &info) override;
 
-protected:
 #ifdef SUPPORT_GRAPHICS
+public:
+    void OnSceneCreated() override;
+    void onSceneDestroyed() override;
+    void OnSceneRestored() override;
+
+    void OnForeground(const Want &want) override;
+    void OnBackground() override;
+
+protected:
     void DoOnForeground(const Want &want) override;
     void RequsetFocus(const Want &want) override;
+
+private:
+    void GetPageStackFromWant(const Want &want, std::string &pageStack);
 #endif
+
 private:
     void CallObjectMethod(const char *name, NativeValue *const *argv = nullptr, size_t argc = 0);
     std::unique_ptr<NativeReference> CreateAppWindowStage();
-#ifdef SUPPORT_GRAPHICS
-    void GetPageStackFromWant(const Want &want, std::string &pageStack);
-#endif
     std::shared_ptr<AppExecFwk::ADelegatorAbilityProperty> CreateADelegatorAbilityProperty();
 
     JsRuntime &jsRuntime_;

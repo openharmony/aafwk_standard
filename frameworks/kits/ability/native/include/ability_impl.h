@@ -97,38 +97,6 @@ public:
     // Page Service Ability has different AbilityTransaction
     virtual void HandleAbilityTransaction(const Want &want, const AAFwk::LifeCycleStateInfo &targetState);
 
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Execution the KeyDown callback of the ability
-     * @param keyEvent Indicates the key-down event.
-     *
-     * @return Returns true if this event is handled and will not be passed further; returns false if this event is
-     * not handled and should be passed to other handlers.
-     *
-     */
-    virtual void DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
-
-    /**
-     * @brief Execution the KeyUp callback of the ability
-     * @param keyEvent Indicates the key-up event.
-     *
-     * @return Returns true if this event is handled and will not be passed further; returns false if this event is
-     * not handled and should be passed to other handlers.
-     *
-     */
-    virtual void DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
-
-    /**
-     * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
-     * does nothing and returns false.
-     * @param touchEvent Indicates information about the touch event.
-     *
-     * @return Returns true if the event is handled; returns false otherwise.
-     *
-     */
-    virtual void DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent);
-#endif
-
     /**
      * @brief Send the result code and data to be returned by this Page ability to the caller.
      * When a Page ability is destroyed, the caller overrides the AbilitySlice#onAbilityResult(int, int, Want)
@@ -345,9 +313,57 @@ public:
     bool IsStageBasedModel() const;
 
 #ifdef SUPPORT_GRAPHICS
+public:
+    /**
+     * @brief Execution the KeyDown callback of the ability
+     * @param keyEvent Indicates the key-down event.
+     *
+     * @return Returns true if this event is handled and will not be passed further; returns false if this event is
+     * not handled and should be passed to other handlers.
+     *
+     */
+    virtual void DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
+
+    /**
+     * @brief Execution the KeyUp callback of the ability
+     * @param keyEvent Indicates the key-up event.
+     *
+     * @return Returns true if this event is handled and will not be passed further; returns false if this event is
+     * not handled and should be passed to other handlers.
+     *
+     */
+    virtual void DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
+
+    /**
+     * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
+     * does nothing and returns false.
+     * @param touchEvent Indicates information about the touch event.
+     *
+     * @return Returns true if the event is handled; returns false otherwise.
+     *
+     */
+    virtual void DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent);
+
     void AfterUnFocused();
     void AfterFocused();
+
+protected:
+    /**
+     * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_INACTIVE. And notifies the application
+     * that it belongs to of the lifecycle status.
+     *
+     * @param want The Want object to switch the life cycle.
+     */
+    void Foreground(const Want &want);
+
+    /**
+     * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_BACKGROUND. And notifies the
+     * application that it belongs to of the lifecycle status.
+     *
+     */
+    void Background();
 #endif
+
 protected:
     /**
      * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_INACTIVE. And notifies the application
@@ -377,23 +393,6 @@ protected:
      *
      */
     void Inactive();
-
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_INACTIVE. And notifies the application
-     * that it belongs to of the lifecycle status.
-     *
-     * @param want The Want object to switch the life cycle.
-     */
-    void Foreground(const Want &want);
-
-    /**
-     * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_BACKGROUND. And notifies the
-     * application that it belongs to of the lifecycle status.
-     *
-     */
-    void Background();
-#endif
 
     /**
      * @brief SerUriString
@@ -430,7 +429,24 @@ protected:
     std::shared_ptr<AbilityHandler> handler_;
 
 private:
+    typedef enum {
+        START,
+        INACTIVE,
+        ACTIVE,
+        BACKGROUND,
+        FOREGROUND,
+        STOP,
+    } Action;
+
+    std::shared_ptr<AbilityLifecycleCallbacks> abilityLifecycleCallbacks_;
+    std::shared_ptr<ApplicationImpl> applicationImpl_;
+    std::shared_ptr<ContextDeal> contextDeal_;
+    bool hasSaveData_ = false;
+    bool needSaveDate_ = false;
+    PacMap restoreData_;
+
 #ifdef SUPPORT_GRAPHICS
+private:
 class WindowLifeCycleImpl : public Rosen::IWindowLifeCycle {
 public:
     WindowLifeCycleImpl(const sptr<IRemoteObject>& token, const std::shared_ptr<AbilityImpl>& owner)
@@ -456,23 +472,6 @@ private:
     std::shared_ptr<AbilityImpl> abilityImpl_;
 };
 #endif
-    typedef enum {
-        START,
-        INACTIVE,
-        ACTIVE,
-        BACKGROUND,
-        FOREGROUND,
-        STOP,
-    } Action;
-
-    std::shared_ptr<AbilityLifecycleCallbacks> abilityLifecycleCallbacks_;
-    std::shared_ptr<ApplicationImpl> applicationImpl_;
-    std::shared_ptr<ContextDeal> contextDeal_;
-
-private:
-    bool hasSaveData_ = false;
-    bool needSaveDate_ = false;
-    PacMap restoreData_;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -44,8 +44,10 @@ group("benchmarktest") {
   testonly = true
   deps = []
 
-  deps += [
-    # deps file
-    ":BenchmarkTestForMissionManager",
-  ]
+  if (ability_runtime_graphics) {
+    deps += [
+      # deps file
+      ":BenchmarkTestForMissionManager",
+    ]
+  }
 }

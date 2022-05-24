@@ -54,12 +54,7 @@ public:
     static NativeValue* TerminateSelfWithResult(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* RequestPermissionsFromUser(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* RestoreWindowStage(NativeEngine* engine, NativeCallbackInfo* info);
-    static NativeValue* SetMissionLabel(NativeEngine* engine, NativeCallbackInfo* info);
     static NativeValue* IsTerminating(NativeEngine* engine, NativeCallbackInfo* info);
-
-#ifdef SUPPORT_GRAPHICS
-    static NativeValue* SetMissionIcon(NativeEngine* engine, NativeCallbackInfo* info);
-#endif
 
     static void ConfigurationUpdated(NativeEngine* engine, std::shared_ptr<NativeReference> &jsContext,
         const std::shared_ptr<AppExecFwk::Configuration> &config);
@@ -68,6 +63,16 @@ public:
     {
         return context_.lock();
     }
+
+#ifdef SUPPORT_GRAPHICS
+public:
+    static NativeValue* SetMissionLabel(NativeEngine* engine, NativeCallbackInfo* info);
+    static NativeValue* SetMissionIcon(NativeEngine* engine, NativeCallbackInfo* info);
+
+private:
+    NativeValue* OnSetMissionLabel(NativeEngine& engine, NativeCallbackInfo& info);
+    NativeValue* OnSetMissionIcon(NativeEngine& engine, NativeCallbackInfo& info);
+#endif
 
 private:
     NativeValue* OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info);
@@ -86,12 +91,7 @@ private:
     NativeValue* OnTerminateSelf(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnRequestPermissionsFromUser(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnRestoreWindowStage(NativeEngine& engine, NativeCallbackInfo& info);
-    NativeValue* OnSetMissionLabel(NativeEngine& engine, NativeCallbackInfo& info);
     NativeValue* OnIsTerminating(NativeEngine& engine, NativeCallbackInfo& info);
-
-#ifdef SUPPORT_GRAPHICS
-    NativeValue* OnSetMissionIcon(NativeEngine& engine, NativeCallbackInfo& info);
-#endif
 
     static bool UnWrapWant(NativeEngine& engine, NativeValue* argv, AAFwk::Want& want);
     static NativeValue* WrapWant(NativeEngine& engine, const AAFwk::Want& want);

@@ -48,13 +48,9 @@ public:
     {
     }
 
-#ifdef SUPPORT_GRAPHICS
-
     void OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<OHOS::Media::PixelMap> &icon) override
     {
     }
-
-#endif
 };
 
 class MissionManagerTest : public benchmark::Fixture {

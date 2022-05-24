@@ -44,33 +44,6 @@ void JsMissionListener::OnMissionMovedToFront(int32_t missionId)
     CallJsMethod("onMissionMovedToFront", missionId);
 }
 
-#ifdef SUPPORT_GRAPHICS
-void JsMissionListener::OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon)
-{
-    HILOG_INFO("OnMissionIconUpdated, missionId = %{public}d", missionId);
-    if (engine_ == nullptr) {
-        HILOG_ERROR("engine_ is nullptr");
-        return;
-    }
-
-    if (missionId <= 0 || !icon) {
-        HILOG_ERROR("missionId or icon is invalid, missionId:%{public}d", missionId);
-        return;
-    }
-
-    // js callback must run in js thread
-    std::unique_ptr<AsyncTask::CompleteCallback> complete = std::make_unique<AsyncTask::CompleteCallback>
-        ([jsMissionListener = this, missionId, icon](NativeEngine &engine, AsyncTask &task, int32_t status) {
-            if (jsMissionListener) {
-                jsMissionListener->CallJsMissionIconUpdated(missionId, icon);
-            }
-        });
-    NativeReference* callback = nullptr;
-    std::unique_ptr<AsyncTask::ExecuteCallback> execute = nullptr;
-    AsyncTask::Schedule(*engine_, std::make_unique<AsyncTask>(callback, std::move(execute), std::move(complete)));
-}
-#endif
-
 void JsMissionListener::AddJsListenerObject(int32_t listenerId, NativeValue* jsListenerObject)
 {
     jsListenerObjectMap_.emplace(
@@ -134,6 +107,31 @@ void JsMissionListener::CallJsMethodInner(const std::string &methodName, int32_t
 }
 
 #ifdef SUPPORT_GRAPHICS
+void JsMissionListener::OnMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon)
+{
+    HILOG_INFO("OnMissionIconUpdated, missionId = %{public}d", missionId);
+    if (engine_ == nullptr) {
+        HILOG_ERROR("engine_ is nullptr");
+        return;
+    }
+
+    if (missionId <= 0 || !icon) {
+        HILOG_ERROR("missionId or icon is invalid, missionId:%{public}d", missionId);
+        return;
+    }
+
+    // js callback must run in js thread
+    std::unique_ptr<AsyncTask::CompleteCallback> complete = std::make_unique<AsyncTask::CompleteCallback>
+        ([jsMissionListener = this, missionId, icon](NativeEngine &engine, AsyncTask &task, int32_t status) {
+            if (jsMissionListener) {
+                jsMissionListener->CallJsMissionIconUpdated(missionId, icon);
+            }
+        });
+    NativeReference* callback = nullptr;
+    std::unique_ptr<AsyncTask::ExecuteCallback> execute = nullptr;
+    AsyncTask::Schedule(*engine_, std::make_unique<AsyncTask>(callback, std::move(execute), std::move(complete)));
+}
+
 void JsMissionListener::CallJsMissionIconUpdated(int32_t missionId, const std::shared_ptr<Media::PixelMap> &icon)
 {
     if (engine_ == nullptr) {
