@@ -3823,6 +3823,10 @@ HWTEST_F(WantBaseTest, AaFwk_Want_HasParameter_0200, Function | MediumTest | Lev
         return;
     }
     std::shared_ptr<Want> p2(newWant);
+    // want has default param which key is "moduleName"
+    std::string moduleKey = "moduleName";
+    std::string moduleValue = "wantTest";
+    p1->SetParam(moduleKey, moduleValue);
     CompareWant(p1, p2);
 }
 /**
