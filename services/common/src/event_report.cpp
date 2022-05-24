@@ -41,12 +41,12 @@ const std::string EVENT_KEY_FORM_ID = "FORM_ID";
 const std::string TYPE = "TYPE";
 }
 
-void EventReport::AppEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo)
+void EventReport::SendAppEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo)
 {
     EventReport::EventWrite(
         eventName,
         type,
-        EVENT_KEY_APP_NAME, eventInfo.appName,
+        EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
         EVENT_KEY_VERSION_NAME, eventInfo.versionName,
         EVENT_KEY_VERSION_CODE, eventInfo.versionCode,
         EVENT_KEY_PID, eventInfo.pid,

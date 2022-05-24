@@ -272,13 +272,13 @@ void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppSched
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
     eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
-    eventInfo.appName = applicationInfo->name;
+    eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::AppEvent(AAFWK::APP_ATTACH, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_ATTACH, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecord> &appRecord)
@@ -317,13 +317,13 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
     eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
-    eventInfo.appName = applicationInfo->name;
+    eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::AppEvent(AAFWK::APP_LAUNCH, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_LAUNCH, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::AddAbilityStageDone(const int32_t recordId)
@@ -361,13 +361,13 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
     eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
-    eventInfo.appName = applicationInfo->name;
+    eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::AppEvent(AAFWK::APP_FOREGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_FOREGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
@@ -391,13 +391,13 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
     eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
-    eventInfo.appName = applicationInfo->name;
+    eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::AppEvent(AAFWK::APP_BACKGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_BACKGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
@@ -433,13 +433,13 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
     eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
-    eventInfo.appName = applicationInfo->name;
+    eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::AppEvent(AAFWK::APP_TERMINATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_TERMINATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 int32_t AppMgrServiceInner::KillApplication(const std::string &bundleName)

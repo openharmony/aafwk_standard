@@ -110,7 +110,7 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode, in
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
-    return abms->StartAbility(want, userId, requestCode);
+    return ret;
 }
 
 ErrCode AbilityManagerClient::StartAbility(
@@ -129,7 +129,7 @@ ErrCode AbilityManagerClient::StartAbility(
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
-    return abms->StartAbility(want, callerToken, userId, requestCode);
+    return ret;
 }
 
 ErrCode AbilityManagerClient::StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
@@ -146,7 +146,7 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, const AbilityStartS
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
-    return abms->StartAbility(want, abilityStartSetting, callerToken, userId, requestCode);
+    return ret;
 }
 
 ErrCode AbilityManagerClient::StartAbility(const Want &want, const StartOptions &startOptions,
@@ -165,7 +165,7 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, const StartOptions 
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
-    return abms->StartAbility(want, startOptions, callerToken, userId, requestCode);
+    return ret;
 }
 
 ErrCode AbilityManagerClient::StartExtensionAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
@@ -183,7 +183,7 @@ ErrCode AbilityManagerClient::StartExtensionAbility(const Want &want, const sptr
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
-    return abms->StartExtensionAbility(want, callerToken, userId, extensionType);
+    return ret;
 }
 
 ErrCode AbilityManagerClient::StopExtensionAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
@@ -209,7 +209,7 @@ ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &token,
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::TERMINATE_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
-    return abms->TerminateAbility(token, resultCode, resultWant);
+    return ret;
 }
 
 ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &callerToken, int requestCode)
@@ -225,7 +225,7 @@ ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &caller
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::TERMINATE_ABILITY_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
-    return abms->TerminateAbilityByCaller(callerToken, requestCode);
+    return ret;
 }
 
 ErrCode AbilityManagerClient::TerminateAbilityResult(const sptr<IRemoteObject> &token, int startId)
@@ -267,7 +267,7 @@ ErrCode AbilityManagerClient::ConnectAbility(const Want &want, const sptr<IAbili
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
-    return abms->ConnectAbility(want, connect, nullptr, userId);
+    return ret;
 }
 
 ErrCode AbilityManagerClient::ConnectAbility(
@@ -286,7 +286,7 @@ ErrCode AbilityManagerClient::ConnectAbility(
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
-    return abms->ConnectAbility(want, connect, callerToken, userId);
+    return ret;
 }
 
 ErrCode AbilityManagerClient::DisconnectAbility(const sptr<IAbilityConnection> &connect)
@@ -304,7 +304,7 @@ ErrCode AbilityManagerClient::DisconnectAbility(const sptr<IAbilityConnection> &
     if (ret != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::DISCONNECT_SERVICE_ERROR, AAFWK::HiSysEventType::FAULT, eventInfo);
     }
-    return abms->DisconnectAbility(connect);
+    return ret;
 }
 
 sptr<IAbilityScheduler> AbilityManagerClient::AcquireDataAbility(

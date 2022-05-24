@@ -58,7 +58,6 @@ ohos_unittest("AmsServiceLoadAbilityProcessTest") {
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "${innerkits_path}/uri_permission:uri_permission_mgr",
-    "${services_path}/appmgr:libappms",
     "${services_path}/appmgr/test:appmgr_test_source",
     "${services_path}/common:perm_verification",
   ]

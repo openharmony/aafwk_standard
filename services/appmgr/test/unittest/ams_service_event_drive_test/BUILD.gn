@@ -47,7 +47,6 @@ ohos_unittest("AmsServiceEventDriveTest") {
 
   sources += [ "ams_service_event_drive_test.cpp" ]
 
-  configs = [ "${services_path}/appmgr/test:appmgr_test_config" ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
