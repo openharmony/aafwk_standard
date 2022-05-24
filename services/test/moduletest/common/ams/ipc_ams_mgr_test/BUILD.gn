@@ -20,11 +20,11 @@ ohos_moduletest("AmsIpcAmsmgrModuleTest") {
   module_out_path = module_output_path
 
   include_dirs = [
-    "${base_inner_api_path}/uri/include",
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/uri/include",
+    "${ability_base_innerapi_path}/want/include",
     "${aafwk_path}/services/appmgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_core/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_core/include",
     "//base/hiviewdfx/hilog/interfaces/native/innerkits/include",
   ]
   sources = [ "ams_ipc_ams_mgr_module_test.cpp" ]

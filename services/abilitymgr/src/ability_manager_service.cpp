@@ -1263,9 +1263,7 @@ sptr<IWantSender> AbilityManagerService::GetWantSender(
 
     HILOG_INFO("AbilityManagerService::GetWantSender: bundleName = %{public}s", wantSenderInfo.bundleName.c_str());
     auto apl = bundleInfo.applicationInfo.appPrivilegeLevel;
-    auto isSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid));
-    PendingWantManager::Params params = { bundleInfo.uid, apl, isSystemApp };
-    return pendingWantManager_->GetWantSender(callerUid, params, wantSenderInfo, callerToken);
+    return pendingWantManager_->GetWantSender(callerUid, bundleInfo.uid, apl, wantSenderInfo, callerToken);
 }
 
 int AbilityManagerService::SendWantSender(const sptr<IWantSender> &target, const SenderInfo &senderInfo)
@@ -1307,8 +1305,7 @@ void AbilityManagerService::CancelWantSender(const sptr<IWantSender> &sender)
     }
 
     auto apl = bundleInfo.applicationInfo.appPrivilegeLevel;
-    auto isSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid));
-    pendingWantManager_->CancelWantSender(apl, isSystemApp, sender);
+    pendingWantManager_->CancelWantSender(apl, sender);
 }
 
 int AbilityManagerService::GetPendingWantUid(const sptr<IWantSender> &target)
@@ -3054,16 +3051,6 @@ void AbilityManagerService::ConnectBmsService()
     HILOG_INFO("Connect bms success!");
 }
 
-bool AbilityManagerService::CheckCallerIsSystemAppByIpc()
-{
-    HILOG_DEBUG("%{public}s", __func__);
-    auto bms = GetBundleManager();
-    CHECK_POINTER_RETURN_BOOL(bms);
-    int32_t callerUid = IPCSkeleton::GetCallingUid();
-    HILOG_ERROR("callerUid %{public}d", callerUid);
-    return IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid));
-}
-
 int AbilityManagerService::GetWantSenderInfo(const sptr<IWantSender> &target, std::shared_ptr<WantSenderInfo> &info)
 {
     HILOG_INFO("Get pending request info.");
@@ -3303,14 +3290,10 @@ int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityReq
 
     auto bms = GetBundleManager();
     CHECK_POINTER_AND_RETURN(bms, GET_ABILITY_SERVICE_FAILED);
-    auto isCallerSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(callerUid));
-    auto isTargetSystemApp = IN_PROCESS_CALL(bms->CheckIsSystemAppByUid(targetUid));
-    HILOG_ERROR("isCallerSystemApp:%{public}d, isTargetSystemApp:%{public}d",
-        isCallerSystemApp, isTargetSystemApp);
 
     auto isSaCall = AAFwk::PermissionVerification::GetInstance()->IsSACall();
     auto apl = abilityRequest.appInfo.appPrivilegeLevel;
-    if (!isSaCall && apl != AbilityUtil::SYSTEM_BASIC && apl != AbilityUtil::SYSTEM_CORE && !isCallerSystemApp) {
+    if (!isSaCall && apl != AbilityUtil::SYSTEM_BASIC && apl != AbilityUtil::SYSTEM_CORE) {
         HILOG_DEBUG("caller is common app.");
         std::string bundleName;
         bool result = IN_PROCESS_CALL(bms->GetBundleNameForUid(callerUid, bundleName));
@@ -3318,7 +3301,7 @@ int AbilityManagerService::CheckCallPermissions(const AbilityRequest &abilityReq
             HILOG_ERROR("GetBundleNameForUid from bms fail.");
             return RESOLVE_CALL_NO_PERMISSIONS;
         }
-        if (bundleName != abilityInfo.bundleName && callerUid != targetUid && !isTargetSystemApp) {
+        if (bundleName != abilityInfo.bundleName && callerUid != targetUid) {
             HILOG_ERROR("the bundlename of caller is different from target one, caller: %{public}s "
                         "target: %{public}s",
                 bundleName.c_str(),

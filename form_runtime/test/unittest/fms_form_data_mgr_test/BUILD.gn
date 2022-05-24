@@ -12,7 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/form_runtime/form_runtime.gni")
 
 module_output_path = "form_runtime/formmgrservice"
 
@@ -26,21 +26,21 @@ ohos_unittest("FmsFormDataMgrTest") {
 
   include_dirs = [
     "//third_party/json/include",
-    "${aafwk_path}/services/formmgr/include",
+    "${ability_runtime_path}/services/formmgr/include",
 
-    "${appexecfwk_inner_api_path}/appexecfwk_base/include/",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include/",
     "${form_runtime_path}/interfaces/inner_api/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_core/include/bundlemgr/",
+    "${bundlefwk_inner_api_path}/appexecfwk_core/include/bundlemgr/",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include/",
 
     #"${distributedschedule_path}/samgr/adapter/interfaces/innerkits/include/",
-    "${appexecfwk_innerkits_path}/libeventhandler/include",
+    "${bundlefwk_innerkits_path}/libeventhandler/include",
     "${form_runtime_path}/test/mock/include",
     "//foundation/appexecfwk/appexecfwk_lite/interfaces/kits/bundle_lite",
   ]
 
   configs = [
-    #"${appexecfwk_inner_api_path}/appexecfwk_core:bundlemgr_sdk_config",
+    #"${bundlefwk_inner_api_path}/appexecfwk_core:bundlemgr_sdk_config",
     #"${form_runtime_path}:formmgr_config",
   ]
   cflags = []
@@ -48,14 +48,14 @@ ohos_unittest("FmsFormDataMgrTest") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
   }
   deps = [
-    "${aafwk_path}/interfaces/innerkits/app_manager:app_manager",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${ability_runtime_path}/interfaces/innerkits/app_manager:app_manager",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
     "${form_runtime_path}:fms_target",
 
     #"${libs_path}/libeventhandler:libeventhandler_target",
-    "${base_path}:base",
-    "${base_path}:configuration",
-    "${base_path}:want",
+    "${ability_base_path}:base",
+    "${ability_base_path}:configuration",
+    "${ability_base_path}:want",
     "${distributedschedule_path}/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
     "//utils/native/base:utils",

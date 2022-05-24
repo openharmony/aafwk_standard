@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,7 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/ability_base/ability_base.gni")
 
 base_output_path = "aafwk/base_test"
 
@@ -44,8 +44,8 @@ config("want_private_config") {
   include_dirs = [
     "//utils/native/base/include",
     "//sdk/appexecfwk/appexecfwk_base/include",
-    "${base_inner_api_path}/uri/include",
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/uri/include",
+    "${ability_base_innerapi_path}/want/include",
   ]
 
   defines = [
@@ -59,7 +59,7 @@ config("module_private_want_param_wrapper_config") {
   include_dirs = [
     "//utils/native/base/include",
     "//sdk/appexecfwk/appexecfwk_base/include",
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/want/include",
   ]
 
   defines = [
@@ -74,7 +74,7 @@ ohos_unittest("operation_test") {
 
   configs = [
     ":want_private_config",
-    "${base_path}:want_public_config",
+    "${ability_base_path}:want_public_config",
   ]
 
   deps = [
@@ -96,11 +96,11 @@ ohos_unittest("patterns_matcher_test") {
 
   configs = [
     ":want_private_config",
-    "${base_path}:want_public_config",
+    "${ability_base_path}:want_public_config",
   ]
 
   deps = [
-    "${base_path}:base",
+    "${ability_base_path}:base",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -118,7 +118,7 @@ ohos_unittest("skills_test") {
 
   configs = [
     ":want_private_config",
-    "${base_path}:want_public_config",
+    "${ability_base_path}:want_public_config",
   ]
 
   deps = [
@@ -141,12 +141,12 @@ ohos_unittest("want_params_test") {
 
   configs = [
     ":want_private_config",
-    "${base_path}:want_public_config",
+    "${ability_base_path}:want_public_config",
   ]
 
   deps = [
-    "${base_path}:base",
-    "${base_path}:want",
+    "${ability_base_path}:base",
+    "${ability_base_path}:want",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
@@ -185,7 +185,7 @@ ohos_unittest("want_test") {
 
   configs = [
     ":want_private_config",
-    "${base_path}:want_public_config",
+    "${ability_base_path}:want_public_config",
   ]
 
   deps = [

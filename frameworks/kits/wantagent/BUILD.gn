@@ -22,16 +22,16 @@ config("wantagent_innerkits_public_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "${base_inner_api_path}/configuration/include",
+    "${ability_base_innerapi_path}/configuration/include",
     "${global_path}/resource_management/interfaces/inner_api/include",
     "${kits_path}/ability/native/include",
     "${innerkits_path}/ability_manager/include",
     "${innerkits_path}/wantagent/include",
     "${services_path}/abilitymgr/include",
     "${innerkits_path}/app_manager/include/appmgr",
-    "${appexecfwk_inner_api_path}/appexecfwk_base/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_core/include/bundlemgr",
-    "${appexecfwk_innerkits_path}/libeventhandler/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_core/include/bundlemgr",
+    "${bundlefwk_innerkits_path}/libeventhandler/include",
     "${kits_path}/appkit/native/app/include",
     "${kits_path}/appkit/native/ability_runtime",
     "//third_party/icu/icu4c/source/common",

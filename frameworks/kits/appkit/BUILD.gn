@@ -54,7 +54,7 @@ config("appkit_config") {
 config("appkit_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "${base_inner_api_path}/configuration/include",
+    "${ability_base_innerapi_path}/configuration/include",
     "native/ability_delegator/include",
     "${global_path}/resource_management/interfaces/inner_api/include",
   ]

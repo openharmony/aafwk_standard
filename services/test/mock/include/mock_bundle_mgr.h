@@ -308,7 +308,6 @@ public:
     bool GetBundleInfo(
         const std::string &bundleName, const BundleFlag flag, BundleInfo &bundleInfo, int32_t userId) override;
 
-    virtual bool CheckIsSystemAppByUid(const int uid) override;
     MOCK_METHOD3(GetApplicationInfos,
         bool(const ApplicationFlag flag, const int userId, std::vector<ApplicationInfo> &appInfos));
     MOCK_METHOD3(GetBundleInfos, bool(const BundleFlag flag, std::vector<BundleInfo> &bundleInfos, int32_t userId));
@@ -427,10 +426,6 @@ public:
         const std::string &appName, const ApplicationFlag flag, const int userId, ApplicationInfo &appInfo) override;
     bool NotifyAbilityLifeStatus(const std::string &bundleName, const std::string &abilityName,
         const int64_t launchTime, const int uid) override;
-    virtual bool CheckIsSystemAppByUid(const int uid) override
-    {
-        return true;
-    };
     virtual bool GetBundleGidsByUid(const std::string &bundleName, const int &uid, std::vector<int> &gids) override
     {
         return true;

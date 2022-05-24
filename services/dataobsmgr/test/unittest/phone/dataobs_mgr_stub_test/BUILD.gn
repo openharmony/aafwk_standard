@@ -31,8 +31,8 @@ ohos_unittest("dataobs_mgr_stub_test") {
   deps = [
     "${aafwk_path}/interfaces/innerkits/dataobs_manager:dataobs_manager",
     "${aafwk_path}/services/dataobsmgr:dataobsms",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",

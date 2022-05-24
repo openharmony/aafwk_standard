@@ -129,17 +129,11 @@ public:
     explicit PendingWantManager(const std::shared_ptr<PendingWantManager> &manager) {};
     virtual ~PendingWantManager();
 
-    struct Params {
-        int32_t uid;
-        std::string &apl;
-        bool isSystemApp;
-    };
-
 public:
-    sptr<IWantSender> GetWantSender(const int32_t callingUid, Params &params,
+    sptr<IWantSender> GetWantSender(int32_t callingUid, int32_t uid, const std::string &apl,
         const WantSenderInfo &wantSenderInfo, const sptr<IRemoteObject> &callerToken);
     int32_t SendWantSender(const sptr<IWantSender> &target, const SenderInfo &senderInfo);
-    void CancelWantSender(std::string apl, const bool isSystemApp, const sptr<IWantSender> &sender);
+    void CancelWantSender(std::string &apl, const sptr<IWantSender> &sender);
 
     int32_t GetPendingWantUid(const sptr<IWantSender> &target);
     int32_t GetPendingWantUserId(const sptr<IWantSender> &target);
