@@ -806,6 +806,15 @@ public:
      */
     ErrCode SendANRProcessID(int pid);
 
+    /**
+     * Called when client complete dump.
+     *
+     * @param infos The dump info.
+     * @param callerToken The caller ability token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode DumpAbilityInfoDone(std::vector<std::string> &infos, const sptr<IRemoteObject> &callerToken);
+
 private:
     static std::mutex mutex_;
     static std::shared_ptr<AbilityManagerClient> instance_;

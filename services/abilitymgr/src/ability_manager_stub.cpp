@@ -153,6 +153,7 @@ void AbilityManagerStub::ThirdStepInit()
     requestFuncMap_[GET_MISSION_ID_BY_ABILITY_TOKEN] = &AbilityManagerStub::GetMissionIdByTokenInner;
     requestFuncMap_[GET_TOP_ABILITY] = &AbilityManagerStub::GetTopAbilityInner;
     requestFuncMap_[SET_MISSION_ICON] = &AbilityManagerStub::SetMissionIconInner;
+    requestFuncMap_[DUMP_ABILITY_INFO_DONE] = &AbilityManagerStub::DumpAbilityInfoDoneInner;
 }
 
 int AbilityManagerStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -1577,6 +1578,19 @@ int AbilityManagerStub::ForceTimeoutForTestInner(MessageParcel &data, MessagePar
     int result = ForceTimeoutForTest(abilityName, state);
     if (!reply.WriteInt32(result)) {
         HILOG_ERROR("force ability timeout error");
+        return ERR_INVALID_VALUE;
+    }
+    return NO_ERROR;
+}
+
+int AbilityManagerStub::DumpAbilityInfoDoneInner(MessageParcel &data, MessageParcel &reply)
+{
+    std::vector<std::string> infos;
+    data.ReadStringVector(&infos);
+    sptr<IRemoteObject> callerToken = data.ReadRemoteObject();
+    int32_t result = DumpAbilityInfoDone(infos, callerToken);
+    if (!reply.WriteInt32(result)) {
+        HILOG_ERROR("reply write failed.");
         return ERR_INVALID_VALUE;
     }
     return NO_ERROR;

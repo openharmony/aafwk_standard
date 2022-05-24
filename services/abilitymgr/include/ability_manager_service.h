@@ -771,6 +771,15 @@ public:
 
     virtual int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label) override;
 
+    /**
+     * Called when client complete dump.
+     *
+     * @param infos The dump info.
+     * @param callerToken The caller ability token.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DumpAbilityInfoDone(std::vector<std::string> &infos, const sptr<IRemoteObject> &callerToken) override;
+
 #ifdef SUPPORT_GRAPHICS
     virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
         const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
@@ -895,6 +904,7 @@ public:
     static constexpr uint32_t RESTART_ABILITY_TIMEOUT = 500;  // ms
     static constexpr uint32_t FOREGROUNDNEW_TIMEOUT = 5000;   // ms
     static constexpr uint32_t BACKGROUNDNEW_TIMEOUT = 3000;   // ms
+    static constexpr uint32_t DUMP_TIMEOUT = 5000;            // ms
 
     static constexpr uint32_t MIN_DUMP_ARGUMENT_NUM = 2;
     static constexpr uint32_t MAX_WAIT_SYSTEM_UI_NUM = 600;
