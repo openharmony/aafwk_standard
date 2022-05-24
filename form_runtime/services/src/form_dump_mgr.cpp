@@ -88,7 +88,7 @@ void FormDumpMgr::DumpFormInfos(const std::vector<FormRecord> &formRecordInfos, 
 
         // formCacheData
         std::string strCacheData;
-        std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageMap;
+        std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> imageMap;
         if (FormCacheMgr::GetInstance().GetData(info.formId, strCacheData, imageMap)) {
             formInfos += "    formCacheData [";
             formInfos += strCacheData;
@@ -164,7 +164,7 @@ void FormDumpMgr::DumpFormInfo(const FormRecord &formRecordInfo, std::string &fo
 
     // formCacheData
     std::string strCacheData;
-    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageMap;
+    std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> imageMap;
     if (FormCacheMgr::GetInstance().GetData(formRecordInfo.formId, strCacheData, imageMap)) {
         formInfo += "    formCacheData[";
         formInfo += strCacheData;

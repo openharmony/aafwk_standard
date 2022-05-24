@@ -89,7 +89,7 @@ ErrCode FormProviderMgr::AcquireForm(const int64_t formId, const FormProviderInf
     std::string jsonData = formProviderInfo.GetFormDataString(); // get json data
     HILOG_DEBUG("%{public}s , jsonData is %{public}s.",  __func__, jsonData.c_str());
 
-    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap = formProviderInfo.GetImageDataMap();
+    std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> imageDataMap = formProviderInfo.GetImageDataMap();
     if (jsonData.size() <= Constants::MAX_FORM_DATA_SIZE) {
         HILOG_WARN("%{public}s, acquire js card, cache the card", __func__);
         FormCacheMgr::GetInstance().AddData(formId, formProviderInfo.GetFormDataString(),
@@ -324,7 +324,7 @@ ErrCode FormProviderMgr::UpdateForm(const int64_t formId,
     std::string jsonData = formRecord.formProviderInfo.GetFormDataString(); // get json data
     HILOG_DEBUG("%{public}s screenOn:%{public}d jsonData:%{public}s.", __func__, screenOnFlag, jsonData.c_str());
 
-    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap = formProviderData.GetImageDataMap();
+    std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> imageDataMap = formProviderData.GetImageDataMap();
     // check if cache data size is less than 1k or not
     if (jsonData.size() <= Constants::MAX_FORM_DATA_SIZE) {
         HILOG_INFO("%{public}s, updateJsForm, data is less than 1k, cache data.", __func__);
