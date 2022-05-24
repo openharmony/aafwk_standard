@@ -86,6 +86,7 @@ void AmsServiceLoadAbilityProcessTest::SetUp()
 {
     bundleMgr_ = new (std::nothrow) BundleMgrService();
     service_.reset(new (std::nothrow) AppMgrServiceInner());
+    service_->Init();
     mock_token_ = new (std::nothrow) MockAbilityToken();
     if (service_) {
         service_->SetBundleManager(bundleMgr_.GetRefPtr());

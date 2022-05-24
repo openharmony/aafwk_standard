@@ -116,6 +116,7 @@ void AmsAppLifeCycleModuleTest::TearDownTestCase()
 void AmsAppLifeCycleModuleTest::SetUp()
 {
     serviceInner_.reset(new (std::nothrow) AppMgrServiceInner());
+    serviceInner_->Init();
     mockAppStateCallbackStub_ = new (std::nothrow) MockAppStateCallback();
 
     inner_ = std::make_shared<AppMgrServiceInner>();

@@ -88,6 +88,7 @@ void AppDeathRecipientTest::SetUp()
 {
     auto runner = EventRunner::Create("AppDeathRecipientTest");
     appMgrServiceInner_ = std::make_shared<AppMgrServiceInner>();
+    appMgrServiceInner_->Init();
 
     handler_ = std::make_shared<AMSEventHandler>(runner, appMgrServiceInner_);
 
