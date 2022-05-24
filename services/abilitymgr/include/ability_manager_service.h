@@ -915,7 +915,6 @@ private:
     void DumpMissionListInner(const std::string &args, std::vector<std::string> &info);
     void DumpMissionInfosInner(const std::string &args, std::vector<std::string> &info);
     void DumpFuncInit();
-    bool CheckCallerIsSystemAppByIpc();
     bool IsExistFile(const std::string &path);
 
     int CheckCallPermissions(const AbilityRequest &abilityRequest);

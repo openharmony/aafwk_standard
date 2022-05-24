@@ -368,7 +368,10 @@ public:
      * @param SystemMemoryAttr, memory information.
      */
     void GetSystemMemoryAttr(AppExecFwk::SystemMemoryAttr &memoryInfo);
+    
+    ErrCode GetAppMemorySize();
 
+    bool IsRamConstrainedDevice();
     /**
      * ContinueMission, continue ability from mission center.
      *

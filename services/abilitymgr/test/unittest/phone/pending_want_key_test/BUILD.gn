@@ -21,7 +21,7 @@ ohos_unittest("pending_want_key_test") {
 
   include_dirs = [
     "${aafwk_path}/services/abilitymgr/include",
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/want/include",
   ]
 
   sources = [
@@ -34,8 +34,8 @@ ohos_unittest("pending_want_key_test") {
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/services/abilitymgr:abilityms",
-    "${appexecfwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
-    "${appexecfwk_innerkits_path}/libeventhandler:libeventhandler",
+    "${bundlefwk_inner_api_path}/appexecfwk_base:appexecfwk_base",
+    "${bundlefwk_innerkits_path}/libeventhandler:libeventhandler",
     "${services_path}/abilitymgr/test:abilityms_test_source",
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",

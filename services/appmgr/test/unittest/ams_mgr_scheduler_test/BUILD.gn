@@ -20,14 +20,14 @@ ohos_unittest("AmsMgrSchedulerTest") {
   module_out_path = module_output_path
   cflags_cc = []
   include_dirs = [
-    "${base_inner_api_path}/uri/include",
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/uri/include",
+    "${ability_base_innerapi_path}/want/include",
     "${aafwk_path}/services/appmgr/include",
     "${distributedschedule_path}/samgr/interfaces/innerkits/samgr_proxy/include",
-    "${appexecfwk_inner_api_path}/appexecfwk_core/include",
+    "${bundlefwk_inner_api_path}/appexecfwk_core/include",
     "//base/account/os_account/frameworks/common/database/include",
     "//base/account/os_account/frameworks/common/account_error/include",
-    "${base_inner_api_path}/want/include",
+    "${ability_base_innerapi_path}/want/include",
   ]
 
   sources = [ "${services_path}/appmgr/src/ams_mgr_scheduler.cpp" ]

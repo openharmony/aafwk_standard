@@ -28,7 +28,7 @@ ohos_benchmarktest("BenchmarkTestForAbilityContext") {
   deps = [
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
-    "${base_path}:want",
+    "${ability_base_path}:want",
     "//third_party/benchmark:benchmark",
     "//third_party/googletest:gtest_main",
   ]

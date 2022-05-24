@@ -44,8 +44,8 @@ ohos_fuzztest("StartContinuationFuzzTest") {
     "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${aafwk_path}/interfaces/innerkits/ability_manager:ability_manager",
     "${aafwk_path}/services/abilitymgr:abilityms",
-    "${base_path}:base",
-    "${base_path}:want",
+    "${ability_base_path}:base",
+    "${ability_base_path}:want",
   ]
 
   external_deps = [

@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//foundation/aafwk/standard/aafwk.gni")
+import("//foundation/aafwk/standard/form_runtime/form_runtime.gni")
 
 group("benchmarktest") {
   testonly = true

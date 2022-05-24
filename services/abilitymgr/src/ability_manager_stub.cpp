@@ -1241,10 +1241,10 @@ int AbilityManagerStub::RegisterWindowManagerServiceHandlerInner(MessageParcel &
 int AbilityManagerStub::CompleteFirstFrameDrawingInner(MessageParcel &data, MessageParcel &reply)
 {
     HILOG_DEBUG("%{public}s is called.", __func__);
-    sptr<IRemoteObject> abilityToken = nullptr;
-    if (data.ReadBool()) {
-        HILOG_DEBUG("abilityToken is valid.");
-        abilityToken = data.ReadObject<IRemoteObject>();
+    sptr<IRemoteObject> abilityToken = data.ReadRemoteObject();
+    if (abilityToken == nullptr) {
+        HILOG_ERROR("%{public}s read abilityToken failed!", __func__);
+        return ERR_NULL_OBJECT;
     }
     CompleteFirstFrameDrawing(abilityToken);
     return 0;
