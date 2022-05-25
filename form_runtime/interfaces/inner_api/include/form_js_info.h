@@ -17,6 +17,7 @@
 #define FOUNDATION_APPEXECFWK_OHOS_FORM_JS_INFO_H
 
 #include <string>
+#include "form_ashmem.h"
 #include "form_provider_data.h"
 #include "form_info_base.h"
 #include "parcel.h"
@@ -36,7 +37,7 @@ struct FormJsInfo : public Parcelable {
     bool formTempFlg = false;
     std::string jsFormCodePath;
     std::string formData;
-    std::map<std::string, std::pair<int, int32_t>> imageDataMap;
+    std::map<std::string, sptr<FormAshmem>> imageDataMap;
     FormProviderData formProviderData;
 
     std::string htmlPath;

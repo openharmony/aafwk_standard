@@ -84,13 +84,13 @@ public:
      * @brief Updates imageDataMap in this {@code FormProviderData} object.
      * @param imageDataMap Indicates the imageDataMap to update.
      */
-    void SetImageDataMap(std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> imageDataMap);
+    void SetImageDataMap(std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> imageDataMap);
 
     /**
      * @brief Obtains the imageDataMap stored in this {@code FormProviderData} object.
      * @return Returns the map that contains shared image data.
      */
-    std::map<std::string, std::pair<sptr<Ashmem>, int32_t>> GetImageDataMap() const;
+    std::map<std::string, std::pair<sptr<FormAshmem>, int32_t>> GetImageDataMap() const;
 
     /**
      * @brief Merge new data to FormProviderData.
