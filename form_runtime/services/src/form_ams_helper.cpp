@@ -19,6 +19,7 @@
 #include "form_mgr_errors.h"
 #include "hilog_wrapper.h"
 #include "if_system_ability_manager.h"
+#include "in_process_call_wrapper.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
@@ -69,7 +70,7 @@ ErrCode FormAmsHelper::ConnectServiceAbility(
         HILOG_ERROR("%{public}s:ability service not connect", __func__);
         return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
     }
-    return ams->ConnectAbility(want, connect, nullptr);
+    return IN_PROCESS_CALL(ams->ConnectAbility(want, connect, nullptr));
 }
 /**
  * @brief Disconnect ability, disconnect session with service ability.
@@ -85,7 +86,7 @@ ErrCode FormAmsHelper::DisConnectServiceAbility(const sptr<AAFwk::IAbilityConnec
         HILOG_ERROR("%{public}s:ability service not connect", __func__);
         return ERR_APPEXECFWK_FORM_BIND_PROVIDER_FAILED;
     }
-    return ams->DisconnectAbility(connect);
+    return IN_PROCESS_CALL(ams->DisconnectAbility(connect));
 }
 /**
  * @brief Disconnect ability delay, disconnect session with service ability.
@@ -130,7 +131,7 @@ void FormAmsHelper::DisConnectAbilityTask(const sptr<AAFwk::IAbilityConnection> 
         HILOG_ERROR("%{public}s, ability service not connect", __func__);
         return;
     }
-    ams->DisconnectAbility(connect);
+    IN_PROCESS_CALL_WITHOUT_RET(ams->DisconnectAbility(connect));
 }
 }  // namespace AppExecFwk
 }  // namespace OHOS
