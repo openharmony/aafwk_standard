@@ -117,6 +117,7 @@ ohos_moduletest("AbilityRecordModuleTest") {
     "dataability:native_dataability",
     "dsoftbus_standard:softbus_client",
     "hicollie_native:libhicollie",
+    "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
