@@ -34,6 +34,7 @@
 namespace OHOS {
 namespace AAFwk {
 const std::string DEBUG_APP = "debugApp";
+const std::string ABILITY_OWNER_USERID = "AbilityMS_Owner_UserId";
 int64_t AbilityRecord::abilityRecordId = 0;
 int64_t AbilityRecord::g_abilityRecordEventId_ = 0;
 const int32_t DEFAULT_USER_ID = 0;
@@ -183,8 +184,11 @@ int AbilityRecord::LoadAbility()
             callerToken_ = caller->GetToken();
         }
     }
-    return DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
+    want_.SetParam(ABILITY_OWNER_USERID, ownerMissionUserId_);
+    auto result = DelayedSingleton<AppScheduler>::GetInstance()->LoadAbility(
         token_, callerToken_, abilityInfo_, applicationInfo_, want_);
+    want_.RemoveParam(ABILITY_OWNER_USERID);
+    return result;
 }
 
 bool AbilityRecord::CanRestartRootLauncher()
@@ -1232,6 +1236,16 @@ void AbilityRecord::SetSwitchingPause(bool state)
 bool AbilityRecord::IsSwitchingPause()
 {
     return isSwitchingPause_;
+}
+
+void AbilityRecord::SetOwnerMissionUserId(int32_t userId)
+{
+    ownerMissionUserId_ = userId;
+}
+
+int32_t AbilityRecord::GetOwnerMissionUserId()
+{
+    return ownerMissionUserId_;
 }
 
 void AbilityRecord::DumpSys(std::vector<std::string> &info, bool isClient)
