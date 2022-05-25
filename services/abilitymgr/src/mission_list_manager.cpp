@@ -827,10 +827,16 @@ int MissionListManager::DispatchForegroundNew(const std::shared_ptr<AbilityRecor
     }
 
     handler->RemoveEvent(AbilityManagerService::FOREGROUNDNEW_TIMEOUT_MSG, abilityRecord->GetEventId());
-    auto self(shared_from_this());
-    auto task = [self, abilityRecord]() { self->CompleteForegroundNew(abilityRecord); };
+    auto self(weak_from_this());
+    auto task = [self, abilityRecord]() {
+        auto manager = self.lock();
+        if (manager == nullptr) {
+            HILOG_ERROR("MissionListManager is null, CompleteForegroundNew failed.");
+            return;
+        }
+        manager->CompleteForegroundNew(abilityRecord);
+    };
     handler->PostTask(task);
-
     return ERR_OK;
 }
 
@@ -885,8 +891,15 @@ void MissionListManager::CompleteForegroundNew(const std::shared_ptr<AbilityReco
         }
     }
 
-    auto self(shared_from_this());
-    auto startWaittingAbilityTask = [self]() { self->StartWaittingAbility(); };
+    auto self(weak_from_this());
+    auto startWaittingAbilityTask = [self]() {
+        auto manager = self.lock();
+        if (manager == nullptr) {
+            HILOG_ERROR("MissionListManager is null, StartWaittingAbility failed.");
+            return;
+        }
+        manager->StartWaittingAbility();
+    };
 
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     CHECK_POINTER_LOG(handler, "Fail to get AbilityEventHandler.");
@@ -908,10 +921,16 @@ int MissionListManager::DispatchBackground(const std::shared_ptr<AbilityRecord> 
 
     // remove background timeout task.
     handler->RemoveTask(std::to_string(abilityRecord->GetEventId()));
-    auto self(shared_from_this());
-    auto task = [self, abilityRecord]() { self->CompleteBackground(abilityRecord); };
+    auto self(weak_from_this());
+    auto task = [self, abilityRecord]() {
+        auto manager = self.lock();
+        if (manager == nullptr) {
+            HILOG_ERROR("MissionListManager is null, CompleteBackground failed.");
+            return;
+        }
+        manager->CompleteBackground(abilityRecord);
+    };
     handler->PostTask(task);
-
     return ERR_OK;
 }
 
@@ -935,13 +954,18 @@ void MissionListManager::CompleteBackground(const std::shared_ptr<AbilityRecord>
 
     // Abilities ahead of the one started with SingleTask mode were put in terminate list, we need to terminate
     // them.
-    auto self(shared_from_this());
+    auto self(weak_from_this());
     for (auto terminateAbility : terminateAbilityList_) {
         if (terminateAbility->GetAbilityState() == AbilityState::BACKGROUND) {
             auto timeoutTask = [terminateAbility, self]() {
                 HILOG_WARN("Disconnect ability terminate timeout.");
-                self->PrintTimeOutLog(terminateAbility, AbilityManagerService::TERMINATE_TIMEOUT_MSG);
-                self->CompleteTerminate(terminateAbility);
+                auto manager = self.lock();
+                if (manager == nullptr) {
+                    HILOG_ERROR("MissionListManager is null, CompleteTerminate failed.");
+                    return;
+                }
+                manager->PrintTimeOutLog(terminateAbility, AbilityManagerService::TERMINATE_TIMEOUT_MSG);
+                manager->CompleteTerminate(terminateAbility);
             };
             terminateAbility->Terminate(timeoutTask);
         }
@@ -1029,10 +1053,15 @@ int MissionListManager::TerminateAbilityLocked(const std::shared_ptr<AbilityReco
 
     // 3. ability on background, schedule to terminate.
     if (abilityRecord->GetAbilityState() == AbilityState::BACKGROUND) {
-        auto self(shared_from_this());
+        auto self(weak_from_this());
         auto task = [abilityRecord, self]() {
             HILOG_WARN("Disconnect ability terminate timeout.");
-            self->CompleteTerminate(abilityRecord);
+            auto manager = self.lock();
+            if (manager == nullptr) {
+                HILOG_ERROR("MissionListManager is null, CompleteTerminate failed.");
+                return;
+            }
+            manager->CompleteTerminate(abilityRecord);
         };
         abilityRecord->Terminate(task);
     }
@@ -1143,10 +1172,16 @@ int MissionListManager::DispatchTerminate(const std::shared_ptr<AbilityRecord> &
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     CHECK_POINTER_AND_RETURN_LOG(handler, ERR_INVALID_VALUE, "Fail to get AbilityEventHandler.");
     handler->RemoveTask(std::to_string(abilityRecord->GetEventId()));
-    auto self(shared_from_this());
-    auto task = [self, abilityRecord]() { self->CompleteTerminate(abilityRecord); };
+    auto self(weak_from_this());
+    auto task = [self, abilityRecord]() {
+        auto manager = self.lock();
+        if (manager == nullptr) {
+            HILOG_ERROR("MissionListManager is null, CompleteTerminate failed.");
+            return;
+        }
+        manager->CompleteTerminate(abilityRecord);
+    };
     handler->PostTask(task);
-
     return ERR_OK;
 }
 
@@ -1328,12 +1363,17 @@ void MissionListManager::MoveToBackgroundTask(const std::shared_ptr<AbilityRecor
     }
     HILOG_INFO("Move the ability to background, ability:%{public}s.", abilityRecord->GetAbilityInfo().name.c_str());
     abilityRecord->SetIsNewWant(false);
-    auto self(shared_from_this());
+    auto self(weak_from_this());
     UpdateMissionSnapshot(abilityRecord);
     auto task = [abilityRecord, self]() {
         HILOG_ERROR("Mission list manager move to background timeout.");
-        self->PrintTimeOutLog(abilityRecord, AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG);
-        self->CompleteBackground(abilityRecord);
+        auto manager = self.lock();
+        if (manager == nullptr) {
+            HILOG_ERROR("MissionListManager is null, CompleteBackground failed.");
+            return;
+        }
+        manager->PrintTimeOutLog(abilityRecord, AbilityManagerService::BACKGROUNDNEW_TIMEOUT_MSG);
+        manager->CompleteBackground(abilityRecord);
     };
     abilityRecord->BackgroundAbility(task);
 }
@@ -1761,8 +1801,15 @@ void MissionListManager::UpdateMissionTimeStamp(const std::shared_ptr<AbilityRec
 
 void MissionListManager::PostStartWaittingAbility()
 {
-    auto self(shared_from_this());
-    auto startWaittingAbilityTask = [self]() { self->StartWaittingAbility(); };
+    auto self(weak_from_this());
+    auto startWaittingAbilityTask = [self]() {
+        auto manager = self.lock();
+        if (manager == nullptr) {
+            HILOG_ERROR("MissionListManager is null, StartWaittingAbility failed.");
+            return;
+        }
+        manager->StartWaittingAbility();
+    };
 
     auto handler = DelayedSingleton<AbilityManagerService>::GetInstance()->GetEventHandler();
     CHECK_POINTER_LOG(handler, "Fail to get AbilityEventHandler.");
