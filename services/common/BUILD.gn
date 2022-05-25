@@ -52,7 +52,6 @@ ohos_shared_library("perm_verification") {
   ]
 
   external_deps = [
-    "ability_base:want",
     "access_token:libaccesstoken_sdk",
     "bundle_framework:appexecfwk_base",
     "hisysevent_native:libhisysevent",

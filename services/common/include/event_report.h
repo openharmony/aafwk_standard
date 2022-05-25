@@ -19,14 +19,12 @@
 #include <string>
 #include <unordered_map>
 
-#include "application_info.h"
-#include "want.h"
 #include "errors.h"
+#include "hisysevent.h"
 
 namespace OHOS {
 namespace AAFWK {
 namespace {
-// event type
 // fault event
 const std::string START_ABILITY_ERROR = "START_ABILITY_ERROR";
 const std::string TERMINATE_ABILITY_ERROR = "TERMINATE_ABILITY_ERROR";
@@ -43,8 +41,8 @@ const std::string DO_BACKGROUND_ABILITY = "DO_BACKGROUND_ABILITY";
 // serviceExtensionAbility behavior event
 const std::string START_SERVICE_EXTENSION = "START_SERVICE_EXTENSION";
 const std::string STOP_SERVICE_EXTENSION = "STOP_SERVICE_EXTENSION";
-const std::string CONNECT_SERVICE_EXTENSION = "CONNECT_SERVICE_EXTENSION";
-const std::string DISCONNECT_SERVICE_EXTENSION = "DISCONNECT_SERVICE_EXTENSION";
+const std::string CONNECT_SERVICE = "CONNECT_SERVICE";
+const std::string DISCONNECT_SERVICE = "DISCONNECT_SERVICE";
 // form behavior event
 const std::string ADD_FORM = "ADD_FORM";
 const std::string REQUEST_FORM = "REQUEST_FORM";
@@ -64,13 +62,6 @@ const std::string APP_BACKGROUND = "APP_BACKGROUND";
 const std::string APP_TERMINATE = "APP_TERMINATE";
 }
 
-enum HiSysEventType {
-    FAULT = 1,
-    STATISTIC = 2,
-    SECURITY = 3,
-    BEHAVIOR = 4,
-};
-
 struct EventInfo {
     int32_t pid = -1;
     int32_t userId = -1;
@@ -82,6 +73,7 @@ struct EventInfo {
     std::string bundleName;
     std::string moduleName;
     std::string abilityName;
+    std::string extensionType;
 
     // olny used in fault event
     ErrCode errCode = ERR_OK;
@@ -98,15 +90,20 @@ struct EventInfo {
         bundleName.clear();
         moduleName.clear();
         abilityName.clear();
+        extensionType.clear();
         errCode = ERR_OK;
     }
 };
 class EventReport {
 public:
-    static void SendAppEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
-    static void SendAbilityEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
-    static void SendExtensionEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
-    static void SendFormEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
+    static void SendAppEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+        const EventInfo& eventInfo);
+    static void SendAbilityEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+        const EventInfo& eventInfo);
+    static void SendExtensionEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+        const EventInfo& eventInfo);
+    static void SendFormEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+        const EventInfo& eventInfo);
 };
 }  // namespace AAFWK
 }  // namespace OHOS

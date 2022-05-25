@@ -50,6 +50,7 @@
 #endif
 #include "uri_permission_manager_client.h"
 #include "event_report.h"
+#include "hisysevent.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -279,7 +280,7 @@ void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppSched
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::SendAppEvent(AAFWK::APP_ATTACH, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_ATTACH, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecord> &appRecord)
@@ -324,7 +325,7 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::SendAppEvent(AAFWK::APP_LAUNCH, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_LAUNCH, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::AddAbilityStageDone(const int32_t recordId)
@@ -368,7 +369,7 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::SendAppEvent(AAFWK::APP_FOREGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_FOREGROUND, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
@@ -398,7 +399,7 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::SendAppEvent(AAFWK::APP_BACKGROUND, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_BACKGROUND, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
@@ -428,9 +429,6 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_TERMINATED);
     appRunningManager_->RemoveAppRunningRecordById(recordId);
     RemoveAppFromRecentListById(recordId);
-    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
-
-    HILOG_INFO("application is terminated");
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
     eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
@@ -440,7 +438,10 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::SendAppEvent(AAFWK::APP_TERMINATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_TERMINATE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+    DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
+
+    HILOG_INFO("application is terminated");
 }
 
 int32_t AppMgrServiceInner::KillApplication(const std::string &bundleName)

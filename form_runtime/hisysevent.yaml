@@ -16,53 +16,53 @@ domain: AAFWK
 # form behavior event
 
 ADD_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: form manager}
   FORM_ID: {type: INT64, desc: formId}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
   MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 REQUEST_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: form manager}
   FORM_ID: {type: INT64, desc: formId}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
   MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 DELETE_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: form manager}
   FORM_ID: {type: INT64, desc: formId}
 
 CASTTEMP_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: form manager}
   FORM_ID: {type: INT64, desc: formId}
 
 ACQUIREFORMSTATE_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: form manager}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
   MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 MESSAGE_EVENT_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: form manager}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
   MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 ROUTE_EVENT_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: form manager}
   FORM_ID: {type: INT64, desc: formId}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
   MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 RELEASE_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: form manager}
   FORM_ID: {type: INT64, desc: formId}
 
 DELETE_INVALID_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: form manager}
 
 SET_NEXT_REFRESH_TIME_FORM:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: form manager}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: form manager}
   FORM_ID: {type: INT64, desc: formId}
