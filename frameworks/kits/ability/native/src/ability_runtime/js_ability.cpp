@@ -255,7 +255,6 @@ void JsAbility::onSceneDestroyed()
         applicationContext->DispatchOnAbilityWindowStageDestroy(jsAbilityObj_);
     }
     HILOG_INFO("onSceneDestroyed end, ability is %{public}s.", GetAbilityName().c_str());
-        eventInfo);
 }
 
 void JsAbility::OnForeground(const Want &want)

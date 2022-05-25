@@ -40,6 +40,7 @@
 #include "permission_verification.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
+#include "event_report.h"
 
 namespace OHOS {
 namespace AppExecFwk {
