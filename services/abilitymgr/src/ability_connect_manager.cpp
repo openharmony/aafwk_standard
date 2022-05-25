@@ -97,7 +97,8 @@ int AbilityConnectManager::TerminateAbilityResult(const sptr<IRemoteObject> &tok
 int AbilityConnectManager::StartAbilityLocked(const AbilityRequest &abilityRequest)
 {
     HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("Start ability locked, ability_name: %{public}s", abilityRequest.want.GetElement().GetURI().c_str());
+    HILOG_INFO("Start ability locked, ability_name: %{public}s",
+        abilityRequest.want.GetElement().GetURI().c_str());
 
     std::shared_ptr<AbilityRecord> targetService;
     bool isLoadedAbility = false;
@@ -173,8 +174,8 @@ int AbilityConnectManager::StopServiceAbilityLocked(const AbilityRequest &abilit
 {
     HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Stop service ability locked.");
-    AppExecFwk::ElementName element(
-        abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
+    AppExecFwk::ElementName element(abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName,
+        abilityRequest.abilityInfo.name, abilityRequest.abilityInfo.moduleName);
     auto abilityRecord = GetServiceRecordByElementName(element.GetURI());
     CHECK_POINTER_AND_RETURN(abilityRecord, ERR_INVALID_VALUE);
 
@@ -202,8 +203,8 @@ void AbilityConnectManager::GetOrCreateServiceRecord(const AbilityRequest &abili
     const bool isCreatedByConnect, std::shared_ptr<AbilityRecord> &targetService, bool &isLoadedAbility)
 {
     HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    AppExecFwk::ElementName element(
-        abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name);
+    AppExecFwk::ElementName element(abilityRequest.abilityInfo.deviceId, abilityRequest.abilityInfo.bundleName,
+        abilityRequest.abilityInfo.name, abilityRequest.abilityInfo.moduleName);
     auto serviceMapIter = serviceMap_.find(element.GetURI());
     if (serviceMapIter == serviceMap_.end()) {
         targetService = AbilityRecord::CreateAbilityRecord(abilityRequest);

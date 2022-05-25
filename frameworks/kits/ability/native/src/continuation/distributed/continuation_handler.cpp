@@ -67,7 +67,7 @@ bool ContinuationHandler::HandleStartContinuationWithStack(const sptr<IRemoteObj
 
     want.SetParams(wantParams);
     want.AddFlags(want.FLAG_ABILITY_CONTINUATION);
-    want.SetElementName(deviceId, abilityInfo_->bundleName, abilityInfo_->name);
+    want.SetElementName(deviceId, abilityInfo_->bundleName, abilityInfo_->name, abilityInfo_->moduleName);
 
     int result = AAFwk::AbilityManagerClient::GetInstance()->StartContinuation(want, token, status);
     if (result != ERR_OK) {
@@ -118,7 +118,7 @@ bool ContinuationHandler::HandleStartContinuation(const sptr<IRemoteObject> &tok
     }
 
     Want want = SetWantParams(wantParams);
-    want.SetElementName(deviceId, abilityInfo_->bundleName, abilityInfo_->name);
+    want.SetElementName(deviceId, abilityInfo_->bundleName, abilityInfo_->name, abilityInfo_->moduleName);
 
     int result = AAFwk::AbilityManagerClient::GetInstance()->StartContinuation(want, token, 0);
     if (result != 0) {
@@ -260,7 +260,7 @@ Want ContinuationHandler::SetWantParams(const WantParams &wantParams)
         HILOG_INFO("SetWantParams: Reversible.");
         want.AddFlags(Want::FLAG_ABILITY_CONTINUATION_REVERSIBLE);
     }
-    ElementName element("", abilityInfo_->bundleName, abilityInfo_->name);
+    ElementName element("", abilityInfo_->bundleName, abilityInfo_->name, abilityInfo_->moduleName);
     want.SetElement(element);
     HILOG_INFO("%{public}s called end", __func__);
     return want;

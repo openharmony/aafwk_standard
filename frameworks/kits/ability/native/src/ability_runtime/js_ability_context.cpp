@@ -1246,11 +1246,13 @@ void JSAbilityConnection::HandleOnAbilityDisconnectDone(const AppExecFwk::Elemen
     HILOG_INFO("OnAbilityDisconnectDone abilityConnects_.size:%{public}zu", abilityConnects_.size());
     std::string bundleName = element.GetBundleName();
     std::string abilityName = element.GetAbilityName();
+    std::string moduleName = element.GetModuleName();
     auto item = std::find_if(abilityConnects_.begin(), abilityConnects_.end(),
-        [bundleName, abilityName] (
+        [bundleName, abilityName, moduleName] (
             const std::map<ConnectionKey, sptr<JSAbilityConnection>>::value_type &obj) {
                 return (bundleName == obj.first.want.GetBundle()) &&
-                    (abilityName == obj.first.want.GetElement().GetAbilityName());
+                    (abilityName == obj.first.want.GetElement().GetAbilityName()) &&
+                    (moduleName == obj.first.want.GetElement().GetModuleName());
         });
     if (item != abilityConnects_.end()) {
         // match bundlename && abilityname

@@ -103,7 +103,7 @@ protected:
         EXPECT_TRUE(appInfo != nullptr) << "appInfo is nullptr!";
         EXPECT_TRUE(abilityInfo != nullptr) << "abilityInfo is nullptr!";
         EXPECT_TRUE(record != nullptr) << "record is nullptr!";
-        auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(index));
+        auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(index), abilityInfo->moduleName);
         int32_t id = record->GetRecordId();
         auto name = record->GetName();
         sptr<IRemoteObject> token = abilityRecord->GetToken();
@@ -116,7 +116,8 @@ protected:
         auto appRecordFromServ = service_->appRunningManager_->CheckAppRunningRecordIsExist(
             appInfo->name, processName, appInfo->uid, bundleInfo);
         EXPECT_TRUE(appRecordFromServ);
-        auto abilityRecordFromServ = appRecordFromServ->GetAbilityRunningRecord(GetTestAbilityName(index));
+        auto abilityRecordFromServ = appRecordFromServ->GetAbilityRunningRecord(GetTestAbilityName(index),
+            abilityInfo->moduleName);
         int32_t idFromServ = appRecordFromServ->GetRecordId();
         sptr<IRemoteObject> tokenFromServ = abilityRecordFromServ->GetToken();
         auto nameFromServ = appRecordFromServ->GetName();

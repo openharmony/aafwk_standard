@@ -717,6 +717,7 @@ std::shared_ptr<HapModuleInfo> ContextDeal::GetHapModuleInfo()
     ElementName name;
     name.SetBundleName(GetBundleName());
     name.SetAbilityName(abilityInfo_->name);
+    name.SetModuleName(abilityInfo_->moduleName);
     want.SetElement(name);
     std::vector<AbilityInfo> abilityInfos;
     bool isSuc = ptr->QueryAbilityInfos(want, abilityInfos);

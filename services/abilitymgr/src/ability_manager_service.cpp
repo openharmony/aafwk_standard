@@ -2489,6 +2489,9 @@ int AbilityManagerService::GenerateAbilityRequest(
     HILOG_DEBUG("GenerateAbilityRequest end, app name: %{public}s, bundle name: %{public}s, uid: %{public}d.",
         request.appInfo.name.c_str(), request.appInfo.bundleName.c_str(), request.uid);
 
+    HILOG_INFO("GenerateAbilityRequest, moduleName: %{public}s.", request.abilityInfo.moduleName.c_str());
+    request.want.SetModuleName(request.abilityInfo.moduleName);
+
     return ERR_OK;
 }
 
@@ -2535,6 +2538,9 @@ int AbilityManagerService::GenerateExtensionAbilityRequest(
     request.uid = request.appInfo.uid;
     HILOG_DEBUG("GenerateAbilityRequest end, app name: %{public}s, bundle name: %{public}s, uid: %{public}d.",
         request.appInfo.name.c_str(), request.appInfo.bundleName.c_str(), request.uid);
+
+    HILOG_INFO("GenerateExtensionAbilityRequest, moduleName: %{public}s.", request.abilityInfo.moduleName.c_str());
+    request.want.SetModuleName(request.abilityInfo.moduleName);
 
     return ERR_OK;
 }

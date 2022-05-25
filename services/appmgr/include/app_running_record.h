@@ -238,7 +238,7 @@ public:
      * @return the ability record.
      */
     std::shared_ptr<AbilityRunningRecord> GetAbilityRunningRecord(
-        const std::string &abilityName, int32_t ownerUserId = -1) const;
+        const std::string &abilityName, const std::string &moduleName, int32_t ownerUserId = -1) const;
 
     std::shared_ptr<AbilityRunningRecord> GetAbilityRunningRecord(const int64_t eventId) const;
 

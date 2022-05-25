@@ -81,11 +81,6 @@ ElementName::~ElementName()
 
 std::string ElementName::GetURI() const
 {
-    return deviceId_ + "/" + bundleName_ + "/" + abilityName_;
-}
-
-std::string ElementName::GetElementNameURI() const
-{
     return deviceId_ + "/" + bundleName_ + "/" + moduleName_ + "/" + abilityName_;
 }
 
