@@ -38,34 +38,6 @@ public:
         GTEST_LOG_(INFO) << "MockLifecycleObserver::OnActive called";
     }
 
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * Called back in response to an ON_BACKGROUND event.
-     * When an ON_BACKGROUND event is received, the ability or ability slice is invisible. You are advised to
-     * suspend the threads related to this ability or ability slice and clear resources for more system memory.
-     *
-     */
-
-    virtual void OnBackground()
-    {
-        GTEST_LOG_(INFO) << "MockLifecycleObserver::OnBackground called";
-    }
-
-    /**
-     * Called back in response to an ON_FOREGROUND event, where information for the
-     * ability or ability slice to go back to the ACTIVE state is carried in the want parameter.
-     * When an ON_FOREGROUND event is received, the ability or ability slice returns to the foreground. You can use
-     * this method to implement re-initialization or adjust the UI display by using the want parameter.
-     *
-     * @param want Indicates the information for the ability or ability slice to go back to the ACTIVE state.
-     */
-    virtual void OnForeground(const Want &want)
-    {
-        (void)want;
-        GTEST_LOG_(INFO) << "MockLifecycleObserver::OnForeground called";
-    }
-#endif
-
     /**
      * Called back in response to an ON_INACTIVE event.
      * When an ON_INACTIVE event is received, the ability or ability slice is in the INACTIVE state. INACTIVE is an
@@ -129,6 +101,34 @@ public:
         (void)event;
         GTEST_LOG_(INFO) << "MockLifecycleObserver::OnStateChanged called";
     }
+
+#ifdef SUPPORT_GRAPHICS
+    /**
+     * Called back in response to an ON_BACKGROUND event.
+     * When an ON_BACKGROUND event is received, the ability or ability slice is invisible. You are advised to
+     * suspend the threads related to this ability or ability slice and clear resources for more system memory.
+     *
+     */
+
+    virtual void OnBackground()
+    {
+        GTEST_LOG_(INFO) << "MockLifecycleObserver::OnBackground called";
+    }
+
+    /**
+     * Called back in response to an ON_FOREGROUND event, where information for the
+     * ability or ability slice to go back to the ACTIVE state is carried in the want parameter.
+     * When an ON_FOREGROUND event is received, the ability or ability slice returns to the foreground. You can use
+     * this method to implement re-initialization or adjust the UI display by using the want parameter.
+     *
+     * @param want Indicates the information for the ability or ability slice to go back to the ACTIVE state.
+     */
+    virtual void OnForeground(const Want &want)
+    {
+        (void)want;
+        GTEST_LOG_(INFO) << "MockLifecycleObserver::OnForeground called";
+    }
+#endif
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

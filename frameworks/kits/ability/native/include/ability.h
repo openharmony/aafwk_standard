@@ -25,21 +25,24 @@
 #include "ability_event_interface.h"
 #include "ability_lifecycle_executor.h"
 #include "ability_lifecycle_interface.h"
-#ifdef SUPPORT_GRAPHICS
-#include "ability_window.h"
-#endif
 #include "appexecfwk_errors.h"
 #include "configuration.h"
 #include "context.h"
 #include "continuation_handler.h"
 #include "continuation_state.h"
-#ifdef SUPPORT_GRAPHICS
-#include "display_manager.h"
-#endif
 #include "dummy_ability_package.h"
 #include "dummy_component_container.h"
 #include "dummy_notification_request.h"
+#include "iability_callback.h"
+#include "iremote_object.h"
+#include "pac_map.h"
+#include "want.h"
+#include "want_agent.h"
+#include "../../ability_runtime/include/ability_context.h"
+
 #ifdef SUPPORT_GRAPHICS
+#include "ability_window.h"
+#include "display_manager.h"
 #include "form_callback_interface.h"
 #include "form_constants.h"
 #include "form_death_callback.h"
@@ -48,21 +51,11 @@
 #include "form_state_info.h"
 #include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/key_event.h"
 #include "foundation/multimodalinput/input/interfaces/native/innerkits/event/include/pointer_event.h"
-#endif
-#include "iability_callback.h"
-#include "iremote_object.h"
-#include "pac_map.h"
-#include "want.h"
-#include "want_agent.h"
-#ifdef SUPPORT_GRAPHICS
 #include "window_option.h"
 #include "window_scene.h"
 #include "wm_common.h"
-#endif
-#ifndef SUPPORT_GRAPHICS
 #include "inttypes.h"
 #endif
-#include "../../ability_runtime/include/ability_context.h"
 
 using Uri = OHOS::Uri;
 
@@ -102,9 +95,6 @@ class Ability : public IAbilityEvent,
                 public IAbilityCallback,
                 public std::enable_shared_from_this<Ability> {
 public:
-#ifdef SUPPORT_GRAPHICS
-    friend class PageAbilityImpl;
-#endif
     friend class NewAbilityImpl;
 
     static Ability* Create(const std::unique_ptr<AbilityRuntime::Runtime>& runtime);
@@ -144,21 +134,6 @@ public:
      */
     virtual void AddActionRoute(const std::string &action, const std::string &entry) final;
 
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Sets the background color of the window in RGB color mode.
-     *
-     * @param red The value ranges from 0 to 255.
-     *
-     * @param green The value ranges from 0 to 255.
-     *
-     * @param blue The value ranges from 0 to 255.
-     *
-     * @return Returns the result of SetWindowBackgroundColor
-     */
-    virtual int SetWindowBackgroundColor(int red, int green, int blue) final;
-#endif
-
     /**
      * @brief Destroys this Page or Service ability.
      * After a Page or Service ability performs all operations, it can use this method to destroy itself
@@ -188,30 +163,6 @@ public:
      * @return Returns true if the configuration of this ability is changing and false otherwise.
      */
     bool IsUpdatingConfigurations() override;
-
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Informs the system of the time required for drawing this Page ability.
-     *
-     * @return Returns the notification is successful or fail
-     */
-    bool PrintDrawnCompleted() override;
-
-    /**
-     * @brief Inflates UI controls by using ComponentContainer.
-     * You can create a ComponentContainer instance that contains multiple components.
-     *
-     * @param componentContainer Indicates a set of customized components.
-     */
-    virtual void SetUIContent(const ComponentContainer &componentContainer);
-
-    /**
-     * @brief Inflates layout resources by using the layout resource ID.
-     *
-     * @param layoutRes Indicates the layout resource ID, which cannot be a negative number.
-     */
-    virtual void SetUIContent(int layoutRes) final;
-#endif
 
     /**
      * Start other ability for result.
@@ -297,86 +248,6 @@ public:
      */
     virtual void OnInactive();
 
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Called after instantiating WindowScene.
-     *
-     *
-     * You can override this function to implement your own processing logic.
-     */
-    virtual void OnSceneCreated();
-
-    /**
-     * @brief Called after ability stoped.
-     *
-     *
-     * You can override this function to implement your own processing logic.
-     */
-    virtual void onSceneDestroyed();
-
-    /**
-     * @brief Called after ability restored.
-     *
-     *
-     * You can override this function to implement your own processing logic.
-     */
-    virtual void OnSceneRestored();
-
-    /**
-     * @brief Called when this ability enters the <b>STATE_FOREGROUND</b> state.
-     *
-     *
-     * The ability in the <b>STATE_FOREGROUND</b> state is visible.
-     * You can override this function to implement your own processing logic.
-     */
-    virtual void OnForeground(const Want &want);
-
-    /**
-     * @brief Called when this ability enters the <b>STATE_BACKGROUND</b> state.
-     *
-     *
-     * The ability in the <b>STATE_BACKGROUND</b> state is invisible.
-     * You can override this function to implement your own processing logic.
-     */
-    virtual void OnBackground();
-
-    /**
-     * @brief Called when a key is pressed. When any component in the Ability gains focus, the key-down event for
-     * the component will be handled first. This callback will not be invoked if the callback triggered for the
-     * key-down event of the component returns true. The default implementation of this callback does nothing
-     * and returns false.
-     *
-     * @param keyEvent Indicates the key-down event.
-     *
-     * @return Returns true if this event is handled and will not be passed further; returns false if this event
-     * is not handled and should be passed to other handlers.
-     */
-    virtual void OnKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
-
-    /**
-     * @brief Called when a key is released. When any component in the Ability gains focus, the key-up event for
-     * the component will be handled first. This callback will not be invoked if the callback triggered for the
-     * key-up event of the component returns true. The default implementation of this callback does nothing and
-     * returns false.
-     *
-     * @param keyEvent Indicates the key-up event.
-     *
-     * @return Returns true if this event is handled and will not be passed further; returns false if this event
-     * is not handled and should be passed to other handlers.
-     */
-    virtual void OnKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
-
-    /**
-     * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
-     * does nothing and returns false.
-     *
-     * @param event  Indicates information about the touch event.
-     *
-     * @return Returns true if the event is handled; returns false otherwise.
-     */
-    virtual void OnPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent);
-#endif
-
     /**
      * @brief Called when this Service ability is connected for the first time.
      *
@@ -395,105 +266,6 @@ public:
      */
     virtual void OnDisconnect(const Want &want);
 
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Inflates UI controls by using ComponentContainer.
-     * You can create a ComponentContainer instance that contains multiple components.
-     *
-     * @param componentContainer Indicates the component layout defined by the user.
-     * @param context Indicates the context to use.
-     * @param typeFlag Indicates the window type.
-     */
-    virtual void SetUIContent(
-        const ComponentContainer &componentContainer, std::shared_ptr<Context> &context, int typeFlag);
-
-    /**
-     * @brief Inflates layout resources by using the layout resource ID.
-     *
-     * @param layoutRes Indicates the layout resource ID, which cannot be a negative number.
-     * @param context Indicates the context to use.
-     * @param typeFlag Indicates the window type.
-     */
-    virtual void SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int typeFlag);
-
-    /**
-     * @brief Called when this ability gains or loses window focus.
-     *
-     * @param hasFocus Specifies whether this ability has focus.
-     */
-    virtual void OnWindowFocusChanged(bool hasFocus);
-
-    /**
-     * @brief Called when this ability is moved to or removed from the top of the stack.
-     *
-     * @param topActive Specifies whether this ability is moved to or removed from the top of the stack. The value true
-     * indicates that it is moved to the top, and false indicates that it is removed from the top of the stack.
-     */
-    virtual void OnTopActiveAbilityChanged(bool topActive);
-
-    /**
-     * @brief Inflates UI controls by using windowOption.
-     *
-     * @param windowOption Indicates the window option defined by the user.
-     */
-    virtual void InitWindow(Rosen::WindowType winType, int32_t displayId, sptr<Rosen::WindowOption> option);
-
-    /**
-     * @brief Get the window belong to the ability.
-     *
-     * @return Returns a Window object pointer.
-     */
-    virtual const sptr<Rosen::Window> GetWindow();
-
-    /**
-     * @brief get the scene belong to the ability.
-     *
-     * @return Returns a WindowScene object pointer.
-     */
-    std::shared_ptr<Rosen::WindowScene> GetScene();
-
-    /**
-     * @brief Checks whether the main window of this ability has window focus.
-     *
-     * @return Returns true if this ability currently has window focus; returns false otherwise.
-     */
-    bool HasWindowFocus();
-
-    void SetShowOnLockScreen(bool showOnLockScreen);
-
-    /**
-     * @brief When the ability starts, set whether to wake up the screen.
-     *
-     * @param wakeUp Set true to wake up, false to not wake up.
-     */
-    void SetWakeUpScreen(bool wakeUp);
-
-    /**
-     * @brief Set the display orientation of the main window.
-     *
-     * @param orientation Indicates the display orientation of the window.
-     */
-    void SetDisplayOrientation(int orientation);
-
-    /**
-     * @brief Get the display orientation of the main window.
-     *
-     * @return Returns the display orientation of the window.
-     */
-    int GetDisplayOrientation() override;
-
-    /**
-     * @brief Called when a key is lone pressed.
-     *
-     * @param keyCode Indicates the code of the key long pressed.
-     * @param keyEvent Indicates the key-long-press event.
-     *
-     * @return Returns true if this event is handled and will not be passed further; returns false if this event
-     * is not handled and should be passed to other handlers.
-     */
-    virtual bool OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &keyEvent);
-#endif
-
     /**
      * @brief Called back after permissions are requested by using
      * AbilityContext.requestPermissionsFromUser(java.lang.String[],int).
@@ -509,15 +281,6 @@ public:
      */
     virtual void OnRequestPermissionsFromUserResult(
         int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults);
-
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Called when this ability is about to leave the foreground and enter the background due to a user
-     * operation, for example, when the user touches the Home key.
-     *
-     */
-    virtual void OnLeaveForeground();
-#endif
 
     /**
      * @brief Obtains the MIME type matching the data specified by the URI of the Data ability. This method should be
@@ -712,15 +475,6 @@ public:
      * This parameter can be null.
      */
     virtual void SetResult(int resultCode, const Want &resultData) final;
-
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Sets the type of audio whose volume will be adjusted by the volume button.
-     *
-     * @param volumeType Indicates the AudioManager.AudioVolumeType to set.
-     */
-    virtual void SetVolumeTypeAdjustedByKey(int volumeType);
-#endif
 
     /**
      * @brief Called back when Service is started.
@@ -917,15 +671,6 @@ public:
      */
     virtual int BatchInsert(const Uri &uri, const std::vector<NativeRdb::ValuesBucket> &values);
 
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Obtains the type of audio whose volume is adjusted by the volume button.
-     *
-     * @return Returns the AudioManager.AudioVolumeType.
-     */
-    int GetVolumeTypeAdjustedByKey();
-#endif
-
     /**
      * @brief Obtains the lifecycle state of this ability.
      *
@@ -1017,7 +762,376 @@ public:
      */
     std::shared_ptr<AbilityPostEventTimeout> CreatePostEventTimeouter(std::string taskstr);
 
+    /**
+     * @brief Keep this Service ability in the background and displays a notification bar.
+     *
+     * @param wantAgent Indicates which ability to start when user click the notification bar.
+     * @return the method result code, 0 means succeed
+     */
+    virtual int StartBackgroundRunning(const AbilityRuntime::WantAgent::WantAgent &wantAgent) final;
+
+    /**
+     * @brief Cancel background running of this ability to free up system memory.
+     *
+     * @return the method result code, 0 means succeed
+     */
+    virtual int StopBackgroundRunning() final;
+
+    /**
+     * @brief Get the error message by error code.
+     * @param errorCode the error code return form fms.
+     * @return Returns the error message detail.
+     */
+    std::string GetErrorMsg(const ErrCode errorCode);
+
+    /**
+     * @brief Acquire a bundle manager, if it not existed,
+     * @return returns the bundle manager ipc object, or nullptr for failed.
+     */
+    sptr<IBundleMgr> GetBundleMgr();
+
+    /**
+     * @brief Add the bundle manager instance for debug.
+     * @param bundleManager the bundle manager ipc object.
+     */
+    void SetBundleManager(const sptr<IBundleMgr> &bundleManager);
+
+    /**
+     * @brief You can use the IContinuationRegisterManager object to interact with the Device+ control center,
+     * including registering and unregistering the ability to migrate, updating the device connection state, and
+     * showing the list of devices that can be selected for ability migration.
+     *
+     * @return Returns true if the migration request is successful; returns false otherwise.
+     */
+    std::weak_ptr<IContinuationRegisterManager> GetContinuationRegisterManager();
+
+    /**
+     * @brief Prepare user data of local Ability.
+     *
+     * @param wantParams Indicates the user data to be saved.
+     * @return If the ability is willing to continue and data saved successfully, it returns 0;
+     * otherwise, it returns errcode.
+     */
+    virtual int32_t OnContinue(WantParams &wantParams);
+
+    /**
+     * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
+     * ability slices must implement the IAbilityContinuation interface.
+     *
+     * @param deviceId Indicates the ID of the target device where this ability will be migrated to.
+     * @param versionCode Target bundle version.
+     */
+    virtual void ContinueAbilityWithStack(const std::string &deviceId, uint32_t versionCode) final;
+
+    /**
+     * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
+     * ability slices must implement the IAbilityContinuation interface.
+     *
+     * @param deviceId Indicates the ID of the target device where this ability will be migrated to. If this parameter
+     * is null, this method has the same effect as continueAbility().
+     *
+     */
+    virtual void ContinueAbility(const std::string &deviceId) final;
+
+    /**
+     * @brief Callback function to ask the user whether to start the migration .
+     *
+     * @return If the user allows migration, it returns true; otherwise, it returns false.
+     */
+    virtual bool OnStartContinuation() override;
+
+    /**
+     * @brief Performs batch operations on the database.
+     *
+     * @param operations Indicates a list of database operations on the database.
+     * @return Returns the result of each operation, in array.
+     */
+    virtual std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
+        const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
+
+    /**
+     * @brief Executes an operation among the batch operations to be executed.
+     *
+     * @param operation Indicates the operation to execute.
+     * @param results Indicates a set of results of the batch operations.
+     * @param index Indicates the index of the current operation result in the batch operation results.
+     */
+    void ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
+        std::vector<std::shared_ptr<DataAbilityResult>> &results, int index);
+
+    /**
+     * @brief Save user data of local Ability generated at runtime.
+     *
+     * @param saveData Indicates the user data to be saved.
+     * @return If the data is saved successfully, it returns true; otherwise, it returns false.
+     */
+    virtual bool OnSaveData(WantParams &saveData) override;
+
+    /**
+     * @brief After creating the Ability on the remote device,
+     *      immediately restore the user data saved during the migration of the Ability on the remote device.
+     * @param restoreData Indicates the user data to be restored.
+     * @return If the data is restored successfully, it returns true; otherwise, it returns false .
+     */
+    virtual bool OnRestoreData(WantParams &restoreData) override;
+
+    /**
+     * @brief This function can be used to implement the processing logic after the migration is completed.
+     *
+     * @param result Migration result code. 0 means the migration was successful, -1 means the migration failed.
+     * @return None.
+     */
+    virtual void OnCompleteContinuation(int result) override;
+
+    /**
+     * @brief Used to notify the local Ability that the remote Ability has been destroyed.
+     *
+     * @return None.
+     */
+    virtual void OnRemoteTerminated() override;
+
+	/**
+     * @brief request a remote object of callee from this ability.
+     * @return Returns the remote object of callee.
+     */
+    virtual sptr<IRemoteObject> CallRequest();
+
 #ifdef SUPPORT_GRAPHICS
+public:
+    friend class PageAbilityImpl;
+    uint32_t sceneFlag_ = 0;
+
+    /**
+     * @brief Sets the background color of the window in RGB color mode.
+     *
+     * @param red The value ranges from 0 to 255.
+     *
+     * @param green The value ranges from 0 to 255.
+     *
+     * @param blue The value ranges from 0 to 255.
+     *
+     * @return Returns the result of SetWindowBackgroundColor
+     */
+    virtual int SetWindowBackgroundColor(int red, int green, int blue) final;
+
+    /**
+     * @brief Informs the system of the time required for drawing this Page ability.
+     *
+     * @return Returns the notification is successful or fail
+     */
+    bool PrintDrawnCompleted() override;
+
+    /**
+     * @brief Inflates UI controls by using ComponentContainer.
+     * You can create a ComponentContainer instance that contains multiple components.
+     *
+     * @param componentContainer Indicates a set of customized components.
+     */
+    virtual void SetUIContent(const ComponentContainer &componentContainer);
+
+    /**
+     * @brief Inflates layout resources by using the layout resource ID.
+     *
+     * @param layoutRes Indicates the layout resource ID, which cannot be a negative number.
+     */
+    virtual void SetUIContent(int layoutRes) final;
+
+    /**
+     * @brief Called after instantiating WindowScene.
+     *
+     *
+     * You can override this function to implement your own processing logic.
+     */
+    virtual void OnSceneCreated();
+
+    /**
+     * @brief Called after ability stoped.
+     *
+     *
+     * You can override this function to implement your own processing logic.
+     */
+    virtual void onSceneDestroyed();
+
+    /**
+     * @brief Called after ability restored.
+     *
+     *
+     * You can override this function to implement your own processing logic.
+     */
+    virtual void OnSceneRestored();
+
+    /**
+     * @brief Called when this ability enters the <b>STATE_FOREGROUND</b> state.
+     *
+     *
+     * The ability in the <b>STATE_FOREGROUND</b> state is visible.
+     * You can override this function to implement your own processing logic.
+     */
+    virtual void OnForeground(const Want &want);
+
+    /**
+     * @brief Called when this ability enters the <b>STATE_BACKGROUND</b> state.
+     *
+     *
+     * The ability in the <b>STATE_BACKGROUND</b> state is invisible.
+     * You can override this function to implement your own processing logic.
+     */
+    virtual void OnBackground();
+
+    /**
+     * @brief Called when a key is pressed. When any component in the Ability gains focus, the key-down event for
+     * the component will be handled first. This callback will not be invoked if the callback triggered for the
+     * key-down event of the component returns true. The default implementation of this callback does nothing
+     * and returns false.
+     *
+     * @param keyEvent Indicates the key-down event.
+     *
+     * @return Returns true if this event is handled and will not be passed further; returns false if this event
+     * is not handled and should be passed to other handlers.
+     */
+    virtual void OnKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
+
+    /**
+     * @brief Called when a key is released. When any component in the Ability gains focus, the key-up event for
+     * the component will be handled first. This callback will not be invoked if the callback triggered for the
+     * key-up event of the component returns true. The default implementation of this callback does nothing and
+     * returns false.
+     *
+     * @param keyEvent Indicates the key-up event.
+     *
+     * @return Returns true if this event is handled and will not be passed further; returns false if this event
+     * is not handled and should be passed to other handlers.
+     */
+    virtual void OnKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent);
+
+    /**
+     * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
+     * does nothing and returns false.
+     *
+     * @param event  Indicates information about the touch event.
+     *
+     * @return Returns true if the event is handled; returns false otherwise.
+     */
+    virtual void OnPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent);
+
+    /**
+     * @brief Inflates UI controls by using ComponentContainer.
+     * You can create a ComponentContainer instance that contains multiple components.
+     *
+     * @param componentContainer Indicates the component layout defined by the user.
+     * @param context Indicates the context to use.
+     * @param typeFlag Indicates the window type.
+     */
+    virtual void SetUIContent(
+        const ComponentContainer &componentContainer, std::shared_ptr<Context> &context, int typeFlag);
+
+    /**
+     * @brief Inflates layout resources by using the layout resource ID.
+     *
+     * @param layoutRes Indicates the layout resource ID, which cannot be a negative number.
+     * @param context Indicates the context to use.
+     * @param typeFlag Indicates the window type.
+     */
+    virtual void SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int typeFlag);
+
+    /**
+     * @brief Called when this ability gains or loses window focus.
+     *
+     * @param hasFocus Specifies whether this ability has focus.
+     */
+    virtual void OnWindowFocusChanged(bool hasFocus);
+
+    /**
+     * @brief Called when this ability is moved to or removed from the top of the stack.
+     *
+     * @param topActive Specifies whether this ability is moved to or removed from the top of the stack. The value true
+     * indicates that it is moved to the top, and false indicates that it is removed from the top of the stack.
+     */
+    virtual void OnTopActiveAbilityChanged(bool topActive);
+
+    /**
+     * @brief Inflates UI controls by using windowOption.
+     *
+     * @param windowOption Indicates the window option defined by the user.
+     */
+    virtual void InitWindow(Rosen::WindowType winType, int32_t displayId, sptr<Rosen::WindowOption> option);
+
+    /**
+     * @brief Get the window belong to the ability.
+     *
+     * @return Returns a Window object pointer.
+     */
+    virtual const sptr<Rosen::Window> GetWindow();
+
+    /**
+     * @brief get the scene belong to the ability.
+     *
+     * @return Returns a WindowScene object pointer.
+     */
+    std::shared_ptr<Rosen::WindowScene> GetScene();
+
+    /**
+     * @brief Checks whether the main window of this ability has window focus.
+     *
+     * @return Returns true if this ability currently has window focus; returns false otherwise.
+     */
+    bool HasWindowFocus();
+
+    void SetShowOnLockScreen(bool showOnLockScreen);
+
+    /**
+     * @brief When the ability starts, set whether to wake up the screen.
+     *
+     * @param wakeUp Set true to wake up, false to not wake up.
+     */
+    void SetWakeUpScreen(bool wakeUp);
+
+    /**
+     * @brief Set the display orientation of the main window.
+     *
+     * @param orientation Indicates the display orientation of the window.
+     */
+    void SetDisplayOrientation(int orientation);
+
+    /**
+     * @brief Get the display orientation of the main window.
+     *
+     * @return Returns the display orientation of the window.
+     */
+    int GetDisplayOrientation() override;
+
+    /**
+     * @brief Called when a key is lone pressed.
+     *
+     * @param keyCode Indicates the code of the key long pressed.
+     * @param keyEvent Indicates the key-long-press event.
+     *
+     * @return Returns true if this event is handled and will not be passed further; returns false if this event
+     * is not handled and should be passed to other handlers.
+     */
+    virtual bool OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &keyEvent);
+
+    /**
+     * @brief Called when this ability is about to leave the foreground and enter the background due to a user
+     * operation, for example, when the user touches the Home key.
+     *
+     */
+    virtual void OnLeaveForeground();
+
+    /**
+     * @brief Sets the type of audio whose volume will be adjusted by the volume button.
+     *
+     * @param volumeType Indicates the AudioManager.AudioVolumeType to set.
+     */
+    virtual void SetVolumeTypeAdjustedByKey(int volumeType);
+
+    /**
+     * @brief Obtains the type of audio whose volume is adjusted by the volume button.
+     *
+     * @return Returns the AudioManager.AudioVolumeType.
+     */
+    int GetVolumeTypeAdjustedByKey();
+
     /**
      * Releases an obtained form by its ID.
      *
@@ -1083,24 +1197,7 @@ public:
      * </ul>
      */
     ErrCode DeleteForm(const int64_t formId);
-#endif
 
-    /**
-     * @brief Keep this Service ability in the background and displays a notification bar.
-     *
-     * @param wantAgent Indicates which ability to start when user click the notification bar.
-     * @return the method result code, 0 means succeed
-     */
-    virtual int StartBackgroundRunning(const AbilityRuntime::WantAgent::WantAgent &wantAgent) final;
-
-    /**
-     * @brief Cancel background running of this ability to free up system memory.
-     *
-     * @return the method result code, 0 means succeed
-     */
-    virtual int StopBackgroundRunning() final;
-
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief The form callback.
      */
@@ -1409,130 +1506,14 @@ public:
      * @return Returns true if the request is successfully initiated; returns false otherwise.
      */
     ErrCode GetFormsInfoByModule(std::string &bundleName, std::string &moduleName, std::vector<FormInfo> &formInfos);
-#endif
-    /**
-     * @brief Get the error message by error code.
-     * @param errorCode the error code return form fms.
-     * @return Returns the error message detail.
-     */
-    std::string GetErrorMsg(const ErrCode errorCode);
 
-    /**
-     * @brief Acquire a bundle manager, if it not existed,
-     * @return returns the bundle manager ipc object, or nullptr for failed.
-     */
-    sptr<IBundleMgr> GetBundleMgr();
-
-    /**
-     * @brief Add the bundle manager instance for debug.
-     * @param bundleManager the bundle manager ipc object.
-     */
-    void SetBundleManager(const sptr<IBundleMgr> &bundleManager);
-
-    /**
-     * @brief You can use the IContinuationRegisterManager object to interact with the Device+ control center,
-     * including registering and unregistering the ability to migrate, updating the device connection state, and
-     * showing the list of devices that can be selected for ability migration.
-     *
-     * @return Returns true if the migration request is successful; returns false otherwise.
-     */
-    std::weak_ptr<IContinuationRegisterManager> GetContinuationRegisterManager();
-
-    /**
-     * @brief Prepare user data of local Ability.
-     *
-     * @param wantParams Indicates the user data to be saved.
-     * @return If the ability is willing to continue and data saved successfully, it returns 0;
-     * otherwise, it returns errcode.
-     */
-    virtual int32_t OnContinue(WantParams &wantParams);
-
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Get page ability stack info.
      *
      * @return A string represents page ability stack info, empty if failed;
      */
     virtual std::string GetContentInfo();
-#endif
 
-    /**
-     * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
-     * ability slices must implement the IAbilityContinuation interface.
-     *
-     * @param deviceId Indicates the ID of the target device where this ability will be migrated to.
-     * @param versionCode Target bundle version.
-     */
-    virtual void ContinueAbilityWithStack(const std::string &deviceId, uint32_t versionCode) final;
-
-    /**
-     * @brief Migrates this ability to the given device on the same distributed network. The ability to migrate and its
-     * ability slices must implement the IAbilityContinuation interface.
-     *
-     * @param deviceId Indicates the ID of the target device where this ability will be migrated to. If this parameter
-     * is null, this method has the same effect as continueAbility().
-     *
-     */
-    virtual void ContinueAbility(const std::string &deviceId) final;
-
-    /**
-     * @brief Callback function to ask the user whether to start the migration .
-     *
-     * @return If the user allows migration, it returns true; otherwise, it returns false.
-     */
-    virtual bool OnStartContinuation() override;
-
-    /**
-     * @brief Performs batch operations on the database.
-     *
-     * @param operations Indicates a list of database operations on the database.
-     * @return Returns the result of each operation, in array.
-     */
-    virtual std::vector<std::shared_ptr<DataAbilityResult>> ExecuteBatch(
-        const std::vector<std::shared_ptr<DataAbilityOperation>> &operations);
-
-    /**
-     * @brief Executes an operation among the batch operations to be executed.
-     *
-     * @param operation Indicates the operation to execute.
-     * @param results Indicates a set of results of the batch operations.
-     * @param index Indicates the index of the current operation result in the batch operation results.
-     */
-    void ExecuteOperation(std::shared_ptr<DataAbilityOperation> &operation,
-        std::vector<std::shared_ptr<DataAbilityResult>> &results, int index);
-
-    /**
-     * @brief Save user data of local Ability generated at runtime.
-     *
-     * @param saveData Indicates the user data to be saved.
-     * @return If the data is saved successfully, it returns true; otherwise, it returns false.
-     */
-    virtual bool OnSaveData(WantParams &saveData) override;
-
-    /**
-     * @brief After creating the Ability on the remote device,
-     *      immediately restore the user data saved during the migration of the Ability on the remote device.
-     * @param restoreData Indicates the user data to be restored.
-     * @return If the data is restored successfully, it returns true; otherwise, it returns false .
-     */
-    virtual bool OnRestoreData(WantParams &restoreData) override;
-
-    /**
-     * @brief This function can be used to implement the processing logic after the migration is completed.
-     *
-     * @param result Migration result code. 0 means the migration was successful, -1 means the migration failed.
-     * @return None.
-     */
-    virtual void OnCompleteContinuation(int result) override;
-
-    /**
-     * @brief Used to notify the local Ability that the remote Ability has been destroyed.
-     *
-     * @return None.
-     */
-    virtual void OnRemoteTerminated() override;
-
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Set WindowScene listener
      *
@@ -1540,81 +1521,13 @@ public:
      * @return None.
      */
     void SetSceneListener(const sptr<Rosen::IWindowLifeCycle> &listener);
-#endif
 
-	/**
-     * @brief request a remote object of callee from this ability.
-     * @return Returns the remote object of callee.
-     */
-    virtual sptr<IRemoteObject> CallRequest();
-
-#ifdef SUPPORT_GRAPHICS
     /**
      * @brief Called back at ability context.
      */
     virtual int GetCurrentWindowMode() override;
 
-    uint32_t sceneFlag_ = 0;
-#endif
 protected:
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Acquire a form provider remote object.
-     * @return Returns form provider remote object.
-     */
-    sptr<IRemoteObject> GetFormRemoteObject();
-#endif
-
-    /**
-     * @brief Acquire the launch parameter.
-     * @return launch parameter.
-     */
-    const AAFwk::LaunchParam& GetLaunchParam() const;
-
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief process when foreground executed.
-     *
-     * You can override this function to implement your own processing logic
-     */
-    virtual void DoOnForeground(const Want& want);
-
-    /**
-     * @brief requeset focus for current window.
-     *
-     * You can override this function to implement your own processing logic
-     */
-    virtual void RequsetFocus(const Want &want);
-
-    /**
-     * @brief Acquire the window option.
-     * @return window option.
-     */
-    sptr<Rosen::WindowOption> GetWindowOption(const Want &want);
-#endif
-
-    /**
-     * @brief judge where invoke resoreWindowStage in continuation
-     * @return true if invoked resoreWindowStage in continuation.
-     */
-    bool IsRestoredInContinuation() const;
-
-    /**
-     * @brief wait for distributed object to complete sync
-     *
-     * @param want the want param.
-     */
-    void WaitingDistributedObjectSyncComplete(const Want& want);
-
-    /**
-     * @brief Notify continuation
-     *
-     * @param want the want param.
-     * @param success whether continuation success.
-     */
-    void NotityContinuationResult(const Want& want, bool success);
-
-#ifdef SUPPORT_GRAPHICS
     class AbilityDisplayListener : public OHOS::Rosen::DisplayManager::IDisplayListener {
     public:
         AbilityDisplayListener(const std::weak_ptr<Ability>& ability)
@@ -1683,17 +1596,71 @@ protected:
      * @param to the displayId after display move
      */
     void OnDisplayMove(Rosen::DisplayId from, Rosen::DisplayId to);
-#endif
-protected:
-    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;
-    std::shared_ptr<AbilityStartSetting> setting_ = nullptr;
-    LaunchParam launchParam_;
-#ifdef SUPPORT_GRAPHICS
+
+    /**
+     * @brief Acquire a form provider remote object.
+     * @return Returns form provider remote object.
+     */
+    sptr<IRemoteObject> GetFormRemoteObject();
+
+    /**
+     * @brief process when foreground executed.
+     *
+     * You can override this function to implement your own processing logic
+     */
+    virtual void DoOnForeground(const Want& want);
+
+    /**
+     * @brief requeset focus for current window.
+     *
+     * You can override this function to implement your own processing logic
+     */
+    virtual void RequsetFocus(const Want &want);
+
+    /**
+     * @brief Acquire the window option.
+     * @return window option.
+     */
+    sptr<Rosen::WindowOption> GetWindowOption(const Want &want);
+
     std::shared_ptr<Rosen::WindowScene> scene_ = nullptr;
     sptr<Rosen::IWindowLifeCycle> sceneListener_ = nullptr;
     sptr<AbilityDisplayListener> abilityDisplayListener_ = nullptr;
     sptr<Rosen::IDisplayMoveListener> abilityDisplayMoveListener_ = nullptr;
 #endif
+
+protected:
+    /**
+     * @brief Acquire the launch parameter.
+     * @return launch parameter.
+     */
+    const AAFwk::LaunchParam& GetLaunchParam() const;
+
+    /**
+     * @brief judge where invoke resoreWindowStage in continuation
+     * @return true if invoked resoreWindowStage in continuation.
+     */
+    bool IsRestoredInContinuation() const;
+
+    /**
+     * @brief wait for distributed object to complete sync
+     *
+     * @param want the want param.
+     */
+    void WaitingDistributedObjectSyncComplete(const Want& want);
+
+    /**
+     * @brief Notify continuation
+     *
+     * @param want the want param.
+     * @param success whether continuation success.
+     */
+    void NotityContinuationResult(const Want& want, bool success);
+
+    std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext_ = nullptr;
+    std::shared_ptr<AbilityStartSetting> setting_ = nullptr;
+    LaunchParam launchParam_;
+
 private:
     std::shared_ptr<NativeRdb::DataAbilityPredicates> ParsePredictionArgsReference(
         std::vector<std::shared_ptr<DataAbilityResult>> &results, std::shared_ptr<DataAbilityOperation> &operation,
@@ -1727,7 +1694,6 @@ private:
      */
     void SetLaunchParam(const AAFwk::LaunchParam &launchParam);
 
-private:
     std::shared_ptr<ContinuationHandler> continuationHandler_ = nullptr;
     std::shared_ptr<ContinuationManager> continuationManager_ = nullptr;
     std::shared_ptr<ContinuationRegisterManager> continuationRegisterManager_ = nullptr;
@@ -1738,15 +1704,8 @@ private:
     std::shared_ptr<OHOSApplication> application_ = nullptr;
     std::vector<std::string> types_;
     std::map<int, FeatureAbilityTask> resultCallbacks_;
-#ifdef SUPPORT_GRAPHICS
-    std::shared_ptr<AbilityWindow> abilityWindow_ = nullptr;
-#endif
     std::shared_ptr<AAFwk::Want> setWant_ = nullptr;
     sptr<IRemoteObject> reverseContinuationSchedulerReplica_ = nullptr;
-#ifdef SUPPORT_GRAPHICS
-    bool bWindowFocus_ = false;
-    bool showOnLockScreen_ = false;
-#endif
 
     static const std::string SYSTEM_UI;
     static const std::string STATUS_BAR;
@@ -1761,26 +1720,12 @@ private:
 
     // If session id cannot get from want, assign it as default.
     static const int DEFAULT_DMS_SESSION_ID;
-#ifdef SUPPORT_GRAPHICS
-    std::vector<int64_t> lostedByReconnectTempForms_;
-    std::map<int64_t, std::shared_ptr<FormCallback>> appCallbacks_;
-#endif
     std::map<int64_t, Want> userReqParams_;
     sptr<IBundleMgr> iBundleMgr_;
-#ifdef SUPPORT_GRAPHICS
-    static const int32_t OHOS_FORM_ACQUIRE_FORM = 0;
-    static const int32_t OHOS_FORM_UPDATE_FORM = 1;
-
-    static const int32_t DELETE_FORM = 3;
-    static const int32_t ENABLE_FORM_UPDATE = 5;
-    static const int32_t DISABLE_FORM_UPDATE = 6;
-    static const int32_t RELEASE_FORM = 8;
-    static const int32_t RELEASE_CACHED_FORM = 9;
-#endif
     static const int64_t MIN_NEXT_TIME = 5;
 
-private:
 #ifdef SUPPORT_GRAPHICS
+private:
     /**
      * @brief Delete or release form with formId.
      *
@@ -1856,6 +1801,20 @@ private:
      * @return Returns true if the request is successfully initiated; returns false otherwise.
      */
     bool ReAcquireForm(const int64_t formId, const Want &want);
+
+    std::shared_ptr<AbilityWindow> abilityWindow_ = nullptr;
+    bool bWindowFocus_ = false;
+    bool showOnLockScreen_ = false;
+    std::vector<int64_t> lostedByReconnectTempForms_;
+    std::map<int64_t, std::shared_ptr<FormCallback>> appCallbacks_;
+    static const int32_t OHOS_FORM_ACQUIRE_FORM = 0;
+    static const int32_t OHOS_FORM_UPDATE_FORM = 1;
+
+    static const int32_t DELETE_FORM = 3;
+    static const int32_t ENABLE_FORM_UPDATE = 5;
+    static const int32_t DISABLE_FORM_UPDATE = 6;
+    static const int32_t RELEASE_FORM = 8;
+    static const int32_t RELEASE_CACHED_FORM = 9;
 #endif
 };
 }  // namespace AppExecFwk

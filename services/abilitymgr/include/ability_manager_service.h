@@ -595,8 +595,6 @@ public:
 
     virtual int StopUser(int userId, const sptr<IStopUserCallback> &callback) override;
 
-    virtual int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label) override;
-
     /**
      * Called when client complete dump.
      *
@@ -607,6 +605,8 @@ public:
     virtual int DumpAbilityInfoDone(std::vector<std::string> &infos, const sptr<IRemoteObject> &callerToken) override;
 
 #ifdef SUPPORT_GRAPHICS
+    virtual int SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label) override;
+
     virtual int SetMissionIcon(const sptr<IRemoteObject> &token,
         const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
 
@@ -949,9 +949,6 @@ private:
 
     int32_t InitAbilityInfoFromExtension(AppExecFwk::ExtensionAbilityInfo &extensionInfo,
         AppExecFwk::AbilityInfo &abilityInfo);
-#ifdef SUPPORT_GRAPHICS
-    int32_t ShowPickerDialog(const Want& want, int32_t userId);
-#endif
 
     // multi user
     void StartFreezingScreen();
@@ -1041,9 +1038,7 @@ private:
 
     std::unordered_map<int, std::shared_ptr<MissionListManager>> missionListManagers_;
     std::shared_ptr<MissionListManager> currentMissionListManager_;
-#ifdef SUPPORT_GRAPHICS
-    sptr<IWindowManagerServiceHandler> wmsHandler_;
-#endif
+
     std::shared_ptr<UserController> userController_;
     sptr<AppExecFwk::IAbilityController> abilityController_ = nullptr;
     bool controllerIsAStabilityTest_ = false;
@@ -1053,6 +1048,12 @@ private:
     std::multimap<std::string, std::string> timeoutMap_;
 
     static sptr<AbilityManagerService> instance_;
+
+#ifdef SUPPORT_GRAPHICS
+    int32_t ShowPickerDialog(const Want& want, int32_t userId);
+
+    sptr<IWindowManagerServiceHandler> wmsHandler_;
+#endif
 };
 }  // namespace AAFwk
 }  // namespace OHOS

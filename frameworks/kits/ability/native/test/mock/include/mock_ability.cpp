@@ -67,18 +67,6 @@ void Ability::OnActive()
 void Ability::OnInactive()
 {}
 
-#ifdef SUPPORT_GRAPHICS
-void Ability::OnForeground(const Want &want)
-{
-    return;
-}
-
-void Ability::OnBackground()
-{
-    return;
-}
-#endif
-
 sptr<IRemoteObject> Ability::OnConnect(const Want &want)
 {
     return nullptr;
@@ -102,99 +90,11 @@ void Ability::StartAbility(const Want &want, AbilityStartSetting abilityStartSet
     return;
 }
 
-#ifdef SUPPORT_GRAPHICS
-bool Ability::OnKeyDown(int keyCode, const KeyEvent &keyEvent)
-{
-    return false;
-}
-
-bool Ability::OnKeyUp(int keyCode, const KeyEvent &keyEvent)
-{
-    return false;
-}
-
-bool Ability::OnTouchEvent(const TouchEvent &touchEvent)
-{
-    return false;
-}
-
-void Ability::SetUIContent(const ComponentContainer &componentContainer)
-{
-    return;
-}
-
-void Ability::SetUIContent(int layoutRes)
-{
-    return;
-}  // namespace AppExecFwk
-
-void Ability::SetUIContent(
-    const ComponentContainer &componentContainer, std::shared_ptr<Context> &context, int typeFlag)
-{
-    return;
-}
-
-void Ability::SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int typeFlag)
-{
-    return;
-}
-
-/**
- * @brief Inflates UI controls by using WindowConfig.
- *
- * @param config Indicates the window config defined by the user.
- */
-void Ability::SetUIContent(const WindowConfig &config)
-{
-    if (abilityWindow_ == nullptr) {
-        HILOG_ERROR("Ability::SetUIContent abilityWindow_ is nullptr");
-        return;
-    }
-
-    HILOG_INFO("Ability::SetUIContent called");
-    abilityWindow_->SetWindowConfig(config);
-}
-
-/**
- * @brief Get the window belong to the ability.
- *
- * @return Returns a IWindowsManager object pointer.
- */
-std::unique_ptr<Window> &Ability::GetWindow(int windowID)
-{
-    HILOG_INFO("Ability::GetWindow called windowID = %d.", windowID);
-
-    return abilityWindow_->GetWindow(windowID);
-}
-
-int Ability::GetVolumeTypeAdjustedByKey()
-{
-    return 0;
-}
-
-bool Ability::HasWindowFocus()
-{
-    return false;
-}
-
-bool Ability::OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &keyEvent)
-{
-    return false;
-}
-#endif
-
 void Ability::OnRequestPermissionsFromUserResult(
     int requestCode, const std::vector<std::string> &permissions, const std::vector<int> &grantResults)
 {
     return;
 }
-
-#ifdef SUPPORT_GRAPHICS
-void Ability::OnLeaveForeground()
-{
-    return;
-}
-#endif
 
 std::string Ability::GetType(const Uri &uri)
 {
@@ -272,13 +172,6 @@ void Ability::OnEventDispatch()
     return;
 }
 
-#ifdef SUPPORT_GRAPHICS
-void Ability::OnWindowFocusChanged(bool hasFocus)
-{
-    return;
-}
-#endif
-
 void Ability::SetWant(const AAFwk::Want &want)
 {
     setWant_ = std::make_shared<AAFwk::Want>(want);
@@ -301,13 +194,6 @@ void Ability::SetResult(int resultCode, const Want &resultData)
         AbilityContext::resultCode_ = resultCode;
     }
 }
-
-#ifdef SUPPORT_GRAPHICS
-void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
-{
-    return;
-}
-#endif
 
 void Ability::OnCommand(const AAFwk::Want &want, bool restart, int startId)
 {
@@ -442,6 +328,110 @@ void Ability::AddActionRoute(const std::string &action, const std::string &entry
 }
 
 #ifdef SUPPORT_GRAPHICS
+void Ability::OnForeground(const Want &want)
+{
+    return;
+}
+
+void Ability::OnBackground()
+{
+    return;
+}
+
+bool Ability::OnKeyDown(int keyCode, const KeyEvent &keyEvent)
+{
+    return false;
+}
+
+bool Ability::OnKeyUp(int keyCode, const KeyEvent &keyEvent)
+{
+    return false;
+}
+
+bool Ability::OnTouchEvent(const TouchEvent &touchEvent)
+{
+    return false;
+}
+
+void Ability::SetUIContent(const ComponentContainer &componentContainer)
+{
+    return;
+}
+
+void Ability::SetUIContent(int layoutRes)
+{
+    return;
+}  // namespace AppExecFwk
+
+void Ability::SetUIContent(
+    const ComponentContainer &componentContainer, std::shared_ptr<Context> &context, int typeFlag)
+{
+    return;
+}
+
+void Ability::SetUIContent(int layoutRes, std::shared_ptr<Context> &context, int typeFlag)
+{
+    return;
+}
+
+/**
+ * @brief Inflates UI controls by using WindowConfig.
+ *
+ * @param config Indicates the window config defined by the user.
+ */
+void Ability::SetUIContent(const WindowConfig &config)
+{
+    if (abilityWindow_ == nullptr) {
+        HILOG_ERROR("Ability::SetUIContent abilityWindow_ is nullptr");
+        return;
+    }
+
+    HILOG_INFO("Ability::SetUIContent called");
+    abilityWindow_->SetWindowConfig(config);
+}
+
+/**
+ * @brief Get the window belong to the ability.
+ *
+ * @return Returns a IWindowsManager object pointer.
+ */
+std::unique_ptr<Window> &Ability::GetWindow(int windowID)
+{
+    HILOG_INFO("Ability::GetWindow called windowID = %d.", windowID);
+
+    return abilityWindow_->GetWindow(windowID);
+}
+
+int Ability::GetVolumeTypeAdjustedByKey()
+{
+    return 0;
+}
+
+bool Ability::HasWindowFocus()
+{
+    return false;
+}
+
+bool Ability::OnKeyPressAndHold(int keyCode, const std::shared_ptr<KeyEvent> &keyEvent)
+{
+    return false;
+}
+
+void Ability::OnLeaveForeground()
+{
+    return;
+}
+
+void Ability::OnWindowFocusChanged(bool hasFocus)
+{
+    return;
+}
+
+void Ability::SetVolumeTypeAdjustedByKey(int volumeType)
+{
+    return;
+}
+
 int Ability::SetWindowBackgroundColor(int red, int green, int blue)
 {
     return -1;

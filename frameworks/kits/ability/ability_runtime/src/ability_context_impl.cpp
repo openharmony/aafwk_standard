@@ -455,6 +455,13 @@ ErrCode AbilityContextImpl::ReleaseAbility(const std::shared_ptr<CallerCallBack>
     return localCallContainer_->Release(callback);
 }
 
+void AbilityContextImpl::RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback)
+{
+    HILOG_INFO("%{public}s called.", __func__);
+    abilityCallback_ = abilityCallback;
+}
+
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityContextImpl::SetMissionLabel(const std::string &label)
 {
     HILOG_INFO("%{public}s begin. label = %{public}s", __func__, label.c_str());
@@ -465,7 +472,6 @@ ErrCode AbilityContextImpl::SetMissionLabel(const std::string &label)
     return err;
 }
 
-#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityContextImpl::SetMissionIcon(const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {
     HILOG_INFO("%{public}s begin.", __func__);
@@ -475,15 +481,7 @@ ErrCode AbilityContextImpl::SetMissionIcon(const std::shared_ptr<OHOS::Media::Pi
     }
     return err;
 }
-#endif
 
-void AbilityContextImpl::RegisterAbilityCallback(std::weak_ptr<AppExecFwk::IAbilityCallback> abilityCallback)
-{
-    HILOG_INFO("%{public}s called.", __func__);
-    abilityCallback_ = abilityCallback;
-}
-
-#ifdef SUPPORT_GRAPHICS
 int AbilityContextImpl::GetCurrentWindowMode()
 {
     HILOG_INFO("%{public}s called.", __func__);

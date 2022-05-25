@@ -199,26 +199,6 @@ int MockAbilityDelegatorStub::BlockAppService()
     return 0;
 }
 
-#ifdef ABILITY_COMMAND_FOR_TEST
-int MockAbilityDelegatorStub::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
-{
-    return 0;
-}
-#endif
-
-#ifdef SUPPORT_GRAPHICS
-int MockAbilityDelegatorStub::SetMissionIcon(
-    const sptr<IRemoteObject> &token, const std::shared_ptr<OHOS::Media::PixelMap> &icon)
-{
-    return 0;
-}
-
-int MockAbilityDelegatorStub::RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler)
-{
-    return 0;
-}
-#endif
-
 bool MockAbilityDelegatorStub2::finishFlag_ = false;
 
 MockAbilityDelegatorStub2::MockAbilityDelegatorStub2()
@@ -396,6 +376,11 @@ int MockAbilityDelegatorStub2::BlockAppService()
 }
 
 #ifdef ABILITY_COMMAND_FOR_TEST
+int MockAbilityDelegatorStub::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
+{
+    return 0;
+}
+
 int MockAbilityDelegatorStub2::ForceTimeoutForTest(const std::string &abilityName, const std::string &state)
 {
     return 0;
@@ -403,6 +388,17 @@ int MockAbilityDelegatorStub2::ForceTimeoutForTest(const std::string &abilityNam
 #endif
 
 #ifdef SUPPORT_GRAPHICS
+int MockAbilityDelegatorStub::SetMissionIcon(
+    const sptr<IRemoteObject> &token, const std::shared_ptr<OHOS::Media::PixelMap> &icon)
+{
+    return 0;
+}
+
+int MockAbilityDelegatorStub::RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler)
+{
+    return 0;
+}
+
 int MockAbilityDelegatorStub2::SetMissionIcon(
     const sptr<IRemoteObject> &token, const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {

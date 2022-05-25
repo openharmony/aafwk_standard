@@ -71,15 +71,6 @@ public:
      */
     void DeleteMissionSnapshot(int32_t missionId);
 
-#ifdef SUPPORT_GRAPHICS
-    /**
-     * @brief Get the Snapshot object
-     * @param missionId Indicates this mission id.
-     * @return Returns PixelMap of snapshot.
-     */
-    sptr<Media::PixelMap> GetSnapshot(int missionId) const;
-#endif
-
     /**
      * @brief Get the Mission Snapshot object
      * @param missionId
@@ -87,6 +78,21 @@ public:
      * @return Returns true if this function is successfully called; returns false otherwise.
      */
     bool GetMissionSnapshot(int32_t missionId, MissionSnapshot& missionSnapshot);
+
+#ifdef SUPPORT_GRAPHICS
+public:
+    /**
+     * @brief Get the Snapshot object
+     * @param missionId Indicates this mission id.
+     * @return Returns PixelMap of snapshot.
+     */
+    sptr<Media::PixelMap> GetSnapshot(int missionId) const;
+    
+    std::unique_ptr<Media::PixelMap> GetPixelMap(int missionId) const;
+
+private:
+    std::map<int32_t, std::shared_ptr<Media::PixelMap>> cachedPixelMap_;
+#endif
 
 private:
     std::string GetMissionDataDirPath() const;
@@ -107,17 +113,9 @@ private:
 
     void SaveSnapshotFile(int32_t missionId, const MissionSnapshot& missionSnapshot);
 
-#ifdef SUPPORT_GRAPHICS
-    std::unique_ptr<Media::PixelMap> GetPixelMap(int missionId) const;
-#endif
-
-private:
     int userId_ = 0;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
     std::mutex cachedPixelMapMutex_;
-#ifdef SUPPORT_GRAPHICS
-    std::map<int32_t, std::shared_ptr<Media::PixelMap>> cachedPixelMap_;
-#endif
 };
 }  // namespace AAFwk
 }  // namespace OHOS
