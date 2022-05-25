@@ -27,6 +27,7 @@ ohos_unittest("ability_manager_client_test") {
 
   sources = [
     "${services_path}/abilitymgr/src/ability_manager_client.cpp",
+    "${services_path}/common/src/event_report.cpp",
     "ability_manager_client_test.cpp",
   ]
 
@@ -45,7 +46,6 @@ ohos_unittest("ability_manager_client_test") {
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
-    "${services_path}/common:perm_verification",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",
