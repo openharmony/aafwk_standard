@@ -165,7 +165,7 @@ ohos_shared_library("fmskit_native") {
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "form_runtime:form_manager",
-    "hisysevent_native:libhisysevent",
+    "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
