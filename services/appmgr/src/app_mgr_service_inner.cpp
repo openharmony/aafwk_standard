@@ -369,7 +369,8 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::SendAppEvent(AAFWK::APP_FOREGROUND, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_FOREGROUND,
+        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
@@ -399,7 +400,8 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::SendAppEvent(AAFWK::APP_BACKGROUND, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_BACKGROUND,
+        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
