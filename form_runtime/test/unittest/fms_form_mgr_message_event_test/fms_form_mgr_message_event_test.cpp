@@ -32,7 +32,9 @@
 #include "mock_ability_manager.h"
 #include "mock_bundle_manager.h"
 #include "mock_form_host_client.h"
+#ifdef SUPPORT_POWER
 #include "power_mgr_client.h"
+#endif
 #include "running_process_info.h"
 #include "system_ability_definition.h"
 
@@ -133,13 +135,14 @@ HWTEST_F(FmsFormMgrMessageEventTest, MessageEvent_001, TestSize.Level0)
     want.SetElementName(DEVICE_ID, FORM_PROVIDER_BUNDLE_NAME, FORM_PROVIDER_ABILITY_NAME);
     want.SetParam(Constants::PARAM_MESSAGE_KEY, FORM_MESSAGE_EVENT_VALUE_1);
 
+#ifdef SUPPORT_POWER
     bool screenOnFlag = PowerMgr::PowerMgrClient::GetInstance().IsScreenOn();
     if (!screenOnFlag) {
         EXPECT_EQ(ERR_APPEXECFWK_FORM_COMMON_CODE, FormMgr::GetInstance().MessageEvent(formId, want, token_));
     } else {
         EXPECT_EQ(ERR_OK, FormMgr::GetInstance().MessageEvent(formId, want, token_));
     }
-
+#endif
     GTEST_LOG_(INFO) << "fms_form_mgr_message_event_test_001 end";
 }
 

@@ -589,6 +589,7 @@ public:
      */
     ErrCode RegisterSnapshotHandler(const sptr<ISnapshotHandler>& handler);
 
+#ifdef SUPPORT_GRAPHICS
     /**
      * Set mission label of this ability.
      *
@@ -598,7 +599,6 @@ public:
      */
     ErrCode SetMissionLabel(const sptr<IRemoteObject> &abilityToken, const std::string &label);
 
-#ifdef SUPPORT_GRAPHICS
     /**
      * Set mission icon of this ability.
      *
