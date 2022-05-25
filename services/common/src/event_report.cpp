@@ -66,7 +66,8 @@ void EventReport::SendAbilityEvent(const std::string &eventName, OHOS::HiviewDFX
             EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
             EVENT_KEY_ABILITY_NAME, eventInfo.abilityName,
             EVENT_KEY_ERROR_CODE, eventInfo.errCode);
-    } else if (eventName == START_ABILITY_ERROR)
+    }
+    else if (eventName == START_ABILITY_ERROR)
     {
         OHOS::HiviewDFX::HiSysEvent::Write(
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
@@ -76,14 +77,16 @@ void EventReport::SendAbilityEvent(const std::string &eventName, OHOS::HiviewDFX
             EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
             EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
             EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
-    } else if (eventName == DO_FOREGROUND_ABILITY | eventName == DO_BACKGROUND_ABILITY)
+    }
+    else if (eventName == DO_FOREGROUND_ABILITY | eventName == DO_BACKGROUND_ABILITY)
     {
         OHOS::HiviewDFX::HiSysEvent::Write(
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
             eventName,
             type,
             EVENT_KEY_SCENE_FLAG, eventInfo.sceneFlag);
-    } else
+    }
+    else
     {
         OHOS::HiviewDFX::HiSysEvent::Write(
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
@@ -101,7 +104,8 @@ void EventReport::SendExtensionEvent(const std::string &eventName, OHOS::HiviewD
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
             eventName,
             type);
-    } else if (eventName ==CONNECT_SERVICE)
+    }
+    else if (eventName ==CONNECT_SERVICE)
     {
         OHOS::HiviewDFX::HiSysEvent::Write(
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
@@ -111,7 +115,8 @@ void EventReport::SendExtensionEvent(const std::string &eventName, OHOS::HiviewD
             EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
             EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
             EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
-    } else if (eventName == START_SERVICE_EXTENSION | eventName == STOP_SERVICE_EXTENSION)
+    }
+    else if (eventName == START_SERVICE_EXTENSION | eventName == STOP_SERVICE_EXTENSION)
     {
         OHOS::HiviewDFX::HiSysEvent::Write(
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
@@ -122,7 +127,8 @@ void EventReport::SendExtensionEvent(const std::string &eventName, OHOS::HiviewD
             EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
             EVENT_KEY_ABILITY_NAME, eventInfo.abilityName,
             EVENT_KEY_EXTENSION_TYPE, eventInfo.extensionType);
-    } else
+    }
+    else
     {
         OHOS::HiviewDFX::HiSysEvent::Write(
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
@@ -145,7 +151,8 @@ void EventReport::SendFormEvent(const std::string &eventName, OHOS::HiviewDFX::H
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
             eventName,
             type);
-    } else if (eventName == ACQUIREFORMSTATE_FORM | eventName == MESSAGE_EVENT_FORM)
+    }
+    else if (eventName == ACQUIREFORMSTATE_FORM | eventName == MESSAGE_EVENT_FORM)
     {
         OHOS::HiviewDFX::HiSysEvent::Write(
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
@@ -154,7 +161,8 @@ void EventReport::SendFormEvent(const std::string &eventName, OHOS::HiviewDFX::H
             EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
             EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
             EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
-    } else if (eventName == ADD_FORM | eventName == REQUEST_FORM | eventName == ROUTE_EVENT_FORM)
+    }
+    else if (eventName == ADD_FORM | eventName == REQUEST_FORM | eventName == ROUTE_EVENT_FORM)
     {
         OHOS::HiviewDFX::HiSysEvent::Write(
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
@@ -164,7 +172,8 @@ void EventReport::SendFormEvent(const std::string &eventName, OHOS::HiviewDFX::H
             EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
             EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
             EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
-    } else
+    }
+    else
     {
         OHOS::HiviewDFX::HiSysEvent::Write(
             OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
@@ -172,8 +181,6 @@ void EventReport::SendFormEvent(const std::string &eventName, OHOS::HiviewDFX::H
             type,
             EVENT_KEY_ABILITY_NAME, eventInfo.formId);
     }
-    
-    
 }
 }  // namespace AAFWK
 }  // namespace OHOS
