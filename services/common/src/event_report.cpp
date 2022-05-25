@@ -19,8 +19,6 @@
 
 #include <chrono>
 
-using HiSysEvent =  OHOS::HiviewDFX::HiSysEvent;
-
 namespace OHOS {
 namespace AAFWK {
 namespace {
@@ -37,14 +35,16 @@ const std::string EVENT_KEY_MODULE_NAME = "MODULE_NAME";
 const std::string EVENT_KEY_ABILITY_NAME = "ABILITY_NAME";
 const std::string EVENT_KEY_VERSION_NAME = "VERSION_NAME";
 const std::string EVENT_KEY_VERSION_CODE = "VERSION_CODE";
+const std::string EVENT_KEY_EXTENSION_TYPE = "EXTENSION_TYPE";
 }
 
-void EventReport::SendAppEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo)
+void EventReport::SendAppEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+    const EventInfo& eventInfo)
 {
-    HiSysEvent::Write(
-        HiSysEvent::Domain::AAFWK,
+    OHOS::HiviewDFX::HiSysEvent::Write(
+        OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
         eventName,
-        static_cast<HiSysEvent::EventType>(type),
+        type,
         EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
         EVENT_KEY_VERSION_NAME, eventInfo.versionName,
         EVENT_KEY_VERSION_CODE, eventInfo.versionCode,
@@ -52,43 +52,128 @@ void EventReport::SendAppEvent(const std::string &eventName, HiSysEventType type
         EVENT_KEY_TIME_STAMP, eventInfo.timeStamp);
 }
 
-void EventReport::SendAbilityEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo)
+void EventReport::SendAbilityEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+    const EventInfo& eventInfo)
 {
-    HiSysEvent::Write(
-        HiSysEvent::Domain::AAFWK,
-        eventName,
-        static_cast<HiSysEvent::EventType>(type),
-        EVENT_KEY_USERID, eventInfo.userId,
-        EVENT_KEY_SCENE_FLAG, eventInfo.sceneFlag,
-        EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
-        EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
-        EVENT_KEY_ABILITY_NAME, eventInfo.abilityName,
-        EVENT_KEY_ERROR_CODE, eventInfo.errCode);
+    if (eventName == START_ABILITY_ERROR | eventName == TERMINATE_ABILITY_ERROR)
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type,
+            EVENT_KEY_USERID, eventInfo.userId,
+            EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
+            EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
+            EVENT_KEY_ABILITY_NAME, eventInfo.abilityName,
+            EVENT_KEY_ERROR_CODE, eventInfo.errCode);
+    } else if (eventName == START_ABILITY_ERROR)
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type,
+            EVENT_KEY_USERID, eventInfo.userId,
+            EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
+            EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
+            EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
+    } else if (eventName == DO_FOREGROUND_ABILITY | eventName == DO_BACKGROUND_ABILITY)
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type,
+            EVENT_KEY_SCENE_FLAG, eventInfo.sceneFlag);
+    } else
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type);
+    }
 }
 
-void EventReport::SendExtensionEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo)
+void EventReport::SendExtensionEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+    const EventInfo& eventInfo)
 {
-    HiSysEvent::Write(
-        HiSysEvent::Domain::AAFWK,
-        eventName,
-        static_cast<HiSysEvent::EventType>(type),
-        EVENT_KEY_USERID, eventInfo.userId,
-        EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
-        EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
-        EVENT_KEY_ABILITY_NAME, eventInfo.abilityName,
-        EVENT_KEY_ERROR_CODE, eventInfo.errCode);
+    if (eventName == DISCONNECT_SERVICE)
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type);
+    } else if (eventName ==CONNECT_SERVICE)
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type,
+            EVENT_KEY_USERID, eventInfo.userId,
+            EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
+            EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
+            EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
+    } else if (eventName == START_SERVICE_EXTENSION | eventName == STOP_SERVICE_EXTENSION)
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type,
+            EVENT_KEY_USERID, eventInfo.userId,
+            EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
+            EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
+            EVENT_KEY_ABILITY_NAME, eventInfo.abilityName,
+            EVENT_KEY_EXTENSION_TYPE, eventInfo.extensionType);
+    } else
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type,
+            EVENT_KEY_USERID, eventInfo.userId,
+            EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
+            EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
+            EVENT_KEY_ABILITY_NAME, eventInfo.abilityName,
+            EVENT_KEY_ERROR_CODE, eventInfo.errCode);
+    }
 }
 
-void EventReport::SendFormEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo)
+void EventReport::SendFormEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+    const EventInfo& eventInfo)
 {
-    HiSysEvent::Write(
-        HiSysEvent::Domain::AAFWK,
-        eventName,
-        static_cast<HiSysEvent::EventType>(type),
-        EVENT_KEY_ABILITY_NAME, eventInfo.formId,
-        EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
-        EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
-        EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
+    if (eventName == DELETE_INVALID_FORM)
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type);
+    } else if (eventName == ACQUIREFORMSTATE_FORM | eventName == MESSAGE_EVENT_FORM)
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type,
+            EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
+            EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
+            EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
+    } else if (eventName == ADD_FORM | eventName == REQUEST_FORM | eventName == ROUTE_EVENT_FORM)
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type,
+            EVENT_KEY_ABILITY_NAME, eventInfo.formId,
+            EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
+            EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
+            EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
+    } else
+    {
+        OHOS::HiviewDFX::HiSysEvent::Write(
+            OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
+            eventName,
+            type,
+            EVENT_KEY_ABILITY_NAME, eventInfo.formId);
+    }
+    
+    
 }
 }  // namespace AAFWK
 }  // namespace OHOS

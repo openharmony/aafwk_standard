@@ -41,6 +41,7 @@
 #include "string_ex.h"
 #include "system_ability_definition.h"
 #include "event_report.h"
+#include "hisysevent.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -97,7 +98,7 @@ int FormMgrService::AddForm(const int64_t formId, const Want &want,
     eventInfo.bundleName = want.GetElement().GetBundleName();
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendFormEvent(AAFWK::ADD_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendFormEvent(AAFWK::ADD_FORM, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
     if (ret != ERR_OK) {
         HILOG_ERROR("%{public}s fail, add form permission denied", __func__);
         return ret;
@@ -120,7 +121,7 @@ int FormMgrService::DeleteForm(const int64_t formId, const sptr<IRemoteObject> &
     }
     AAFWK::EventInfo eventInfo;
     eventInfo.userId = formId;
-    AAFWK::EventReport::SendFormEvent(AAFWK::DELETE_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendFormEvent(AAFWK::DELETE_FORM, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 
     return FormMgrAdapter::GetInstance().DeleteForm(formId, callerToken);
 }
@@ -141,7 +142,7 @@ int FormMgrService::ReleaseForm(const int64_t formId, const sptr<IRemoteObject> 
     }
     AAFWK::EventInfo eventInfo;
     eventInfo.userId = formId;
-    AAFWK::EventReport::SendFormEvent(AAFWK::RELEASE_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendFormEvent(AAFWK::RELEASE_FORM, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 
     return FormMgrAdapter::GetInstance().ReleaseForm(formId, callerToken, delCache);
 }
@@ -191,7 +192,7 @@ int FormMgrService::RequestForm(const int64_t formId, const sptr<IRemoteObject> 
     eventInfo.bundleName = want.GetElement().GetBundleName();
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendFormEvent(AAFWK::REQUEST_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendFormEvent(AAFWK::REQUEST_FORM, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 
     return FormMgrAdapter::GetInstance().RequestForm(formId, callerToken, want);
 }
@@ -208,7 +209,7 @@ int FormMgrService::SetNextRefreshTime(const int64_t formId, const int64_t nextT
     HILOG_INFO("%{public}s called.", __func__);
     AAFWK::EventInfo eventInfo;
     eventInfo.userId = formId;
-    AAFWK::EventReport::SendFormEvent(AAFWK::SET_NEXT_REFRESH_TIME_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendFormEvent(AAFWK::SET_NEXT_REFRESH_TIME_FORM, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 
     return FormMgrAdapter::GetInstance().SetNextRefreshTime(formId, nextTime);
 }
@@ -248,7 +249,7 @@ int FormMgrService::CastTempForm(const int64_t formId, const sptr<IRemoteObject>
     }
     AAFWK::EventInfo eventInfo;
     eventInfo.userId = formId;
-    AAFWK::EventReport::SendFormEvent(AAFWK::CASTTEMP_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendFormEvent(AAFWK::CASTTEMP_FORM, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
 
     return FormMgrAdapter::GetInstance().CastTempForm(formId, callerToken);
 }
@@ -335,7 +336,7 @@ int FormMgrService::MessageEvent(const int64_t formId, const Want &want, const s
     eventInfo.bundleName = want.GetElement().GetBundleName();
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendFormEvent(AAFWK::MESSAGE_EVENT_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendFormEvent(AAFWK::MESSAGE_EVENT_FORM, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
     return FormMgrAdapter::GetInstance().MessageEvent(formId, want, callerToken);
 }
 
@@ -358,7 +359,7 @@ int FormMgrService::RouterEvent(const int64_t formId, Want &want)
     eventInfo.bundleName = want.GetElement().GetBundleName();
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendFormEvent(AAFWK::ROUTE_EVENT_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendFormEvent(AAFWK::ROUTE_EVENT_FORM, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
     return FormMgrAdapter::GetInstance().RouterEvent(formId, want);
 }
 
@@ -531,7 +532,7 @@ int FormMgrService::DeleteInvalidForms(const std::vector<int64_t> &formIds, cons
         return ret;
     }
     AAFWK::EventInfo eventInfo;
-    AAFWK::EventReport::SendFormEvent(AAFWK::DELETE_INVALID_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendFormEvent(AAFWK::DELETE_INVALID_FORM, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
     return FormMgrAdapter::GetInstance().DeleteInvalidForms(formIds, callerToken, numFormsDeleted);
 }
 
@@ -554,7 +555,7 @@ int FormMgrService::AcquireFormState(const Want &want, const sptr<IRemoteObject>
     eventInfo.bundleName = want.GetElement().GetBundleName();
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendFormEvent(AAFWK::ACQUIREFORMSTATE_FORM, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendFormEvent(AAFWK::ACQUIREFORMSTATE_FORM, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
     return FormMgrAdapter::GetInstance().AcquireFormState(want, callerToken, stateInfo);
 }
 

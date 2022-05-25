@@ -49,11 +49,11 @@ THREAD_BLOCK_6S:
 # fault event
 
 START_ABILITY_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: start ability error}
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: start ability error}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 TERMINATE_ABILITY_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: terminate ability error}
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: terminate ability error}
   USER_ID: {type: INT32, desc: userId}
   ERROR_CODE: {type: INT32, desc: error code}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
@@ -61,7 +61,7 @@ TERMINATE_ABILITY_ERROR:
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 START_EXTENSION_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: start extensionAbility error}
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: start extensionAbility error}
   USER_ID: {type: INT32, desc: userId}
   ERROR_CODE: {type: INT32, desc: error code}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
@@ -69,7 +69,7 @@ START_EXTENSION_ERROR:
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 STOP_EXTENSION_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: stop extensionAbility error}
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: stop extensionAbility error}
   USER_ID: {type: INT32, desc: userId}
   ERROR_CODE: {type: INT32, desc: error code}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
@@ -77,7 +77,7 @@ STOP_EXTENSION_ERROR:
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 CONNECT_SERVICE_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: connnect serviceExtensionAbility error}
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: connnect serviceExtensionAbility error}
   USER_ID: {type: INT32, desc: userId}
   ERROR_CODE: {type: INT32, desc: error code}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
@@ -85,7 +85,7 @@ CONNECT_SERVICE_ERROR:
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 DISCONNECT_SERVICE_ERROR:
-  __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: disconnect serviceExtensionAbility error}
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: disconnect serviceExtensionAbility error}
   USER_ID: {type: INT32, desc: userId}
   ERROR_CODE: {type: INT32, desc: error code}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
@@ -95,30 +95,30 @@ DISCONNECT_SERVICE_ERROR:
 # ability behavior event
 
 START_ABILITY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: start ability}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: start ability}
   USER_ID: {type: INT32, desc: userId}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
   MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 DO_FOREGROUND_ABILITY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: foreground ability}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: foreground ability}
   SCENE_FLAG: {type: STRING, desc: scene flag}
 
 DO_BACKGROUND_ABILITY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: background ability}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: background ability}
   SCENE_FLAG: {type: STRING, desc: scene flag}
 
 CLOSE_ABILITY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: close ability}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: close ability}
 
 TERMINATE_ABILITY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: terminate ability}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: terminate ability}
 
 # serviceExtensionAbility behavior event
 
 START_SERVICE_EXTENSION:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: start serviceExtensionAbility}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: start serviceExtensionAbility}
   USER_ID: {type: INT32, desc: userId}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
   MODULE_NAME: {type: STRING, desc: module name}
@@ -126,61 +126,61 @@ START_SERVICE_EXTENSION:
   EXTENSION_TYPE: {type: STRING, desc: extension type}
   
 STOP_SERVICE_EXTENSION:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: stop serviceExtensionAbility}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: stop serviceExtensionAbility}
   USER_ID: {type: INT32, desc: userId}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
   MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
   EXTENSION_TYPE: {type: STRING, desc: extension type}
   
-CONNECT_SERVICE_EXTENSION:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: connect serviceExtensionAbility}
+CONNECT_SERVICE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: connect serviceAbility}
   USER_ID: {type: INT32, desc: userId}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
   MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
-DISCONNECT_SERVICE_EXTENSION:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: disconnect serviceExtensionAbility}
+DISCONNECT_SERVICE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: disconnect serviceAbility}
 
 # app behavior event
 
 APP_ATTACH:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: attach app}
-  NAME: {type: STRING, desc: application name}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: app, desc: attach app}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
   VERSION_NAME: {type: STRING, desc: version name}
   VERSION_CODE: {type: INT32, desc: version code}
-  PROCESS: {type: STRING, desc: process}
+  PID: {type: INT32, desc: pid}
   TIME_STAMP: {type: INT32, desc: time stamp}
 
 APP_LAUNCH:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: launch app}
-  NAME: {type: STRING, desc: application name}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: app, desc: launch app}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
   VERSION_NAME: {type: STRING, desc: version name}
   VERSION_CODE: {type: INT32, desc: version code}
-  PROCESS: {type: STRING, desc: process}
+  PID: {type: INT32, desc: pid}
   TIME_STAMP: {type: INT32, desc: time stamp}
 
 APP_FOREGROUND:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: foreground app}
-  NAME: {type: STRING, desc: application name}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: app, desc: foreground app}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
   VERSION_NAME: {type: STRING, desc: version name}
   VERSION_CODE: {type: INT32, desc: version code}
-  PROCESS: {type: STRING, desc: process}
+  PID: {type: INT32, desc: pid}
   TIME_STAMP: {type: INT32, desc: time stamp}
 
 APP_BACKGROUND:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: background app}
-  NAME: {type: STRING, desc: application name}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: app, desc: background app}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
   VERSION_NAME: {type: STRING, desc: version name}
   VERSION_CODE: {type: INT32, desc: version code}
-  PROCESS: {type: STRING, desc: process}
+  PID: {type: INT32, desc: pid}
   TIME_STAMP: {type: INT32, desc: time stamp}
 
 APP_TERMINATE:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: terminate app}
-  NAME: {type: STRING, desc: application name}
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: app, desc: terminate app}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
   VERSION_NAME: {type: STRING, desc: version name}
   VERSION_CODE: {type: INT32, desc: version code}
-  PROCESS: {type: STRING, desc: process}
+  PID: {type: INT32, desc: pid}
   TIME_STAMP: {type: INT32, desc: time stamp}
