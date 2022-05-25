@@ -28,6 +28,7 @@ bool CallerInfo::ReadFromParcel(Parcel &parcel)
     deviceId = Str16ToStr8(parcel.ReadString16());
     bundleName = Str16ToStr8(parcel.ReadString16());
     abilityName = Str16ToStr8(parcel.ReadString16());
+    moduleName = Str16ToStr8(parcel.ReadString16());
     return true;
 }
 
@@ -57,6 +58,10 @@ bool CallerInfo::Marshalling(Parcel &parcel) const
     }
     // write abilityName
     if (!parcel.WriteString16(Str8ToStr16(abilityName))) {
+        return false;
+    }
+    // write moduleName
+    if (!parcel.WriteString16(Str8ToStr16(moduleName))) {
         return false;
     }
     return true;

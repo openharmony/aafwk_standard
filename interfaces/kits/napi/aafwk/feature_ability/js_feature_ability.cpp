@@ -362,7 +362,7 @@ Want JsFeatureAbility::GetWant(DistributeReqParam &requestParam)
 
     if (!requestParam.GetBundleName().empty() && !requestParam.GetAbilityName().empty()) {
         want.SetElementName(requestParam.GetNetworkId(), requestParam.GetBundleName(),
-            requestParam.GetAbilityName());
+            requestParam.GetAbilityName(), requestParam.GetModuleName());
     } else {
         want.SetAction(requestParam.GetAction());
         for (auto entity : requestParam.GetEntities()) {

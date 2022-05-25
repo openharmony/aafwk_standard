@@ -51,10 +51,15 @@ struct ConnectionInfo {
         }
         if (connectCaller == that.connectCaller &&
             connectReceiver.GetBundleName() == that.connectReceiver.GetBundleName() &&
-            connectReceiver.GetAbilityName() < that.connectReceiver.GetAbilityName()) {
+            connectReceiver.GetModuleName() < that.connectReceiver.GetModuleName()) {
             return true;
         }
-
+        if (connectCaller == that.connectCaller &&
+            connectReceiver.GetBundleName() == that.connectReceiver.GetBundleName() &&
+            connectReceiver.GetModuleName() == that.connectReceiver.GetModuleName() &&
+            connectReceiver.GetAbilityName() == that.connectReceiver.GetAbilityName()) {
+            return true;
+        }
         return false;
     }
 };

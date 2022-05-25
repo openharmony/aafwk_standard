@@ -339,7 +339,8 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
     // no reused mission, create a new one.
     bool isSingleton = abilityRequest.abilityInfo.launchMode == AppExecFwk::LaunchMode::SINGLETON;
     std::string missionName = isSingleton ? AbilityUtil::ConvertBundleNameSingleton(
-        abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name) : abilityRequest.abilityInfo.bundleName;
+        abilityRequest.abilityInfo.bundleName, abilityRequest.abilityInfo.name, abilityRequest.abilityInfo.moduleName) :
+        abilityRequest.abilityInfo.bundleName;
 
     // try reuse mission info
     InnerMissionInfo info;
@@ -483,7 +484,7 @@ std::shared_ptr<Mission> MissionListManager::GetReusedMission(const AbilityReque
 
     std::shared_ptr<Mission> reUsedMission = nullptr;
     std::string missionName = AbilityUtil::ConvertBundleNameSingleton(abilityRequest.abilityInfo.bundleName,
-        abilityRequest.abilityInfo.name);
+        abilityRequest.abilityInfo.name, abilityRequest.abilityInfo.moduleName);
 
     // find launcher first.
     if (abilityRequest.abilityInfo.applicationInfo.isLauncherApp) {

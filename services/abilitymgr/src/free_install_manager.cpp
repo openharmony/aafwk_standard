@@ -67,12 +67,12 @@ bool FreeInstallManager::IsTopAbility(const sptr<IRemoteObject> &callerToken)
     }
 
     AppExecFwk::ElementName callerElementName = caller->GetWant().GetElement();
-    std::string callerBundleName;
-    std::string callerAbilityName;
-    callerBundleName = callerElementName.GetBundleName();
-    callerAbilityName = callerElementName.GetAbilityName();
+    std::string callerBundleName = callerElementName.GetBundleName();
+    std::string callerAbilityName = callerElementName.GetAbilityName();
+    std::string callerModuleName = callerElementName.GetModuleName();
     if (elementName.GetBundleName().compare(callerBundleName) == 0 &&
-        elementName.GetAbilityName().compare(callerAbilityName) == 0) {
+        elementName.GetAbilityName().compare(callerAbilityName) == 0 &&
+        elementName.GetModuleName().compare(callerModuleName) == 0) {
         HILOG_INFO("The ability is top ability.");
         return true;
     }

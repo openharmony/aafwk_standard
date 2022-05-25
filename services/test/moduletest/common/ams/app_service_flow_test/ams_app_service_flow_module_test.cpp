@@ -47,13 +47,13 @@ struct TestApplicationPreRunningRecord {
     {}
     sptr<IRemoteObject> GetToken(const std::string &abilityName) const
     {
-        auto abilityRecord = appRecord_->GetAbilityRunningRecord(abilityName);
+        auto abilityRecord = appRecord_->GetAbilityRunningRecord(abilityName, "");
         return abilityRecord ? abilityRecord->GetToken() : nullptr;
     }
 
     std::shared_ptr<AbilityRunningRecord> GetAbility(const std::string &abilityName) const
     {
-        return appRecord_->GetAbilityRunningRecord(abilityName);
+        return appRecord_->GetAbilityRunningRecord(abilityName, "");
     }
 
     virtual ~TestApplicationPreRunningRecord()
