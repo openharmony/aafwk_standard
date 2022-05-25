@@ -19,33 +19,32 @@
 
 #include <chrono>
 
+using HiSysEvent =  OHOS::HiviewDFX::HiSysEvent;
+
 namespace OHOS {
 namespace AAFWK {
 namespace {
 // event params
+const std::string TYPE = "TYPE";
 const std::string EVENT_KEY_PID = "PID";
-const std::string EVENT_KEY_UID = "UID";
-const std::string EVENT_KEY_RID = "RID";
-const std::string EVENT_KEY_ABILITY_NAME = "ABILITY_NAME";
-const std::string EVENT_KEY_ABILITY_TYPE = "ABILITY_TYPE";
-const std::string EVENT_KEY_MODEL_TYPE = "MODEL_TYPE";
+const std::string EVENT_KEY_USERID = "USERID";
+const std::string EVENT_KEY_FORM_ID = "FORM_ID";
+const std::string EVENT_KEY_TIME_STAMP = "TIME_STAMP";
+const std::string EVENT_KEY_ERROR_CODE = "ERROR_CODE";
+const std::string EVENT_KEY_SCENE_FLAG = "SCENE_FLAG";
 const std::string EVENT_KEY_BUNDLE_NAME = "BUNDLE_NAME";
-const std::string EVENT_KEY_DEVICEID = "DEVICEID";
-const std::string EVENT_KEY_URI = "URI";
-const std::string EVENT_KEY_ACTION = "ACTION";
-const std::string EVENT_KEY_APP_NAME = "APP_NAME";
+const std::string EVENT_KEY_MODULE_NAME = "MODULE_NAME";
+const std::string EVENT_KEY_ABILITY_NAME = "ABILITY_NAME";
 const std::string EVENT_KEY_VERSION_NAME = "VERSION_NAME";
 const std::string EVENT_KEY_VERSION_CODE = "VERSION_CODE";
-const std::string EVENT_KEY_TIME_STAMP = "TIME_STAMP";
-const std::string EVENT_KEY_FORM_ID = "FORM_ID";
-const std::string TYPE = "TYPE";
 }
 
 void EventReport::SendAppEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo)
 {
-    EventReport::EventWrite(
+    HiSysEvent::Write(
+        HiSysEvent::Domain::AAFWK,
         eventName,
-        type,
+        static_cast<HiSysEvent::EventType>(type),
         EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
         EVENT_KEY_VERSION_NAME, eventInfo.versionName,
         EVENT_KEY_VERSION_CODE, eventInfo.versionCode,
@@ -55,39 +54,41 @@ void EventReport::SendAppEvent(const std::string &eventName, HiSysEventType type
 
 void EventReport::SendAbilityEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo)
 {
-    EventReport::EventWrite(
+    HiSysEvent::Write(
+        HiSysEvent::Domain::AAFWK,
         eventName,
-        type,
-        EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
+        static_cast<HiSysEvent::EventType>(type),
+        EVENT_KEY_USERID, eventInfo.userId,
+        EVENT_KEY_SCENE_FLAG, eventInfo.sceneFlag,
+        EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
+        EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
+        EVENT_KEY_ABILITY_NAME, eventInfo.abilityName,
+        EVENT_KEY_ERROR_CODE, eventInfo.errCode);
 }
 
 void EventReport::SendExtensionEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo)
 {
-    EventReport::EventWrite(
+    HiSysEvent::Write(
+        HiSysEvent::Domain::AAFWK,
         eventName,
-        type,
-        EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
+        static_cast<HiSysEvent::EventType>(type),
+        EVENT_KEY_USERID, eventInfo.userId,
+        EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
+        EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
+        EVENT_KEY_ABILITY_NAME, eventInfo.abilityName,
+        EVENT_KEY_ERROR_CODE, eventInfo.errCode);
 }
 
 void EventReport::SendFormEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo)
 {
-    EventReport::EventWrite(
+    HiSysEvent::Write(
+        HiSysEvent::Domain::AAFWK,
         eventName,
-        type,
-        EVENT_KEY_ABILITY_NAME, eventInfo.formId);
-}
-
-template<typename... Types>
-void EventReport::EventWrite(
-    const std::string &eventName,
-    HiSysEventType type,
-    Types... keyValues)
-{
-    OHOS::HiviewDFX::HiSysEvent::Write(
-        OHOS::HiviewDFX::HiSysEvent::Domain::AAFWK,
-        eventName,
-        static_cast<OHOS::HiviewDFX::HiSysEvent::EventType>(type),
-        keyValues...);
+        static_cast<HiSysEvent::EventType>(type),
+        EVENT_KEY_ABILITY_NAME, eventInfo.formId,
+        EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
+        EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
+        EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
 }
 }  // namespace AAFWK
 }  // namespace OHOS

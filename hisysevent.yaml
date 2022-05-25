@@ -45,106 +45,105 @@ THREAD_BLOCK_6S:
   PACKAGE_NAME: {type: STRING, desc: package name}
   PROCESS_NAME: {type: STRING, desc: process name}
   MSG: {type: STRING, desc: application event message}
-  
+
+# fault event
+
 START_ABILITY_ERROR:
   __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: start ability error}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 TERMINATE_ABILITY_ERROR:
   __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: terminate ability error}
+  USER_ID: {type: INT32, desc: userId}
+  ERROR_CODE: {type: INT32, desc: error code}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 START_EXTENSION_ERROR:
   __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: start extensionAbility error}
+  USER_ID: {type: INT32, desc: userId}
+  ERROR_CODE: {type: INT32, desc: error code}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 STOP_EXTENSION_ERROR:
   __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: stop extensionAbility error}
+  USER_ID: {type: INT32, desc: userId}
+  ERROR_CODE: {type: INT32, desc: error code}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 CONNECT_SERVICE_ERROR:
   __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: connnect serviceExtensionAbility error}
+  USER_ID: {type: INT32, desc: userId}
+  ERROR_CODE: {type: INT32, desc: error code}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 DISCONNECT_SERVICE_ERROR:
   __BASE: {type: FAULT, level: MINOR, tag: IDENTIFICATION, desc: disconnect serviceExtensionAbility error}
+  USER_ID: {type: INT32, desc: userId}
+  ERROR_CODE: {type: INT32, desc: error code}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
-  
+
+# ability behavior event
+
 START_ABILITY:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: start ability}
+  USER_ID: {type: INT32, desc: userId}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
 
 DO_FOREGROUND_ABILITY:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: foreground ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
+  SCENE_FLAG: {type: STRING, desc: scene flag}
 
 DO_BACKGROUND_ABILITY:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: background ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
+  SCENE_FLAG: {type: STRING, desc: scene flag}
+
+CLOSE_ABILITY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: close ability}
 
 TERMINATE_ABILITY:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: terminate ability}
-  ABILITY_NAME: {type: STRING, desc: ability name}
 
-ABILITY_ONSTART:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle onstart}
-  ABILITY_NAME: {type: STRING, desc: ability name}
+# serviceExtensionAbility behavior event
 
-ABILITY_ONSTOP:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle onstop}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_ONFOREGROUND:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle onforeground}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_ONBACKGROUND:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle onbackground}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_WINDOWSTAGE_CREATE:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle windowstage create}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-ABILITY_WINDOWSTAGE_DESTORY:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: ability lifecycle windwostage destory}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-  
 START_SERVICE_EXTENSION:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: start serviceExtensionAbility}
+  USER_ID: {type: INT32, desc: userId}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
+  EXTENSION_TYPE: {type: STRING, desc: extension type}
   
 STOP_SERVICE_EXTENSION:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: stop serviceExtensionAbility}
+  USER_ID: {type: INT32, desc: userId}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
+  EXTENSION_TYPE: {type: STRING, desc: extension type}
   
 CONNECT_SERVICE_EXTENSION:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: connect serviceExtensionAbility}
+  USER_ID: {type: INT32, desc: userId}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
   ABILITY_NAME: {type: STRING, desc: ability name}
   
 DISCONNECT_SERVICE_EXTENSION:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: disconnect serviceExtensionAbility}
-  ABILITY_NAME: {type: STRING, desc: ability name}
 
-SERVICE_EXTENSION_ONSTART:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle onstart}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-SERVICE_EXTENSION_ONSTOP:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle onstop}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-SERVICE_EXTENSION_ONCONNECT:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle onconnect}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-SERVICE_EXTENSION_ONDISCONNECT:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle ondisconnect}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-
-SERVICE_EXTENSION_ONREQUEST:
-  __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: serviceExtensionAbility lifecycle onrequest}
-  ABILITY_NAME: {type: STRING, desc: ability name}
+# app behavior event
 
 APP_ATTACH:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: IDENTIFICATION, desc: attach app}

@@ -30,7 +30,6 @@ group("appms_target") {
 
 ohos_shared_library("libappms") {
   sources = [
-    "${services_path}/common/src/event_report.cpp",
     "src/ability_running_record.cpp",
     "src/ams_mgr_scheduler.cpp",
     "src/app_death_recipient.cpp",

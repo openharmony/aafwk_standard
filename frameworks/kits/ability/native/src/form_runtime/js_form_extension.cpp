@@ -29,7 +29,6 @@
 #include "napi_common_configuration.h"
 #include "napi_common_util.h"
 #include "napi_common_want.h"
-#include "event_report.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -151,9 +150,6 @@ OHOS::AppExecFwk::FormProviderInfo JsFormExtension::OnCreate(const OHOS::AAFwk::
     }
     formProviderInfo.SetFormData(formData);
     HILOG_INFO("%{public}s called end.", __func__);
-    AAFWK::EventInfo eventInfo;
-    eventInfo.formId = 0;
-    AAFWK::EventReport::SendFormEvent(AAFWK::FORM_LIFECYCLE_ONCREATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
     return formProviderInfo;
 }
 
@@ -171,9 +167,6 @@ void JsFormExtension::OnDestroy(const int64_t formId)
     NativeValue* nativeFormId = reinterpret_cast<NativeValue*>(napiFormId);
     NativeValue* argv[] = {nativeFormId};
     CallObjectMethod("onDestroy", argv, 1);
-    AAFWK::EventInfo eventInfo;
-    eventInfo.formId = formId;
-    AAFWK::EventReport::SendFormEvent(AAFWK::FORM_LIFECYCLE_ONCREATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void JsFormExtension::OnEvent(const int64_t formId, const std::string& message)
@@ -194,9 +187,6 @@ void JsFormExtension::OnEvent(const int64_t formId, const std::string& message)
     NativeValue* nativeMessage = reinterpret_cast<NativeValue*>(napiMessage);
     NativeValue* argv[] = {nativeFormId, nativeMessage};
     CallObjectMethod("onEvent", argv, ON_EVENT_PARAMS_SIZE);
-    AAFWK::EventInfo eventInfo;
-    eventInfo.formId = formId;
-    AAFWK::EventReport::SendFormEvent(AAFWK::FORM_LIFECYCLE_ONCREATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void JsFormExtension::OnUpdate(const int64_t formId)
@@ -213,9 +203,6 @@ void JsFormExtension::OnUpdate(const int64_t formId)
     NativeValue* nativeFormId = reinterpret_cast<NativeValue*>(napiFormId);
     NativeValue* argv[] = {nativeFormId};
     CallObjectMethod("onUpdate", argv, 1);
-    AAFWK::EventInfo eventInfo;
-    eventInfo.formId = formId;
-    AAFWK::EventReport::SendFormEvent(AAFWK::FORM_LIFECYCLE_ONCREATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void JsFormExtension::OnCastToNormal(const int64_t formId)
@@ -232,9 +219,6 @@ void JsFormExtension::OnCastToNormal(const int64_t formId)
     NativeValue* nativeFormId = reinterpret_cast<NativeValue*>(napiFormId);
     NativeValue* argv[] = {nativeFormId};
     CallObjectMethod("onCastToNormal", argv, 1);
-    AAFWK::EventInfo eventInfo;
-    eventInfo.formId = formId;
-    AAFWK::EventReport::SendFormEvent(AAFWK::FORM_LIFECYCLE_ONCREATE, AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void JsFormExtension::OnVisibilityChange(const std::map<int64_t, int32_t>& formEventsMap)
@@ -365,10 +349,6 @@ FormState JsFormExtension::OnAcquireFormState(const Want &want)
     } else {
         return (AppExecFwk::FormState) state;
     }
-    AAFWK::EventInfo eventInfo;
-    eventInfo.formId = 0;
-    AAFWK::EventReport::SendFormEvent(AAFWK::FORM_LIFECYCLE_ONACQUIREFORMSTATE,
-        AAFWK::HiSysEventType::BEHAVIOR, eventInfo);
 }
 } // namespace AbilityRuntime
 } // namespace OHOS
