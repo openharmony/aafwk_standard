@@ -76,7 +76,7 @@ std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::AddAbility(const sptr
     auto abilityRecord = std::make_shared<AbilityRunningRecord>(abilityInfo, token);
     abilityRecord->SetWant(want);
     if (appInfo_) {
-        abilityRecord->SetIsSingleUser(appInfo_->singleUser);
+        abilityRecord->SetIsSingleUser(appInfo_->singleton);
     }
     if (want) {
         abilityRecord->SetOwnerUserId(want->GetIntParam(ABILITY_OWNER_USERID, -1));
