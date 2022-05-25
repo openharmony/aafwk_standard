@@ -404,6 +404,23 @@ public:
     void NotifyCompleteContinuation(const std::string &deviceId, int32_t sessionId, bool isSuccess);
 
     /**
+     * ContinueMission, continue ability from mission center.
+     * @param deviceId, target deviceId.
+     * @param missionId, indicates which ability to continue.
+     * @param versionCode, version of the remote target ability.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode ContinueAbility(const std::string &deviceId, int32_t missionId, uint32_t versionCode);
+
+    /**
+     * notify continuation result to application.
+     * @param missionId, indicates which ability to notify.
+     * @param result, continuation result.
+     * @return
+     */
+    ErrCode NotifyContinuationResult(int32_t missionId, int32_t result);
+
+    /**
      * @brief Lock specified mission.
      * @param missionId The id of target mission.
      *

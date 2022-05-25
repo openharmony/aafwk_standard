@@ -1096,17 +1096,9 @@ int AbilityManagerService::ContinueMission(const std::string &srcDeviceId, const
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         return CHECK_PERMISSION_FAILED;
     }
-    MissionInfo missionInfo;
-    if (GetMissionInfo("", missionId, missionInfo) != ERR_OK) {
-        HILOG_ERROR("get local missionInfo failed");
-        return ERR_INVALID_VALUE;
-    }
-    std::string bundleName = missionInfo.want.GetBundle();
-    OHOS::AAFwk::Want want;
-    want.SetParams(wantParams);
-    want.SetParam(BUNDLE_NAME_KEY, bundleName);
+
     DistributedClient dmsClient;
-    return dmsClient.ContinueMission(srcDeviceId, dstDeviceId, missionId, callBack, want.GetParams());
+    return dmsClient.ContinueMission(srcDeviceId, dstDeviceId, missionId, callBack, wantParams);
 }
 
 int AbilityManagerService::ContinueAbility(const std::string &deviceId, int32_t missionId, uint32_t versionCode)
