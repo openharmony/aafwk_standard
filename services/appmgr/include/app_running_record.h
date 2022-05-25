@@ -233,10 +233,12 @@ public:
      * GetAbilityRunningRecord, Get ability record by the ability Name.
      *
      * @param abilityName, the ability name.
+     * @param ownerUserId, the owner userId of this ability.
      *
      * @return the ability record.
      */
-    std::shared_ptr<AbilityRunningRecord> GetAbilityRunningRecord(const std::string &abilityName) const;
+    std::shared_ptr<AbilityRunningRecord> GetAbilityRunningRecord(
+        const std::string &abilityName, int32_t ownerUserId = -1) const;
 
     std::shared_ptr<AbilityRunningRecord> GetAbilityRunningRecord(const int64_t eventId) const;
 

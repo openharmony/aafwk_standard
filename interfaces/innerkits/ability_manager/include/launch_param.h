@@ -42,6 +42,16 @@ enum LastExitReason {
 };
 
 /**
+ * @enum OnContinueResult
+ * OnContinueResult defines the result of onContinue.
+ */
+enum OnContinueResult {
+    ONCONTINUE_AGREE = 0,
+    ONCONTINUE_REJECT,
+    ONCONTINUE_MISMATCH
+};
+
+/**
  * @struct LaunchParam
  * LaunchParam is used to save information about ability launch param.
  */

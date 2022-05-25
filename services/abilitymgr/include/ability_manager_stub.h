@@ -129,8 +129,6 @@ private:
     int ReleaseInner(MessageParcel &data, MessageParcel &reply);
     int StartUserInner(MessageParcel &data, MessageParcel &reply);
     int StopUserInner(MessageParcel &data, MessageParcel &reply);
-    int SetMissionLabelInner(MessageParcel &data, MessageParcel &reply);
-    int SetMissionIconInner(MessageParcel &data, MessageParcel &reply);
     int GetAbilityRunningInfosInner(MessageParcel &data, MessageParcel &reply);
     int GetExtensionRunningInfosInner(MessageParcel &data, MessageParcel &reply);
     int GetProcessRunningInfosInner(MessageParcel &data, MessageParcel &reply);
@@ -155,6 +153,8 @@ private:
     int MoveMissionToFrontByOptionsInner(MessageParcel &data, MessageParcel &reply);
 
 #ifdef SUPPORT_GRAPHICS
+    int SetMissionLabelInner(MessageParcel &data, MessageParcel &reply);
+    int SetMissionIconInner(MessageParcel &data, MessageParcel &reply);
     int RegisterWindowManagerServiceHandlerInner(MessageParcel &data, MessageParcel &reply);
     int CompleteFirstFrameDrawingInner(MessageParcel &data, MessageParcel &reply);
 #endif

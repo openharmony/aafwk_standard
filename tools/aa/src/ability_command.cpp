@@ -32,7 +32,7 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 namespace AAFwk {
 namespace {
-const std::string SHORT_OPTIONS = "ch:d:a:b:p:s:CD";
+const std::string SHORT_OPTIONS = "ch:d:a:b:p:s:m:CD";
 constexpr struct option LONG_OPTIONS[] = {
     {"help", no_argument, nullptr, 'h'},
     {"device", required_argument, nullptr, 'd'},
@@ -40,6 +40,7 @@ constexpr struct option LONG_OPTIONS[] = {
     {"bundle", required_argument, nullptr, 'b'},
     {"power", required_argument, nullptr, 'p'},
     {"setting", required_argument, nullptr, 's'},
+    {"module", required_argument, nullptr, 'm'},
     {"cold-start", no_argument, nullptr, 'C'},
     {"debug", no_argument, nullptr, 'D'},
     {nullptr, 0, nullptr, 0},
@@ -487,7 +488,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                     // 'aa dump -i 10 -element -lastpage'
                     // 'aa dump -i 10 -render -lastpage'
                     // 'aa dump -i 10 -layer'
-                    if (strcmp(optarg, "astpage") && strcmp(optarg, "ayer")) {
+                    if ((optarg != nullptr) && strcmp(optarg, "astpage") && strcmp(optarg, "ayer")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -509,7 +510,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                     }
                 } else {
                     // 'aa dumpsys -i 10 -inspector'
-                    if (strcmp(optarg, "nspector")) {
+                    if ((optarg != nullptr) && strcmp(optarg, "nspector")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -524,7 +525,7 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                     isfirstCommand = true;
                 } else {
                     // 'aa dumpsys -i 10 -element'
-                    if (strcmp(optarg, "lement")) {
+                    if ((optarg != nullptr) && strcmp(optarg, "lement")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -553,7 +554,8 @@ ErrCode AbilityManagerShellCommand::RunAsDumpsysCommand()
                     // 'aa dump -i 10 -render'
                     // 'aa dump -i 10 -rotation'
                     // 'aa dump -i 10 -frontend'
-                    if (strcmp(optarg, "ender") && strcmp(optarg, "otation") && strcmp(optarg, "ontend")) {
+                    if ((optarg != nullptr) && strcmp(optarg, "ender") && strcmp(optarg, "otation") &&
+                        strcmp(optarg, "ontend")) {
                         result = OHOS::ERR_INVALID_VALUE;
                         resultReceiver_.append(HELP_MSG_DUMPSYS);
                         return result;
@@ -694,6 +696,7 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
     std::string deviceId = "";
     std::string bundleName = "";
     std::string abilityName = "";
+    std::string moduleName;
     bool isColdStart = false;
     bool isDebugApp = false;
     bool isContinuation = false;
@@ -777,6 +780,17 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
                     result = OHOS::ERR_INVALID_VALUE;
                     break;
                 }
+                case 'm': {
+                    // 'aa start -m' with no argument
+                    // 'aa stop-service -m' with no argument
+                    HILOG_INFO("'aa %{public}s -m' with no argument.", cmd_.c_str());
+
+                    resultReceiver_.append("error: option ");
+                    resultReceiver_.append("requires a value.\n");
+
+                    result = OHOS::ERR_INVALID_VALUE;
+                    break;
+                }
                 case 0: {
                     // 'aa start' with an unknown option: aa start --x
                     // 'aa start' with an unknown option: aa start --xxx
@@ -850,6 +864,14 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
                 windowMode = optarg;
                 break;
             }
+            case 'm': {
+                // 'aa start -m xxx'
+                // 'aa stop-service -m xxx'
+
+                // save module name
+                moduleName = optarg;
+                break;
+            }
             case 'C': {
                 // 'aa start -C'
                 // cold start app
@@ -893,18 +915,14 @@ ErrCode AbilityManagerShellCommand::MakeWantFromCmd(Want &want, std::string &win
 
             result = OHOS::ERR_INVALID_VALUE;
         } else {
-            ElementName element(deviceId, bundleName, abilityName);
+            ElementName element(deviceId, bundleName, abilityName, moduleName);
             want.SetElement(element);
 
             if (isColdStart) {
-                WantParams wantParams;
-                wantParams.SetParam("coldStart", Boolean::Box(isColdStart));
-                want.SetParams(wantParams);
+                want.SetParam("coldStart", isColdStart);
             }
             if (isDebugApp) {
-                WantParams wantParams;
-                wantParams.SetParam("debugApp", Boolean::Box(isDebugApp));
-                want.SetParams(wantParams);
+                want.SetParam("debugApp", isDebugApp);
             }
             if (isContinuation) {
                 want.AddFlags(Want::FLAG_ABILITY_CONTINUATION);

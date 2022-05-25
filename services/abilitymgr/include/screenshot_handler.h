@@ -34,13 +34,14 @@ public:
     virtual ~ScreenshotHandler() = default;
 
     void StartScreenshot(int32_t missionId, int32_t winId);
-#ifdef SUPPORT_GRAPHICS
-    OHOS::WMImageInfo GetImageInfo(int32_t missionId);
-#endif
+
     void RemoveImageInfo(int32_t missionId);
 
-private:
 #ifdef SUPPORT_GRAPHICS
+public:
+    OHOS::WMImageInfo GetImageInfo(int32_t missionId);
+
+private:
     std::map<int32_t, OHOS::WMImageInfo> screenShot_;
     sptr<IWindowManagerService> windowMS_;
 #endif

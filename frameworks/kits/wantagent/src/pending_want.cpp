@@ -406,6 +406,7 @@ PendingWant *PendingWant::Unmarshalling(Parcel &parcel)
     }
     sptr<AAFwk::IWantSender> target = iface_cast<AAFwk::IWantSender>(parcel.ReadObject<IRemoteObject>());
     if (target == nullptr) {
+        delete pendingWant;
         return nullptr;
     }
     pendingWant->SetTarget(target);

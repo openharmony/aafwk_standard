@@ -182,160 +182,6 @@ bool AbilityImpl::IsStageBasedModel() const
     return isStageBasedModel_;
 }
 
-#ifdef SUPPORT_GRAPHICS
-void AbilityImpl::AfterUnFocused()
-{
-    HILOG_INFO("%{public}s begin.", __func__);
-    if (!ability_ || !ability_->GetAbilityInfo() || !contextDeal_ || !handler_) {
-        HILOG_ERROR("AbilityImpl::AfterUnFocused failed");
-        return;
-    }
-
-    if (ability_->GetAbilityInfo()->isStageBasedModel) {
-        HILOG_INFO("new version ability, do nothing when after unfocused.");
-        return;
-    }
-
-    HILOG_INFO("old version ability, window after unfocused.");
-    auto task = [abilityImpl = shared_from_this(), ability = ability_, contextDeal = contextDeal_]() {
-        auto info = contextDeal->GetLifeCycleStateInfo();
-        info.state = AbilityLifeCycleState::ABILITY_STATE_INACTIVE;
-        info.isNewWant = false;
-        Want want(*(ability->GetWant()));
-        abilityImpl->HandleAbilityTransaction(want, info);
-    };
-    handler_->PostTask(task);
-    HILOG_INFO("%{public}s end.", __func__);
-}
-
-void AbilityImpl::AfterFocused()
-{
-    HILOG_INFO("%{public}s begin.", __func__);
-    if (!ability_ || !ability_->GetAbilityInfo() || !contextDeal_ || !handler_) {
-        HILOG_ERROR("AbilityImpl::AfterFocused failed");
-        return;
-    }
-
-    if (ability_->GetAbilityInfo()->isStageBasedModel) {
-        HILOG_INFO("new version ability, do nothing when after focused.");
-        return;
-    }
-
-    HILOG_INFO("fa mode ability, window after focused.");
-    auto task = [abilityImpl = shared_from_this(), ability = ability_, contextDeal = contextDeal_]() {
-        auto info = contextDeal->GetLifeCycleStateInfo();
-        info.state = AbilityLifeCycleState::ABILITY_STATE_ACTIVE;
-        info.isNewWant = false;
-        Want want(*(ability->GetWant()));
-        abilityImpl->HandleAbilityTransaction(want, info);
-    };
-    handler_->PostTask(task);
-    HILOG_INFO("%{public}s end.", __func__);
-}
-
-void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
-{
-    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin.", __func__);
-    auto owner = owner_.lock();
-    if (owner && !owner->IsStageBasedModel()) {
-        return;
-    }
-
-    HILOG_INFO("Stage mode ability, window after foreground, notify ability manager service.");
-    PacMap restoreData;
-    AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_,
-        AbilityLifeCycleState::ABILITY_STATE_FOREGROUND_NEW, restoreData);
-}
-
-void AbilityImpl::WindowLifeCycleImpl::AfterBackground()
-{
-    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
-    HILOG_INFO("%{public}s begin.", __func__);
-    auto owner = owner_.lock();
-    if (owner && !owner->IsStageBasedModel()) {
-        return;
-    }
-
-    HILOG_INFO("new version ability, window after background.");
-    PacMap restoreData;
-    AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_,
-        AbilityLifeCycleState::ABILITY_STATE_BACKGROUND_NEW, restoreData);
-}
-
-void AbilityImpl::WindowLifeCycleImpl::AfterFocused()
-{
-    HILOG_INFO("%{public}s begin.", __func__);
-    auto owner = owner_.lock();
-    if (owner) {
-        owner->AfterFocused();
-    }
-    HILOG_INFO("%{public}s end.", __func__);
-}
-
-void AbilityImpl::WindowLifeCycleImpl::AfterUnfocused()
-{
-    HILOG_INFO("%{public}s begin.", __func__);
-    auto owner = owner_.lock();
-    if (owner) {
-        owner->AfterUnFocused();
-    }
-    HILOG_INFO("%{public}s end.", __func__);
-}
-
-/**
- * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_INACTIVE. And notifies the application
- * that it belongs to of the lifecycle status.
- *
- * @param want The Want object to switch the life cycle.
- */
-void AbilityImpl::Foreground(const Want &want)
-{
-    HILOG_INFO("%{public}s begin.", __func__);
-    if (ability_ == nullptr || ability_->GetAbilityInfo() == nullptr || abilityLifecycleCallbacks_ == nullptr) {
-        HILOG_ERROR("AbilityImpl::Foreground ability_ or abilityLifecycleCallbacks_ is nullptr");
-        return;
-    }
-
-    HILOG_INFO("AbilityImpl::Foreground");
-    ability_->OnForeground(want);
-    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetAbilityInfo()->isStageBasedModel)) {
-        lifecycleState_ = AAFwk::ABILITY_STATE_FOREGROUND_NEW;
-    } else {
-        lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
-    }
-    abilityLifecycleCallbacks_->OnAbilityForeground(ability_);
-    HILOG_INFO("%{public}s end.", __func__);
-}
-
-/**
- * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_BACKGROUND. And notifies the application
- * that it belongs to of the lifecycle status.
- *
- */
-void AbilityImpl::Background()
-{
-    HILOG_INFO("%{public}s begin.", __func__);
-    if (ability_ == nullptr || ability_->GetAbilityInfo() == nullptr || abilityLifecycleCallbacks_ == nullptr) {
-        HILOG_ERROR("AbilityImpl::Background ability_ or abilityLifecycleCallbacks_ is nullptr");
-        return;
-    }
-
-    HILOG_INFO("AbilityImpl::Background");
-    ability_->OnLeaveForeground();
-    ability_->OnBackground();
-    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
-        (ability_->GetAbilityInfo()->isStageBasedModel)) {
-        lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND_NEW;
-    } else {
-        lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND;
-    }
-    abilityLifecycleCallbacks_->OnAbilityBackground(ability_);
-    HILOG_INFO("%{public}s end.", __func__);
-}
-#endif
-
 /**
  * @brief Save data and states of an ability when it is restored by the system. and Calling information back to Ability.
  *        This method should be implemented by a Page ability.
@@ -449,47 +295,6 @@ int AbilityImpl::GetCurrentState()
 {
     return lifecycleState_;
 }
-
-#ifdef SUPPORT_GRAPHICS
-/**
- * @brief Execution the KeyDown callback of the ability
- * @param keyEvent Indicates the key-down event.
- *
- * @return Returns true if this event is handled and will not be passed further; returns false if this event is
- * not handled and should be passed to other handlers.
- *
- */
-void AbilityImpl::DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
-{
-    HILOG_INFO("AbilityImpl::DoKeyDown called");
-}
-
-/**
- * @brief Execution the KeyUp callback of the ability
- * @param keyEvent Indicates the key-up event.
- *
- * @return Returns true if this event is handled and will not be passed further; returns false if this event is
- * not handled and should be passed to other handlers.
- *
- */
-void AbilityImpl::DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
-{
-    HILOG_INFO("AbilityImpl::DoKeyUp called");
-}
-
-/**
- * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
- * does nothing and returns false.
- * @param touchEvent Indicates information about the touch event.
- *
- * @return Returns true if the event is handled; returns false otherwise.
- *
- */
-void AbilityImpl::DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent)
-{
-    HILOG_INFO("AbilityImpl::DoPointerEvent called");
-}
-#endif
 
 /**
  * @brief Send the result code and data to be returned by this Page ability to the caller.
@@ -861,26 +666,6 @@ void AbilityImpl::ScheduleUpdateConfiguration(const Configuration &config)
     HILOG_INFO("%{public}s end.", __func__);
 }
 
-#ifdef SUPPORT_GRAPHICS
-void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const
-{
-    int32_t code = keyEvent->GetKeyAction();
-    if (code == MMI::KeyEvent::KEY_ACTION_DOWN) {
-        abilityImpl_->DoKeyDown(keyEvent);
-        HILOG_INFO("AbilityImpl::OnKeyDown keyAction: %{public}d.", code);
-    } else if (code == MMI::KeyEvent::KEY_ACTION_UP) {
-        abilityImpl_->DoKeyUp(keyEvent);
-        HILOG_INFO("AbilityImpl::DoKeyUp keyAction: %{public}d.", code);
-    }
-}
-
-void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const
-{
-    HILOG_INFO("AbilityImpl::DoPointerEvent called.");
-    abilityImpl_->DoPointerEvent(pointerEvent);
-}
-#endif
-
 /**
  * @brief Create a PostEvent timeout task. The default delay is 5000ms
  *
@@ -921,5 +706,216 @@ void AbilityImpl::NotifyContinuationResult(int32_t result)
     }
     ability_->OnCompleteContinuation(result);
 }
+
+#ifdef SUPPORT_GRAPHICS
+void AbilityImpl::AfterUnFocused()
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    if (!ability_ || !ability_->GetAbilityInfo() || !contextDeal_ || !handler_) {
+        HILOG_ERROR("AbilityImpl::AfterUnFocused failed");
+        return;
+    }
+
+    if (ability_->GetAbilityInfo()->isStageBasedModel) {
+        HILOG_INFO("new version ability, do nothing when after unfocused.");
+        return;
+    }
+
+    HILOG_INFO("old version ability, window after unfocused.");
+    auto task = [abilityImpl = shared_from_this(), ability = ability_, contextDeal = contextDeal_]() {
+        auto info = contextDeal->GetLifeCycleStateInfo();
+        info.state = AbilityLifeCycleState::ABILITY_STATE_INACTIVE;
+        info.isNewWant = false;
+        Want want(*(ability->GetWant()));
+        abilityImpl->HandleAbilityTransaction(want, info);
+    };
+    handler_->PostTask(task);
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
+void AbilityImpl::AfterFocused()
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    if (!ability_ || !ability_->GetAbilityInfo() || !contextDeal_ || !handler_) {
+        HILOG_ERROR("AbilityImpl::AfterFocused failed");
+        return;
+    }
+
+    if (ability_->GetAbilityInfo()->isStageBasedModel) {
+        HILOG_INFO("new version ability, do nothing when after focused.");
+        return;
+    }
+
+    HILOG_INFO("fa mode ability, window after focused.");
+    auto task = [abilityImpl = shared_from_this(), ability = ability_, contextDeal = contextDeal_]() {
+        auto info = contextDeal->GetLifeCycleStateInfo();
+        info.state = AbilityLifeCycleState::ABILITY_STATE_ACTIVE;
+        info.isNewWant = false;
+        Want want(*(ability->GetWant()));
+        abilityImpl->HandleAbilityTransaction(want, info);
+    };
+    handler_->PostTask(task);
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
+void AbilityImpl::WindowLifeCycleImpl::AfterForeground()
+{
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HILOG_INFO("%{public}s begin.", __func__);
+    auto owner = owner_.lock();
+    if (owner && !owner->IsStageBasedModel()) {
+        return;
+    }
+
+    HILOG_INFO("Stage mode ability, window after foreground, notify ability manager service.");
+    PacMap restoreData;
+    AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_,
+        AbilityLifeCycleState::ABILITY_STATE_FOREGROUND_NEW, restoreData);
+}
+
+void AbilityImpl::WindowLifeCycleImpl::AfterBackground()
+{
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
+    HILOG_INFO("%{public}s begin.", __func__);
+    auto owner = owner_.lock();
+    if (owner && !owner->IsStageBasedModel()) {
+        return;
+    }
+
+    HILOG_INFO("new version ability, window after background.");
+    PacMap restoreData;
+    AbilityManagerClient::GetInstance()->AbilityTransitionDone(token_,
+        AbilityLifeCycleState::ABILITY_STATE_BACKGROUND_NEW, restoreData);
+}
+
+void AbilityImpl::WindowLifeCycleImpl::AfterFocused()
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    auto owner = owner_.lock();
+    if (owner) {
+        owner->AfterFocused();
+    }
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
+void AbilityImpl::WindowLifeCycleImpl::AfterUnfocused()
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    auto owner = owner_.lock();
+    if (owner) {
+        owner->AfterUnFocused();
+    }
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
+/**
+ * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_INACTIVE. And notifies the application
+ * that it belongs to of the lifecycle status.
+ *
+ * @param want The Want object to switch the life cycle.
+ */
+void AbilityImpl::Foreground(const Want &want)
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    if (ability_ == nullptr || ability_->GetAbilityInfo() == nullptr || abilityLifecycleCallbacks_ == nullptr) {
+        HILOG_ERROR("AbilityImpl::Foreground ability_ or abilityLifecycleCallbacks_ is nullptr");
+        return;
+    }
+
+    HILOG_INFO("AbilityImpl::Foreground");
+    ability_->OnForeground(want);
+    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
+        (ability_->GetAbilityInfo()->isStageBasedModel)) {
+        lifecycleState_ = AAFwk::ABILITY_STATE_FOREGROUND_NEW;
+    } else {
+        lifecycleState_ = AAFwk::ABILITY_STATE_INACTIVE;
+    }
+    abilityLifecycleCallbacks_->OnAbilityForeground(ability_);
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
+/**
+ * @brief Toggles the lifecycle status of Ability to AAFwk::ABILITY_STATE_BACKGROUND. And notifies the application
+ * that it belongs to of the lifecycle status.
+ *
+ */
+void AbilityImpl::Background()
+{
+    HILOG_INFO("%{public}s begin.", __func__);
+    if (ability_ == nullptr || ability_->GetAbilityInfo() == nullptr || abilityLifecycleCallbacks_ == nullptr) {
+        HILOG_ERROR("AbilityImpl::Background ability_ or abilityLifecycleCallbacks_ is nullptr");
+        return;
+    }
+
+    HILOG_INFO("AbilityImpl::Background");
+    ability_->OnLeaveForeground();
+    ability_->OnBackground();
+    if ((ability_->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE) &&
+        (ability_->GetAbilityInfo()->isStageBasedModel)) {
+        lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND_NEW;
+    } else {
+        lifecycleState_ = AAFwk::ABILITY_STATE_BACKGROUND;
+    }
+    abilityLifecycleCallbacks_->OnAbilityBackground(ability_);
+    HILOG_INFO("%{public}s end.", __func__);
+}
+
+/**
+ * @brief Execution the KeyDown callback of the ability
+ * @param keyEvent Indicates the key-down event.
+ *
+ * @return Returns true if this event is handled and will not be passed further; returns false if this event is
+ * not handled and should be passed to other handlers.
+ *
+ */
+void AbilityImpl::DoKeyDown(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
+{
+    HILOG_INFO("AbilityImpl::DoKeyDown called");
+}
+
+/**
+ * @brief Execution the KeyUp callback of the ability
+ * @param keyEvent Indicates the key-up event.
+ *
+ * @return Returns true if this event is handled and will not be passed further; returns false if this event is
+ * not handled and should be passed to other handlers.
+ *
+ */
+void AbilityImpl::DoKeyUp(const std::shared_ptr<MMI::KeyEvent>& keyEvent)
+{
+    HILOG_INFO("AbilityImpl::DoKeyUp called");
+}
+
+/**
+ * @brief Called when a touch event is dispatched to this ability. The default implementation of this callback
+ * does nothing and returns false.
+ * @param touchEvent Indicates information about the touch event.
+ *
+ * @return Returns true if the event is handled; returns false otherwise.
+ *
+ */
+void AbilityImpl::DoPointerEvent(std::shared_ptr<MMI::PointerEvent>& pointerEvent)
+{
+    HILOG_INFO("AbilityImpl::DoPointerEvent called");
+}
+
+void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const
+{
+    int32_t code = keyEvent->GetKeyAction();
+    if (code == MMI::KeyEvent::KEY_ACTION_DOWN) {
+        abilityImpl_->DoKeyDown(keyEvent);
+        HILOG_INFO("AbilityImpl::OnKeyDown keyAction: %{public}d.", code);
+    } else if (code == MMI::KeyEvent::KEY_ACTION_UP) {
+        abilityImpl_->DoKeyUp(keyEvent);
+        HILOG_INFO("AbilityImpl::DoKeyUp keyAction: %{public}d.", code);
+    }
+}
+
+void AbilityImpl::InputEventConsumerImpl::OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const
+{
+    HILOG_INFO("AbilityImpl::DoPointerEvent called.");
+    abilityImpl_->DoPointerEvent(pointerEvent);
+}
+#endif
 }  // namespace AppExecFwk
 }  // namespace OHOS
