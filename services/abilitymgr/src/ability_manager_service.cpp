@@ -4686,7 +4686,7 @@ int AbilityManagerService::DumpAbilityInfoDone(std::vector<std::string> &infos, 
 std::string AbilityManagerService::GetExtensionType(AppExecFwk::ExtensionAbilityType extensionType)
 {
     std::string extensionTypeStr;
-    switch (extensionType){
+    switch (extensionType) {
         case AppExecFwk::ExtensionAbilityType::FORM:
             extensionTypeStr = "FOMR";
             break;
