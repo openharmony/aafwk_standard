@@ -20,6 +20,9 @@
 
 namespace OHOS {
 namespace AppExecFwk {
+namespace {
+const std::string ABILITY_OWNER_USERID = "AbilityMS_Owner_UserId";
+}
 ModuleRunningRecord::ModuleRunningRecord(
     const std::shared_ptr<ApplicationInfo> &info, const std::shared_ptr<AMSEventHandler> &eventHandler)
     : appInfo_(info), eventHandler_(eventHandler)
@@ -72,6 +75,12 @@ std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::AddAbility(const sptr
     }
     auto abilityRecord = std::make_shared<AbilityRunningRecord>(abilityInfo, token);
     abilityRecord->SetWant(want);
+    if (appInfo_) {
+        abilityRecord->SetIsSingleUser(appInfo_->singleUser);
+    }
+    if (want) {
+        abilityRecord->SetOwnerUserId(want->GetIntParam(ABILITY_OWNER_USERID, -1));
+    }
     abilities_.emplace(token, abilityRecord);
     return abilityRecord;
 }
@@ -120,13 +129,25 @@ void ModuleRunningRecord::ClearAbility(const std::shared_ptr<AbilityRunningRecor
     abilities_.erase(record->GetToken());
 }
 
-std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::GetAbilityRunningRecord(const std::string &abilityName) const
+std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::GetAbilityRunningRecord(
+    const std::string &abilityName, int32_t ownerUserId) const
 {
     HILOG_INFO("Get ability running record by ability name.");
-    const auto &iter = std::find_if(abilities_.begin(), abilities_.end(), [&abilityName](const auto &pair) {
-        return pair.second->GetName() == abilityName;
+    const auto &it = std::find_if(abilities_.begin(), abilities_.end(), [&abilityName, ownerUserId](const auto &pair) {
+        auto ability = pair.second;
+        if (!ability) {
+            return false;
+        }
+
+        bool flag = ability->GetName() == abilityName;
+        if (ability->GetAbilityInfo() && ability->GetAbilityInfo()->type == AppExecFwk::AbilityType::PAGE &&
+            ability->GetAbilityInfo()->launchMode == AppExecFwk::LaunchMode::SINGLETON) {
+            flag = flag && (ability->GetOwnerUserId() == ownerUserId);
+        }
+        return flag;
     });
-    return ((iter == abilities_.end()) ? nullptr : iter->second);
+
+    return ((it == abilities_.end()) ? nullptr : it->second);
 }
 
 std::shared_ptr<AbilityRunningRecord> ModuleRunningRecord::GetAbilityRunningRecord(const int64_t eventId) const
@@ -157,7 +178,7 @@ void ModuleRunningRecord::OnAbilityStateChanged(
     }
     AbilityState oldState = ability->GetState();
     ability->SetState(state);
-    HILOG_INFO("Ability state change from %{public}d to %{public}d, name is %{public}s.", 
+    HILOG_INFO("Ability state change from %{public}d to %{public}d, name is %{public}s.",
         oldState, state, ability->GetName().c_str());
     auto serviceInner = appMgrServiceInner_.lock();
     if (serviceInner) {
