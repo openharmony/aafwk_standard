@@ -666,6 +666,8 @@ public:
     int32_t GetUid();
     void SetSwitchingPause(bool state);
     bool IsSwitchingPause();
+    void SetOwnerMissionUserId(int32_t userId);
+    int32_t GetOwnerMissionUserId();
 
     // new version
     ResolveResultType Resolve(const AbilityRequest &abilityRequest);
@@ -759,6 +761,7 @@ private:
     std::weak_ptr<MissionList> missionList_;
     std::weak_ptr<Mission> mission_;
     int32_t missionId_ = -1;
+    int32_t ownerMissionUserId_ = -1;
     bool isSwitchingPause_ = false;
 
 	// new version
