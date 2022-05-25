@@ -58,6 +58,7 @@ ohos_source_set("abilityms_test_source") {
     "${services_path}/abilitymgr/src/want_sender_proxy.cpp",
     "${services_path}/abilitymgr/src/want_sender_stub.cpp",
     "${services_path}/abilitymgr/src/wants_info.cpp",
+    "${services_path}/common/src/event_report.cpp",
   ]
 
   include_dirs = [
