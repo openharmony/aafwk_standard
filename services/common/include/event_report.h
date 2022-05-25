@@ -37,24 +37,14 @@ const std::string DISCONNECT_SERVICE_ERROR = "DISCONNECT_SERVICE_ERROR";
 // ability behavior event
 const std::string START_ABILITY = "START_ABILITY";
 const std::string TERMINATE_ABILITY = "TERMINATE_ABILITY";
+const std::string CLOSE_ABILITY = "CLOSE_ABILITY";
 const std::string DO_FOREGROUND_ABILITY = "DO_FOREGROUND_ABILITY";
 const std::string DO_BACKGROUND_ABILITY = "DO_BACKGROUND_ABILITY";
-const std::string ABILITY_ONSTART = "ABILITY_ONSTART";
-const std::string ABILITY_ONSTOP = "ABILITY_ONSTOP";
-const std::string ABILITY_ONFOREGROUND = "ABILITY_ONFOREGROUND";
-const std::string ABILITY_ONBACKGROUND = "ABILITY_ONBACKGROUND";
-const std::string ABILITY_WINDOWSTAGE_CREATE = "ABILITY_WINDOWSTAGE_CREATE";
-const std::string ABILITY_WINDOWSTAGE_DESTORY = "ABILITY_WINDOWSTAGE_DESTORY";
 // serviceExtensionAbility behavior event
 const std::string START_SERVICE_EXTENSION = "START_SERVICE_EXTENSION";
 const std::string STOP_SERVICE_EXTENSION = "STOP_SERVICE_EXTENSION";
 const std::string CONNECT_SERVICE_EXTENSION = "CONNECT_SERVICE_EXTENSION";
 const std::string DISCONNECT_SERVICE_EXTENSION = "DISCONNECT_SERVICE_EXTENSION";
-const std::string SERVICE_EXTENSION_ONSTART = "SERVICE_EXTENSION_ONSTART";
-const std::string SERVICE_EXTENSION_ONSTOP = "SERVICE_EXTENSION_ONSTOP";
-const std::string SERVICE_EXTENSION_ONCONNECT = "SERVICE_EXTENSION_ONCONNECT";
-const std::string SERVICE_EXTENSION_ONDISCONNECT = "SERVICE_EXTENSION_ONDISCONNECT";
-const std::string SERVICE_EXTENSION_ONREQUEST = "SERVICE_EXTENSION_ONREQUEST";
 // form behavior event
 const std::string ADD_FORM = "ADD_FORM";
 const std::string REQUEST_FORM = "REQUEST_FORM";
@@ -66,12 +56,6 @@ const std::string ROUTE_EVENT_FORM = "ROUTE_EVENT_FORM";
 const std::string RELEASE_FORM = "RELEASE_FORM";
 const std::string DELETE_INVALID_FORM = "DELETE_INVALID_FORM";
 const std::string SET_NEXT_REFRESH_TIME_FORM = "SET_NEXT_REFRESH_TIME_FORM";
-const std::string FORM_LIFECYCLE_ONCREATE = "FORM_LIFECYCLE_ONCREATE";
-const std::string FORM_LIFECYCLE_ONDESTROY = "FORM_LIFECYCLE_ONDESTROY";
-const std::string FORM_LIFECYCLE_ONUPDATE = "FORM_LIFECYCLE_ONUPDATE";
-const std::string FORM_LIFECYCLE_EVENT = "FORM_LIFECYCLE_EVENT";
-const std::string FORM_LIFECYCLE_ONCASTTEMPFORM = "FORM_LIFECYCLE_ONCASTTEMPFORM";
-const std::string FORM_LIFECYCLE_ONACQUIREFORMSTATE = "FORM_LIFECYCLE_ONACQUIREFORMSTATE";
 // app behavior event
 const std::string APP_ATTACH = "APP_ATTACH";
 const std::string APP_LAUNCH = "APP_LAUNCH";
@@ -93,8 +77,10 @@ struct EventInfo {
     int64_t timeStamp = 0;
     int64_t formId = -1;
     uint32_t versionCode = 0;
+    uint32_t sceneFlag = -1;
     std::string versionName;
     std::string bundleName;
+    std::string moduleName;
     std::string abilityName;
 
     // olny used in fault event
@@ -107,8 +93,10 @@ struct EventInfo {
         timeStamp = 0;
         formId =-1;
         versionCode = 0;
+        sceneFlag = -1;
         versionName.clear();
         bundleName.clear();
+        moduleName.clear();
         abilityName.clear();
         errCode = ERR_OK;
     }
@@ -119,9 +107,6 @@ public:
     static void SendAbilityEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
     static void SendExtensionEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
     static void SendFormEvent(const std::string &eventName, HiSysEventType type, const EventInfo& eventInfo);
-    template<typename... Types>
-    static void EventWrite(const std::string &eventName,
-        HiSysEventType type, Types... keyValues);
 };
 }  // namespace AAFWK
 }  // namespace OHOS
