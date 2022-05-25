@@ -110,7 +110,6 @@ public:
     MOCK_METHOD0(CleanAllMissions, int());
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
     MOCK_METHOD2(MoveMissionToFront, int(int32_t missionId, const StartOptions &startOptions));
-    MOCK_METHOD2(SetMissionLabel, int(const sptr<IRemoteObject> &token, const std::string &label));
     MOCK_METHOD1(ClearUpApplicationData, int(const std::string &));
     MOCK_METHOD1(GetAbilityRunningInfos, int(std::vector<AbilityRunningInfo> &info));
     MOCK_METHOD2(GetExtensionRunningInfos, int(int upperLimit, std::vector<ExtensionRunningInfo> &info));
@@ -152,6 +151,7 @@ public:
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override;
 #endif
 #ifdef SUPPORT_GRAPHICS
+    MOCK_METHOD2(SetMissionLabel, int(const sptr<IRemoteObject> &token, const std::string &label));
     virtual int SetMissionIcon(
         const sptr<IRemoteObject> &token, const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
     virtual int RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler);
@@ -247,7 +247,6 @@ public:
     MOCK_METHOD0(CleanAllMissions, int());
     MOCK_METHOD1(MoveMissionToFront, int(int32_t missionId));
     MOCK_METHOD2(MoveMissionToFront, int(int32_t missionId, const StartOptions &startOptions));
-    MOCK_METHOD2(SetMissionLabel, int(const sptr<IRemoteObject> &token, const std::string &label));
     MOCK_METHOD1(ClearUpApplicationData, int(const std::string &));
     MOCK_METHOD1(GetAbilityRunningInfos, int(std::vector<AbilityRunningInfo> &info));
     MOCK_METHOD2(GetExtensionRunningInfos, int(int upperLimit, std::vector<ExtensionRunningInfo> &info));
@@ -289,6 +288,7 @@ public:
     virtual int ForceTimeoutForTest(const std::string &abilityName, const std::string &state) override;
 #endif
 #ifdef SUPPORT_GRAPHICS
+    MOCK_METHOD2(SetMissionLabel, int(const sptr<IRemoteObject> &token, const std::string &label));
     virtual int SetMissionIcon(
         const sptr<IRemoteObject> &token, const std::shared_ptr<OHOS::Media::PixelMap> &icon) override;
     virtual int RegisterWindowManagerServiceHandler(const sptr<IWindowManagerServiceHandler>& handler);

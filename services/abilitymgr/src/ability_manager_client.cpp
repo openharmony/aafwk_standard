@@ -769,6 +769,7 @@ ErrCode AbilityManagerClient::DelegatorDoAbilityBackground(const sptr<IRemoteObj
     return abms->DelegatorDoAbilityBackground(token);
 }
 
+#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string& label)
 {
     auto abms = GetAbilityManager();
@@ -776,7 +777,6 @@ ErrCode AbilityManagerClient::SetMissionLabel(const sptr<IRemoteObject> &token, 
     return abms->SetMissionLabel(token, label);
 }
 
-#ifdef SUPPORT_GRAPHICS
 ErrCode AbilityManagerClient::SetMissionIcon(
     const sptr<IRemoteObject> &abilityToken, const std::shared_ptr<OHOS::Media::PixelMap> &icon)
 {

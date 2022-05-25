@@ -49,18 +49,6 @@ public:
         this->Inactive();
     }
 
-#ifdef SUPPORT_GRAPHICS
-    void ImplForeground(const Want &want)
-    {
-        this->Foreground(want);
-    }
-
-    void ImplBackground()
-    {
-        this->Background();
-    }
-#endif
-
     void SetlifecycleState(int state)
     {
         this->lifecycleState_ = state;
@@ -92,6 +80,18 @@ public:
     {
         return AbilityImpl::CheckAndRestore();
     }
+
+#ifdef SUPPORT_GRAPHICS
+    void ImplForeground(const Want &want)
+    {
+        this->Foreground(want);
+    }
+
+    void ImplBackground()
+    {
+        this->Background();
+    }
+#endif
 
 private:
     AbilityImpl AbilityImpl_;

@@ -377,6 +377,7 @@ void MissionListManager::GetTargetMissionAndAbility(const AbilityRequest &abilit
         isCold = true;
         targetMission = std::make_shared<Mission>(info.missionInfo.id, targetRecord, missionName, startMethod);
         targetRecord->SetMission(targetMission);
+        targetRecord->SetOwnerMissionUserId(userId_);
     } else {
         HILOG_DEBUG("Update old mission data.");
         auto state = targetMission->UpdateMissionId(info.missionInfo.id, startMethod);
@@ -1718,6 +1719,7 @@ std::shared_ptr<MissionList> MissionListManager::GetTargetMissionList(int missio
     isCold = true;
     mission = std::make_shared<Mission>(innerMissionInfo.missionInfo.id, abilityRecord, innerMissionInfo.missionName);
     abilityRecord->SetMission(mission);
+    abilityRecord->SetOwnerMissionUserId(userId_);
     std::shared_ptr<MissionList> newMissionList = std::make_shared<MissionList>();
     listenerController_->NotifyMissionCreated(innerMissionInfo.missionInfo.id);
     return newMissionList;
@@ -1915,6 +1917,7 @@ void MissionListManager::BackToLauncher()
     launcherRootAbility->ProcessForegroundAbility();
 }
 
+#ifdef SUPPORT_GRAPHICS
 int MissionListManager::SetMissionLabel(const sptr<IRemoteObject> &token, const std::string &label)
 {
     if (!token) {
@@ -1931,7 +1934,6 @@ int MissionListManager::SetMissionLabel(const sptr<IRemoteObject> &token, const 
     return DelayedSingleton<MissionInfoMgr>::GetInstance()->UpdateMissionLabel(missionId, label);
 }
 
-#ifdef SUPPORT_GRAPHICS
 int MissionListManager::SetMissionIcon(const sptr<IRemoteObject> &token, const std::shared_ptr<Media::PixelMap> &icon)
 {
     if (!token) {

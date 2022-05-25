@@ -170,6 +170,11 @@ public:
     void SetEventId(const int64_t eventId);
     int64_t GetEventId() const;
 
+    void SetOwnerUserId(int32_t ownerUserId);
+    int32_t GetOwnerUserId() const;
+    void SetIsSingleUser(bool flag);
+    bool IsSingleUser() const;
+
 private:
     int32_t lastLaunchTime_ = 0;
     int32_t visibility_ = 0;
@@ -182,6 +187,8 @@ private:
     std::shared_ptr<AAFwk::Want> want_ = nullptr;
     sptr<IRemoteObject> token_;
     sptr<IRemoteObject> preToken_;
+    int32_t ownerUserId_ = -1;
+    bool isSingleUser_ = false;
 };
 }  // namespace AppExecFwk
 }  // namespace OHOS

@@ -27,6 +27,7 @@
 #ifndef SUPPORT_GRAPHICS
 #include "inttypes.h"
 #endif
+
 #include "ability_delegator_infos.h"
 #include "iability_monitor.h"
 #include "delegator_thread.h"
