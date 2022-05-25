@@ -1240,12 +1240,12 @@ bool AbilityRecord::IsSwitchingPause()
 
 void AbilityRecord::SetOwnerMissionUserId(int32_t userId)
 {
-    userId_ = userId;
+    ownerMissionUserId_ = userId;
 }
 
 int32_t AbilityRecord::GetOwnerMissionUserId()
 {
-    return userId_;
+    return ownerMissionUserId_;
 }
 
 void AbilityRecord::DumpSys(std::vector<std::string> &info, bool isClient)
