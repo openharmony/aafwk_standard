@@ -30,6 +30,7 @@ ohos_moduletest("mission_dump_test") {
   sources = [ "mission_dump_test.cpp" ]
   sources += [
     "${aafwk_path}/services/abilitymgr/test/mock/libs/appexecfwk_core/src/appmgr/mock_app_scheduler.cpp",
+    "${aafwk_path}/services/common/src/event_report.cpp",
     "${aafwk_path}/services/common/src/permission_verification.cpp",
     "//foundation/distributedhardware/devicemanager/test/unittest/mock/parameter.cpp",
   ]
@@ -49,7 +50,6 @@ ohos_moduletest("mission_dump_test") {
     "${services_path}/abilitymgr/test/mock/libs/aakit:aakit_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_appmgr_mock",
     "${services_path}/abilitymgr/test/mock/libs/appexecfwk_core:appexecfwk_bundlemgr_mock",
-    "${services_path}/common:perm_verification",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/libpng:libpng",
