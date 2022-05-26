@@ -690,7 +690,7 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     eventInfo.bundleName = want.GetElement().GetBundleName();
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
-    eventInfo.extensionType = extensionType;
+    eventInfo.extensionType = (int32_t)extensionType;
     AAFWK::EventReport::SendExtensionEvent(AAFWK::START_SERVICE,
         HiSysEventType::BEHAVIOR, eventInfo);
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
@@ -768,7 +768,7 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
     eventInfo.bundleName = want.GetElement().GetBundleName();
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
-    eventInfo.extensionType = extensionType;
+    eventInfo.extensionType = (int32_t)extensionType;
     AAFWK::EventReport::SendExtensionEvent(AAFWK::STOP_SERVICE,
         HiSysEventType::BEHAVIOR, eventInfo);
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
