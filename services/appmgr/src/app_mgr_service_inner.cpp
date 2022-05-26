@@ -273,7 +273,7 @@ void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppSched
     appRecord->RegisterAppDeathRecipient();
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    eventInfo.abilityName = appRecord->GetAbilityInfo()->name;
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
     eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
@@ -316,7 +316,7 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
     appRecord->LaunchPendingAbilities();
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    eventInfo.abilityName = appRecord->GetAbilityInfo()->name;
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
     eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
@@ -358,7 +358,7 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
     HILOG_INFO("application is foregrounded");
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    eventInfo.abilityName = appRecord->GetAbilityInfo()->name;
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
     eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
@@ -387,7 +387,7 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
     HILOG_INFO("application is backgrounded");
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    eventInfo.abilityName = appRecord->GetAbilityInfo()->name;
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
     eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
@@ -425,7 +425,7 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     RemoveAppFromRecentListById(recordId);
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    eventInfo.abilityName = appRecord->GetAbilityInfo()->name;
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
     eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
