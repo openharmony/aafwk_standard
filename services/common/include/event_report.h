@@ -21,6 +21,7 @@
 
 #include "errors.h"
 #include "hisysevent.h"
+#include "extension_ability_info.h"
 
 using HiSysEventType = OHOS::HiviewDFX::HiSysEvent::EventType;
 using HiSysEvent = OHOS::HiviewDFX::HiSysEvent;
@@ -42,8 +43,8 @@ const std::string CLOSE_ABILITY = "CLOSE_ABILITY";
 const std::string DO_FOREGROUND_ABILITY = "DO_FOREGROUND_ABILITY";
 const std::string DO_BACKGROUND_ABILITY = "DO_BACKGROUND_ABILITY";
 // serviceExtensionAbility behavior event
-const std::string START_SERVICE_EXTENSION = "START_SERVICE_EXTENSION";
-const std::string STOP_SERVICE_EXTENSION = "STOP_SERVICE_EXTENSION";
+const std::string START_SERVICE = "START_SERVICE";
+const std::string STOP_SERVICE = "STOP_SERVICE";
 const std::string CONNECT_SERVICE = "CONNECT_SERVICE";
 const std::string DISCONNECT_SERVICE = "DISCONNECT_SERVICE";
 // form behavior event
@@ -66,9 +67,7 @@ const std::string APP_TERMINATE = "APP_TERMINATE";
 }
 
 struct EventInfo {
-    int32_t pid = -1;
     int32_t userId = -1;
-    int64_t timeStamp = 0;
     int64_t formId = -1;
     uint32_t versionCode = 0;
     uint32_t sceneFlag = -1;
@@ -76,16 +75,15 @@ struct EventInfo {
     std::string bundleName;
     std::string moduleName;
     std::string abilityName;
-    std::string extensionType;
+    std::string processName;
+    AppExecFwk::ExtensionAbilityType extensionType;
 
     // olny used in fault event
     ErrCode errCode = ERR_OK;
 
     void Reset()
     {
-        pid =-1;
         userId = -1;
-        timeStamp = 0;
         formId =-1;
         versionCode = 0;
         sceneFlag = -1;
@@ -93,7 +91,8 @@ struct EventInfo {
         bundleName.clear();
         moduleName.clear();
         abilityName.clear();
-        extensionType.clear();
+        processName.clear();
+        extensionType = AppExecFwk::ExtensionAbilityType::UNSPECIFIED;
         errCode = ERR_OK;
     }
 };
