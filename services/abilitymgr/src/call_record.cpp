@@ -101,7 +101,8 @@ AppExecFwk::ElementName CallRecord::GetTargetServiceName() const
     std::shared_ptr<AbilityRecord> tmpService = service_.lock();
     if (tmpService) {
         const AppExecFwk::AbilityInfo &abilityInfo = tmpService->GetAbilityInfo();
-        AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName, abilityInfo.name);
+        AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName,
+            abilityInfo.name, abilityInfo.moduleName);
         return element;
     }
     return AppExecFwk::ElementName();
@@ -122,7 +123,8 @@ bool CallRecord::SchedulerConnectDone()
     }
 
     const AppExecFwk::AbilityInfo &abilityInfo = tmpService->GetAbilityInfo();
-    AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName, abilityInfo.name);
+    AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName,
+        abilityInfo.name, abilityInfo.moduleName);
     connCallback_->OnAbilityConnectDone(element, callRemoteObject_, ERR_OK);
     state_ = CallState::REQUESTED;
 
@@ -141,7 +143,8 @@ bool CallRecord::SchedulerDisConnectDone()
     }
 
     const AppExecFwk::AbilityInfo &abilityInfo = tmpService->GetAbilityInfo();
-    AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName, abilityInfo.name);
+    AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName,
+        abilityInfo.name, abilityInfo.moduleName);
     connCallback_->OnAbilityDisconnectDone(element,  ERR_OK);
 
     return true;
@@ -173,7 +176,7 @@ void CallRecord::Dump(std::vector<std::string> &info) const
     if (abilityRecord) {
         AppExecFwk::ElementName element(
             abilityRecord->GetAbilityInfo().deviceId, abilityRecord->GetAbilityInfo().bundleName,
-            abilityRecord->GetAbilityInfo().name);
+            abilityRecord->GetAbilityInfo().name, abilityRecord->GetAbilityInfo().moduleName);
         tempstr += " uri [" + element.GetURI() + "]" + "\n";
     }
 

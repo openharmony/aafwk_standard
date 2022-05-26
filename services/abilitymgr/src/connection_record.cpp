@@ -120,7 +120,8 @@ void ConnectionRecord::CompleteConnect(int resultCode)
         targetService_->SetAbilityState(AbilityState::ACTIVE);
     }
     const AppExecFwk::AbilityInfo &abilityInfo = targetService_->GetAbilityInfo();
-    AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName, abilityInfo.name);
+    AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName,
+        abilityInfo.name, abilityInfo.moduleName);
     auto remoteObject = targetService_->GetConnRemoteObject();
     if (connCallback_) {
         connCallback_->OnAbilityConnectDone(element, remoteObject, resultCode);
@@ -135,7 +136,8 @@ void ConnectionRecord::CompleteDisconnect(int resultCode, bool isDied)
     }
     CHECK_POINTER(targetService_);
     const AppExecFwk::AbilityInfo &abilityInfo = targetService_->GetAbilityInfo();
-    AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName, abilityInfo.name);
+    AppExecFwk::ElementName element(abilityInfo.deviceId, abilityInfo.bundleName,
+        abilityInfo.name, abilityInfo.moduleName);
     if (connCallback_) {
         connCallback_->OnAbilityDisconnectDone(element, isDied ? (resultCode - 1) : resultCode);
     }

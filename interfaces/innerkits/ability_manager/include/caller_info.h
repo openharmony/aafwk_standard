@@ -31,6 +31,7 @@ struct CallerInfo : public Parcelable {
     std::string deviceId;
     std::string bundleName;
     std::string abilityName;
+    std::string moduleName;
 
     bool ReadFromParcel(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;

@@ -605,11 +605,11 @@ PacMap &AbilityImpl::GetRestoreData()
  *
  * @param deviceId abilityName of the calling ability
  */
-void AbilityImpl::SetCallingContext(
-    const std::string &deviceId, const std::string &bundleName, const std::string &abilityName)
+void AbilityImpl::SetCallingContext(const std::string &deviceId, const std::string &bundleName,
+    const std::string &abilityName, const std::string &moduleName)
 {
     if (ability_ != nullptr) {
-        ability_->SetCallingContext(deviceId, bundleName, abilityName);
+        ability_->SetCallingContext(deviceId, bundleName, abilityName, moduleName);
     }
 }
 

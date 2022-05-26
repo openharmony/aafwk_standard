@@ -60,7 +60,8 @@ ErrCode ConnectionManager::ConnectAbilityInner(const sptr<IRemoteObject> &connec
             std::vector<sptr<AbilityConnectCallback>>>::value_type &obj) {
                 return connectCaller == obj.first.connectCaller &&
                     connectReceiver.GetBundleName() == obj.first.connectReceiver.GetBundleName() &&
-                    connectReceiver.GetAbilityName() == obj.first.connectReceiver.GetAbilityName();
+                    connectReceiver.GetAbilityName() == obj.first.connectReceiver.GetAbilityName() &&
+                    connectReceiver.GetModuleName() == obj.first.connectReceiver.GetModuleName();
         });
     if (item != abilityConnections_.end()) {
         std::vector<sptr<AbilityConnectCallback>> callbacks = item->second;
@@ -109,7 +110,8 @@ ErrCode ConnectionManager::DisconnectAbility(const sptr<IRemoteObject> &connectC
             const std::map<ConnectionInfo, std::vector<sptr<AbilityConnectCallback>>>::value_type &obj) {
             return connectCaller == obj.first.connectCaller &&
                    connectReceiver.GetBundleName() == obj.first.connectReceiver.GetBundleName() &&
-                   connectReceiver.GetAbilityName() == obj.first.connectReceiver.GetAbilityName();
+                   connectReceiver.GetAbilityName() == obj.first.connectReceiver.GetAbilityName() &&
+                   connectReceiver.GetModuleName() == obj.first.connectReceiver.GetModuleName();
         });
     if (item != abilityConnections_.end()) {
         std::vector<sptr<AbilityConnectCallback>> callbacks = item->second;
@@ -228,7 +230,8 @@ bool ConnectionManager::IsConnectReceiverEqual(const AppExecFwk::ElementName &co
     const AppExecFwk::ElementName &connectReceiverOther)
 {
     return connectReceiver.GetBundleName() == connectReceiverOther.GetBundleName() &&
-           connectReceiver.GetAbilityName() == connectReceiverOther.GetAbilityName();
+           connectReceiver.GetAbilityName() == connectReceiverOther.GetAbilityName() &&
+           connectReceiver.GetModuleName() == connectReceiverOther.GetModuleName();
 }
 
 ErrCode ConnectionManager::HandleCallbackTimeOut(const sptr<IRemoteObject> &connectCaller, const AAFwk::Want &want,
