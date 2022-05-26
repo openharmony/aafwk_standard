@@ -280,7 +280,7 @@ void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppSched
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::SendAppEvent(AAFWK::APP_ATTACH, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_ATTACH, HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecord> &appRecord)
@@ -325,7 +325,7 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::SendAppEvent(AAFWK::APP_LAUNCH, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_LAUNCH, HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::AddAbilityStageDone(const int32_t recordId)
@@ -370,7 +370,7 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
     AAFWK::EventReport::SendAppEvent(AAFWK::APP_FOREGROUND,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
@@ -401,7 +401,7 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
     AAFWK::EventReport::SendAppEvent(AAFWK::APP_BACKGROUND,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
@@ -440,7 +440,7 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     eventInfo.timeStamp =
         std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
         .count();
-    AAFWK::EventReport::SendAppEvent(AAFWK::APP_TERMINATE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_TERMINATE, HiSysEventType::BEHAVIOR, eventInfo);
     DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
 
     HILOG_INFO("application is terminated");
