@@ -324,7 +324,7 @@ aa force-stop com.ohos.app
 ## 相关仓
 元能力子系统
 
-appexecfwk_standard
+[appexecfwk_standard](https://gitee.com/openharmony/appexecfwk_standard)
 
-**aafwk_standard**
+[**aafwk_standard**](https://gitee.com/openharmony/aafwk_standard)
 
