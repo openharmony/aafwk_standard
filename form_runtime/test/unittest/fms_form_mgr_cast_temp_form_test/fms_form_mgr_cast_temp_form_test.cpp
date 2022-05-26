@@ -107,6 +107,10 @@ HWTEST_F(FmsFormMgrCastTempFormTest, CastTempForm_001, TestSize.Level0)
 {
     GTEST_LOG_(INFO) << "fms_form_mgr_cast_temp_form_test_001 start";
 
+    std::vector<FormDBInfo> originDBInfos;
+    FormDbCache::GetInstance().GetAllFormInfo(originDBInfos);
+    size_t originDbInfoSize = originDBInfos.size();
+
     int64_t formId {FormDataMgr::GetInstance().GenerateFormId()};
     int callingUid {1};
     // cache info
@@ -136,7 +140,7 @@ HWTEST_F(FmsFormMgrCastTempFormTest, CastTempForm_001, TestSize.Level0)
     // db data is added
     std::vector<FormDBInfo> formDBInfos;
     FormDbCache::GetInstance().GetAllFormInfo(formDBInfos);
-    EXPECT_EQ(dataCnt, formDBInfos.size());
+    EXPECT_EQ(originDbInfoSize + dataCnt, formDBInfos.size());
     FormDBInfo dbInfo {formDBInfos[0]};
     EXPECT_EQ(formId, dbInfo.formId);
     EXPECT_EQ(userUidCnt, dbInfo.formUserUids.size());
