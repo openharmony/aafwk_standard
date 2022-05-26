@@ -20,7 +20,7 @@
 #include "ability_constants.h"
 #include "ability_manager_client.h"
 #include "ability_manager_interface.h"
-#include "app/include/application_context.h"
+#include "app_context.h"
 #include "directory_ex.h"
 #include "file_ex.h"
 #include "hilog_wrapper.h"

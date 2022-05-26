@@ -18,7 +18,7 @@
 #include "completed_callback.h"
 #include "context_container.h"
 #include "context_impl.h"
-#include "context/context.h"
+#include "context/application_context.h"
 #include "element_name.h"
 #include "event_handler.h"
 #include "base_types.h"
@@ -204,7 +204,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_0900, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_1000, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        OHOS::AbilityRuntime::Context::GetApplicationContext();
     WantAgentInfo wantAgentInfo;
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("device", "bundleName", "abilityName");
@@ -225,7 +226,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_1000, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_1100, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        OHOS::AbilityRuntime::Context::GetApplicationContext();
     WantAgentInfo wantAgentInfo;
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("device", "bundleName", "abilityName");
@@ -247,7 +249,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_1100, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_1200, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("device", "bundleName", "abilityName");
     want->SetElement(element);
@@ -271,7 +274,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_1200, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_1300, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("device", "bundleName", "abilityName");
     want->SetElement(element);
@@ -295,7 +299,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_1300, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_1400, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("device", "bundleName", "abilityName");
     want->SetElement(element);
@@ -319,7 +324,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_1400, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_1500, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("device", "bundleName", "abilityName");
     want->SetElement(element);
@@ -343,7 +349,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_1500, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_1600, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("device", "bundleName", "abilityName");
     want->SetElement(element);
@@ -367,7 +374,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_1600, Function | MediumTest | Leve
 HWTEST_F(WantAgentHelperTest, WantAgentHelper_1700, Function | MediumTest | Level1)
 {
     std::shared_ptr<WantAgentHelper> wantAgentHelper = std::make_shared<WantAgentHelper>();
-    std::shared_ptr<AbilityRuntime::Context> context = OHOS::AbilityRuntime::Context::GetApplicationContext();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     std::shared_ptr<Want> want = std::make_shared<Want>();
     ElementName element("device", "bundleName", "abilityName");
     want->SetElement(element);
@@ -566,7 +574,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_2700, Function | MediumTest | Leve
     unsigned int flags = 1;
     flags |= FLAG_ONE_SHOT;
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_FOREGROUND_SERVICE;
-    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     std::shared_ptr<PendingWant> pendingWant =
         PendingWant::BuildServicePendingWant(context, requestCode, want, flags, type);
 
@@ -600,7 +609,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_2800, Function | MediumTest | Leve
     unsigned int flags = 1;
     flags |= FLAG_ONE_SHOT;
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_FOREGROUND_SERVICE;
-    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     std::shared_ptr<PendingWant> pendingWant =
         PendingWant::BuildServicePendingWant(context, requestCode, want, flags, type);
 
@@ -626,7 +636,8 @@ HWTEST_F(WantAgentHelperTest, WantAgentHelper_2900, Function | MediumTest | Leve
     unsigned int flags = 1;
     flags |= FLAG_ONE_SHOT;
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_FOREGROUND_SERVICE;
-    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     std::shared_ptr<PendingWant> pendingWant =
         PendingWant::BuildServicePendingWant(context, requestCode, want, flags, type);
 

@@ -102,8 +102,8 @@ ohos_unittest("context_deal_interface_test") {
 ohos_unittest("application_test") {
   module_out_path = module_output_path
   sources = [
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "../app/src/ohos_application.cpp",
     "unittest/ability_stage_test.cpp",
     "unittest/application_test.cpp",
@@ -208,8 +208,8 @@ ohos_unittest("context_deal_test") {
 ohos_unittest("application_impl_test") {
   module_out_path = module_output_path
   sources = [
+    "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_context.cpp",
     "${aafwk_path}/frameworks/kits/appkit/native/app/src/app_loader.cpp",
-    "${aafwk_path}/frameworks/kits/appkit/native/app/src/application_context.cpp",
     "../app/src/application_impl.cpp",
     "../app/src/ohos_application.cpp",
     "unittest/application_impl_test.cpp",

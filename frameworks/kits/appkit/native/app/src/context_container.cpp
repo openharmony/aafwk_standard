@@ -19,7 +19,7 @@
 #include "ability_constants.h"
 #include "ability_manager_client.h"
 #include "ability_manager_errors.h"
-#include "app/include/application_context.h"
+#include "app_context.h"
 #include "bundle_constants.h"
 #include "hilog_wrapper.h"
 
@@ -584,7 +584,7 @@ std::shared_ptr<Context> ContextContainer::CreateBundleContext(std::string bundl
         return nullptr;
     }
 
-    std::shared_ptr<ApplicationContext> appContext = std::make_shared<ApplicationContext>();
+    std::shared_ptr<AppContext> appContext = std::make_shared<AppContext>();
     if (appContext == nullptr) {
         HILOG_ERROR("ContextContainer::CreateBundleContext appContext is nullptr");
         return nullptr;

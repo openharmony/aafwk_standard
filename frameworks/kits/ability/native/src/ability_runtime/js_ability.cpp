@@ -126,7 +126,7 @@ void JsAbility::OnStart(const Want &want)
         HILOG_WARN("Not found Ability.js");
         return;
     }
-    auto applicationContext = AbilityRuntime::Context::GetJsApplicationContext();
+    auto applicationContext = AbilityRuntime::Context::GetApplicationContext();
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityCreate(jsAbilityObj_);
     }
@@ -179,7 +179,7 @@ void JsAbility::OnStop()
         HILOG_INFO("The service connection is not disconnected.");
     }
 
-    auto applicationContext = AbilityRuntime::Context::GetJsApplicationContext();
+    auto applicationContext = AbilityRuntime::Context::GetApplicationContext();
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityDestroy(jsAbilityObj_);
     }
@@ -206,7 +206,7 @@ void JsAbility::OnSceneCreated()
         delegator->PostPerformScenceCreated(CreateADelegatorAbilityProperty());
     }
 
-    auto applicationContext = AbilityRuntime::Context::GetJsApplicationContext();
+    auto applicationContext = AbilityRuntime::Context::GetApplicationContext();
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityWindowStageCreate(jsAbilityObj_);
     }
@@ -246,7 +246,7 @@ void JsAbility::onSceneDestroyed()
         delegator->PostPerformScenceDestroyed(CreateADelegatorAbilityProperty());
     }
 
-    auto applicationContext = AbilityRuntime::Context::GetJsApplicationContext();
+    auto applicationContext = AbilityRuntime::Context::GetApplicationContext();
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityWindowStageDestroy(jsAbilityObj_);
     }
@@ -281,7 +281,7 @@ void JsAbility::OnForeground(const Want &want)
         delegator->PostPerformForeground(CreateADelegatorAbilityProperty());
     }
 
-    auto applicationContext = AbilityRuntime::Context::GetJsApplicationContext();
+    auto applicationContext = AbilityRuntime::Context::GetApplicationContext();
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityForeground(jsAbilityObj_);
     }
@@ -300,7 +300,7 @@ void JsAbility::OnBackground()
         delegator->PostPerformBackground(CreateADelegatorAbilityProperty());
     }
 
-    auto applicationContext = AbilityRuntime::Context::GetJsApplicationContext();
+    auto applicationContext = AbilityRuntime::Context::GetApplicationContext();
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityBackground(jsAbilityObj_);
     }
@@ -448,7 +448,7 @@ int32_t JsAbility::OnContinue(WantParams &wantParams)
         return false;
     }
 
-    auto applicationContext = AbilityRuntime::Context::GetJsApplicationContext();
+    auto applicationContext = AbilityRuntime::Context::GetApplicationContext();
     if (applicationContext != nullptr) {
         applicationContext->DispatchOnAbilityContinue(jsAbilityObj_);
     }
