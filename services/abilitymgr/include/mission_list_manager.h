@@ -477,7 +477,6 @@ private:
 
     std::queue<AbilityRequest> waittingAbilityQueue_;
     std::shared_ptr<MissionListenerController> listenerController_;
-    bool isPC_ = false;
 
     class MissionDmInitCallback : public DistributedHardware::DmInitCallback {
     public:
