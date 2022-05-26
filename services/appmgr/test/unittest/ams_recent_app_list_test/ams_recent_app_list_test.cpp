@@ -66,6 +66,7 @@ void AmsRecentAppListTest::TearDownTestCase()
 void AmsRecentAppListTest::SetUp()
 {
     serviceInner_.reset(new (std::nothrow) AppMgrServiceInner());
+    serviceInner_->Init();
     mockBundleMgr = new (std::nothrow) BundleMgrService();
     serviceInner_->SetBundleManager(mockBundleMgr);
 }

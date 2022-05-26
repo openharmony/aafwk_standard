@@ -24,6 +24,7 @@ ohos_moduletest("AmsAppServiceFlowModuleTest") {
   sources = [ "ams_app_service_flow_module_test.cpp" ]
 
   deps = [
+    "${aafwk_path}/frameworks/kits/ability/native:abilitykit_native",
     "${services_path}/common:perm_verification",
     "${services_path}/test/moduletest/common/ams:appmgr_mst_source",
   ]
