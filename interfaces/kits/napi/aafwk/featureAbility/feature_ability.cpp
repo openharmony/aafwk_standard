@@ -25,6 +25,7 @@
 #include "napi_context.h"
 #include "napi_data_ability_helper.h"
 #include "securec.h"
+#include "hitrace_meter.h"
 
 using namespace OHOS::AAFwk;
 using namespace OHOS::AppExecFwk;
@@ -1383,6 +1384,7 @@ napi_value NAPI_AcquireDataAbilityHelper(napi_env env, napi_callback_info info)
  */
 napi_value NAPI_FAConnectAbility(napi_env env, napi_callback_info info)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("FA connect ability called.");
     return NAPI_ConnectAbilityCommon(env, info, AbilityType::PAGE);
 }
@@ -1397,6 +1399,7 @@ napi_value NAPI_FAConnectAbility(napi_env env, napi_callback_info info)
  */
 napi_value NAPI_FADisConnectAbility(napi_env env, napi_callback_info info)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("FA disconnect ability called.");
     return NAPI_DisConnectAbilityCommon(env, info, AbilityType::PAGE);
 }

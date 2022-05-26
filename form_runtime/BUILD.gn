@@ -98,6 +98,7 @@ ohos_shared_library("libfms") {
     "distributeddatamgr:distributeddata_inner",
     "eventhandler:libeventhandler",
     "form_runtime:form_manager",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",

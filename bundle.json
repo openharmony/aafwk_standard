@@ -33,6 +33,7 @@
               "distributeddatamgr_appdatamgr",
               "dsoftbus_standard",
               "form_runtime",
+              "hisysevent_native",
               "hiviewdfx_hilog_native",
               "ipc",
               "dataability",

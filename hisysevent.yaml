@@ -1,4 +1,4 @@
-#  Copyright (c) 2021 Huawei Device Co., Ltd.
+#  Copyright (c) 2021-2022 Huawei Device Co., Ltd.
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
@@ -45,3 +45,142 @@ THREAD_BLOCK_6S:
   PACKAGE_NAME: {type: STRING, desc: package name}
   PROCESS_NAME: {type: STRING, desc: process name}
   MSG: {type: STRING, desc: application event message}
+
+# fault event
+
+START_ABILITY_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: start ability error}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+TERMINATE_ABILITY_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: terminate ability error}
+  USER_ID: {type: INT32, desc: userId}
+  ERROR_CODE: {type: INT32, desc: error code}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+START_EXTENSION_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: start extensionAbility error}
+  USER_ID: {type: INT32, desc: userId}
+  ERROR_CODE: {type: INT32, desc: error code}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+STOP_EXTENSION_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: stop extensionAbility error}
+  USER_ID: {type: INT32, desc: userId}
+  ERROR_CODE: {type: INT32, desc: error code}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+CONNECT_SERVICE_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: connnect serviceExtensionAbility error}
+  USER_ID: {type: INT32, desc: userId}
+  ERROR_CODE: {type: INT32, desc: error code}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+DISCONNECT_SERVICE_ERROR:
+  __BASE: {type: FAULT, level: MINOR, tag: ability, desc: disconnect serviceExtensionAbility error}
+  USER_ID: {type: INT32, desc: userId}
+  ERROR_CODE: {type: INT32, desc: error code}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+# ability behavior event
+
+START_ABILITY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: start ability}
+  USER_ID: {type: INT32, desc: userId}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+
+DO_FOREGROUND_ABILITY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: foreground ability}
+  SCENE_FLAG: {type: STRING, desc: scene flag}
+
+DO_BACKGROUND_ABILITY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: background ability}
+  SCENE_FLAG: {type: STRING, desc: scene flag}
+
+CLOSE_ABILITY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: close ability}
+
+TERMINATE_ABILITY:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: terminate ability}
+
+# serviceExtensionAbility behavior event
+
+START_SERVICE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: start serviceExtensionAbility}
+  USER_ID: {type: INT32, desc: userId}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  EXTENSION_TYPE: {type: STRING, desc: extension type}
+  
+STOP_SERVICE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: stop serviceExtensionAbility}
+  USER_ID: {type: INT32, desc: userId}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  EXTENSION_TYPE: {type: STRING, desc: extension type}
+  
+CONNECT_SERVICE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: connect serviceAbility}
+  USER_ID: {type: INT32, desc: userId}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  MODULE_NAME: {type: STRING, desc: module name}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  
+DISCONNECT_SERVICE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: disconnect serviceAbility}
+
+# app behavior event
+
+APP_ATTACH:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: app, desc: attach app}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  VERSION_NAME: {type: STRING, desc: version name}
+  VERSION_CODE: {type: INT32, desc: version code}
+  PID: {type: INT32, desc: pid}
+  TIME_STAMP: {type: INT32, desc: time stamp}
+
+APP_LAUNCH:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: app, desc: launch app}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  VERSION_NAME: {type: STRING, desc: version name}
+  VERSION_CODE: {type: INT32, desc: version code}
+  PID: {type: INT32, desc: pid}
+  TIME_STAMP: {type: INT32, desc: time stamp}
+
+APP_FOREGROUND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: app, desc: foreground app}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  VERSION_NAME: {type: STRING, desc: version name}
+  VERSION_CODE: {type: INT32, desc: version code}
+  PID: {type: INT32, desc: pid}
+  TIME_STAMP: {type: INT32, desc: time stamp}
+
+APP_BACKGROUND:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: app, desc: background app}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  VERSION_NAME: {type: STRING, desc: version name}
+  VERSION_CODE: {type: INT32, desc: version code}
+  PID: {type: INT32, desc: pid}
+  TIME_STAMP: {type: INT32, desc: time stamp}
+
+APP_TERMINATE:
+  __BASE: {type: BEHAVIOR, level: MINOR, tag: app, desc: terminate app}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  VERSION_NAME: {type: STRING, desc: version name}
+  VERSION_CODE: {type: INT32, desc: version code}
+  PID: {type: INT32, desc: pid}
+  TIME_STAMP: {type: INT32, desc: time stamp}

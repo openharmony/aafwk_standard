@@ -452,6 +452,7 @@ void MainThread::ScheduleAbilityStage(const HapModuleInfo &abilityStage)
 void MainThread::ScheduleLaunchAbility(const AbilityInfo &info, const sptr<IRemoteObject> &token,
     const std::shared_ptr<AAFwk::Want> &want)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("MainThread schedule launch ability, name is %{public}s, type is %{public}d.",
         info.name.c_str(), info.type);
 

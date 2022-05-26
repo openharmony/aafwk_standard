@@ -35,7 +35,10 @@ ohos_source_set("abilitymgr_common") {
 
 config("perm_verification_config") {
   visibility = [ ":*" ]
-  include_dirs = [ "include" ]
+  include_dirs = [
+    "include",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include",
+  ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]
@@ -46,10 +49,14 @@ config("perm_verification_config") {
 ohos_shared_library("perm_verification") {
   public_configs = [ ":perm_verification_config" ]
 
-  sources = [ "src/permission_verification.cpp" ]
+  sources = [
+    "src/event_report.cpp",
+    "src/permission_verification.cpp",
+  ]
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
+    "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "utils_base:utils",
