@@ -33,7 +33,6 @@ public:
     ~ElementName();
 
     std::string GetURI() const;
-    std::string GetElementNameURI() const;
 
     bool operator==(const ElementName &element) const;
 

@@ -248,7 +248,8 @@ public:
      *
      * @param deviceId abilityName of the calling ability
      */
-    void SetCallingContext(const std::string &deviceId, const std::string &bundleName, const std::string &abilityName);
+    void SetCallingContext(const std::string &deviceId, const std::string &bundleName,
+        const std::string &abilityName, const std::string &moduleName);
 
     /**
      * @brief Converts the given uri that refer to the Data ability into a normalized URI. A normalized URI can be used

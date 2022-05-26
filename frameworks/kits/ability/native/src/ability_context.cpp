@@ -145,6 +145,7 @@ std::shared_ptr<ElementName> AbilityContext::GetElementName()
     elementName->SetAbilityName(info->name);
     elementName->SetBundleName(info->bundleName);
     elementName->SetDeviceID(info->deviceId);
+    elementName->SetModuleName(info->moduleName);
     HILOG_INFO("%{public}s end.", __func__);
     return elementName;
 }
@@ -161,6 +162,7 @@ std::shared_ptr<ElementName> AbilityContext::GetCallingAbility()
     elementName->SetAbilityName(callingAbilityName_);
     elementName->SetBundleName(callingBundleName_);
     elementName->SetDeviceID(callingDeviceId_);
+    elementName->SetModuleName(callingModuleName_);
     HILOG_INFO("%{public}s end.", __func__);
     return elementName;
 }
@@ -439,12 +441,13 @@ bool AbilityContext::DeleteFile(const std::string &fileName)
     return ContextContainer::DeleteFile(fileName);
 }
 
-void AbilityContext::SetCallingContext(
-    const std::string &deviceId, const std::string &bundleName, const std::string &abilityName)
+void AbilityContext::SetCallingContext(const std::string &deviceId, const std::string &bundleName,
+    const std::string &abilityName, const std::string &moduleName)
 {
     callingDeviceId_ = deviceId;
     callingBundleName_ = bundleName;
     callingAbilityName_ = abilityName;
+    callingModuleName_ = moduleName;
 }
 
 Uri AbilityContext::GetCaller()

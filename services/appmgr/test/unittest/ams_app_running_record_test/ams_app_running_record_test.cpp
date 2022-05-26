@@ -766,7 +766,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_001, TestSize.Level1)
     EXPECT_TRUE(service_ != nullptr);
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
         GetMockToken(), nullptr, appInfo, abilityInfo, GetTestProcessName(), bundleInfo, hapModuleInfo, nullptr);
-    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
+    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(), hapModuleInfo.moduleName);
     EXPECT_TRUE(abilityRecord != nullptr);
 
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(1);
@@ -809,7 +809,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_002, TestSize.Level1)
 
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
         GetMockToken(), nullptr, appInfo, abilityInfo, GetTestProcessName(), bundleInfo, hapModuleInfo, nullptr);
-    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
+    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(), hapModuleInfo.moduleName);
     EXPECT_TRUE(abilityRecord != nullptr);
 
     sptr<IRemoteObject> token2 = new (std::nothrow) MockAbilityToken();
@@ -861,7 +861,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_003, TestSize.Level1)
         GetMockToken(), nullptr, appInfo, abilityInfo, GetTestProcessName(), bundleInfo, hapModuleInfo, nullptr);
     record->SetState(ApplicationState::APP_STATE_READY);
     record->SetApplicationClient(GetMockedAppSchedulerClient());
-    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
+    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(), hapModuleInfo.moduleName);
     EXPECT_TRUE(abilityRecord != nullptr);
 
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(0);
@@ -905,7 +905,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_004, TestSize.Level1)
 
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
         GetMockToken(), nullptr, appInfo, abilityInfo, GetTestProcessName(), bundleInfo, hapModuleInfo, nullptr);
-    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
+    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(), hapModuleInfo.moduleName);
     EXPECT_TRUE(abilityRecord != nullptr);
 
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleLaunchApplication(_, _)).Times(1);
@@ -953,7 +953,7 @@ HWTEST_F(AmsAppRunningRecordTest, LaunchAbilityForApp_005, TestSize.Level1)
 
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
         GetMockToken(), nullptr, appInfo, abilityInfo, GetTestProcessName(), bundleInfo, hapModuleInfo, nullptr);
-    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
+    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(), hapModuleInfo.moduleName);
     EXPECT_TRUE(abilityRecord != nullptr);
 
     sptr<IRemoteObject> token2 = new (std::nothrow) MockAbilityToken();
@@ -1022,7 +1022,7 @@ HWTEST_F(AmsAppRunningRecordTest, TerminateAbility_002, TestSize.Level1)
 
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
         GetMockToken(), nullptr, appInfo, abilityInfo, GetTestProcessName(), bundleInfo, hapModuleInfo, nullptr);
-    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
+    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(), hapModuleInfo.moduleName);
     EXPECT_TRUE(abilityRecord != nullptr);
 
     EXPECT_CALL(*mockAppSchedulerClient_, ScheduleCleanAbility(_)).Times(0);
@@ -1075,11 +1075,11 @@ HWTEST_F(AmsAppRunningRecordTest, GetAbilityRunningRecord_001, TestSize.Level1)
 
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
         GetMockToken(), nullptr, appInfo, abilityInfo, GetTestProcessName(), bundleInfo, hapModuleInfo, nullptr);
-    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
+    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(), hapModuleInfo.moduleName);
     EXPECT_TRUE(abilityRecord != nullptr);
 
     std::string abilityName = "not_exist_ability_name";
-    EXPECT_EQ(nullptr, record->GetAbilityRunningRecord(abilityName));
+    EXPECT_EQ(nullptr, record->GetAbilityRunningRecord(abilityName, hapModuleInfo.moduleName));
 
     HILOG_INFO("AmsAppRunningRecordTest GetAbilityRunningRecord_001 end");
 }
@@ -1163,7 +1163,7 @@ HWTEST_F(AmsAppRunningRecordTest, OnAbilityStateChanged_001, TestSize.Level1)
         GetMockToken(), nullptr, appInfo, abilityInfo, GetTestProcessName(), bundleInfo, hapModuleInfo, nullptr);
     auto moduleRecord = record->GetModuleRecordByModuleName(appInfo->bundleName, hapModuleInfo.moduleName);
     EXPECT_TRUE(moduleRecord != nullptr);
-    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
+    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(), hapModuleInfo.moduleName);
     EXPECT_TRUE(abilityRecord != nullptr);
 
     sptr<MockAppStateCallback> callback = new (std::nothrow) MockAppStateCallback();
@@ -1663,13 +1663,13 @@ HWTEST_F(AmsAppRunningRecordTest, Specified_LaunchApplication_001, TestSize.Leve
     EXPECT_TRUE(service_ != nullptr);
     std::shared_ptr<AppRunningRecord> record = service_->CreateAppRunningRecord(
         GetMockToken(), nullptr, appInfo, abilityInfo, GetTestProcessName(), bundleInfo, hapModuleInfo, nullptr);
-    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName());
+    auto abilityRecord = record->GetAbilityRunningRecord(GetTestAbilityName(), hapModuleInfo.moduleName);
     EXPECT_TRUE(abilityRecord != nullptr);
 
     record->SetApplicationClient(GetMockedAppSchedulerClient());
     record->isSpecifiedAbility_ = true;
     service_->LaunchApplication(record);
-    auto ability = record->GetAbilityRunningRecord(GetTestAbilityName());
+    auto ability = record->GetAbilityRunningRecord(GetTestAbilityName(), hapModuleInfo.moduleName);
     EXPECT_TRUE(ability->GetState() != AbilityState::ABILITY_STATE_READY);
 }
 }  // namespace AppExecFwk

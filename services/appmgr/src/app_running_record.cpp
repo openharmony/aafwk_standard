@@ -237,11 +237,14 @@ sptr<IAppScheduler> AppRunningRecord::GetApplicationClient() const
 }
 
 std::shared_ptr<AbilityRunningRecord> AppRunningRecord::GetAbilityRunningRecord(
-    const std::string &abilityName, int32_t ownerUserId) const
+    const std::string &abilityName, const std::string &moduleName, int32_t ownerUserId) const
 {
     HILOG_INFO("Get ability running record by ability name.");
     auto moduleRecordList = GetAllModuleRecord();
     for (const auto &moduleRecord : moduleRecordList) {
+        if (!moduleName.empty() && moduleRecord->GetModuleName() != moduleName) {
+            continue;
+        }
         auto abilityRecord = moduleRecord->GetAbilityRunningRecord(abilityName, ownerUserId);
         if (abilityRecord) {
             return abilityRecord;

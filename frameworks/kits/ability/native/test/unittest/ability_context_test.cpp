@@ -130,7 +130,7 @@ HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_GetCallingAbility_0100, Functi
     ability->Init(abilityInfo, nullptr, handler, nullptr);
     ability->StartAbilityForResult(want, -1);
 
-    ability->SetCallingContext("", "", std::string("App.System.Test.AbilityName_0127"));
+    ability->SetCallingContext("", "", std::string("App.System.Test.AbilityName_0127"), "");
     std::shared_ptr<ElementName> elementNameTest = ability->GetCallingAbility();
     std::string abilityName;
     if (elementNameTest != nullptr) {
@@ -455,7 +455,7 @@ HWTEST_F(AbilityContextTest, AaFwk_AbilityContext_GetCallingBundle_0200, Functio
     std::shared_ptr<Ability> ability = std::make_shared<Ability>();
     ability->Init(abilityInfo, nullptr, handler, nullptr);
     ability->StartAbilityForResult(want, -1);
-    ability->SetCallingContext("", "BundleName", "");
+    ability->SetCallingContext("", "BundleName", "", "");
 
     EXPECT_STREQ(bundleName.c_str(), ability->GetCallingBundle().c_str());
 }
