@@ -49,6 +49,8 @@
 #include "locale_config.h"
 #endif
 #include "uri_permission_manager_client.h"
+#include "event_report.h"
+#include "hisysevent.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -269,6 +271,14 @@ void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppSched
         LaunchApplication(appRecord);
     }
     appRecord->RegisterAppDeathRecipient();
+    AAFWK::EventInfo eventInfo;
+    auto applicationInfo = appRecord->GetApplicationInfo();
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.bundleName = applicationInfo->name;
+    eventInfo.versionName = applicationInfo->versionName;
+    eventInfo.versionCode = applicationInfo->versionCode;
+    eventInfo.processName = applicationInfo->process;
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_ATTACH, HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecord> &appRecord)
@@ -304,6 +314,14 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
         return;
     }
     appRecord->LaunchPendingAbilities();
+    AAFWK::EventInfo eventInfo;
+    auto applicationInfo = appRecord->GetApplicationInfo();
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.bundleName = applicationInfo->name;
+    eventInfo.versionName = applicationInfo->versionName;
+    eventInfo.versionCode = applicationInfo->versionCode;
+    eventInfo.processName = applicationInfo->process;
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_LAUNCH, HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::AddAbilityStageDone(const int32_t recordId)
@@ -338,6 +356,15 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
     // push the foregrounded app front of RecentAppList.
     PushAppFront(recordId);
     HILOG_INFO("application is foregrounded");
+    AAFWK::EventInfo eventInfo;
+    auto applicationInfo = appRecord->GetApplicationInfo();
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.bundleName = applicationInfo->name;
+    eventInfo.versionName = applicationInfo->versionName;
+    eventInfo.versionCode = applicationInfo->versionCode;
+    eventInfo.processName = applicationInfo->process;
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_FOREGROUND,
+        HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
@@ -358,6 +385,15 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
     }
 
     HILOG_INFO("application is backgrounded");
+    AAFWK::EventInfo eventInfo;
+    auto applicationInfo = appRecord->GetApplicationInfo();
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.bundleName = applicationInfo->name;
+    eventInfo.versionName = applicationInfo->versionName;
+    eventInfo.versionCode = applicationInfo->versionCode;
+    eventInfo.processName = applicationInfo->process;
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_BACKGROUND,
+        HiSysEventType::BEHAVIOR, eventInfo);
 }
 
 void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
@@ -387,6 +423,14 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     OnAppStateChanged(appRecord, ApplicationState::APP_STATE_TERMINATED);
     appRunningManager_->RemoveAppRunningRecordById(recordId);
     RemoveAppFromRecentListById(recordId);
+    AAFWK::EventInfo eventInfo;
+    auto applicationInfo = appRecord->GetApplicationInfo();
+    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.bundleName = applicationInfo->name;
+    eventInfo.versionName = applicationInfo->versionName;
+    eventInfo.versionCode = applicationInfo->versionCode;
+    eventInfo.processName = applicationInfo->process;
+    AAFWK::EventReport::SendAppEvent(AAFWK::APP_TERMINATE, HiSysEventType::BEHAVIOR, eventInfo);
     DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
 
     HILOG_INFO("application is terminated");

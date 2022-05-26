@@ -34,6 +34,7 @@
 #include "string_wrapper.h"
 #include "context/context.h"
 #include "context/application_context.h"
+#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -119,6 +120,7 @@ void JsAbility::Init(const std::shared_ptr<AbilityInfo> &abilityInfo,
 
 void JsAbility::OnStart(const Want &want)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnStart begin, ability is %{public}s.", GetAbilityName().c_str());
     Ability::OnStart(want);
 
@@ -163,6 +165,7 @@ void JsAbility::OnStart(const Want &want)
 
 void JsAbility::OnStop()
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     Ability::OnStop();
 
     CallObjectMethod("onDestroy");
@@ -190,6 +193,7 @@ const std::string PAGE_STACK_PROPERTY_NAME = "pageStack";
 
 void JsAbility::OnSceneCreated()
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnSceneCreated begin, ability is %{public}s.", GetAbilityName().c_str());
     Ability::OnSceneCreated();
     auto jsAppWindowStage = CreateAppWindowStage();
@@ -255,6 +259,7 @@ void JsAbility::onSceneDestroyed()
 
 void JsAbility::OnForeground(const Want &want)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnForeground begin, ability is %{public}s.", GetAbilityName().c_str());
     Ability::OnForeground(want);
 
@@ -290,6 +295,7 @@ void JsAbility::OnForeground(const Want &want)
 
 void JsAbility::OnBackground()
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     Ability::OnBackground();
 
     CallObjectMethod("onBackground");

@@ -23,6 +23,7 @@
 #include "iservice_registry.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
+#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace AAFwk {
@@ -97,6 +98,7 @@ ErrCode AbilityManagerClient::ScheduleCommandAbilityDone(const sptr<IRemoteObjec
 
 ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode, int32_t userId)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->StartAbility(want, userId, requestCode);
@@ -105,6 +107,7 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, int requestCode, in
 ErrCode AbilityManagerClient::StartAbility(
     const Want &want, const sptr<IRemoteObject> &callerToken, int requestCode, int32_t userId)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     HILOG_INFO("Start ability come, ability:%{public}s, userId:%{public}d.",
@@ -115,6 +118,7 @@ ErrCode AbilityManagerClient::StartAbility(
 ErrCode AbilityManagerClient::StartAbility(const Want &want, const AbilityStartSetting &abilityStartSetting,
     const sptr<IRemoteObject> &callerToken, int requestCode, int32_t userId)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->StartAbility(want, abilityStartSetting, callerToken, userId, requestCode);
@@ -123,6 +127,7 @@ ErrCode AbilityManagerClient::StartAbility(const Want &want, const AbilityStartS
 ErrCode AbilityManagerClient::StartAbility(const Want &want, const StartOptions &startOptions,
     const sptr<IRemoteObject> &callerToken, int requestCode, int32_t userId)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     HILOG_INFO("%{public}s come, abilityName=%{public}s, userId=%{public}d.",
@@ -160,6 +165,7 @@ ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &token,
 
 ErrCode AbilityManagerClient::TerminateAbility(const sptr<IRemoteObject> &callerToken, int requestCode)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     return abms->TerminateAbilityByCaller(callerToken, requestCode);
@@ -182,6 +188,7 @@ ErrCode AbilityManagerClient::CloseAbility(const sptr<IRemoteObject> &token, int
 
 ErrCode AbilityManagerClient::MinimizeAbility(const sptr<IRemoteObject> &token, bool fromUser)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     HILOG_INFO("Minimize ability, fromUser:%{public}d.", fromUser);
@@ -190,6 +197,7 @@ ErrCode AbilityManagerClient::MinimizeAbility(const sptr<IRemoteObject> &token, 
 
 ErrCode AbilityManagerClient::ConnectAbility(const Want &want, const sptr<IAbilityConnection> &connect, int32_t userId)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     HILOG_INFO("Connect ability called, bundleName:%{public}s, abilityName:%{public}s, userId:%{public}d.",
@@ -200,6 +208,7 @@ ErrCode AbilityManagerClient::ConnectAbility(const Want &want, const sptr<IAbili
 ErrCode AbilityManagerClient::ConnectAbility(
     const Want &want, const sptr<IAbilityConnection> &connect, const sptr<IRemoteObject> &callerToken, int32_t userId)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     HILOG_INFO("Connect ability called, bundleName:%{public}s, abilityName:%{public}s, userId:%{public}d.",
@@ -209,6 +218,7 @@ ErrCode AbilityManagerClient::ConnectAbility(
 
 ErrCode AbilityManagerClient::DisconnectAbility(const sptr<IAbilityConnection> &connect)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     auto abms = GetAbilityManager();
     CHECK_POINTER_RETURN_NOT_CONNECTED(abms);
     HILOG_INFO("Disconnect ability begin.");

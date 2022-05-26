@@ -298,6 +298,7 @@ ohos_unittest("page_ability_impl_test") {
     ]
 
     external_deps = [
+      "hitrace_native:hitrace_meter",
       "hiviewdfx_hilog_native:libhilog",
       "input:libmmi-client",
       "ipc:ipc_core",
@@ -330,6 +331,7 @@ ohos_unittest("service_ability_impl_test") {
   ]
 
   external_deps = [
+    "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
   ]

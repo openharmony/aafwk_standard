@@ -32,6 +32,7 @@ ohos_moduletest("on_new_want_module_test") {
     "${aafwk_path}/services/abilitymgr/src/ability_manager_service.cpp",
     "${aafwk_path}/services/abilitymgr/src/mission_list.cpp",
     "${aafwk_path}/services/abilitymgr/src/mission_list_manager.cpp",
+    "${aafwk_path}/services/common/src/event_report.cpp",
     "${aafwk_path}/services/common/src/permission_verification.cpp",
     "//foundation/distributedhardware/devicemanager/test/unittest/mock/parameter.cpp",
   ]

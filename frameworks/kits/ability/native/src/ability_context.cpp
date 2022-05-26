@@ -26,6 +26,7 @@
 #include "resource_manager.h"
 #include "sys_mgr_client.h"
 #include "system_ability_definition.h"
+#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace AppExecFwk {
@@ -169,6 +170,7 @@ std::shared_ptr<ElementName> AbilityContext::GetCallingAbility()
 
 bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbilityConnection> &conn)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     AppExecFwk::AbilityType type = GetAbilityInfoType();
 
     std::shared_ptr<AbilityInfo> abilityInfo = GetAbilityInfo();
@@ -196,6 +198,7 @@ bool AbilityContext::ConnectAbility(const Want &want, const sptr<AAFwk::IAbility
 
 ErrCode AbilityContext::DisconnectAbility(const sptr<AAFwk::IAbilityConnection> &conn)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     std::shared_ptr<AbilityInfo> info = GetAbilityInfo();
     HILOG_INFO("Disconnect ability begin, caller:%{public}s.", info == nullptr ? "" : info->name.c_str());
 

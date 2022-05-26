@@ -28,6 +28,7 @@
 #include "napi_remote_object.h"
 #include "napi_common_start_options.h"
 #include "start_options.h"
+#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace AbilityRuntime {
@@ -118,6 +119,7 @@ private:
     std::weak_ptr<ServiceExtensionContext> context_;
     NativeValue* OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info)
     {
+        HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
         HILOG_INFO("OnStartAbility is called");
         // only support one or two or three params
         if (info.argc != ARGC_ONE && info.argc != ARGC_TWO && info.argc != ARGC_THREE) {

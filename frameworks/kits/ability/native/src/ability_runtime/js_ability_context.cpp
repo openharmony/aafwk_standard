@@ -30,6 +30,7 @@
 #include "start_options.h"
 #include "want.h"
 #include "event_handler.h"
+#include "hitrace_meter.h"
 
 #ifdef SUPPORT_GRAPHICS
 #include "pixel_map_napi.h"
@@ -130,6 +131,7 @@ NativeValue* JsAbilityContext::ConnectAbilityWithAccount(NativeEngine* engine, N
 
 NativeValue* JsAbilityContext::DisconnectAbility(NativeEngine* engine, NativeCallbackInfo* info)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     JsAbilityContext* me = CheckParamsAndGetThis<JsAbilityContext>(engine, info);
     return (me != nullptr) ? me->OnDisconnectAbility(*engine, *info) : nullptr;
 }
@@ -166,6 +168,7 @@ NativeValue* JsAbilityContext::IsTerminating(NativeEngine* engine, NativeCallbac
 
 NativeValue* JsAbilityContext::OnStartAbility(NativeEngine& engine, NativeCallbackInfo& info)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("OnStartAbility is called.");
 
     if (info.argc == ARGC_ZERO) {
@@ -700,6 +703,7 @@ NativeValue* JsAbilityContext::OnTerminateSelfWithResult(NativeEngine& engine, N
 
 NativeValue* JsAbilityContext::OnConnectAbility(NativeEngine& engine, NativeCallbackInfo& info)
 {
+    HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_INFO("Connect ability called.");
     // only support two params
     if (info.argc != ARGC_TWO) {
