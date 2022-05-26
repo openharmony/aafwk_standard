@@ -58,6 +58,7 @@ ohos_shared_library("featureability") {
     "napi:ace_napi",
     "relational_store:native_appdatafwk",
     "relational_store:native_rdb",
+    "relational_store:rdb_data_share_adapter",
     "utils_base:utils",
 
     #"appdatamgr_jskits:rdb",
