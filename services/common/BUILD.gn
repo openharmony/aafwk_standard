@@ -35,7 +35,10 @@ ohos_source_set("abilitymgr_common") {
 
 config("perm_verification_config") {
   visibility = [ ":*" ]
-  include_dirs = [ "include" ]
+  include_dirs = [
+    "include",
+    "${bundlefwk_inner_api_path}/appexecfwk_base/include",
+  ]
   cflags = []
   if (target_cpu == "arm") {
     cflags += [ "-DBINDER_IPC_32BIT" ]

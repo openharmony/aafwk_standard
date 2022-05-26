@@ -21,6 +21,7 @@
 
 #include "errors.h"
 #include "hisysevent.h"
+#include "extension_ability_info.h"
 
 using HiSysEventType = OHOS::HiviewDFX::HiSysEvent::EventType;
 using HiSysEvent = OHOS::HiviewDFX::HiSysEvent;
