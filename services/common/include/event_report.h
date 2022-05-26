@@ -69,6 +69,7 @@ const std::string APP_TERMINATE = "APP_TERMINATE";
 struct EventInfo {
     int32_t userId = -1;
     int64_t formId = -1;
+    int32_t extensionType = -1;
     uint32_t versionCode = 0;
     uint32_t sceneFlag = -1;
     std::string versionName;
@@ -76,7 +77,6 @@ struct EventInfo {
     std::string moduleName;
     std::string abilityName;
     std::string processName;
-    AppExecFwk::ExtensionAbilityType extensionType;
 
     // olny used in fault event
     ErrCode errCode = ERR_OK;
@@ -92,7 +92,7 @@ struct EventInfo {
         moduleName.clear();
         abilityName.clear();
         processName.clear();
-        extensionType = AppExecFwk::ExtensionAbilityType::UNSPECIFIED;
+        extensionType = (int32_t)AppExecFwk::ExtensionAbilityType::UNSPECIFIED;
         errCode = ERR_OK;
     }
 };
