@@ -211,8 +211,16 @@ int DataAbilityRecord::AddClient(const sptr<IRemoteObject> &client, bool tryBind
             client->RemoveDeathRecipient(callerDeathRecipient_);
         }
         if (callerDeathRecipient_ == nullptr) {
-            callerDeathRecipient_ = new DataAbilityCallerRecipient(
-                std::bind(&DataAbilityRecord::OnSchedulerDied, this, std::placeholders::_1));
+            auto self(weak_from_this());
+            auto diedTask = [self](const wptr<IRemoteObject> &remote) {
+                auto record = self.lock();
+                if (record == nullptr) {
+                    HILOG_ERROR("DataAbilityRecord is null, OnSchedulerDied failed.");
+                    return;
+                }
+                record->OnSchedulerDied(remote);
+            };
+            callerDeathRecipient_ = new DataAbilityCallerRecipient(diedTask);
         }
         if (client != nullptr) {
             client->AddDeathRecipient(callerDeathRecipient_);
