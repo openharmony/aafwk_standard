@@ -67,6 +67,7 @@ const std::string APP_TERMINATE = "APP_TERMINATE";
 }
 
 struct EventInfo {
+    int32_t pid = -1;
     int32_t userId = -1;
     int64_t formId = -1;
     int32_t extensionType = -1;
@@ -83,6 +84,7 @@ struct EventInfo {
 
     void Reset()
     {
+        pid =-1;
         userId = -1;
         formId =-1;
         versionCode = 0;
