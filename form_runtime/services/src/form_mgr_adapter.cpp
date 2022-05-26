@@ -1294,6 +1294,67 @@ int FormMgrAdapter::SetNextRefreshTime(const int64_t formId, const int64_t nextT
 }
 
 /**
+ * @brief Add the form info.
+ *
+ * @param formInfo Indicates the form info to be added.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormMgrAdapter::AddFormInfo(FormInfo &formInfo)
+{
+    std::string bundleName;
+    if (!GetBundleName(bundleName)) {
+        return ERR_APPEXECFWK_FORM_GET_BUNDLE_FAILED;
+    }
+    if (formInfo.bundleName != bundleName) {
+        HILOG_WARN("The bundleName in formInfo does not match the bundleName of current calling user.");
+        formInfo.bundleName = bundleName;
+    }
+    if (formInfo.isStatic) {
+        HILOG_WARN("Only dynamic forms can be added.");
+        formInfo.isStatic = false;
+    }
+
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    int32_t userId = GetCurrentUserId(callingUid);
+
+    return FormInfoMgr::GetInstance().AddDynamicFormInfo(formInfo, userId);
+}
+
+/**
+ * @brief Remove the specified form info.
+ *
+ * @param moduleName Indicates the module name of the dynamic form info to be removed.
+ * @param formName Indicates the form name of the dynamic form info to be removed.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormMgrAdapter::RemoveFormInfo(const std::string &moduleName, const std::string &formName)
+{
+    std::string bundleName;
+    if (!GetBundleName(bundleName)) {
+        return ERR_APPEXECFWK_FORM_GET_BUNDLE_FAILED;
+    }
+
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    int32_t userId = GetCurrentUserId(callingUid);
+
+    return FormInfoMgr::GetInstance().RemoveDynamicFormInfo(bundleName, moduleName, formName, userId);
+}
+
+/**
+ * @brief Request to publish a form to the form host.
+ *
+ * @param want The want of the form to publish.
+ * @param withFormBindingData Indicates whether the formBindingData is carried with.
+ * @param formBindingData Indicates the form data.
+ * @return Returns ERR_OK on success, others on failure.
+ */
+ErrCode FormMgrAdapter::RequestPublishForm(Want &want, bool withFormBindingData,
+                                           std::unique_ptr<FormProviderData> &formBindingData)
+{
+    return ERR_OK;
+}
+
+/**
  * @brief get bundleName.
  * @param bundleName for output.
  * @return Returns true on success, others on failure.
