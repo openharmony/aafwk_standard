@@ -86,6 +86,31 @@ private:
      * @return Returns ERR_OK on success, others on failure.
      */
     int32_t HandleSetNextRefreshTime(MessageParcel &data, MessageParcel &reply);
+
+    /**
+     * @brief handle AddFormInfo message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode HandleAddFormInfo(MessageParcel &data, MessageParcel &reply);
+
+    /**
+     * @brief handle RemoveFormInfo message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode HandleRemoveFormInfo(MessageParcel &data, MessageParcel &reply);
+
+    /**
+     * @brief handle RequestPublishForm message.
+     * @param data input param.
+     * @param reply output param.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    ErrCode HandleRequestPublishForm(MessageParcel &data, MessageParcel &reply);
+
     /**
      * @brief Handle RequestForm message.
      * @param data input param.

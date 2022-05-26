@@ -56,7 +56,7 @@ private:
     void HandleBundleFormInfoChanged(const std::string &bundleName, int32_t userId);
     void HandleBundleFormInfoRemoved(const std::string &bundleName, int32_t userId);
     void HandleProviderRemoved(const std::string &bundleName, const int32_t userId);
-    void HandleBundleDataCleared(const std::string &bundleName, const int uid);
+    void HandleBundleDataCleared(const std::string &bundleName, int32_t userId);
     void HandleFormHostDataCleared(const int uid);
     void ClearFormDBRecordData(const int uid, std::map<int64_t, bool> &removedFormsMap);
     void ClearTempFormRecordData(const int uid, std::map<int64_t, bool> &removedFormsMap);

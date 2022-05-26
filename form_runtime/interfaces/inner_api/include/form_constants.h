@@ -122,6 +122,8 @@ namespace Constants {
         {3, "2*4"},
         {4, "4*4"},
     };
+    const int32_t DIM_KEY_MIN = 1;
+    const int32_t DIM_KEY_MAX = 4;
     const int MAX_FORMS = 512;
     const int MAX_RECORD_PER_APP = 256;
     const int MAX_TEMP_FORMS = 256;

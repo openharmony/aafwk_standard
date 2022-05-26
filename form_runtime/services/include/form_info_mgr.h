@@ -44,9 +44,15 @@ public:
 
     ErrCode InitFromJson(const std::string &formInfoStoragesJson);
 
-    ErrCode Update(int32_t userId);
+    ErrCode UpdateStaticFormInfos(int32_t userId);
 
     ErrCode Remove(int32_t userId);
+
+    ErrCode AddDynamicFormInfo(const FormInfo &formInfo, int32_t userId);
+
+    ErrCode RemoveDynamicFormInfo(const std::string &moduleName, const std::string &formName, int32_t userId);
+
+    ErrCode RemoveAllDynamicFormsInfo(int32_t userId);
 
     bool Empty();
 
@@ -55,6 +61,8 @@ public:
     ErrCode GetFormsInfoByModule(const std::string &moduleName, std::vector<FormInfo> &formInfos);
 
 private:
+    ErrCode UpdateFormInfoStorageLocked();
+
     std::string bundleName_ {};
     mutable std::shared_timed_mutex formInfosMutex_ {};
     std::vector<AAFwk::FormInfoStorage> formInfoStorages_ {};
@@ -68,7 +76,7 @@ public:
 
     ErrCode Start();
 
-    ErrCode Update(const std::string &bundleNamef, int32_t userId);
+    ErrCode UpdateStaticFormInfos(const std::string &bundleName, int32_t userId);
 
     ErrCode Remove(const std::string &bundleName, int32_t userId);
 
@@ -79,10 +87,18 @@ public:
     ErrCode GetFormsInfoByModule(const std::string &bundleName, const std::string &moduleName,
                                  std::vector<FormInfo> &formInfos);
 
+    ErrCode AddDynamicFormInfo(FormInfo &formInfo, int32_t userId);
+
+    ErrCode RemoveDynamicFormInfo(const std::string &bundleName, const std::string &moduleName,
+                                  const std::string &formName, int32_t userId);
+
+    ErrCode RemoveAllDynamicFormsInfo(const std::string &bundleName, int32_t userId);
+
 private:
     std::shared_ptr<BundleFormInfo> GetOrCreateBundleFromInfo(const std::string &bundleName);
-    bool IsCaller(std::string bundleName);
-    bool CheckBundlePermission();
+    static bool IsCaller(std::string bundleName);
+    static bool CheckBundlePermission();
+    static ErrCode CheckDynamicFormInfo(FormInfo &formInfo, const BundleInfo &bundleInfo);
 
     mutable std::shared_timed_mutex bundleFormInfoMapMutex_ {};
     std::unordered_map<std::string, std::shared_ptr<BundleFormInfo>> bundleFormInfoMap_ {};
