@@ -225,6 +225,7 @@ ohos_shared_library("abilitykit_native") {
     "ipc_js:rpc",
     "relational_store:native_appdatafwk",
     "relational_store:native_rdb",
+    "relational_store:rdb_data_share_adapter",
     "resource_management:global_resmgr",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
