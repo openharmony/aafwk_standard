@@ -751,8 +751,10 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     }
     HILOG_INFO("Start extension begin, name is %{public}s.", abilityInfo.name.c_str());
     eventInfo.errCode = connectManager->StartAbility(abilityRequest);
-    AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
-        HiSysEventType::FAULT, eventInfo);
+    if (eventInfo.errCode != ERR_OK) {
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
+            HiSysEventType::FAULT, eventInfo);
+    }
     return eventInfo.errCode;
 }
 
