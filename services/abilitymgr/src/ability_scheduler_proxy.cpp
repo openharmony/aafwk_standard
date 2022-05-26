@@ -1040,7 +1040,7 @@ void AbilitySchedulerProxy::DumpAbilityInfo(const std::vector<std::string> &para
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option(MessageOption::TF_ASYNC);
     if (!WriteInterfaceToken(data)) {
         HILOG_ERROR("DumpAbilityRunner fail to write token");
         return;
@@ -1054,12 +1054,6 @@ void AbilitySchedulerProxy::DumpAbilityInfo(const std::vector<std::string> &para
     int32_t err = Remote()->SendRequest(IAbilityScheduler::DUMP_ABILITY_RUNNER_INNER, data, reply, option);
     if (err != NO_ERROR) {
         HILOG_ERROR("DumpAbilityRunner fail to SendRequest. err: %{public}d", err);
-    }
-
-    int32_t stackNum = reply.ReadInt32();
-    for (int i = 0; i < stackNum; i++) {
-        std::string stac = Str16ToStr8(reply.ReadString16());
-        info.emplace_back(stac);
     }
 }
 

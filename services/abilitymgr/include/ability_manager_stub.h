@@ -180,6 +180,7 @@ private:
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 
     int GetTopAbilityInner(MessageParcel &data, MessageParcel &reply);
+    int DumpAbilityInfoDoneInner(MessageParcel &data, MessageParcel &reply);
 };
 }  // namespace AAFwk
 }  // namespace OHOS

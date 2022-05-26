@@ -682,6 +682,14 @@ public:
      */
     virtual int32_t GetMissionIdByToken(const sptr<IRemoteObject> &token) override;
 
+    /**
+     * Called when client complete dump.
+     *
+     * @param infos The dump info.
+     * @return Returns ERR_OK on success, others on failure.
+     */
+    virtual int DumpAbilityInfoDone(std::vector<std::string> &infos, const sptr<IRemoteObject> &callerToken) override;
+
 private:
     template <typename T>
     int GetParcelableInfos(MessageParcel &reply, std::vector<T> &parcelableInfos);

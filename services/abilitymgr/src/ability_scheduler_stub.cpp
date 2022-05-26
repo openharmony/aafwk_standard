@@ -631,11 +631,6 @@ int AbilitySchedulerStub::DumpAbilityInfoInner(MessageParcel &data, MessageParce
         HILOG_INFO("DumpAbilityInfoInner infos = %{public}s", infostep.c_str());
     }
 
-    reply.WriteInt32(infos.size());
-    for (auto stack : infos) {
-        reply.WriteString16(Str8ToStr16(stack));
-    }
-
     return NO_ERROR;
 }
 int AbilitySchedulerStub::CallRequestInner(MessageParcel &data, MessageParcel &reply)

@@ -1012,5 +1012,14 @@ AppExecFwk::ElementName AbilityManagerClient::GetTopAbility()
     sptr<IAbilityManager> abms = iface_cast<IAbilityManager>(remoteObject_);
     return abms->GetTopAbility();
 }
+
+ErrCode AbilityManagerClient::DumpAbilityInfoDone(std::vector<std::string> &infos,
+    const sptr<IRemoteObject> &callerToken)
+{
+    HILOG_INFO("DumpAbilityInfoDone begin.");
+    CHECK_REMOTE_OBJECT_AND_RETURN(remoteObject_, ABILITY_SERVICE_NOT_CONNECTED);
+    auto abms = iface_cast<IAbilityManager>(remoteObject_);
+    return abms->DumpAbilityInfoDone(infos, callerToken);
+}
 }  // namespace AAFwk
 }  // namespace AAFwk
