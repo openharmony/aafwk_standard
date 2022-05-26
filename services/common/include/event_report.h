@@ -22,6 +22,9 @@
 #include "errors.h"
 #include "hisysevent.h"
 
+using HiSysEventType = OHOS::HiviewDFX::HiSysEvent::EventType;
+using HiSysEvent = OHOS::HiviewDFX::HiSysEvent;
+
 namespace OHOS {
 namespace AAFWK {
 namespace {
@@ -96,13 +99,13 @@ struct EventInfo {
 };
 class EventReport {
 public:
-    static void SendAppEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+    static void SendAppEvent(const std::string &eventName, HiSysEventType type,
         const EventInfo& eventInfo);
-    static void SendAbilityEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+    static void SendAbilityEvent(const std::string &eventName, HiSysEventType type,
         const EventInfo& eventInfo);
-    static void SendExtensionEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+    static void SendExtensionEvent(const std::string &eventName, HiSysEventType type,
         const EventInfo& eventInfo);
-    static void SendFormEvent(const std::string &eventName, OHOS::HiviewDFX::HiSysEvent::EventType type,
+    static void SendFormEvent(const std::string &eventName, HiSysEventType type,
         const EventInfo& eventInfo);
 };
 }  // namespace AAFWK

@@ -265,12 +265,12 @@ int AbilityManagerService::StartAbility(const Want &want, int32_t userId, int re
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
     int32_t ret = StartAbilityInner(want, nullptr, requestCode, -1, userId);
     if (ret != ERR_OK) {
         eventInfo.errCode = ret;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
     }
     return ret;
 }
@@ -286,12 +286,12 @@ int AbilityManagerService::StartAbility(const Want &want, const sptr<IRemoteObje
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
     if ((flags & Want::FLAG_ABILITY_CONTINUATION) == Want::FLAG_ABILITY_CONTINUATION) {
         HILOG_ERROR("StartAbility with continuation flags is not allowed!");
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
 
@@ -307,7 +307,7 @@ int AbilityManagerService::StartAbility(const Want &want, const sptr<IRemoteObje
         eventInfo.errCode = manager->FreeInstall(fiWant, validUserId, requestCode, callerToken,
             CheckIfOperateRemote(want));
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return eventInfo.errCode;
     }
 
@@ -317,14 +317,14 @@ int AbilityManagerService::StartAbility(const Want &want, const sptr<IRemoteObje
         HILOG_INFO("AbilityManagerService::StartAbility. try to StartRemoteAbility");
         eventInfo.errCode = StartRemoteAbility(want, requestCode);
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return eventInfo.errCode;
     }
     int32_t ret = StartAbilityInner(want, callerToken, requestCode, -1, userId);
     if (ret != ERR_OK) {
         eventInfo.errCode = ret;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
     }
     return ret;
 }
@@ -422,20 +422,20 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
 
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         eventInfo.errCode = CHECK_PERMISSION_FAILED;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return CHECK_PERMISSION_FAILED;
     }
 
     if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
     int32_t oriValidUserId = GetValidUserId(userId);
@@ -444,7 +444,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
 
@@ -454,7 +454,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         HILOG_ERROR("Generate ability request local error.");
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return result;
     }
     auto abilityInfo = abilityRequest.abilityInfo;
@@ -466,7 +466,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
     if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return result;
     }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
@@ -474,7 +474,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return result;
     }
 
@@ -484,7 +484,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         HILOG_ERROR("Cannot start data ability, use 'AcquireDataAbility()' instead.");
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
 
@@ -496,7 +496,7 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
                 result);
             eventInfo.errCode = result;
             AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-                OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+                HiSysEventType::FAULT, eventInfo);
             return result;
         }
     }
@@ -505,14 +505,14 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         HILOG_ERROR("Only support for page type ability.");
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
 #endif
     if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
         eventInfo.errCode = ERR_WOULD_BLOCK;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_WOULD_BLOCK;
     }
     auto missionListManager = GetListManagerByUserId(oriValidUserId);
@@ -520,14 +520,14 @@ int AbilityManagerService::StartAbility(const Want &want, const AbilityStartSett
         HILOG_ERROR("missionListManager is Null. userId=%{public}d", validUserId);
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
     int32_t ret = missionListManager->StartAbility(abilityRequest);
     if (ret != ERR_OK) {
         eventInfo.errCode = ret;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
     }
     return ret;
 }
@@ -543,20 +543,20 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
     AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
 
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         eventInfo.errCode = CHECK_PERMISSION_FAILED;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return CHECK_PERMISSION_FAILED;
     }
 
     if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
     int32_t oriValidUserId = GetValidUserId(userId);
@@ -565,7 +565,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
 
@@ -575,7 +575,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         HILOG_ERROR("Generate ability request local error.");
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return result;
     }
 
@@ -588,7 +588,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     if (result != AppExecFwk::Constants::PERMISSION_GRANTED) {
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return result;
     }
     result = AbilityUtil::JudgeAbilityVisibleControl(abilityInfo);
@@ -596,7 +596,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         HILOG_ERROR("%{public}s JudgeAbilityVisibleControl error.", __func__);
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return result;
     }
 
@@ -604,7 +604,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         HILOG_ERROR("Only support for page type ability.");
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
 
@@ -616,7 +616,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
                 result);
             eventInfo.errCode = result;
             AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-                OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+                HiSysEventType::FAULT, eventInfo);
             return result;
         }
     }
@@ -624,7 +624,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     if (!IsAbilityControllerStart(want, abilityInfo.bundleName)) {
         eventInfo.errCode = ERR_WOULD_BLOCK;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_WOULD_BLOCK;
     }
     GrantUriPermission(want, validUserId);
@@ -635,14 +635,14 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
         HILOG_ERROR("missionListManager is Null. userId=%{public}d", validUserId);
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
     int32_t ret = missionListManager->StartAbility(abilityRequest);
     if (ret != ERR_OK) {
         eventInfo.errCode = ret;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
     }
     return ret;
 }
@@ -692,12 +692,12 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     eventInfo.abilityName = want.GetElement().GetAbilityName();
     eventInfo.extensionType = GetExtensionType(extensionType);
     AAFWK::EventReport::SendExtensionEvent(AAFWK::START_SERVICE_EXTENSION,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed.", __func__);
         eventInfo.errCode = CHECK_PERMISSION_FAILED;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return CHECK_PERMISSION_FAILED;
     }
 
@@ -705,7 +705,7 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
         HILOG_ERROR("%{public}s VerificationAllToken failed.", __func__);
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
     int32_t validUserId = GetValidUserId(userId);
@@ -713,7 +713,7 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
 
@@ -723,7 +723,7 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
         HILOG_ERROR("Generate ability request local error.");
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return result;
     }
 
@@ -737,7 +737,7 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
         HILOG_ERROR("CheckOptExtensionAbility error.");
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return result;
     }
 
@@ -746,13 +746,13 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
         HILOG_ERROR("connectManager is nullptr. userId=%{public}d", validUserId);
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
     HILOG_INFO("Start extension begin, name is %{public}s.", abilityInfo.name.c_str());
     eventInfo.errCode = connectManager->StartAbility(abilityRequest);
     AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
-        OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+        HiSysEventType::FAULT, eventInfo);
     return eventInfo.errCode;
 }
 
@@ -768,12 +768,12 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
     eventInfo.abilityName = want.GetElement().GetAbilityName();
     eventInfo.extensionType = GetExtensionType(extensionType);
     AAFWK::EventReport::SendExtensionEvent(AAFWK::STOP_SERVICE_EXTENSION,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed.", __func__);
         eventInfo.errCode = CHECK_PERMISSION_FAILED;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            HiSysEventType::FAULT,
             eventInfo);
         return CHECK_PERMISSION_FAILED;
     }
@@ -782,7 +782,7 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
         HILOG_ERROR("%{public}s VerificationAllToken failed.", __func__);
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            HiSysEventType::FAULT,
             eventInfo);
         return ERR_INVALID_VALUE;
     }
@@ -791,7 +791,7 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            HiSysEventType::FAULT,
             eventInfo);
         return ERR_INVALID_VALUE;
     }
@@ -802,7 +802,7 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
         HILOG_ERROR("Generate ability request local error.");
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            HiSysEventType::FAULT,
             eventInfo);
         return result;
     }
@@ -817,7 +817,7 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
         HILOG_ERROR("CheckOptExtensionAbility error.");
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            HiSysEventType::FAULT,
             eventInfo);
         return result;
     }
@@ -827,14 +827,14 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
         HILOG_ERROR("connectManager is nullptr. userId=%{public}d", validUserId);
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+            HiSysEventType::FAULT,
             eventInfo);
         return ERR_INVALID_VALUE;
     }
     HILOG_INFO("Stop extension begin, name is %{public}s.", abilityInfo.name.c_str());
     eventInfo.errCode = connectManager->StopServiceAbility(abilityRequest);
     AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
-        OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+        HiSysEventType::FAULT,
         eventInfo);
     return eventInfo.errCode;
 }
@@ -903,10 +903,10 @@ int AbilityManagerService::TerminateAbility(const sptr<IRemoteObject> &token, in
     eventInfo.abilityName = resultWant->GetElement().GetAbilityName();
     eventInfo.errCode = TerminateAbilityWithFlag(token, resultCode, resultWant, true);
     AAFWK::EventReport::SendAbilityEvent(AAFWK::TERMINATE_ABILITY,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
     if (eventInfo.errCode != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::TERMINATE_ABILITY_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
     }
     return eventInfo.errCode;
 }
@@ -915,7 +915,7 @@ int AbilityManagerService::CloseAbility(const sptr<IRemoteObject> &token, int re
 {
     AAFWK::EventInfo eventInfo;
     AAFWK::EventReport::SendAbilityEvent(AAFWK::CLOSE_ABILITY,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
     return TerminateAbilityWithFlag(token, resultCode, resultWant, false);
 }
 
@@ -1163,14 +1163,14 @@ int AbilityManagerService::ConnectAbility(
     eventInfo.bundleName = want.GetElement().GetBundleName();
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
-    AAFWK::EventReport::SendExtensionEvent(AAFWK::CONNECT_SERVICE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+    AAFWK::EventReport::SendExtensionEvent(AAFWK::CONNECT_SERVICE, HiSysEventType::BEHAVIOR,
         eventInfo);
 
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         eventInfo.errCode = CHECK_PERMISSION_FAILED;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return CHECK_PERMISSION_FAILED;
     }
     int32_t validUserId = GetValidUserId(userId);
@@ -1179,7 +1179,7 @@ int AbilityManagerService::ConnectAbility(
         HILOG_ERROR("%{public}s: Get Local DeviceId failed", __func__);
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
     auto manager = std::make_shared<FreeInstallManager>(weak_from_this());
@@ -1187,7 +1187,7 @@ int AbilityManagerService::ConnectAbility(
     if (result != ERR_OK) {
         eventInfo.errCode = result;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return result;
     }
 
@@ -1204,7 +1204,7 @@ int AbilityManagerService::ConnectAbility(
             HILOG_ERROR("Invalid extension ability info.");
             eventInfo.errCode = ERR_INVALID_VALUE;
             AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
-                OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+                HiSysEventType::FAULT, eventInfo);
             return ERR_INVALID_VALUE;
         }
         abilityWant.SetElementName(extensionInfo.bundleName, extensionInfo.name);
@@ -1214,7 +1214,7 @@ int AbilityManagerService::ConnectAbility(
         HILOG_INFO("AbilityManagerService::ConnectAbility. try to ConnectRemoteAbility");
         eventInfo.errCode = ConnectRemoteAbility(abilityWant, connect->AsObject());
         AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return eventInfo.errCode;
     }
 
@@ -1222,13 +1222,13 @@ int AbilityManagerService::ConnectAbility(
         HILOG_INFO("%{public}s invalid Token.", __func__);
         eventInfo.errCode = ConnectLocalAbility(abilityWant, validUserId, connect, nullptr);
         AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
         return eventInfo.errCode;
     }
     eventInfo.errCode = ConnectLocalAbility(abilityWant, validUserId, connect, callerToken);
     if (eventInfo.errCode != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
     }
     return eventInfo.errCode;
 }
@@ -1238,7 +1238,7 @@ int AbilityManagerService::DisconnectAbility(const sptr<IAbilityConnection> &con
     HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Disconnect ability begin.");
     AAFWK::EventInfo eventInfo;
-    AAFWK::EventReport::SendExtensionEvent(AAFWK::DISCONNECT_SERVICE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
+    AAFWK::EventReport::SendExtensionEvent(AAFWK::DISCONNECT_SERVICE, HiSysEventType::BEHAVIOR,
         eventInfo);
     CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
     CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
@@ -1247,7 +1247,7 @@ int AbilityManagerService::DisconnectAbility(const sptr<IAbilityConnection> &con
     eventInfo.errCode |= DisconnectRemoteAbility(connect->AsObject());
     if (eventInfo.errCode != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::DISCONNECT_SERVICE_ERROR,
-            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+            HiSysEventType::FAULT, eventInfo);
     }
     return eventInfo.errCode;
 }
@@ -4158,7 +4158,7 @@ int AbilityManagerService::DoAbilityForeground(const sptr<IRemoteObject> &token,
     AAFWK::EventInfo eventInfo;
     eventInfo.sceneFlag = flag;
     AAFWK::EventReport::SendAbilityEvent(AAFWK::DO_FOREGROUND_ABILITY,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
     return ERR_OK;
 }
 
@@ -4176,7 +4176,7 @@ int AbilityManagerService::DoAbilityBackground(const sptr<IRemoteObject> &token,
     AAFWK::EventInfo eventInfo;
     eventInfo.sceneFlag = flag;
     AAFWK::EventReport::SendAbilityEvent(AAFWK::DO_FOREGROUND_ABILITY,
-        OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR, eventInfo);
+        HiSysEventType::BEHAVIOR, eventInfo);
     return ret;
 }
 
