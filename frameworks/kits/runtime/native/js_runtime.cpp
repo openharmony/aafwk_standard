@@ -658,7 +658,9 @@ void JsRuntime::DumpHeapSnapshot(bool isPrivate)
 std::string JsRuntime::BuildNativeAndJsBackStackTrace()
 {
     std::string straceStr = "";
+    nativeEngine_->SuspendVM();
     [[maybe_unused]]bool temp = nativeEngine_->BuildNativeAndJsBackStackTrace(straceStr);
+    nativeEngine_->ResumeVM();
     return straceStr;
 }
 }  // namespace AbilityRuntime
