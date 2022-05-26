@@ -750,7 +750,10 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
         return ERR_INVALID_VALUE;
     }
     HILOG_INFO("Start extension begin, name is %{public}s.", abilityInfo.name.c_str());
-    return connectManager->StartAbility(abilityRequest);
+    eventInfo.errCode = connectManager->StartAbility(abilityRequest);
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
+        OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+    return eventInfo.errCode;
 }
 
 int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRemoteObject> &callerToken,
@@ -829,7 +832,11 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
         return ERR_INVALID_VALUE;
     }
     HILOG_INFO("Stop extension begin, name is %{public}s.", abilityInfo.name.c_str());
-    return connectManager->StopServiceAbility(abilityRequest);
+    eventInfo.errCode = connectManager->StopServiceAbility(abilityRequest);
+    AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
+        OHOS::HiviewDFX::HiSysEvent::EventType::FAULT,
+        eventInfo);
+    return eventInfo.errCode;
 }
 
 
@@ -1161,17 +1168,26 @@ int AbilityManagerService::ConnectAbility(
 
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
+        eventInfo.errCode = CHECK_PERMISSION_FAILED;
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
         return CHECK_PERMISSION_FAILED;
     }
     int32_t validUserId = GetValidUserId(userId);
     std::string localDeviceId;
     if (!GetLocalDeviceId(localDeviceId)) {
         HILOG_ERROR("%{public}s: Get Local DeviceId failed", __func__);
+        eventInfo.errCode = ERR_INVALID_VALUE;
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
     auto manager = std::make_shared<FreeInstallManager>(weak_from_this());
     int result = manager->IsConnectFreeInstall(want, validUserId, callerToken, localDeviceId);
     if (result != ERR_OK) {
+        eventInfo.errCode = result;
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
         return result;
     }
 
@@ -1186,6 +1202,9 @@ int AbilityManagerService::ConnectAbility(
         bool queryResult = IN_PROCESS_CALL(bms->QueryExtensionAbilityInfoByUri(uri, validUserId, extensionInfo));
         if (!queryResult || extensionInfo.name.empty() || extensionInfo.bundleName.empty()) {
             HILOG_ERROR("Invalid extension ability info.");
+            eventInfo.errCode = ERR_INVALID_VALUE;
+            AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+                OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
             return ERR_INVALID_VALUE;
         }
         abilityWant.SetElementName(extensionInfo.bundleName, extensionInfo.name);
@@ -1193,29 +1212,44 @@ int AbilityManagerService::ConnectAbility(
 
     if (CheckIfOperateRemote(abilityWant)) {
         HILOG_INFO("AbilityManagerService::ConnectAbility. try to ConnectRemoteAbility");
-        return ConnectRemoteAbility(abilityWant, connect->AsObject());
+        eventInfo.errCode = ConnectRemoteAbility(abilityWant, connect->AsObject());
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+        return eventInfo.errCode;
     }
 
     if (callerToken != nullptr && callerToken->GetObjectDescriptor() != u"ohos.aafwk.AbilityToken") {
         HILOG_INFO("%{public}s invalid Token.", __func__);
-        return ConnectLocalAbility(abilityWant, validUserId, connect, nullptr);
+        eventInfo.errCode = ConnectLocalAbility(abilityWant, validUserId, connect, nullptr);
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+        return eventInfo.errCode;
     }
-    return ConnectLocalAbility(abilityWant, validUserId, connect, callerToken);
+    eventInfo.errCode = ConnectLocalAbility(abilityWant, validUserId, connect, callerToken);
+    if (eventInfo.errCode != ERR_OK) {
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+    }
+    return eventInfo.errCode;
 }
 
 int AbilityManagerService::DisconnectAbility(const sptr<IAbilityConnection> &connect)
 {
     HITRACE_METER_NAME(HITRACE_TAG_ABILITY_MANAGER, __PRETTY_FUNCTION__);
     HILOG_DEBUG("Disconnect ability begin.");
-    CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
-    CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
-
-    DisconnectLocalAbility(connect);
-    DisconnectRemoteAbility(connect->AsObject());
     AAFWK::EventInfo eventInfo;
     AAFWK::EventReport::SendExtensionEvent(AAFWK::DISCONNECT_SERVICE, OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
         eventInfo);
-    return ERR_OK;
+    CHECK_POINTER_AND_RETURN(connect, ERR_INVALID_VALUE);
+    CHECK_POINTER_AND_RETURN(connect->AsObject(), ERR_INVALID_VALUE);
+
+    eventInfo.errCode = DisconnectLocalAbility(connect);
+    eventInfo.errCode |= DisconnectRemoteAbility(connect->AsObject());
+    if (eventInfo.errCode != ERR_OK) {
+        AAFWK::EventReport::SendAbilityEvent(AAFWK::DISCONNECT_SERVICE_ERROR,
+            OHOS::HiviewDFX::HiSysEvent::EventType::FAULT, eventInfo);
+    }
+    return eventInfo.errCode;
 }
 
 int AbilityManagerService::ConnectLocalAbility(const Want &want, const int32_t userId,
