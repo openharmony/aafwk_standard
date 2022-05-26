@@ -1505,25 +1505,21 @@ void MainThread::HandleSignal(int signal)
 {
     switch (signal) {
         case SIGUSR1:
-            HILOG_INFO("MainThread::ScheduleANRProcess called begin");
             if (handleANRThread_ == nullptr) {
                 handleANRThread_ = std::make_shared<std::thread>(&MainThread::HandleScheduleANRProcess);
             }
             break;
         case SIGNAL_JS_HEAP: {
-            HILOG_INFO("Dump js heap called.");
             auto heapFunc = std::bind(&MainThread::HandleDumpHeap, false);
             dfxHandler_->PostTask(heapFunc);
             break;
         }
         case SIGNAL_JS_HEAP_PRIV: {
-            HILOG_INFO("Dump js heap private called.");
             auto privateHeapFunc = std::bind(&MainThread::HandleDumpHeap, true);
             dfxHandler_->PostTask(privateHeapFunc);
             break;
         }
         default:
-            HILOG_INFO("Signal:%{public}d need not to handle.", signal);
             break;
     }
 }
