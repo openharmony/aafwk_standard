@@ -40,14 +40,14 @@ WantAgentConstant::OperationType PendingWant::GetType(const sptr<AAFwk::IWantSen
 }
 
 std::shared_ptr<PendingWant> PendingWant::GetAbility(
-    const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
+    const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context,
     int requestCode, const std::shared_ptr<Want> &want, unsigned int flags)
 {
     return GetAbility(context, requestCode, want, flags, nullptr);
 }
 
 std::shared_ptr<PendingWant> PendingWant::GetAbility(
-    const std::shared_ptr<OHOS::AbilityRuntime::Context> &context, int requestCode,
+    const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, int requestCode,
     const std::shared_ptr<Want> &want, unsigned int flags, const std::shared_ptr<WantParams> &options)
 {
     WANT_AGENT_LOGI("PendingWant::GetAbility begin.");
@@ -76,15 +76,16 @@ std::shared_ptr<PendingWant> PendingWant::GetAbility(
     return std::make_shared<PendingWant>(target);
 }
 
-std::shared_ptr<PendingWant> PendingWant::GetAbilities(const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
-    int requestCode, std::vector<std::shared_ptr<Want>> &wants, unsigned int flags)
+std::shared_ptr<PendingWant> PendingWant::GetAbilities(
+    const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, int requestCode,
+    std::vector<std::shared_ptr<Want>> &wants, unsigned int flags)
 {
     return GetAbilities(context, requestCode, wants, flags, nullptr);
 }
 
-std::shared_ptr<PendingWant> PendingWant::GetAbilities(const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
-    int requestCode, std::vector<std::shared_ptr<Want>> &wants,
-    unsigned int flags, const std::shared_ptr<WantParams> &options)
+std::shared_ptr<PendingWant> PendingWant::GetAbilities(
+    const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, int requestCode,
+    std::vector<std::shared_ptr<Want>> &wants, unsigned int flags, const std::shared_ptr<WantParams> &options)
 {
     if (context == nullptr) {
         WANT_AGENT_LOGE("PendingWant::GetAbilities invalid input param.");
@@ -114,14 +115,14 @@ std::shared_ptr<PendingWant> PendingWant::GetAbilities(const std::shared_ptr<OHO
 }
 
 std::shared_ptr<PendingWant> PendingWant::GetCommonEvent(
-    const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
+    const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context,
     int requestCode, const std::shared_ptr<Want> &want, unsigned int flags)
 {
     return GetCommonEventAsUser(context, requestCode, want, flags, 0);
 }
 
 std::shared_ptr<PendingWant> PendingWant::GetCommonEventAsUser(
-    const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
+    const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context,
     int requestCode, const std::shared_ptr<Want> &want, unsigned int flags, int uid)
 {
     if (context == nullptr) {
@@ -148,7 +149,7 @@ std::shared_ptr<PendingWant> PendingWant::GetCommonEventAsUser(
 }
 
 std::shared_ptr<PendingWant> PendingWant::GetService(
-    const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
+    const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context,
     int requestCode, const std::shared_ptr<Want> &want, unsigned int flags)
 {
     return BuildServicePendingWant(context, requestCode, want, flags,
@@ -156,7 +157,7 @@ std::shared_ptr<PendingWant> PendingWant::GetService(
 }
 
 std::shared_ptr<PendingWant> PendingWant::GetForegroundService(
-    const std::shared_ptr<OHOS::AbilityRuntime::Context> &context, int requestCode,
+    const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context, int requestCode,
     const std::shared_ptr<Want> &want, unsigned int flags)
 {
     return BuildServicePendingWant(
@@ -164,7 +165,7 @@ std::shared_ptr<PendingWant> PendingWant::GetForegroundService(
 }
 
 std::shared_ptr<PendingWant> PendingWant::BuildServicePendingWant(
-    const std::shared_ptr<OHOS::AbilityRuntime::Context> &context,
+    const std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> &context,
     int requestCode, const std::shared_ptr<Want> &want,
     unsigned int flags, WantAgentConstant::OperationType serviceKind)
 {

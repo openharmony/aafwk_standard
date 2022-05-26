@@ -857,7 +857,6 @@ void MainThread::HandleLaunchApplication(const AppLaunchData &appLaunchData, con
     std::shared_ptr<AbilityRuntime::ContextImpl> contextImpl = std::make_shared<AbilityRuntime::ContextImpl>();
     contextImpl->SetResourceManager(resourceManager);
     contextImpl->SetApplicationInfo(std::make_shared<ApplicationInfo>(appInfo));
-    contextImpl->InitAppContext();
     std::shared_ptr<AbilityRuntime::ApplicationContext> applicationContext =
         std::make_shared<AbilityRuntime::ApplicationContext>();
     applicationContext->AttachContextImpl(contextImpl);

@@ -18,7 +18,7 @@
 #include "cancel_listener.h"
 #include "completed_callback.h"
 #include "completed_dispatcher.h"
-#include "context/context.h"
+#include "context/application_context.h"
 #include "context_container.h"
 #include "context_impl.h"
 #include "element_name.h"
@@ -94,9 +94,10 @@ Want PendingWantTest::MakeWant(std::string deviceId, std::string abilityName, st
     return want;
 }
 
-std::shared_ptr<OHOS::AbilityRuntime::Context> GetAppContext()
+std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> GetAppContext()
 {
-    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     return context;
 }
 
@@ -434,7 +435,8 @@ HWTEST_F(PendingWantTest, PendingWant_1900, Function | MediumTest | Level1)
     unsigned int flags = 1;
     flags |= FLAG_ONE_SHOT;
     WantAgentConstant::OperationType type = WantAgentConstant::OperationType::START_FOREGROUND_SERVICE;
-    std::shared_ptr<AbilityRuntime::Context> context = std::make_shared<AbilityRuntime::ContextImpl>();
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        std::make_shared<AbilityRuntime::ApplicationContext>();
     std::shared_ptr<PendingWant> pendingWant =
         PendingWant::BuildServicePendingWant(context, requestCode, want, flags, type);
 
