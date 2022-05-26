@@ -632,7 +632,7 @@ int AbilityManagerService::StartAbility(const Want &want, const StartOptions &st
     abilityRequest.want.SetParam(Want::PARAM_RESV_WINDOW_MODE, startOptions.GetWindowMode());
     auto missionListManager = GetListManagerByUserId(oriValidUserId);
     if (missionListManager == nullptr) {
-        HILOG_ERROR("missionListManager is Null. userId=%{public}d", validUserId);
+        HILOG_ERROR("missionListManager is Null. userId=%{public}d", oriValidUserId);
         eventInfo.errCode = ERR_INVALID_VALUE;
         AAFWK::EventReport::SendAbilityEvent(AAFWK::START_ABILITY_ERROR,
             HiSysEventType::FAULT, eventInfo);
@@ -690,13 +690,13 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     eventInfo.bundleName = want.GetElement().GetBundleName();
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
-    eventInfo.extensionType = GetExtensionType(extensionType);
-    AAFWK::EventReport::SendExtensionEvent(AAFWK::START_SERVICE_EXTENSION,
+    eventInfo.extensionType = extensionType;
+    AAFWK::EventReport::SendExtensionEvent(AAFWK::START_SERVICE,
         HiSysEventType::BEHAVIOR, eventInfo);
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed.", __func__);
         eventInfo.errCode = CHECK_PERMISSION_FAILED;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::START_EXTENSION_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return CHECK_PERMISSION_FAILED;
     }
@@ -704,7 +704,7 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
         HILOG_ERROR("%{public}s VerificationAllToken failed.", __func__);
         eventInfo.errCode = ERR_INVALID_VALUE;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::START_EXTENSION_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
@@ -712,7 +712,7 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     if (!JudgeMultiUserConcurrency(validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
         eventInfo.errCode = ERR_INVALID_VALUE;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::START_EXTENSION_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
@@ -722,7 +722,7 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     if (result != ERR_OK) {
         HILOG_ERROR("Generate ability request local error.");
         eventInfo.errCode = result;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::START_EXTENSION_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return result;
     }
@@ -736,7 +736,7 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     if (result != ERR_OK) {
         HILOG_ERROR("CheckOptExtensionAbility error.");
         eventInfo.errCode = result;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::START_EXTENSION_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return result;
     }
@@ -745,14 +745,14 @@ int AbilityManagerService::StartExtensionAbility(const Want &want, const sptr<IR
     if (!connectManager) {
         HILOG_ERROR("connectManager is nullptr. userId=%{public}d", validUserId);
         eventInfo.errCode = ERR_INVALID_VALUE;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::START_EXTENSION_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
     HILOG_INFO("Start extension begin, name is %{public}s.", abilityInfo.name.c_str());
     eventInfo.errCode = connectManager->StartAbility(abilityRequest);
     if (eventInfo.errCode != ERR_OK) {
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::START_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::START_EXTENSION_ERROR,
             HiSysEventType::FAULT, eventInfo);
     }
     return eventInfo.errCode;
@@ -768,13 +768,13 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
     eventInfo.bundleName = want.GetElement().GetBundleName();
     eventInfo.moduleName = want.GetElement().GetModuleName();
     eventInfo.abilityName = want.GetElement().GetAbilityName();
-    eventInfo.extensionType = GetExtensionType(extensionType);
-    AAFWK::EventReport::SendExtensionEvent(AAFWK::STOP_SERVICE_EXTENSION,
+    eventInfo.extensionType = extensionType;
+    AAFWK::EventReport::SendExtensionEvent(AAFWK::STOP_SERVICE,
         HiSysEventType::BEHAVIOR, eventInfo);
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed.", __func__);
         eventInfo.errCode = CHECK_PERMISSION_FAILED;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::STOP_EXTENSION_ERROR,
             HiSysEventType::FAULT,
             eventInfo);
         return CHECK_PERMISSION_FAILED;
@@ -783,7 +783,7 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
     if (callerToken != nullptr && !VerificationAllToken(callerToken)) {
         HILOG_ERROR("%{public}s VerificationAllToken failed.", __func__);
         eventInfo.errCode = ERR_INVALID_VALUE;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::STOP_EXTENSION_ERROR,
             HiSysEventType::FAULT,
             eventInfo);
         return ERR_INVALID_VALUE;
@@ -792,7 +792,7 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
     if (!JudgeMultiUserConcurrency(validUserId)) {
         HILOG_ERROR("Multi-user non-concurrent mode is not satisfied.");
         eventInfo.errCode = ERR_INVALID_VALUE;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::STOP_EXTENSION_ERROR,
             HiSysEventType::FAULT,
             eventInfo);
         return ERR_INVALID_VALUE;
@@ -803,7 +803,7 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
     if (result != ERR_OK) {
         HILOG_ERROR("Generate ability request local error.");
         eventInfo.errCode = result;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::STOP_EXTENSION_ERROR,
             HiSysEventType::FAULT,
             eventInfo);
         return result;
@@ -828,14 +828,14 @@ int AbilityManagerService::StopExtensionAbility(const Want &want, const sptr<IRe
     if (!connectManager) {
         HILOG_ERROR("connectManager is nullptr. userId=%{public}d", validUserId);
         eventInfo.errCode = ERR_INVALID_VALUE;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::STOP_EXTENSION_ERROR,
             HiSysEventType::FAULT,
             eventInfo);
         return ERR_INVALID_VALUE;
     }
     HILOG_INFO("Stop extension begin, name is %{public}s.", abilityInfo.name.c_str());
     eventInfo.errCode = connectManager->StopServiceAbility(abilityRequest);
-    AAFWK::EventReport::SendAbilityEvent(AAFWK::STOP_EXTENSION_ERROR,
+    AAFWK::EventReport::SendExtensionEvent(AAFWK::STOP_EXTENSION_ERROR,
         HiSysEventType::FAULT,
         eventInfo);
     return eventInfo.errCode;
@@ -898,19 +898,13 @@ void AbilityManagerService::GrantUriPermission(const Want &want, int32_t validUs
 int AbilityManagerService::TerminateAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
 {
     AAFWK::EventInfo eventInfo;
-    auto abilityRecord = Token::GetAbilityRecordByToken(token);
-    eventInfo.userId = abilityRecord->GetApplicationInfo().uid / BASE_USER_RANGE;
-    eventInfo.bundleName = resultWant->GetElement().GetBundleName();
-    eventInfo.moduleName = resultWant->GetElement().GetModuleName();
-    eventInfo.abilityName = resultWant->GetElement().GetAbilityName();
-    eventInfo.errCode = TerminateAbilityWithFlag(token, resultCode, resultWant, true);
     AAFWK::EventReport::SendAbilityEvent(AAFWK::TERMINATE_ABILITY,
         HiSysEventType::BEHAVIOR, eventInfo);
     if (eventInfo.errCode != ERR_OK) {
         AAFWK::EventReport::SendAbilityEvent(AAFWK::TERMINATE_ABILITY_ERROR,
             HiSysEventType::FAULT, eventInfo);
     }
-    return eventInfo.errCode;
+    return TerminateAbilityWithFlag(token, resultCode, resultWant, true);
 }
 
 int AbilityManagerService::CloseAbility(const sptr<IRemoteObject> &token, int resultCode, const Want *resultWant)
@@ -1171,7 +1165,7 @@ int AbilityManagerService::ConnectAbility(
     if (VerifyAccountPermission(userId) == CHECK_PERMISSION_FAILED) {
         HILOG_ERROR("%{public}s: Permission verification failed", __func__);
         eventInfo.errCode = CHECK_PERMISSION_FAILED;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::CONNECT_SERVICE_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return CHECK_PERMISSION_FAILED;
     }
@@ -1180,7 +1174,7 @@ int AbilityManagerService::ConnectAbility(
     if (!GetLocalDeviceId(localDeviceId)) {
         HILOG_ERROR("%{public}s: Get Local DeviceId failed", __func__);
         eventInfo.errCode = ERR_INVALID_VALUE;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::CONNECT_SERVICE_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return ERR_INVALID_VALUE;
     }
@@ -1188,7 +1182,7 @@ int AbilityManagerService::ConnectAbility(
     int result = manager->IsConnectFreeInstall(want, validUserId, callerToken, localDeviceId);
     if (result != ERR_OK) {
         eventInfo.errCode = result;
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::CONNECT_SERVICE_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return result;
     }
@@ -1205,7 +1199,7 @@ int AbilityManagerService::ConnectAbility(
         if (!queryResult || extensionInfo.name.empty() || extensionInfo.bundleName.empty()) {
             HILOG_ERROR("Invalid extension ability info.");
             eventInfo.errCode = ERR_INVALID_VALUE;
-            AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+            AAFWK::EventReport::SendExtensionEvent(AAFWK::CONNECT_SERVICE_ERROR,
                 HiSysEventType::FAULT, eventInfo);
             return ERR_INVALID_VALUE;
         }
@@ -1215,7 +1209,7 @@ int AbilityManagerService::ConnectAbility(
     if (CheckIfOperateRemote(abilityWant)) {
         HILOG_INFO("AbilityManagerService::ConnectAbility. try to ConnectRemoteAbility");
         eventInfo.errCode = ConnectRemoteAbility(abilityWant, connect->AsObject());
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::CONNECT_SERVICE_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return eventInfo.errCode;
     }
@@ -1223,13 +1217,13 @@ int AbilityManagerService::ConnectAbility(
     if (callerToken != nullptr && callerToken->GetObjectDescriptor() != u"ohos.aafwk.AbilityToken") {
         HILOG_INFO("%{public}s invalid Token.", __func__);
         eventInfo.errCode = ConnectLocalAbility(abilityWant, validUserId, connect, nullptr);
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::CONNECT_SERVICE_ERROR,
             HiSysEventType::FAULT, eventInfo);
         return eventInfo.errCode;
     }
     eventInfo.errCode = ConnectLocalAbility(abilityWant, validUserId, connect, callerToken);
     if (eventInfo.errCode != ERR_OK) {
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::CONNECT_SERVICE_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::CONNECT_SERVICE_ERROR,
             HiSysEventType::FAULT, eventInfo);
     }
     return eventInfo.errCode;
@@ -1248,7 +1242,7 @@ int AbilityManagerService::DisconnectAbility(const sptr<IAbilityConnection> &con
     eventInfo.errCode = DisconnectLocalAbility(connect);
     eventInfo.errCode |= DisconnectRemoteAbility(connect->AsObject());
     if (eventInfo.errCode != ERR_OK) {
-        AAFWK::EventReport::SendAbilityEvent(AAFWK::DISCONNECT_SERVICE_ERROR,
+        AAFWK::EventReport::SendExtensionEvent(AAFWK::DISCONNECT_SERVICE_ERROR,
             HiSysEventType::FAULT, eventInfo);
     }
     return eventInfo.errCode;
@@ -4717,50 +4711,6 @@ int AbilityManagerService::DumpAbilityInfoDone(std::vector<std::string> &infos, 
     }
     abilityRecord->DumpAbilityInfoDone(infos);
     return ERR_OK;
-}
-
-std::string AbilityManagerService::GetExtensionType(AppExecFwk::ExtensionAbilityType extensionType)
-{
-    std::string extensionTypeStr;
-    switch (extensionType) {
-        case AppExecFwk::ExtensionAbilityType::FORM:
-            extensionTypeStr = "FOMR";
-            break;
-        case AppExecFwk::ExtensionAbilityType::WORK_SCHEDULER:
-            extensionTypeStr = "WORK_SCHEDULER";
-            break;
-        case AppExecFwk::ExtensionAbilityType::INPUTMETHOD:
-            extensionTypeStr = "INPUTMETHOD";
-            break;
-        case AppExecFwk::ExtensionAbilityType::SERVICE:
-            extensionTypeStr = "SERVICE";
-            break;
-        case AppExecFwk::ExtensionAbilityType::ACCESSIBILITY:
-            extensionTypeStr = "ACCESSIBILITY";
-            break;
-        case AppExecFwk::ExtensionAbilityType::DATASHARE:
-            extensionTypeStr = "DATASHARE";
-            break;
-        case AppExecFwk::ExtensionAbilityType::FILESHARE:
-            extensionTypeStr = "FILESHARE";
-            break;
-        case AppExecFwk::ExtensionAbilityType::STATICSUBSCRIBER:
-            extensionTypeStr = "STATICSUBSCRIBER";
-            break;
-        case AppExecFwk::ExtensionAbilityType::WALLPAPER:
-            extensionTypeStr = "WALLPAPER";
-            break;
-        case AppExecFwk::ExtensionAbilityType::BACKUP:
-            extensionTypeStr = "BACKUP";
-            break;
-        case AppExecFwk::ExtensionAbilityType::WINDOW:
-            extensionTypeStr = "WINDOW";
-            break;
-        default:
-            extensionTypeStr = "UNSPECIFIED";
-            break;
-    }
-    return extensionTypeStr;
 }
 
 #ifdef SUPPORT_GRAPHICS

@@ -117,7 +117,7 @@ TERMINATE_ABILITY:
 
 # serviceExtensionAbility behavior event
 
-START_SERVICE_EXTENSION:
+START_SERVICE:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: start serviceExtensionAbility}
   USER_ID: {type: INT32, desc: userId}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
@@ -125,7 +125,7 @@ START_SERVICE_EXTENSION:
   ABILITY_NAME: {type: STRING, desc: ability name}
   EXTENSION_TYPE: {type: STRING, desc: extension type}
   
-STOP_SERVICE_EXTENSION:
+STOP_SERVICE:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: ability, desc: stop serviceExtensionAbility}
   USER_ID: {type: INT32, desc: userId}
   BUNDLE_NAME: {type: STRING, desc: bundle name}

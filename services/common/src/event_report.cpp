@@ -14,7 +14,6 @@
  */
 
 #include "event_report.h"
-#include "hisysevent.h"
 #include "hilog_wrapper.h"
 
 #include <chrono>
@@ -27,7 +26,6 @@ const std::string TYPE = "TYPE";
 const std::string EVENT_KEY_PID = "PID";
 const std::string EVENT_KEY_USERID = "USERID";
 const std::string EVENT_KEY_FORM_ID = "FORM_ID";
-const std::string EVENT_KEY_TIME_STAMP = "TIME_STAMP";
 const std::string EVENT_KEY_ERROR_CODE = "ERROR_CODE";
 const std::string EVENT_KEY_SCENE_FLAG = "SCENE_FLAG";
 const std::string EVENT_KEY_BUNDLE_NAME = "BUNDLE_NAME";
@@ -35,6 +33,7 @@ const std::string EVENT_KEY_MODULE_NAME = "MODULE_NAME";
 const std::string EVENT_KEY_ABILITY_NAME = "ABILITY_NAME";
 const std::string EVENT_KEY_VERSION_NAME = "VERSION_NAME";
 const std::string EVENT_KEY_VERSION_CODE = "VERSION_CODE";
+const std::string EVENT_KEY_PROCESS_NAME = "PROCESS_NAME";
 const std::string EVENT_KEY_EXTENSION_TYPE = "EXTENSION_TYPE";
 }
 
@@ -48,8 +47,8 @@ void EventReport::SendAppEvent(const std::string &eventName, HiSysEventType type
         EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
         EVENT_KEY_VERSION_NAME, eventInfo.versionName,
         EVENT_KEY_VERSION_CODE, eventInfo.versionCode,
-        EVENT_KEY_PID, eventInfo.pid,
-        EVENT_KEY_TIME_STAMP, eventInfo.timeStamp);
+        EVENT_KEY_ABILITY_NAME, eventInfo.abilityName,
+        EVENT_KEY_PROCESS_NAME, eventInfo.processName);
 }
 
 void EventReport::SendAbilityEvent(const std::string &eventName, HiSysEventType type,
@@ -96,7 +95,7 @@ void EventReport::SendExtensionEvent(const std::string &eventName, HiSysEventTyp
             HiSysEvent::Domain::AAFWK,
             eventName,
             type);
-    } else if (eventName ==CONNECT_SERVICE) {
+    } else if (eventName == CONNECT_SERVICE) {
         HiSysEvent::Write(
             HiSysEvent::Domain::AAFWK,
             eventName,
@@ -105,7 +104,7 @@ void EventReport::SendExtensionEvent(const std::string &eventName, HiSysEventTyp
             EVENT_KEY_BUNDLE_NAME, eventInfo.bundleName,
             EVENT_KEY_MODULE_NAME, eventInfo.moduleName,
             EVENT_KEY_ABILITY_NAME, eventInfo.abilityName);
-    } else if (eventName == START_SERVICE_EXTENSION || eventName == STOP_SERVICE_EXTENSION) {
+    } else if (eventName == START_SERVICE || eventName == STOP_SERVICE) {
         HiSysEvent::Write(
             HiSysEvent::Domain::AAFWK,
             eventName,

@@ -273,13 +273,11 @@ void AppMgrServiceInner::AttachApplication(const pid_t pid, const sptr<IAppSched
     appRecord->RegisterAppDeathRecipient();
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.abilityName = appRecord->GetAbilityInfo()->name;
     eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
-    eventInfo.timeStamp =
-        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
-        .count();
+    eventInfo.processName = applicationInfo->process;
     AAFWK::EventReport::SendAppEvent(AAFWK::APP_ATTACH, HiSysEventType::BEHAVIOR, eventInfo);
 }
 
@@ -318,13 +316,11 @@ void AppMgrServiceInner::LaunchApplication(const std::shared_ptr<AppRunningRecor
     appRecord->LaunchPendingAbilities();
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.abilityName = appRecord->GetAbilityInfo()->name;
     eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
-    eventInfo.timeStamp =
-        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
-        .count();
+    eventInfo.processName = applicationInfo->process;
     AAFWK::EventReport::SendAppEvent(AAFWK::APP_LAUNCH, HiSysEventType::BEHAVIOR, eventInfo);
 }
 
@@ -362,13 +358,11 @@ void AppMgrServiceInner::ApplicationForegrounded(const int32_t recordId)
     HILOG_INFO("application is foregrounded");
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.abilityName = appRecord->GetAbilityInfo()->name;
     eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
-    eventInfo.timeStamp =
-        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
-        .count();
+    eventInfo.processName = applicationInfo->process;
     AAFWK::EventReport::SendAppEvent(AAFWK::APP_FOREGROUND,
         HiSysEventType::BEHAVIOR, eventInfo);
 }
@@ -393,13 +387,11 @@ void AppMgrServiceInner::ApplicationBackgrounded(const int32_t recordId)
     HILOG_INFO("application is backgrounded");
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.abilityName = appRecord->GetAbilityInfo()->name;
     eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
-    eventInfo.timeStamp =
-        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
-        .count();
+    eventInfo.processName = applicationInfo->process;
     AAFWK::EventReport::SendAppEvent(AAFWK::APP_BACKGROUND,
         HiSysEventType::BEHAVIOR, eventInfo);
 }
@@ -433,13 +425,11 @@ void AppMgrServiceInner::ApplicationTerminated(const int32_t recordId)
     RemoveAppFromRecentListById(recordId);
     AAFWK::EventInfo eventInfo;
     auto applicationInfo = appRecord->GetApplicationInfo();
-    eventInfo.pid = appRecord->GetPriorityObject()->GetPid();
+    eventInfo.abilityName = appRecord->GetAbilityInfo()->name;
     eventInfo.bundleName = applicationInfo->name;
     eventInfo.versionName = applicationInfo->versionName;
     eventInfo.versionCode = applicationInfo->versionCode;
-    eventInfo.timeStamp =
-        std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch())
-        .count();
+    eventInfo.processName = applicationInfo->process;
     AAFWK::EventReport::SendAppEvent(AAFWK::APP_TERMINATE, HiSysEventType::BEHAVIOR, eventInfo);
     DelayedSingleton<AppStateObserverManager>::GetInstance()->OnProcessDied(appRecord);
 
