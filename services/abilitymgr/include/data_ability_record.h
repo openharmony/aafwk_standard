@@ -28,7 +28,7 @@
 
 namespace OHOS {
 namespace AAFwk {
-class DataAbilityRecord {
+class DataAbilityRecord : public std::enable_shared_from_this<DataAbilityRecord> {
 public:
     explicit DataAbilityRecord(const AbilityRequest &req);
     virtual ~DataAbilityRecord();

@@ -317,8 +317,16 @@ void AbilityRecord::SetScheduler(const sptr<IAbilityScheduler> &scheduler)
             }
         }
         if (schedulerDeathRecipient_ == nullptr) {
-            schedulerDeathRecipient_ =
-                new AbilitySchedulerRecipient(std::bind(&AbilityRecord::OnSchedulerDied, this, std::placeholders::_1));
+            auto self(weak_from_this());
+            auto diedTask = [self](const wptr<IRemoteObject> &remote) {
+                auto record = self.lock();
+                if (record == nullptr) {
+                    HILOG_ERROR("AbilityRecord is null, OnSchedulerDied failed.");
+                    return;
+                }
+                record->OnSchedulerDied(remote);
+            };
+            schedulerDeathRecipient_ = new AbilitySchedulerRecipient(diedTask);
         }
         isReady_ = true;
         scheduler_ = scheduler;
