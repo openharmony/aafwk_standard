@@ -26,7 +26,8 @@ kits_path = "//foundation/aafwk/standard/frameworks/kits"
 innerkits_path = "//foundation/aafwk/standard/interfaces/innerkits"
 bundlefwk_innerkits_path = "${bundlefwk_path}/interfaces/innerkits"
 bundlefwk_inner_api_path = "${bundlefwk_path}/interfaces/inner_api"
-ans_core_path = "//base/notification/ans_standard/frameworks/ans/core"
+ans_core_path =
+    "//base/notification/distributed_notification_service/frameworks/core"
 system_test_app_path =
     "//foundation/aafwk/standard/test/resource/amssystemtestability/abilitySrc"
 form_runtime_path = "//foundation/aafwk/standard/form_runtime"

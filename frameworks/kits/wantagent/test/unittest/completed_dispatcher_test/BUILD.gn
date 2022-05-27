@@ -51,10 +51,6 @@ ohos_unittest("completed_dispatcher_test") {
     "ipc:ipc_core",
     "samgr_standard:samgr_proxy",
   ]
-
-  if (ability_runtime_graphics) {
-    deps += [ "${ans_core_path}:ans_core" ]
-  }
 }
 
 group("unittest") {
