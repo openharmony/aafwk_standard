@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "system_environment_information.h"
+#include "parse_aafwk_int.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -45,12 +46,19 @@ void KernelSystemMemoryInfo::Init(std::map<std::string, std::string> &memInfo)
         }
     };
 
-    memTotal_ = std::stoll(findData(std::string("MemTotal"))) * BYTES_KB;
-    memFree_ = std::stoll(findData(std::string("MemFree"))) * BYTES_KB;
-    memAvailable_ = std::stoll(findData(std::string("MemAvailable"))) * BYTES_KB;
-    buffers_ = std::stoll(findData(std::string("Buffers"))) * BYTES_KB;
-    cached_ = std::stoll(findData(std::string("Cached"))) * BYTES_KB;
-    swapCached_ = std::stoll(findData(std::string("SwapCached"))) * BYTES_KB;
+    auto parseKb = [](const std::string &raw) -> int64_t {
+        int64_t value = 0;
+        if (!ParseAafwkInt64(raw, value)) {
+            return 0;
+        }
+        return value * BYTES_KB;
+    };
+    memTotal_ = parseKb(findData(std::string("MemTotal")));
+    memFree_ = parseKb(findData(std::string("MemFree")));
+    memAvailable_ = parseKb(findData(std::string("MemAvailable")));
+    buffers_ = parseKb(findData(std::string("Buffers")));
+    cached_ = parseKb(findData(std::string("Cached")));
+    swapCached_ = parseKb(findData(std::string("SwapCached")));
 }
 
 int64_t KernelSystemMemoryInfo::GetMemTotal() const
