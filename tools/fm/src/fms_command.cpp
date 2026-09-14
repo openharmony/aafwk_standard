@@ -19,6 +19,7 @@
 #include "appexecfwk_errors.h"
 #include "hilog_wrapper.h"
 #include "fms_command.h"
+#include "parse_aafwk_int.h"
 #include "form_mgr_errors.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
@@ -258,7 +259,12 @@ int32_t FormMgrShellCommand::HandleNormalOption(const int option, std::string &b
                 break;
             }
             cmdFlag = COMMAND_QUERY_ID;
-            formId = std::stoll(optarg);
+            if (!ParseAafwkInt64(optarg, formId)) {
+                resultReceiver_.append("error: option ");
+                resultReceiver_.append("'-i'");
+                resultReceiver_.append(" requires an integer.\n");
+                result = OHOS::ERR_INVALID_VALUE;
+            }
             break;
         }
         default: {
